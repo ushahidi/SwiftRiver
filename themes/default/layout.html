@@ -1,0 +1,363 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-language" content="en" />
+	<meta name="robots" content="noindex,nofollow" />
+	<link rel="stylesheet" media="screen,projection" type="text/css" href="media/css/reset.css" /> <!-- RESET -->
+	<link rel="stylesheet" media="screen,projection" type="text/css" href="media/css/main.css" /> <!-- MAIN STYLE SHEET -->
+	<link rel="stylesheet" media="screen,projection" type="text/css" href="media/css/2col.css" title="2col" /> <!-- DEFAULT: 2 COLUMNS -->
+	<link rel="alternate stylesheet" media="screen,projection" type="text/css" href="media/css/1col.css" title="1col" /> <!-- ALTERNATE: 1 COLUMN -->
+	<!--[if lte IE 6]><link rel="stylesheet" media="screen,projection" type="text/css" href="css/main-ie6.css" /><![endif]--> <!-- MSIE6 -->
+	<link rel="stylesheet" media="screen,projection" type="text/css" href="media/css/style.css" /> <!-- GRAPHIC THEME -->
+	<script type="text/javascript" src="media/js/jquery.js"></script>
+	<script type="text/javascript" src="media/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="media/js/jquery.switcher.js"></script>
+	<script type="text/javascript" src="media/js/toggle.js"></script>
+	<script type="text/javascript" src="media/js/ui.core.js"></script>
+	<script type="text/javascript" src="media/js/ui.tabs.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$(".tabs > ul").tabs();
+		$.tablesorter.defaults.sortList = [[1,0]];
+		$("table").tablesorter({
+			headers: {
+				0: { sorter: false },
+				7: { sorter: false }
+			}
+		});
+	});
+	</script>
+	<title>Sweeper</title>
+</head>
+
+<body>
+
+<div id="main">
+
+	<!-- Tray -->
+	<div id="tray" class="box">
+
+		<p class="f-left box">
+
+			<!-- Switcher -->
+			<span class="f-left" id="switcher">
+				<a href="#" rel="1col" class="styleswitch ico-col1" title="Display one column"><img src="media/img/switcher-1col.gif" alt="1 Column" /></a>
+				<a href="#" rel="2col" class="styleswitch ico-col2" title="Display two columns"><img src="media/img/switcher-2col.gif" alt="2 Columns" /></a>
+			</span>
+
+			Project: <strong>Your Project</strong>
+
+		</p>
+
+		<p class="f-right">User: <strong><a href="#">Administrator</a></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong><a href="#" id="logout">Log out</a></strong></p>
+
+	</div> <!--  /tray -->
+	 <!-- /header -->
+
+	<hr class="noscreen" />
+
+	<!-- Columns -->
+	<div id="cols" class="box">
+
+		<!-- Aside (Left Column) -->
+		<div id="aside" class="box">
+
+			<div class="padding box">
+
+				<!-- Logo (Max. width = 200px) -->
+				<p id="logo"><a href="#"><img src="media/img/logo_dashboard.png" alt="Sweeper" title="Sweeper" /></a></p>
+
+				<!-- Search -->
+				<form action="#" method="get" id="search">
+					<fieldset>
+						<legend>Search</legend>
+
+						<p><input type="text" size="17" name="" class="input-text" />&nbsp;<input type="submit" value="OK" class="input-submit-02" /><br />
+						<a href="javascript:toggle('search-options');" class="ico-drop">Advanced search</a></p>
+
+						<!-- Advanced search -->
+						<div id="search-options" style="display:none;">
+
+							<p>
+								<label><input type="checkbox" name="" checked="checked" />ALL</label><br />
+								<label><input type="checkbox" name="" />Projects</label><br />
+								<label><input type="checkbox" name="" />Stories</label><br />
+								<label><input type="checkbox" name="" />Items</label><br />
+								<label><input type="checkbox" name="" />Sources</label>
+							</p>
+
+						</div> <!-- /search-options -->
+
+					</fieldset>
+				</form>
+
+				<!-- Create a new project -->
+				<p id="btn-create" class="box"><a href="#"><span>Create a new project</span></a></p>
+
+			</div> <!-- /padding -->
+
+			<ul class="box">
+				<li><a href="#">Dashboard</a></li>
+				<li id="submenu-active"><a href="#">Project</a> <!-- Active -->
+					<ul>
+						<li><a href="#">Test Project 1</a></li>
+						<li><a href="#">New Project 2</a></li>
+					</ul>
+				</li>
+				<li><a href="#">Sources</a></li>
+				<li><a href="#">Plugins</a></li>
+				<li><a href="#">Users</a></li>
+				<li><a href="#">Settings</a></li>
+			</ul>
+
+		</div> <!-- /aside -->
+
+		<hr class="noscreen" />
+
+		<!-- Content (Right Column) -->
+		<div id="content" class="box">
+
+			<h1>Index</h1>
+
+			<p class="msg warning">You have <a href="#">123 posts</a>, contained within <a href="#">35 categories</a>. You have <a href="#">350 comments</a> and <a href="#">15 awaiting moderation</a>.</p>
+
+			<h3>Quick Links</h3>
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Articles</a> (558)</dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Photogallery</a> (44)</dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Files</a> (18)</dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Comments</a> (1,568)</dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Users</a> (2,771)</dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Calendar</a></dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">System settings &amp; Backup</a></dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<!-- Button -->
+			<div class="btn-box">
+			<div class="btn-top"></div>
+			<div class="btn">
+				<dl>
+					<dt><a href="#">Statistics</a></dt>
+					<dd>Lorem ipsum dolor sit amet consectetur</dd>
+				</dl>
+			</div> <!-- /btn -->
+			<div class="btn-bottom"></div>
+			</div> <!-- /btn-box -->
+
+			<div class="fix"></div>
+
+			<h3>Latest articles</h3>
+
+			<table class="tablesorter"> <!-- Sort this TABLE -->
+				<thead>
+					<tr>
+						<th>[x]</th>
+						<th>ID</th>
+						<th>Article</th>
+						<th>Approved<br />comments</th>
+						<th>Unapproved<br />comments</th>
+						<th>Published</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tfoot>
+					<tr class="bg">
+					    <td colspan="7" class="arrow-01">
+						<select name="" class="input-text">
+						    <option value="">Delete selected</option>
+						    <option value="">Remove selected</option>
+						    <option value="">Rename selected</option>
+						    <option value="">Copy selected</option>
+						</select>&nbsp;<input type="submit" value="OK" /></td>
+					</tr>
+				</tfoot>
+				<tbody>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">1</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">16</a></td>
+						<td class="t-center high-bg"><a href="#">3</a></td>
+						<td>Jan 18, 2007 09:12 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">2</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">18</a></td>
+						<td class="t-center high-bg"><a href="#">6</a></td>
+						<td>Dec 10, 2002 05:14 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">3</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">32</a></td>
+						<td class="t-center high-bg"><a href="#">1</a></td>
+						<td>Jan 12, 2003 11:14 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">4</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">4</a></td>
+						<td class="t-center high-bg"><a href="#">12</a></td>
+						<td>Jul 6, 2006 08:14 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">5</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">0</a></td>
+						<td class="t-center high-bg"><a href="#">9</a></td>
+						<td>Feb 23, 2009 11:35 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">6</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">158</a></td>
+						<td class="t-center high-bg"><a href="#">21</a></td>
+						<td>Mar 14, 2008 11:41 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">7</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">93</a></td>
+						<td class="t-center high-bg"><a href="#">16</a></td>
+						<td>Oct 27, 2001 02:06 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">8</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">26</a></td>
+						<td class="t-center high-bg"><a href="#">8</a></td>
+						<td>Jul 14, 2006 06:55 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">9</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">33</a></td>
+						<td class="t-center high-bg"><a href="#">5</a></td>
+						<td>Aug 19, 2008 08:57 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+					<tr>
+						<td class="t-center"><input type="checkbox" name="" /></td>
+						<td class="t-center">10</td>
+						<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+						<td class="t-center"><a href="#">41</a></td>
+						<td class="t-center high-bg"><a href="#">11</a></td>
+						<td>Aug 20, 2008 10:14 AM</td>
+						<td class="t-center"><a href="#"><img src="media/img/ico-delete.gif" class="ico" alt="Delete" /></a>  <a href="#"><img src="media/img/ico-edit.gif" class="ico" alt="Edit" /></a></td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div> <!-- /content -->
+
+	</div> <!-- /cols -->
+
+	<hr class="noscreen" />
+
+	<!-- Footer -->
+	<div id="footer" class="box">
+
+		<p class="f-left">Sweeper v0.1</p>
+
+		<p class="f-right">Powered by <a href="http://www.ushahidi.com/" target="_blank">Ushahidi</a></p>
+
+	</div> <!-- /footer -->
+
+</div> <!-- /main -->
+
+</body>
+</html>
