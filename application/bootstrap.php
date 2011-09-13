@@ -110,8 +110,9 @@ Route::set('project', '(project(/<id>(/<action>)))', array('id' => '\d+'))
  */	
 Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
-		'controller' => 'settings',
+		'controller' => 'main',
 		'action'     => 'index',
+		'directory'  => 'settings'
 	));
 
 /**

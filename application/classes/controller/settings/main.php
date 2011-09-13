@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Settings Controller
+ * Main Settings Controller
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Settings extends Controller_Sweeper {
+class Controller_Settings_Main extends Controller_Sweeper {
 	
 	/**
 	 * @return	void

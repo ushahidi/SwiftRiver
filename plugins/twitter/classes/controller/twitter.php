@@ -25,11 +25,11 @@ class Controller_Twitter extends Controller {
 	}
 	
 	/**
-	 * We'll use this action for Twitter Callback actions
+	 * We'll use this action for Twitter Oauth Callback actions
 	 * 
 	 * @return	void
 	 */
-	public function action_index()
+	public function action_auth()
 	{
 		
 	}
