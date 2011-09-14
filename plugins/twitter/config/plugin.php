@@ -28,6 +28,23 @@ return array(
 				'max' => '10.0.0',
 			),
 			'plugins' => array()	// unique plugin names
+		),
+		
+		// Service and Service Options
+		'service'		=> TRUE,
+		'service_options' => array(
+			'hashtag' => array(
+				'name' => 'Twitter Hash Tag',
+				'fields' => array('hashtag'),
+			),
+			'keywords' => array(
+				'name' => 'Twitter Key Words',
+				'fields' => array('keywords'),
+			),
+			'location' => array(
+				'name' => 'Twitter Tweet Locations',
+				'fields' => array('latitude', 'longitude'),
+			)
 		)
 	),
 );

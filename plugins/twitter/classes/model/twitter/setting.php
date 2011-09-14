@@ -15,5 +15,15 @@
  */
 class Model_Twitter_Setting extends ORM
 {
-	//protected $_table_name = 'twitter_settings';
+	/**
+	 * Validation for twitter settings
+	 * @param array $arr
+	 * @return array
+	 */
+	public function validate($arr)
+	{
+		return Validation::factory($arr)
+			->rule('consumer_key', 'not_empty')
+			->rule('consumer_secret', 'not_empty');
+	}
 }

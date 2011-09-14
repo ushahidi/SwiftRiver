@@ -34,16 +34,16 @@ class Twitter {
 		
 		// Twitter Key
 		$setting = ORM::factory('twitter_setting')
-			->where('key', '=', 'twitter_key')
+			->where('key', '=', 'consumer_key')
 			->find();
-		$setting->key = 'twitter_key';
+		$setting->key = 'consumer_key';
 		$setting->save();
 		
 		// Twitter Secret
 		$setting = ORM::factory('twitter_setting')
-			->where('key', '=', 'twitter_secret')
+			->where('key', '=', 'consumer_secret')
 			->find();
-		$setting->key = 'twitter_secret';
+		$setting->key = 'consumer_secret';
 		$setting->save();
 	}
 }
