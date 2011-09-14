@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Settings_Twitter extends Controller_Settings {
+class Controller_Settings_Twitter extends Controller_Settings_Main {
 	
 	/**
 	 * @return	void
