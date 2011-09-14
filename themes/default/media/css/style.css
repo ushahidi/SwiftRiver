@@ -156,12 +156,12 @@ MESSAGES
 INNER TABS
 ============================================================================= */
 #content .innertabs li{padding:0; background-color:none; background-image: none; margin:0;}
-#content .innertabs{border-bottom:1px solid gray; margin-bottom:1em}
-#content .innertabs ul{padding:3px 0; margin-left:0; margin-top:1px; margin-bottom:0; font:bold 13px Verdana; list-style-type:none; text-align:left}
+#content .innertabs{border-bottom:1px solid #ccc; margin-bottom:1em}
+#content .innertabs ul{padding:3px 0; margin-left:0; margin-top:1px; margin-bottom:0; font:normal 12px "tahoma",sans-serif; list-style-type:none; text-align:left}
 #content .innertabs li{display:inline; margin:0}
-#content .innertabs li a{text-decoration:none; padding:3px 7px; margin-right:3px; border:1px solid #778; color:#2d2b2b; background:white url(../img/shade.gif) top left repeat-x}
-#content .innertabs li a:visited{color:#2d2b2b}
-#content .innertabs li a:hover{text-decoration:underline; color:#2d2b2b}
+#content .innertabs li a{text-decoration:none; padding:3px 7px; margin-right:3px; border:1px solid #ccc; color:#666; background:white url(../img/shade.gif) top left repeat-x}
+#content .innertabs li a:visited{color:#666}
+#content .innertabs li a:hover{text-decoration:underline; color:#666}
 #content .innertabs li.selected{position:relative; top:1px}
-#content .innertabs li.selected a{background-image:url(../img/shadeactive.gif); border-bottom-color:white}
+#content .innertabs li.selected a{background-image:url(../img/shadeactive.gif); border-bottom-color:white; color:#333; font-weight:bold;}
 #content .innertabs li.selected a:hover{text-decoration:none}
