@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Project_Main extends Controller_Sweeper {
+class Controller_Project extends Controller_Sweeper {
 	
 	/**
 	 * This Project
@@ -23,7 +23,7 @@ class Controller_Project_Main extends Controller_Sweeper {
 	/**
 	 * @return	void
 	 */
-	public function before()
+	public function before($id = NULL)
 	{
 		// Execute parent::before first
 		parent::before();
@@ -51,8 +51,6 @@ class Controller_Project_Main extends Controller_Sweeper {
 		$this->template->header->menu->active_project_id = $this->project->id;
 		$this->template->header->page_title = $this->project->project_title;
 		$this->template->header->tab_menu = View::factory('pages/project/menu');
-		$this->template->header->tab_menu->project_id = $this->project->id;
-		$this->template->header->tab_menu->active = '';
 	}
 	
 	/**
