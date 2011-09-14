@@ -105,7 +105,9 @@ class Controller_Sweeper extends Controller_Template {
 		$this->template->header->js = ""; // Dynamic Javascript
 		$this->template->header->menu = View::factory('template/menu');
 		$this->template->header->menu->active = Request::$current->controller();;	// Active Controller
-		$this->template->header->menu->projects = ORM::factory('project')->find_all();
+		$this->template->header->menu->projects = ORM::factory('project')
+			->order_by('project_title', 'ASC')
+			->find_all();
 		$this->template->header->menu->active_project_id = "";
 		$this->template->header->tab_menu = "";
 		$this->template->content = "";

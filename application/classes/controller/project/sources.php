@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Project Stream Controller
+ * Project Sources Controller
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Project_Stream extends Controller_Project_Main {
+class Controller_Project_Sources extends Controller_Project_Main {
 	
 	/**
 	 * @return	void
@@ -23,7 +23,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->template->header->tab_menu->active = 'stream';
+		$this->template->header->tab_menu->active = 'sources';
 	}
 	
 }
