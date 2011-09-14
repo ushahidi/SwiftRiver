@@ -99,10 +99,11 @@ Kohana::modules(array(
 /**
  * Sweeper Project Route
  */
-Route::set('project', '(project(/<id>(/<action>)))', array('id' => '\d+'))
+Route::set('project', 'project(/<id>(/<controller>(/<action>)))', array('id' => '\d+'))
 	->defaults(array(
-		'controller' => 'project',
-		'action'     => 'index'
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'project',
 	));
 
 /**
