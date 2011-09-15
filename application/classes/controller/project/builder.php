@@ -70,13 +70,21 @@ class Controller_Project_Builder extends Controller_Project_Main {
 	 */
 	public function action_edit($page = NULL)
 	{
+		$services = array();
 		$this->template->content = View::factory('pages/project/builder/edit')
-			->bind('project', $this->project);
+			->bind('project', $this->project)
+			->bind('services', $services);
 		
+		// Load each plugins configs and find out which plugins
+		// are Feed Service Providers
 		$plugins = Kohana::$config->load('plugin');
-		foreach ($plugins as $key => $plugin)
+		foreach($plugins as $key => $plugin)
 		{
-			//print_r($plugin);
+			if (isset($plugin['service']) AND $plugin['service'] == TRUE)
+			{
+				$services[$key] = $plugin['name'];
+			}
 		}
+		asort($services);
 	}
 }
