@@ -34,4 +34,9 @@
 <div class="btn-bottom"></div>
 </div> <!-- /btn-box -->
 
+<?php
+// Sweeper Plugin Hook -- add button
+Event::run('sweeper.profile.stats.button');
+?>
+
 <div class="fix"></div>

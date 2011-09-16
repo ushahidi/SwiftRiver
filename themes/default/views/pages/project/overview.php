@@ -35,3 +35,10 @@
 </div> <!-- /btn -->
 <div class="btn-bottom"></div>
 </div> <!-- /btn-box -->
+
+<?php
+// Sweeper Plugin Hook -- add button
+Event::run('sweeper.project.stats.button');
+?>
+
+<div class="fix"></div>
