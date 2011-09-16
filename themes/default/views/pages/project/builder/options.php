@@ -16,31 +16,29 @@ if (isset($errors))
 }
 ?>
 <?php
-echo Form::open(URL::site('/project/'.$project->id.'/builder/options')); 
+echo Form::open(URL::site('/project/'.$project->id.'/builder/confirm'));
 echo Form::hidden('service', $service);
+echo Form::hidden('service_option', $service_option);
 ?>
 	
 	<fieldset>
-		<legend><?php echo __('Select').' '.$service_name.' '.__('Options');?></legend>
+		<legend><?php echo __('Enter').' '.$service_option_name.' '.__('Details');?></legend>
 		<?php
-		if ( ! count($service_options))
+		if ( ! count($service_option_fields))
 		{
 			?>
-			<p class="msg info"><?php echo __('This service has no further options.');?></p>
+			<p class="msg info"><?php echo __('This service has no options to set!');?></p>
 			<p><input type="submit" value="<?php echo __('Finish');?>" class="input-submit" /></p>
 			<?php
 		}
 		else
 		{
-			foreach ($service_options as $key => $value)
+			foreach ($service_option_fields as $key => $value)
 			{
-				if ( ! isset($value['name']))
-				{
-					$value['name'] = '-- '.__('Unknown').' --';
-				}
 				?>
 				<p class="nomt">
-					<?php echo Form::radio('service_option', $key, FALSE, array('id' => $key)); ?> <label for="<?php echo $key; ?>"><?php echo $value['name']; ?></label>
+					<label for="<?php echo $key; ?>" class="req"><?php echo $value;?>:</label><br />
+					<?php echo Form::input('options['.$key.']', '', array("size" => 60, "class" => "input-text-02 required") ); ?>
 				</p>
 				<?php
 			}

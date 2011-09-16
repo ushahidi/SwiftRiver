@@ -34,6 +34,15 @@ class Controller_Dashboard extends Controller_Sweeper {
 	{
 		$this->template->header->page_title = __('Dashboard');
 		$this->template->content = View::factory('pages/dashboard/overview');
-		$this->template->content->stats = View::factory('pages/dashboard/stats');
+		$this->template->content->stats = View::factory('pages/dashboard/stats')
+			->bind('projects', $projects)
+			->bind('stories', $stories)
+			->bind('items', $items)
+			->bind('tags', $tags);
+
+		$projects = ORM::factory('project')->count_all();
+		$stories = ORM::factory('story')->count_all();
+		$items = ORM::factory('item')->count_all();
+		$tags = ORM::factory('tag')->count_all();
 	}
 }

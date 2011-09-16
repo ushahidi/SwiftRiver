@@ -2,7 +2,7 @@
 <div class="innertabs">
 	<ul>
 		<li><a href="<?php echo URL::site('/project/')."/".$project->id."/builder"; ?>"><span><?php echo __('Feeds'); ?></span></a></li>
-		<li class="selected"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/edit/"; ?>"><span><?php echo __('Create New Feed'); ?> [+]</span></a></li>
+		<li class="selected"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/new/"; ?>"><span><?php echo __('Create New Feed'); ?> [+]</span></a></li>
 	</ul>
 </div>
 
@@ -15,7 +15,7 @@ if (isset($errors))
 	}
 }
 ?>
-<?php echo Form::open(); ?>
+<?php echo Form::open(URL::site('/project/'.$project->id.'/builder/parameters')); ?>
 
 	<fieldset>
 		<legend><?php echo __('Select Feed Service Provider');?></legend>
@@ -37,7 +37,7 @@ if (isset($errors))
 				<?php
 			}
 			?>
-			<p><input type="submit" value="<?php echo __('Save & Next');?>" class="input-submit" /></p>
+			<p><input type="submit" value="<?php echo __('Next');?>" class="input-submit" /></p>
 			<?php
 		}?>
 	</fieldset>

@@ -16,5 +16,11 @@
 
 </div> <!-- /main -->
 
+
+<?php 
+// Uncomment to turn on Profiler
+echo View::factory('profiler/stats');
+?>
+
 </body>
 </html>

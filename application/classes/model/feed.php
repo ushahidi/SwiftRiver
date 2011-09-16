@@ -21,6 +21,7 @@ class Model_Feed extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'items' => array()
+		'items' => array(),
+		'feed_options' => array()
 		);
 }

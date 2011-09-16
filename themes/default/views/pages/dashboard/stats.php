@@ -3,7 +3,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Projects</a> (2)</dt>
+		<dt><a href="<?php echo URL::site('/projects/');?>"><?php echo __('Projects');?></a> (<?php echo $projects; ?>)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->
@@ -15,7 +15,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Stories</a> (35)</dt>
+		<dt><a href="#"><?php echo __('Stories');?></a> (<?php echo $stories; ?>)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->
@@ -27,7 +27,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Feed Items</a> (18,003)</dt>
+		<dt><a href="#"><?php echo __('Feed Items');?></a> (<?php echo $items; ?>)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->
@@ -39,7 +39,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Tags</a> (1301)</dt>
+		<dt><a href="#"><?php echo __('Tags');?></a> (<?php echo $tags; ?>)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->
@@ -51,7 +51,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Private Messages</a> (3)</dt>
+		<dt><a href="#"><?php echo __('Private Messages');?></a> (0)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->
@@ -63,19 +63,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Pending Tasks</a> (20)</dt>
-		<dd>Lorem ipsum dolor sit amet consectetur</dd>
-	</dl>
-</div> <!-- /btn -->
-<div class="btn-bottom"></div>
-</div> <!-- /btn-box -->
-
-<!-- Button -->
-<div class="btn-box">
-<div class="btn-top"></div>
-<div class="btn">
-	<dl>
-		<dt><a href="#">Test</a></dt>
+		<dt><a href="#"><?php echo __('Pending Tasks');?></a> (0)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
 </div> <!-- /btn -->

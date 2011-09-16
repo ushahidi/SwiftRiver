@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Services
+ * Model for Feed_Options
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,22 +13,14 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Service extends ORM
+class Model_Feed_Option extends ORM
 {
 	/**
-	 * A service has many sources and many items
+	 * A feeds_option belongs to a feed
 	 *
 	 * @var array Relationhips
 	 */
-	protected $_has_many = array(
-		'sources' => array(),
-		'items' => array()
+	protected $_belongs_to = array(
+		'feed' => array()
 		);
-	
-	/**
-	 * A service belongs to a plugin
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_belongs_to = array('plugin' => array());
 }

@@ -15,13 +15,14 @@
  */
 
 return array(
-	'twitter' => array(				//same name as plugin folder
+	//same name as plugin folder
+	'twitter' => array(
 		'name'			=> 'Twitter',
 		'description'	=> 'Adds the twitter service to Sweeper.',
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
-		'settings'		=> TRUE,
+		'settings'		=> TRUE,	// Plugin has settings
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
@@ -35,15 +36,29 @@ return array(
 		'service_options' => array(
 			'hashtag' => array(
 				'name' => 'Twitter Hash Tag',
-				'fields' => array('hashtag'),
+				'fields' => array(
+					'hashtag' => __('HashTag (e.g. #ushahidi)') 		// Field and Label
+				),
 			),
+			'user' => array(
+				'name' => 'Twitter User',
+				'fields' => array(
+					'user' => __('Username (e.g. @ushahidi)')			// Field and Label
+				),
+			),			
 			'keywords' => array(
-				'name' => 'Twitter Key Words',
-				'fields' => array('keywords'),
+				'name' => 'Twitter Keywords',
+				'fields' => array(
+					'keywords' => __('Keywords (Separate with commas)')
+				),
 			),
 			'location' => array(
-				'name' => 'Twitter Tweet Locations',
-				'fields' => array('latitude', 'longitude'),
+				'name' => 'Twitter Tweet Location',
+				'fields' => array(
+					'latitude' => __('Latitude'),
+					'longitude' => __('Longitude'),
+					'place' => __('Place Name (e.g. Nairobi, Kenya)')
+				),
 			)
 		)
 	),

@@ -16,7 +16,8 @@ ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `feeds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `service_id` int(11) NOT NULL,
+  `service` varchar(100) NOT NULL,
+  `service_option` varchar(100) default NULL,
   `feed_name` varchar(255) DEFAULT NULL,
   `feed_description` varchar(255) DEFAULT NULL,
   `feed_type` varchar(100) NOT NULL,
@@ -26,8 +27,21 @@ CREATE TABLE IF NOT EXISTS `feeds` (
   `feed_runs` int(11) DEFAULT '0',
   `feed_schedule` varchar(30) DEFAULT '*:-1:*:*:*',
   `feed_enabled` tinyint(4) DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Feeds belong to a specific service and generate items.';
+  PRIMARY KEY (`id`),
+  KEY `service` (`service`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Feeds generate items.';
+
+
+
+# Dump of table feeds_options
+# ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `feed_options` (
+  `id` int(11) unsigned NOT NULL auto_increment,
+  `feed_id` int(11) NOT NULL,
+  `key` varchar(255) NOT NULL default '',
+  `value` varchar(255) NOT NULL default '',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 
@@ -39,7 +53,6 @@ CREATE TABLE IF NOT EXISTS `items` (
   `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
   `source_id` bigint(20) NOT NULL COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
   `feed_id` int(11) DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',
-  `service_id` int(11) DEFAULT '0' COMMENT 'The service to which this item is connected (e.g. Twitter, Facebook, CSV, SMS)',
   `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this item',
   `item_type` int(11) DEFAULT '1' COMMENT 'What type of item is this?\n1 - Original\n2 - Reply\n3 - Retweet\n4 - Comment\n5 - Revision',
   `item_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
@@ -178,20 +191,6 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table services
-# ------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `services` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `plugin_id` int(11) DEFAULT '0',
-  `service` varchar(150) NOT NULL,
-  `service_name` varchar(150) DEFAULT NULL COMMENT '1 - ushahidi\n2 - twitter_user\n3 - twitter_hash\n4 - facebook\n5 - email_imap\n6 - email_pop3\n7 - flickr',
-  `service_description` varchar(255) DEFAULT NULL,
-  `service_enabled` tinyint(4) DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='We build feeds from specific services like Twitter, Email (P';
-
-
 
 # Dump of table settings
 # ------------------------------------------------------------
@@ -224,7 +223,6 @@ UNLOCK TABLES;
 CREATE TABLE IF NOT EXISTS `sources` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
-  `service_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this source',
   `orig_id` varchar(255) DEFAULT NULL,
   `source_username` varchar(255) DEFAULT NULL,

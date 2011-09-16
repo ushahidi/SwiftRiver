@@ -15,10 +15,5 @@
  */
 class Model_Plugin extends ORM
 {
-	/**
-	 * A plugin has many services
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array('service' => array());
+	
 }
