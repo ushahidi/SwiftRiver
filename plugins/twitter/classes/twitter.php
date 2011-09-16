@@ -45,5 +45,19 @@ class Twitter {
 			->find();
 		$setting->key = 'consumer_secret';
 		$setting->save();
+
+		// Twitter Oauth Token
+		$setting = ORM::factory('twitter_setting')
+			->where('key', '=', 'oauth_token')
+			->find();
+		$setting->key = 'oauth_token';
+		$setting->save();
+
+		// Twitter Oauth Token Secret
+		$setting = ORM::factory('twitter_setting')
+			->where('key', '=', 'oauth_token_secret')
+			->find();
+		$setting->key = 'oauth_token_secret';
+		$setting->save();
 	}
 }
