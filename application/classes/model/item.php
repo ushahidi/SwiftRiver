@@ -37,11 +37,13 @@ class Model_Item extends ORM
 		);
 		
 	/**
-	 * A feed belongs to a source and a user
+	 * An item belongs to a project, a feed, a source and a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
+		'project' => array(),
+		'feed' => array(),
 		'source' => array(),
 		'user' => array()
 		);

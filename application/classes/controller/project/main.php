@@ -63,7 +63,20 @@ class Controller_Project_Main extends Controller_Sweeper {
 	 */
 	public function action_index($page = NULL)
 	{
-		$this->template->content = View::factory('pages/project/overview');
-		
+		$this->template->content = View::factory('pages/project/overview')
+			->bind('project', $this->project)
+			->bind('feeds', $feeds)
+			->bind('stories', $stories)
+			->bind('items', $items);
+
+		$feeds = ORM::factory('feed')
+			->where('project_id', '=', $this->project->id)
+			->count_all();
+		$stories = ORM::factory('story')
+			->where('project_id', '=', $this->project->id)
+			->count_all();
+		$items = ORM::factory('item')
+			->where('project_id', '=', $this->project->id)
+			->count_all();
 	}
 }

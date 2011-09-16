@@ -16,6 +16,8 @@ ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `feeds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,  
   `service` varchar(100) NOT NULL,
   `service_option` varchar(100) default NULL,
   `feed_name` varchar(255) DEFAULT NULL,
@@ -50,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `feed_options` (
 
 CREATE TABLE IF NOT EXISTS `items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) NOT NULL, 
   `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
   `source_id` bigint(20) NOT NULL COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
   `feed_id` int(11) DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',

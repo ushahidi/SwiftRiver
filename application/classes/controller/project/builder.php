@@ -46,7 +46,9 @@ class Controller_Project_Builder extends Controller_Project_Main {
 		// Feeds
 		$feeds = ORM::factory('feed');
 		// Get the total count for the pagination
-		$total = $feeds->count_all();
+		$total = $feeds
+			->where('project_id', '=', $this->project->id)
+			->count_all();
 		
 		// Create a paginator
 		$pagination = new Pagination(array(
@@ -59,6 +61,7 @@ class Controller_Project_Builder extends Controller_Project_Main {
 		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'service'; // set default sorting
 		$dir = isset($_GET['dir']) ? 'DESC' : 'ASC'; // set order_by
 		$result = $feeds->limit($pagination->items_per_page)
+			->where('project_id', '=', $this->project->id)
 			->offset($pagination->offset)
 			->order_by($sort, $dir)
 			->find_all();
@@ -250,6 +253,8 @@ class Controller_Project_Builder extends Controller_Project_Main {
 				{
 					// First Save Feed
 					$feed = ORM::factory('feed');
+					$feed->project_id = $this->project->id;
+					$feed->user_id = $this->user->id;
 					$feed->service = $_POST['service'];
 					$feed->service_option = $_POST['service_option'];
 					$feed->save();

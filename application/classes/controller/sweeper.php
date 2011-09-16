@@ -38,6 +38,11 @@ class Controller_Sweeper extends Controller_Template {
 	 * @var int ID of the current project
 	 */
 	public $active_project = NULL;
+
+	/**
+	 * Logged In User
+	 */
+	public $user = NULL;	
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -97,9 +102,13 @@ class Controller_Sweeper extends Controller_Template {
 				$this->login_required();
 			}
 		}
+
+		// Logged In User
+		$this->user = Auth::instance()->get_user();
 		
 		// Load Header & Footer & variables
 		$this->template->header = View::factory('template/header');
+		$this->template->header->user = $this->user;
 		$this->template->header->page_title = "";
 		$this->template->header->active_project = "None Selected"; // Current Project
 		$this->template->header->js = ""; // Dynamic Javascript

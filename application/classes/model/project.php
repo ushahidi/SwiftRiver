@@ -20,7 +20,11 @@ class Model_Project extends ORM
 	 *
 	 * @var array Relationhips
 	 */
-	protected $_has_many = array('stories' => array());
+	protected $_has_many = array(
+		'items' => array(),
+		'feeds' => array(),
+		'stories' => array()
+		);
 	
 	/**
 	 * A project belongs to a user

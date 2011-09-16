@@ -50,7 +50,7 @@
 
 		</p>
 
-		<p class="f-right"><?php echo __('User');?>: <strong>Administrator</strong> (<a href="<?php echo URL::site('/profile');?>"><?php echo __('My Profile');?></a>) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong><a href="<?php echo URL::site('/login/done');?>" id="logout"><?php echo __('Log Out');?></a></strong></p>
+		<p class="f-right"><?php echo __('User');?>: <strong><?php echo $user->name; ?></strong> (<a href="<?php echo URL::site('/profile');?>"><?php echo __('My Profile');?></a>) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong><a href="<?php echo URL::site('/login/done');?>" id="logout"><?php echo __('Log Out');?></a></strong></p>
 
 	</div> <!--  /tray -->
 	 <!-- /header -->

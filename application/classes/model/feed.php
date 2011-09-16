@@ -24,4 +24,14 @@ class Model_Feed extends ORM
 		'items' => array(),
 		'feed_options' => array()
 		);
+
+	/**
+	 * A feed belongs to a project and a user
+	 *
+	 * @var array Relationhips
+	 */
+	protected $_belongs_to = array(
+		'project' => array(),
+		'user' => array()
+		);
 }

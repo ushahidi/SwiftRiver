@@ -27,6 +27,7 @@ class Model_User extends Model_Auth_User
 		'items' => array(),
 		'sources' => array(),
 		'projects' => array(),
+		'feeds' => array(),
 		'stories' => array(),
 		// for RiverID and other OpenID identities
 		'user_identity' => array(),
