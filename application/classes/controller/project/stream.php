@@ -26,4 +26,8 @@ class Controller_Project_Stream extends Controller_Project_Main {
 		$this->template->header->tab_menu->active = 'stream';
 	}
 	
+	public function action_index()
+	{
+		
+	}
 }

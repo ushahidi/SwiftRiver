@@ -35,7 +35,8 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 	{
 		$this->template->content = View::factory('twitter/settings')
 			->bind('post', $post)
-			->bind('errors', $errors);
+			->bind('errors', $errors)
+			->bind('auth_url', $auth_url);
 		
 		// save the data
 		if ($_POST)
@@ -74,6 +75,38 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 			{
 				$post[$setting->key] = $setting->value;
 			}
+			$auth_url = $this->_get_auth_url();
+		}
+	}
+
+	/**
+	 * Get the Twitter Authorization URL
+	 *
+	 * @return  string $auth_url
+	 */
+	private function _get_auth_url()
+	{
+		include_once Kohana::find_file('vendor', 'epioauth/EpiCurl');
+		include_once Kohana::find_file('vendor', 'epioauth/EpiOAuth');
+		include_once Kohana::find_file('vendor', 'epioauth/EpiTwitter');
+
+		// Get Twitter Settings
+		$settings = array();
+		$params = ORM::factory('twitter_setting')->find_all();
+		foreach ($params as $param)
+		{
+			$settings[$param->key] = $param->value;
+		}
+
+		if (isset($settings['consumer_key']) AND isset($settings['consumer_secret']))
+		{
+			$auth = new EpiTwitter($settings['consumer_key'], 
+				$settings['consumer_secret']);
+			return $auth->getAuthorizationUrl();
+		}
+		else
+		{
+			return '#';
 		}
 	}
 }

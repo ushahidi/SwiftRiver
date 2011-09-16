@@ -4,7 +4,7 @@
 			<div class="padding box">
 
 				<!-- Logo (Max. width = 200px) -->
-				<p id="logo"><a href="#"><img src="/themes/default/media/img/logo_dashboard.png" alt="Sweeper" title="Sweeper" /></a></p>
+				<p id="logo"><a href="<?php echo URL::site('/');?>"><img src="/themes/default/media/img/logo_dashboard.png" alt="Sweeper" title="Sweeper" /></a></p>
 
 				<!-- Search -->
 				<form action="#" method="get" id="search">

@@ -117,6 +117,16 @@ Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 	));
 
 /**
+ * Sweeper Crawler Route
+ */	
+Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'crawler'
+	));	
+
+/**
  * Sweeper Default Route
  */	
 Route::set('default', '(<controller>(/<action>(/<id>)))')
