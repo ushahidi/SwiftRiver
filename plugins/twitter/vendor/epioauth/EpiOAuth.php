@@ -141,10 +141,34 @@ class EpiOAuth
   protected function normalizeUrl($url = null)
   {
     $urlParts = parse_url($url);
-    print_r($urlParts);
     $scheme = strtolower($urlParts['scheme']);
     $host   = strtolower($urlParts['host']);
-    $port = intval($urlParts['port']);
+    // $port = intval($urlParts['port']); // This doesn't work in 5.3+ ? (David Kobia)
+    if( isset($urlParts['port']) ) {
+        $port = $urlParts['port'];
+    } else { // no port specified; get default port
+        if (isset($urlParts['scheme']) ) {
+            switch( $urlParts['scheme'] ) {
+                case 'http':
+                    $port = 80; // default for http
+                    break;
+                case 'https':
+                    $port = 443; // default for https
+                    break;
+                case 'ftp':
+                    $port = 21; // default for ftp
+                    break;
+                case 'ftps':
+                    $port = 990; // default for ftps
+                    break;
+                default:
+                    $port = 0; // error; unsupported scheme
+                    break;
+            }
+        } else {
+            $port = 0; // error; unknown scheme
+        }
+    }
 
     $retval = "{$scheme}://{$host}";
     if($port > 0 && ($scheme === 'http' && $port !== 80) || ($scheme === 'https' && $port !== 443))
