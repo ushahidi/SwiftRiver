@@ -53,6 +53,7 @@ class Controller_Twitter extends Controller {
 					$settings['consumer_secret']);
 				$twitter->setToken($_GET['oauth_token']);
 				$token = $twitter->getAccessToken();
+				$twitter->setToken($token->oauth_token, $token->oauth_token_secret);
 
 				if ( isset($token->oauth_token) AND isset($token->oauth_token_secret) )
 				{
@@ -74,6 +75,8 @@ class Controller_Twitter extends Controller {
 				}
 			}
 		}
+
+		Request::current()->redirect('settings/twitter');
 	}
 	
 }

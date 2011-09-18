@@ -10,7 +10,7 @@ if (isset($errors))
 <?php echo Form::open(); ?>
 
 	<fieldset>
-		<legend><?php echo __('Twitter Connection Details');?></legend>
+		<legend><?php echo __('Twitter Connection Settings');?></legend>
 		
 		<?php if ( ! $post['consumer_key'] AND ! $post['consumer_secret']): ;?>
 			<p class="msg info"><a href="http://twitter.com/oauth_clients/" target="_blank"><?php echo __('Register your Sweeper application on Twitter'); ?></a></p>
@@ -18,7 +18,14 @@ if (isset($errors))
 			<p class="msg info"><?php echo __('Set the callback URL to'); ?> <?php echo HTML::anchor(URL::base('http', TRUE)."twitter/auth"); ?></p>
 			<p class="msg info"><?php echo __('Set the application Default Access type to "Read-only"'); ?></p>
 			<p class="msg info"><?php echo __('Enter the Twitter-provided consumer key and secret here'); ?></p>
-		<?php else : ; ?>
+		<?php else : ; 
+			if ($authorized)
+			{
+				?>
+				<p class="msg done"><?php echo __('Twitter Authorization is Complete!'); ?></p>
+				<?php
+			}
+			?>
 			<p class="box">
 				<a href="<?php echo $auth_url; ?>" class="btn-info"><span><?php echo __('Authorize on Twitter'); ?></span></a>
 			</p>

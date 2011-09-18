@@ -57,32 +57,78 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 		}
 	}
 
-
+    /**
+     * Use the Twitter Search API to retrieve hashtag tweets
+     * @param array $options
+     * @return void
+     */
 	private function hashtag($options = array())
 	{
-		echo "hashtag <BR>";
-		print_r($options);
-		echo "<BR /><br />";
+		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
+		//print_r($options);
 	}
 
+    /**
+     * Use the Twitter Search API to retrieve location based
+     * tweets
+     * @param array $options
+     * @return void
+     */
 	private function location($options = array())
 	{
-		echo "location <BR>";
-		print_r($options);
-		echo "<BR /><br />";
+		
 	}
 
+    /**
+     * Use the Twitter Search API to retrieve tweets from 
+     * specified keywords
+     * @param array $options
+     * @return void
+     */
 	private function keywords($options = array())
 	{
-		echo "keywords <BR>";
-		print_r($options);
-		echo "<BR /><br />";
+		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
+		if ( isset($options['keywords']) )
+		{
+			$keywords = array_map('trim', explode(',', $options['keywords']));
+			foreach ($keywords as $keyword)
+			{
+				if ($keyword)
+				{
+					$search = new TwitterSearch($keyword);
+					$results = $search->results();
+					print_r($results);
+					echo '<Br><Br><Br>{{{{-------------}}}<Br><Br><Br>';
+				}
+			}
+		}
 	}
 
 	private function user($options = array())
 	{
-		echo "user <BR>";
-		print_r($options);
-		echo "<BR /><br />";
+		
+	}
+
+	/**
+     * Is this an old style retweet i.e. (RT @)
+     * @param string $str
+     * @return bool
+     */
+    private function _is_retweet($str = NULL)
+	{
+		// Case insensitive search on "RT @user"
+		$regex1 = '(RT)(\\s+)(@)((?:[a-z][a-z]*[0-9]+[a-z0-9]*))';
+
+		if ($c=preg_match_all ("/".$regex1."/is", $str, $matches))
+		{
+			$word1=$matches[1][0];
+			$ws1=$matches[2][0];
+			$c1=$matches[3][0];
+			$word2=$matches[4][0];
+			print "($word1) ($ws1) ($c1) ($word2) \n";
+		}
+
+		// Case insensitive search on "RT@user"
+		$regex2 = '(RT)(@)((?:[a-z][a-z]+))';
 	}
 }

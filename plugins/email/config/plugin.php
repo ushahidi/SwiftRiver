@@ -21,12 +21,30 @@ return array(
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
+		'settings'		=> TRUE,	// Plugin has settings
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
 				'max' => '10.0.0',
 			),
 			'plugins' => array()	// unique plugin names
-		)
+		),
+
+		// Service and Service Options
+		'service'		=> TRUE,
+		'service_options' => array(
+			'all' => array(
+				'name' => 'All Emails',
+				'fields' => array(
+					//'keywords' => __('Keywords (Separate with commas)')		// Field and Label
+				),
+			),
+			'keywords' => array(
+				'name' => 'Filter by Keywords',
+				'fields' => array(
+					'keywords' => __('Keywords (Separate with commas)')		// Field and Label
+				),
+			)
+		)		
 	),
 );

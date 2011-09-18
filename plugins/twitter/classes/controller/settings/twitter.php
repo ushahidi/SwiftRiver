@@ -36,7 +36,8 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 		$this->template->content = View::factory('twitter/settings')
 			->bind('post', $post)
 			->bind('errors', $errors)
-			->bind('auth_url', $auth_url);
+			->bind('auth_url', $auth_url)
+			->bind('authorized', $authorized);
 		
 		// save the data
 		if ($_POST)
@@ -75,6 +76,18 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 			{
 				$post[$setting->key] = $setting->value;
 			}
+
+			// Are we already authorized?
+			if ( ! empty($post['oauth_token']) AND ! empty($post['oauth_token_secret']) )
+			{
+				$authorized = TRUE;
+			}
+			else
+			{
+				$authorized = FALSE;
+			}
+
+			// Generate Twitter Auth URL
 			$auth_url = $this->_get_auth_url();
 		}
 	}

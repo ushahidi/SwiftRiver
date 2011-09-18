@@ -21,7 +21,7 @@ echo Form::hidden('service', $service);
 ?>
 	
 	<fieldset>
-		<legend><?php echo __('Select').' '.$service_name.' '.__('Options');?></legend>
+		<legend><?php echo __('Available options for').' '.$service_name;?></legend>
 		<?php
 		if ( ! count($service_options))
 		{
