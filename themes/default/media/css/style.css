@@ -165,3 +165,12 @@ INNER TABS
 #content .innertabs li.selected{position:relative; top:1px}
 #content .innertabs li.selected a{background-image:url(../img/shadeactive.gif); border-bottom-color:white; color:#333; font-weight:bold;}
 #content .innertabs li.selected a:hover{text-decoration:none}
+
+/* =============================================================================
+STREAM STUFF
+============================================================================= */
+#content .item-content {font-size:110%; display:block; margin-bottom:5px;}
+#content .item-meta {font-size:90%;}
+#content .item-functions a {color:#999;}
+code { background: rgba(0,0,0,.5); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }
+code { font: 12px/18px "Monaco", "Courier New", "Courier", monospace; color: #fff; }

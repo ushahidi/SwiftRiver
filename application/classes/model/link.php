@@ -13,12 +13,17 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Links extends ORM
+class Model_Link extends ORM
 {
 	/**
-	 * A link belongs to an item
+	 * A link has and belongs to many items
 	 *
 	 * @var array Relationhips
 	 */
-	protected $_belongs_to = array('item' => array());
+	protected $_has_many = array(
+		'items' => array(
+			'model' => 'item',
+			'through' => 'items_links'
+			)
+		);
 }

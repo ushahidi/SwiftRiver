@@ -23,7 +23,7 @@ class Model_Tag extends ORM
 	protected $_has_many = array(
 		'items' => array(
 			'model' => 'item',
-			'through' => 'item_tag'
+			'through' => 'items_tags'
 			)
 		);
 }

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `feeds` (
   `feed_schedule` varchar(30) DEFAULT '*:-1:*:*:*',
   `feed_enabled` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `service` (`service`)
+  KEY `idx_service` (`service`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Feeds generate items.';
 
 
@@ -56,20 +56,40 @@ CREATE TABLE IF NOT EXISTS `items` (
   `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
   `source_id` bigint(20) NOT NULL COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
   `feed_id` int(11) DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',
+  `service` varchar(100) NOT NULL DEFAULT '',
   `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this item',
+  `item_orig_id` varchar(255) DEFAULT NULL,
   `item_type` int(11) DEFAULT '1' COMMENT 'What type of item is this?\n1 - Original\n2 - Reply\n3 - Retweet\n4 - Comment\n5 - Revision',
   `item_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
-  `item_description` text COMMENT 'The content of the feed item (if available)',
+  `item_content` text COMMENT 'The content of the feed item (if available)',
+  `item_raw` text,
   `item_author` varchar(150) DEFAULT NULL COMMENT 'The full name of the author of this item',
   `item_locale` varchar(30) DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))',
   `item_date_pub` datetime DEFAULT '0000-00-00 00:00:00' COMMENT 'Original publish date of the feed item',
   `item_date_add` datetime DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
   `item_state` tinyint(4) DEFAULT '1' COMMENT 'Status of the feed item\n0 - inactive\n1 - new\n2 - accurate etc etc',
-  `item_is_translation` tinyint(4) DEFAULT '0' COMMENT 'If tagged as a translation, it references the translated item via the parent_id',
-  `item_locked` tinyint(4) DEFAULT '0' COMMENT 'If item is locked, another user is editing it',
-  `item_veracity` tinyint(4) DEFAULT '0' COMMENT 'Veracity score of this item -- generated via a combination of variables',
-  PRIMARY KEY (`id`)
+  `item_is_translation` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'If tagged as a translation, it references the translated item via the parent_id',
+  `item_locked` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'If item is locked, another user is editing it',
+  `item_veracity` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Veracity score of this item -- generated via a combination of variables',
+  `item_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `item_hidden` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_item_orig_id` (`item_orig_id`),
+  KEY `idx_service` (`service`),
+  KEY `idx_item_author` (`item_author`),
+  KEY `idx_item_date_pub` (`item_date_pub`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
+
+
+
+# Dump of table items_links
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `items_links` (
+  `item_id` bigint(20) NOT NULL,
+  `link_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
 
@@ -78,7 +98,8 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `items_locations` (
   `item_id` bigint(20) NOT NULL,
-  `location_id` bigint(20) NOT NULL
+  `location_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -88,7 +109,8 @@ CREATE TABLE IF NOT EXISTS `items_locations` (
 
 CREATE TABLE IF NOT EXISTS `items_stories` (
   `story_id` int(11) NOT NULL,
-  `item_id` bigint(20) NOT NULL
+  `item_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -98,7 +120,8 @@ CREATE TABLE IF NOT EXISTS `items_stories` (
 
 CREATE TABLE IF NOT EXISTS `items_tags` (
   `item_id` bigint(20) NOT NULL,
-  `tag_id` bigint(20) NOT NULL
+  `tag_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -108,12 +131,12 @@ CREATE TABLE IF NOT EXISTS `items_tags` (
 
 CREATE TABLE IF NOT EXISTS `links` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `item_id` bigint(20) NOT NULL,
   `link` varchar(255) DEFAULT NULL,
-  `full_link` varchar(255) DEFAULT NULL,
+  `link_full` varchar(255) DEFAULT NULL,
+  `link_ignore` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  KEY `link_idx` (`link`),
-  KEY `full_link_idx` (`full_link`)
+  KEY `idx_link` (`link`),
+  KEY `idx_link_full` (`link_full`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -227,7 +250,8 @@ CREATE TABLE IF NOT EXISTS `sources` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
   `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this source',
-  `orig_id` varchar(255) DEFAULT NULL,
+  `service` varchar(100) NOT NULL DEFAULT '',
+  `source_orig_id` varchar(255) DEFAULT NULL,
   `source_username` varchar(255) DEFAULT NULL,
   `source_name` varchar(255) DEFAULT NULL,
   `source_description` text,
@@ -235,7 +259,8 @@ CREATE TABLE IF NOT EXISTS `sources` (
   `source_full_link` varchar(255) DEFAULT NULL,
   `source_followers` int(10) DEFAULT '0',
   `source_book` tinyint(4) DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_service` (`service`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Sources are individual People, Organizations or Websites tha';
 
 

@@ -26,8 +26,42 @@ class Controller_Project_Stream extends Controller_Project_Main {
 		$this->template->header->tab_menu->active = 'stream';
 	}
 	
-	public function action_index()
+	/**
+	 * The Item Stream
+	 *
+	 * @param	string $page - page uri
+	 * @return	void
+	 */
+	public function action_index($page = NULL)
 	{
+		$this->template->content = View::factory('pages/project/stream/overview')
+			->bind('items', $result)
+			->bind('paging', $pagination)
+			->bind('default_sort', $sort)
+			->bind('total', $total)
+			->bind('project', $this->project);
 		
+		// Items
+		$items = ORM::factory('item');
+		// Get the total count for the pagination
+		$total = $items
+			->where('project_id', '=', $this->project->id)
+			->count_all();
+		
+		// Create a paginator
+		$pagination = new Pagination(array(
+			'total_items' => $total, 
+			'items_per_page' => 20,
+			'auto_hide' => false
+		));
+		
+		// Get the items for the query
+		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'item_date_pub'; // set default sorting
+		$dir = isset($_GET['dir']) ? 'ASC' : 'DESC'; // set order_by
+		$result = $items->limit($pagination->items_per_page)
+			->where('project_id', '=', $this->project->id)
+			->offset($pagination->offset)
+			->order_by($sort, $dir)
+			->find_all();
 	}
 }

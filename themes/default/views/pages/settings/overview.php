@@ -1,55 +1,27 @@
 <?php
-echo Form::open('', array('id' => 'list'));
-echo Form::hidden('action', '', array('id' => 'action'));
-echo Form::hidden('id', '', array('id' => 'id'));
-?>
-<table width="100%">
-	<tr>
-		<th><?php echo __('Plugin');?></th>
-		<th><?php echo __('Description');?></th>
-		<th><?php echo __('Action');?></th>
-	</tr>
-	<?php
-	$i = 0;
-	foreach ($plugins as $plugin)
+if (isset($errors))
+{
+	foreach ($errors as $message)
 	{
-		$btn_style = "btn-create";
-		if ($plugin->plugin_enabled)
-		{
-			$status = __("Disable");
-			$action = 0;
-			$btn_style = "btn-delete";
-		}
-		else
-		{
-			$status = __("Enable");
-			$action = 1;
-		}
-		?>
-			<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
-				<td><?php echo $plugin->plugin_name; ?></td>
-				<td><?php echo $plugin->plugin_description; ?></td>
-				<td>
-					<a href="javascript:quickAction(<?php echo $action; ?>,'<?php echo strtoupper($status); ?>',<?php echo $plugin->id; ?>)" class="<?php echo $btn_style; ?>"><span><?php echo $status;?></span></a>
-					<?php
-					if ($plugin->plugin_enabled)
-					{
-						?><a href="#" class="btn"><span><?php echo __('Settings');?></span></a><?php
-					}
-					?>
-				</td>
-			</tr>
-		<?php
-		if ($i == 1)
-		{
-			$i = 0;
-		}
-		else
-		{
-			$i++;
-		}
+		?><p class="msg error"><?php echo $message;?></p><?php
 	}
-	?>
-</table>
+}
+?>
+<?php echo Form::open(); ?>
+
+	<fieldset>
+		<legend><?php echo __('Sweeper Settings');?></legend>
+		
+		<p class="nomt">
+			<label for="site_name" class="req"><?php echo __('Site Name');?>:</label><br />
+			<?php echo Form::input("site_name", $post['site_name'], array("size" => 60, "class" => "input-text-02 required")); ?>
+		</p>
+		
+		<p>
+			<label for="site_locale" class="req"><?php echo __('Locale');?>:</label><br />
+			<?php echo Form::input("site_locale", $post['site_locale'], array("size" => 60, "class" => "input-text-02 required")); ?>
+		</p>
+
+	</fieldset>
+
 <?php echo Form::close(); ?>
-<?php echo $paging; ?>

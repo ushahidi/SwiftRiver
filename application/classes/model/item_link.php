@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Sources
+ * Model for Items/Links (Pivot)
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,22 +13,15 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Source extends ORM
+class Model_Item_Link extends ORM
 {
 	/**
-	 * A source belongs to a feed and a user
+	 * Item_Link is a pivot for items and links
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
-		'feed' => array(),
-		'user' => array()
+		'item' => array(),
+		'link' => array()
 		);
-
-	/**
-	 * A source has many items
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array('items' => array());
 }

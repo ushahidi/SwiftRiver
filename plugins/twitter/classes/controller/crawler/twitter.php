@@ -16,6 +16,16 @@
 class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 
 	/**
+	 * This Project
+	 */
+	protected $project;
+
+	/**
+	 * This Feed
+	 */
+	protected $feed;
+
+	/**
 	 * @return	void
 	 */
 	public function before()
@@ -41,6 +51,9 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 		
 		foreach ($feeds as $feed)
 		{
+			$this->feed = $feed;
+			$this->project = $feed->project;
+
 			// Which Twitter Option are we going to use?
 			$service_option = $feed->service_option;
 
@@ -57,34 +70,34 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 		}
 	}
 
-    /**
-     * Use the Twitter Search API to retrieve hashtag tweets
-     * @param array $options
-     * @return void
-     */
+	/**
+	 * Use the Twitter Search API to retrieve hashtag tweets
+	 * @param array $options
+	 * @return void
+	 */
 	private function hashtag($options = array())
 	{
 		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
 		//print_r($options);
 	}
 
-    /**
-     * Use the Twitter Search API to retrieve location based
-     * tweets
-     * @param array $options
-     * @return void
-     */
+	/**
+	 * Use the Twitter Search API to retrieve location based
+	 * tweets
+	 * @param array $options
+	 * @return void
+	 */
 	private function location($options = array())
 	{
 		
 	}
 
-    /**
-     * Use the Twitter Search API to retrieve tweets from 
-     * specified keywords
-     * @param array $options
-     * @return void
-     */
+	/**
+	 * Use the Twitter Search API to retrieve tweets from 
+	 * specified keywords
+	 * @param array $options
+	 * @return void
+	 */
 	private function keywords($options = array())
 	{
 		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
@@ -97,8 +110,18 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 				{
 					$search = new TwitterSearch($keyword);
 					$results = $search->results();
-					print_r($results);
-					echo '<Br><Br><Br>{{{{-------------}}}<Br><Br><Br>';
+					foreach ($results as $result)
+					{
+						if ( $result->text AND ! $this->_is_retweet($result->text) )
+						{
+							if ( isset($result->from_user_id) AND ! empty($result->from_user_id) AND 
+							 	isset($result->id) AND ! empty($result->id) )
+							{
+								$this->_save($result);
+							}
+						};
+						
+					}
 				}
 			}
 		}
@@ -109,26 +132,71 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 		
 	}
 
-	/**
-     * Is this an old style retweet i.e. (RT @)
-     * @param string $str
-     * @return bool
-     */
-    private function _is_retweet($str = NULL)
-	{
-		// Case insensitive search on "RT @user"
-		$regex1 = '(RT)(\\s+)(@)((?:[a-z][a-z]*[0-9]+[a-z0-9]*))';
 
-		if ($c=preg_match_all ("/".$regex1."/is", $str, $matches))
+	/**
+	 * Save A Tweet!
+	 * @param object $result
+	 * @return void
+	 */
+	private function _save($result = NULL)
+	{
+		if ($result)
 		{
-			$word1=$matches[1][0];
-			$ws1=$matches[2][0];
-			$c1=$matches[3][0];
-			$word2=$matches[4][0];
-			print "($word1) ($ws1) ($c1) ($word2) \n";
+			// Create a new Source
+			$source = ORM::factory('source')
+				->where( 'source_orig_id', '=', trim((string) $result->from_user_id) )
+				->find();
+			$source->source_orig_id = trim((string) $result->from_user_id);
+			$source->service = 'twitter';
+			$source->source_username = $result->from_user;
+			$source->save();
+
+			// Create a new Item
+			$item = ORM::factory('item')
+				->where( 'item_orig_id', '=', trim((string) $result->id) )
+				->find();
+			$item->service = 'twitter';
+			$item->source_id = $source->id; // the source we just saved above
+			$item->item_orig_id = trim((string) $result->id);
+			$item->project_id = $this->project->id;
+			$item->feed_id = $this->feed->id;
+			$item->item_content = strip_tags($result->text);
+			$item->item_raw = $result->text;
+			$item->item_author = $result->from_user;
+			$item->item_locale = $result->iso_language_code;
+			$item->item_date_pub = date("Y-m-d H:i:s", strtotime($result->created_at));
+			$item->item_date_add = date("Y-m-d H:i:s", time());
+			$item->save();
+		}
+	}
+
+
+	/**
+	 * Is this an old style retweet i.e. (RT @)
+	 * @param string $str
+	 * @return bool
+	 */
+	private function _is_retweet($str = NULL)
+	{
+		if ( $str )
+		{
+			// Case insensitive search on "RT @user"
+			$regex1 = 'RT\s+@[a-zA-Z0-9_]*';
+
+			// Case insensitive search on "RT@user"
+			$regex2 = 'RT@[a-zA-Z0-9_]*';
+
+			if ( preg_match_all("/".$regex1."/is", $str, $matches) OR 
+				preg_match_all("/".$regex2."/is", $str, $matches) )
+			{
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
 		}
 
-		// Case insensitive search on "RT@user"
-		$regex2 = '(RT)(@)((?:[a-z][a-z]+))';
+		return TRUE;
 	}
 }

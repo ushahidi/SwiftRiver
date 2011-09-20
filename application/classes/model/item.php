@@ -16,24 +16,27 @@
 class Model_Item extends ORM
 {
 	/**
-	 * A feed has many links, locations, stories and tags
+	 * A feed has and belongs to many links, locations, stories and tags
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'links' => array(),
 		'locations' => array(
 			'model' => 'location',
-			'through' => 'item_location'
+			'through' => 'items_locations'
 			),
 		'stories' => array(
 			'model' => 'story',
-			'through' => 'item_story'
+			'through' => 'items_stories'
 			),
 		'tags' => array(
-			'model' => 'story',
-			'through' => 'item_tag'
-			)
+			'model' => 'tag',
+			'through' => 'items_tags'
+			),
+		'links' => array(
+			'model' => 'link',
+			'through' => 'items_links'
+			)			
 		);
 		
 	/**
@@ -47,4 +50,43 @@ class Model_Item extends ORM
 		'source' => array(),
 		'user' => array()
 		);
+
+	/**
+	 * Overload saving to perform additional functions on the item
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		// Extract Links
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			$item = parent::save();
+
+			$links = Links::extract($item->item_content);
+			foreach ($links as $orig_link)
+			{
+				$full_link = Links::full($orig_link);
+				if ( $orig_link == $full_link OR 
+					! $full_link )
+				{
+					$full_link = $orig_link;
+				}
+
+				$link = ORM::factory('link')
+					->where('link_full', '=', $full_link)
+					->find();
+				$link->link = $orig_link;
+				$link->link_full = $full_link;
+				$link->save();
+
+				$item->add('links', $link);
+			}
+		}
+		else
+		{
+			$item = parent::save();
+		}
+
+		return $item;
+	}
 }

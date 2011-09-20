@@ -23,7 +23,7 @@ class Model_Story extends ORM
 	protected $_has_many = array(
 		'items' => array(
 			'model' => 'item',
-			'through' => 'item_story'
+			'through' => 'items_stories'
 			)
 		);
 	

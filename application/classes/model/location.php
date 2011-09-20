@@ -23,7 +23,7 @@ class Model_Location extends ORM
 	protected $_has_many = array(
 		'items' => array(
 			'model' => 'item',
-			'through' => 'item_location'
+			'through' => 'items_locations'
 			)
 		);
 }
