@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Tags
+ * Model for Open Calais Settings
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,31 +13,16 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Tag extends ORM
+class Model_Opencalais_Setting extends ORM
 {
 	/**
-	 * A tag has many items
-	 *
-	 * @var array Relationhips
+	 * Validation for open calais settings
+	 * @param array $arr
+	 * @return array
 	 */
-	protected $_has_many = array(
-		'items' => array(
-			'model' => 'item',
-			'through' => 'items_tags'
-			)
-		);
-
-	/**
-	 * Overload saving to perform additional functions on the tag
-	 */
-	public function save(Validation $validation = NULL)
+	public function validate($arr)
 	{
-		// Ensure Tag Goes In as Lower Case
-		$this->tag = strtolower($this->tag);
-
-		// Ensure Tag Type Goes In as Lower Case
-		$this->tag = strtolower($this->tag);
-
-		return parent::save();
+		return Validation::factory($arr)
+			->rule('service_key', 'not_empty');
 	}
 }

@@ -40,6 +40,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			->bind('default_sort', $sort)
 			->bind('total', $total)
 			->bind('project', $this->project);
+		$this->template->header->js = View::factory('pages/project/stream/js/overview');
 		
 		// Items
 		$items = ORM::factory('item');

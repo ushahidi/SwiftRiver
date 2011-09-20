@@ -46,7 +46,18 @@ class Links {
 	{
 		if ($url)
 		{
-			$headers = get_headers($url,1);
+			try
+			{
+				$headers = get_headers($url,1);
+			}
+			catch (Exception $e)
+			{
+				// Some kind of error
+				// Abandon and return original url
+				Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
+				return $url;
+			}
+
 			if ( empty($headers) )
 			{
 				return $url;

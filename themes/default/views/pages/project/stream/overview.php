@@ -10,22 +10,39 @@
 			$source = $item->source;
 			$item_author_count = $source->items->count_all();
 		$item_date_pub = date('H:i M d, Y', strtotime($item->item_date_pub));
+		$tag_count = $item->tags->count_all();
+		$tags = $item->tags->find_all();
 		?>	
 		<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
 			<td>
-			<?php
-			if ($item_title)
-			{
-				?><h4><?php echo $item_title; ?></h4>><?php
-			}
-			?>
-			<p>
+				<?php
+				if ($item_title)
+				{
+					?><h4><?php echo $item_title; ?></h4>><?php
+				}
+				?>
 				<span class="item-content"><?php echo $item_content; ?></span>
-				<span class="item-meta">From <code><?php echo $service; ?></code> by <code><?php echo $item_author . '('.$item_author_count.')'; ?></code></span>
-			</p>
-			<p class="item-functions"><a href="#" class="ico-info">Info</a>&nbsp;&nbsp;<a href="#" class="ico-edit">Edit</a>&nbsp;&nbsp;<a href="#" class="ico-delete">Delete</a></p>
+				<p class="item-extras">
+					<?php
+					if ($tag_count)
+					{
+						?><span class="item-tags">Tags: <?php
+						foreach ($tags as $tag)
+						{
+							?><code class="blue"><?php echo $tag->tag; ?></code>&nbsp;<?php
+						}
+						?></span><?php
+					}
+					?>
+					<span class="item-meta">From <code><?php echo $service; ?></code> by <code><?php echo $item_author . '('.$item_author_count.')'; ?></code></span>
+				</p>
+				<p class="item-functions">
+					<a href="javascript:showInfo(<?php echo $item->id; ?>);" class="ico-edit">Edit</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#" class="ico-user-03">Discuss</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#" class="ico-delete">Sweep</a>
+				</p>
+				<div id="dialog-<?php echo $item->id; ?>" title="Edit Item"></div><script type="text/javascript">$(function() {$("#dialog-<?php echo $item->id; ?>").dialog({autoOpen:false,modal: true});});</script>
 			</td>
-			<td>XXXX</td>
 		</tr>
 		<?php
 		if ($i == 1)

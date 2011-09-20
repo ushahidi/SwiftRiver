@@ -7,6 +7,7 @@
 	<meta name="robots" content="noindex,nofollow" />
 	
 	<?php echo(Html::style("themes/default/media/css/reset.css")); ?>
+	<?php echo(Html::style("themes/default/media/css/jquery-ui-1.8.16.custom.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/main.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/2col.css", array("title" => "2col"))); ?>
 	<?php echo(Html::style("themes/default/media/css/1col.css", array("title" => "1col"))); ?>
@@ -19,9 +20,11 @@
 	<?php echo(Html::script("themes/default/media/js/jquery.tablesorter.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.switcher.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/toggle.js")); ?>
-	<?php echo(Html::script("themes/default/media/js/ui.core.js")); ?>
-	<?php echo(Html::script("themes/default/media/js/ui.tabs.js")); ?>
-	
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.core.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.widget.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.tabs.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.dialog.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.position.min.js")); ?>
 	<script type="text/javascript">
 		<?php
 			// Dynamic Javascript

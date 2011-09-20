@@ -56,6 +56,9 @@ class Model_Item extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
+		// Ensure Service Goes In as Lower Case
+		$this->service = strtolower($this->service);
+
 		// Extract Links
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
@@ -75,17 +78,27 @@ class Model_Item extends ORM
 				$link = ORM::factory('link')
 					->where('link_full', '=', $full_link)
 					->find();
-				$link->link = $orig_link;
-				$link->link_full = $full_link;
-				$link->save();
 
-				$item->add('links', $link);
+				if ( ! $link->loaded() )
+				{
+					$link->link = $orig_link;
+					$link->link_full = $full_link;
+					$link->save();
+				}
+
+				if ( ! $item->has('links', $link))
+				{
+					$item->add('links', $link);
+				}
 			}
 		}
 		else
 		{
 			$item = parent::save();
 		}
+
+		// Sweeper Plugin Hook -- save new item
+		Event::run('sweeper.save.item', $item);
 
 		return $item;
 	}

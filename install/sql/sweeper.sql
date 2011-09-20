@@ -87,8 +87,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 
 CREATE TABLE IF NOT EXISTS `items_links` (
   `item_id` bigint(20) NOT NULL,
-  `link_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
+  `link_id` bigint(20) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -98,8 +97,7 @@ CREATE TABLE IF NOT EXISTS `items_links` (
 
 CREATE TABLE IF NOT EXISTS `items_locations` (
   `item_id` bigint(20) NOT NULL,
-  `location_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
+  `location_id` bigint(20) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -109,8 +107,7 @@ CREATE TABLE IF NOT EXISTS `items_locations` (
 
 CREATE TABLE IF NOT EXISTS `items_stories` (
   `story_id` int(11) NOT NULL,
-  `item_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
+  `item_id` bigint(20) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -120,8 +117,7 @@ CREATE TABLE IF NOT EXISTS `items_stories` (
 
 CREATE TABLE IF NOT EXISTS `items_tags` (
   `item_id` bigint(20) NOT NULL,
-  `tag_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
+  `tag_id` bigint(20) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -283,8 +279,14 @@ CREATE TABLE IF NOT EXISTS `stories` (
 
 CREATE TABLE IF NOT EXISTS `tags` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `tag` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `tag` varchar(255) NOT NULL DEFAULT '',
+  `tag_type` varchar(255) DEFAULT '',
+  `tag_source` varchar(255) DEFAULT NULL,
+  `tag_ignore` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_tag` (`tag`),
+  KEY `idx_tag_type` (`tag_type`),
+  KEY `idx_tag_source` (`tag_source`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

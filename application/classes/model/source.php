@@ -31,4 +31,15 @@ class Model_Source extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array('items' => array());
+
+	/**
+	 * Overload saving to perform additional functions on the source
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		// Ensure Service Goes In as Lower Case
+		$this->service = strtolower($this->service);
+
+		return parent::save();
+	}
 }

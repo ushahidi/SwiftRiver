@@ -169,8 +169,11 @@ INNER TABS
 /* =============================================================================
 STREAM STUFF
 ============================================================================= */
-#content .item-content {font-size:110%; display:block; margin-bottom:5px;}
-#content .item-meta {font-size:90%;}
-#content .item-functions a {color:#999;}
-code { background: rgba(0,0,0,.5); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }
+#content .item-content {font-size:110%; display:block; margin-top:5px; font: 14px/20px "Monaco", "Courier New", "Courier", monospace;}
+#content .item-extras {margin-left:10px;}
+#content .item-tags {font-size:80%; display: block; }
+#content .item-meta {font-size:80%; display: block; margin-top:8px;}
+#content .item-functions a {color:#666; font-size:90%;}
+code { background: rgba(0,0,0,.3); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }
 code { font: 12px/18px "Monaco", "Courier New", "Courier", monospace; color: #fff; }
+code.blue { background: rgba(6,128,188,.6); color:#000; text-shadow: 0 1px 1px rgba(255,255,255,.75); }
