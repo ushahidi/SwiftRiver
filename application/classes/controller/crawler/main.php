@@ -30,7 +30,16 @@ class Controller_Crawler_Main extends Controller {
 		$services = Plugins::services();
 		foreach ($services as $key => $value)
 		{
-			Request::factory('crawler/'.$key)->execute();
+			try
+			{
+				Request::factory('crawler/'.$key)->execute();
+			}
+			catch (Exception $e)
+			{
+				// Probably doesn't have a crawler
+				Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
+				//continue;
+			}
 		}
 	}
 

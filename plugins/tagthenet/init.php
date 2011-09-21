@@ -19,7 +19,7 @@ class tag_the_net_init {
 	public function __construct()
 	{	
 		// Hook into routing
-		Event::add('sweeper.item.post_save', array($this, 'filter'));
+		Event::add('sweeper.item.pre_save', array($this, 'filter'));
 	}
 
 	public function filter()
@@ -35,32 +35,34 @@ class tag_the_net_init {
 			curl_setopt($ch, CURLOPT_URL, $tag_url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 5); 
 			$data = curl_exec($ch);
 			curl_close($ch);
 
-			$xml = simplexml_load_file($data);
-
-			$data = $xml->xpath("//dim");
-
-			foreach($data as $entities)
+			if ($xml = @simplexml_load_string($data))
 			{
-				foreach ($entities->item as $entity)
+				$data = $xml->xpath("//dim");
+
+				foreach($data as $entities)
 				{
-					$tag = ORM::factory('tag')
-						->where('tag', '=', $entity)
-						->find();
-
-					if ( ! $tag->loaded() )
+					foreach ($entities->item as $entity)
 					{
-						$tag->tag = $entity;
-						$tag->tag_type = strtolower($entities->attributes());
-						$tag->tag_source = 'tagthenet';
-						$tag->save();
-					}
+						$tag = ORM::factory('tag')
+							->where('tag', '=', $entity)
+							->find();
 
-					if ( ! $item->has('tags', $tag))
-					{
-						$item->add('tags', $tag);
+						if ( ! $tag->loaded() )
+						{
+							$tag->tag = $entity;
+							$tag->tag_type = strtolower($entities->attributes());
+							$tag->tag_source = 'tagthenet';
+							$tag->save();
+						}
+
+						if ( ! $item->has('tags', $tag))
+						{
+							$item->add('tags', $tag);
+						}
 					}
 				}
 			}

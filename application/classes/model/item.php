@@ -56,9 +56,6 @@ class Model_Item extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Sweeper Plugin Hook -- pre_save new item
-		Event::run('sweeper.item.pre_save', $this);
-
 		// Ensure Service Goes In as Lower Case
 		$this->service = strtolower($this->service);
 
@@ -66,6 +63,9 @@ class Model_Item extends ORM
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
+			// Sweeper Plugin Hook -- execute before saving new item
+			Event::run('sweeper.item.pre_save', $this);
+
 			$item = parent::save();
 
 			$links = Links::extract($item->item_content);
