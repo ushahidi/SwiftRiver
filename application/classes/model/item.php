@@ -64,7 +64,7 @@ class Model_Item extends ORM
 		if ($this->loaded() === FALSE)
 		{
 			// Sweeper Plugin Hook -- execute before saving new item
-			Event::run('sweeper.item.pre_save', $this);
+			Event::run('sweeper.item.pre_save_new', $this);
 
 			$item = parent::save();
 
@@ -94,14 +94,20 @@ class Model_Item extends ORM
 					$item->add('links', $link);
 				}
 			}
+
+			// Sweeper Plugin Hook -- post_save new item
+			Event::run('sweeper.item.post_save_new', $item);
 		}
 		else
 		{
-			$item = parent::save();
-		}
+			// Sweeper Plugin Hook -- pre_save existing item
+			Event::run('sweeper.item.pre_save', $this);
 
-		// Sweeper Plugin Hook -- post_save new item
-		Event::run('sweeper.item.post_save', $item);
+			$item = parent::save();
+
+			// Sweeper Plugin Hook -- post_save existing item
+			Event::run('sweeper.item.post_save', $item);
+		}
 
 		return $item;
 	}
