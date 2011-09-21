@@ -15,6 +15,7 @@
 		<?php echo(Html::style("themes/default/media/css/main-ie6.css")); ?>
 	<![endif]-->
 	<?php echo(Html::style("themes/default/media/css/style.css")); ?>
+	<?php echo(Html::style("themes/default/media/css/pagination.css")); ?>
 	
 	<?php echo(Html::script("themes/default/media/js/jquery.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.tablesorter.js")); ?>

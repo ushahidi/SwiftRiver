@@ -37,6 +37,9 @@ class Model_Source extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
+		// Sweeper Plugin Hook
+		Event::run('sweeper.source.pre_save', $this);
+
 		// Ensure Service Goes In as Lower Case
 		$this->service = strtolower($this->service);
 

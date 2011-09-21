@@ -1,37 +1,37 @@
-<p class="pagination">
+<p class="pagination blue">
 
 	<?php if ($first_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($first_page)) ?>" rel="first"><?php echo __('First') ?></a>
+		<a href="<?php echo HTML::chars($page->url($first_page)) ?>" rel="first" class="number">&lt;&lt;</a>
 	<?php else: ?>
-		<?php echo __('First') ?>
+		<a href="<?php echo HTML::chars($page->url($first_page)) ?>" rel="first" class="number disable">&lt;&lt;</a>
 	<?php endif ?>
 
 	<?php if ($previous_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($previous_page)) ?>" rel="prev"><?php echo __('Previous') ?></a>
+		<a href="<?php echo HTML::chars($page->url($previous_page)) ?>" rel="prev" class="number">&lt;</a>
 	<?php else: ?>
-		<?php echo __('Previous') ?>
+		<a href="<?php echo HTML::chars($page->url($previous_page)) ?>" rel="prev" class="number disable">&lt;</a>
 	<?php endif ?>
 
 	<?php for ($i = 1; $i <= $total_pages; $i++): ?>
 
 		<?php if ($i == $current_page): ?>
-			<strong><?php echo $i ?></strong>
+			<a href="<?php echo HTML::chars($page->url($i)) ?>" class="number current"><?php echo $i ?></a>
 		<?php else: ?>
-			<a href="<?php echo HTML::chars($page->url($i)) ?>"><?php echo $i ?></a>
+			<a href="<?php echo HTML::chars($page->url($i)) ?>" class="number"><?php echo $i ?></a>
 		<?php endif ?>
 
 	<?php endfor ?>
 
 	<?php if ($next_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($next_page)) ?>" rel="next"><?php echo __('Next') ?></a>
+		<a href="<?php echo HTML::chars($page->url($next_page)) ?>" rel="next" class="number">&gt;</a>
 	<?php else: ?>
-		<?php echo __('Next') ?>
+		<a href="<?php echo HTML::chars($page->url($next_page)) ?>" rel="next" class="number disable">&gt;</a>
 	<?php endif ?>
 
 	<?php if ($last_page !== FALSE): ?>
-		<a href="<?php echo HTML::chars($page->url($last_page)) ?>" rel="last"><?php echo __('Last') ?></a>
+		<a href="<?php echo HTML::chars($page->url($last_page)) ?>" rel="last" class="number">&gt;&gt;</a>
 	<?php else: ?>
-		<?php echo __('Last') ?>
+		<a href="<?php echo HTML::chars($page->url($last_page)) ?>" rel="last" class="number disable">&gt;&gt;</a>
 	<?php endif ?>
 
 </p><!-- .pagination -->

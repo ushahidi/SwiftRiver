@@ -56,6 +56,9 @@ class Model_Item extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
+		// Sweeper Plugin Hook -- pre_save new item
+		Event::run('sweeper.item.pre_save', $this);
+
 		// Ensure Service Goes In as Lower Case
 		$this->service = strtolower($this->service);
 
@@ -97,8 +100,8 @@ class Model_Item extends ORM
 			$item = parent::save();
 		}
 
-		// Sweeper Plugin Hook -- save new item
-		Event::run('sweeper.save.item', $item);
+		// Sweeper Plugin Hook -- post_save new item
+		Event::run('sweeper.item.post_save', $item);
 
 		return $item;
 	}

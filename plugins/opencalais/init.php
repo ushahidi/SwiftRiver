@@ -19,7 +19,7 @@ class open_calais_init {
 	public function __construct()
 	{	
 		// Hook into routing
-		Event::add('sweeper.save.item', array($this, 'filter'));
+		Event::add('sweeper.item.pre_save', array($this, 'filter'));
 	}
 
 	public function filter()
