@@ -63,6 +63,10 @@ class Links {
 				return $url;
 			}
 
+			if ( ! isset($headers['Location']) )
+			{
+				return $url;
+			}
 			$url = $headers['Location'];
 			
 			// If an Array is returned for redirects

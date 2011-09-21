@@ -17,7 +17,7 @@
 return array(
 	'rss' => array(				//same name as plugin folder
 		'name'			=> 'RSS',
-		'description'	=> 'Adds the RSS/Atom service to Sweeper.',
+		'description'	=> 'Adds the RSS/Atom service to Sweeper to parse RSS and Atom Feeds.',
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',

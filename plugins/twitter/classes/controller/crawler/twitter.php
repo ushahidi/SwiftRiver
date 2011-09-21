@@ -160,7 +160,7 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 			$item->item_orig_id = trim((string) $result->id);
 			$item->project_id = $this->project->id;
 			$item->feed_id = $this->feed->id;
-			$item->item_content = strip_tags($result->text);
+			$item->item_content = trim(strip_tags(str_replace('<', ' <', $result->text)));
 			$item->item_raw = $result->text;
 			$item->item_author = $result->from_user;
 			$item->item_locale = $result->iso_language_code;
