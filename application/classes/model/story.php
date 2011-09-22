@@ -36,4 +36,18 @@ class Model_Story extends ORM
 		'project' => array(),
 		'user' => array()
 		);
+
+	/**
+	 * Validation for stories
+	 * @param array $arr
+	 * @return array
+	 */
+	public function validate($arr)
+	{
+		return Validation::factory($arr)
+			->rule('story_title', 'not_empty')
+			->rule('story_title', 'min_length', array(':value', 3))
+			->rule('story_title', 'max_length', array(':value', 255))
+			->rule('story_summary', 'max_length', array(':value', 255));
+	}		
 }

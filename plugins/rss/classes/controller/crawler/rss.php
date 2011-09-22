@@ -127,6 +127,7 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 						$item->item_orig_id = trim((string) $feed_item->get_link());
 						$item->project_id = $this->project->id;
 						$item->feed_id = $this->feed->id;
+						$item->item_title = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
 						$item->item_content = trim(strip_tags(str_replace('<', ' <', $feed_item->get_description())));
 						$item->item_raw = $feed_item->get_description();
 						$item->item_author = $feed->get_title();

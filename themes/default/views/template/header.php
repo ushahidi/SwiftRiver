@@ -23,9 +23,14 @@
 	<?php echo(Html::script("themes/default/media/js/toggle.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.core.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.widget.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.mouse.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.tabs.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.dialog.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.position.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.accordion.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.draggable.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.resizable.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.selectable.min.js")); ?>
 	<script type="text/javascript">
 		<?php
 			// Dynamic Javascript

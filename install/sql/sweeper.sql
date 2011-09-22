@@ -266,9 +266,15 @@ CREATE TABLE IF NOT EXISTS `sources` (
 
 CREATE TABLE IF NOT EXISTS `stories` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(11) NOT NULL,
   `project_id` int(11) NOT NULL,
   `story_title` varchar(255) DEFAULT NULL,
-  `story_description` text,
+  `story_summary` text,
+  `story` text,
+  `story_active` tinyint(4) NOT NULL DEFAULT '1',
+  `story_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `story_date_add` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stories belong to a specific project and contain multiple items ';
 

@@ -186,8 +186,8 @@ OTHERS
 #content .pagination p {margin:0;}
 #content .pagination .f-right a {padding:2px 4px; text-decoration:none;}
 #content .pagination .f-right a.pagination-active {padding:2px 6px; font-weight:bold;}
-#content .col50 {float:left; width:49%;}
-#content .col33 {float:left; width:32%;}
+#content .col50, #content-dialog .col50 {float:left; width:49%;}
+#content .col33, #content-dialog .col33 {float:left; width:32%;}
 #content .col33.center {padding:0 2%;}
 #content .tabs {margin:15px 0;}
 #content .tabs ul {margin:0; padding:0; list-style-type:none;}

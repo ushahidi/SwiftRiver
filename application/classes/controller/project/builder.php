@@ -30,10 +30,9 @@ class Controller_Project_Builder extends Controller_Project_Main {
 	/**
 	 * List all the Feeds
 	 *
-	 * @param	string $page - page uri
 	 * @return	void
 	 */
-	public function action_index($page = NULL)
+	public function action_index()
 	{
 		$this->template->content = View::factory('pages/project/builder/overview')
 			->bind('services', $this->services)

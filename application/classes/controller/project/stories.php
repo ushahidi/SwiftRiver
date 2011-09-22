@@ -25,5 +25,87 @@ class Controller_Project_Stories extends Controller_Project_Main {
 		
 		$this->template->header->tab_menu->active = 'stories';
 	}
+
+	/**
+	 * List all the Stories
+	 *
+	 * @return	void
+	 */
+	public function action_index()
+	{
+		$this->template->content = View::factory('pages/project/stories/overview')
+			->bind('stories', $result)
+			->bind('paging', $pagination)
+			->bind('default_sort', $sort)
+			->bind('total', $total)
+			->bind('project', $this->project);
+		
+		// Feeds
+		$stories = ORM::factory('story');
+		// Get the total count for the pagination
+		$total = $stories
+			->where('project_id', '=', $this->project->id)
+			->count_all();
+		
+		// Create a paginator
+		$pagination = new Pagination(array(
+			'total_items' => $total, 
+			'items_per_page' => 20,
+			'auto_hide' => false
+		));
+		
+		// Get the items for the query
+		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'story_title'; // set default sorting
+		$dir = isset($_GET['dir']) ? 'DESC' : 'ASC'; // set order_by
+		$result = $stories->limit($pagination->items_per_page)
+			->where('project_id', '=', $this->project->id)
+			->offset($pagination->offset)
+			->order_by($sort, $dir)
+			->find_all();
+	}
+
+	/**
+	 * Add/Edit a Story
+	 *
+	 * @return	void
+	 */
+	public function action_edit()
+	{
+		$id = $this->request->param('id');
+		$this->template->content = View::factory('pages/project/stories/edit')
+			->bind('post', $post)
+			->bind('errors', $errors)
+			->bind('project', $this->project);
+		
+		// save the data
+		if ($_POST)
+		{
+			$story = ORM::factory('story', $id);
+			$post = $story->validate($_POST);
+			if ($post->check())
+			{
+				$story->project_id = $this->project->id;
+				$story->story_title = $post['story_title'];
+				$story->story_summary = $post['story_summary'];
+				$story->save();
+				
+				// Always redirect after a successful POST to prevent refresh warnings
+				Request::current()->redirect('project/'.$this->project->id.'/stories');
+			}
+			else
+			{
+				//validation failed, get errors
+				$errors = $post->errors('stories');
+			}
+		}
+		else
+		{
+			if (is_numeric($id))
+			{
+				$story = ORM::factory('story', $id);
+				$post = $story->as_array();
+			}
+		}	
+	}	
 	
 }

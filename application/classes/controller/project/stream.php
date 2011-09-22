@@ -29,10 +29,9 @@ class Controller_Project_Stream extends Controller_Project_Main {
 	/**
 	 * The Item Stream
 	 *
-	 * @param	string $page - page uri
 	 * @return	void
 	 */
-	public function action_index($page = NULL)
+	public function action_index()
 	{
 		$this->template->content = View::factory('pages/project/stream/overview')
 			->bind('items', $result)
@@ -40,7 +39,8 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			->bind('default_sort', $sort)
 			->bind('total', $total)
 			->bind('project', $this->project);
-		$this->template->header->js = View::factory('pages/project/stream/js/overview');
+		$this->template->header->js = View::factory('pages/project/stream/js/overview')
+			->bind('project', $this->project);
 		
 		// Items
 		$items = ORM::factory('item');
@@ -65,5 +65,40 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			->offset($pagination->offset)
 			->order_by($sort, $dir)
 			->find_all();
+	}
+
+	/**
+	 * Ajax Loaded Edit Window
+	 *
+	 * @return	void
+	 */
+	public function action_ajax_edit()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		$item_id = ( isset($_POST['item_id']) AND ! empty($_POST['item_id']) ) ?
+			$_POST['item_id'] : 0;
+
+		if ($item_id)
+		{
+			$item = ORM::factory('item', $item_id);
+
+			if ($item->loaded())
+			{
+				$content = View::factory('pages/project/stream/window/edit')
+					->bind('item', $item)
+					->bind('tags', $tags)
+					->bind('links', $links)
+					->bind('source', $source);
+
+				$tags = $item->tags->find_all();
+				$links = $item->links->find_all();
+				$source = $item->source;
+
+				// Return the Content
+				echo $content;
+			}	
+		}
 	}
 }

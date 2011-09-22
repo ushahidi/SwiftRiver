@@ -65,14 +65,12 @@ class Controller_Projects extends Controller_Sweeper {
 	/**
 	 * Add/Edit a Project
 	 *
-	 * @param	int $id - ID of the project
 	 * @return	void
 	 */
-	public function action_edit($id = NULL)
+	public function action_edit()
 	{
 		$id = $this->request->param('id');
-		$this->template->content = View::factory('pages/projects/edit');
-		$this->template->content->form = View::factory('pages/projects/form')
+		$this->template->content = View::factory('pages/projects/edit')
 			->bind('post', $post)
 			->bind('errors', $errors);
 		$this->template->header->tab_menu->active = 'edit';

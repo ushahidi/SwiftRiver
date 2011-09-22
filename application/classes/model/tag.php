@@ -36,7 +36,7 @@ class Model_Tag extends ORM
 		$this->tag = strtolower($this->tag);
 
 		// Ensure Tag Type Goes In as Lower Case
-		$this->tag = strtolower($this->tag);
+		$this->tag_type = strtolower($this->tag_type);
 
 		return parent::save();
 	}
