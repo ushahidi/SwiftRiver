@@ -88,6 +88,8 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			{
 				$content = View::factory('pages/project/stream/window/edit')
 					->bind('item', $item)
+					->bind('next', $next)
+					->bind('previous', $previous)
 					->bind('tags', $tags)
 					->bind('links', $links)
 					->bind('source', $source);
@@ -95,6 +97,17 @@ class Controller_Project_Stream extends Controller_Project_Main {
 				$tags = $item->tags->find_all();
 				$links = $item->links->find_all();
 				$source = $item->source;
+
+				// Get Next Item
+				$next = ORM::factory('item')
+					->where('id', '>', $item_id)
+					->find();
+				
+				// Get Previous Item
+				$previous = ORM::factory('item')
+					->where('id', '<', $item_id)
+					->order_by('id','desc')
+					->find();
 
 				// Return the Content
 				echo $content;

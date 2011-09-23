@@ -41,7 +41,7 @@
 					<a href="#" class="ico-user-03">Discuss</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="#" class="ico-delete">Sweep</a>
 				</p>
-				<div id="dialog-<?php echo $item->id; ?>" title="Edit Item"></div><script type="text/javascript">$(function() {$("#dialog-<?php echo $item->id; ?>").dialog({autoOpen:false,modal: true,width:720,height:530});});</script>
+				<div id="dialog-<?php echo $item->id; ?>" class='sweeper-dialog' title="Edit Item"></div><script type="text/javascript">$(function() {$("#dialog-<?php echo $item->id; ?>").dialog({autoOpen:false,modal: true,width:720,height:530});});</script>
 			</td>
 		</tr>
 		<?php

@@ -34,6 +34,18 @@
 					?><?php echo __('Description'); ?>: <code class="blue"><?php echo $source->source_description; ?></code><br /><?php
 				}
 				?>
+				<p style="font-size: 90%;">
+					<label for="source_trust"><?php echo __('Trust Level'); ?></label>
+					<p></p>
+					<select name="source_trust" id="slider-<?php echo $item->id; ?>">
+						<option value="0">0</option>
+						<option value="1">1</option>
+						<option value="2" selected="selected">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</p>
 			</div>
 			<h3><a href="#"><?php echo __('Tags'); ?></a></h3>
 			<div>
@@ -52,7 +64,13 @@
 			</div>
 			<h3><a href="#"><?php echo __('Links'); ?></a></h3>
 			<div>
-				<p>xxx</p>
+				<ul><?php
+					foreach ($links as $link)
+					{
+						$link_text = Text::limit_chars($link->link_full, 30, '...');
+						?><li><code class="blue"><a href="<?php echo $link->link_full; ?>" target="_blank"><?php echo $link_text; ?></a></code></li><?php
+					}
+				?></ul>
 			</div>
 			<h3><a href="#"><?php echo __('Media'); ?></a></h3>
 			<div>
@@ -65,11 +83,11 @@
 		</div>
 	</div> <!-- /col50 -->
 	<div class="fix"></div>
+</div>
 
-	<p></p>
+<div class="dialog-paging">
 	<p class="pagination blue">
-		<a href="#" class="number current">&laquo; <?php echo __('Previous'); ?></a>
-		<a href="#" class="number current"><?php echo __('Next'); ?> &raquo;</a>
+		<a href="<?php echo ($previous->loaded()) ? 'javascript:getInfo('.$previous->id.');' : '#'; ?>" class="number current">&laquo; <?php echo __('Previous'); ?></a>
+		<a href="<?php echo ($next->loaded()) ? 'javascript:getInfo('.$next->id.');' : '#'; ?>" class="number current"><?php echo __('Next'); ?> &raquo;</a>
 	</p><!-- .pagination -->
-
 </div>

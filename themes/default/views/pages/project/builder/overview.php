@@ -1,16 +1,30 @@
-<p></p>
-<div class="innertabs">
-	<ul>
-		<li class="selected"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder"; ?>"><span><?php echo __('Feeds'); ?></span></a></li>
-		<li><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/new"; ?>"><span><?php echo __('Create New Feed'); ?> [+]</span></a></li>
-	</ul>
-</div>
+<?php echo $menu; ?>
+<?php
+if (isset($errors))
+{
+	foreach ($errors as $message)
+	{
+		?><p class="msg error"><?php echo $message;?></p><?php
+	}
+}
 
+if (isset($msgs))
+{
+	foreach ($msgs as $message)
+	{
+		?><p class="msg done"><?php echo $message;?></p><?php
+	}
+}
+?>
+<?php
+echo Form::open('', array('id' => 'list'));
+echo Form::hidden('action', '', array('id' => 'action'));
+echo Form::hidden('id', '', array('id' => 'id'));
+?>
 <table width="100%">
 	<tr>
 		<th><?php echo __('Feed'); ?></th>
-		<th><?php echo __('Type'); ?></th>
-		<th><?php echo __('Values'); ?></th>
+		<th><?php echo __('Options'); ?></th>
 		<th><?php echo __('Action'); ?></th>
 	</tr>
 	<?php
@@ -18,7 +32,7 @@
 	{
 		?>
 		<tr>
-			<td colspan="3" align="center"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/new"; ?>"><?php echo __('There are no feeds in the system. Add Some.'); ?></span></td>
+			<td colspan="3" align="center"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/main/new"; ?>"><?php echo __('There are no feeds in the system. Add Some.'); ?></span></td>
 		</tr>	
 		<?php
 	}
@@ -29,24 +43,21 @@
 	{
 		$items = $feed->items->count_all();
 		$service_name = $services[$feed->service];
-		$service_options = Plugins::get_service_options($feed->service);
-		$service_option_name = $service_options[$feed->service_option]['name'];
-		$service_option_fields = $service_options[$feed->service_option]['fields'];
+
+		$options = $feed->feed_options->find_all();
 		?>
 			<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
 				<td><?php echo $service_name; ?></td>
-				<td><?php echo $service_option_name; ?></td>
-				<td><?php
-				$options = $feed->feed_options->find_all();
+				<td><ul class="nostyle"><?php
 				foreach ($options as $option)
 				{
 					if ($option->value)
 					{
-						echo $option->value.'&nbsp;&nbsp;';
+						echo '<li><strong>'.$option->key.':</strong> '.$option->value.'</li>';
 					}
 				}
-				?></td>
-				<td><a href="#"><img src="<?php echo URL::base();?>themes/default/media/img/ico-edit.gif" class="ico" alt="Edit" /></a>  <a href="#"><img src="<?php echo URL::base();?>themes/default/media/img/ico-delete.gif" class="ico" alt="Delete" /></a></td>
+				?></ul></td>
+				<td><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/".$feed->service."/index/".$feed->id; ?>"><img src="<?php echo URL::base();?>themes/default/media/img/ico-edit.gif" class="ico" alt="Edit" /></a>  <a href="javascript:quickAction('d','<?php echo __('Delete'); ?>',<?php echo $feed->id; ?>)"><img src="<?php echo URL::base();?>themes/default/media/img/ico-delete.gif" class="ico" alt="Delete" /></a></td>
 			</tr>
 		<?php
 		if ($i == 1)
@@ -61,4 +72,5 @@
 	?>
 </table>
 
+<?php echo Form::close(); ?>
 <?php echo $paging; ?>

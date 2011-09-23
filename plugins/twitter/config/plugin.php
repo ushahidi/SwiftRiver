@@ -23,43 +23,13 @@ return array(
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
 		'settings'		=> TRUE,	// Plugin has settings
+		'service'		=> TRUE,	// Plugin is a service
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
 				'max' => '10.0.0',
 			),
 			'plugins' => array()	// unique plugin names
-		),
-		
-		// Service and Service Options
-		'service'		=> TRUE,
-		'service_options' => array(
-			'hashtag' => array(
-				'name' => 'Twitter Hash Tag',
-				'fields' => array(
-					'hashtag' => __('HashTag (e.g. #ushahidi)') 		// Field and Label
-				),
-			),
-			'user' => array(
-				'name' => 'Twitter User',
-				'fields' => array(
-					'user' => __('Username (e.g. @ushahidi)')			// Field and Label
-				),
-			),			
-			'keywords' => array(
-				'name' => 'Twitter Keywords',
-				'fields' => array(
-					'keywords' => __('Keywords (Separate with commas)')
-				),
-			),
-			'location' => array(
-				'name' => 'Twitter Tweet Location',
-				'fields' => array(
-					'latitude' => __('Latitude'),
-					'longitude' => __('Longitude'),
-					'place' => __('Place Name (e.g. Nairobi, Kenya)')
-				),
-			)
 		)
 	),
 );

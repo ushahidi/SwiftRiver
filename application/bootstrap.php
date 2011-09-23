@@ -98,10 +98,23 @@ Kohana::modules(array(
 	'sweeper_core' => MODPATH.'sweeper_core',
 	));
 
+
+/**
+ * Sweeper Project Builder Route
+ */
+Route::set('builder', 'project/<id>/builder(/<controller>(/<action>(/<feed_id>)))',
+	array('id' => '\d+',
+		'feed_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'project/builder/',
+	));
+
 /**
  * Sweeper Project Route
  */
-Route::set('project', 'project(/<id>(/<controller>(/<action>)))', array('id' => '\d+'))
+Route::set('project', 'project/<id>(/<controller>(/<action>))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',

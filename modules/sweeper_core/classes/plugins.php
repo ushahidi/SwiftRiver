@@ -167,42 +167,5 @@ class Plugins {
 		{
 			return FALSE;
 		}
-	}
-
-	/**
-	 * Find and return the service options available for a feed
-	 * service.
-	 *
-	 * @return array/bool
-	 */
-	public static function get_service_options($plugin = NULL)
-	{
-		if ($plugin)
-		{
-			$all_plugin_configs = Kohana::$config->load('plugin');
-			$plugin_configs = $all_plugin_configs->get($plugin);
-			if ( is_array($plugin_configs) 
-				AND isset($plugin_configs['service']) 
-				AND $plugin_configs['service'] == TRUE )
-			{
-				if ( isset($plugin_configs['service_options']) )
-				{
-					return $plugin_configs['service_options'];
-				}
-				else
-				{
-					return array();
-				}
-			}
-			else
-			{
-				return FALSE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
-	
+	}	
 }

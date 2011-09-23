@@ -177,3 +177,6 @@ STREAM STUFF
 code { background: rgba(0,0,0,.15); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(255,255,255,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }
 code { font: 12px/18px "Monaco", "Courier New", "Courier", monospace; color: #333; }
 code.blue { background: rgba(6,128,188,.3); color:#000; text-shadow: 0 1px 1px rgba(255,255,255,.75); }
+.sweeper-dialog {position:relative;}
+.dialog-paging {position:absolute; bottom:0;}
+#content-dialog{margin-bottom:30px;}

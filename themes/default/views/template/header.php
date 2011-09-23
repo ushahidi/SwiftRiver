@@ -16,6 +16,11 @@
 	<![endif]-->
 	<?php echo(Html::style("themes/default/media/css/style.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/pagination.css")); ?>
+	<?php echo(Html::style("themes/default/media/css/ui.slider.extras.css")); ?>
+	<?php
+	// Sweeper Plugin Hook -- Add CSS
+	Event::run('sweeper.header.css');
+	?>
 	
 	<?php echo(Html::script("themes/default/media/js/jquery.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.tablesorter.js")); ?>
@@ -31,6 +36,12 @@
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.draggable.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.resizable.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.selectable.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.ui.slider.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/selectToUISlider.jQuery.js")); ?>
+	<?php
+	// Sweeper Plugin Hook -- Add Script JS
+	Event::run('sweeper.header.js');
+	?>
 	<script type="text/javascript">
 		<?php
 			// Dynamic Javascript

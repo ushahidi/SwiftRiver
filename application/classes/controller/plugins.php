@@ -39,7 +39,7 @@ class Controller_Plugins extends Controller_Sweeper {
 			->bind('plugins', $result)
 			->bind('paging', $pagination)
 			->bind('default_sort', $sort);
-		$this->template->header->js = View::factory('pages/plugins/js/overview');
+		$this->template->header->js = View::factory('common/js/utility');
 		
 		// Process Plugins
 		$this->_process_plugins();
