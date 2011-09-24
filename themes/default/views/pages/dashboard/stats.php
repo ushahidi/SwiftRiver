@@ -15,42 +15,6 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#"><?php echo __('Stories');?></a> (<?php echo $stories; ?>)</dt>
-		<dd>Lorem ipsum dolor sit amet consectetur</dd>
-	</dl>
-</div> <!-- /btn -->
-<div class="btn-bottom"></div>
-</div> <!-- /btn-box -->
-
-<!-- Button -->
-<div class="btn-box">
-<div class="btn-top"></div>
-<div class="btn">
-	<dl>
-		<dt><a href="#"><?php echo __('Feed Items');?></a> (<?php echo $items; ?>)</dt>
-		<dd>Lorem ipsum dolor sit amet consectetur</dd>
-	</dl>
-</div> <!-- /btn -->
-<div class="btn-bottom"></div>
-</div> <!-- /btn-box -->
-
-<!-- Button -->
-<div class="btn-box">
-<div class="btn-top"></div>
-<div class="btn">
-	<dl>
-		<dt><a href="#"><?php echo __('Tags');?></a> (<?php echo $tags; ?>)</dt>
-		<dd>Lorem ipsum dolor sit amet consectetur</dd>
-	</dl>
-</div> <!-- /btn -->
-<div class="btn-bottom"></div>
-</div> <!-- /btn-box -->
-
-<!-- Button -->
-<div class="btn-box">
-<div class="btn-top"></div>
-<div class="btn">
-	<dl>
 		<dt><a href="#"><?php echo __('Private Messages');?></a> (0)</dt>
 		<dd>Lorem ipsum dolor sit amet consectetur</dd>
 	</dl>
@@ -76,3 +40,7 @@ Event::run('sweeper.dashboard.stats.button');
 ?>
 
 <div class="fix"></div>
+
+<!-- Charts -->
+<div id="holder"></div>
+<!-- /Charts -->

@@ -80,6 +80,10 @@
 			<div>
 				<p>xxx</p>
 			</div>
+			<h3><a href="#"><?php echo __('Discussions'); ?></a></h3>
+			<div>
+				<p>xxx</p>
+			</div>			
 		</div>
 	</div> <!-- /col50 -->
 	<div class="fix"></div>

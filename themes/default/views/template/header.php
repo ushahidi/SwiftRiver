@@ -38,6 +38,9 @@
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.selectable.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.slider.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/selectToUISlider.jQuery.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/raphael-min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/g.raphael-min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/g.line-min.js")); ?>
 	<?php
 	// Sweeper Plugin Hook -- Add Script JS
 	Event::run('sweeper.header.js');

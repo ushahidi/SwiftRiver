@@ -34,4 +34,25 @@ class Model_Feed extends ORM
 		'project' => array(),
 		'user' => array()
 		);
+
+	
+	/**
+	 * Overload saving to perform additional functions on the feed
+	 */
+	public function save(Validation $validation = NULL)
+	{
+
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the feed was first added
+			$this->feed_date_add = date("Y-m-d H:i:s", time());
+		}
+		else
+		{
+			$this->feed_date_modified = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}
 }

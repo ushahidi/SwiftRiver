@@ -12,6 +12,7 @@
 		$item_date_pub = date('H:i M d, Y', strtotime($item->item_date_pub));
 		$tag_count = $item->tags->count_all();
 		$tags = $item->tags->find_all();
+		$discussions = $item->discussions->count_all();
 		?>	
 		<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
 			<td>
@@ -38,7 +39,7 @@
 				</p>
 				<p class="item-functions">
 					<a href="javascript:showInfo(<?php echo $item->id; ?>);" class="ico-edit">Edit</a>&nbsp;&nbsp;&nbsp;&nbsp;
-					<a href="#" class="ico-user-03">Discuss</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="#" class="ico-user-03">Discussions</a>&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="#" class="ico-delete">Sweep</a>
 				</p>
 				<div id="dialog-<?php echo $item->id; ?>" class='sweeper-dialog' title="Edit Item"></div><script type="text/javascript">$(function() {$("#dialog-<?php echo $item->id; ?>").dialog({autoOpen:false,modal: true,width:720,height:530});});</script>

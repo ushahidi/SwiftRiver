@@ -38,8 +38,10 @@ class Controller_Project_Builder_Twitter extends Controller_Project_Builder_Main
 		$id = $this->request->param('feed_id');
 		$post = array(
 			'keywords' => '',
-			'hashtags' => '',
-			'users' => '',
+			'hashtag' => '',
+			'from' => '',
+			'to' => '',
+			'mention' => '',
 			'place' => ''
 			);
 
@@ -49,8 +51,10 @@ class Controller_Project_Builder_Twitter extends Controller_Project_Builder_Main
 			// Validation Checks
 			$post = Validation::factory($_POST)
 				->rule('keywords', 'max_length', array(':value', '255'))
-				->rule('hashtags', 'max_length', array(':value', '255'))
-				->rule('users', 'max_length', array(':value', '255'))
+				->rule('hashtag', 'max_length', array(':value', '255'))
+				->rule('from', 'max_length', array(':value', '255'))
+				->rule('to', 'max_length', array(':value', '255'))
+				->rule('mention', 'max_length', array(':value', '255'))
 				->rule('place', 'max_length', array(':value', '255'));
 
 			if ($post->check())
@@ -71,6 +75,8 @@ class Controller_Project_Builder_Twitter extends Controller_Project_Builder_Main
 					$key->delete();
 				}
 
+				//** I Know ORM doesn't look pretty :|
+
 				if ($post['keywords'])
 				{
 					$option = ORM::factory('feed_option');
@@ -80,21 +86,39 @@ class Controller_Project_Builder_Twitter extends Controller_Project_Builder_Main
 					$option->save();
 				}
 
-				if ($post['hashtags'])
+				if ($post['hashtag'])
 				{
 					$option = ORM::factory('feed_option');
 					$option->feed_id = $feed->id;
-					$option->key = 'hashtags';
-					$option->value = trim($post['hashtags']);
+					$option->key = 'hashtag';
+					$option->value = trim($post['hashtag']);
 					$option->save();
 				}
 
-				if ($post['users'])
+				if ($post['from'])
 				{
 					$option = ORM::factory('feed_option');
 					$option->feed_id = $feed->id;
-					$option->key = 'users';
-					$option->value = trim($post['users']);
+					$option->key = 'from';
+					$option->value = trim($post['from']);
+					$option->save();
+				}
+
+				if ($post['to'])
+				{
+					$option = ORM::factory('feed_option');
+					$option->feed_id = $feed->id;
+					$option->key = 'to';
+					$option->value = trim($post['to']);
+					$option->save();
+				}
+
+				if ($post['mention'])
+				{
+					$option = ORM::factory('feed_option');
+					$option->feed_id = $feed->id;
+					$option->key = 'mention';
+					$option->value = trim($post['mention']);
 					$option->save();
 				}
 

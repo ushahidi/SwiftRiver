@@ -63,73 +63,76 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 			$params = $feed->feed_options->find_all();
 			foreach ($params as $param)
 			{
-				$options[$param->key] = $param->value;
-			}
-
-			$this->$service_option($options);
-		}
-	}
-
-	/**
-	 * Use the Twitter Search API to retrieve hashtag tweets
-	 * @param array $options
-	 * @return void
-	 */
-	private function hashtag($options = array())
-	{
-		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
-		//print_r($options);
-	}
-
-	/**
-	 * Use the Twitter Search API to retrieve location based
-	 * tweets
-	 * @param array $options
-	 * @return void
-	 */
-	private function location($options = array())
-	{
-		
-	}
-
-	/**
-	 * Use the Twitter Search API to retrieve tweets from 
-	 * specified keywords
-	 * @param array $options
-	 * @return void
-	 */
-	private function keywords($options = array())
-	{
-		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
-		if ( isset($options['keywords']) )
-		{
-			$keywords = array_map('trim', explode(',', $options['keywords']));
-			foreach ($keywords as $keyword)
-			{
-				if ($keyword)
+				if ($param->value)
 				{
-					$search = new TwitterSearch($keyword);
-					$results = $search->results();
-					foreach ($results as $result)
-					{
-						if ( $result->text AND ! $this->_is_retweet($result->text) )
-						{
-							if ( isset($result->from_user_id) AND ! empty($result->from_user_id) AND 
-							 	isset($result->id) AND ! empty($result->id) )
-							{
-								$this->_save($result);
-							}
-						};
-						
-					}
+					$options[$param->key] = $param->value;
 				}
 			}
+
+			if (count($options))
+			{
+				$this->_search($options);
+			}
 		}
 	}
 
-	private function user($options = array())
+	/**
+	 * Build Twitter Search Query
+	 * @param array $options
+	 * @return void
+	 */
+	private function _search($options = array())
 	{
+		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
 		
+		$search = new TwitterSearch();
+		foreach ($options as $key => $value)
+		{
+			// Keywords
+			if ($key == 'keywords')
+			{
+				$search->contains($value);
+			}
+
+			// Hashtag
+			if ($key == 'hashtag')
+			{
+				$search->with($value);
+			}
+
+			// From @user
+			if ($key == 'from')
+			{
+				$search->from($value);
+			}
+
+			// To @user
+			if ($key == 'to')
+			{
+				$search->to($value);
+			}
+
+			// Mention @user
+			if ($key == 'mention')
+			{
+				$search->about($value);
+			}
+		}
+
+		$results = $search->rpp(50)->results();
+
+		foreach ($results as $result)
+		{
+			if ( $result->text AND ! $this->_is_retweet($result->text) )
+			{
+				if ( isset($result->from_user_id) AND ! empty($result->from_user_id) AND 
+				 	isset($result->id) AND ! empty($result->id) )
+				{
+					$this->_save($result);
+				}
+			};
+			
+		}
 	}
 
 

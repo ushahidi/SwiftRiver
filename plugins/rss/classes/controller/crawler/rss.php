@@ -55,10 +55,13 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 			$params = $feed->feed_options->find_all();
 			foreach ($params as $param)
 			{
-				$options[$param->key] = $param->value;
+				if ($param->value)
+				{
+					$options[$param->key] = $param->value;
+				}
 			}
 
-			$this->$service_option($options);
+			$this->_parse_url($options);
 		}
 	}
 
@@ -67,7 +70,7 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 	 * @param array $options
 	 * @return void
 	 */
-	private function url($options = array())
+	private function _parse_url($options = array())
 	{
 		include_once Kohana::find_file('vendor', 'simplepie/SimplePieAutoloader');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');

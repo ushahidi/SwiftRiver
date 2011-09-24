@@ -25,6 +25,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 	<tr>
 		<th><?php echo __('Feed'); ?></th>
 		<th><?php echo __('Options'); ?></th>
+		<th><?php echo __('Items'); ?></th>
 		<th><?php echo __('Action'); ?></th>
 	</tr>
 	<?php
@@ -57,6 +58,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 					}
 				}
 				?></ul></td>
+				<td><?php echo $items; ?></td>
 				<td><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/".$feed->service."/index/".$feed->id; ?>"><img src="<?php echo URL::base();?>themes/default/media/img/ico-edit.gif" class="ico" alt="Edit" /></a>  <a href="javascript:quickAction('d','<?php echo __('Delete'); ?>',<?php echo $feed->id; ?>)"><img src="<?php echo URL::base();?>themes/default/media/img/ico-delete.gif" class="ico" alt="Delete" /></a></td>
 			</tr>
 		<?php

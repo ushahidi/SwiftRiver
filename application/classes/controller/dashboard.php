@@ -33,6 +33,7 @@ class Controller_Dashboard extends Controller_Sweeper {
 	public function action_index()
 	{
 		$this->template->header->page_title = __('Dashboard');
+		$this->template->header->js = View::factory('pages/dashboard/js/overview');
 		$this->template->content = View::factory('pages/dashboard/overview');
 		$this->template->content->stats = View::factory('pages/dashboard/stats')
 			->bind('projects', $projects)

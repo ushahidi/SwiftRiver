@@ -92,10 +92,12 @@ class Controller_Project_Stream extends Controller_Project_Main {
 					->bind('previous', $previous)
 					->bind('tags', $tags)
 					->bind('links', $links)
+					->bind('discussions', $discussions)
 					->bind('source', $source);
 
 				$tags = $item->tags->find_all();
 				$links = $item->links->find_all();
+				$discussions = $item->discussions->find_all();
 				$source = $item->source;
 
 				// Get Next Item

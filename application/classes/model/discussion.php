@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Stories
+ * Model for Discussions
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,43 +13,30 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Story extends ORM
+class Model_Discussion extends ORM
 {
 	/**
-	 * A story has and belongs to many items
-	 * A story has many discussions
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array(
-		'discussions' => array(),
-		'items' => array(
-			'model' => 'item',
-			'through' => 'items_stories'
-			)
-		);
-	
-	/**
-	 * A story belongs to a project and a user
+	 * A story belongs to a story, an item and a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
-		'project' => array(),
+		'story' => array(),
+		'item' => array(),
 		'user' => array()
 		);
 
 	/**
-	 * Validation for stories
+	 * Validation for discussions
 	 * @param array $arr
 	 * @return array
 	 */
 	public function validate($arr)
 	{
 		return Validation::factory($arr)
-			->rule('story_title', 'not_empty')
-			->rule('story_title', 'min_length', array(':value', 3))
-			->rule('story_title', 'max_length', array(':value', 255))
-			->rule('story_summary', 'max_length', array(':value', 255));
+			->rule('discussion_title', 'not_empty')
+			->rule('discussion_title', 'min_length', array(':value', 3))
+			->rule('discussion_title', 'max_length', array(':value', 255))
+			->rule('discussion_content', 'not_empty');
 	}		
 }

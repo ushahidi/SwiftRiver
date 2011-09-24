@@ -10,6 +10,26 @@
 ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 
+# Dump of table discussions
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `discussions` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `parent_id` int(11) NOT NULL DEFAULT '0',
+  `item_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `story_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `discussion_title` varchar(255) NOT NULL DEFAULT '',
+  `discussion_content` text NOT NULL,
+  `discussion_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `discussion_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `discussion_sticky` tinyint(4) NOT NULL DEFAULT '0',
+  `discussion_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_discussion_date_add` (`discussion_date_add`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
 
 # Dump of table feeds
 # ------------------------------------------------------------
@@ -17,13 +37,15 @@ ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE IF NOT EXISTS `feeds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `project_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,  
+  `user_id` int(11) NOT NULL,
   `service` varchar(100) NOT NULL,
-  `service_option` varchar(100) default NULL,
+  `service_option` varchar(100) DEFAULT NULL,
   `feed_name` varchar(255) DEFAULT NULL,
   `feed_description` varchar(255) DEFAULT NULL,
   `feed_type` varchar(100) NOT NULL,
   `feed_url` varchar(255) DEFAULT NULL,
+  `feed_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `feed_date_modified` datetime DEFAULT '0000-00-00 00:00:00',
   `feed_lastrun` int(11) DEFAULT '0',
   `feed_nextrun` int(11) DEFAULT '0',
   `feed_runs` int(11) DEFAULT '0',
@@ -274,7 +296,7 @@ CREATE TABLE IF NOT EXISTS `stories` (
   `story` text,
   `story_active` tinyint(4) NOT NULL DEFAULT '1',
   `story_deleted` tinyint(4) NOT NULL DEFAULT '0',
-  `story_date_add` datetime DEFAULT NULL,
+  `story_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stories belong to a specific project and contain multiple items ';
 

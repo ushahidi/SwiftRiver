@@ -16,11 +16,13 @@
 class Model_Item extends ORM
 {
 	/**
-	 * A feed has and belongs to many links, locations, stories and tags
+	 * An item has and belongs to many links, locations, stories and tags
+	 * An has many discussions
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
+		'discussions' => array(),
 		'locations' => array(
 			'model' => 'location',
 			'through' => 'items_locations'
