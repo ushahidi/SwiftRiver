@@ -49,6 +49,15 @@ if (count($filter_tags) OR $filter_service OR $filter_author)
 }?>
 <table width="100%" class="nostyle">
 	<?php
+	if ($total == 0)
+	{
+		?>
+		<tr>
+			<td align="center"><a href="<?php echo URL::site('/project/').'/'.$project->id.'/builder'; ?>"><?php echo __('There are no items in your stream. Click here to add or modify your feeds.'); ?></span></td>
+		</tr>	
+		<?php
+	}
+		
 	$i = 0;
 	foreach ($items as $item)
 	{

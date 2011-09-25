@@ -93,9 +93,10 @@ class Controller_Project_Stream extends Controller_Project_Main {
 
 		// Create a paginator
 		$total = clone $query;
+		$total = $total->execute()->count();
 		$pagination = new Pagination(array(
 			'current_page' => array('source' => 'query_string', 'key' => 'page'),  // route
-			'total_items' => $total->execute()->count(), 
+			'total_items' => $total, 
 			'items_per_page' => 20,
 			'auto_hide' => false
 		));

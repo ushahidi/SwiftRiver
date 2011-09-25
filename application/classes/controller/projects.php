@@ -38,6 +38,7 @@ class Controller_Projects extends Controller_Sweeper {
 	{
 		$this->template->content = View::factory('pages/projects/overview')
 			->bind('projects', $result)
+			->bind('total', $total)
 			->bind('paging', $pagination)
 			->bind('default_sort', $sort);
 		

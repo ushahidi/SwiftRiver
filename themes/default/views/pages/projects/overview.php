@@ -5,6 +5,14 @@
 		<th>Action</th>
 	</tr>
 	<?php
+	if ($total == 0)
+	{
+		?>
+		<tr>
+			<td colspan="3" align="center"><a href="<?php echo URL::site('/projects/edit'); ?>"><?php echo __('There are no projects. Create one.'); ?></span></td>
+		</tr>	
+		<?php
+	}	
 	$i = 0;
 	foreach ($projects as $project)
 	{

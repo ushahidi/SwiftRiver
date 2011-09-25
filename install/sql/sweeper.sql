@@ -427,5 +427,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `project_title` varchar(255) DEFAULT NULL,
   `project_description` text,
   `project_enabled` tinyint(4) NOT NULL DEFAULT '1',
+  `project_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `project_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Projects can contain multiple stories within them';
