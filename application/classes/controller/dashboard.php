@@ -63,7 +63,7 @@ class Controller_Dashboard extends Controller_Sweeper {
 		}
 		else
 		{
-			return date('M j, Y', strtotime ( '-1 month' , date('M j, Y') ));
+			return date('M j, Y', strtotime ( '-1 month' , strtotime(date('M j, Y')) ));
 		}
 	}
 }
