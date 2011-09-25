@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Project_Stories extends Controller_Project_Main {
+class Controller_Project_Stories_Main extends Controller_Project_Main {
 	
 	/**
 	 * @return	void
@@ -71,7 +71,7 @@ class Controller_Project_Stories extends Controller_Project_Main {
 	 */
 	public function action_edit()
 	{
-		$id = $this->request->param('id');
+		$id = $this->request->param('story_id');
 		$this->template->content = View::factory('pages/project/stories/edit')
 			->bind('post', $post)
 			->bind('errors', $errors)
@@ -102,7 +102,9 @@ class Controller_Project_Stories extends Controller_Project_Main {
 		{
 			if (is_numeric($id))
 			{
-				$story = ORM::factory('story', $id);
+				$story = ORM::factory('story')
+					->where('project_id', '=', $this->project->id)
+					->find($id);
 				$post = $story->as_array();
 			}
 		}	

@@ -16,14 +16,15 @@
 class Model_Project extends ORM
 {
 	/**
-	 * A project has many stories
+	 * A project has many items, feeds, stories and projects
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
 		'items' => array(),
 		'feeds' => array(),
-		'stories' => array()
+		'stories' => array(),
+		'projects' => array()
 		);
 	
 	/**
@@ -45,4 +46,24 @@ class Model_Project extends ORM
 			->rule('project_title', 'min_length', array(':value', 3))
 			->rule('project_title', 'max_length', array(':value', 255));
 	}
+
+	/**
+	 * Overload saving to perform additional functions on the project
+	 */
+	public function save(Validation $validation = NULL)
+	{
+
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the feed was first added
+			$this->project_date_add = date("Y-m-d H:i:s", time());
+		}
+		else
+		{
+			$this->project_date_modified = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}	
 }

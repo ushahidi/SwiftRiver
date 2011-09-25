@@ -149,27 +149,33 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 			$source = ORM::factory('source')
 				->where( 'source_orig_id', '=', trim((string) $result->from_user_id) )
 				->find();
-			$source->source_orig_id = trim((string) $result->from_user_id);
-			$source->service = 'twitter';
-			$source->source_username = $result->from_user;
-			$source->save();
+			if ( ! $source->loaded() )
+			{
+				$source->source_orig_id = trim((string) $result->from_user_id);
+				$source->service = 'twitter';
+				$source->source_username = $result->from_user;
+				$source->save();
+			}
 
 			// Create a new Item
 			$item = ORM::factory('item')
 				->where( 'item_orig_id', '=', trim((string) $result->id) )
 				->find();
-			$item->service = 'twitter';
-			$item->source_id = $source->id; // the source we just saved above
-			$item->item_orig_id = trim((string) $result->id);
-			$item->project_id = $this->project->id;
-			$item->feed_id = $this->feed->id;
-			$item->item_content = trim(strip_tags(str_replace('<', ' <', $result->text)));
-			$item->item_raw = $result->text;
-			$item->item_author = $result->from_user;
-			$item->item_locale = $result->iso_language_code;
-			$item->item_date_pub = date("Y-m-d H:i:s", strtotime($result->created_at));
-			$item->item_date_add = date("Y-m-d H:i:s", time());
-			$item->save();
+			if ( ! $item->loaded() )
+			{
+				$item->service = 'twitter';
+				$item->source_id = $source->id; // the source we just saved above
+				$item->item_orig_id = trim((string) $result->id);
+				$item->project_id = $this->project->id;
+				$item->feed_id = $this->feed->id;
+				$item->item_content = trim(strip_tags(str_replace('<', ' <', $result->text)));
+				$item->item_raw = $result->text;
+				$item->item_author = $result->from_user;
+				$item->item_locale = $result->iso_language_code;
+				$item->item_date_pub = date("Y-m-d H:i:s", strtotime($result->created_at));
+				$item->item_date_add = date("Y-m-d H:i:s", time());
+				$item->save();
+			}
 		}
 	}
 

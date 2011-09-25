@@ -17,11 +17,12 @@ class Model_Item extends ORM
 {
 	/**
 	 * An item has and belongs to many links, locations, stories and tags
-	 * An has many discussions
+	 * An has many attachments and discussions
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
+		'attachments' => array(),
 		'discussions' => array(),
 		'locations' => array(
 			'model' => 'location',
@@ -65,6 +66,9 @@ class Model_Item extends ORM
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
+			// Save the date the item was first added
+			$this->item_date_add = date("Y-m-d H:i:s", time());
+
 			// Sweeper Plugin Hook -- execute before saving new item
 			Event::run('sweeper.item.pre_save_new', $this);
 

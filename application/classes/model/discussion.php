@@ -16,11 +16,12 @@
 class Model_Discussion extends ORM
 {
 	/**
-	 * A story belongs to a story, an item and a user
+	 * A discussion belongs to a project, a story, an item and a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
+		'project' => array(),
 		'story' => array(),
 		'item' => array(),
 		'user' => array()
@@ -38,5 +39,25 @@ class Model_Discussion extends ORM
 			->rule('discussion_title', 'min_length', array(':value', 3))
 			->rule('discussion_title', 'max_length', array(':value', 255))
 			->rule('discussion_content', 'not_empty');
+	}
+	
+	/**
+	 * Overload saving to perform additional functions on the discussion
+	 */
+	public function save(Validation $validation = NULL)
+	{
+
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the discussion was first added
+			$this->discussion_date_add = date("Y-m-d H:i:s", time());
+		}
+		else
+		{
+			$this->discussion_date_modified = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
 	}		
 }

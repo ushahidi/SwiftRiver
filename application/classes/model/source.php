@@ -43,6 +43,17 @@ class Model_Source extends ORM
 		// Ensure Service Goes In as Lower Case
 		$this->service = strtolower($this->service);
 
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the source was first added
+			$this->source_date_add = date("Y-m-d H:i:s", time());
+		}
+		else
+		{
+			$this->source_date_modified = date("Y-m-d H:i:s", time());
+		}		
+
 		return parent::save();
 	}
 }

@@ -38,6 +38,13 @@ class Model_Tag extends ORM
 		// Ensure Tag Type Goes In as Lower Case
 		$this->tag_type = strtolower($this->tag_type);
 
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the tag was first added
+			$this->tag_date_add = date("Y-m-d H:i:s", time());
+		}
+
 		return parent::save();
 	}
 }

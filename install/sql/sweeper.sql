@@ -10,15 +10,44 @@
 ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 
+# Dump of table attachments
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `attachments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `item_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `attachment_name` varchar(255) DEFAULT NULL,
+  `attachment_file` varchar(255) DEFAULT NULL,
+  `attachment_thumb` varchar(255) DEFAULT NULL,
+  `attachment_mime` varchar(50) DEFAULT NULL,
+  `attachment_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table attachments_stories
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `attachments_stories` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `attachment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `story_id` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table discussions
 # ------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `discussions` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
   `item_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `story_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `story_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `project_id` int(11) unsigned NOT NULL DEFAULT '0',
   `discussion_title` varchar(255) NOT NULL DEFAULT '',
   `discussion_content` text NOT NULL,
   `discussion_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -36,8 +65,8 @@ CREATE TABLE IF NOT EXISTS `discussions` (
 
 CREATE TABLE IF NOT EXISTS `feeds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `project_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
   `service` varchar(100) NOT NULL,
   `service_option` varchar(100) DEFAULT NULL,
   `feed_name` varchar(255) DEFAULT NULL,
@@ -45,14 +74,15 @@ CREATE TABLE IF NOT EXISTS `feeds` (
   `feed_type` varchar(100) NOT NULL,
   `feed_url` varchar(255) DEFAULT NULL,
   `feed_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `feed_date_modified` datetime DEFAULT '0000-00-00 00:00:00',
-  `feed_lastrun` int(11) DEFAULT '0',
-  `feed_nextrun` int(11) DEFAULT '0',
-  `feed_runs` int(11) DEFAULT '0',
+  `feed_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `feed_lastrun` int(11) NOT NULL DEFAULT '0',
+  `feed_nextrun` int(11) NOT NULL DEFAULT '0',
+  `feed_runs` int(11) NOT NULL DEFAULT '0',
   `feed_schedule` varchar(30) DEFAULT '*:-1:*:*:*',
-  `feed_enabled` tinyint(4) DEFAULT '1',
+  `feed_enabled` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `idx_service` (`service`)
+  KEY `idx_service` (`service`),
+  KEY `idx_feed_date_add` (`feed_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Feeds generate items.';
 
 
@@ -60,11 +90,13 @@ CREATE TABLE IF NOT EXISTS `feeds` (
 # Dump of table feeds_options
 # ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `feed_options` (
-  `id` int(11) unsigned NOT NULL auto_increment,
-  `feed_id` int(11) NOT NULL,
-  `key` varchar(255) NOT NULL default '',
-  `value` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `feed_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `key` varchar(255) NOT NULL DEFAULT '',
+  `value` varchar(255) NOT NULL DEFAULT '',
+  `password` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_key` (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -74,22 +106,23 @@ CREATE TABLE IF NOT EXISTS `feed_options` (
 
 CREATE TABLE IF NOT EXISTS `items` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `project_id` int(11) NOT NULL, 
-  `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
-  `source_id` bigint(20) NOT NULL COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
-  `feed_id` int(11) DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',
+  `project_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
+  `source_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
+  `feed_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',
   `service` varchar(100) NOT NULL DEFAULT '',
-  `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this item',
-  `item_orig_id` varchar(255) DEFAULT NULL,
-  `item_type` int(11) DEFAULT '1' COMMENT 'What type of item is this?\n1 - Original\n2 - Reply\n3 - Retweet\n4 - Comment\n5 - Revision',
+  `user_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this item',
+  `item_type` tinyint(30) NOT NULL DEFAULT '1' COMMENT 'What type of item is this?\\n1 - Original\\n2 - Reply\\n3 - Retweet\\n4 - Comment\\n5 - Revision',
+  `item_orig_id` varchar(255) DEFAULT '',
   `item_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
   `item_content` text COMMENT 'The content of the feed item (if available)',
   `item_raw` text,
   `item_author` varchar(150) DEFAULT NULL COMMENT 'The full name of the author of this item',
   `item_locale` varchar(30) DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))',
-  `item_date_pub` datetime DEFAULT '0000-00-00 00:00:00' COMMENT 'Original publish date of the feed item',
-  `item_date_add` datetime DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
-  `item_state` tinyint(4) DEFAULT '1' COMMENT 'Status of the feed item\n0 - inactive\n1 - new\n2 - accurate etc etc',
+  `item_date_pub` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Original publish date of the feed item',
+  `item_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
+  `item_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `item_state` tinyint(4) NOT NULL DEFAULT '1' COMMENT 'Status of the feed item\\n0 - inactive\\n1 - new\\n2 - accurate etc etc',
   `item_is_translation` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'If tagged as a translation, it references the translated item via the parent_id',
   `item_locked` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'If item is locked, another user is editing it',
   `item_veracity` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Veracity score of this item -- generated via a combination of variables',
@@ -99,7 +132,8 @@ CREATE TABLE IF NOT EXISTS `items` (
   UNIQUE KEY `uniq_item_orig_id` (`item_orig_id`),
   KEY `idx_service` (`service`),
   KEY `idx_item_author` (`item_author`),
-  KEY `idx_item_date_pub` (`item_date_pub`)
+  KEY `idx_item_date_pub` (`item_date_pub`),
+  KEY `idx_item_date_add` (`item_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
 
 
@@ -108,8 +142,8 @@ CREATE TABLE IF NOT EXISTS `items` (
 # ------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `items_links` (
-  `item_id` bigint(20) NOT NULL,
-  `link_id` bigint(20) NOT NULL
+  `item_id` bigint(20) NOT NULL DEFAULT '0',
+  `link_id` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -118,8 +152,8 @@ CREATE TABLE IF NOT EXISTS `items_links` (
 # ------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `items_locations` (
-  `item_id` bigint(20) NOT NULL,
-  `location_id` bigint(20) NOT NULL
+  `item_id` bigint(20) NOT NULL DEFAULT '0',
+  `location_id` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -128,8 +162,8 @@ CREATE TABLE IF NOT EXISTS `items_locations` (
 # ------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `items_stories` (
-  `story_id` int(11) NOT NULL,
-  `item_id` bigint(20) NOT NULL
+  `item_id` bigint(20) NOT NULL DEFAULT '0',
+  `story_id` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -138,8 +172,8 @@ CREATE TABLE IF NOT EXISTS `items_stories` (
 # ------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `items_tags` (
-  `item_id` bigint(20) NOT NULL,
-  `tag_id` bigint(20) NOT NULL
+  `item_id` bigint(20) NOT NULL DEFAULT '0',
+  `tag_id` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -152,9 +186,11 @@ CREATE TABLE IF NOT EXISTS `links` (
   `link` varchar(255) DEFAULT NULL,
   `link_full` varchar(255) DEFAULT NULL,
   `link_ignore` tinyint(4) NOT NULL DEFAULT '0',
+  `link_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `idx_link` (`link`),
-  KEY `idx_link_full` (`link_full`)
+  KEY `idx_link_full` (`link_full`),
+  KEY `idx_link_date_add` (`link_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -167,6 +203,7 @@ CREATE TABLE IF NOT EXISTS `locations` (
   `location_name` varchar(255) DEFAULT NULL COMMENT 'Full location name',
   `location_lonlat` point DEFAULT NULL COMMENT 'POINT geometry for this location',
   `location_polygon` polygon DEFAULT NULL COMMENT 'POLYGON geometry for this location',
+  `location_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -180,9 +217,9 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `plugin_path` varchar(100) NOT NULL,
   `plugin_name` varchar(255) DEFAULT NULL,
   `plugin_description` varchar(255) DEFAULT NULL,
-  `plugin_enabled` tinyint(4) DEFAULT '0',
+  `plugin_enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_plugin_path` (`plugin_name`)
+  UNIQUE KEY `uniq_plugin_path` (`plugin_path`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
@@ -266,8 +303,8 @@ UNLOCK TABLES;
 
 CREATE TABLE IF NOT EXISTS `sources` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` bigint(20) DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
-  `user_id` int(11) DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this source',
+  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'Unique user ID of the last user to modify this source',
   `service` varchar(100) NOT NULL DEFAULT '',
   `source_orig_id` varchar(255) DEFAULT NULL,
   `source_username` varchar(255) DEFAULT NULL,
@@ -275,10 +312,13 @@ CREATE TABLE IF NOT EXISTS `sources` (
   `source_description` text,
   `source_link` varchar(255) DEFAULT NULL,
   `source_full_link` varchar(255) DEFAULT NULL,
-  `source_followers` int(10) DEFAULT '0',
-  `source_book` tinyint(4) DEFAULT '0',
+  `source_followers` int(10) NOT NULL DEFAULT '0',
+  `source_book` tinyint(4) NOT NULL DEFAULT '0',
+  `source_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `source_date_modified` datetime DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  KEY `idx_service` (`service`)
+  KEY `idx_service` (`service`),
+  KEY `idx_source_date_add` (`source_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Sources are individual People, Organizations or Websites tha';
 
 
@@ -288,16 +328,18 @@ CREATE TABLE IF NOT EXISTS `sources` (
 
 CREATE TABLE IF NOT EXISTS `stories` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
-  `user_id` int(11) NOT NULL,
-  `project_id` int(11) NOT NULL,
+  `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `project_id` int(11) unsigned NOT NULL DEFAULT '0',
   `story_title` varchar(255) DEFAULT NULL,
   `story_summary` text,
   `story` text,
   `story_active` tinyint(4) NOT NULL DEFAULT '1',
   `story_deleted` tinyint(4) NOT NULL DEFAULT '0',
   `story_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  `story_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `idx_story_date_add` (`story_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stories belong to a specific project and contain multiple items ';
 
 
@@ -311,10 +353,12 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `tag_type` varchar(255) DEFAULT '',
   `tag_source` varchar(255) DEFAULT NULL,
   `tag_ignore` tinyint(4) NOT NULL DEFAULT '0',
+  `tag_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_tag` (`tag`),
   KEY `idx_tag_type` (`tag_type`),
-  KEY `idx_tag_source` (`tag_source`)
+  KEY `idx_tag_source` (`tag_source`),
+  KEY `idx_tag_date_add` (`tag_date_add`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

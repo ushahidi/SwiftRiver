@@ -72,7 +72,7 @@
 					}
 				?></ul>
 			</div>
-			<h3><a href="#"><?php echo __('Media'); ?></a></h3>
+			<h3><a href="#"><?php echo __('Attachments'); ?></a></h3>
 			<div>
 				<p>xxx</p>
 			</div>

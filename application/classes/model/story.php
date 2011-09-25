@@ -16,7 +16,7 @@
 class Model_Story extends ORM
 {
 	/**
-	 * A story has and belongs to many items
+	 * A story has and belongs to many items and attachments
 	 * A story has many discussions
 	 *
 	 * @var array Relationhips
@@ -26,7 +26,11 @@ class Model_Story extends ORM
 		'items' => array(
 			'model' => 'item',
 			'through' => 'items_stories'
-			)
+			),
+		'attachments' => array(
+			'model' => 'attachment',
+			'through' => 'attachments_stories'
+			)			
 		);
 	
 	/**
@@ -51,5 +55,25 @@ class Model_Story extends ORM
 			->rule('story_title', 'min_length', array(':value', 3))
 			->rule('story_title', 'max_length', array(':value', 255))
 			->rule('story_summary', 'max_length', array(':value', 255));
-	}		
+	}
+
+	/**
+	 * Overload saving to perform additional functions on the story
+	 */
+	public function save(Validation $validation = NULL)
+	{
+
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the story was first added
+			$this->story_date_add = date("Y-m-d H:i:s", time());
+		}
+		else
+		{
+			$this->story_date_modified = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}	
 }

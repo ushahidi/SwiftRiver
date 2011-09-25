@@ -41,14 +41,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 				</td>
 			</tr>
 		<?php
-		if ($i == 1)
-		{
-			$i = 0;
-		}
-		else
-		{
-			$i++;
-		}
+		$i = ($i == 1) ? 0 : $i++;
 	}
 	?>
 </table>

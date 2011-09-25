@@ -112,6 +112,30 @@ Route::set('builder', 'project/<id>/builder(/<controller>(/<action>(/<feed_id>))
 	));
 
 /**
+ * Sweeper Project Stories Route
+ */
+Route::set('stories', 'project/<id>/stories(/<controller>(/<action>(/<story_id>)))',
+	array('id' => '\d+',
+		'story_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'project/stories/',
+	));	
+
+/**
+ * Sweeper Project Discussions Route
+ */
+Route::set('discussions', 'project/<id>/discussions(/<controller>(/<action>(/<discussion_id>)))',
+	array('id' => '\d+',
+		'discussion_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'project/discussions/',
+	));	
+
+/**
  * Sweeper Project Route
  */
 Route::set('project', 'project/<id>(/<controller>(/<action>))', array('id' => '\d+'))

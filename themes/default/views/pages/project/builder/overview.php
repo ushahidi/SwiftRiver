@@ -33,7 +33,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 	{
 		?>
 		<tr>
-			<td colspan="3" align="center"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/main/new"; ?>"><?php echo __('There are no feeds in the system. Add Some.'); ?></span></td>
+			<td colspan="3" align="center"><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/main/new"; ?>"><?php echo __('This project has no feeds. Create one.'); ?></span></td>
 		</tr>	
 		<?php
 	}
@@ -48,13 +48,14 @@ echo Form::hidden('id', '', array('id' => 'id'));
 		$options = $feed->feed_options->find_all();
 		?>
 			<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
-				<td><?php echo $service_name; ?></td>
+				<td><h4><?php echo $service_name; ?></h4></td>
 				<td><ul class="nostyle"><?php
 				foreach ($options as $option)
 				{
+					$value = ($option->password) ? '*********' : $option->value;
 					if ($option->value)
 					{
-						echo '<li><strong>'.$option->key.':</strong> '.$option->value.'</li>';
+						echo '<li><strong>'.$option->key.':</strong> '.$value.'</li>';
 					}
 				}
 				?></ul></td>
@@ -62,14 +63,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 				<td><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/".$feed->service."/index/".$feed->id; ?>"><img src="<?php echo URL::base();?>themes/default/media/img/ico-edit.gif" class="ico" alt="Edit" /></a>  <a href="javascript:quickAction('d','<?php echo __('Delete'); ?>',<?php echo $feed->id; ?>)"><img src="<?php echo URL::base();?>themes/default/media/img/ico-delete.gif" class="ico" alt="Delete" /></a></td>
 			</tr>
 		<?php
-		if ($i == 1)
-		{
-			$i = 0;
-		}
-		else
-		{
-			$i++;
-		}
+		$i = ($i == 1) ? 0 : $i++;
 	}
 	?>
 </table>

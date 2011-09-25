@@ -26,4 +26,19 @@ class Model_Link extends ORM
 			'through' => 'items_links'
 			)
 		);
+
+	/**
+	 * Overload saving to perform additional functions on the link
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the link was first added
+			$this->link_date_add = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}		
 }

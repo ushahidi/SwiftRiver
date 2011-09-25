@@ -34,37 +34,77 @@ class Controller_Project_Stream extends Controller_Project_Main {
 	public function action_index()
 	{
 		$this->template->content = View::factory('pages/project/stream/overview')
+			->bind('current', $current)
 			->bind('items', $result)
+			->bind('filter_tags', $tags)
+			->bind('filter_service', $service)
+			->bind('filter_author', $author)
+			->bind('querystring', $querystring)
 			->bind('paging', $pagination)
 			->bind('default_sort', $sort)
 			->bind('total', $total)
 			->bind('project', $this->project);
+
 		$this->template->header->js = View::factory('pages/project/stream/js/overview')
 			->bind('project', $this->project);
-		
+
+		// Current Page
+		$current = $this->_current_page();
+		$querystring = array_unique($this->request->query());
+
 		// Items
 		$items = ORM::factory('item');
-		// Get the total count for the pagination
-		$total = $items
-			->where('project_id', '=', $this->project->id)
-			->count_all();
-		
-		// Create a paginator
-		$pagination = new Pagination(array(
-			'current_page' => array('source' => 'query_string', 'key' => 'page'),  // route
-			'total_items' => $total, 
-			'items_per_page' => 20,
-			'auto_hide' => false
-		));
 		
 		// Get the items for the query
 		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'item_date_pub'; // set default sorting
 		$dir = isset($_GET['dir']) ? 'ASC' : 'DESC'; // set order_by
-		$result = $items->limit($pagination->items_per_page)
-			->where('project_id', '=', $this->project->id)
+
+		// Get Query parameters
+		$tags = isset($_GET['t']) ? $_GET['t'] : array();
+		$service = isset($_GET['s']) ? $_GET['s'] : '';
+		$author = isset($_GET['a']) ? $_GET['a'] : '';
+		
+		// Build Query
+		$query = DB::select(array(DB::expr('DISTINCT items.id'), 'id'))->from('items');
+		// Do we have tags to filter by?
+		if ( is_array($tags) AND count($tags) )
+		{
+			$query->join('items_tags', 'INNER')
+				->on('items_tags.item_id', '=', 'items.id');
+			$query ->join('tags', 'INNER')
+				->on('items_tags.tag_id', '=', 'tags.id');
+			
+			$query->where('tags.tag', 'IN', $tags);
+		}
+		// Do we have a service to filter by?
+		if ( $service )
+		{
+			$query->where('items.service', '=', $service);
+		}
+		// Do we have an author to filter by?
+		if ( $author )
+		{
+			$query->where('items.item_author', '=', $author);
+		}
+		// Do we have locations to filter by?
+		// ++ coming back to this later
+		$query->where('project_id', '=', $this->project->id);
+		$query->order_by($sort, $dir);
+
+		// Create a paginator
+		$total = clone $query;
+		$pagination = new Pagination(array(
+			'current_page' => array('source' => 'query_string', 'key' => 'page'),  // route
+			'total_items' => $total->execute()->count(), 
+			'items_per_page' => 20,
+			'auto_hide' => false
+		));
+
+		// Finally execute main query with limits
+		$result = $query->limit($pagination->items_per_page)
 			->offset($pagination->offset)
-			->order_by($sort, $dir)
-			->find_all();
+			->as_object()
+			->execute();
 	}
 
 	/**
@@ -115,5 +155,19 @@ class Controller_Project_Stream extends Controller_Project_Main {
 				echo $content;
 			}	
 		}
+	}
+
+	/**
+	 * Generate current url + query strings
+	 *
+	 * @return	string $current page
+	 */
+	private function _current_page()
+	{
+		$current = URL::site().Request::current()->uri();
+		$query = array_unique(Request::current()->query());
+		$current .= '?'.http_build_query($query, NULL, '&');
+
+		return $current;
 	}
 }

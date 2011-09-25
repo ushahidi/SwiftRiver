@@ -7,7 +7,6 @@
 	<meta name="robots" content="noindex,nofollow" />
 	
 	<?php echo(Html::style("themes/default/media/css/reset.css")); ?>
-	<?php echo(Html::style("themes/default/media/css/jquery-ui-1.8.16.custom.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/main.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/2col.css", array("title" => "2col"))); ?>
 	<?php echo(Html::style("themes/default/media/css/1col.css", array("title" => "1col"))); ?>
@@ -16,7 +15,9 @@
 	<![endif]-->
 	<?php echo(Html::style("themes/default/media/css/style.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/pagination.css")); ?>
+	<?php echo(Html::style("themes/default/media/css/jquery-ui-1.8.16.custom.css")); ?>
 	<?php echo(Html::style("themes/default/media/css/ui.slider.extras.css")); ?>
+	<?php echo(Html::style("themes/default/media/css/jquery.jqplot.css")); ?>
 	<?php
 	// Sweeper Plugin Hook -- Add CSS
 	Event::run('sweeper.header.css');
@@ -38,9 +39,13 @@
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.selectable.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/jquery.ui.slider.min.js")); ?>
 	<?php echo(Html::script("themes/default/media/js/selectToUISlider.jQuery.js")); ?>
-	<?php echo(Html::script("themes/default/media/js/raphael-min.js")); ?>
-	<?php echo(Html::script("themes/default/media/js/g.raphael-min.js")); ?>
-	<?php echo(Html::script("themes/default/media/js/g.line-min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jquery.jqplot.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.json2.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.canvasTextRenderer.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.categoryAxisRenderer.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.dateAxisRenderer.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.highlighter.min.js")); ?>
+	<?php echo(Html::script("themes/default/media/js/jqplot.pointLabels.min.js")); ?>
 	<?php
 	// Sweeper Plugin Hook -- Add Script JS
 	Event::run('sweeper.header.js');

@@ -15,12 +15,13 @@
  */
 
 return array(
-	'ushahidi' => array(				//same name as plugin folder
-		'name'			=> 'Ushahidi',
-		'description'	=> 'Adds the Ushahidi service to Sweeper.',
+	'ushahidi' => array( //same name as plugin folder
+		'name'			=> 'Ushahidi/Crowdmap',
+		'description'	=> 'Adds the Ushahidi/Crowdmap service to Sweeper to parse reports',
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
+		'service'		=> TRUE,	// Plugin is a service		
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',

@@ -34,16 +34,36 @@ class Controller_Dashboard extends Controller_Sweeper {
 	{
 		$this->template->header->page_title = __('Dashboard');
 		$this->template->header->js = View::factory('pages/dashboard/js/overview');
+		$this->template->header->js->first_date = $this->_get_first_date();
 		$this->template->content = View::factory('pages/dashboard/overview');
 		$this->template->content->stats = View::factory('pages/dashboard/stats')
 			->bind('projects', $projects)
 			->bind('stories', $stories)
 			->bind('items', $items)
-			->bind('tags', $tags);
+			->bind('tags', $tags)
+			->bind('links', $links);
+
+		$this->template->content->charts = View::factory('pages/dashboard/charts');
 
 		$projects = ORM::factory('project')->count_all();
 		$stories = ORM::factory('story')->count_all();
 		$items = ORM::factory('item')->count_all();
 		$tags = ORM::factory('tag')->count_all();
+		$links = ORM::factory('link')->count_all();
+	}
+
+	private function _get_first_date()
+	{
+		$item = ORM::factory('item')
+			->order_by('item_date_add', 'ASC')
+			->find();
+		if ( $item->loaded() )
+		{
+			return date('M j, Y', strtotime ( '-1 month' , strtotime($item->item_date_add) ));	
+		}
+		else
+		{
+			return date('M j, Y', strtotime ( '-1 month' , date('M j, Y') ));
+		}
 	}
 }
