@@ -43,8 +43,8 @@
 						// Get All Existing Projects
 						foreach ($projects as $project)
 						{
-							$stories = $project->stories->count_all();
-							?><li <?php if ($active_project_id == $project->id) echo "id=\"submenu-active-project\"";?>><a href="<?php echo URL::site('/project/')."/".$project->id; ?>"><?php echo $project->project_title;?> (<?php echo $stories; ?>)</a></li><?php
+							$items = $project->items->count_all();
+							?><li <?php if ($active_project_id == $project->id) echo "id=\"submenu-active-project\"";?>><a href="<?php echo URL::site('/project/')."/".$project->id; ?>"><?php echo $project->project_title;?> (<?php echo $items; ?>)</a></li><?php
 						}
 						?>
 					</ul>
