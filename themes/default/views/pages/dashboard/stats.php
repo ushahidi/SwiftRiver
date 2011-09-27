@@ -63,7 +63,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><?php echo __('Links');?> (<?php echo $locations; ?>)</dt>
+		<dt><?php echo __('Locations');?> (<?php echo $locations; ?>)</dt>
 		<dd><?php echo __('Locations generated from all stream');?></dd>
 	</dl>
 </div> <!-- /btn -->
