@@ -201,10 +201,13 @@ CREATE TABLE IF NOT EXISTS `links` (
 CREATE TABLE IF NOT EXISTS `locations` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `location_name` varchar(255) DEFAULT NULL COMMENT 'Full location name',
-  `location_lonlat` point DEFAULT NULL COMMENT 'POINT geometry for this location',
-  `location_polygon` polygon DEFAULT NULL COMMENT 'POLYGON geometry for this location',
+  `location_point` point DEFAULT NULL COMMENT 'POINT geometry for this location',
+ # `location_polygon` polygon DEFAULT NULL COMMENT 'POLYGON geometry for this location',
   `location_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  `location_source` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_location_name` (`location_name`),
+  KEY `idx_location_point` (`location_point`(25))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 

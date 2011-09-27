@@ -78,7 +78,12 @@
 			</div>
 			<h3><a href="#"><?php echo __('Locations'); ?></a></h3>
 			<div>
-				<p>xxx</p>
+				<p><?php
+					foreach ($locations as $location)
+					{
+						?><code class="green"><?php echo $location->location_name; ?>[<a href="#">x</a>]</code> <?php
+					}
+				?></p>
 			</div>
 			<h3><a href="#"><?php echo __('Discussions'); ?></a></h3>
 			<div>

@@ -37,6 +37,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			->bind('current', $current)
 			->bind('items', $result)
 			->bind('filter_tags', $tags)
+			->bind('filter_locations', $locations)
 			->bind('filter_service', $service)
 			->bind('filter_author', $author)
 			->bind('querystring', $querystring)
@@ -61,6 +62,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 
 		// Get Query parameters
 		$tags = isset($_GET['t']) ? $_GET['t'] : array();
+		$locations = isset($_GET['l']) ? $_GET['l'] : array();
 		$service = isset($_GET['s']) ? $_GET['s'] : '';
 		$author = isset($_GET['a']) ? $_GET['a'] : '';
 		
@@ -76,6 +78,16 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			
 			$query->where('tags.tag', 'IN', $tags);
 		}
+		// Do we have locations to filter by?
+		if ( is_array($locations) AND count($locations) )
+		{
+			$query->join('items_locations', 'INNER')
+				->on('items_locations.item_id', '=', 'items.id');
+			$query ->join('locations', 'INNER')
+				->on('items_locations.location_id', '=', 'locations.id');
+			
+			$query->where('locations.location_name', 'IN', $locations);
+		}
 		// Do we have a service to filter by?
 		if ( $service )
 		{
@@ -86,8 +98,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 		{
 			$query->where('items.item_author', '=', $author);
 		}
-		// Do we have locations to filter by?
-		// ++ coming back to this later
+		
 		$query->where('project_id', '=', $this->project->id);
 		$query->order_by($sort, $dir);
 
@@ -133,11 +144,13 @@ class Controller_Project_Stream extends Controller_Project_Main {
 					->bind('previous', $previous)
 					->bind('tags', $tags)
 					->bind('links', $links)
+					->bind('locations', $locations)
 					->bind('discussions', $discussions)
 					->bind('source', $source);
 
 				$tags = $item->tags->find_all();
 				$links = $item->links->find_all();
+				$locations = $item->locations->find_all();
 				$discussions = $item->discussions->find_all();
 				$source = $item->source;
 

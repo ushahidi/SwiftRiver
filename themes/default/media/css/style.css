@@ -172,6 +172,7 @@ STREAM STUFF
 #content .item-content, #content-dialog .item-content {font-size:110%; display:block; margin-top:5px; font: 14px/20px "Monaco", "Courier New", "Courier", monospace;}
 #content .item-extras {margin-left:10px;}
 #content .item-tags {font-size:80%; display: block; }
+#content .item-locations {font-size:80%; display: block; margin-top:8px;}
 #content .item-meta {font-size:80%; display: block; margin-top:8px;}
 #content .item-functions a {color:#666; font-size:90%;}
 code { background: rgba(0,0,0,.1); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(255,255,255,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }
@@ -179,8 +180,11 @@ code { font: 12px/18px "Monaco", "Courier New", "Courier", monospace; color: #33
 code a { color: #333; text-decoration:none; }
 code a:hover { color: #333; text-decoration:underline; }
 code:hover{ background: rgba(0,0,0,.3); }
-code.blue { background: rgba(6,128,188,.2); color:#000; text-shadow: 0 1px 1px rgba(255,255,255,.75); }
+code.blue,code.green { color:#000; text-shadow: 0 1px 1px rgba(255,255,255,.75); }
+code.blue { background: rgba(6,128,188,.2); }
 code.blue a { color:#000; } code.blue:hover { background: rgba(6,128,188,.4); }
+code.green { background: rgba(6,128,0,.2); }
+code.green a { color:#000; } code.green:hover { background: rgba(6,128,0,.4); }
 .sweeper-dialog {position:relative;}
 .dialog-paging {position:absolute; bottom:0;}
 #content-dialog{margin-bottom:30px;}
