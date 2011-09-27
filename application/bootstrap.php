@@ -133,7 +133,17 @@ Route::set('discussions', 'project/<id>/discussions(/<controller>(/<action>(/<di
 		'controller' => 'main',
 		'action'     => 'index',
 		'directory'  => 'project/discussions/',
-	));	
+	));
+
+/**
+ * Sweeper Charts Route
+ */
+Route::set('charts', 'charts(/<action>(/<project_id>))',
+	array('project_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'charts',
+		'action'     => 'index'
+	));		
 
 /**
  * Sweeper Project Route

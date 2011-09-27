@@ -66,16 +66,70 @@ class Controller_Project_Main extends Controller_Sweeper {
 			->bind('project', $this->project)
 			->bind('feeds', $feeds)
 			->bind('stories', $stories)
-			->bind('items', $items);
+			->bind('items', $items)
+			->bind('tags', $tags)
+			->bind('links', $links)
+			->bind('locations', $locations);
 
-		$feeds = ORM::factory('feed')
-			->where('project_id', '=', $this->project->id)
-			->count_all();
-		$stories = ORM::factory('story')
-			->where('project_id', '=', $this->project->id)
-			->count_all();
-		$items = ORM::factory('item')
-			->where('project_id', '=', $this->project->id)
-			->count_all();
+		$this->template->header->js = View::factory('pages/project/js/overview')
+			->bind('first_date', $first_date)
+			->bind('project', $this->project);
+		
+		$first_date = $this->_get_first_date();
+
+		$feeds = $this->project->feeds->count_all();
+		$stories = $this->project->stories->count_all();
+		$items = $this->project->items->count_all();
+
+		// Tags
+		$tags = DB::select(array(DB::expr('DISTINCT tags.id'), 'id'))
+			->from('tags')
+			->join('items_tags', 'INNER')
+				->on('items_tags.tag_id', '=', 'tags.id')
+			->join('items', 'INNER')
+				->on('items_tags.item_id', '=', 'items.id')
+			->where('items.project_id', '=', $this->project->id)
+			->execute()->count();
+
+		// Links
+		$links = DB::select(array(DB::expr('DISTINCT links.id'), 'id'))
+			->from('links')
+			->join('items_links', 'INNER')
+				->on('items_links.link_id', '=', 'links.id')
+			->join('items', 'INNER')
+				->on('items_links.item_id', '=', 'items.id')
+			->where('items.project_id', '=', $this->project->id)
+			->execute()->count();
+
+		// Locations
+		$locations = DB::select(array(DB::expr('DISTINCT locations.id'), 'id'))
+			->from('locations')
+			->join('items_locations', 'INNER')
+				->on('items_locations.location_id', '=', 'locations.id')
+			->join('items', 'INNER')
+				->on('items_locations.item_id', '=', 'items.id')
+			->where('items.project_id', '=', $this->project->id)
+			->execute()->count();		
 	}
+
+	/**
+	 * Get the Chart Start Date
+	 *
+	 * @return	string date
+	 */
+	private function _get_first_date()
+	{
+		$item = ORM::factory('item')
+			->where('project_id', '=', $this->project->id)
+			->order_by('item_date_add', 'ASC')
+			->find();
+		if ( $item->loaded() )
+		{
+			return date('M j, Y', strtotime ( '-1 day' , strtotime($item->item_date_add) ));	
+		}
+		else
+		{
+			return date('M j, Y', strtotime ( '-1 day' , strtotime(date('M j, Y')) ));
+		}
+	}	
 }

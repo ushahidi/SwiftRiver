@@ -25,7 +25,7 @@ class Controller_Charts extends Controller_Sweeper {
 	}
 	
 	/**
-	 * Ajax Loaded Chart Data
+	 * Ajax Loaded Chart Data For Item Streams
 	 * 
 	 * @return	void
 	 */
@@ -34,58 +34,56 @@ class Controller_Charts extends Controller_Sweeper {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
-		$chart = $this->request->param('id');
+		$project_id = $this->request->param('project_id');
 		
-		switch ($chart)
-		{
-			case 'value':
-				# code...
-				break;
-			
-			default:
-				echo $this->_get_items();
-				break;
-		}
+		echo $this->_get_items($project_id);
 	}
 
 	//
 	private function _get_items($project_id = NULL)
 	{
 		$js_array = array();
+
 		if ( ! $project_id)
 		{
 			$projects = ORM::factory('project')
 				->find_all();
+		}
+		else
+		{
+			$projects = ORM::factory('project')
+				->where('id', '=', $project_id)
+				->find_all();
+		}
 
-			foreach ($projects as $project)
+		foreach ($projects as $project)
+		{
+			$js = array();
+			$query = DB::select(
+					array(DB::expr('DATE_FORMAT(item_date_add, "%Y-%m-%d")'), 'date'),
+					array('COUNT("id")', 'counts')
+				)
+				->from('items')
+				->where('project_id', '=', $project->id)
+				->group_by('date');
+
+			$total = clone $query;
+			
+			if ($total->execute()->count())
 			{
-				$js = array();
-				$query = DB::select(
-						array(DB::expr('DATE_FORMAT(item_date_add, "%Y-%m-%d")'), 'date'),
-						array('COUNT("id")', 'counts')
-					)
-					->from('items')
-					->where('project_id', '=', $project->id)
-					->group_by('date');
-
-				$total = clone $query;
-				
-				if ($total->execute()->count())
+				$items = $query->execute();
+				$i = 0;
+				foreach ($items as $item)
 				{
-					$items = $query->execute();
-					$i = 0;
-					foreach ($items as $item)
-					{
-						$label = ($i == 0) ? $project->project_title : '';
-						$js[] = array( $item['date'].' 0:00AM', (int) $item['counts'], $label );
-						$i++;
-					}
-					$js_array[] = $js;
+					$label = ($i == 0) ? $project->project_title : '';
+					$js[] = array( $item['date'].' 0:00AM', (int) $item['counts'], $label );
+					$i++;
 				}
-				else
-				{
-					//$js = array();
-				}
+				$js_array[] = $js;
+			}
+			else
+			{
+				//$js = array();
 			}
 		}
 

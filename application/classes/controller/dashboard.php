@@ -41,7 +41,8 @@ class Controller_Dashboard extends Controller_Sweeper {
 			->bind('stories', $stories)
 			->bind('items', $items)
 			->bind('tags', $tags)
-			->bind('links', $links);
+			->bind('links', $links)
+			->bind('locations', $locations);
 
 		$this->template->content->charts = View::factory('pages/dashboard/charts');
 
@@ -50,8 +51,14 @@ class Controller_Dashboard extends Controller_Sweeper {
 		$items = ORM::factory('item')->count_all();
 		$tags = ORM::factory('tag')->count_all();
 		$links = ORM::factory('link')->count_all();
+		$locations = ORM::factory('location')->count_all();
 	}
 
+	/**
+	 * Get the Chart Start Date
+	 *
+	 * @return	string date
+	 */
 	private function _get_first_date()
 	{
 		$item = ORM::factory('item')
@@ -59,11 +66,11 @@ class Controller_Dashboard extends Controller_Sweeper {
 			->find();
 		if ( $item->loaded() )
 		{
-			return date('M j, Y', strtotime ( '-1 month' , strtotime($item->item_date_add) ));	
+			return date('M j, Y', strtotime ( '-1 day' , strtotime($item->item_date_add) ));	
 		}
 		else
 		{
-			return date('M j, Y', strtotime ( '-1 month' , strtotime(date('M j, Y')) ));
+			return date('M j, Y', strtotime ( '-1 day' , strtotime(date('M j, Y')) ));
 		}
 	}
 }

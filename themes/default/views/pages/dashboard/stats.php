@@ -16,7 +16,19 @@
 <div class="btn">
 	<dl>
 		<dt><?php echo __('Stream');?> (<?php echo $items; ?>)</dt>
-		<dd><?php echo __('Total items generated from feeds');?></dd>
+		<dd><?php echo __('Items generated from all projects');?></dd>
+	</dl>
+</div> <!-- /btn -->
+<div class="btn-bottom"></div>
+</div> <!-- /btn-box -->
+
+<!-- Button -->
+<div class="btn-box">
+<div class="btn-top"></div>
+<div class="btn">
+	<dl>
+		<dt><?php echo __('Stories');?> (<?php echo $tags; ?>)</dt>
+		<dd><?php echo __('Stories generated from all projects');?></dd>
 	</dl>
 </div> <!-- /btn -->
 <div class="btn-bottom"></div>
@@ -28,7 +40,7 @@
 <div class="btn">
 	<dl>
 		<dt><?php echo __('Tags');?> (<?php echo $tags; ?>)</dt>
-		<dd><?php echo __('Total tags generated from the stream');?></dd>
+		<dd><?php echo __('Tags generated from all streams');?></dd>
 	</dl>
 </div> <!-- /btn -->
 <div class="btn-bottom"></div>
@@ -40,7 +52,19 @@
 <div class="btn">
 	<dl>
 		<dt><?php echo __('Links');?> (<?php echo $links; ?>)</dt>
-		<dd><?php echo __('Total links generated from the stream');?></dd>
+		<dd><?php echo __('Links generated from all stream');?></dd>
+	</dl>
+</div> <!-- /btn -->
+<div class="btn-bottom"></div>
+</div> <!-- /btn-box -->
+
+<!-- Button -->
+<div class="btn-box">
+<div class="btn-top"></div>
+<div class="btn">
+	<dl>
+		<dt><?php echo __('Links');?> (<?php echo $locations; ?>)</dt>
+		<dd><?php echo __('Locations generated from all stream');?></dd>
 	</dl>
 </div> <!-- /btn -->
 <div class="btn-bottom"></div>

@@ -21,7 +21,7 @@ function getCharts(){
 		return ret;
 	};
 
-	var jsonurl = "<?php echo URL::base().'charts/';?>";
+	var jsonurl = "<?php echo URL::base().'charts/index/'.$project->id;?>";
 
 
 	var plot = $.jqplot('charts', jsonurl,{
