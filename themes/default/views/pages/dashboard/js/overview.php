@@ -33,7 +33,7 @@ function getCharts(){
 			xaxis:{
 				tickOptions:{formatString:'%b %#d, %y'},
 				min:'<?php echo $first_date; ?>',
-				tickInterval:'1 month',
+				tickInterval:'1 week',
 				renderer:$.jqplot.DateAxisRenderer
 			}
 		},
