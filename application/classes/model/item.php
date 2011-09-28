@@ -74,33 +74,6 @@ class Model_Item extends ORM
 
 			$item = parent::save();
 
-			$links = Links::extract($item->item_content);
-			foreach ($links as $orig_link)
-			{
-				$full_link = Links::full($orig_link);
-				if ( $orig_link == $full_link OR 
-					! $full_link )
-				{
-					$full_link = $orig_link;
-				}
-
-				$link = ORM::factory('link')
-					->where('link_full', '=', $full_link)
-					->find();
-
-				if ( ! $link->loaded() )
-				{
-					$link->link = $orig_link;
-					$link->link_full = $full_link;
-					$link->save();
-				}
-
-				if ( ! $item->has('links', $link))
-				{
-					$item->add('links', $link);
-				}
-			}
-
 			// Sweeper Plugin Hook -- post_save new item
 			Event::run('sweeper.item.post_save_new', $item);
 		}
