@@ -86,3 +86,15 @@ Sweeper is broken down into projects, stories and items. The application has a f
     mysql -u '[username]' -p '[password]' '[database]' < install/sql/sweeper.sql
 
 * ####Finally, to access Sweeper, the default username and password are sweeperadmin/password
+
+## Credits
+#### Contributors
+* David Kobia
+* Heather Ford
+* Chris Blow
+* Ed Bice
+* Anas Qtiesh
+
+#### Organizations
+* [Ushahidi](http://www.ushahidi.com)
+* [Meedan](http://news.meedan.net/index.php?page=static&action=about)
