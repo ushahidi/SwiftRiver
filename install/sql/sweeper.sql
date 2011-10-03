@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `attachments` (
   `attachment_mime` varchar(50) DEFAULT NULL,
   `attachment_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `attachments_stories` (
   `attachment_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `story_id` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `discussions` (
   `discussion_deleted` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idx_discussion_date_add` (`discussion_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `feeds` (
   PRIMARY KEY (`id`),
   KEY `idx_service` (`service`),
   KEY `idx_feed_date_add` (`feed_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Feeds generate items.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Feeds generate items.';
 
 
 
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `feed_options` (
   `password` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `idx_key` (`key`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   KEY `idx_item_author` (`item_author`),
   KEY `idx_item_date_pub` (`item_date_pub`),
   KEY `idx_item_date_add` (`item_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
 
 
 
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `items` (
 CREATE TABLE IF NOT EXISTS `items_links` (
   `item_id` bigint(20) NOT NULL DEFAULT '0',
   `link_id` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `items_links` (
 CREATE TABLE IF NOT EXISTS `items_locations` (
   `item_id` bigint(20) NOT NULL DEFAULT '0',
   `location_id` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS `items_locations` (
 CREATE TABLE IF NOT EXISTS `items_stories` (
   `item_id` bigint(20) NOT NULL DEFAULT '0',
   `story_id` int(11) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `items_stories` (
 CREATE TABLE IF NOT EXISTS `items_tags` (
   `item_id` bigint(20) NOT NULL DEFAULT '0',
   `tag_id` bigint(20) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `links` (
   KEY `idx_link` (`link`),
   KEY `idx_link_full` (`link_full`),
   KEY `idx_link_date_add` (`link_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `locations` (
   PRIMARY KEY (`id`),
   KEY `idx_location_name` (`location_name`),
   KEY `idx_location_point` (`location_point`(25))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `plugin_enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_plugin_path` (`plugin_path`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
   `permissions` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS `roles_users` (
   PRIMARY KEY (`user_id`,`role_id`),
   KEY `fk_role_id` (`role_id`),
   CONSTRAINT `roles_users_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `roles_users` WRITE;
 /*!40000 ALTER TABLE `roles_users` DISABLE KEYS */;
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_key` (`key`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
@@ -322,7 +322,7 @@ CREATE TABLE IF NOT EXISTS `sources` (
   PRIMARY KEY (`id`),
   KEY `idx_service` (`service`),
   KEY `idx_source_date_add` (`source_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Sources are individual People, Organizations or Websites tha';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Sources are individual People, Organizations or Websites tha';
 
 
 
@@ -343,7 +343,7 @@ CREATE TABLE IF NOT EXISTS `stories` (
   `story_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `idx_story_date_add` (`story_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Stories belong to a specific project and contain multiple items ';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Stories belong to a specific project and contain multiple items ';
 
 
 
@@ -362,7 +362,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   KEY `idx_tag_type` (`tag_type`),
   KEY `idx_tag_source` (`tag_source`),
   KEY `idx_tag_date_add` (`tag_date_add`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -380,7 +380,7 @@ CREATE TABLE IF NOT EXISTS `user_tokens` (
   UNIQUE KEY `uniq_token` (`token`),
   KEY `fk_user_id` (`user_id`),
   CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -398,7 +398,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_username` (`username`),
   UNIQUE KEY `uniq_email` (`email`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
@@ -419,7 +419,7 @@ CREATE TABLE IF NOT EXISTS `user_identity` (
   `provider` varchar(255) NOT NULL,
   `identity` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 # Dump of table projects
@@ -433,4 +433,4 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `project_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `project_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Projects can contain multiple stories within them';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Projects can contain multiple stories within them';
