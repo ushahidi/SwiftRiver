@@ -1,10 +1,3 @@
-<p></p>
-<div class="innertabs">
-	<ul>
-		<li><a href="<?php echo URL::site('/project/')."/".$project->id."/stories"; ?>"><span><?php echo __('Stories'); ?></span></a></li>
-		<li class="selected"><a href="<?php echo URL::site('/project/')."/".$project->id."/stories/edit"; ?>"><span><?php echo __('Create New Story'); ?> [+]</span></a></li>
-	</ul>
-</div>
 <?php
 if (isset($errors))
 {
@@ -29,7 +22,7 @@ if (isset($errors))
 			<?php echo Form::textarea("story_summary", $post['story_summary'], array("cols" => 70, "rows" => 10,"class" => "input-text")); ?>
 		</p>
 
-		<p><input type="submit" value="<?php echo __('Save Story');?>" class="input-submit" /></p>
+		<p><input type="submit" value="<?php echo __('Save Story');?>" class="input-submit" /> <?php echo __('or');?> <a href="<?php echo URL::site('/project/')."/".$project->id."/stories"; ?>"><?php echo __('Cancel');?></a></p>
 
 	</fieldset>
 

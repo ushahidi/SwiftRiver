@@ -1,4 +1,6 @@
-<?php echo $menu; ?>
+<p class="box">
+	<a href="<?php echo URL::site('/project/')."/".$project->id."/builder/main/new";?>" class="btn-create"><span><?php echo __('Create a New Feed'); ?></span></a>
+</p>
 <?php
 if (isset($errors))
 {

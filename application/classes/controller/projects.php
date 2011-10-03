@@ -24,8 +24,6 @@ class Controller_Projects extends Controller_Sweeper {
 		parent::before();
 		
 		$this->template->header->page_title = __('Projects');
-		$this->template->header->tab_menu = View::factory('pages/projects/menu');
-		$this->template->header->tab_menu->active = "";
 	}
 	
 	/**
@@ -71,10 +69,10 @@ class Controller_Projects extends Controller_Sweeper {
 	public function action_edit()
 	{
 		$id = $this->request->param('id');
+		$this->template->header->page_title = __('Create a new Project');
 		$this->template->content = View::factory('pages/projects/edit')
 			->bind('post', $post)
 			->bind('errors', $errors);
-		$this->template->header->tab_menu->active = 'edit';
 		
 		// save the data
 		if ($_POST)
@@ -101,7 +99,11 @@ class Controller_Projects extends Controller_Sweeper {
 			if (is_numeric($id))
 			{
 				$project = ORM::factory('project', $id);
-				$post = $project->as_array();
+				if ($project->loaded())
+				{
+					$post = $project->as_array();
+					$this->template->header->page_title = __('Edit').' '.$post['project_title'];
+				}
 			}
 		}	
 	}

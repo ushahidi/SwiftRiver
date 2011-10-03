@@ -31,7 +31,13 @@
 				</form>
 
 				<!-- Create a new project -->
-				<p id="btn-create" class="box"><a href="<?php echo URL::site('/projects/edit');?>"><span><?php echo __('Create a new Project');?></span></a></p>
+				<?php
+				if ($active == "dashboard")
+				{
+					?>
+					<p id="btn-create" class="box"><a href="<?php echo URL::site('/projects/edit');?>"><span><?php echo __('Create a new Project');?></span></a></p>
+					<?php
+				}?>
 
 			</div> <!-- /padding -->
 

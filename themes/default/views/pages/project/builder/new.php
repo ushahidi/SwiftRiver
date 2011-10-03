@@ -1,5 +1,3 @@
-<?php echo $menu; ?>
-
 <fieldset>
 	<legend><?php echo __('Select Feed Service Provider');?></legend>
 	<?php
@@ -20,4 +18,5 @@
 		</p>
 		<?php
 	}?>
+	<p><br /><br /><br /><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/"; ?>"><?php echo __('Cancel');?></a></p>
 </fieldset>

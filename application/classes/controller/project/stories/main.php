@@ -72,6 +72,7 @@ class Controller_Project_Stories_Main extends Controller_Project_Main {
 	public function action_edit()
 	{
 		$id = $this->request->param('story_id');
+		$this->template->header->page_title = __('Create a new Story');
 		$this->template->content = View::factory('pages/project/stories/edit')
 			->bind('post', $post)
 			->bind('errors', $errors)
@@ -105,7 +106,11 @@ class Controller_Project_Stories_Main extends Controller_Project_Main {
 				$story = ORM::factory('story')
 					->where('project_id', '=', $this->project->id)
 					->find($id);
-				$post = $story->as_array();
+				if ($story->loaded())
+				{
+					$post = $story->as_array();
+					$this->template->header->page_title = __('Edit').' '.$post['story_title'];
+				}				
 			}
 		}	
 	}	

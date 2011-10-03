@@ -22,7 +22,7 @@ if (isset($errors))
 			<?php echo Form::textarea("project_description", $post['project_description'], array("cols" => 70, "rows" => 10,"class" => "input-text")); ?>
 		</p>
 
-		<p><input type="submit" value="<?php echo __('Save Project');?>" class="input-submit" /></p>
+		<p><input type="submit" value="<?php echo __('Save Project');?>" class="input-submit" /> <?php echo __('or');?> <a href="<?php echo URL::site().'projects'; ?>"><?php echo __('Cancel');?></a></p>
 
 	</fieldset>
 

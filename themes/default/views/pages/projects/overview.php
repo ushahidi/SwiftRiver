@@ -1,3 +1,7 @@
+<p class="box">
+	<a href="<?php echo URL::site('/projects/edit');?>" class="btn-create"><span><?php echo __('Create a new Project');?></span></a>
+</p>
+
 <table width="100%">
 	<tr>
 		<th>Project</th>

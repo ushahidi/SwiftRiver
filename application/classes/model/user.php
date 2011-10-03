@@ -45,9 +45,33 @@ class Model_User extends Model_Auth_User
 	public function rules()
 	{
 		$parent = parent::rules();
-		// fixes the min_length username value
-		$parent['username'][1] = array('min_length', array(':value', 1));
+		$parent['username'][] = array('min_length', array(':value', 3));
+		$parent['name'] = array(
+			array('not_empty'),
+			array('min_length', array(':value', 3)),
+			array('max_length', array(':value', 150))
+		);
 		return $parent;
+	}
+
+	/**
+	 * Given a string, this function will try to find an unused username by appending a number.
+	 * Ex. username2, username3, username4 ...
+	 *
+	 * @param string $base
+	 */
+	function generate_username($base = '') 
+	{
+		$base = $this->transcribe($base);
+		$username = $base;
+		$i = 2;
+		// check for existent username
+		while( $this->username_exist($username) ) 
+		{
+			$username = $base.$i;
+			$i++;
+		}
+		return $username;
 	}
 	
 	/**

@@ -1,10 +1,6 @@
-<p></p>
-<div class="innertabs">
-	<ul>
-		<li class="selected"><a href="<?php echo URL::site('/project/')."/".$project->id."/stories"; ?>"><span><?php echo __('Stories'); ?></span></a></li>
-		<li><a href="<?php echo URL::site('/project/')."/".$project->id."/stories/main/edit"; ?>"><span><?php echo __('Create New Story'); ?> [+]</span></a></li>
-	</ul>
-</div>
+<p class="box">
+	<a href="<?php echo URL::site('/project/')."/".$project->id."/stories/main/edit"; ?>" class="btn-create"><span><?php echo __('Create a New Story'); ?></span></a>
+</p>
 
 <table width="100%">
 	<tr>

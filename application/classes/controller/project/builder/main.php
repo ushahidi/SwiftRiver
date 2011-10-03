@@ -24,9 +24,6 @@ class Controller_Project_Builder_Main extends Controller_Project_Main {
 		parent::before();
 		
 		$this->template->header->tab_menu->active = 'builder';
-		$this->menu = View::factory('pages/project/builder/menu');
-		$this->menu->active = '';
-		$this->menu->project = $this->project;
 		$this->services = Plugins::services();
 	}
 	
@@ -41,16 +38,12 @@ class Controller_Project_Builder_Main extends Controller_Project_Main {
 			->bind('services', $this->services)
 			->bind('feeds', $result)
 			->bind('paging', $pagination)
-			->bind('menu', $this->menu)
 			->bind('default_sort', $sort)
 			->bind('total', $total)
 			->bind('project', $this->project)
 			->bind('msgs', $msgs);
 
 		$this->template->header->js = View::factory('common/js/utility');
-
-		$this->menu->active = 'main';
-
 
 		$msgs = array();
 		// Delete Action
@@ -107,9 +100,6 @@ class Controller_Project_Builder_Main extends Controller_Project_Main {
 	{
 		$this->template->content = View::factory('pages/project/builder/new')
 			->bind('project', $this->project)
-			->bind('menu', $this->menu)
 			->bind('services', $this->services);
-
-		$this->menu->active = 'new';
 	}
 }
