@@ -61,7 +61,7 @@ echo Form::hidden('id', '', array('id' => 'id'));
 					}
 				}
 				?></ul></td>
-				<td><?php echo $items; ?></td>
+				<td><h4><a href="<?php echo URL::site('/project/')."/".$project->id."/stream?s=".$feed->service; ?>"><?php echo $items; ?></a></h4></td>
 				<td><a href="<?php echo URL::site('/project/')."/".$project->id."/builder/".$feed->service."/index/".$feed->id; ?>"><img src="<?php echo URL::base();?>themes/default/media/img/ico-edit.gif" class="ico" alt="Edit" /></a>  <a href="javascript:quickAction('d','<?php echo __('Delete'); ?>',<?php echo $feed->id; ?>)"><img src="<?php echo URL::base();?>themes/default/media/img/ico-delete.gif" class="ico" alt="Delete" /></a></td>
 			</tr>
 		<?php
