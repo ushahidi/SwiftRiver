@@ -3,7 +3,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Projects</a> (2)</dt>
+		<dt><a href="#">Projects</a> (<?php echo $projects; ?>)</dt>
 		<dd><?php echo __('Projects I started') ;?></dd>
 	</dl>
 </div> <!-- /btn -->
@@ -15,7 +15,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><a href="#">Stories</a> (35)</dt>
+		<dt><a href="#">Stories</a> (<?php echo $stories; ?>)</dt>
 		<dd><?php echo __('Stories I created') ;?></dd>
 	</dl>
 </div> <!-- /btn -->

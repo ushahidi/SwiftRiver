@@ -411,7 +411,7 @@ VALUES
 UNLOCK TABLES;
 
 
-# Dump of table projects
+# Dump of table user_identity
 # ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_identity` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -427,6 +427,7 @@ CREATE TABLE IF NOT EXISTS `user_identity` (
 
 CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL default '0',  
   `project_title` varchar(255) DEFAULT NULL,
   `project_description` text,
   `project_enabled` tinyint(4) NOT NULL DEFAULT '1',

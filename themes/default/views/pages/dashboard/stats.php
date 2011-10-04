@@ -27,7 +27,7 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><?php echo __('Stories');?> (<?php echo $tags; ?>)</dt>
+		<dt><?php echo __('Stories');?> (<?php echo $stories; ?>)</dt>
 		<dd><?php echo __('Stories generated from all projects');?></dd>
 	</dl>
 </div> <!-- /btn -->

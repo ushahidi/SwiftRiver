@@ -56,6 +56,14 @@ class Model_Project extends ORM
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
+			// Save the original creator of this project
+			// Logged In User
+			$user = Auth::instance()->get_user();
+			if ($user)
+			{
+				$this->user_id = $user->id;
+			}
+
 			// Save the date the feed was first added
 			$this->project_date_add = date("Y-m-d H:i:s", time());
 		}

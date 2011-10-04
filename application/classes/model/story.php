@@ -66,6 +66,14 @@ class Model_Story extends ORM
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
+			// Save the original creator of this story
+			// Logged In User
+			$user = Auth::instance()->get_user();
+			if ($user)
+			{
+				$this->user_id = $user->id;
+			}
+
 			// Save the date the story was first added
 			$this->story_date_add = date("Y-m-d H:i:s", time());
 		}

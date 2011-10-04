@@ -38,7 +38,17 @@ class Controller_Profile extends Controller_Sweeper {
 	public function action_index($page = NULL)
 	{
 		$this->template->content = View::factory('pages/profile/overview')
-			->bind('user', $this->user);
+			->bind('user', $this->user)
+			->bind('stories', $stories)
+			->bind('projects', $projects);
+			
+		$stories = ORM::factory('story')
+			->where('user_id', '=', $this->user->id)
+			->count_all();
+
+		$projects = ORM::factory('project')
+			->where('user_id', '=', $this->user->id)
+			->count_all();
 	}
 	
 	/**

@@ -66,7 +66,7 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 			else
 			{
 				//validation failed, get errors
-				$errors = $post->errors('projects');
+				$errors = $post->errors('settings');
 			}
 		}
 		else
