@@ -37,7 +37,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			->bind('current', $current)
 			->bind('items', $result)
 			->bind('filter_tags', $tags)
-			->bind('filter_locations', $locations)
+			->bind('filter_places', $places)
 			->bind('filter_service', $service)
 			->bind('filter_author', $author)
 			->bind('querystring', $querystring)
@@ -62,7 +62,7 @@ class Controller_Project_Stream extends Controller_Project_Main {
 
 		// Get Query parameters
 		$tags = isset($_GET['t']) ? $_GET['t'] : array();
-		$locations = isset($_GET['l']) ? $_GET['l'] : array();
+		$places = isset($_GET['p']) ? $_GET['p'] : array();
 		$service = isset($_GET['s']) ? $_GET['s'] : '';
 		$author = isset($_GET['a']) ? $_GET['a'] : '';
 		
@@ -78,15 +78,15 @@ class Controller_Project_Stream extends Controller_Project_Main {
 			
 			$query->where('tags.tag', 'IN', $tags);
 		}
-		// Do we have locations to filter by?
-		if ( is_array($locations) AND count($locations) )
+		// Do we have places to filter by?
+		if ( is_array($places) AND count($places) )
 		{
-			$query->join('items_locations', 'INNER')
-				->on('items_locations.item_id', '=', 'items.id');
-			$query ->join('locations', 'INNER')
-				->on('items_locations.location_id', '=', 'locations.id');
+			$query->join('items_places', 'INNER')
+				->on('items_places.item_id', '=', 'items.id');
+			$query ->join('places', 'INNER')
+				->on('items_places.place_id', '=', 'places.id');
 			
-			$query->where('locations.location_name', 'IN', $locations);
+			$query->where('places.place_name', 'IN', $places);
 		}
 		// Do we have a service to filter by?
 		if ( $service )
@@ -144,13 +144,13 @@ class Controller_Project_Stream extends Controller_Project_Main {
 					->bind('previous', $previous)
 					->bind('tags', $tags)
 					->bind('links', $links)
-					->bind('locations', $locations)
+					->bind('places', $places)
 					->bind('discussions', $discussions)
 					->bind('source', $source);
 
 				$tags = $item->tags->find_all();
 				$links = $item->links->find_all();
-				$locations = $item->locations->find_all();
+				$places = $item->places->find_all();
 				$discussions = $item->discussions->find_all();
 				$source = $item->source;
 

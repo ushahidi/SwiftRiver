@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Items/Locations (Pivot)
+ * Model for Items/Places (Pivot)
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,15 +13,15 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Item_Location extends ORM
+class Model_Item_Place extends ORM
 {
 	/**
-	 * Item_Location is a pivot for items and locations
+	 * Item_Place is a pivot for items and places
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
 		'item' => array(),
-		'location' => array()
+		'place' => array()
 		);
 }

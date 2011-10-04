@@ -69,7 +69,7 @@ class Controller_Project_Main extends Controller_Sweeper {
 			->bind('items', $items)
 			->bind('tags', $tags)
 			->bind('links', $links)
-			->bind('locations', $locations);
+			->bind('places', $places);
 
 		$this->template->header->js = View::factory('pages/project/js/overview')
 			->bind('first_date', $first_date)
@@ -101,13 +101,13 @@ class Controller_Project_Main extends Controller_Sweeper {
 			->where('items.project_id', '=', $this->project->id)
 			->execute()->count();
 
-		// Locations
-		$locations = DB::select(array(DB::expr('DISTINCT locations.id'), 'id'))
-			->from('locations')
-			->join('items_locations', 'INNER')
-				->on('items_locations.location_id', '=', 'locations.id')
+		// places
+		$places = DB::select(array(DB::expr('DISTINCT places.id'), 'id'))
+			->from('places')
+			->join('items_places', 'INNER')
+				->on('items_places.place_id', '=', 'places.id')
 			->join('items', 'INNER')
-				->on('items_locations.item_id', '=', 'items.id')
+				->on('items_places.item_id', '=', 'items.id')
 			->where('items.project_id', '=', $this->project->id)
 			->execute()->count();		
 	}

@@ -46,22 +46,22 @@ class placemaker_init {
 				$places = $placemaker->get_all($content);
 				foreach($places as $place)
 				{
-					$location = ORM::factory('location')
-						->where(DB::expr('X(location_point)'), '=', $place->longitude)
-						->where(DB::expr('Y(location_point)'), '=', $place->latitude)
+					$place = ORM::factory('place')
+						->where(DB::expr('X(place_point)'), '=', $place->longitude)
+						->where(DB::expr('Y(place_point)'), '=', $place->latitude)
 						->find();
 
-					if ( ! $location->loaded() )
+					if ( ! $place->loaded() )
 					{
-						$location->location_name = $place->name;
-						$location->location_point = DB::expr("GeomFromText('POINT($place->longitude $place->latitude)')");
-						$location->location_source = 'placemaker';
-						$location->save();
+						$place->place_name = $place->name;
+						$place->place_point = DB::expr("GeomFromText('POINT($place->longitude $place->latitude)')");
+						$place->place_source = 'placemaker';
+						$place->save();
 					}
 
-					if ( ! $item->has('locations', $location))
+					if ( ! $item->has('places', $place))
 					{
-						$item->add('locations', $location);
+						$item->add('places', $place);
 					}
 				}
 			}

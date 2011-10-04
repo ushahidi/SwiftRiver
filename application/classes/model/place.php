@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Locations
+ * Model for Places
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,30 +13,30 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Location extends ORM
+class Model_Place extends ORM
 {
 	/**
-	 * A location has many items
+	 * A place has many items
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
 		'items' => array(
 			'model' => 'item',
-			'through' => 'items_locations'
+			'through' => 'items_places'
 			)
 		);
 
 	/**
-	 * Overload saving to perform additional functions on the location
+	 * Overload saving to perform additional functions on the place
 	 */
 	public function save(Validation $validation = NULL)
 	{
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the date the location was first added
-			$this->location_date_add = date("Y-m-d H:i:s", time());
+			// Save the date the place was first added
+			$this->place_date_add = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();

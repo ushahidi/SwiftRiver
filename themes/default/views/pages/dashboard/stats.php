@@ -63,8 +63,8 @@
 <div class="btn-top"></div>
 <div class="btn">
 	<dl>
-		<dt><?php echo __('Locations');?> (<?php echo $locations; ?>)</dt>
-		<dd><?php echo __('Locations generated from all stream');?></dd>
+		<dt><?php echo __('Places');?> (<?php echo $places; ?>)</dt>
+		<dd><?php echo __('Places generated from all stream');?></dd>
 	</dl>
 </div> <!-- /btn -->
 <div class="btn-bottom"></div>

@@ -42,7 +42,7 @@ class Controller_Dashboard extends Controller_Sweeper {
 			->bind('items', $items)
 			->bind('tags', $tags)
 			->bind('links', $links)
-			->bind('locations', $locations);
+			->bind('places', $places);
 
 		$this->template->content->charts = View::factory('pages/dashboard/charts');
 
@@ -51,7 +51,7 @@ class Controller_Dashboard extends Controller_Sweeper {
 		$items = ORM::factory('item')->count_all();
 		$tags = ORM::factory('tag')->count_all();
 		$links = ORM::factory('link')->count_all();
-		$locations = ORM::factory('location')->count_all();
+		$places = ORM::factory('place')->count_all();
 	}
 
 	/**

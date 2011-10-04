@@ -76,12 +76,12 @@
 			<div>
 				<p>xxx</p>
 			</div>
-			<h3><a href="#"><?php echo __('Locations'); ?></a></h3>
+			<h3><a href="#"><?php echo __('Places'); ?></a></h3>
 			<div>
 				<p><?php
-					foreach ($locations as $location)
+					foreach ($places as $place)
 					{
-						?><code class="green"><?php echo $location->location_name; ?>[<a href="#">x</a>]</code> <?php
+						?><code class="green"><?php echo $place->place_name; ?>[<a href="#">x</a>]</code> <?php
 					}
 				?></p>
 			</div>

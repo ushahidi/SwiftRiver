@@ -172,7 +172,7 @@ STREAM STUFF
 #content .item-content, #content-dialog .item-content {font-size:110%; display:block; margin-top:5px; font: 14px/20px "Monaco", "Courier New", "Courier", monospace;}
 #content .item-extras {margin-left:10px;}
 #content .item-tags {font-size:80%; display: block; }
-#content .item-locations {font-size:80%; display: block; margin-top:8px;}
+#content .item-places {font-size:80%; display: block; margin-top:8px;}
 #content .item-meta {font-size:80%; display: block; margin-top:8px;}
 #content .item-functions a {color:#666; font-size:90%;}
 code { background: rgba(0,0,0,.1); padding: 2px 3px; color: #fff; text-shadow: 0 1px 1px rgba(255,255,255,.75); -webkit-border-radius: 3px; -moz-border-radius: 3px; }

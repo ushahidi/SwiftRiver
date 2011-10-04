@@ -16,7 +16,7 @@
 class Model_Item extends ORM
 {
 	/**
-	 * An item has and belongs to many links, locations, stories and tags
+	 * An item has and belongs to many links, places, stories and tags
 	 * An has many attachments and discussions
 	 *
 	 * @var array Relationhips
@@ -24,9 +24,9 @@ class Model_Item extends ORM
 	protected $_has_many = array(
 		'attachments' => array(),
 		'discussions' => array(),
-		'locations' => array(
-			'model' => 'location',
-			'through' => 'items_locations'
+		'places' => array(
+			'model' => 'place',
+			'through' => 'items_places'
 			),
 		'stories' => array(
 			'model' => 'story',

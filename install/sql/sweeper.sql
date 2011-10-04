@@ -1,7 +1,7 @@
 # Sweeper Database Installer
 # http://www.ushahidi.com
 #
-# version: 001
+# version: 002
 # ------------------------------------------------------------
 
 
@@ -148,12 +148,12 @@ CREATE TABLE IF NOT EXISTS `items_links` (
 
 
 
-# Dump of table items_locations
+# Dump of table items_places
 # ------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `items_locations` (
+CREATE TABLE IF NOT EXISTS `items_places` (
   `item_id` bigint(20) NOT NULL DEFAULT '0',
-  `location_id` bigint(20) NOT NULL DEFAULT '0'
+  `place_id` bigint(20) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -195,19 +195,19 @@ CREATE TABLE IF NOT EXISTS `links` (
 
 
 
-# Dump of table locations
+# Dump of table places
 # ------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `locations` (
+CREATE TABLE IF NOT EXISTS `places` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `location_name` varchar(255) DEFAULT NULL COMMENT 'Full location name',
-  `location_point` point DEFAULT NULL COMMENT 'POINT geometry for this location',
- # `location_polygon` polygon DEFAULT NULL COMMENT 'POLYGON geometry for this location',
-  `location_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `location_source` varchar(100) DEFAULT NULL,
+  `place_name` varchar(255) DEFAULT NULL COMMENT 'Full place name',
+  `place_point` point DEFAULT NULL COMMENT 'POINT geometry for this place',
+ # `place_polygon` polygon DEFAULT NULL COMMENT 'POLYGON geometry for this place',
+  `place_date_add` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `place_source` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_location_name` (`location_name`),
-  KEY `idx_location_point` (`location_point`(25))
+  KEY `idx_place_name` (`place_name`),
+  KEY `idx_place_point` (`place_point`(25))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

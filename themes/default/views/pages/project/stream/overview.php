@@ -1,5 +1,5 @@
 <?php
-if (count($filter_tags) OR count($filter_locations) OR $filter_service OR $filter_author)
+if (count($filter_tags) OR count($filter_places) OR $filter_service OR $filter_author)
 {
 	?>
 	<fieldset>
@@ -19,19 +19,19 @@ if (count($filter_tags) OR count($filter_locations) OR $filter_service OR $filte
 				'?'.http_build_query($new_querystring, NULL, '&');
 			?><span class="label label-03"><a href="<?php echo $new_url; ?>">X</a>&nbsp;&nbsp;<?php echo $tag; ?></span>&nbsp;&nbsp;<?php
 		}
-		foreach ($filter_locations as $location)
+		foreach ($filter_places as $place)
 		{
 			$new_querystring = $querystring;
-			foreach ($new_querystring['l'] as $key => $value)
+			foreach ($new_querystring['p'] as $key => $value)
 			{
-				if($value == $location)
+				if($value == $place)
 				{
-					unset($new_querystring['l'][$key]);
+					unset($new_querystring['p'][$key]);
 				}
 			}
 			$new_url = URL::site().Request::current()->uri().
 				'?'.http_build_query($new_querystring, NULL, '&');
-			?><span class="label label-02"><a href="<?php echo $new_url; ?>">X</a>&nbsp;&nbsp;<?php echo $location; ?></span>&nbsp;&nbsp;<?php
+			?><span class="label label-02"><a href="<?php echo $new_url; ?>">X</a>&nbsp;&nbsp;<?php echo $place; ?></span>&nbsp;&nbsp;<?php
 		}
 		if ($filter_service)
 		{
@@ -84,8 +84,8 @@ if (count($filter_tags) OR count($filter_locations) OR $filter_service OR $filte
 		$item_date_pub = date('H:i M d, Y', strtotime($item->item_date_pub));
 		$tag_count = $item->tags->count_all();
 		$tags = $item->tags->find_all();
-		$location_count = $item->locations->count_all();
-		$locations = $item->locations->find_all();
+		$place_count = $item->places->count_all();
+		$places = $item->places->find_all();
 		$discussions = $item->discussions->count_all();
 		?>	
 		<tr <?php if ($i == 0) { echo 'class="bg"'; } ?>>
@@ -108,12 +108,12 @@ if (count($filter_tags) OR count($filter_locations) OR $filter_service OR $filte
 						}
 						?></span><?php
 					}
-					if ($location_count)
+					if ($place_count)
 					{
-						?><span class="item-locations"><?php echo __('Locations');?>: <?php
-						foreach ($locations as $location)
+						?><span class="item-places"><?php echo __('Places');?>: <?php
+						foreach ($places as $place)
 						{
-							?><code class="green"><a href="<?php echo $current.'&l[]='.urlencode($location->location_name); ?>"><?php echo $location->location_name; ?></a></code>&nbsp;<?php
+							?><code class="green"><a href="<?php echo $current.'&p[]='.urlencode($place->place_name); ?>"><?php echo $place->place_name; ?></a></code>&nbsp;<?php
 						}
 						?></span><?php
 					}					
