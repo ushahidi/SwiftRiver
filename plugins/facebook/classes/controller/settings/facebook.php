@@ -15,6 +15,9 @@
  */
 class Controller_Settings_Facebook extends Controller_Settings_Main {
 	
+	/**
+	 * Facebook Connection
+	 */	
 	private $facebook = NULL;
 
 	/**
