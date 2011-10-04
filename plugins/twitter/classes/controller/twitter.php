@@ -14,7 +14,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_Twitter extends Controller {
-	
+
+	private $session;
+
 	/**
 	 * @return	void
 	 */
@@ -22,6 +24,9 @@ class Controller_Twitter extends Controller {
 	{
 		// Execute parent::before first
 		parent::before();
+
+		// Get the session instance
+		$this->session = Session::instance();
 	}
 	
 	/**
@@ -31,9 +36,7 @@ class Controller_Twitter extends Controller {
 	 */
 	public function action_auth()
 	{
-		include_once Kohana::find_file('vendor', 'epioauth/EpiCurl');
-		include_once Kohana::find_file('vendor', 'epioauth/EpiOAuth');
-		include_once Kohana::find_file('vendor', 'epioauth/EpiTwitter');
+		include_once Kohana::find_file('vendor', 'twitteroauth/twitteroauth');
 
 		if ( isset($_GET['oauth_token']) 
 			AND ! empty($_GET['oauth_token']) )
@@ -49,29 +52,50 @@ class Controller_Twitter extends Controller {
 
 			if (isset($settings['consumer_key']) AND isset($settings['consumer_secret']))
 			{
-				$twitter = new EpiTwitter($settings['consumer_key'], 
-					$settings['consumer_secret']);
-				$twitter->setToken($_GET['oauth_token']);
-				$token = $twitter->getAccessToken();
-				$twitter->setToken($token->oauth_token, $token->oauth_token_secret);
-
-				if ( isset($token->oauth_token) AND isset($token->oauth_token_secret) )
+				try
 				{
-					// Save Twitter Oauth Token
-					$setting = ORM::factory('twitter_setting')
-						->where('key', '=', 'oauth_token')
-						->find();
-					$setting->key = 'oauth_token';
-					$setting->value = $token->oauth_token;
-					$setting->save();
+					$connection = new TwitterOAuth(
+							$settings['consumer_key'],
+							$settings['consumer_secret'],
+							$this->session->get('oauth_token'),
+							$this->session->get('oauth_token_secret')
+						);
 
-					// Save Twitter Oauth Token Secret
-					$setting = ORM::factory('twitter_setting')
-						->where('key', '=', 'oauth_token_secret')
-						->find();
-					$setting->key = 'oauth_token_secret';
-					$setting->value = $token->oauth_token_secret;
-					$setting->save();
+					$token = $connection->getAccessToken();
+					
+					// Get the details of user making this request
+					$user = $connection->get('account/verify_credentials');
+
+					if ( isset($token['oauth_token']) AND isset($token['oauth_token_secret']) )
+					{
+						// Save Twitter Oauth Token
+						$setting = ORM::factory('twitter_setting')
+							->where('key', '=', 'oauth_token')
+							->find();
+						$setting->key = 'oauth_token';
+						$setting->value = $token['oauth_token'];
+						$setting->save();
+
+						// Save Twitter Oauth Token Secret
+						$setting = ORM::factory('twitter_setting')
+							->where('key', '=', 'oauth_token_secret')
+							->find();
+						$setting->key = 'oauth_token_secret';
+						$setting->value = $token['oauth_token_secret'];
+						$setting->save();
+
+						// Save Twitter Screen Name
+						$setting = ORM::factory('twitter_setting')
+							->where('key', '=', 'screen_name')
+							->find();
+						$setting->key = 'screen_name';
+						$setting->value = $user->screen_name;
+						$setting->save();
+					}			
+				}
+				catch (Exception $e)
+				{
+					Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
 				}
 			}
 		}

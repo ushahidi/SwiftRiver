@@ -14,7 +14,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_Settings_Twitter extends Controller_Settings_Main {
-	
+
 	/**
 	 * @return	void
 	 */
@@ -99,9 +99,7 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 	 */
 	private function _get_auth_url()
 	{
-		include_once Kohana::find_file('vendor', 'epioauth/EpiCurl');
-		include_once Kohana::find_file('vendor', 'epioauth/EpiOAuth');
-		include_once Kohana::find_file('vendor', 'epioauth/EpiTwitter');
+		include_once Kohana::find_file('vendor', 'twitteroauth/twitteroauth');
 
 		// Get Twitter Settings
 		$settings = array();
@@ -113,9 +111,15 @@ class Controller_Settings_Twitter extends Controller_Settings_Main {
 
 		if (isset($settings['consumer_key']) AND isset($settings['consumer_secret']))
 		{
-			$auth = new EpiTwitter($settings['consumer_key'], 
+			$connection = new TwitterOAuth($settings['consumer_key'],
 				$settings['consumer_secret']);
-			return $auth->getAuthorizationUrl();
+			
+			$request_token = $connection->getRequestToken();
+
+			$this->session->set('oauth_token', $request_token['oauth_token']);
+			$this->session->set('oauth_token_secret', $request_token['oauth_token_secret']);
+
+			return $connection->getAuthorizeURL($request_token);
 		}
 		else
 		{

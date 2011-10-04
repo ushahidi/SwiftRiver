@@ -11,11 +11,28 @@ if (isset($errors))
 
 	<fieldset>
 		<legend><?php echo __('Facebook Connection Settings');?></legend>
-		
-		<p class="msg info"><a href="http://developers.facebook.com/setup/" target="_blank"><?php echo __('Register your Sweeper application on Facebook'); ?></a></p>
-		
-		<p class="msg info"><?php echo __('Set the site URL to'); ?> <?php echo HTML::anchor(URL::base('http', TRUE)); ?></p>
-		<p class="msg info"><?php echo __('Enter the Facebook-provided Application ID/API key and Application secret here'); ?></p>
+
+		<?php if ( ! $post['application_id'] AND ! $post['application_secret']): ;?>
+			<p class="msg info"><a href="http://developers.facebook.com/setup/" target="_blank"><?php echo __('Register a Sweeper application on Facebook'); ?></a></p>
+			<p class="msg info"><?php echo __('Set the site URL to'); ?> <?php echo HTML::anchor(URL::base('http', TRUE)); ?></p>
+			<p class="msg info"><?php echo __('Enter the Facebook-provided Application ID/API key and Application secret here'); ?></p>
+		<?php else : ; 
+			if ($authorized)
+			{
+				?>
+				<p class="msg done">
+					<?php
+					echo __('Authorized on Facebook').' -- ';
+					echo (isset($access_name)) ? ' '.$access_name : '.';
+					?>
+				</p>
+				<?php
+			}
+			?>
+			<p class="box">
+				<a href="<?php echo $auth_url; ?>" class="btn-info"><span><?php echo __('Authorize on Facebook'); ?></span></a>
+			</p>
+		<?php endif; ?>
 
 		<p></p>
 		

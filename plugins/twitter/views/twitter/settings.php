@@ -13,7 +13,7 @@ if (isset($errors))
 		<legend><?php echo __('Twitter Connection Settings');?></legend>
 		
 		<?php if ( ! $post['consumer_key'] AND ! $post['consumer_secret']): ;?>
-			<p class="msg info"><a href="http://twitter.com/oauth_clients/" target="_blank"><?php echo __('Register your Sweeper application on Twitter'); ?></a></p>
+			<p class="msg info"><a href="http://twitter.com/oauth_clients/" target="_blank"><?php echo __('Register a Sweeper application on Twitter'); ?></a></p>
 			
 			<p class="msg info"><?php echo __('Set the callback URL to'); ?> <?php echo HTML::anchor(URL::base('http', TRUE)."twitter/auth"); ?></p>
 			<p class="msg info"><?php echo __('Set the application Default Access type to "Read-only"'); ?></p>
@@ -22,7 +22,12 @@ if (isset($errors))
 			if ($authorized)
 			{
 				?>
-				<p class="msg done"><?php echo __('Twitter Authorization is Complete!'); ?></p>
+				<p class="msg done">
+					<?php
+					echo __('Authorized on Twitter').' -- ';
+					echo (isset($post['screen_name'])) ? ' '.$post['screen_name'] : '.';
+					?>
+				</p>
 				<?php
 			}
 			?>

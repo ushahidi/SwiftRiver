@@ -15,14 +15,36 @@
  */
 class Controller_Settings_Facebook extends Controller_Settings_Main {
 	
+	private $facebook = NULL;
+
 	/**
 	 * @return	void
 	 */
 	public function before()
 	{
+		include_once Kohana::find_file('vendor', 'facebook/facebook');
+
 		// Execute parent::before first
 		parent::before();
 		$this->template->header->tab_menu->active = 'facebook';
+
+		// Get Facebook Settings
+		$settings = array();
+		$params = ORM::factory('facebook_setting')->find_all();
+		foreach ($params as $param)
+		{
+			$settings[$param->key] = $param->value;
+		}
+
+		if (isset($settings['application_id']) AND isset($settings['application_secret']))
+		{
+			// Create our Application instance (replace this with your appId and secret).
+			$this->facebook = new Facebook(array(
+				'appId' => $settings['application_id'],
+				'secret' => $settings['application_secret'],
+				'cookie' => true,
+			));
+		}
 	}
 	
 	/**
@@ -35,7 +57,10 @@ class Controller_Settings_Facebook extends Controller_Settings_Main {
 	{
 		$this->template->content = View::factory('facebook/settings')
 			->bind('post', $post)
-			->bind('errors', $errors);
+			->bind('errors', $errors)
+			->bind('auth_url', $auth_url)
+			->bind('authorized', $authorized)
+			->bind('access_name', $access_name);
 		
 		// save the data
 		if ($_POST)
@@ -76,7 +101,62 @@ class Controller_Settings_Facebook extends Controller_Settings_Main {
 			}
 		}
 
-		echo $this->_get_auth_url();
+		$authorized = FALSE;
+
+		if ($this->facebook)
+		{
+			// Get the Access Token from Facebook
+			$access_token = $this->facebook->getAccessToken();
+
+			// Now use the access token to test the connection
+			$this->facebook->setAccessToken($access_token);
+
+			// Get the user associated with the token
+			$user = $this->facebook->getUser();
+			if ($user)
+			{
+				// Get User ID
+				try
+				{
+					$user_profile = $this->facebook->api('/me');
+
+					// Save Facebook Auth Settings
+					$settings = ORM::factory('facebook_setting')
+						->where('key', '=', 'access_token')
+						->find();
+					$settings->key = 'access_token';
+					$settings->value = $access_token;
+					$settings->save();
+
+					// Save Facebook User ID
+					$settings = ORM::factory('facebook_setting')
+						->where('key', '=', 'access_user_id')
+						->find();
+					$settings->key = 'access_user_id';
+					$settings->value = $user_profile["id"];
+					$settings->save();
+
+					// Save Facebook User Name
+					$settings = ORM::factory('facebook_setting')
+						->where('key', '=', 'access_name')
+						->find();
+					$settings->key = 'access_name';
+					$settings->value = $access_name = $user_profile["name"];
+					$settings->save();
+					
+					$authorized = TRUE;
+				}
+				// Failed - Reauthorize
+				catch (Exception $e)
+				{
+					$user = null;
+
+					$authorized = FALSE;
+				}
+			}
+		}
+
+		$auth_url = $this->_get_auth_url();
 	}
 
 
@@ -87,28 +167,12 @@ class Controller_Settings_Facebook extends Controller_Settings_Main {
 	 * @return  string $auth_url
 	 */
 	private function _get_auth_url()
-	{
-		include_once Kohana::find_file('vendor', 'facebook/facebook');
-
-		// Get Facebook Settings
-		$settings = array();
-		$params = ORM::factory('facebook_setting')->find_all();
-		foreach ($params as $param)
+	{	
+		if ($this->facebook)
 		{
-			$settings[$param->key] = $param->value;
-		}
-
-		if (isset($settings['application_id']) AND isset($settings['application_secret']))
-		{
-			// Create our Application instance (replace this with your appId and secret).
-			$facebook = new Facebook(array(
-				'appId' => $settings['application_id'],
-				'secret' => $settings['application_secret'],
-			));
-
-			return $facebook->getLoginUrl(
+			return $this->facebook->getLoginUrl(
 				array(
-					'redirect_uri' => URL::site(NULL, 'http').'facebook/auth'
+					'scope' => 'offline_access,read_stream,user_likes,user_location,user_website,read_friendlists'
 				)
 			);
 		}

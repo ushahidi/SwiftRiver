@@ -45,5 +45,26 @@ class Facebook {
 			->find();
 		$setting->key = 'application_secret';
 		$setting->save();
+
+		// Access token for offline access to Facebook
+		$setting = ORM::factory('facebook_setting')
+			->where('key', '=', 'access_token')
+			->find();
+		$setting->key = 'access_token';
+		$setting->save();
+
+		// Unique ID on Facebook of the user Authorizing the Facebook Application
+		$setting = ORM::factory('facebook_setting')
+			->where('key', '=', 'access_user_id')
+			->find();
+		$setting->key = 'access_user_id';
+		$setting->save();
+
+		// Name of the user Authorizing the Facebook Application
+		$setting = ORM::factory('facebook_setting')
+			->where('key', '=', 'access_name')
+			->find();
+		$setting->key = 'access_name';
+		$setting->save();
 	}
 }
