@@ -14,7 +14,7 @@ Sweeper is broken down into projects, stories and items. The application has a f
 * Sources
 * Tags
 * Dates
-* Locations and Places
+* Places
 * Links
 * Attachments (jpg,gif,png,pdf,mov etc..)
 
