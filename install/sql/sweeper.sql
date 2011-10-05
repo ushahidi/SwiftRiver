@@ -1,7 +1,7 @@
 # Sweeper Database Installer
 # http://www.ushahidi.com
 #
-# version: 002
+# version: 003
 # ------------------------------------------------------------
 
 
@@ -435,3 +435,14 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `project_date_modified` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Projects can contain multiple stories within them';
+
+
+# Dump of table project_permissions
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `project_permissions` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

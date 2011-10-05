@@ -72,8 +72,13 @@ class Controller_Projects extends Controller_Sweeper {
 		$this->template->header->page_title = __('Create a new Project');
 		$this->template->content = View::factory('pages/projects/edit')
 			->bind('post', $post)
-			->bind('errors', $errors);
+			->bind('errors', $errors)
+			->bind('editors', $editors)
+			->bind('allowed_array', $allowed_array);
 		
+		// Array of permitted users
+		$allowed_array = $this->_get_allowed($id);
+
 		// save the data
 		if ($_POST)
 		{
@@ -84,12 +89,29 @@ class Controller_Projects extends Controller_Sweeper {
 				$project->project_title = $post['project_title'];
 				$project->project_description = $post['project_description'];
 				$project->save();
+
+				// Permissions
+				// First Reset everything
+				DB::delete('project_permissions')
+					->where('project_id', '=', $project->id)
+					->execute();
+				
+				// Now Recreate permissions
+				foreach ( array_filter($post['user_id']) as $user_id )
+				{
+					$permission = ORM::factory('project_permission');
+					$permission->project_id = $project->id;
+					$permission->user_id = (int) $user_id;
+					$permission->save();
+				}
 				
 				// Always redirect after a successful POST to prevent refresh warnings
 				$this->request->redirect('projects');
 			}
 			else
 			{
+				$allowed_array = $post['user_id'];
+
 				//validation failed, get errors
 				$errors = $post->errors('projects');
 			}
@@ -105,6 +127,38 @@ class Controller_Projects extends Controller_Sweeper {
 					$this->template->header->page_title = __('Edit').' '.$post['project_title'];
 				}
 			}
-		}	
+		}
+
+		// Get all the editors for permission settings
+		$editors = ORM::factory('role')
+			->where('name', '=', 'editor')
+			->find()
+				->users
+				->find_all();
+	}
+
+	/**
+	 * Array of Editors Allowed to view this project
+	 * @param int $id of project
+	 * @return array $allowed
+	 */
+	private function _get_allowed($id = NULL)
+	{
+		$allowed = array();
+		if ($id)
+		{
+			// Creator of this project is automatically allowed
+			//$allowed_array[] = $project->user_id;
+
+			$permissions = ORM::factory('project_permission')
+				->where('project_id', '=', $id)
+				->find_all();
+			foreach ($permissions as $permission)
+			{
+				$allowed[] = $permission->user_id;
+			}
+		}
+
+		return $allowed;
 	}
 }

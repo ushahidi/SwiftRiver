@@ -55,9 +55,11 @@
 						?>
 					</ul>
 				</li>
-				<li <?php if ($active == "plugins") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/plugins/index');?>"><?php echo __('Plugins');?></a></li>
-				<li <?php if ($active == "users") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/users');?>"><?php echo __('Users');?></a></li>
-				<li <?php if ($active == "settings") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/settings');?>"><?php echo __('Settings');?></a></li>
+				<?php if ($admin): ?>
+					<li <?php if ($active == "plugins") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/plugins/index');?>"><?php echo __('Plugins');?></a></li>
+					<li <?php if ($active == "users") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/users');?>"><?php echo __('Users');?></a></li>
+					<li <?php if ($active == "settings") echo "id=\"submenu-active\"";?>><a href="<?php echo URL::site('/settings');?>"><?php echo __('Settings');?></a></li>
+				<?php endif ?>
 			</ul>
 
 		</div> <!-- /menu -->

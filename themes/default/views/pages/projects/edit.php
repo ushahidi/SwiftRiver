@@ -7,7 +7,10 @@ if (isset($errors))
 	}
 }
 ?>
-<?php echo Form::open(); ?>
+<?php
+echo Form::open(); 
+echo Form::hidden('user_id[]', '');
+?>
 
 	<fieldset>
 		<legend><?php echo __('Project Details');?></legend>
@@ -21,6 +24,21 @@ if (isset($errors))
 			<label for="project_description" class="req"><?php echo __('Project Description');?>:</label><br />
 			<?php echo Form::textarea("project_description", $post['project_description'], array("cols" => 70, "rows" => 10,"class" => "input-text")); ?>
 		</p>
+
+		<p></p>
+
+		<fieldset>
+			<legend><?php echo __('Editor Access');?></legend>
+			<?php
+			foreach ($editors as $editor)
+			{
+				echo Form::checkbox('user_id[]', $editor->id, in_array($editor->id, $allowed_array));
+				?>
+				<label for="user_id" class="req"><?php echo $editor->name ;?></label><br />
+				<?php
+			}
+			?>
+		</fieldset>
 
 		<p><input type="submit" value="<?php echo __('Save Project');?>" class="input-submit" /> <?php echo __('or');?> <a href="<?php echo URL::site().'projects'; ?>"><?php echo __('Cancel');?></a></p>
 

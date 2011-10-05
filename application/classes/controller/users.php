@@ -16,6 +16,11 @@
 class Controller_Users extends Controller_Sweeper {
 	
 	/**
+	 * Access privileges for this controller and its children
+	 */
+	public $auth_required = 'admin';
+
+	/**
 	 * @return	void
 	 */
 	public function before()
@@ -191,17 +196,5 @@ class Controller_Users extends Controller_Sweeper {
 		{
 			$all_roles[$role->id] = strtoupper($role->name);
 		}
-	}
-
-
-
-	/**
-	 * User Permissions
-	 *
-	 * @return  void
-	 */
-	public function action_permissions()
-	{
-	
 	}	
 }

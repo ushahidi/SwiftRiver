@@ -53,6 +53,13 @@ class Controller_Project_Main extends Controller_Sweeper {
 		$this->template->header->tab_menu = View::factory('pages/project/menu');
 		$this->template->header->tab_menu->project_id = $this->project->id;
 		$this->template->header->tab_menu->active = '';
+
+		// Access Privileges
+		if ( ! $this->_allowed() AND
+			Request::current()->uri() != 'project/'.$id.'/main/noaccess')
+		{
+			Request::current()->redirect('project/'.$id.'/main/noaccess');
+		}
 	}
 	
 	/**
@@ -113,6 +120,50 @@ class Controller_Project_Main extends Controller_Sweeper {
 	}
 
 	/**
+	 * User doesn't have access
+	 *
+	 * @return	void
+	 */
+	public function action_noaccess()
+	{
+		$this->template->header->tab_menu = '';
+		$this->template->content = View::factory('pages/project/noaccess')
+			->bind('project', $this->project);
+	}
+
+	/**
+	 * Is User Allowed to access this project?
+	 *
+	 * @return bool
+	 */
+	private function _allowed()
+	{
+		// Admins have full access
+		if ( Auth::instance()->logged_in('admin') === TRUE )
+		{
+			return TRUE;
+		}
+
+		// Creator of the project has automatica permissions
+		if ($this->user->id == $this->project->user_id)
+		{
+			return TRUE;
+		}
+
+		// Check permissions table
+		$permissions = $this->project->project_permissions
+			->where('project_id', '=', $this->project->id)
+			->where('user_id', '=', $this->user->id)
+			->find();
+		if ($permissions->loaded())
+		{
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Get the Chart Start Date
 	 *
 	 * @return	string date
@@ -131,5 +182,5 @@ class Controller_Project_Main extends Controller_Sweeper {
 		{
 			return date('M j, Y', strtotime ( '-1 day' , strtotime(date('M j, Y')) ));
 		}
-	}	
+	}
 }

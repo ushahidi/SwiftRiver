@@ -16,6 +16,11 @@
 class Controller_Settings_Main extends Controller_Sweeper {
 	
 	/**
+	 * Access privileges for this controller and its children
+	 */
+	public $auth_required = 'admin';
+	
+	/**
 	 * @return	void
 	 */
 	public function before()

@@ -53,6 +53,17 @@ class Controller_Sweeper extends Controller_Template {
 	{
 		Request::current()->redirect('login');
 	}
+
+	/**
+	 * Called from before() when the user does not have the correct rights to access a controller/action.
+	 *
+	 * Override this in your own Controller / Controller_App if you need to handle
+	 * responses differently.
+	 */
+	public function access_required()
+	{
+		Request::current()->redirect('dashboard');
+	}	
 	
 	/**
 	 * The before() method is called before main controller action.
@@ -85,11 +96,12 @@ class Controller_Sweeper extends Controller_Template {
 		{
 			Auth::instance()->auto_login();
 		}
-		
+
 		if 
 		(
 			// auth is required AND user role given in auth_required is NOT logged in
-			( Auth::instance()->logged_in($this->auth_required) === FALSE )
+			$this->auth_required !== FALSE AND 
+				Auth::instance()->logged_in($this->auth_required) === FALSE
 		)
 		{
 			if (Auth::instance()->logged_in())
@@ -113,6 +125,7 @@ class Controller_Sweeper extends Controller_Template {
 		$this->template->header->active_project = "None Selected"; // Current Project
 		$this->template->header->js = ""; // Dynamic Javascript
 		$this->template->header->menu = View::factory('template/menu');
+		$this->template->header->menu->admin = Auth::instance()->logged_in('admin'); // Is Admin or Editor?
 		$this->template->header->menu->active = Request::$current->controller();;	// Active Controller
 		$this->template->header->menu->projects = ORM::factory('project')
 			->order_by('project_title', 'ASC')

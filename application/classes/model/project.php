@@ -24,7 +24,8 @@ class Model_Project extends ORM
 		'items' => array(),
 		'feeds' => array(),
 		'stories' => array(),
-		'projects' => array()
+		'projects' => array(),
+		'project_permissions' => array()
 		);
 	
 	/**
