@@ -8,7 +8,7 @@
 	<!-- Footer -->
 	<div id="footer" class="box">
 
-		<p class="f-left">Sweeper v0.5.1</p>
+		<p class="f-left">Sweeper v0.5.2</p>
 
 		<p class="f-right">Powered by <a href="http://www.ushahidi.com/">Ushahidi</a></p>
 
