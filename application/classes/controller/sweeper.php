@@ -42,7 +42,9 @@ class Controller_Sweeper extends Controller_Template {
 	/**
 	 * Logged In User
 	 */
-	public $user = NULL;	
+	public $user = NULL;
+
+	protected $session;
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -95,6 +97,10 @@ class Controller_Sweeper extends Controller_Template {
 		if( ! Auth::instance()->logged_in() AND $supports_auto_login)
 		{
 			Auth::instance()->auto_login();
+			if ( ! Auth::instance()->get_user() )
+			{
+				$this->login_required();
+			}
 		}
 
 		if 
