@@ -252,6 +252,50 @@ VALUES
 UNLOCK TABLES;
 
 
+# Dump of table users
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(127) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `username` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL,
+  `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_login` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_username` (`username`),
+  UNIQUE KEY `uniq_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+
+INSERT INTO `users` (`id`, `email`, `username`, `name`, `password`, `logins`, `last_login`)
+VALUES
+  (1,'mysweeper@mysweeper.com','sweeperadmin','Administrator','c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542',0,NULL);
+
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table user_tokens
+# ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `user_tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `user_agent` varchar(40) NOT NULL,
+  `token` varchar(32) NOT NULL,
+  `created` int(10) unsigned NOT NULL,
+  `expires` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_token` (`token`),
+  KEY `fk_user_id` (`user_id`),
+  CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 # Dump of table roles_users
 # ------------------------------------------------------------
 
@@ -363,52 +407,6 @@ CREATE TABLE IF NOT EXISTS `tags` (
   KEY `idx_tag_source` (`tag_source`),
   KEY `idx_tag_date_add` (`tag_date_add`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table user_tokens
-# ------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `user_agent` varchar(40) NOT NULL,
-  `token` varchar(32) NOT NULL,
-  `created` int(10) unsigned NOT NULL,
-  `expires` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_token` (`token`),
-  KEY `fk_user_id` (`user_id`),
-  CONSTRAINT `user_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table users
-# ------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(127) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `username` varchar(255) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL,
-  `logins` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_login` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_username` (`username`),
-  UNIQUE KEY `uniq_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-
-INSERT INTO `users` (`id`, `email`, `username`, `name`, `password`, `logins`, `last_login`)
-VALUES
-	(1,'mysweeper@mysweeper.com','sweeperadmin','Administrator','c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542',0,NULL);
-
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 # Dump of table user_identity
