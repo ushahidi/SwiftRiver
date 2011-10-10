@@ -99,6 +99,8 @@ Kohana::modules(array(
 	));
 
 
+Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
+
 /**
  * Sweeper Project Builder Route
  */
