@@ -16,15 +16,19 @@
 class Model_Link extends ORM
 {
 	/**
-	 * A link has and belongs to many items
+	 * A link has and belongs to many droplets and accounts
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'items' => array(
-			'model' => 'item',
-			'through' => 'items_links'
-			)
+		'droplets' => array(
+			'model' => 'droplet',
+			'through' => 'droplets_links'
+			),
+		'accounts' => array(
+			'model' => 'account',
+			'through' => 'droplets_links'
+			),				
 		);
 
 	/**
@@ -32,7 +36,7 @@ class Model_Link extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time items only
+		// Do this for first time links only
 		if ($this->loaded() === FALSE)
 		{
 			// Save the date the link was first added

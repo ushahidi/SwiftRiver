@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Items/Tags (Pivot)
+ * Model for Account_Plugins
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,15 +13,14 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Item_Tag extends ORM
+class Model_Account_Plugin extends ORM
 {
 	/**
-	 * Item_Tag is a pivot for items and tags
+	 * An account_plugin belongs to a account
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
-		'item' => array(),
-		'tag' => array()
+		'account' => array()
 		);
 }

@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Feeds
+ * Model for Channel_Filters
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,44 +13,44 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Feed extends ORM
+class Model_Channel_Filter extends ORM
 {
 	/**
-	 * A feed has many items
+	 * A channel_filter has many droplets and channel_filter_options
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'items' => array(),
-		'feed_options' => array()
+		'droplets' => array(),
+		'channel_filter_options' => array()
 		);
 
 	/**
-	 * A feed belongs to a project and a user
+	 * A channel_filter belongs to an account and a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
-		'project' => array(),
+		'account' => array(),
 		'user' => array()
 		);
 
 	
 	/**
-	 * Overload saving to perform additional functions on the feed
+	 * Overload saving to perform additional functions on the channel_filter
 	 */
 	public function save(Validation $validation = NULL)
 	{
 
-		// Do this for first time items only
+		// Do this for first time channel_filters only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the date the feed was first added
-			$this->feed_date_add = date("Y-m-d H:i:s", time());
+			// Save the date the channel_filter was first added
+			$this->filter_date_add = date("Y-m-d H:i:s", time());
 		}
 		else
 		{
-			$this->feed_date_modified = date("Y-m-d H:i:s", time());
+			$this->filter_date_modified = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();

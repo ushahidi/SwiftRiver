@@ -24,11 +24,10 @@ class Model_User extends Model_Auth_User
 		// auth
 		'roles' => array('through' => 'roles_users'),
 		'user_tokens' => array(),
-		'items' => array(),
-		'sources' => array(),
-		'projects' => array(),
-		'feeds' => array(),
-		'stories' => array(),
+		'buckets' => array(),
+		'channel_filters' => array(),
+		'accounts' => array(),
+		'discussions' => array(),
 		// for RiverID and other OpenID identities
 		'user_identity' => array(),
 		);
