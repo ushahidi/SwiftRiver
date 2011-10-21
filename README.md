@@ -1,8 +1,7 @@
-![Diagram](https://github.com/ushahidi/Sweeper/raw/master/modules/sweeper_guide/media/guide/img/sweeper_logo.png)
+![Diagram](https://github.com/ushahidi/Swiftriver_v2_/raw/master/modules/sweeper_guide/media/guide/img/sweeper_logo.png)
 
-# Sweeper
-Sweeper is part of the SwiftRiver initiative at Ushahidi. SwiftRiver's aim is to democratize access to the tools used to make sense of realtime data. This app is designed to allow users to sweep through data feeds quickly, using conditional filters and views.
-
+# Swiftriver
+Swiftriver is a tool that helps people discover, analyze and present information from disparate sources in meaningful ways - timelines, maps, graphs & charts etc
 ## Support
 
 * [Google Groups](http://groups.google.com/group/swiftriver?hl=en)
@@ -18,7 +17,7 @@ Sweeper is broken down into projects, stories and items. The application has a f
 * Links
 * Attachments (jpg,gif,png,pdf,mov etc..)
 
-![Diagram](https://github.com/ushahidi/Sweeper/raw/master/modules/sweeper_guide/media/guide/img/sweeper_overview.png)
+![Diagram](https://github.com/ushahidi/Swiftriver_v2_/raw/master/modules/sweeper_guide/media/guide/img/sweeper_overview.png)
 
 ## Requirements
 
@@ -37,7 +36,7 @@ Sweeper is broken down into projects, stories and items. The application has a f
 * ####Download and extract Sweeper
     To unzip/extract the archive on a typical Unix/Linux command line:
     
-        tar -xvf Sweeper-xxxx.tar.gz
+        tar -xvf Swiftriver_v2_-xxxx.tar.gz
     
     or in the case of a zip file:
 
