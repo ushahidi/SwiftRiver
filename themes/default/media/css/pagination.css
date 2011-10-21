@@ -1,0 +1,126 @@
+.pagination {
+	display: inline-block;
+	font-family: "Tahoma", Arial, sans-serif;
+	font-size: 10px;
+	line-height: 18px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+.pagination .dots {
+	bottom: -6px;
+	color: #606060;
+	position: relative;
+}
+
+.pagination a, .pagination .dots {
+	display: inline-block;
+	margin-right: 2px;
+	padding: 2px 8px;
+}
+
+div.pagination a:hover {
+	color: #303030;
+}
+
+div.pagination a:active {
+	color: #585858;
+}
+
+.pagination a.number {
+	border: 1px solid #ddd;	
+	
+	/* CURVED CORNERS */
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.pagination a.number:hover {
+	border-color: #d0d0d0;
+	
+	/* DROP SHADOWS */
+	-moz-box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+}
+
+.pagination a.number.current {
+	color: #fff;
+}
+
+.pagination a.number.current:hover {
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.pagination a.number.current:active {
+	/* INNER SHADOWS */
+	-moz-box-shadow: 0px 1px 1px rgba(255,255,255,0.3), inset 0px 1px 2px rgba(0,0,0,0.15);
+	-webkit-box-shadow: 0px 1px 1px rgba(255,255,255,0.3), inset 0px 1px 2px rgba(0,0,0,0.15);
+	box-shadow: 0px 1px 1px rgba(255,255,255,0.3), inset 0px 1px 2px rgba(0,0,0,0.15);
+}
+
+.pagination a.number.disable {
+	color:#999;
+	text-decoration: none;
+}
+
+/* BLUE PAGINATION STYLE */
+.pagination.blue, .pagination.blue a {
+	color: #0680BC;
+}
+
+.pagination.blue a.number.current {
+	background-color: #4fa3e0;
+	border-color: #4b9ec9 #2e7fb4 #206fa8;
+	text-shadow: 0px 1px 1px #206fa8;
+	
+	background: -moz-linear-gradient(top,
+		#b5dfef,
+		#7fc3df 5%,
+		#4fa3e0
+	);
+	background: -webkit-gradient(linear, left top, left bottom,
+		from(#b5dfef),
+		color-stop(0.05, #7fc3df),
+		to(#4fa3e0)
+	);
+	
+	filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#7fc3df', EndColorStr='#4fa3e0');
+}
+
+.pagination.blue a.number.current:hover {
+	border-color: #4092c0 #1f68a1 #175e97;
+	background-color: #3f91c0;
+
+	background: -moz-linear-gradient(top,
+		#aad9ec,
+		#72bad9 5%,
+		#3f91c0
+	);
+	background: -webkit-gradient(linear, left top, left bottom,
+		from(#aad9ec),
+		color-stop(0.05, #72bad9),
+		to(#3f91c0)
+	);
+	
+	filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#72bad9', EndColorStr='#3f91c0');
+}
+
+.pagination.blue a.number.current:active {
+	border-color: #206fa8 #2e7fb4 #4b9ec9;
+	text-shadow: 0px -1px 1px #1f68a1;
+	
+	background: -moz-linear-gradient(top,
+		#3f91c0,
+		#72bad9
+	);
+	background: -webkit-gradient(linear, left top, left bottom,
+		from(#3f91c0),
+		to(#72bad9)
+	);
+	
+	filter: progid:DXImageTransform.Microsoft.Gradient(StartColorStr='#3f91c0', EndColorStr='#aad9ec');
+}
