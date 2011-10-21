@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Sources
+ * Model for Identities
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,10 +13,10 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Source extends ORM
+class Model_Identity extends ORM
 {
 	/**
-	 * A source belongs to an account
+	 * An identity belongs to an account
 	 *
 	 * @var array Relationhips
 	 */
@@ -25,31 +25,41 @@ class Model_Source extends ORM
 		);
 
 	/**
-	 * A source has and belongs to many identities
+	 * An identity has and belongs to many sources
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'identities' => array(
-			'model' => 'identity',
+		'sources' => array(
+			'model' => 'sources',
 			'through' => 'identities_sources'
 			)
 		);
 
 	/**
-	 * Overload saving to perform additional functions on the source
+	 * An has many droplets
+	 *
+	 * @var array Relationhips
+	 */
+	protected $_has_many = array('droplets' => array());
+
+	/**
+	 * Overload saving to perform additional functions on the identity
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time sources only
+		// Swiftriver Plugin Hook
+		Event::run('swiftriver.identity.pre_save', $this);
+
+		// Do this for first time identities only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the date the source was first added
-			$this->source_date_add = date("Y-m-d H:i:s", time());
+			// Save the date the identity was first added
+			$this->identity_date_add = date("Y-m-d H:i:s", time());
 		}
 		else
 		{
-			$this->source_date_modified = date("Y-m-d H:i:s", time());
+			$this->identity_date_modified = date("Y-m-d H:i:s", time());
 		}		
 
 		return parent::save();

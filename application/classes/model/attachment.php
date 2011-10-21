@@ -16,32 +16,27 @@
 class Model_Attachment extends ORM
 {
 	/**
-	 * An attachment belongs to an item
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_belongs_to = array(
-		'item' => array()
-		);
-
-	/**
-	 * An attachment has and belongs to many stories
+	 * An attachment has and belongs to many droplets
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'stories' => array(
-			'model' => 'story',
-			'through' => 'attachments_stories'
-			)
-		);		
+		'droplets' => array(
+			'model' => 'droplet',
+			'through' => 'attachments_droplets'
+			),
+		'accounts' => array(
+			'model' => 'account',
+			'through' => 'attachments_droplets'
+			),				
+		);
 		
 	/**
 	 * Overload saving to perform additional functions on the attachment
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time items only
+		// Do this for first time attachments only
 		if ($this->loaded() === FALSE)
 		{
 			// Save the date the attachment was first added

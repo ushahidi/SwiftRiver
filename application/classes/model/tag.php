@@ -16,15 +16,19 @@
 class Model_Tag extends ORM
 {
 	/**
-	 * A tag has many items
+	 * A tag has and belongs to many droplets and accounts
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'items' => array(
-			'model' => 'item',
-			'through' => 'items_tags'
-			)
+		'droplets' => array(
+			'model' => 'droplets',
+			'through' => 'droplets_tags'
+			),
+		'accounts' => array(
+			'model' => 'account',
+			'through' => 'droplets_tags'
+			),
 		);
 
 	/**

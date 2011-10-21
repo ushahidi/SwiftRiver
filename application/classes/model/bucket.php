@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Places
+ * Model for Buckets
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,34 +13,40 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Place extends ORM
+class Model_Bucket extends ORM
 {
 	/**
-	 * A place has and belongs to many droplets and accounts
+	 * A bucket has and belongs to many droplets
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
 		'droplets' => array(
 			'model' => 'droplet',
-			'through' => 'droplets_places'
-			),
-		'accounts' => array(
-			'model' => 'account',
-			'through' => 'droplets_places'
-			),				
+			'through' => 'buckets_droplets'
+			)			
 		);
 
 	/**
-	 * Overload saving to perform additional functions on the place
+	 * A bucket belongs to an account and a user
+	 *
+	 * @var array Relationhips
+	 */
+	protected $_belongs_to = array(
+		'account' => array(),
+		'user' => array()
+		);		
+		
+	/**
+	 * Overload saving to perform additional functions on the bucket
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time places only
+		// Do this for first time buckets only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the date the place was first added
-			$this->place_date_add = date("Y-m-d H:i:s", time());
+			// Save the date the bucket was first added
+			$this->bucket_date_add = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();

@@ -53,9 +53,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `account_droplets`
+-- Table `accounts_droplets`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `account_droplets` (
+CREATE  TABLE IF NOT EXISTS `accounts_droplets` (
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplet_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 ,
   INDEX `account_id_idx` (`account_id` ASC) ,
@@ -84,7 +84,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `channel_filters` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `plugin_path` VARCHAR(100) NOT NULL ,
+  `channel` VARCHAR(100) NOT NULL ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `filter_name` VARCHAR(255) NULL DEFAULT NULL ,
@@ -175,6 +175,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `discussions` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,  
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `parent_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -208,6 +209,7 @@ CREATE  TABLE IF NOT EXISTS `droplets` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
   `identity_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)' ,
+  `channel` VARCHAR(100) NOT NULL ,  
   `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)' ,
   `droplet_orig_id` VARCHAR(255) NULL DEFAULT NULL ,
   `droplet_type` VARCHAR(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision' ,
@@ -292,7 +294,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `identities` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `channel_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `channel` VARCHAR(100) NOT NULL ,
   `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
   `identity_orig_id` VARCHAR(255) NULL DEFAULT NULL ,
   `identity_username` VARCHAR(255) NULL DEFAULT NULL ,

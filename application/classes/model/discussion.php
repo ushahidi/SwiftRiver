@@ -16,14 +16,12 @@
 class Model_Discussion extends ORM
 {
 	/**
-	 * A discussion belongs to a project, a story, an item and a user
+	 * A discussion belongs to an account and a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
-		'project' => array(),
-		'story' => array(),
-		'item' => array(),
+		'account' => array(),
 		'user' => array()
 		);
 
@@ -47,7 +45,7 @@ class Model_Discussion extends ORM
 	public function save(Validation $validation = NULL)
 	{
 
-		// Do this for first time items only
+		// Do this for first time discussions only
 		if ($this->loaded() === FALSE)
 		{
 			// Save the date the discussion was first added

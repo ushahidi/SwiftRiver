@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Projects
+ * Model for Accounts
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,30 +13,61 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Project extends ORM
+class Model_Account extends ORM
 {
 	/**
-	 * A project has many items, feeds, stories and projects
+	 * An account has many channel_filters, buckets, snapshots, sources
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'items' => array(),
-		'feeds' => array(),
-		'stories' => array(),
-		'projects' => array(),
-		'project_permissions' => array()
+		'channel_filters' => array(),
+		'buckets' => array(),
+		'snapshots' => array(),
+		'sources' => array()
 		);
+
+	/**
+	 * An account has and belongs to many droplets, links, places, tags, attachments and plugins
+	 *
+	 * @var array Relationships
+	 */
+	protected $_has_many = array(
+		'droplets' => array(
+			'model' => 'attachment',
+			'through' => 'accounts_droplets'
+			),
+		'attachments' => array(
+			'model' => 'attachment',
+			'through' => 'droplets_attachments'
+			),
+		'links' => array(
+			'model' => 'story',
+			'through' => 'droplets_links'
+			),
+		'tags' => array(
+			'model' => 'tag',
+			'through' => 'droplets_tags'
+			),
+		'places' => array(
+			'model' => 'link',
+			'through' => 'droplets_places'
+			),
+		'plugins' => array(
+			'model' => 'plugin',
+			'through' => 'accounts_plugins'
+			),					
+		);		
 	
 	/**
-	 * A project belongs to a user
+	 * An account belongs to a user
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array('user' => array());
 	
 	/**
-	 * Validation for projects
+	 * Validation for accounts
 	 * @param array $arr
 	 * @return array
 	 */
@@ -49,7 +80,7 @@ class Model_Project extends ORM
 	}
 
 	/**
-	 * Overload saving to perform additional functions on the project
+	 * Overload saving to perform additional functions on the account
 	 */
 	public function save(Validation $validation = NULL)
 	{
@@ -57,7 +88,7 @@ class Model_Project extends ORM
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the original creator of this project
+			// Save the original creator of this account
 			// Logged In User
 			$user = Auth::instance()->get_user();
 			if ($user)
@@ -66,11 +97,11 @@ class Model_Project extends ORM
 			}
 
 			// Save the date the feed was first added
-			$this->project_date_add = date("Y-m-d H:i:s", time());
+			$this->account_date_add = date("Y-m-d H:i:s", time());
 		}
 		else
 		{
-			$this->project_date_modified = date("Y-m-d H:i:s", time());
+			$this->account_date_modified = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();
