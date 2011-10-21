@@ -94,8 +94,7 @@ Kohana::modules(array(
 	'database'     => MODPATH.'database',   // Database access
 	'image'        => MODPATH.'image',      // Image manipulation
 	'pagination'   => MODPATH.'pagination', // Pagination
-	
-	'sweeper_core' => MODPATH.'sweeper_core',
+	'swiftriver'   => MODPATH.'swiftriver',
 	));
 
 

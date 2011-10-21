@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Charts extends Controller_Sweeper {
+class Controller_Charts extends Controller_Swiftriver {
 	
 	/**
 	 * @return	void

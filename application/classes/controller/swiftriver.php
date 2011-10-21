@@ -1,19 +1,19 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Sweeper Controller (Default)
+ * Swiftriver Base controller
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/gpl.html
- * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   Ushahidi - http://source.swiftly.org
+ * @author     Ushahidi Team <team@ushahidi.com> 
+ * @package    Ushahidi - http://source.swiftly.org
  * @subpackage Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Sweeper extends Controller_Template {
+class Controller_Swiftriver extends Controller_Template {
 	
 	/**
 	 * @var boolean Whether the template file should be rendered automatically.

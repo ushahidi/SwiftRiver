@@ -3,16 +3,16 @@
 /**
  * Unit test for Links helper
  *
- * @see 		Links
- * @package 	Sweeper
- * @category 	Tests
- * @author 		Ushahidi Team
- * @author 		Emmanuel Kala <emmanuel(at)ushahidi.com>
- * @copyright 	(c) 2008-2011 Ushahidi Inc
- * @license 	For license information, see LICENSE file
+ * @see         Links
+ * @package     Sweeper
+ * @category    Tests
+ * @author      Ushahidi Team
+ * @author      Emmanuel Kala <emmanuel(at)ushahidi.com>
+ * @copyright   (c) 2008-2011 Ushahidi Inc
+ * @license     For license information, see LICENSE file
  */
 
-class Sweeper_LinksTest extends Unittest_TestCase {
+class Swiftriver_LinksTest extends Unittest_TestCase {
 	
 	/**
 	 * Provides test data for test_extract
