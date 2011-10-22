@@ -17,7 +17,7 @@
 /**
  * Activate Enabled Plugins
  */
-Plugins::load();
+Swiftriver_Plugins::load();
 
 /**
  * Load Active Theme

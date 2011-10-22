@@ -92,4 +92,18 @@ class Model_Droplet extends ORM
 
 		return $droplet;
 	}
+	
+	/**
+	 * Checks if a droplet already exists based on its channel filter and origin id
+	 *
+	 * @param string $channel_filter_id ID of the channel
+	 * @param string $droplet_orig_id Origin ID of the droplet
+	 */
+	public static function is_duplicate_droplet($channel_filter_id, $droplet_orig_id)
+	{
+		return (bool) ORM::factory('droplet')
+						->where('channel_filter_id', '=', $channel_filter_id)
+						->and_where('droplet_orig_id', '=', $droplet_orig_id)
+						->count_all();
+	}
 }

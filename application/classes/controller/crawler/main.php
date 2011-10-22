@@ -27,7 +27,7 @@ class Controller_Crawler_Main extends Controller {
 	public function action_index()
 	{
 		// Get all the available services
-		$services = Plugins::services();
+		$services = Swiftriver_Plugins::services();
 		foreach ($services as $key => $value)
 		{
 			try
