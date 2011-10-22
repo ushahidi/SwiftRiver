@@ -211,7 +211,8 @@ CREATE  TABLE IF NOT EXISTS `droplets` (
   `identity_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)' ,
   `channel` VARCHAR(100) NOT NULL ,  
   `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)' ,
-  `droplet_orig_id` VARCHAR(255) NULL DEFAULT NULL ,
+  `droplet_orig_id` VARCHAR(255) NOT NULL ,
+  `droplet_hash` VARCHAR(64) NOT NULL ,
   `droplet_type` VARCHAR(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision' ,
   `droplet_title` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Title of the feed item if available' ,
   `droplet_content` TEXT NULL DEFAULT NULL COMMENT 'The content of the feed item (if available)' ,
@@ -219,14 +220,15 @@ CREATE  TABLE IF NOT EXISTS `droplets` (
   `droplet_locale` VARCHAR(30) NULL DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))' ,
   `droplet_date_pub` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Original publish date of the feed item' ,
   `droplet_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Date the feed item was added to this database' ,
-  UNIQUE INDEX (`droplet_orig_id` ASC) ,
+  `droplet_processed` TINYINT(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
+  INDEX `droplet_hash_idx` (`droplet_hash` ASC) ,
   INDEX `droplet_type_idx` (`droplet_type` ASC) ,
   INDEX `droplet_date_pub_idx` (`droplet_date_pub` ASC) ,
   INDEX `droplet_date_add_idx` (`droplet_date_add` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8, 
-COMMENT = 'Items are generated from feeds and are attached to a specifi' ;
+COMMENT = 'Droplets are generated from channel_filters' ;
 
 
 -- -----------------------------------------------------
