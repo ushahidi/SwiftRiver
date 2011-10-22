@@ -9,7 +9,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
  * @package    Ushahidi - http://source.swiftly.org
- * @subpackage Controllers
+ * @category Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */

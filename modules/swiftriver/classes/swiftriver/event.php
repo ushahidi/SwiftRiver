@@ -12,7 +12,7 @@
  * @license    http://kohanaphp.com/license.html
  * @link       http://docs.kohanaphp.com/general/events
  */
-class Event {
+class Swiftriver_Event {
 
 	// Event callbacks
 	protected static $_events = array();

@@ -12,7 +12,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Links {
+class Swiftriver_Links {
 
 	/**
 	 * Extract URL's from text

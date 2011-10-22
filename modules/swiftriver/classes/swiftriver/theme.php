@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-class Themes {
+class Swiftriver_Themes {
 	
 	public function render_js()
 	{

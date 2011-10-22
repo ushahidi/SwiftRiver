@@ -41,7 +41,7 @@ class Swiftriver_LinksTest extends Unittest_TestCase {
 	 */
 	public function test_extract($token, $text)
 	{
-		$urls = Links::extract($text);
+		$urls = Swiftriver_Links::extract($text);
 		$this->assertContains($token, $urls, sprintf('%s not found in the list of extracted URLs', $token));
 	}
 	
@@ -71,7 +71,7 @@ class Swiftriver_LinksTest extends Unittest_TestCase {
 	 */
 	public function test_full($full_url, $short_url)
 	{
-		$result = Links::full($short_url);
+		$result = Swiftriver_Links::full($short_url);
 		$this->assertSame($full_url, $result, 'Returned URL does not match expected result');
 	}
 }

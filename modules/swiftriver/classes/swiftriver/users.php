@@ -12,7 +12,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Users {
+class Swiftriver_Users {
 	
 	/**
 	 * Get either a Gravatar URL or complete image tag for a specified email address.
