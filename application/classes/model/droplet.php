@@ -9,7 +9,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
  * @package    Ushahidi - http://source.swiftly.org
- * @subpackage Models
+ * @category Models
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
@@ -97,13 +97,13 @@ class Model_Droplet extends ORM
 	 * Checks if a droplet already exists based on its channel filter and origin id
 	 *
 	 * @param string $channel_filter_id ID of the channel
-	 * @param string $droplet_orig_id Origin ID of the droplet
+	 * @param string $droplet_hash SHA2 Hash of the origin ID of the droplet
 	 */
-	public static function is_duplicate_droplet($channel_filter_id, $droplet_orig_id)
+	public static function is_duplicate_droplet($channel_filter_id, $droplet_hash)
 	{
 		return (bool) ORM::factory('droplet')
 						->where('channel_filter_id', '=', $channel_filter_id)
-						->and_where('droplet_orig_id', '=', $droplet_orig_id)
+						->and_where('droplet_hash', '=', $droplet_hash)
 						->count_all();
 	}
 }
