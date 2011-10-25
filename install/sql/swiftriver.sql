@@ -144,7 +144,7 @@ CREATE  TABLE IF NOT EXISTS `snapshot_options` (
   `value` VARCHAR(255) NOT NULL ,
   `password` TINYINT(4) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
-  INDEX `snapshot_id_idx` (`channel_filter_id` ASC) ,
+  INDEX `snapshot_id_idx` (`snapshot_id` ASC) ,
   INDEX `key_idx` (`key` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8, 
