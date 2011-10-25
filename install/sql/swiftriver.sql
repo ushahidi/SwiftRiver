@@ -128,9 +128,27 @@ CREATE  TABLE IF NOT EXISTS `snapshots` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `snapshot_name` VARCHAR(255) NOT NULL ,
+  `snapshot_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `snapshot_options`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `snapshot_options` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `snapshot_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `key` VARCHAR(255) NOT NULL ,
+  `value` VARCHAR(255) NOT NULL ,
+  `password` TINYINT(4) NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`id`) ,
+  INDEX `snapshot_id_idx` (`channel_filter_id` ASC) ,
+  INDEX `key_idx` (`key` ASC) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8, 
+COMMENT = 'Snapshot options' ;
 
 
 -- -----------------------------------------------------
