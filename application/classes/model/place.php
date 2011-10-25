@@ -44,5 +44,20 @@ class Model_Place extends ORM
 		}
 
 		return parent::save();
-	}			
+	}
+	
+	/**
+	 * Retrives a place using its latitude and longitude values
+	 *
+	 * @param string $latitude
+	 * @param string $longitude
+	 * @return Model_Place
+	 */
+	public static function get_place_by_lat_lon($latitude, $longitude)
+	{
+		return ORM::factory('place')
+				->where(DB::expr('X(place_point)'), '=', $longitude)
+				->where(DB::expr('Y(place_point)'), '=', $latitude)
+				->find();
+	}
 }

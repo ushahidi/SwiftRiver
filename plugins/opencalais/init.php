@@ -9,7 +9,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
  * @package	   Ushahidi - http://source.swiftly.org
- * @subpackage Inits
+ * @category   Plugins
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
@@ -19,7 +19,7 @@ class open_calais_init {
 	public function __construct()
 	{	
 		// Hook into routing
-		Event::add('sweeper.item.post_save_new', array($this, 'filter'));
+		Swiftriver_Event::add('swiftriver.droplet.extract_entities', array($this, 'filter'));
 	}
 
 	public function filter()
@@ -32,7 +32,7 @@ class open_calais_init {
 			->where('key', '=', 'service_key')
 			->find();
 
-		if ( $settings->loaded() AND $settings->value )
+		if ($settings->loaded() AND $settings->value )
 		{
 			try
 			{
@@ -40,13 +40,13 @@ class open_calais_init {
 				$oc = new OpenCalais($settings->value);
 				$oc->setPrettyTypes = FALSE;
 
-				// Get Item Content
-				$item = Event::$data;
-				$content = $item->item_content;
+				// Get the droplet content
+				$droplet = Event::$data;
+				$content = $droplet['droplet_content'];
 
 				// Retrieve Entities from Open Calais
 				$entities = $oc->getEntities($content);
-				//print_r($entities);
+				
 				if (is_array($entities))
 				{
 					foreach ($entities as $type => $values)
@@ -59,27 +59,14 @@ class open_calais_init {
 							{
 								if ($entity)
 								{
-									$tag = ORM::factory('tag')
-										->where('tag', '=', $entity)
-										->find();
-
-									if ( ! $tag->loaded() )
-									{
-										$tag->tag = $entity;
-										$tag->tag_type = $type;
-										$tag->tag_source = 'opencalais';
-										$tag->save();
-									}
-
-									if ( ! $item->has('tags', $tag))
-									{
-										$item->add('tags', $tag);
-									}
+									// Add the extracted entities to the list of tags
+									array_push($entity, $droplet['tags']);
 								}
 							}
 						}
 					}
 				}
+				
 			}
 			catch (Exception $e)
 			{

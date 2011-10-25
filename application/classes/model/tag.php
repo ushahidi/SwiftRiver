@@ -51,4 +51,34 @@ class Model_Tag extends ORM
 
 		return parent::save();
 	}
+	
+	/**
+	 * Checks if a given tag already exists
+	 *
+	 * @param string $tag_name Name of the tag
+	 * @param bool $save Optionally saves the tag if does not exist
+	 * @return mixed Model_Tag if the tag exists, FALSE otherwise
+	 */
+	public static function get_tag_by_name($tag_name, $save = FALSE)
+	{
+		$result = ORM::factory('tag')->where('tag', '=', $tag_name)->find();
+		if ($result->loaded())
+		{
+			return $result;
+		}
+		elseif ( ! $result->loaded() AND $save == TRUE)
+		{
+			// Save the tag
+			$orm_tag = new Model_Tag;
+			$orm_tag->tag  =$tag_name;
+			// $orm_tag->tag_source = '';
+			$orm_tag->tag_date_add = date('Y-m-d H:i:s', time());
+			
+			return $orm_tag->save();
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
 }

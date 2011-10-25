@@ -44,5 +44,42 @@ class Model_Link extends ORM
 		}
 
 		return parent::save();
-	}		
+	}
+	
+	/**
+	 * Retrives a Model_Link item from the DB and optionally creates the 
+	 * save if the retrieval is unsuccessful
+	 *
+	 * @param string $url URL to be looked up
+	 * @param bool $save Optionally save the URL if it's not found
+	 * @return mixed Model_Link if a record is found, FALSE otherwise
+	 */
+	public static function get_link_by_url($url, $save = FALSE)
+	{
+		$orm_link = ORM::factory('links')
+					->where('link', '=', $url)
+					->or_where('link_full', '=', $url)
+					->find();
+		
+		if ($orm_link->loaded())
+		{
+			return $orm_link;
+		}
+		elseif ( ! $orm_link->loaded() AND $save)
+		{
+			// Get the full URL
+			$full_link = Swiftriver_Links::full($url);
+			$orm_link->link = $url;
+			$orm_link->link_full = $full_link
+			$orm_link->domain = parse_url($full_link, PHP_URL_HOST);
+			$orm_link->link_date_add = date('Y-m-d H:i:s', time());
+			
+			// Save and return
+			return $orm_link->save();
+		}
+		else
+		{
+			return FALSE;
+		}
+	}	
 }
