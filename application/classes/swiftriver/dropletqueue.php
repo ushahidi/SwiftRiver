@@ -33,17 +33,11 @@ class Swiftriver_Dropletqueue {
 	public static function process()
 	{
 		// If the queue is empty, fetch the unprocessed items from the DB
-		if (empty(self::$_queue))
-		{
-			// Get the unprocessed items from the DB
-			self::$_queue = Model_Droplet::get_unprocessed_droplets();
-		}
-		else
-		{
+		self::$_queue = empty(self::$_queue)
+			? Model_Droplet::get_unprocessed_droplets()
 			// Reverse the ordering of items in the array
 			// NOTE: Necessary evil because we'll be popping items; possible bottleneck
-			self::$_queue = array_reverse(self::$_queue);
-		}
+			: array_reverse(self::$_queue);
 		
 		// Process the items in the queue
 		while ( ! empty(self::$_queue))
