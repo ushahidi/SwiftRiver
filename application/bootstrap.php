@@ -121,7 +121,7 @@ unset($active_plugins, $theme);
 Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
 
 /**
- * Sweeper Project Builder Route
+ * Swiftriver Project Builder Route
  */
 Route::set('builder', 'project/<id>/builder(/<controller>(/<action>(/<feed_id>)))',
 	array('id' => '\d+',
@@ -133,7 +133,7 @@ Route::set('builder', 'project/<id>/builder(/<controller>(/<action>(/<feed_id>))
 	));
 
 /**
- * Sweeper Project Stories Route
+ * Swiftriver Project Stories Route
  */
 Route::set('stories', 'project/<id>/stories(/<controller>(/<action>(/<story_id>)))',
 	array('id' => '\d+',
@@ -145,7 +145,7 @@ Route::set('stories', 'project/<id>/stories(/<controller>(/<action>(/<story_id>)
 	));	
 
 /**
- * Sweeper Project Discussions Route
+ * Swiftriver Project Discussions Route
  */
 Route::set('discussions', 'project/<id>/discussions(/<controller>(/<action>(/<discussion_id>)))',
 	array('id' => '\d+',
@@ -157,7 +157,7 @@ Route::set('discussions', 'project/<id>/discussions(/<controller>(/<action>(/<di
 	));
 
 /**
- * Sweeper Charts Route
+ * Swiftriver Charts Route
  */
 Route::set('charts', 'charts(/<action>(/<project_id>))',
 	array('project_id' => '\d+'))
@@ -167,7 +167,7 @@ Route::set('charts', 'charts(/<action>(/<project_id>))',
 	));		
 
 /**
- * Sweeper Project Route
+ * Swiftriver Project Route
  */
 Route::set('project', 'project/<id>(/<controller>(/<action>))', array('id' => '\d+'))
 	->defaults(array(
@@ -177,7 +177,7 @@ Route::set('project', 'project/<id>(/<controller>(/<action>))', array('id' => '\
 	));
 
 /**
- * Sweeper Settings Route
+ * Swiftriver Settings Route
  */	
 Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
@@ -187,7 +187,7 @@ Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 	));
 
 /**
- * Sweeper Crawler Route
+ * Swiftriver Crawler Route
  */	
 Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
@@ -197,10 +197,10 @@ Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
 	));	
 
 /**
- * Sweeper Default Route
+ * Swiftriver Default Route
  */	
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
-		'controller' => 'sweeper',
+		'controller' => 'swiftriver',
 		'action'     => 'index',
 	));

@@ -16,64 +16,22 @@
 class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 
 	/**
-	 * This Project
-	 */
-	protected $project;
-
-	/**
-	 * This Feed
-	 */
-	protected $feed;
-
-	/**
 	 * @return	void
 	 */
 	public function before()
 	{
 		// Execute parent::before first
 		parent::before();
-
-		// Get Twitter Settings
-		$this->settings = array();
-		$params = ORM::factory('twitter_setting')->find_all();
-		foreach ($params as $param)
-		{
-			$this->settings[$param->key] = $param->value;
-		}
 	}
 
 	public function action_index()
 	{
-		$feeds = ORM::factory('feed')
-			->where('service', '=', 'twitter')
-			->where('feed_enabled', '=', '1')
-			->find_all();
-		
-		foreach ($feeds as $feed)
-		{
-			$this->feed = $feed;
-			$this->project = $feed->project;
+		// Start streaming +++ TESTING +++
+		$sc = new Firehose_Filter('username', 'password', Phirehose::METHOD_FILTER);
+		$sc->setTrack(array('ushahidi'));
+		$sc->consume();
 
-			// Which Twitter Option are we going to use?
-			$service_option = $feed->service_option;
-
-			$options = array();
-
-			// Get the Search parameters
-			$params = $feed->feed_options->find_all();
-			foreach ($params as $param)
-			{
-				if ($param->value)
-				{
-					$options[$param->key] = $param->value;
-				}
-			}
-
-			if (count($options))
-			{
-				$this->_search($options);
-			}
-		}
+		//echo "test";
 	}
 
 	/**
