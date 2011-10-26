@@ -48,14 +48,14 @@ class Model_Droplet extends ORM
 		);
 		
 	/**
+	 * Many-to-one relationship defintion
 	 * A droplet belongs to an identity and a channel_filter
-	 *
-	 * @var array Relationhips
+	 * @var array
 	 */
 	protected $_belongs_to = array(
 		'channel_filter' => array(),
 		'identity' => array()
-		);
+	);
 
 	/**
 	 * Overload saving to perform additional functions on the droplet
@@ -194,7 +194,7 @@ class Model_Droplet extends ORM
 		foreach ($places as $place)
 		{
 			// Get the place record
-			$orm_place = Model_place::get_place_by_lat_lon($places, TRUE);
+			$orm_place = Model_Place::get_place_by_lat_lon($places, TRUE);
 			if ($orm_place AND !$orm_droplet->has('places', $orm_place))
 			{
 				$orm_droplet->add('places', $orm_place);
@@ -202,4 +202,5 @@ class Model_Droplet extends ORM
 		}
 	}
 }
+
 ?>
