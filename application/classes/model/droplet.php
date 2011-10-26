@@ -222,7 +222,7 @@ class Model_Droplet extends ORM
 			$droplets[] = array(
 				'id' => $droplet->id,
 				'droplet_content' => $droplet->droplet_content,
-				'droplet_pub_date' => $droplet->droplet_pub_date,
+				'droplet_date_pub' => $droplet->droplet_pub_date,
 				'places' => array(),
 				'links' => array(),
 				'tags' => array()
