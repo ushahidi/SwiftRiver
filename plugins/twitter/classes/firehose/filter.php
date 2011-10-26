@@ -29,7 +29,7 @@ class Firehose_Filter extends Phirehose {
 				'droplet_date_pub' => date("Y-m-d H:i:s", strtotime($data['created_at'])),
 			);
 
-			Swiftriver_Dropletqueue::add($droplet);
+			Swiftriver_Dropletqueue::add($droplet, FALSE);
 		}
 	}
 
