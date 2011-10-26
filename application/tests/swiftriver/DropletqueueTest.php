@@ -1,98 +1,124 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
 /**
  * Swiftriver_Dropletqueue Unit test
  *
- * @see         Dropletqueue
+ * This test uses the story framework phpunit/PHPUnit_Story to test the dropletqueue. This
+ * is because the SUT is analgous to a conveyor belt where items(droplets) are passed from
+ * one stage to the next. It therefore allows the different components of the queue to be 
+ * chained in the order in which they are executed
+ *
+ * @see         Swiftriver_Dropletqueue
  * @package     Swiftriver
- * @category    Tests
+ * @category    Unit Tests
  * @author      Ushahidi Team
  * @author      Emmanuel Kala <emmanuel(at)ushahidi.com>
  * @copyright   (c) 2008-2011 Ushahidi Inc
  * @license     For license information, see LICENSE file
  */
-
-class Swiftriver_Dropletqueue_Test extends Unittest_TestCase {
+class Swiftriver_Dropletqueue_Test extends PHPUnit_Extensions_Story_TestCase {
 	
 	/**
-	 * Dataprovider for test_add
-	 *
+	 * Generates and returns a sample droplet - subtitute for dataProvider
 	 * @return array
 	 */
-	public function provider_test_add()
+	private function get_sample_droplet()
 	{
-		return array(array(
-			array(
-				'channel' => 'twitter',
-				'channel_filter_id' => '1',
-				'identity_orig_id' => '193958229',
-				'identity_username' => 'twitteruser',
-				'identity_name' => 'Twitter User',
-				'droplet_orig_id' => '2124569790',
-				'droplet_type' => 'tweet',
-				'droplet_title' => '',
-				'droplet_content' => "Professor Wangari Maathai leads the votes for the 'Forbes Africa, Person of the Year Awards 2011'. Vote now - bit.ly/stzTju",
-				'droplet_raw' => "Professor Wangari Maathai leads the votes for the 'Forbes Africa, Person of the Year Awards 2011'. Vote now - bit.ly/stzTju",
-				'droplet_locale' => 'en',
-				'droplet_date_pub' => '2011-10-15 22:15:10',
-			)
-		));
+		return array(
+			'channel' => 'twitter',
+			'channel_filter_id' => '1',
+			'identity_orig_id' => '193958229',
+			'identity_username' => 'twitteruser',
+			'identity_name' => 'Twitter User',
+			'droplet_orig_id' => '2124569790',
+			'droplet_type' => 'tweet',
+			'droplet_title' => '',
+			'droplet_content' => "Professor Wangari Maathai leads the votes for the 'Forbes Africa, Person of the Year Awards 2011'. Vote now - bit.ly/stzTju",
+			'droplet_locale' => 'en',
+			'droplet_date_pub' => '2011-10-15 22:15:10',
+		);
 	}
 	
 	/**
-	 * @dataProvider provider_test_add
-	 * @covers Swiftriver_Dropletqueue:add
+	 * Scenario for adding a droplet to the queue, processing it and fetching it
+	 * from the "processed queue"
+	 * @scenario
 	 */
-	public function test_add($droplet)
+	public function queue_droplet()
 	{
-		$this->assertArrayHasKey('droplet_orig_id', $droplet);
-		$success = Swiftriver_Dropletqueue::add($droplet);
-		
-		// Assert that the droplet has been successfully added to the queue
-		$this->assertTrue($success, 'The droplet could not be added to the queue.');
-		
-		// Verify that the droplet has a database ID
-		$this->assertArrayHasKey('id', $droplet);
-		$this->assertGreatherThan(0, $droplet['id']);
-		
-		return $droplet;
+		$this->given('init_queue')
+			 ->when('add_droplet', $this->get_sample_droplet()) // Call Dropletqueue::add()
+			 ->then('process_queue');	// Call Dropletqueue::process
 	}
 	
-	/**
-	 * @covers Swiftriver_Dropletqueue::process
-	 * @depends test_add
-	 */
-	public function test_process($droplet)
+	public function runGiven(&$world, $action, $arguments)
 	{
-		Swiftriver_Dropletqueue::process();
-		
-		// Load the droplet
-		$orm_droplet = ORM::factory('droplet', $droplet['id']);
-		
-		// Verify that the droplet has been processed and saved
-		$this->assertEquals(1, $orm_droplet->droplet_processed);
-		$this->assertNotEmtpy($orm_droplet->droplet_date_processed);
-		
-		// Garbage collection
-		unset($orm_droplet);
+		switch ($action)
+		{
+			case 'init_queue': {
+				$world['dropletqueue'] = 'Swiftriver_Dropletqueue';
+				$world['queue_length'] = 0;
+			}
+			break;
+			
+			default: {
+				return $this->notImplemented($action);
+			}
+		}
 	}
 	
-	/**
-	 * @covers Swiftriver_Dropletqueue::get_processed_droplets
-	 * @depends test_process
-	 */
-	public function test_get_processed_droplets()
+	public function runWhen(&$world, $action, $arguments)
 	{
-		// Verify that the result is not empty
-		$result = Swiftriver_Dropletqueue::get_processed_droplets();
-		$this->assertNotEmpty($result);
-		
-		// Verify that the "processed" queue is empty
-		$empty_result = Swiftriver_Dropletqueue::get_processed_droplets();
-		$this->assertEmpty($empty_result);
-		
-		// Garbage colleciton
-		unset ($result, $empty_result);
+		switch ($action)
+		{
+			case 'add_droplet':
+			{
+				$world['dropletqueue']::add($arguments[0]);
+				$world['queue_length']++;
+				
+				// Check if the 'id' array key exists
+				$this->assertArrayHasKey('id', $arguments[0]);
+			}
+			break;
+			
+			default:
+			{
+				return $this->notImplemented($action);
+			}
+		}
+	}
+	
+	public function runThen(&$world, $action, $arguments)
+	{
+		switch($action)
+		{
+			case 'process_queue':
+			{
+				$world['dropletqueue']::process();
+				
+				// Get the processed droplets
+				$processed = $world['dropletqueue']::get_processed_droplets();
+				$this->assertEquals($world['queue_length'], count($processed));
+				
+				// Verify that the "processed" queue is empty
+				$empty_queue = $world['dropletqueue']::get_processed_droplets();
+				$this->assertEmpty($empty_queue, 
+					sprintf("The processed queue is not empty. %d droplets found", count($empty_queue)));
+				
+				// Cleanup
+				foreach ($processed as $test_droplet)
+				{
+					// Delete the test droplet(s) from the database
+					ORM::factory('droplet', $test_droplet['id'])->delete();
+				}
+				unset ($processed, $empty_queue);
+			}
+			break;
+			
+			default:
+			{
+				return $this->notImplemented($action);
+			}
+		}
 	}
 }
 ?>

@@ -32,12 +32,21 @@ class Swiftriver_Dropletqueue {
 	 */
 	public static function process()
 	{
-		// Reverse the ordering of items in the array
-		// NOTE: Necessary evil because we'll be popping items; possible bottleneck
-		self::$_queue = array_reverse(self::$_queue);
+		// If the queue is empty, fetch the unprocessed items from the DB
+		if (empty(self::$_queue))
+		{
+			// Get the unprocessed items from the DB
+			self::$_queue = Model_Droplet::get_unprocessed_droplets();
+		}
+		else
+		{
+			// Reverse the ordering of items in the array
+			// NOTE: Necessary evil because we'll be popping items; possible bottleneck
+			self::$_queue = array_reverse(self::$_queue);
+		}
 		
 		// Process the items in the queue
-		while (count(self::$_queue) > 0)
+		while ( ! empty(self::$_queue))
 		{
 			// Pop that droplet!
 			$droplet = array_pop(self::$_queue);
@@ -60,19 +69,25 @@ class Swiftriver_Dropletqueue {
 	 * The template for the droplets may be obtained by invoking get_droplet_template
 	 * from within the crawler.
 	 *
-	 * @param array $droplet
+	 * @param array $droplet Droplet to be queued for processing
+	 * @param bool $queue_droplet When TRUE, adds the droplet to self::$_queue
 	 */
-	public static function add(array & $droplet)
+	public static function add(array & $droplet, $queue_droplet = TRUE)
 	{
 		// Set the SHA-256 hash value for the droplet
 		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_orig_id']);
+		
+		// Set the raw content and strip the content of any HTML tags
+		$droplet['droplet_raw'] = $droplet['droplet_content'];
+		$droplet['droplet_content'] = strip_tags($droplet['droplet_raw']);
+		
 		
 		// Check if the droplet has already been added to the queue
 		if (Model_Droplet::is_duplicate_droplet($droplet['channel_filter_id'], $droplet['droplet_hash']))
 		{
 			// Delete the droplet from memory
 			unset($droplet);
-			return;
+			return FALSE;
 		}
 		
 		// Validate the droplet
@@ -92,13 +107,17 @@ class Swiftriver_Dropletqueue {
 			// Create droplet from the array
 			Model_Droplet::create_from_array($droplet);
 		
-			// Add new proprties to the droplet
-			$droplet['tags'] = array();
-			$droplet['links'] = array();
-			$droplet['places'] = array();
+			// Check if queueing mode is enabled
+			if ($queue_droplet)
+			{
+				// Add new proprties to the droplet
+				$droplet['tags'] = array();
+				$droplet['links'] = array();
+				$droplet['places'] = array();
 	
-			// Add the droplet to the queue
-			self::$_queue[] = $droplet;
+				// Add the droplet to the queue
+				self::$_queue[] = $droplet;
+			}
 			
 			return TRUE;
 		}
@@ -127,7 +146,6 @@ class Swiftriver_Dropletqueue {
 			'droplet_type' => '',
 			'droplet_title' => '',
 			'droplet_content' => '',
-			'droplet_raw' => '',
 			'droplet_locale' => '',
 			'droplet_date_pub' => '',
 		);

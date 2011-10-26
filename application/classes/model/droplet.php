@@ -129,7 +129,6 @@ class Model_Droplet extends ORM
 			// Update the droplet entry in the DB
 			$orm_droplet = ORM::factory('droplet', $droplet_id);
 			$orm_droplet->droplet_processed = 1;
-			$orm_droplet->droplet_date_processed = date('Y-m-d H:i:s', time());
 			$orm_droplet->save();
 			
 			// Save the tags, links and places
@@ -200,6 +199,38 @@ class Model_Droplet extends ORM
 				$orm_droplet->add('places', $orm_place);
 			}
 		}
+	}
+	
+	/**
+	 * Gets the list of droplets that are yet to be processed. This method
+	 * is called by Swiftriver_Dropletqueue::process
+	 *
+	 * @return array
+	 */
+	public static function get_unprocessed_droplets()
+	{
+		$droplets = array();		
+			
+		// Get the droplets ordered by pub_date in DESC order
+		$result = ORM::factory('droplet')
+					->where('droplet_processed', '=', 0)
+					->order_by('droplet_date_pub', 'DESC')
+					->find_all();
+					
+		foreach ($result as $droplet)
+		{
+			$droplets[] = array(
+				'id' => $droplet->id,
+				'droplet_content' => $droplet->droplet_content,
+				'droplet_pub_date' => $droplet->droplet_pub_date,
+				'places' => array(),
+				'links' => array(),
+				'tags' => array()
+			);
+		}
+		
+		// Return items
+		return $droplets;
 	}
 }
 

@@ -88,6 +88,7 @@ class Model_Identity extends ORM
 				$orm_identity->identity_name = $droplet['identity_name'];
 				$orm_identity->save();
 			}
+			
 		
 			// Set the identity of the droplet
 			$droplet['identity_id'] = $orm_identity->id;
