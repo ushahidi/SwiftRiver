@@ -4,7 +4,7 @@
  * Unit test for Links helper
  *
  * @see         Links
- * @package     Sweeper
+ * @package     Swiftriver
  * @category    Tests
  * @author      Ushahidi Team
  * @author      Emmanuel Kala <emmanuel(at)ushahidi.com>

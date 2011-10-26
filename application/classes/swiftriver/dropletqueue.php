@@ -90,7 +90,7 @@ class Swiftriver_Dropletqueue {
 			Model_Identity::create_from_droplet($droplet);
 		
 			// Create droplet from the array
-			Model_Droplet::create_from_array($droplet)
+			Model_Droplet::create_from_array($droplet);
 		
 			// Add new proprties to the droplet
 			$droplet['tags'] = array();
@@ -99,6 +99,12 @@ class Swiftriver_Dropletqueue {
 	
 			// Add the droplet to the queue
 			self::$_queue[] = $droplet;
+			
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
 		}
 	}
 	

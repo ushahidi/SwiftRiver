@@ -33,15 +33,9 @@ class Model_Identity extends ORM
 		'sources' => array(
 			'model' => 'sources',
 			'through' => 'identities_sources'
-			)
-		);
-
-	/**
-	 * An has many droplets
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array('droplets' => array());
+		),
+		'droplets' => array()
+	);
 
 	/**
 	 * Overload saving to perform additional functions on the identity
@@ -49,7 +43,7 @@ class Model_Identity extends ORM
 	public function save(Validation $validation = NULL)
 	{
 		// Swiftriver Plugin Hook
-		Event::run('swiftriver.identity.pre_save', $this);
+		Swiftriver_Event::run('swiftriver.identity.pre_save', $this);
 
 		// Do this for first time identities only
 		if ($this->loaded() === FALSE)
@@ -75,7 +69,7 @@ class Model_Identity extends ORM
 		// Set up validation
 		$validation = Validation::factory($droplet)
 						->rule('identity_orig_id', 'not_empty')
-						->rule('channel', 'not empty');
+						->rule('channel', 'not_empty');
 		
 		// Execute the validation rules
 		if ($validation->check())

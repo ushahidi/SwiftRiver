@@ -114,7 +114,7 @@ class Model_Droplet extends ORM
 			$orm_droplet->droplet_title = $droplet['droplet_title'];
 			$orm_droplet->droplet_content = $droplet['droplet_content'];
 			$orm_droplet->droplet_raw = $droplet['droplet_raw'];
-			$orm_droplet->droplet_locale = $dropplet['droplet_locale'];
+			$orm_droplet->droplet_locale = $droplet['droplet_locale'];
 			$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
 			$orm_droplet->droplet_processed = 0;
 			$orm_droplet->save();
