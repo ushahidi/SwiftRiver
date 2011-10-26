@@ -8,7 +8,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
  * @package    Ushahidi - http://source.swiftly.org
- * @category Helpers
+ * @category   Helpers
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
@@ -39,8 +39,8 @@ class Swiftriver_Links {
 	/**
 	 * Take short url's and determine full urls
 	 * using cURL
-	 * @param   string $url - short url
-	 * @return	string $url - long url
+	 * @param   string $url Short URL
+	 * @return  string $url Full/Expanded URL
 	 */
 	public static function full($url = NULL)
 	{
@@ -58,7 +58,7 @@ class Swiftriver_Links {
 				return $url;
 			}
 
-			if ( empty($headers) )
+			if (empty($headers) )
 			{
 				return $url;
 			}
@@ -71,14 +71,7 @@ class Swiftriver_Links {
 			
 			// If an Array is returned for redirects
 			// Return the last item in the array
-			if (is_array($url))
-			{
-				return end($url);
-			}
-			else
-			{
-				return $url;
-			}
+			return is_array($url)? end($url) :  $url;
 		}
 
 		return $url;

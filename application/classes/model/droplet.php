@@ -194,7 +194,7 @@ class Model_Droplet extends ORM
 		foreach ($places as $place)
 		{
 			// Get the place record
-			$orm_place = Model_Place::get_place_by_lat_lon($places, TRUE);
+			$orm_place = Model_Place::get_place_by_lat_lon($place, TRUE);
 			if ($orm_place AND !$orm_droplet->has('places', $orm_place))
 			{
 				$orm_droplet->add('places', $orm_place);
