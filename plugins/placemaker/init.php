@@ -18,8 +18,8 @@ class placemaker_init {
 	
 	public function __construct()
 	{	
-		// Hook into routing
-		Event::add('sweeper.item.post_save_new', array($this, 'filter'));
+		// Hook into the 'extract_metadata' event
+		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'filter'));
 	}
 
 	public function filter()
@@ -36,9 +36,9 @@ class placemaker_init {
 		{
 			try
 			{
-				// Get Item Content
-				$item = Event::$data;
-				$content = $item->item_content;
+				// Get the droplet content
+				$droplet = Swiftriver_Event::$data;
+				$content = $droplet['droplet_content'];
 
 				// Initialize Yahoo Placemaker
 				$placemaker = new Placemaker();
@@ -46,23 +46,14 @@ class placemaker_init {
 				$places = $placemaker->get_all($content);
 				foreach($places as $place)
 				{
-					$place = ORM::factory('place')
-						->where(DB::expr('X(place_point)'), '=', $place->longitude)
-						->where(DB::expr('Y(place_point)'), '=', $place->latitude)
-						->find();
-
-					if ( ! $place->loaded() )
-					{
-						$place->place_name = $place->name;
-						$place->place_point = DB::expr("GeomFromText('POINT($place->longitude $place->latitude)')");
-						$place->place_source = 'placemaker';
-						$place->save();
-					}
-
-					if ( ! $item->has('places', $place))
-					{
-						$item->add('places', $place);
-					}
+					// $droplet is a memory reference so changes to it ought
+					// to be visible from the script initiating this plugin
+					$droplet['places'][] = array(
+						'name' => $place->name,
+						'latitude' => $place->latitude,
+						'longitude' => $place->longitude,
+						'source' => 'placemaker'
+					);
 				}
 			}
 			catch (Exception $e)

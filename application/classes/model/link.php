@@ -72,7 +72,6 @@ class Model_Link extends ORM
 			$orm_link->link = $url;
 			$orm_link->link_full = $full_link
 			$orm_link->domain = parse_url($full_link, PHP_URL_HOST);
-			$orm_link->link_date_add = date('Y-m-d H:i:s', time());
 			
 			// Save and return
 			return $orm_link->save();

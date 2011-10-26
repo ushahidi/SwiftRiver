@@ -115,7 +115,6 @@ class Model_Droplet extends ORM
 			$orm_droplet->droplet_content = $droplet['droplet_content'];
 			$orm_droplet->droplet_raw = $droplet['droplet_raw'];
 			$orm_droplet->droplet_locale = $dropplet['droplet_locale'];
-			$orm_droplet->droplet_date_add = date('Y-m-d H:i:s', time());
 			$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
 			$orm_droplet->droplet_processed = 0;
 			$orm_droplet->save();
@@ -134,38 +133,27 @@ class Model_Droplet extends ORM
 			$orm_droplet->save();
 			
 			// Save the tags, links and places
-			self::add_tags($droplet_id, $droplet['tags']);
-			self::add_links($droplet_id, $droplet['links']);
-			// self::add_places($droplet_id, $droplet['places']);
+			self::add_tags($orm_droplet, $droplet['tags']);
+			self::add_links($orm_droplet, $droplet['links']);
+			self::add_places($orm_droplet, $droplet['places']);
 		}
 	}
 	
 	/**
 	 * Adds tags to a droplet
 	 *
-	 * @param int $droplet_id Database id of the droplet
+	 * @param Model_Droplet $orm_droplet Droplet ORM reference
 	 * @param Mixed $tags Tag/list of tags to be linked to the droplet
 	 */
-	public static function add_tags($droplet_id, $tags)
+	public static function add_tags($orm_droplet, $tags)
 	{
-		if ( ! is_array($tags))
+		foreach ($tags as $entity)
 		{
 			// Check if the tag already exists
-			$orm_tag = Model_Tag::get_tag_by_name($tags, TRUE);
-			if ($orm_tag)
+			$orm_tag = Model_Tag::get_tag_by_name($entity, TRUE);
+			if ($orm_tag AND !$orm_droplet->has('tags', $orm_tag))
 			{
-				// Associate the droplet with the tag
-				DB::insert('droplet_tags')
-					->columns(array('droplet_id', 'tag_id'))
-					->values(array($droplet_id, $orm_tag->id))
-					->execute();
-			}
-		}
-		else
-		{
-			foreach ($tags as $tag_name)
-			{
-				self::add_tags($droplet_id, $tag_name);
+				$orm_droplet->add($orm_tag);
 			}
 		}
 	}
@@ -173,40 +161,45 @@ class Model_Droplet extends ORM
 	/**
 	 * Adds links to a droplet
 	 *
-	 * @param int $droplet_id
+	 * @param Model_Droplet $orm_droplet Droplet ORM reference
 	 * @param array $links
 	 */
-	public static function add_links($droplet_id, $links)
+	public static function add_links($orm_droplet, $links)
 	{
-		if ( ! is_array($links))
+		foreach ($links as $url)
 		{
 			// Add the link
-			$orm_link = Model_Link::get_link_by_url($links, TRUE);
-			if ($orm_link)
+			$orm_link = Model_Link::get_link_by_url($url, TRUE);
+			if ($orm_link AND !$orm_droplet->has('links', $orm_link))
 			{
-				DB::insert('droplet_links')
-					->columns(array('droplet_id', 'link_id'))
-					->values(array($droplet_id, $orm_link->id))
-					->execute();
-			}
-		}
-		else
-		{
-			foreach ($links as $url)
-			{
-				self::add_links($droplet_id, $url);
+				$orm_droplet->add('links', $orm_link);
 			}
 		}
 	}
 	
 	/**
-	 * Adds the list of place names associated with a droplet
+	 * Adds the list of place names associated with a droplet. The list of places
+	 * should be an array of place names, latitudes and longitudes.
 	 *
-	 * @param int $droplet_id
+	 * Eg:
+	 * $places  = array(
+	 * 		array('name' => 'Nairobi', 'latitude => '-1.2857', 'longitude' => '36.820174', 'source' => 'placemaker'),
+	 *	    array('name' => 'Mombasa', 'latitude'=> '-4.050063', 'longitude' => '39.666653', 'source' => 'placemaker')
+	 * ));
+	 * @param Model_Droplet $orm_droplet Droplet ORM reference
 	 * @param array $places List of place names associated with the droplet
 	 */
-	public static function add_places($droplet_id, $places)
+	public static function add_places($orm_droplet, $places)
 	{
-		// TODO Add the places
+		foreach ($places as $place)
+		{
+			// Get the place record
+			$orm_place = Model_place::get_place_by_lat_lon($places, TRUE);
+			if ($orm_place AND !$orm_droplet->has('places', $orm_place))
+			{
+				$orm_droplet->add('places', $orm_place);
+			}
+		}
 	}
 }
+?>
