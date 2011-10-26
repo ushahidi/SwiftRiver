@@ -19,17 +19,18 @@ class tag_the_net_init {
 	public function __construct()
 	{	
 		// Hook into routing
-		Event::add('sweeper.item.post_save_new', array($this, 'filter'));
+		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'extractor'));
 	}
 
-	public function filter()
+	public function extractor()
 	{
 		try
 		{
-			// Get Item Content
-			$item = Event::$data;
-			$content = $item->item_content;
+			// Get the droplet
+			$droplet = Swiftriver_Event::$data;
+			$content = $droplet['droplet_content'];
 
+			// Connection to TagTheNet
 			$tag_url = 'http://tagthe.net/api/?text='.urlencode($content);
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $tag_url);
@@ -39,33 +40,26 @@ class tag_the_net_init {
 			$data = curl_exec($ch);
 			curl_close($ch);
 
+			$tags = array();
+
 			if ($xml = @simplexml_load_string($data))
 			{
 				$data = $xml->xpath("//dim");
 
+				// Get the extracted Entities
 				foreach($data as $entities)
 				{
 					foreach ($entities->item as $entity)
 					{
-						$tag = ORM::factory('tag')
-							->where('tag', '=', $entity)
-							->find();
-
-						if ( ! $tag->loaded() )
-						{
-							$tag->tag = $entity;
-							$tag->tag_type = strtolower($entities->attributes());
-							$tag->tag_source = 'tagthenet';
-							$tag->save();
-						}
-
-						if ( ! $item->has('tags', $tag))
-						{
-							$item->add('tags', $tag);
-						}
+						$tags[] = $entity;
 					}
 				}
 			}
+
+			$droplet['tags'] = $tags;
+
+			// Return the droplet with tags attached
+			Swiftriver_Event::$data = $droplet;
 		}
 		catch (Exception $e)
 		{

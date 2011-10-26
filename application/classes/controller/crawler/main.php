@@ -24,6 +24,11 @@ class Controller_Crawler_Main extends Controller {
 		parent::before();
 	}
 
+	/**
+	 * Run all available crawlers
+	 *
+	 * @return	void
+	 */
 	public function action_index()
 	{
 		// Get all the available services
@@ -43,4 +48,13 @@ class Controller_Crawler_Main extends Controller {
 		}
 	}
 
+	/**
+	 * Run all available extractors
+	 * 
+	 * @return	void
+	 */
+	public function action_process()
+	{
+		Swiftriver_Dropletqueue::process();
+	}
 }
