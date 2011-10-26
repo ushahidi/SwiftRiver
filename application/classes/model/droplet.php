@@ -152,7 +152,7 @@ class Model_Droplet extends ORM
 			$orm_tag = Model_Tag::get_tag_by_name($entity, TRUE);
 			if ($orm_tag AND !$orm_droplet->has('tags', $orm_tag))
 			{
-				$orm_droplet->add($orm_tag);
+				$orm_droplet->add('tags', $orm_tag);
 			}
 		}
 	}
