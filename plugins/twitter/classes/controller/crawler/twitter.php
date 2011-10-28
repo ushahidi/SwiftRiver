@@ -103,37 +103,24 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 	{
 		if ($result)
 		{
-			// Create a new Source
-			$source = ORM::factory('source')
-				->where( 'source_orig_id', '=', trim((string) $result->from_user_id) )
-				->find();
-			if ( ! $source->loaded() )
-			{
-				$source->source_orig_id = trim((string) $result->from_user_id);
-				$source->service = 'twitter';
-				$source->source_username = $result->from_user;
-				$source->save();
-			}
-
-			// Create a new Item
-			$item = ORM::factory('item')
-				->where( 'item_orig_id', '=', trim((string) $result->id) )
-				->find();
-			if ( ! $item->loaded() )
-			{
-				$item->service = 'twitter';
-				$item->source_id = $source->id; // the source we just saved above
-				$item->item_orig_id = trim((string) $result->id);
-				$item->project_id = $this->project->id;
-				$item->feed_id = $this->feed->id;
-				$item->item_content = trim(strip_tags(str_replace('<', ' <', $result->text)));
-				$item->item_raw = $result->text;
-				$item->item_author = $result->from_user;
-				$item->item_locale = $result->iso_language_code;
-				$item->item_date_pub = date("Y-m-d H:i:s", strtotime($result->created_at));
-				$item->item_date_add = date("Y-m-d H:i:s", time());
-				$item->save();
-			}
+			// Get droplet template
+			$droplet = Swiftriver_Dropletqueue::get_droplet_template();
+			
+			// Set the droplet properties
+			$droplet['channel'] = 'twitter';
+			$droplet['channel_filter_id'] = '1';
+			$droplet['identity_orig_id'] = $result->from_user_id_str;
+			$droplet['identity_username'] = $result->from_user;
+			$droplet['identity_name'] = '';
+			$droplet['droplet_orig_id'] = trim((string) $result->id);
+			$droplet['droplet_type'] = 'original';
+			$droplet['droplet_title'] = '';
+			$droplet['droplet_content'] = trim(strip_tags(str_replace('<', ' <', $result->text)));
+			$droplet['droplet_locale'] = $result->iso_language_code;
+			$droplet['droplet_dat_pub'] = date("Y-m-d H:i:s", strtotime($result->created_at));
+			
+			// 	Add the droplet to the processing queue
+			Swiftriver_Dropletqueue::add($droplet, FALSE);
 		}
 	}
 
@@ -145,7 +132,7 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 	 */
 	private function _is_retweet($str = NULL)
 	{
-		if ( $str )
+		if ($str)
 		{
 			// Case insensitive search on "RT @user"
 			$regex1 = 'RT\s+@[a-zA-Z0-9_]*';
