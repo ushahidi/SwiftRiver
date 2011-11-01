@@ -172,7 +172,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `roles` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(32) NOT NULL ,
-  `description` VARCHAR(255) NOT NULL ,
+  `description` VARCHAR(255) ,
   `permissions` VARCHAR(255) NULL DEFAULT NULL ,
   UNIQUE INDEX (`name` ASC) ,
   PRIMARY KEY (`id`) )
