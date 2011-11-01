@@ -117,7 +117,7 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 			$droplet['droplet_title'] = '';
 			$droplet['droplet_content'] = trim(strip_tags(str_replace('<', ' <', $result->text)));
 			$droplet['droplet_locale'] = $result->iso_language_code;
-			$droplet['droplet_dat_pub'] = date("Y-m-d H:i:s", strtotime($result->created_at));
+			$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($result->created_at));
 			
 			// 	Add the droplet to the processing queue
 			Swiftriver_Dropletqueue::add($droplet, FALSE);
