@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Account_Plugins
+ * Model for Droplets_Places
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -9,18 +9,20 @@
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
  * @package    Ushahidi - http://source.swiftly.org
- * @subpackage Models
+ * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Account_Plugin extends ORM
+class Model_Droplets_Place extends ORM
 {
 	/**
-	 * An account_plugin belongs to a account
+	 * A droplet has and belongs to many accounts
 	 *
-	 * @var array Relationhips
+	 * @var array Relationships
 	 */
-	protected $_belongs_to = array(
-		'account' => array()
-		);
+	protected $_has_many = array(
+		'accounts' => array(
+			'model' => 'account',
+			'through' => 'accounts_droplets_places'
+		));
 }

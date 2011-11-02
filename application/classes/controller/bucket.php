@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Project Sources Controller
+ * Bucket Controller - Handles Individual Buckets
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,17 +13,23 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Project_Sources extends Controller_Project_Main {
-	
+class Controller_Bucket extends Controller_Swiftriver {
+	/**
+	 * This Bucket
+	 */
+	protected $bucket;
+
 	/**
 	 * @return	void
 	 */
-	public function before($id = NULL)
+	public function before()
 	{
 		// Execute parent::before first
 		parent::before();
-		
-		$this->template->header->tab_menu->active = 'sources';
 	}
-	
+
+	public function action_index()
+	{
+		
+	}	
 }

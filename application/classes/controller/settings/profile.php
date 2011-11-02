@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Profile extends Controller_Swiftriver {
+class Controller_Settings_Profile extends Controller_Settings_Main {
 	
 	/**
 	 * @return	void

@@ -120,66 +120,49 @@ unset($active_plugins, $theme);
 
 Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
 
-/**
- * Swiftriver Project Builder Route
- */
-Route::set('builder', 'project/<id>/builder(/<controller>(/<action>(/<feed_id>)))',
-	array('id' => '\d+',
-		'feed_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'project/builder/',
-	));
 
 /**
- * Swiftriver Project Stories Route
+ * Swiftriver Bucket Route
  */
-Route::set('stories', 'project/<id>/stories(/<controller>(/<action>(/<story_id>)))',
-	array('id' => '\d+',
-		'story_id' => '\d+'))
+Route::set('bucket', '<username>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
 	->defaults(array(
-		'controller' => 'main',
+		'controller' => 'bucket',
 		'action'     => 'index',
-		'directory'  => 'project/stories/',
 	));	
 
 /**
- * Swiftriver Project Discussions Route
+ * Swiftriver River Route
  */
-Route::set('discussions', 'project/<id>/discussions(/<controller>(/<action>(/<discussion_id>)))',
-	array('id' => '\d+',
-		'discussion_id' => '\d+'))
+Route::set('river', '<username>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
 	->defaults(array(
-		'controller' => 'main',
+		'controller' => 'river',
 		'action'     => 'index',
-		'directory'  => 'project/discussions/',
 	));
 
 /**
- * Swiftriver Charts Route
- */
-Route::set('charts', 'charts(/<action>(/<project_id>))',
-	array('project_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'charts',
-		'action'     => 'index'
-	));		
-
-/**
- * Swiftriver Project Route
- */
-Route::set('project', 'project/<id>(/<controller>(/<action>))', array('id' => '\d+'))
+ * Swiftriver Visualize Buckets Route
+ */	
+Route::set('visualize_buckets', '<username>/bucket/visualize(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
-		'directory'  => 'project',
+		'directory'  => 'visualize'
 	));
+	
+/**
+ * Swiftriver Visualize Rivers Route
+ */	
+Route::set('visualize_rivers', '<username>/river/visualize(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'visualize'
+	));	
 
 /**
  * Swiftriver Settings Route
  */	
-Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
+Route::set('settings', '<username>/settings(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
@@ -187,7 +170,7 @@ Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 	));
 
 /**
- * Swiftriver Crawler Route
+ * Swiftriver Crawl Route
  */	
 Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
@@ -197,9 +180,17 @@ Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
 	));	
 
 /**
+ * Swiftriver Login Route
+ */	
+Route::set('login', '<username>/login(/<action>(/<id>))')
+	->defaults(array(
+		'action'     => 'index',
+	));
+
+/**
  * Swiftriver Default Route
  */	
-Route::set('default', '(<controller>(/<action>(/<id>)))')
+Route::set('default', '<username>(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'swiftriver',
 		'action'     => 'index',

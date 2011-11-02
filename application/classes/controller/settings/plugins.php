@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Plugins extends Controller_Swiftriver {
+class Controller_Settngs_Plugins extends Controller_Settings_Main {
 	
 	/**
 	 * Access privileges for this controller and its children

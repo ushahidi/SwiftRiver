@@ -16,42 +16,40 @@
 class Model_Account extends ORM
 {
 	/**
-	 * An account has many channel_filters, buckets, snapshots, sources
+	 * An account has many rivers, buckets, snapshots, sources
 	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'channel_filters' => array(),
+		'rivers' => array(),
 		'buckets' => array(),
 		'snapshots' => array(),
 		'sources' => array()
 		);
 
 	/**
-	 * An account has and belongs to many droplets, links, places, tags, attachments and plugins
+	 * An account has and belongs to many droplet_links,
+	 * droplet_places, droplet_tags, droplet_attachments
+	 * and plugins
 	 *
 	 * @var array Relationships
 	 */
 	protected $_has_many = array(
-		'droplets' => array(
-			'model' => 'attachment',
-			'through' => 'accounts_droplets'
+		'droplets_attachments' => array(
+			'model' => 'droplets_attachment',
+			'through' => 'accounts_droplets_attachments'
 			),
-		'attachments' => array(
-			'model' => 'attachment',
-			'through' => 'droplets_attachments'
+		'droplets_links' => array(
+			'model' => 'droplets_link',
+			'through' => 'accounts_droplets_links'
 			),
-		'links' => array(
-			'model' => 'story',
-			'through' => 'droplets_links'
+		'droplets_tags' => array(
+			'model' => 'droplets_tag',
+			'through' => 'accounts_droplets_tags'
 			),
-		'tags' => array(
-			'model' => 'tag',
-			'through' => 'droplets_tags'
-			),
-		'places' => array(
-			'model' => 'link',
-			'through' => 'droplets_places'
+		'droplets_places' => array(
+			'model' => 'droplets_place',
+			'through' => 'accounts_droplets_places'
 			),
 		'plugins' => array(
 			'model' => 'plugin',
@@ -65,19 +63,6 @@ class Model_Account extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array('user' => array());
-	
-	/**
-	 * Validation for accounts
-	 * @param array $arr
-	 * @return array
-	 */
-	public function validate($arr)
-	{
-		return Validation::factory($arr)
-			->rule('project_title', 'not_empty')
-			->rule('project_title', 'min_length', array(':value', 3))
-			->rule('project_title', 'max_length', array(':value', 255));
-	}
 
 	/**
 	 * Overload saving to perform additional functions on the account

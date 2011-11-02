@@ -33,11 +33,11 @@ class Controller_Swiftriver extends Controller_Template {
 	public $auth_required = FALSE;
 	
 	/**
-	 * Active Project
-	 * If set, we should redirect to this project by default, otherwise remain on dashboard
-	 * @var int ID of the current project
+	 * Active River
+	 * If set, we should redirect to this river by default, otherwise remain on dashboard
+	 * @var int ID of the current river
 	 */
-	public $active_project = NULL;
+	public $active_river = NULL;
 
 	/**
 	 * Logged In User
@@ -64,7 +64,7 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function access_required()
 	{
-		Request::current()->redirect('dashboard');
+		Request::current()->redirect('river');
 	}	
 	
 	/**
@@ -128,15 +128,15 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->template->header = View::factory('template/header');
 		$this->template->header->user = $this->user;
 		$this->template->header->page_title = "";
-		$this->template->header->active_project = "None Selected"; // Current Project
+		$this->template->header->active_river = "None Selected"; // Current River
 		$this->template->header->js = ""; // Dynamic Javascript
 		$this->template->header->menu = View::factory('template/menu');
 		$this->template->header->menu->admin = Auth::instance()->logged_in('admin'); // Is Admin or Editor?
 		$this->template->header->menu->active = Request::$current->controller();;	// Active Controller
-		$this->template->header->menu->projects = ORM::factory('project')
-			->order_by('project_title', 'ASC')
+		$this->template->header->menu->rivers = ORM::factory('river')
+			->order_by('river_name', 'ASC')
 			->find_all();
-		$this->template->header->menu->active_project_id = "";
+		$this->template->header->menu->active_river_id = "";
 		$this->template->header->tab_menu = "";
 		$this->template->content = "";
 		$this->template->footer = View::factory('template/footer');
@@ -145,7 +145,7 @@ class Controller_Swiftriver extends Controller_Template {
 	public function action_index()
 	{
 		// redirect
-		Request::current()->redirect('dashboard');
+		Request::current()->redirect('river');
 		return;
 	}
 }

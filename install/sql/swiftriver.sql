@@ -176,7 +176,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `roles` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(32) NOT NULL ,
-  `description` VARCHAR(255) ,
+  `description` VARCHAR(255) NULL DEFAULT NULL ,
   `permissions` VARCHAR(255) NULL DEFAULT NULL ,
   UNIQUE INDEX (`name` ASC) ,
   PRIMARY KEY (`id`) )
@@ -539,8 +539,10 @@ DEFAULT CHARACTER SET = utf8;
 CREATE  TABLE IF NOT EXISTS `roles_users` (
   `user_id` INT(11) UNSIGNED NOT NULL ,
   `role_id` INT(11) UNSIGNED NOT NULL ,
+  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`user_id`, `role_id`) ,
   INDEX `role_id_idx` (`role_id` ASC) ,
+  INDEX `account_id_idx` (`account_id` ASC) ,
   CONSTRAINT `roles_users_ibfk_1`
     FOREIGN KEY (`user_id` )
     REFERENCES `users` (`id` )
