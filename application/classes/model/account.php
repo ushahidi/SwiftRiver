@@ -18,16 +18,6 @@ class Model_Account extends ORM
 	/**
 	 * An account has many rivers, buckets, snapshots, sources
 	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array(
-		'rivers' => array(),
-		'buckets' => array(),
-		'snapshots' => array(),
-		'sources' => array()
-		);
-
-	/**
 	 * An account has and belongs to many droplet_links,
 	 * droplet_places, droplet_tags, droplet_attachments
 	 * and plugins
@@ -35,6 +25,10 @@ class Model_Account extends ORM
 	 * @var array Relationships
 	 */
 	protected $_has_many = array(
+		'rivers' => array(),
+		'buckets' => array(),
+		'snapshots' => array(),
+		'sources' => array(),
 		'droplets_attachments' => array(
 			'model' => 'droplets_attachment',
 			'through' => 'accounts_droplets_attachments'
@@ -54,7 +48,7 @@ class Model_Account extends ORM
 		'plugins' => array(
 			'model' => 'plugin',
 			'through' => 'accounts_plugins'
-			),					
+			)			
 		);		
 	
 	/**

@@ -23,15 +23,19 @@ class Controller_Login extends Controller_Template {
 	/**
 	 * @var	 string	 page template
 	 */
-	public $template = 'template/login';
+	public $template = 'pages/login';
 	
+	/**
+	 * Log User In
+	 * 
+	 * @return void
+	 */	
 	public function action_index()
 	{	
 		// If user already signed-in
 		if (Auth::instance()->logged_in() != 0)
 		{
-			// redirect
-			Request::current()->redirect('dashboard');
+			$this->_redirect();
 		}
 		
 		// check, has the form been submitted, if so, setup validation
@@ -44,7 +48,7 @@ class Controller_Login extends Controller_Template {
 					$_REQUEST['password']) )
 			{
 				// Always redirect after a successful POST to prevent refresh warnings
-				$this->request->redirect('dashboard');
+				$this->_redirect();
 			}
 			else
 			{
@@ -62,11 +66,42 @@ class Controller_Login extends Controller_Template {
 		}
 	}
 	
+
+	/**
+	 * Log User Out
+	 * 
+	 * @return void
+	 */	
 	public function action_done()
 	{
 		// Sign out the user
 		Auth::instance()->logout();
 		
 		Request::current()->redirect('login');
+	}
+
+	/**
+	 * Redirect After successful login
+	 * 
+	 * @return void
+	 */	
+	private function _redirect()
+	{
+		$user = Auth::instance()->get_user();
+
+		// Does this user have an account space?
+		$account = ORM::factory('account')
+			->where('user_id', '=', $user->id)
+			->find();
+
+		if ($account->loaded())
+		{
+			// redirect using account namespace
+			$this->request->redirect($account->account_path.'/river');
+		}
+		else
+		{
+			
+		}
 	}
 }

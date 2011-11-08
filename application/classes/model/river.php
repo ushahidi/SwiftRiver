@@ -16,18 +16,13 @@
 class Model_River extends ORM
 {
 	/**
-	 * An account has many channel_filters
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_has_many = array('channel_filters' => array());
-
-	/**
-	 * An account has and belongs to many droplets
+	 * A river has many channel_filters
+	 * A river has and belongs to many droplets
 	 *
 	 * @var array Relationships
 	 */
 	protected $_has_many = array(
+		'channel_filters' => array(),
 		'droplets' => array(
 			'model' => 'droplet',
 			'through' => 'rivers_droplets'

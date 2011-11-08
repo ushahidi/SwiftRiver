@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_River extends Controller {
+class Controller_River extends Controller_Swiftriver {
 	/**
 	 * This River
 	 */
@@ -25,11 +25,80 @@ class Controller_River extends Controller {
 	public function before()
 	{
 		// Execute parent::before first
-		//parent::before();
+		parent::before();
+
+		// Does this account have a river?
+		$this->river = ORM::factory('river')
+			->where('account_id', '=', $this->account->id)
+			->order_by('river_current', 'DESC')
+			->find();
+		
+		if ( ! $this->river->loaded())
+		{
+			$this->river->river_name = __('River 1');
+			$this->river->account_id = $this->account->id;
+			$this->river->save();
+		}
 	}
 
+	/**
+	 * @return	void
+	 */
 	public function action_index()
 	{
-		echo 'works!!!';	
-	}	
+		$this->template->content = View::factory('pages/river/page')
+			->bind('droplets', $droplets);
+		
+		// This River's total droplets
+		$total_droplets = $this->river->droplets->count_all();
+
+		// Build River Query
+		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'))
+			->from('droplets');
+		$query->join('rivers_droplets', 'INNER')
+			->on('rivers_droplets.droplet_id', '=', 'droplets.id');
+		$query->where('rivers_droplets.river_id', '=', $this->river->id);
+		$query->order_by('droplet_date_pub', 'DESC');
+
+		// Clone query before any filters have been applied
+		$pre_filter = clone $query;
+		$total = (int) $pre_filter->execute()->count();
+
+		// SwiftRiver Plugin Hook -- Hook into River Droplet Query
+		Swiftriver_Event::run('swiftriver.river.filter', $query);
+
+		// Get our droplets
+		$droplets = $query->execute()->as_array();
+		$filter_total = (int) count($droplets);
+
+		// Droplets Meter
+		$meter = 0;
+		if ($total)
+		{
+			$meter = ($filter_total / $total) * 100;
+		}
+
+		$this->template->header->droplets = $filter_total;
+		$this->template->header->meter = $meter;
+	}
+
+	/**
+	 * @return	void
+	 */
+	public function action_filters()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/river/filters');
+	}
+
+	/**
+	 * @return	void
+	 */
+	public function action_channels()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/river/channels');
+	}
 }

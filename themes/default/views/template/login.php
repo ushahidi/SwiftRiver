@@ -1,83 +1,81 @@
-<?php
-/**
- * Login Template
- */
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<meta http-equiv="content-language" content="en" />
-	<meta name="robots" content="noindex,nofollow" />
-	<link rel="stylesheet" media="screen,projection" type="text/css" href="themes/default/media/css/reset.css" />
-	<link rel="stylesheet" media="screen,projection" type="text/css" href="themes/default/media/css/main.css" />
-	<!--[if lte IE 6]><link rel="stylesheet" media="screen,projection" type="text/css" href="themes/default/media/css/main-ie6.css" /><![endif]-->
-	<link rel="stylesheet" media="screen,projection" type="text/css" href="themes/default/media/css/style.css" />
-	<script type="text/javascript" src="themes/default/media/js/toggle.js"></script>
-	<title>Sweeper - Log In</title>
-</head>
-
-<body id="login">
-
-<div id="main-02">
-
-	<div id="login-top"></div>
-
-	<div id="login-box">
-
-		<!-- Logo -->
-		<p class="nom t-center"><a href="#"><img src="themes/default/media/img/logo.png" alt="Sweeper" title="Sweeper" /></a></p>
-
-		<!-- Messages -->
-		<p class="msg info"><?php echo __('Please enter your Username and Password to log in'); ?></p>
+<!DOCTYPE html> 
+<html> 
+ 
+<head> 
+	<meta charset="utf-8"> 
+	<title>Log into SwiftRiver</title> 
+	<meta name="description" content="SwiftRiver" /> 
+	<meta name="keywords" content="SwiftRiver"> 
+	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
+	<link rel="icon" href="/themes/default/media/img/favicon.png" type="image/png">
+	<?php echo(Html::style("themes/default/media/css/styles.css")); ?>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<?php
+	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.outside.js"));
+	echo(Html::script("themes/default/media/js/global.js"));
+	?>	
+</head> 
+ 
+<body> 
+	<header>
+		<div class="left_bar"></div>
+		<div class="center cf">
+			<hgroup>
+				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver</span></a></h1>
+			</hgroup>
+			<nav>
+				<ul>
+					<li class="rivers has_dropdown">
+						<a><span class="arrow"></span>Rivers</a>
+					</li>
+					<li class="buckets has_dropdown">
+						<a><span class="arrow"></span>Buckets</a>
+					</li>
+					<div class="account">
+						<li class="create"><a href="<?php echo url::site().'welcome';?>"><?php echo __('Create an account');?></a></li>
+						<li class="login has_dropdown">
+							<a><span class="arrow"></span><?php echo __('Log in');?></a>
+							<?php echo Form::open(); ?>
+								<ul class="dropdown">
+									<li><strong><?php echo __('Email');?></strong><input type="text" value=""></li>
+									<li><strong><?php echo __('Password');?></strong><input type="password" value=""></li>
+									<li><div class="buttons btn_click"><button class="save"><?php echo __('Log in');?></button></div></li>
+								</ul>
+							<?php echo Form::close(); ?>
+						</li>						
+					</div>
+				</ul>
+			</nav>
+		</div>
+		<div class="right_bar"></div>
+	</header>
+	
+	<article id="login">
+		<div class="cf center page_title">
+			<hgroup>
+				<h1><?php echo __('Create an account');?></h1>
+			</hgroup>
+		</div>
 		
-		<?php
-		if (isset($errors))
-		{
-			foreach ($errors as $message)
-			{
-				?><p class="msg error"><?php echo $message;?></p><?php
-			}
-		}
-		?>
-
-		<!-- Form -->
-		<?php echo Form::open(); ?>
-			<table class="nom nostyle">
-				<tr>
-					<td style="width:75px;"><label for="username"><strong><?php echo __('Username');?>:</strong></label></td>
-					<td><?php echo Form::input("username", "", array("size" => 45, "class" => "input-text")); ?></td>
-				</tr>
-				<tr>
-					<td><label for="password"><strong><?php echo __('Password');?>:</strong></label></td>
-					<td><?php echo Form::password("password", "", array("size" => 45, "class" => "input-text")); ?></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td>
-						<span class="f-right"><a href="javascript:toggle('sendpass');"><?php echo __('Forgot Password');?>?</a></span>
-						<span class="f-left low"><?php echo Form::checkbox('remember', 'remember', TRUE); ?> <label for="login-remember"><?php echo __('Remember Me');?></label></span>
-					</td>
-				</tr>
-				<!-- Show/Hide -->
-				<tr id="sendpass" style="display:none;">
-					<td><label for="login-sendpass"><strong><?php echo __('E-Mail');?>:</strong></label></td>
-					<td>
-						<input type="text" size="35" name="" class="input-text f-left" id="login-sendpass" />
-						<span class="f-right"><input type="submit" value="Send" /></span>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="t-right"><input type="submit" class="input-submit" value="<?php echo __('Submit');?> &raquo;" />&nbsp;&nbsp;<?php echo __('or');?>&nbsp;&nbsp;<input type="submit" class="input-submit" value="<?php echo __('Sign In With RiverID');?> &raquo;" /></td>
-				</tr>
-			</table>
-		<?php echo Form::close(); ?>
-
-	</div> <!-- /login-box -->
-
-	<div id="login-bottom"></div>
-
-</div> <!-- /main -->
-
-</body>
+		<div class="center canvas controls">
+			<?php echo Form::open(); ?>
+				<div class="row cf">
+					<div class="input">
+						<h3><?php echo __('Email'); ?></h3>
+						<?php echo Form::input("username", ""); ?>
+					</div>
+					<div class="input">
+						<h3><?php echo __('Password'); ?></h3>
+						<?php echo Form::password("password", ""); ?>
+					</div>
+				</div>
+				<div class="row controls_buttons cf btn_click">
+					<p class="button_go"><a><?php echo __('Get started'); ?></a></p>
+					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
+				</div>
+			<?php echo Form::close(); ?>
+		</div>
+	</article>
+</body> 
 </html>

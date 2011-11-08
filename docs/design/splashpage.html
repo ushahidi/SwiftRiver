@@ -12,8 +12,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script type="text/javascript" src="js/jquery.cycle.all.latest.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
-	
-	<script type="text/javascript">
+	<script type="text/javascript" src="js/jquery.placehold.min.js"></script>
+	<script src="http://swiftriver.ushahididev.com/js/jquery.outside.js"></script>
+	<script src="http://swiftriver.ushahididev.com/js/global.js"></script>
+  	<script type="text/javascript">
+
 	$(function(){ 
 	  
 	  /* spotlights carousel */
@@ -47,6 +50,10 @@
 	    return false; 
 	  });
 	  
+		
+		/* enable cross-browser placeholder attribute for form fields */
+		$("input, textarea").placehold();
+		
 	});
 	</script>
 	
@@ -63,8 +70,15 @@
 				<ul>
 					<div class="account">
 						<li><a href="#">Who Uses It</a></li>
-      			<li><a href="#">How It Works</a><span>|</span></li>
-						<li class="login"><a href="#">Log in</a>  <span>|</span></li>
+      			<li><a href="#">How It Works</a><span class="pipe">|</span></li>
+						<li class="login has_dropdown">
+							<a><span class="arrow"></span>Log in</a><span class="pipe">|</span>
+							<ul class="dropdown">
+								<li><input type="text" value="" placeholder="Email address"></li>
+								<li><input type="password" placeholder="Password"></li>
+								<li><div class="buttons"><button class="save">Log in</button></div></li>
+							</ul>
+						</li>
 					</div>
 				</ul>
 			</nav>
@@ -172,14 +186,16 @@
           
         <div class="panel-left">
           <h3>Create An Account</h3>
-          <div class="login">
+          <div class="new-account">
+            
             <p>
-              <strong>Username</strong>
-              <input type="text" />
+              <input type="text" placeholder="email address" />
             </p>
             <p>
-              <strong>Password</strong>
-              <input type="password" />
+              <input type="text" placeholder="Username" />
+            </p>
+            <p>
+              <input type="password" placeholder="Password" />
             </p>
             <p class="button_go cf"><a href="#">Create My Account!</a></p>
             

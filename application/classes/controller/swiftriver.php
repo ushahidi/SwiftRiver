@@ -44,6 +44,14 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public $user = NULL;
 
+	/**
+	 * Current Users Account
+	 */
+	public $account = NULL;
+
+	/**
+	 * This Session
+	 */
 	protected $session;
 	
 	/**
@@ -53,18 +61,17 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function login_required()
 	{
-		Request::current()->redirect('login');
+		Request::current()->redirect('welcome');
 	}
 
 	/**
 	 * Called from before() when the user does not have the correct rights to access a controller/action.
+	 * This is the users personal dashboard
 	 *
-	 * Override this in your own Controller / Controller_App if you need to handle
-	 * responses differently.
 	 */
 	public function access_required()
 	{
-		Request::current()->redirect('river');
+		Request::current()->redirect('dashboard');
 	}	
 	
 	/**
@@ -123,29 +130,41 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// Logged In User
 		$this->user = Auth::instance()->get_user();
+
+		// Does this user have an account space?
+		$this->account = ORM::factory('account')
+			->where('user_id', '=', $this->user->id)
+			->find();
+			
+		if ( ! $this->account->loaded())
+		{
+			// Redirect?
+		}	
 		
 		// Load Header & Footer & variables
 		$this->template->header = View::factory('template/header');
 		$this->template->header->user = $this->user;
-		$this->template->header->page_title = "";
-		$this->template->header->active_river = "None Selected"; // Current River
-		$this->template->header->js = ""; // Dynamic Javascript
-		$this->template->header->menu = View::factory('template/menu');
-		$this->template->header->menu->admin = Auth::instance()->logged_in('admin'); // Is Admin or Editor?
-		$this->template->header->menu->active = Request::$current->controller();;	// Active Controller
-		$this->template->header->menu->rivers = ORM::factory('river')
-			->order_by('river_name', 'ASC')
-			->find_all();
-		$this->template->header->menu->active_river_id = "";
-		$this->template->header->tab_menu = "";
-		$this->template->content = "";
+		$this->template->header->account = $this->account;
+		$this->template->header->js = ''; // Dynamic Javascript
+
+		// Navs
+		$this->template->header->nav_header = View::factory('template/nav/header');
+		$this->template->header->nav_header->rivers = $this->account->rivers->find_all();
+		$this->template->header->nav_header->buckets = $this->account->buckets->find_all();
+		$this->template->header->nav_canvas = View::factory('template/nav/canvas');
+		$this->template->header->nav_canvas->filters = url::site().$this->account->account_path.'/river/filters/';
+		$this->template->header->nav_canvas->channels = url::site().$this->account->account_path.'/river/channels/';
+
+		$this->template->content = '';
 		$this->template->footer = View::factory('template/footer');
 	}
 	
+
+	/**
+	 * @return	void
+	 */
 	public function action_index()
 	{
-		// redirect
-		Request::current()->redirect('river');
-		return;
+		$this->request->redirect($this->account->account_path.'/river');
 	}
 }

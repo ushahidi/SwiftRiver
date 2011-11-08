@@ -14,36 +14,6 @@ $(document).ready(function() {
 		event.stopPropagation();
 	});
 	
-	// Show a droplet's detail drawer
-	$('section.actions p.button_view a').toggle(function(e) {
-			var url = $(this).attr('href');
-			$(this).addClass('detail_hide').closest('article.droplet').children('section.detail').slideDown('slow').load(url);
-			e.preventDefault();				
-		}, function(e) {
-			$(this).removeClass('detail_hide').closest('article.droplet').children('section.detail').slideUp('slow').empty();
-			e.preventDefault();
-	});
-	
-	// Add or remove a droplet from buckets
-	$('section.actions p.button_change').click(function(event) {
-		// $('ul.dropdown').fadeOut('fast');
-		$(this).toggleClass('active');
-		$(this).siblings('ul.dropdown').fadeToggle('fast');
-		event.stopPropagation();
-	});
-	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').addClass('bucket_added');
-	jQuery.fn.checkBuckets = function() {
-		if ($('section.actions ul.dropdown li.bucket a').is('.selected')) {
-			$(this).closest('ul.dropdown').siblings('p.button_change').addClass('bucket_added');
-		}
-		else {
-			$(this).closest('ul.dropdown').siblings('p.button_change').removeClass('bucket_added');
-		}
-	};
-	$('section.actions ul.dropdown li.bucket a').live('click', function() {
-		$(this).toggleClass('selected').checkBuckets();
-	});
-	
 	// Create new bucket
 	$('li.create_new').live('click', function() {
 		$(this).empty();
@@ -79,4 +49,55 @@ $(document).ready(function() {
 			$('section.panel div.panel_body').slideUp('fast').empty();				
 			e.preventDefault();
 	});
+	
+	// Toggle following or subscribing
+	$('.button_change a.subscribe').click(function() {
+		$(this).parent().toggleClass('active');
+		$(this).toggleClass('subscribed');
+	});
+	
+	// Show a droplet's detail drawer
+	$('section.actions p.button_view a').toggle(function(e) {
+			var url = $(this).attr('href');
+			$(this).addClass('detail_hide').closest('article.droplet').children('section.detail').slideDown('slow').load(url);
+			e.preventDefault();				
+		}, function(e) {
+			$(this).removeClass('detail_hide').closest('article.droplet').children('section.detail').slideUp('slow').empty();
+			e.preventDefault();
+	});
+
+	// Add or remove a droplet from buckets
+	$('section.actions p.bucket').click(function(event) {
+		// $('ul.dropdown').fadeOut('fast');
+		$(this).toggleClass('active');
+		$(this).siblings('ul.dropdown').fadeToggle('fast');
+		event.stopPropagation();
+	});
+	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');
+	jQuery.fn.checkBuckets = function() {
+		if ($('section.actions ul.dropdown li.bucket a').is('.selected')) {
+			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').addClass('bucket_added');
+		}
+		else {
+			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').removeClass('bucket_added');
+		}
+	};
+	$('section.actions ul.dropdown li.bucket a').live('click', function() {
+		$(this).toggleClass('selected').checkBuckets();
+	});
+	
+	// Score a droplet
+	$('section.source div.actions p.score').click(function(event) {
+		$(this).toggleClass('active');
+		$(this).siblings('ul.dropdown').fadeToggle('fast');
+		event.stopPropagation();
+	});
+	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
+
+	// Submit Button
+	$(".btn_click").click(function(){
+    	var form = $(this).parents('form:first');
+    	form.submit();
+	});
+
 });

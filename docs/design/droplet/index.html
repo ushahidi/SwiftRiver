@@ -11,29 +11,8 @@
 	<link rel="stylesheet" href="/css/styles.css" /> 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		$('section.actions p.button_view a').toggle(function(e) {
-				var url = $(this).attr('href');
-				$(this).addClass('detail_hide').closest('article.droplet').children('section.detail').slideDown('slow').load(url);
-				e.preventDefault();				
-			}, function(e) {
-				$(this).removeClass('detail_hide').closest('article.droplet').children('section.detail').slideUp('slow').empty();
-				e.preventDefault();
-		});
-		$('section.actions p.button_change a').click(function () {
-	      $(this).toggleClass('bucket_added');
-	    });
-		$('.has_dropdown').click(function() {
-			$(this).toggleClass('active');
-		    $('ul.dropdown', this).slideToggle('fast');
-		});
-		$('.page_title .actions p').click(function() {
-			$(this).toggleClass('active');
-		    $('section.panel').slideToggle('fast');
-		});
-	});
-	</script>
+	<script src="/js/jquery.outside.js"></script>
+	<script src="/js/global.js"></script>
 </head> 
  
 <body> 
@@ -50,7 +29,7 @@
 						<ul class="dropdown">
 							<li><a href="/">River 1</a></li>
 							<li><a href="/">River 2</a></li>
-							<li><a href="#"><em>Create new</em></a></li>
+							<li><a href="/river/new.html"><em>Create new</em></a></li>
 						</ul>
 					</li>
 					<li class="buckets has_dropdown">
@@ -62,7 +41,7 @@
 						</ul>
 					</li>
 					<div class="account">
-						<li class="create"><a href="#">Create an account</a></li>
+						<li class="create"><a href="/login.html">Create an account</a></li>
 						<li class="login"><a href="#">Log in</a></li>
 					</div>
 				</ul>
