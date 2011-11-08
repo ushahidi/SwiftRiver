@@ -67,4 +67,19 @@ class Model_User_Identity extends ORM {
 			$validation->error($field, 'identity_available', array($validation[$field]));
 		}
 	}
+
+	/**
+	 * Overload saving to perform additional functions on the identity
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		// Do this for first time identities only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the identity was first added
+			$this->identity_date_add = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}	
 }

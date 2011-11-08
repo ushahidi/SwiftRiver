@@ -16,7 +16,10 @@
 class Model_User extends Model_Auth_User
 {
 	/**
-	 * A user has many roles, tokens, items, sources, projects and stories
+	 * A user has many roles, tokens, buckets,
+	 * actions, followers, subscriptions,
+	 * channel_filters, accounts, discussions and
+	 * user identities
 	 *
 	 * @var array Relationhips
 	 */
@@ -25,11 +28,14 @@ class Model_User extends Model_Auth_User
 		'roles' => array('through' => 'roles_users'),
 		'user_tokens' => array(),
 		'buckets' => array(),
+		'user_actions' => array(),
+		'user_followers' => array(),
+		'user_subscriptions' => array(),
 		'channel_filters' => array(),
 		'accounts' => array(),
 		'discussions' => array(),
 		// for RiverID and other OpenID identities
-		'user_identity' => array(),
+		'user_identities' => array(),
 		);
 	
 	/**

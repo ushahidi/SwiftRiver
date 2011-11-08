@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Snapshots
+ * Model for Droplets_Media
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,19 +13,16 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Channel_Snapshot extends ORM
+class Model_Droplets_Media extends ORM
 {
 	/**
-	 * A snapshot has many snapshot_options
+	 * A droplets_media has and belongs to many accounts
 	 *
-	 * @var array Relationhips
+	 * @var array Relationships
 	 */
-	protected $_has_many = array('snapshot_options' => array());
-
-	/**
-	 * A channel_filter belongs to an account
-	 *
-	 * @var array Relationhips
-	 */
-	protected $_belongs_to = array('account' => array());
+	protected $_has_many = array(
+		'accounts' => array(
+			'model' => 'account',
+			'through' => 'accounts_droplets_attachments'
+		));
 }

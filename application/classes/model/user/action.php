@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Model for Snapshots
+ * Model for User Actions
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,19 +13,27 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Channel_Snapshot extends ORM
+class Model_User_Action extends ORM
 {
 	/**
-	 * A snapshot has many snapshot_options
+	 * An belongs to a user
 	 *
 	 * @var array Relationhips
 	 */
-	protected $_has_many = array('snapshot_options' => array());
-
+	protected $_belongs_to = array('user' => array());	
+		
 	/**
-	 * A channel_filter belongs to an account
-	 *
-	 * @var array Relationhips
+	 * Overload saving to perform additional functions on the action
 	 */
-	protected $_belongs_to = array('account' => array());
+	public function save(Validation $validation = NULL)
+	{
+		// Do this for first time actions only
+		if ($this->loaded() === FALSE)
+		{
+			// Save the date the action was first added
+			$this->action_date_add = date("Y-m-d H:i:s", time());
+		}
+
+		return parent::save();
+	}
 }
