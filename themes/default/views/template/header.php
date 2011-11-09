@@ -8,13 +8,27 @@
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
 	<link rel="icon" href="/themes/default/media/img/favicon.png" type="image/png">
-	<?php echo(Html::style("themes/default/media/css/styles.css")); ?>
+	<?php
+	echo(Html::style("themes/default/media/css/styles.css"));
+	
+	// System and Other CSS
+	echo(Html::script(URL::site().'media/css'));
+	?>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
 	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
+
+	// Dynamic JS Files
+	echo(Html::script('media/js'));
 	?>
+	<script type="text/javascript">
+		<?php
+		// Dynamic inline JS
+		echo $js;
+		?>
+	</script>
 </head> 
  
 <body> 
@@ -22,33 +36,10 @@
 		<div class="left_bar"></div>
 		<div class="center cf">
 			<hgroup>
-				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver</span></a></h1>
+				<h1 class="logo"><a href="<?php URL::site().'dashboard'; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
 			</hgroup>
 			<?php echo $nav_header;?>
 		</div>
 		<div class="right_bar"></div>
 	</header>
 	
-	<article>
-		<div class="cf center page_title">
-			<hgroup class="edit">
-				<h1><span class="edit_trigger" onclick="">River 1</span></h1>
-			</hgroup>
-			<?php
-			if (isset($droplets))
-			{
-				?>
-				<section class="meter">
-					<p style="padding-left:<?php echo $meter; ?>%;"><strong><?php echo $droplets; ?></strong> droplets</p>
-					<div><span style="width:<?php echo $meter; ?>%;"></span></div>
-				</section>
-				<?php
-			}
-			?>
-		</div>
-		
-		<div class="center canvas">
-			<section class="panel">		
-				<?php echo $nav_canvas; ?>
-				<div class="panel_body"></div>
-			</section>

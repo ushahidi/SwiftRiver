@@ -22,17 +22,17 @@ $(document).ready(function() {
 </script>
 
 <div id="channels">
-	<div class="keywords">
+	<div class="controls keywords">
 		<h3>Keywords you're looking for</h3>
 		<input type="text" />
 	</div>
-	<div class="controls cf">
+	<div class="controls tab_controls cf">
 		<ul class="tabs">
 		    <li class="button_view twitter"><a href="#twitter"><span class="switch_on"></span><span class="label">Twitter</span></a></li>
 		    <li class="button_view facebook"><a href="#facebook"><span class="switch_off"></span><span class="label">Facebook</span></a></li>
 			<li class="button_view rss"><a href="#rss"><span class="switch_off"></span><span class="label">RSS</span></a></li>
 		    <li class="button_view sms"><a href="#sms"><span class="switch_off"></span><span class="label">SMS</span></a></li>
-			<li class="more"><a href="#">Find more channels</a></li>
+			<li class="more"><a href="#">More channels</a></li>
 		</ul>				
 		<div class="tab_container">
 		    <article id="twitter" class="tab_content">
@@ -58,5 +58,6 @@ $(document).ready(function() {
 	</div>
 	<div class="row controls_buttons cf">
 		<p class="button_go"><a href="#">Apply changes</a></p>
+		<p class="other"><a class="close" onclick="">Cancel</a></p>
 	</div>
 </div>

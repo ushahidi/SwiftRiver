@@ -159,12 +159,12 @@ header nav li ul.dropdown {
       0 -1px 1px rgba(256,256,256,.4) inset;
    box-shadow: 0 2px 5px rgba(0,0,0,.3),
       0 -1px 1px rgba(256,256,256,.4) inset;
-   -webkit-border-bottom-right-radius: 6px;
-   -webkit-border-bottom-left-radius: 6px;
-   -moz-border-radius-bottomright: 6px;
-   -moz-border-radius-bottomleft: 6px;
-   border-bottom-right-radius: 6px;
-   border-bottom-left-radius: 6px;
+   -webkit-border-bottom-right-radius: 5px;
+   -webkit-border-bottom-left-radius: 5px;
+   -moz-border-radius-bottomright: 5px;
+   -moz-border-radius-bottomleft: 5px;
+   border-bottom-right-radius: 5px;
+   border-bottom-left-radius: 5px;
    border-top: 1px solid #0f9ebb;
    border-bottom: 1px solid #0f9ebb;
    background: #2ea7c1;
@@ -261,6 +261,9 @@ button.save {
    text-align: center;
    text-transform: uppercase;
    text-shadow: 1px 1px 1px rgba(0,0,0,.25);
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
    border: 1px solid #0f9ebb;
    box-shadow: 0 2px 3px rgba(0,0,0,.25),
       0 1px 1px rgba(256,256,256,.4) inset;
@@ -310,6 +313,9 @@ button.cancel {
 }
 
 .button_view a {
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
    box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
    -moz-box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
    -webkit-box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
@@ -328,6 +334,9 @@ button.cancel {
 }
 
 .button_change a {
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
    box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
    -moz-box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
    -webkit-box-shadow: 0 0 1px rgba(256,256,256,.9) inset;
@@ -402,15 +411,9 @@ button:hover {
 
 /* --------------------------- TABS */
 
-.controls {
-   border: 1px solid #dadada;
-   background: #f5f5f5;
-   margin: 15px 1.0416666667%;
-}
-
 ul.tabs {
    float: left;
-   width: 22.82608696%;
+   width: 30%;
 }
 
 ul.tabs li.button_view {
@@ -428,6 +431,10 @@ ul.tabs li:last-child {
 
 ul.tabs li.button_view a {
    display: block;
+   font-size: 0.9em;
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
    border: none;
    padding: 18px 10px;
 }
@@ -452,8 +459,110 @@ ul.tabs li.more a {
 
 div.tab_container {
    float: left;
-   width: 75%;
+   width: 67%;
    padding: 0 1.0416666667%;
+}
+
+div.tab_controls {
+   border: 1px solid #dadada;
+   background: #f5f5f5;
+   margin: 15px 1.0416666667%;
+}
+
+/* --------------------------- LIST STREAM */
+
+.list_stream {
+   text-align: left;
+}
+
+.list_stream ul {
+   padding: 5px;
+}
+
+.list_stream ul li {
+   font-size: 1.5em;
+   padding: 10px 0;
+}
+
+.list_stream ul li div.button_change,
+.list_stream ul li span.subscriber_count {
+   float: right;
+   text-align: right;
+}
+
+.list_stream ul li div.button_change a {
+   padding: 3px;
+}
+
+.list_stream ul li div.button_change a.subscribe span.icon {
+   display: block;
+   width: 13px;
+   height: 12px;
+   background: url(../img/user-subscribe_icons.png) center top no-repeat;
+}
+
+.list_stream ul li div.button_change a.subscribed {
+   border: 1px solid #17A9C6;
+   background: #17A9C6;
+}
+
+.list_stream ul li div.button_change a.subscribed span.icon {
+   background-position: center bottom;
+}
+
+.list_stream ul li span.subscriber_count a {
+   color: #999999;
+   font-size: 0.7em;
+}
+
+.list_stream ul li span.subscriber_count a strong {
+   color: #666666;
+   font-size: 1.3em;
+}
+
+/* --------------------------- CONTROLS */
+
+.controls h3 {
+   font-size: 1.2em;
+   padding: 5px 0;
+}
+
+.controls input {
+   font-size: 1.2em;
+   padding: 5px;
+}
+
+.controls div.input {
+   text-align: left;
+   padding: 10px 1.0416666667%;
+}
+
+.controls div.input input {
+   width: 90%;
+}
+
+.controls div.row {
+   clear: both;
+   padding: 0 1.0416666667%;
+}
+
+.controls div.row ul li {
+   font-size: 1.2em;
+   padding: 5px 0;
+}
+
+.controls_buttons p.button_go,
+.controls_buttons p.other {
+   float: right;
+   margin: 0 1.0416666667%;
+}
+
+.controls_buttons p.button_go a {
+   padding: 15px 50px;
+}
+
+.controls_buttons p.other {
+   padding: 15px 20px;
 }
 
 /* --------------------------- TITLE */
@@ -464,7 +573,18 @@ div.tab_container {
 }
 
 .page_title hgroup {
+   text-align: center;
    margin: 0 1.0416666667%;
+}
+
+.page_title hgroup img {
+   float: left;
+   width: 50px;
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   border: 3px solid #dadada;
+   margin-right: 10px;
 }
 
 .page_title h1 {
@@ -473,6 +593,12 @@ div.tab_container {
    font-weight: 300;
    font-size: 3.2em;
    text-shadow: 1px 1px 1px #fff;
+}
+
+article.dashboard .page_title h1 {
+   text-align: left;
+   font-size: 2.3em;
+   padding-top: 7px;
 }
 
 .edit div.buttons {
@@ -492,36 +618,6 @@ div.tab_container {
    padding: 5px;
 }
 
-.page_title section.meter {
-   clear: both;
-   padding: 0 1.0416666667%;
-   margin-bottom: 10px;
-}
-
-.page_title section.meter p {
-   color: #888888;
-   font-size: 0.8em;
-   padding: 2px 0;
-   margin-left: -40px;
-}
-
-.page_title section.meter p strong {
-   color: #666666;
-   font-size: 1.3em;
-}
-
-.page_title section.meter div {
-   height: 12px;
-   overflow: hidden;
-   -webkit-border-radius: 6px;
-   -moz-border-radius: 6px;
-   border-radius: 6px;
-   -moz-box-shadow: 0 1px 1px rgba(256,256,256,1);
-   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,1);
-   box-shadow: 0 1px 1px rgba(256,256,256,1);
-   background: url(../img/title-meter_bg.gif) repeat-x;
-}
-
 @-webkit-keyframes fill {
  0% {
    background-color: yellow;
@@ -536,17 +632,71 @@ div.tab_container {
  }
 }
 
+@-webkit-keyframes fly {
+ 0% {
+   margin-left: -500px;
+ }
+ 100% {
+   margin-left: -40px;
+ }
+}
+
+.page_title section.meter {
+   clear: both;
+   overflow: hidden;
+   padding: 0 1.0416666667%;
+   margin-bottom: 10px;
+}
+
+.page_title section.meter p {
+   color: #888888;
+   font-size: 0.8em;
+   padding: 2px 0;
+   margin-left: -40px;
+   -webkit-animation-name: fly;
+   -webkit-animation-duration: 2s;
+   -webkit-animation-iteration-count: 1;
+   -webkit-animation-timing-function: ease-in-out;
+}
+
+.page_title section.meter p strong {
+   color: #666666;
+   font-size: 1.3em;
+}
+
+.page_title section.meter div {
+   height: 12px;
+   overflow: hidden;
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,1);
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,1);
+   box-shadow: 0 1px 1px rgba(256,256,256,1);
+   background: url(../img/title-meter_bg.gif) repeat-x;
+}
+
 .page_title section.meter div span {
    display: block;
    height: 12px;
-   -webkit-border-radius: 6px;
-   -moz-border-radius: 6px;
-   border-radius: 6px;
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
    background-color: #3fb9d3;
    -webkit-animation-name: fill;
    -webkit-animation-duration: 2s;
    -webkit-animation-iteration-count: 1;
    -webkit-animation-timing-function: ease-in-out;
+}
+
+article#droplet_full .page_title p.button_change a.subscribed {
+   border: none;
+   background: none;
+}
+
+article.droplet .page_title section.actions {
+   clear: both;
+   margin-top: 15px;
 }
 
 /* --------------------------- PANEL */
@@ -580,16 +730,6 @@ section.panel nav ul li {
    text-transform: uppercase;
 }
 
-section.panel nav ul.views li {
-   display: none;
-}
-
-section.panel nav ul.views li:first-child,
-section.panel nav ul.views li:last-child,
-section.panel nav ul.views li.view_panel {
-   display: block;
-}
-
 section.panel nav ul li a {
    display: block;
    padding: 10px 15px 12px 15px;
@@ -606,6 +746,14 @@ section.panel nav ul.views li.active a {
    box-shadow: 0 3px 5px rgba(0,0,0,.1);
    font-weight: bold;
    background: #fff;
+}
+
+section.panel nav ul.views li:last-child.active a {
+   color: #999999;
+   -moz-box-shadow: none;
+   -webkit-box-shadow: none;
+   box-shadow: none;
+   background: none;
 }
 
 section.panel nav ul.actions li a {
@@ -637,6 +785,13 @@ section.panel nav ul.actions li a.filter span.icon {
    background: url(../img/title-filter.png) left 9px no-repeat;
 }
 
+section.panel #channels,
+section.panel #filters,
+section.panel #account_settings,
+section.panel #trends {
+   padding-bottom: 15px;
+}
+
 section.panel .filters,
 section.panel .options {
    padding: 0 1.0416666667%;
@@ -647,14 +802,14 @@ section.panel .row {
    padding: 1.0416666667%;
 }
 
-section.panel .row h3 {
+section.panel #filters .row h3 {
    float: left;
    font-weight: normal;
    text-transform: none;
    margin-right: 5px;
 }
 
-section.panel .row h3 strong {
+section.panel #filters .row h3 strong {
    font-weight: bold;
    text-transform: uppercase;
 }
@@ -664,7 +819,17 @@ section.panel .options {
    padding-bottom: 20px;
 }
 
-section.panel .options ul li a {
+section.panel #filters select {
+   margin-top: 4px;
+}
+
+section.panel #filters .options ul li {
+   font-size: 1em;
+   padding: 0;
+   margin-top: 4px;
+}
+
+section.panel #filters .options ul li a {
    float: left;
    color: #444444;
    font-weight: bold;
@@ -677,17 +842,17 @@ section.panel .options ul li a {
    margin-right: 7px;
 }
 
-section.panel .options ul li a:hover {
+section.panel #filters .options ul li a:hover {
    background: #bfbfbf;
    text-decoration: none;
 }
 
-section.panel .options ul li a span {
+section.panel #filters .options ul li a span {
    float: right;
    margin-left: 5px;
 }
 
-section.panel .options ul li a span:before {
+section.panel #filters .options ul li a span:before {
    content: "+";
 }
 
@@ -713,6 +878,9 @@ section.panel .options p.save span {
    -moz-box-shadow: 0 3px 5px rgba(0,0,0,.1);
    -webkit-box-shadow: 0 3px 5px rgba(0,0,0,.1);
    box-shadow: 0 3px 5px rgba(0,0,0,.1);
+   -webkit-border-radius: 6px;
+   -moz-border-radius: 6px;
+   border-radius: 6px;
    background: #fff;
 }
 
@@ -722,6 +890,7 @@ div.arrow {
 }
 
 div.bottom {
+   text-align: center;
    background: url(../img/droplet-detail_shadow.gif) bottom repeat-x;
 }
 
@@ -731,11 +900,33 @@ div.top span {
    background: url(../img/droplet-detail_arrow.gif) center top no-repeat;
 }
 
+div.bottom a.close {
+   color: #888888;
+   font-weight: bold;
+   text-transform: uppercase;
+   -webkit-border-top-left-radius: 6px;
+   -webkit-border-top-right-radius: 6px;
+   -moz-border-radius-topleft: 6px;
+   -moz-border-radius-topright: 6px;
+   border-top-left-radius: 6px;
+   border-top-right-radius: 6px;
+   -moz-box-shadow: 0 -1px 2px rgba(0,0,0,.1);
+   -webkit-box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+   box-shadow: 0 -2px 2px rgba(0,0,0,.1);
+   background: #fff;
+   padding: 10px 20px;
+}
+
+div.bottom a.close:hover {
+   color: #666666;
+   text-decoration: none;
+}
+
 /* --------------------------- DROPLET */
 
 article.droplet {
    border-bottom: 1px solid #f2f2f2;
-   padding: 15px 0;
+   padding: 20px 0;
 }
 
 article.droplet div.summary,
@@ -775,11 +966,11 @@ article.droplet section.source img {
 
 article.droplet section.source .actions span.type {
    display: block;
-   float: left;
-   width: 18.75%;
-   height: 15px;
-   border-right: 1px solid rgba(256,256,256,0.7);
-   padding: 5px 2px;
+   width: auto;
+   height: 12px;
+   border: 1px solid #c2c2c2;
+   border-bottom: none;
+   padding: 4px 0;
 }
 
 article.droplet section.twitter .actions span {
@@ -807,6 +998,9 @@ article.droplet section.source .actions p.score a {
    height: 21px;
    font-size: 0.9em;
    line-height: 21px;
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
    padding: 1px 0;
 }
 
@@ -859,6 +1053,11 @@ article.droplet section.content .title h1 {
    font-size: 1.3em;
 }
 
+article.droplet section.content .title h1 span a {
+   color: #888888;
+   font-weight: normal;
+}
+
 article.droplet section.content .body p {
    font-size: 1em;
    padding: 5px 0;
@@ -874,7 +1073,22 @@ article.droplet section.actions p a:hover {
 }
 
 article.droplet section.actions p.button_view a {
+   -webkit-border-bottom-left-radius: 0;
+   -webkit-border-bottom-right-radius: 0;
+   -moz-border-radius-bottomleft: 0;
+   -moz-border-radius-bottomright: 0;
+   border-bottom-left-radius: 0;
+   border-bottom-right-radius: 0;
    border-bottom: none;
+}
+
+article.droplet section.actions p.button_change a {
+   -webkit-border-top-left-radius: 0;
+   -webkit-border-top-right-radius: 0;
+   -moz-border-radius-topleft: 0;
+   -moz-border-radius-topright: 0;
+   border-top-left-radius: 0;
+   border-top-right-radius: 0;
 }
 
 article.droplet section.actions p.button_view a.detail_hide {
@@ -1034,94 +1248,6 @@ article.droplet section.actions p.follow_user a.subscribed strong:after {
    content: "ing";
 }
 
-/* --------------------------- DROPLET FULL */
-
-article#droplet_full div#summary_full {
-   padding: 2.08333333% 1.0416666667%;
-}
-
-div#summary_full section.source {
-   width: 82.9787234%;
-   padding: 0;
-}
-
-div#summary_full section.source .visual {
-   float: left;
-   width: 16.88311688%;
-   padding: 0 1.0416666667%;
-}
-
-div#summary_full section.source .text {
-   float: left;
-   width: 78.22077922%;
-   text-align: left;
-   padding: 0 1.0416666667%;
-}
-
-div#summary_full section.source .text h1 {
-   font-size: 1.5em;
-}
-
-div#summary_full section.source .text h2 {
-   color: #888888;
-   font-style: italic;
-   font-size: 1.3em;
-}
-
-div#summary_full section.source .text p.date {
-   color: #888888;
-   font-style: italic;
-}
-
-div#summary_full section.content {
-   clear: both;
-   width: 97.5%;
-   padding: 0;
-}
-
-div#summary_full section.content .body {
-   font-size: 1.2em;
-   padding: 1.0416666667%;
-}
-
-div#summary_full section.content .tab_content ul {
-   padding: 5px;
-}
-
-div#summary_full section.content .tab_content ul li {
-   font-size: 1.5em;
-   padding: 10px 0;
-}
-
-div#summary_full section.content .tab_content ul li div.button_change {
-   float: right;
-   text-align: right;
-}
-
-div#summary_full section.content .tab_content ul li div.button_change a {
-   padding: 3px;
-}
-
-div#summary_full section.content .tab_content ul li div.button_change a.subscribe span.icon {
-   display: block;
-   width: 13px;
-   height: 12px;
-   background: url(../img/user-subscribe_icons.png) center top no-repeat;
-}
-
-div#summary_full section.content .tab_content ul li div.button_change a.subscribed {
-   border: 1px solid #17A9C6;
-   background: #17A9C6;
-}
-
-div#summary_full section.content .tab_content ul li div.button_change a.subscribed span.icon {
-   background-position: center bottom;
-}
-
-article#droplet_full div.bottom {
-   background: none;
-}
-
 /* --------------------------- DROPLET DETAIL */
 
 article.droplet section.detail {
@@ -1156,27 +1282,27 @@ article.droplet section.detail section.discussion {
    padding: 10px 1.0416666667%;
 }
 
-article.droplet section.detail aside .item {
+article.droplet aside .item {
    padding-bottom: 10px; 
 }
 
-article.droplet section.detail aside .item h2 {
+article.droplet aside .item h2 {
    float: left;
    padding-right: 10px;
 }
 
-article.droplet section.detail aside .item p {
+article.droplet aside .item p {
    float: left;
    font-size: 1em;
    padding: 3px 0 0 0;
 }
 
-article.droplet section.detail aside .item ul li {
+article.droplet aside .item ul.tags li {
    float: left;
-   margin: 2px 2px 0 2px;
+   margin: 2px 2px 6px 2px;
 }
 
-article.droplet section.detail aside .item ul li a {
+article.droplet aside .item ul.tags li a {
    color: #666666;
    font-size: 0.9em;
    -webkit-border-radius: 10px;
@@ -1190,7 +1316,7 @@ article.droplet section.detail article.fullstory h1 {
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
    font-weight: 300;
    font-size: 2.3em;
-   padding: 0 0 5px 0;
+   padding: 7px 0;
 }
 
 article.droplet section.detail article.fullstory img {
@@ -1232,10 +1358,19 @@ article.droplet section.detail article.droplet section.content .body p.button_go
    padding: 3px 0;
 }
 
-article.droplet section.detail article.droplet section.actions p.button_change,
-article.droplet section.detail article.droplet section.actions p.button_change a {
+article.droplet section.detail article.droplet section.actions div.button {
    width: auto;
    height: auto;
+}
+
+article.droplet section.detail article.droplet section.actions p.button_change a {
+   -webkit-border-radius: 6px;
+   -moz-border-radius: 6px;
+   border-radius: 6px;
+}
+
+article.droplet section.detail article.add_reply {
+   border-bottom: none;
 }
 
 article.droplet section.detail article.add_reply section.content textarea {
@@ -1252,10 +1387,111 @@ article.droplet section.detail article.add_reply section.content p.button_go a {
    padding: 13px 30px;
 }
 
+/* --------------------------- SUMMARY FULL */
+
+article#droplet_full div#summary_full {
+   padding: 2.08333333% 1.0416666667%;
+}
+
+div#summary_full section.source {
+   width: 82.9787234%;
+   padding: 0;
+}
+
+div#summary_full section.source .visual {
+   float: left;
+   width: 16.88311688%;
+   padding: 0 1.0416666667%;
+}
+
+div#summary_full section.source .text {
+   float: left;
+   width: 78.22077922%;
+   text-align: left;
+   padding: 0 1.0416666667%;
+}
+
+div#summary_full section.source .text h1 {
+   font-size: 1.5em;
+}
+
+div#summary_full section.source .text h2 {
+   color: #888888;
+   font-style: italic;
+   font-size: 1.3em;
+}
+
+div#summary_full section.source .text p.date {
+   color: #888888;
+   font-style: italic;
+}
+
+div#summary_full section.actions p.button_change a {
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+}
+
+div#summary_full section.content {
+   clear: both;
+   width: 97.5%;
+   padding: 0;
+}
+
+div#summary_full section.content .body {
+   font-size: 1.2em;
+   padding: 1.0416666667%;
+}
+
+div#summary_full section.actions div.button {
+   width: auto;
+}
+
+article#droplet_full div.bottom {
+   background: none;
+}
+
 /* --------------------------- DASHBOARD */
 
 article.dashboard {
    padding: 0;
+}
+
+article.dashboard div.activity_feed article.droplet section.content {
+   width: 79.78723404%;
+}
+
+article.dashboard .list_stream {
+   padding: 10px 1.0416666667%; 
+}
+
+article.dashboard aside {
+   text-align: left;
+   border-top: 4px solid #045376;
+   padding: 10px 1.0416666667%;
+   margin-top: 15px;
+}
+
+article.dashboard aside h2 {
+   color: #045376;
+   font-size: 1.2em;
+   padding: 5px 0;
+}
+
+article.dashboard aside h2 span {
+   color: #888888;
+   font-weight: normal;
+}
+
+article.dashboard aside ul.relationships li {
+   display: block;
+   float: left;
+   width: 30px;
+   margin-right: 5px;
+}
+
+article.dashboard aside ul.relationships li img {
+   width: 100%;
 }
 
 /* --------------------------- CHANNELS */
@@ -1276,8 +1512,6 @@ div#channels .keywords h3 {
 
 div#channels .keywords input {
    width: 50%;
-   font-size: 1.1em;
-   padding: 5px;
 }
 
 div#channels .controls ul.tabs li.button_view {
@@ -1303,7 +1537,6 @@ div#channels .controls ul.tabs li.sms {
 div#channels .controls ul.tabs li.button_view a span.switch_off,
 div#channels .controls ul.tabs li.button_view a span.switch_on {
    display: block;
-   float: right;
    width: 50px;
    height: 18px;
    color: #fff;
@@ -1325,40 +1558,6 @@ div#channels .controls ul.tabs li.button_view a span.switch_on:before {
 div#channels .controls ul.tabs li.button_view a span.switch_off:before {
    content: "off";
    padding-left: 20px;
-}
-
-.controls div.input {
-   float: left;
-   width: 47.55072464%;
-   text-align: left;
-   padding: 10px 1.0416666667%;
-}
-
-.controls div.input h3 {
-   font-size: 1.1em;
-   padding: 5px 0;
-}
-
-.controls div.input input {
-   width: 90%;
-   font-size: 1em;
-   padding: 5px;
-}
-
-.controls div.row {
-   clear: both;
-   padding: 10px 1.0416666667%;
-}
-
-.controls_buttons p.button_go,
-.controls_buttons p.other {
-   float: right;
-   margin: 0 1.0416666667%;
-}
-
-.controls_buttons p.button_go a,
-.controls_buttons p.other {
-   padding: 15px 50px;
 }
 
 /* --------------------------- MAP */
@@ -1442,6 +1641,10 @@ footer li a {
 
 ul.tabs li.button_view {
    font-size: 0.75em;
+}
+
+article.droplet section.detail article.add_reply section.content {
+   width: 80%;
 }
 
 }
@@ -1584,17 +1787,36 @@ header nav .account li.user span.arrow {
    display: none;
 }
 
+ul.tabs {
+   width: 22.82608696%;
+}
+
+div.tab_container {
+   width: 75%;
+}
+
+div#channels .controls ul.tabs li.button_view a span.switch_off,
+div#channels .controls ul.tabs li.button_view a span.switch_on {
+   float: right;
+}
+
 .page_title {
    padding: 25px 0;
 }
 
 .page_title hgroup {
    float: left;
+   text-align: left;
 }
 
 .page_title h1 {
    float: left;
    padding-right: 10px;
+}
+
+article.dashboard .page_title h1 {
+   font-size: 3.2em;
+   padding-top: 0;
 }
 
 .page_title section.meter {
@@ -1604,8 +1826,17 @@ header nav .account li.user span.arrow {
    margin-top: 3px;
 }
 
-section.panel nav ul.views li {
-   display: block;
+article.droplet .page_title section.actions {
+   float: right;
+   clear: none;
+   margin: 0;
+}
+
+article#droplet_full .page_title section.actions p a {
+   height: 30px;
+   -webkit-border-radius: 6px;
+   -moz-border-radius: 6px;
+   border-radius: 6px;
 }
 
 article.droplet section.source {
@@ -1621,6 +1852,11 @@ article.droplet section.actions {
 }
 
 article.droplet section.source .actions span.type {
+   float: left;
+   width: 18.75%;
+   height: 15px;
+   border: none;
+   border-right: 1px solid rgba(256,256,256,0.7);
    padding: 2px;
 }
 
@@ -1647,6 +1883,10 @@ article.droplet section.source .actions ul.dropdown {
    width: auto;
    right: auto;
    left: auto;
+}
+
+article.droplet section.detail article.fullstory h1 {
+   padding: 0 0 5px 0;
 }
 
 article.droplet section.detail article.droplet section.content .body p.button_go {
@@ -1678,6 +1918,23 @@ section.map div.legend {
 
 footer {
    text-align: right;
+}
+
+article.dashboard section.panel nav ul.views li.view_panel {
+   display: none;
+}
+
+article.dashboard div.activity_feed article.droplet section.content {
+   width: 86.45833333%;
+}
+
+.controls div.input {
+   float: left;
+   width: 47.55072464%;
+}
+
+.controls div.row {
+   padding: 10px 1.0416666667%;
 }
 
 }
@@ -1714,6 +1971,16 @@ header nav .account li.login ul.dropdown {
    right: 8%;
 }
 
+article#droplet_full .page_title section.actions p a span {
+   float: left;
+   width: 27px;
+   margin: 0 10px;
+}
+
+article#droplet_full .page_title section.actions p a strong {
+   line-height: 25px;
+}
+
 article.droplet section.actions p.button_view,
 article.droplet section.actions div.button {
    float: left;
@@ -1729,14 +1996,36 @@ article.droplet section.actions p a {
    height: 75px;
 }
 
-article#droplet_full section.actions p a {
+article#droplet_full section.actions p.button_change a {
    height: 65px;
    padding-top: 15px;
 }
 
 article.droplet section.actions p.button_view a {
+   -webkit-border-top-right-radius: 0;
+   -moz-border-radius-topright: 0;
+   border-top-right-radius: 0;
+   -webkit-border-top-left-radius: 6px;
+   -webkit-border-bottom-left-radius: 6px;
+   -moz-border-radius-topleft: 6px;
+   -moz-border-radius-bottomleft: 6px;
+   border-top-left-radius: 6px;
+   border-bottom-left-radius: 6px;
    border-right: none;
    border-bottom: 1px solid #c2c2c2;
+
+}
+
+article.droplet section.actions p.button_change a {
+   -webkit-border-top-right-radius: 6px;
+   -webkit-border-bottom-right-radius: 6px;
+   -moz-border-radius-topright: 6px;
+   -moz-border-radius-bottomright: 6px;
+   border-top-right-radius: 6px;
+   border-bottom-right-radius: 6px;
+   -webkit-border-bottom-left-radius: 0;
+   -moz-border-radius-bottomleft: 0;
+   border-bottom-left-radius: 0;
 }
 
 article.droplet section.actions p.bucket a.bucket_added {
@@ -1760,12 +2049,12 @@ article.droplet section.actions p a strong {
    display: block;
 }
 
-article.droplet section.detail aside {
+article.droplet aside {
    float: left;
    width: 22.34042553%;
 }
 
-article.droplet section.detail aside .item {
+article.droplet aside .item {
    padding-bottom: 20px; 
 }
 
@@ -1774,8 +2063,8 @@ article.droplet section.detail .right_column {
    width: 73.40425532%;
 }
 
-article.droplet section.detail aside .item h2,
-article.droplet section.detail aside .item p {
+article.droplet aside .item h2,
+article.droplet aside .item p {
    float: none;
 }
 
@@ -1787,5 +2076,10 @@ article.droplet section.detail article.fullstory h1 {
    font-size: 2.5em;
    padding: 5px 0 7px 0;
 }
-	
+
+article.dashboard div.activity_feed {
+   float: left;
+   width: 73.40425532%;
+}
+   
 }

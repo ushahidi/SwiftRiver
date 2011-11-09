@@ -48,7 +48,7 @@ class Controller_Login extends Controller_Template {
 					$_REQUEST['password']) )
 			{
 				// Always redirect after a successful POST to prevent refresh warnings
-				$this->_redirect();
+				$this->request->redirect('dashboard');
 			}
 			else
 			{
@@ -78,30 +78,5 @@ class Controller_Login extends Controller_Template {
 		Auth::instance()->logout();
 		
 		Request::current()->redirect('login');
-	}
-
-	/**
-	 * Redirect After successful login
-	 * 
-	 * @return void
-	 */	
-	private function _redirect()
-	{
-		$user = Auth::instance()->get_user();
-
-		// Does this user have an account space?
-		$account = ORM::factory('account')
-			->where('user_id', '=', $user->id)
-			->find();
-
-		if ($account->loaded())
-		{
-			// redirect using account namespace
-			$this->request->redirect($account->account_path.'/river');
-		}
-		else
-		{
-			
-		}
 	}
 }

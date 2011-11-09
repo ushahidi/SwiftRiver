@@ -44,11 +44,13 @@
 					</li>
 					<div class="account">
 						<li class="login has_dropdown">
-							<a><span class="arrow"></span>Log in</a>
+							<a><span class="arrow"></span><?php echo __('Log in'); ?></a>
 							<ul class="dropdown">
-								<li><strong>Email</strong><input type="text" value=""></li>
-								<li><strong>Password</strong><input type="password" value=""></li>
-								<li><div class="buttons"><button class="save">Log in</button></div></li>
+								<?php echo Form::open(); ?>
+									<li><strong><?php echo __('Email'); ?></strong><?php echo Form::input("username", ""); ?></li>
+									<li><strong><?php echo __('Password'); ?></strong><?php echo Form::password("password", ""); ?></li>
+									<li><div class="buttons btn_click"><button class="save"><?php echo __('Log in'); ?></button></div></li>
+								<?php echo Form::close(); ?>
 							</ul>
 						</li>
 					</div>
@@ -82,12 +84,6 @@
 			<?php echo Form::open(); ?>
 				<div class="row cf">
 					<div class="input">
-						<h3><?php echo __('URL'); ?></h3>
-						<input type="text" />
-					</div>
-				</div>
-				<div class="row cf">
-					<div class="input">
 						<h3><?php echo __('Email'); ?></h3>
 						<?php echo Form::input("username", ""); ?>
 					</div>
@@ -96,6 +92,12 @@
 						<?php echo Form::password("password", ""); ?>
 					</div>
 				</div>
+				<div class="row cf">
+					<div class="input">
+						<h3><?php echo __('URL'); ?></h3>
+						<input type="text" />
+					</div>
+				</div>				
 				<div class="row controls_buttons cf">
 					<p class="button_go btn_click"><a>Get started</a></p>
 					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->

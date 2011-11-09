@@ -143,17 +143,14 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Load Header & Footer & variables
 		$this->template->header = View::factory('template/header');
-		$this->template->header->user = $this->user;
-		$this->template->header->account = $this->account;
 		$this->template->header->js = ''; // Dynamic Javascript
 
-		// Navs
+		// Header Nav
 		$this->template->header->nav_header = View::factory('template/nav/header');
 		$this->template->header->nav_header->rivers = $this->account->rivers->find_all();
 		$this->template->header->nav_header->buckets = $this->account->buckets->find_all();
-		$this->template->header->nav_canvas = View::factory('template/nav/canvas');
-		$this->template->header->nav_canvas->filters = url::site().$this->account->account_path.'/river/filters/';
-		$this->template->header->nav_canvas->channels = url::site().$this->account->account_path.'/river/channels/';
+		$this->template->header->nav_header->user = $this->user;
+		$this->template->header->nav_header->account = $this->account;
 
 		$this->template->content = '';
 		$this->template->footer = View::factory('template/footer');
@@ -165,6 +162,6 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function action_index()
 	{
-		$this->request->redirect($this->account->account_path.'/river');
-	}
+		$this->request->redirect('/dashboard');
+	}	
 }

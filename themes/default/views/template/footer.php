@@ -1,9 +1,14 @@
-		</div>
-	</article>
+
+	<footer class="center">
+		<p><a href="/">SwiftRiver</a></p>
+		<ul>
+			<li><a href="#">Who uses it.</a></li>
+			<li><a href="#">How it works.</a></li>
+		</ul>
+	</footer>	
 </body> 
 </html>
 <?php
-
-echo View::factory('profiler/stats');
-
+// Uncomment to profile
+//echo View::factory('profiler/stats');
 ?>

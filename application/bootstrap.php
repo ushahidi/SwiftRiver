@@ -131,6 +131,34 @@ Route::set('login', 'login(/<action>(/<id>))')
 	));
 
 /**
+ * Swiftriver Crawl Route
+ */	
+Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'crawler'
+	));	
+
+/**
+ * Swiftriver Media Router (JS/CSS)
+ */	
+Route::set('media', 'media(/<action>(/<id>))')
+	->defaults(array(
+		'controller' => 'media',
+		'action'     => 'index',
+	));
+
+/**
+ * Swiftriver Dashboard Route
+ */	
+Route::set('dashboard', 'dashboard(/<action>(/<id>))')
+	->defaults(array(
+		'controller' => 'dashboard',
+		'action'     => 'index',
+	));	
+
+/**
  * Swiftriver Welcome Route
  */	
 Route::set('welcome', 'welcome(/<action>(/<id>))')
@@ -142,7 +170,7 @@ Route::set('welcome', 'welcome(/<action>(/<id>))')
 /**
  * Swiftriver Bucket Route
  */
-Route::set('bucket', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
+Route::set('bucket', 'bucket(/<action>(/<id>))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'bucket',
 		'action'     => 'index',
@@ -151,7 +179,28 @@ Route::set('bucket', '<account>(/<controller>(/<action>(/<id>)))', array('id' =>
 /**
  * Swiftriver River Route
  */
-Route::set('river', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
+Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
+	->defaults(array(
+		'controller' => 'river',
+		'action'     => 'index',
+	));
+
+
+//*********** WHEN NOT LOGGED IN USE ACCOUNT NAMESPACE ***********//
+
+/**
+ * Swiftriver Bucket Route
+ */
+Route::set('bucket_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
+	->defaults(array(
+		'controller' => 'bucket',
+		'action'     => 'index',
+	));	
+
+/**
+ * Swiftriver River Route
+ */
+Route::set('river_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'river',
 		'action'     => 'index',
@@ -185,16 +234,6 @@ Route::set('settings', '<account>/settings(/<controller>(/<action>(/<id>)))')
 		'controller' => 'main',
 		'action'     => 'index',
 		'directory'  => 'settings'
-	));
-
-/**
- * Swiftriver Crawl Route
- */	
-Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'crawler'
 	));
 
 /**

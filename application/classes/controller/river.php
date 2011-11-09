@@ -46,8 +46,11 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
-		$this->template->content = View::factory('pages/river/page')
-			->bind('droplets', $droplets);
+		$this->template->content = View::factory('pages/river/main')
+			->bind('droplets', $filter_total)
+			->bind('meter', $meter)
+			->bind('filters', $filters)
+			->bind('channels', $channels);
 		
 		// This River's total droplets
 		$total_droplets = $this->river->droplets->count_all();
@@ -78,27 +81,68 @@ class Controller_River extends Controller_Swiftriver {
 			$meter = ($filter_total / $total) * 100;
 		}
 
-		$this->template->header->droplets = $filter_total;
-		$this->template->header->meter = $meter;
+		$filters = url::site().$this->account->account_path.'/river/filters/';
+		$channels = url::site().$this->account->account_path.'/river/channels/';
 	}
 
 	/**
+	 * Create a New River
+	 *
+	 * @return	void
+	 */
+	public function action_new()
+	{
+		$this->template->content = View::factory('pages/river/new');
+		$this->template->header->js = View::factory('pages/river/js/new');
+		$this->template->header->js->channels = url::site().$this->account->account_path.'/river/channels/';
+	}
+
+	/**
+	 * Ajax rendered filter control box
+	 * 
 	 * @return	void
 	 */
 	public function action_filters()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		echo View::factory('pages/river/filters');
+		echo View::factory('pages/river/filters_control');
 	}
 
 	/**
+	 * Ajax rendered channel control box
+	 * 
 	 * @return	void
 	 */
 	public function action_channels()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		echo View::factory('pages/river/channels');
+		echo View::factory('pages/river/channels_control');
 	}
+
+	/**
+	 * Ajax inline editing
+	 * Edit River Name
+	 * 
+	 * @return	void
+	 */
+	public function action_edit_inline()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		// check, has the form been submitted, if so, setup validation
+		if ($_REQUEST AND
+			isset($_REQUEST['edit_id'], $_REQUEST['edit_value']) AND
+			! empty($_REQUEST['edit_id']) AND 
+			! empty($_REQUEST['edit_value']) )
+		{
+			if ($_REQUEST['edit_id'] === $this->river->id)
+			{
+				$this->river->river_name = $_REQUEST['edit_value'];
+				$this->river->save();
+			}
+		}
+	}	
 }
