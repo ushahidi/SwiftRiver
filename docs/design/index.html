@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>SwiftRiver</title> 
+	<title>Dashboard - SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -11,25 +11,24 @@
 	<link rel="stylesheet" href="/css/styles.css" /> 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="/js/jquery.outside.js"></script>
 	<script src="/js/global.js"></script>
-</head> 
- 
+</head>
+
 <body> 
 	<header>
 		<div class="left_bar"></div>
 		<div class="center cf">
 			<hgroup>
-				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver</span></a></h1>
+				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver - Dashboard</span></a></h1>
 			</hgroup>
 			<nav>
 				<ul>
 					<li class="rivers has_dropdown">
 						<a><span class="arrow"></span>Rivers</a>
 						<ul class="dropdown">
-							<li><a href="/">River 1</a></li>
-							<li><a href="/">River 2</a></li>
-							<li><a href="/river/new.html"><span class="label"><em>Create new</em></span></a></li>
+							<li><a href="/river/">River 1</a></li>
+							<li><a href="/river/">River 2</a></li>
+							<li><a href="/river/new.html"><em>Create new</em></a></li>
 						</ul>
 					</li>
 					<li class="buckets has_dropdown">
@@ -37,17 +36,16 @@
 						<ul class="dropdown">
 							<li><a href="/bucket/">Bucket 1</a></li>
 							<li><a href="/bucket/">Bucket 2</a></li>
-							<li class="create_new"><a><em>Create new</em></a></li>
+							<li><a><em>Create new</em></a></li>
 						</ul>
 					</li>
 					<div class="account">
-						<li class="create"><a href="/login.html"><span class="label">Create an account</span></a></li>
-						<li class="login has_dropdown">
-							<a><span class="arrow"></span>Log in</a>
+						<li class="user has_dropdown">
+							<a><img src="/images/content/avatar3.gif" /><span class="arrow"></span><span class="label">Brandon Rosage</span></a>
 							<ul class="dropdown">
-								<li><strong>Email or Username</strong><input type="text" value=""></li>
-								<li><strong>Password</strong><input type="password" value=""></li>
-								<li><div class="buttons"><button class="save">Log in</button></div></li>
+								<li><a href="#">Your account</a></li>
+								<li><a href="#">Your settings</a></li>
+								<li><a href="#"><em>Log out</em></a></li>
 							</ul>
 						</li>
 					</div>
@@ -57,198 +55,129 @@
 		<div class="right_bar"></div>
 	</header>
 	
-	<article>
+	<article id="droplet_full" class="droplet dashboard cf">
 		<div class="cf center page_title">
 			<hgroup class="edit">
-				<h1><span class="edit_trigger" onclick="">River 1</span></h1>
+				<img src="/images/content/avatar3.gif" />
+				<h1><span class="edit_trigger" onclick="">Brandon Rosage</span></h1>
 			</hgroup>
-			<section class="meter">
-				<p style="padding-left:40%;"><strong>490</strong> droplets</p>
-				<div><span style="width:40%;"></span></div>
-			</section>
 		</div>
 		
-		<div class="center canvas">
+		<div class="center canvas cf">
 			<section class="panel">		
 				<nav class="cf">
 					<ul class="views">
-						<li class="active"><a>Droplets</a></li>
-						<li><a href="/river/trends/map.html">Map</a></li>
-						<li><a href="/river/trends/tags.html">Tags</a></li>
-						<li><a href="/river/trends/links.html">Links</a></li>
-						<li><a href="/river/trends/sources.html">Sources</a></li>
-						<li class="view_panel"><a href="/river/trends/views.html"><span class="arrow"></span>More</a></li>
+						<li class="active"><a>Activity</a></li>
+						<li><a href="/dashboard/rivers.html">Rivers</a></li>
+						<li><a href="/dashboard/buckets.html">Buckets</a></li>
+						<li><a href="/dashboard/teams.html">Teams</a></li>
+						<li class="view_panel"><a href="/dashboard/views.html"><span class="arrow"></span>More</a></li>
 					</ul>
 					<ul class="actions">
-						<li class="view_panel"><a href="/channels_controls.html" class="channels"><span class="icon"></span><span class="label">Edit channels</span></a></li>
-						<li class="view_panel"><a href="/filters.html" class="filter"><span class="icon"></span><span class="label">Edit filter</span></a></li>
+						<li class="view_panel"><a href="/account_settings.html" class="channels"><span class="icon"></span><span class="label">Account settings</span></a></li>
 					</ul>
 				</nav>
 				<div class="panel_body"></div>
 			</section>
-			
-			<div class="trend_container cf">
+						
+			<div class="activity_feed">
 				<article class="droplet cf">
 					<div class="summary">
 						<section class="source twitter">
 							<a href="/user"><img src="/images/content/avatar1.gif" /></a>
-							<div class="actions">
-								<span class="type"></span>
-								<p class="button_change score"><a><span>45</span></a><p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="useful"><a onclick="">This is useful</a></li>
-									<li class="not_useful"><a onclick="">This is not useful</a></li>
-								</ul>
-							</div>
 						</section>
 						<section class="content">
 							<div class="title">
-								<p class="date">July 4, 2011</p>
-								<h1>Adam Tinworth</h1>
+								<p class="date">2:35 p.m., July 4</p>
+								<h1>Adam Tinworth <span><a href="/droplet">added a reply to your droplet</a></span></h1>
 							</div>
 							<div class="body">
 								<p>OK, the Ushahidi section of this afternoon's #likeminds post should now be more link rich and comprehensible: <a href="#">t.co/D2lk9lRg</a></p>
 							</div>
 						</section>
-						<section class="actions">
-							<p class="button_view"><a href="/droplet/detailA.html" class="detail_view"><span></span><strong>detail</strong></a></p>
-							<div class="button">
-								<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
-									<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
-								</ul>
-							</div>
-						</section>
 					</div>
-					<section class="detail cf"></section>
-				</article>
-
-				<article class="droplet cf">
-					<div class="summary">
-						<section class="source facebook">
-							<a href="/user"><img src="/images/content/avatar2.gif" /></a>
-							<div class="actions">
-								<span class="type"></span>
-								<p class="button_change score no_score"><a><span></span></a><p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="useful"><a onclick="">This is useful</a></li>
-									<li class="not_useful"><a onclick="">This is not useful</a></li>
-								</ul>
-							</div>
-						</section>
-						<section class="content">
-							<div class="title">
-								<p class="date">July 4, 2011</p>
-								<h1>Adam Tinworth</h1>
-							</div>
-							<div class="body">
-								<p>OK, the Ushahidi section of this afternoon's #likeminds post should now be more link rich and comprehensible: <a href="#">t.co/D2lk9lRg</a></p>
-							</div>
-						</section>
-						<section class="actions">
-							<p class="button_view"><a href="/droplet/detailB.html" class="detail_view"><span></span><strong>detail</strong></a></p>
-							<div class="button">
-								<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
-									<li class="bucket"><a class="selected" onclick=""><span class="select"></span>Bucket 2</a></li>
-									<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
-								</ul>
-							</div>
-						</section>
-					</div>
-					<section class="detail cf"></section>
 				</article>
 
 				<article class="droplet cf">
 					<div class="summary">
 						<section class="source sms">
 							<a href="/user"><img src="/images/content/avatar3.gif" /></a>
-							<div class="actions">
-								<span class="type"></span>
-								<p class="button_change score"><a><span>45</span></a><p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="useful"><a onclick="">This is useful</a></li>
-									<li class="not_useful"><a onclick="">This is not useful</a></li>
-								</ul>
-							</div>
 						</section>
 						<section class="content">
 							<div class="title">
-								<p class="date">July 4, 2011</p>
-								<h1>Adam Tinworth</h1>
-							</div>
-							<div class="body">
-								<p>OK, the Ushahidi section of this afternoon's #likeminds post should now be more link rich and comprehensible: <a href="#">t.co/D2lk9lRg</a></p>
-							</div>
-						</section>
-						<section class="actions">
-							<p class="button_view"><a href="/droplet/detailC.html" class="detail_view"><span></span><strong>detail</strong></a></p>
-							<div class="button">
-								<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
-									<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
-								</ul>
+								<p class="date">11 a.m., July 4</p>
+								<h1>Brandon Rosage <span><a href="/bucket">created the bucket "Bucket 3"</a></span></h1>
 							</div>
 						</section>
 					</div>
-					<section class="detail cf"></section>
 				</article>
 				
 				<article class="droplet cf">
 					<div class="summary">
-						<section class="source rss">
+						<section class="source twitter">
 							<a href="/user"><img src="/images/content/avatar1.gif" /></a>
-							<div class="actions">
-								<span class="type"></span>
-								<p class="button_change score"><a class="scored"><span>45</span></a><p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="useful"><a onclick="">This is useful</a></li>
-									<li class="not_useful"><a onclick="">This is not useful</a></li>
-								</ul>
-							</div>
 						</section>
 						<section class="content">
 							<div class="title">
-								<p class="date">July 4, 2011</p>
-								<h1>Adam Tinworth</h1>
+								<p class="date">2:35 p.m., July 4</p>
+								<h1>Adam Tinworth <span><a href="/bucket">subscribed to your bucket</a></span></h1>
 							</div>
 							<div class="body">
 								<p>OK, the Ushahidi section of this afternoon's #likeminds post should now be more link rich and comprehensible: <a href="#">t.co/D2lk9lRg</a></p>
 							</div>
 						</section>
-						<section class="actions">
-							<p class="button_view"><a href="/droplet/detailA.html" class="detail_view"><span></span><strong>detail</strong></a></p>
-							<div class="button">
-								<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
-								<div class="clear"></div>
-								<ul class="dropdown">
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
-									<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
-									<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
-								</ul>
+					</div>
+				</article>
+				
+				<article class="droplet cf">
+					<div class="summary">
+						<section class="source sms">
+							<a href="/user"><img src="/images/content/avatar3.gif" /></a>
+						</section>
+						<section class="content">
+							<div class="title">
+								<p class="date">11 a.m., July 4</p>
+								<h1>Brandon Rosage <span><a href="/bucket">created the bucket "Bucket 3"</a></span></h1>
 							</div>
 						</section>
 					</div>
-					<section class="detail cf"></section>
 				</article>
-
+				
 				<div class="page_buttons">
 					<p class="button_view"><a href="/droplet">View more</a></p>
 				</div>
 			</div>
-		</div>
+			
+			<aside>
+				<div class="item cf">
+					<h2>This week</h2>
+					<ul>
+						<li>5 new followers</li>
+						<li>18 new subscribers</li>
+					</ul>
+				</div>
+				
+				<div class="item cf">
+					<h2>Following <span>87</span></h2>
+					<ul class="relationships">
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+					</ul>
+				</div>
+				
+				<div class="item cf">
+					<h2>Followers <span>34</span></h2>
+					<ul class="relationships">
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+						<li><a href="/user"><img src="/images/content/avatar3.gif" /></a></li>
+					</ul>
+				</div>																					
+			</aside>
+		</div>	
 	</article>
 	
 	<footer class="center">

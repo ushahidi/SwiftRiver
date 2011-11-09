@@ -80,30 +80,33 @@
 	
 	<article id="droplet_full" class="droplet dashboard cf">
 		<div class="cf center page_title">
-			<hgroup>
-				<img src="/images/content/avatar2.gif" />
-				<h1>Kate Dawson</h1>
+			<hgroup class="edit">
+				<img src="/images/content/avatar3.gif" />
+				<h1><span class="edit_trigger" onclick="">Brandon Rosage</span></h1>
 			</hgroup>
-			<section class="actions">
-				<p class="button_change follow_user"><a class="subscribe"><span></span><strong>follow</strong></a></p>
-			</section>
 		</div>
 		
 		<div class="center canvas cf">
 			<section class="panel">		
 				<nav class="cf">
 					<ul class="views">
-						<li class="active"><a>Rivers</a></li>
-						<li><a href="/user/buckets.html">Buckets</a></li>
-						<li><a href="/user/teams.html">Teams</a></li>
+						<li><a href="/">Activity</a></li>
+						<li><a href="/dashboard/rivers.html">Rivers</a></li>
+						<li class="active"><a>Buckets</a></li>
+						<li><a href="/dashboard/teams.html">Teams</a></li>
+						<li class="view_panel"><a href="/dashboard/views.html"><span class="arrow"></span>More</a></li>
+					</ul>
+					<ul class="actions">
+						<li class="view_panel"><a href="/channels_controls.html" class="channels"><span class="icon"></span><span class="label">Account settings</span></a></li>
 					</ul>
 				</nav>
+				<div class="panel_body"></div>
 			</section>
 			
 			<div class="list_stream">		
 				<ul>
-					<li><a href="/river/" class="title">River 1</a> <div class="button_change subscription"><a class="subscribe"><span class="icon"></span><span class="nodisplay">Subscribe</span></a></div></li>
-					<li><a href="/river/" class="title">River 2</a> <div class="button_change subscription"><a class="subscribe"><span class="icon"></span><span class="nodisplay">Subscribe</span></a></div></li>
+					<li><a href="/bucket/" class="title">Bucket 1</a> <span class="subscriber_count"><a href="/river/subscribers.html"><strong>22</strong> subscribers</a></span></li>
+					<li><a href="/bucket/" class="title">Bucket 2</a> <span class="subscriber_count"><a href="/river/subscribers.html"><strong>4</strong> subscribers</a></span></li>
 				</ul>
 			</div>
 		</div>	

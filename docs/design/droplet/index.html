@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="/css/styles.css" /> 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="/js/jquery.outside.js"></script>
 	<script src="/js/global.js"></script>
 </head> 
  
@@ -27,8 +26,8 @@
 					<li class="rivers has_dropdown">
 						<a><span class="arrow"></span>Rivers</a>
 						<ul class="dropdown">
-							<li><a href="/">River 1</a></li>
-							<li><a href="/">River 2</a></li>
+							<li><a href="/river/">River 1</a></li>
+							<li><a href="/river/">River 2</a></li>
 							<li><a href="/river/new.html"><em>Create new</em></a></li>
 						</ul>
 					</li>
@@ -41,7 +40,7 @@
 						</ul>
 					</li>
 					<div class="account">
-						<li class="create"><a href="/login.html">Create an account</a></li>
+						<li class="create"><a href="/login.html"><span class="label">Create an account</span></a></li>
 						<li class="login"><a href="#">Log in</a></li>
 					</div>
 				</ul>
@@ -53,14 +52,17 @@
 	<article id="droplet_full" class="droplet cf">
 		<div class="center canvas">				
 			<div id="summary_full" class="summary cf">
-				<section class="source">
+				<section class="source facebook">
 					<div class="visual">
-						<div class="avatar">
-							<img src="/images/content/avatar2.gif" />
-							<div class="twitter"><span></span></div>
-						</div>
-						<div class="score">
-							<p class="total"><a href="#">45</a><p>
+						<a href="/user"><img src="/images/content/avatar1.gif" /></a>
+						<div class="actions">
+							<span class="type"></span>
+							<p class="button_change score"><a><span>45</span></a><p>
+							<div class="clear"></div>
+							<ul class="dropdown">
+								<li class="useful"><a onclick="">This is useful</a></li>
+								<li class="not_useful"><a onclick="">This is not useful</a></li>
+							</ul>
 						</div>
 					</div>
 					<div class="text">
@@ -71,7 +73,15 @@
 					</div>
 				</section>
 				<section class="actions">
-					<p class="button_change"><a class="bucket_add"><span></span><strong>bucket</strong></a></p>
+					<div class="button">
+						<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
+						<div class="clear"></div>
+						<ul class="dropdown">
+							<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
+							<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
+							<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
+						</ul>
+					</div>
 				</section>
 				<section class="content">
 					<div class="body">
@@ -85,7 +95,7 @@
 					<aside>
 						<div class="item cf">
 							<h2>Tags</h2>
-							<ul>
+							<ul class="tags">
 								<li><a href="#">ushahidi</a></li>
 								<li><a href="#">likeminds</a></li>
 								<li><a href="#">comprehensible</a></li>
@@ -130,13 +140,16 @@
 							</hgroup>
 							<article class="droplet cf">
 								<div class="summary">
-									<section class="source">
-										<div class="avatar">
-											<img src="/images/content/avatar1.gif" />
-											<div class="twitter"><span></span></div>
-										</div>
-										<div class="score">
-											<p class="total"><a href="#">45</a><p>
+									<section class="source sms">
+										<a href="/user"><img src="/images/content/avatar3.gif" /></a>
+										<div class="actions">
+											<span class="type"></span>
+											<p class="button_change score"><a><span>45</span></a><p>
+											<div class="clear"></div>
+											<ul class="dropdown">
+												<li class="useful"><a onclick="">This is useful</a></li>
+												<li class="not_useful"><a onclick="">This is not useful</a></li>
+											</ul>
 										</div>
 									</section>
 									<section class="content">
@@ -150,7 +163,15 @@
 										</div>
 									</section>
 									<section class="actions">
-										<p class="button_change"><a class="bucket_add"><span></span>Add to bucket</a></p>
+										<div class="button">
+											<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
+											<div class="clear"></div>
+											<ul class="dropdown">
+												<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
+												<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
+												<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
+											</ul>
+										</div>
 									</section>
 								</div>
 							</article>
@@ -176,5 +197,13 @@
 			</section>
 		</div>	
 	</article>
+	
+	<footer class="center">
+		<p><a href="/">SwiftRiver</a></p>
+		<ul>
+			<li><a href="#">Who uses it.</a></li>
+			<li><a href="#">How it works.</a></li>
+		</ul>
+	</footer>
 </body> 
 </html>

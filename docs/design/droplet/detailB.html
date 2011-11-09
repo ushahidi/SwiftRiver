@@ -3,7 +3,7 @@
 	<aside>
 		<div class="item cf">
 			<h2>Tags</h2>
-			<ul>
+			<ul class="tags">
 				<li><a href="#">ushahidi</a></li>
 				<li><a href="#">likeminds</a></li>
 				<li><a href="#">comprehensible</a></li>
@@ -34,13 +34,16 @@
 			</hgroup>
 			<article class="droplet cf">
 				<div class="summary">
-					<section class="source">
-						<div class="avatar">
-							<img src="/images/content/avatar1.gif" />
-							<div class="twitter"><span></span></div>
-						</div>
-						<div class="score">
-							<p class="total"><a href="#">45</a><p>
+					<section class="source sms">
+						<a href="/user"><img src="/images/content/avatar3.gif" /></a>
+						<div class="actions">
+							<span class="type"></span>
+							<p class="button_change score"><a><span>45</span></a><p>
+							<div class="clear"></div>
+							<ul class="dropdown">
+								<li class="useful"><a onclick="">This is useful</a></li>
+								<li class="not_useful"><a onclick="">This is not useful</a></li>
+							</ul>
 						</div>
 					</section>
 					<section class="content">
@@ -79,9 +82,10 @@
 						<textarea rows="10" cols="60"></textarea>
 						<p class="button_go"><a href="#">Add reply</a></p>
 					</section>
+					<section class="actions"></section>
 				</div>
 			</article>
 		</section>
 	</div>
 </div>
-<div class="arrow bottom"><span></span></div>
+<div class="arrow bottom"><a class="close" onclick="">Hide detail</a></div>

@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="/css/styles.css" /> 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="/js/jquery.outside.js"></script>
 	<script src="/js/global.js"></script>
 </head> 
  
@@ -27,8 +26,8 @@
 					<li class="rivers has_dropdown">
 						<a><span class="arrow"></span>Rivers</a>
 						<ul class="dropdown">
-							<li><a href="/">River 1</a></li>
-							<li><a href="/">River 2</a></li>
+							<li><a href="/river/">River 1</a></li>
+							<li><a href="/river/">River 2</a></li>
 							<li><a href="/river/new.html"><em>Create new</em></a></li>
 						</ul>
 					</li>
@@ -62,8 +61,9 @@
 			<hgroup class="edit">
 				<h1><span class="edit_trigger" onclick="">River 1</span></h1>
 			</hgroup>
-			<section class="dial">
-				<p style="padding-left:50%;"><strong>490</strong> droplets</p>
+			<section class="meter">
+				<p style="padding-left:40%;"><strong>490</strong> droplets</p>
+				<div><span style="width:40%;"></span></div>
 			</section>
 		</div>
 		
@@ -71,8 +71,8 @@
 			<section class="panel">		
 				<nav class="cf">
 					<ul class="views">
-						<li><a href="/">Droplets</a></li>
-						<li class="active"><a href="/river/trends/map.html">Map</a></li>
+						<li><a href="/river/">Droplets</a></li>
+						<li class="active"><a>Map</a></li>
 						<li><a href="/river/trends/tags.html">Tags</a></li>
 						<li><a href="/river/trends/links.html">Links</a></li>
 						<li><a href="/river/trends/sources.html">Sources</a></li>
