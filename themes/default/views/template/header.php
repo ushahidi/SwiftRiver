@@ -36,7 +36,7 @@
 		<div class="left_bar"></div>
 		<div class="center cf">
 			<hgroup>
-				<h1 class="logo"><a href="<?php URL::site().'dashboard'; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
+				<h1 class="logo"><a href="<?php echo URL::site().'dashboard'; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
 			</hgroup>
 			<?php echo $nav_header;?>
 		</div>

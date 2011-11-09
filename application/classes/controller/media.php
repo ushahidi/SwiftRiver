@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Dashboard Controller
+ * Media Controller
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 

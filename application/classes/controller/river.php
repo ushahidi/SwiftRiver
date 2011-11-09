@@ -122,12 +122,13 @@ class Controller_River extends Controller_Swiftriver {
 	}
 
 	/**
-	 * Ajax inline editing
+	 * Ajax Title Editing Inline
+	 *
 	 * Edit River Name
 	 * 
 	 * @return	void
 	 */
-	public function action_edit_inline()
+	public function action_ajax_title()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
