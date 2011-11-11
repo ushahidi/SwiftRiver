@@ -109,10 +109,14 @@ $(document).ready(function() {
 		event.stopPropagation();
 	});
 	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
-
-	// Submit Button
-	$(".btn_click").click(function(){
-		var form = $(this).parents('form:first');
-		form.submit();
-	});
 });
+
+function submitForm(button){
+	var form = $(button).parents('form:first');
+	form.submit();
+}
+
+function submitAjax(button){
+	var form = $(button).parents('form:first');
+	form.submit();
+}

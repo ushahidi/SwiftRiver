@@ -49,7 +49,7 @@
 								<?php echo Form::open(); ?>
 									<li><strong><?php echo __('Email'); ?></strong><?php echo Form::input("username", ""); ?></li>
 									<li><strong><?php echo __('Password'); ?></strong><?php echo Form::password("password", ""); ?></li>
-									<li><div class="buttons btn_click"><button class="save"><?php echo __('Log in'); ?></button></div></li>
+									<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Log in'); ?></button></div></li>
 								<?php echo Form::close(); ?>
 							</ul>
 						</li>
@@ -99,7 +99,7 @@
 					</div>
 				</div>				
 				<div class="row controls_buttons cf">
-					<p class="button_go btn_click"><a>Get started</a></p>
+					<p class="button_go" onclick="submitForm(this)"><a>Get started</a></p>
 					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
 				</div>
 			<?php echo Form::close(); ?>

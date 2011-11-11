@@ -1,7 +1,7 @@
 <article>
 	<div class="cf center page_title">
 		<hgroup class="edit">
-			<h1><span class="edit_trigger" onclick="">River 1</span></h1>
+			<h1><span class="edit_trigger" title="river" id="edit_<?php echo $river->id; ?>" onclick="" onclick=""><?php echo $river->river_name; ?></span></h1>
 		</hgroup>
 		<?php
 		if (isset($droplets))

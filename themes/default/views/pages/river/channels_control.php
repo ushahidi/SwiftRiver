@@ -28,23 +28,39 @@ $(document).ready(function() {
 	</div>
 	<div class="controls tab_controls cf">
 		<ul class="tabs">
-		    <li class="button_view twitter"><a href="#twitter"><span class="switch_on"></span><span class="label">Twitter</span></a></li>
+			<?php
+			foreach ($channels as $key => $channel)
+			{
+				?>
+				<li class="button_view <?php echo $key; ?>"><a href="#<?php echo $key; ?>"><span class="switch_on"></span><span class="label"><?php echo $channel['name']; ?></span></a></li>
+				<?php
+			}
+			?>
 		    <li class="button_view facebook"><a href="#facebook"><span class="switch_off"></span><span class="label">Facebook</span></a></li>
 			<li class="button_view rss"><a href="#rss"><span class="switch_off"></span><span class="label">RSS</span></a></li>
 		    <li class="button_view sms"><a href="#sms"><span class="switch_off"></span><span class="label">SMS</span></a></li>
 			<li class="more"><a href="#">More channels</a></li>
 		</ul>				
 		<div class="tab_container">
-		    <article id="twitter" class="tab_content">
-				<div class="input">
-					<h3>People</h3>
-					<input type="text" />
-				</div>
-				<div class="input">
-					<h3>Locations</h3>
-					<input type="text" />
-				</div>
-			</article>
+			<?php
+			foreach ($channels as $key => $channel)
+			{
+				?>
+				<article id="<?php echo $key; ?>" class="tab_content">
+					<ul class="channel_options cf">
+						<?php
+						foreach ($channel['options'] as $option_key => $option_value)
+						{
+							?>
+							<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', '<?php echo $option_value; ?>')"><span></span><?php echo $option_value; ?></a></li>
+							<?php	
+						}
+						?>
+					</ul>
+				</article>				
+				<?php
+			}
+			?>
 		    <article id="facebook" class="tab_content">
 		       <!--Content-->
 		    </article>
@@ -57,7 +73,7 @@ $(document).ready(function() {
 		</div>
 	</div>
 	<div class="row controls_buttons cf">
-		<p class="button_go"><a href="#">Apply changes</a></p>
+		<p class="button_go"><a href="#" onclick="submitForm(this)">Apply changes</a></p>
 		<p class="other"><a class="close" onclick="">Cancel</a></p>
 	</div>
 </div>

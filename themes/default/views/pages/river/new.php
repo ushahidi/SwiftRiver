@@ -2,7 +2,7 @@
 	<?php echo Form::open(); ?>
 		<div class="cf center page_title">
 			<hgroup class="edit">
-				<h1><span class="edit_input"><input type="text" value="" placeholder="Name your River"></span></h1>
+			<h1><span class="edit_input"><?php echo Form::input('river_name', '', array('placeholder' => __('Name your River'))); ?></span></h1>
 			</hgroup>
 		</div>
 		

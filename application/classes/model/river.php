@@ -61,6 +61,11 @@ class Model_River extends ORM
 			$this->river_date_add = date("Y-m-d H:i:s", time());
 		}
 
-		return parent::save();
+		$river = parent::save();
+
+		// Swiftriver Plugin Hook -- execute after saving a river
+		Swiftriver_Event::run('swiftriver.river.save', $river);
+
+		return $river;
 	}	
 }

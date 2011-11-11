@@ -11,3 +11,17 @@ function inlineEdit() {
 			}, "json");
 	}
 }
+
+var ci = 0;
+function channelOption(channel, option, label){
+	if ( typeof (channel) != 'undefined' && channel ) {
+		ci++;
+		$('#'+channel).append('<div class="input" id="channel_option_'+ci+'"><h3>'+label+' [ <a href="javascript:channelOptionR(\'channel_option_'+ci+'\')">&#8212;</a> ]</h3><input type="text" name="'+channel+'_'+option+'[]" /></div>');
+	}
+}
+
+function channelOptionR(id){
+	if ( typeof (id) != 'undefined' && id ) {
+		$('#'+id).remove();
+	}
+}

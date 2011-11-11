@@ -14,10 +14,11 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_River extends Controller_Swiftriver {
+
 	/**
-	 * This River
+	 * Channels
 	 */
-	protected $river;
+	protected $channels;
 
 	/**
 	 * @return	void
@@ -27,18 +28,8 @@ class Controller_River extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 
-		// Does this account have a river?
-		$this->river = ORM::factory('river')
-			->where('account_id', '=', $this->account->id)
-			->order_by('river_current', 'DESC')
-			->find();
-		
-		if ( ! $this->river->loaded())
-		{
-			$this->river->river_name = __('River 1');
-			$this->river->account_id = $this->account->id;
-			$this->river->save();
-		}
+		// Get all available channels from plugins
+		$this->channels = Swiftriver_Plugins::channels();
 	}
 
 	/**
@@ -47,20 +38,43 @@ class Controller_River extends Controller_Swiftriver {
 	public function action_index()
 	{
 		$this->template->content = View::factory('pages/river/main')
+			->bind('river', $river)
 			->bind('droplets', $filter_total)
 			->bind('meter', $meter)
 			->bind('filters', $filters)
 			->bind('channels', $channels);
+
+		// First we need to make sure this river
+		// actually exists
+		$id = $this->request->param('id');
+		
+		if (is_numeric($id))
+		{
+			$river = ORM::factory('river')
+				->where('id', '=', $id)
+				->where('account_id', '=', $this->account->id)
+				->find();
+			if ( ! $river->loaded())
+			{
+				// It doesn't -- redirect back to dashboard
+				$this->request->redirect('dashboard');
+			}
+		}
+		else
+		{
+			// Non-Numeric ID -- redirect back to dashboard
+			$this->request->redirect('dashboard');
+		}			
 		
 		// This River's total droplets
-		$total_droplets = $this->river->droplets->count_all();
+		$total_droplets = $river->droplets->count_all();
 
 		// Build River Query
 		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'))
 			->from('droplets');
 		$query->join('rivers_droplets', 'INNER')
 			->on('rivers_droplets.droplet_id', '=', 'droplets.id');
-		$query->where('rivers_droplets.river_id', '=', $this->river->id);
+		$query->where('rivers_droplets.river_id', '=', $river->id);
 		$query->order_by('droplet_date_pub', 'DESC');
 
 		// Clone query before any filters have been applied
@@ -95,6 +109,29 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/river/new');
 		$this->template->header->js = View::factory('pages/river/js/new');
 		$this->template->header->js->channels = url::site().$this->account->account_path.'/river/channels/';
+
+		// save the river
+		if ($_POST)
+		{
+			$river = ORM::factory('river');
+			$post = $river->validate($_POST);
+
+			if ($post->check())
+			{
+				$river->river_name = $post['river_name'];
+				$river->account_id = $this->account->id;
+				$river->save();
+
+				// Always redirect after a successful POST to prevent refresh warnings
+				$this->request->redirect('river/index/'.$river->id);
+			}
+			else
+			{
+				//validation failed, get errors
+				$errors = $post->errors('river');
+			}
+
+		}
 	}
 
 	/**
@@ -118,7 +155,9 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		echo View::factory('pages/river/channels_control');
+		$control = View::factory('pages/river/channels_control');
+		$control->channels = $this->channels;
+		echo $control;
 	}
 
 	/**
@@ -139,10 +178,16 @@ class Controller_River extends Controller_Swiftriver {
 			! empty($_REQUEST['edit_id']) AND 
 			! empty($_REQUEST['edit_value']) )
 		{
-			if ($_REQUEST['edit_id'] === $this->river->id)
+
+			$river = ORM::factory('river')
+				->where('id', '=', $_REQUEST['edit_id'])
+				->where('account_id', '=', $this->account->id)
+				->find();
+
+			if ($river->loaded())
 			{
-				$this->river->river_name = $_REQUEST['edit_value'];
-				$this->river->save();
+				$river->river_name = $_REQUEST['edit_value'];
+				$river->save();
 			}
 		}
 	}	

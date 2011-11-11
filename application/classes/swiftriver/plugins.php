@@ -85,19 +85,19 @@ class Swiftriver_Plugins {
 	}
 
 	/**
-	 * Find all the active plugins with feed services
+	 * Find all the active plugins with channel services
 	 *
-	 * @return	array $services
+	 * @return	array $channels
 	 */
-	public static function services()
+	public static function channels()
 	{
-		$services = array();
+		$channels = array();
 		// Load each plugins configs and find out which plugins
 		// are Feed Service Providers
 		$plugins = Kohana::$config->load('plugin');
 		foreach($plugins as $key => $plugin)
 		{
-			if (isset($plugin['service']) AND $plugin['service'] == TRUE)
+			if (isset($plugin['channel']) AND $plugin['channel'] == TRUE)
 			{
 				$active = ORM::factory('plugin')
 					->where('plugin_path', '=', $key)
@@ -105,12 +105,18 @@ class Swiftriver_Plugins {
 					->find();
 				if ($active->loaded())
 				{
-					$services[$key] = $plugin['name'];
+					$channels[$key]['name'] = $plugin['name'];
+
+					// Get Channel Options
+					if (isset($plugin['channel_options']) AND is_array($plugin['channel_options']))
+					{
+						$channels[$key]['options'] = $plugin['channel_options'];
+					}
 				}
 			}
 		}
 
-		return $services;
+		return $channels;
 	}
 
 	/**

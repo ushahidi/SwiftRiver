@@ -6,7 +6,7 @@
 				<?php
 				foreach ($rivers as $river)
 				{
-					?><li><a href="/"><?php echo $river->river_name; ?></a></li><?php
+					?><li><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a></li><?php
 				}
 				?>
 				<li><a href="<?php echo URL::site().'river/new'; ?>"><em><?php echo __('Create New');?></em></a></li>
@@ -38,7 +38,7 @@
 						<ul class="dropdown">
 							<li><strong><?php echo __('Email');?></strong><?php echo Form::input("username", ""); ?></li>
 							<li><strong><?php echo __('Password');?></strong><?php echo Form::password("password", ""); ?></li>
-							<li><div class="buttons btn_click"><button class="save"><?php echo __('Log In');?></button></div></li>
+							<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Log In');?></button></div></li>
 						</ul>
 					</li>
 				<?php echo Form::close(); ?>			
