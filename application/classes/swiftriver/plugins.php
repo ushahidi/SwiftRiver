@@ -14,11 +14,6 @@
  */
 class Swiftriver_Plugins {
 	
-	public static function init()
-	{
-		
-	}
-	
 	/**
 	 * Load all active plugins into the Kohana system
 	 *
@@ -29,12 +24,15 @@ class Swiftriver_Plugins {
 		$active_plugins = ORM::factory("plugin")
 			->where("plugin_enabled", "=", 1)
 			->find_all();
+		
+		$plugin_entries = array();
 		foreach ($active_plugins as $plugin)
 		{
-			Kohana::modules(array_merge(Kohana::modules(), array(
-				$plugin->plugin_path => PLUGINPATH.$plugin->plugin_path
-			)));
+			$plugin_entries[$plugin->plugin_path] = PLUGINPATH.$plugin->plugin_path;
 		}
+		
+		// Add the plugin entries to the list of Kohana modules
+		Kohana::modules(Kohana::modules() + $plugin_entries);
 	}
 	
 	/**
