@@ -5,7 +5,6 @@ include_once Kohana::find_file('vendor', 'phirehose/OauthPhirehose');
 
 class Firehose_Filter extends  OauthPhirehose{
 
-	public $keywords = array();
 	
 	/**
 	 * Enqueue each status
@@ -42,16 +41,24 @@ class Firehose_Filter extends  OauthPhirehose{
 	 * Update the track words
 	 */
 	public function checkFilterPredicates() {
-            $this->setTrack($this->keywords); 
+            $this->setTrack($this->_get_keywords()); 
 	}
 
 
-	/**
-	 * Update the keywords
+
+	/** Get twitter filter options and return a keyword array
+	 * //TODO: Improve this to not query the DB every time.
+	 *
+	 * @return array
 	 */
-	public function updateKeywords($keywords) {
-		$this->keywords = $keywords;
+	private function _get_keywords() {
+		$options = Model_Channel_Filter::getChannelFilterOptions('twitter');
+		$keywords = array();
+		foreach($options as $option) {
+			if(isset($option['keyword'])) {
+			    $keywords[] = $option['keyword'];
+			}
+		}
+		return $keywords;
 	}
- 
-
 }

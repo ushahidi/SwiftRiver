@@ -53,26 +53,7 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 			and defined('TWITTER_CONSUMER_KEY') 
 			and defined('TWITTER_CONSUMER_SECRET')){ 
 		$sc = new Firehose_Filter(OAUTH_TOKEN, OAUTH_SECRET, Phirehose::METHOD_FILTER);
-		$sc->updateKeywords($this->_get_keywords());
 		$sc->consume();
 	    }
 	}
-
-
-	/** Get twitter filter options and return a keyword array
-	 *
-	 * @return array
-	 */
-	private function _get_keywords() {
-		$options = Model_Channel_Filter::getChannelFilterOptions('twitter');
-		$keywords = array();
-		foreach($options as $option) {
-			if(isset($option['keyword'])) {
-			    $keywords[] = $option['keyword'];
-			}
-		}
-		return $keywords;
-	}
-
-
 }
