@@ -22,135 +22,57 @@ class Controller_Crawler_Twitter extends Controller_Crawler_Main {
 	{
 		// Execute parent::before first
 		parent::before();
+		
+		$settings = array();
+		$params = ORM::factory('twitter_setting')->find_all();
+		foreach($params as $param) {
+			$settings[$param->key] = $param->value;
+		}
+
+		
+		if (isset($settings['consumer_key']) 
+			and isset($settings['consumer_secret']) 
+			and isset($settings['oauth_token']) 
+			and isset($settings['oauth_token_secret'])) {
+
+		    // The app OAuth credentials
+                    define("TWITTER_CONSUMER_KEY", $settings['consumer_key']);
+                    define("TWITTER_CONSUMER_SECRET", $settings['consumer_secret']);
+
+
+                    // The OAuth data for the twitter account
+                    define("OAUTH_TOKEN", $settings['oauth_token']);
+                    define("OAUTH_SECRET", $settings['oauth_token_secret']);
+		}
 	}
 
 	public function action_index()
 	{
-		// Start streaming +++ TESTING +++
-		$sc = new Firehose_Filter('username', 'password', Phirehose::METHOD_FILTER);
-		$sc->setTrack(array('ushahidi'));
+		if(defined('OAUTH_TOKEN') 
+			and defined('OAUTH_SECRET') 
+			and defined('TWITTER_CONSUMER_KEY') 
+			and defined('TWITTER_CONSUMER_SECRET')){ 
+		$sc = new Firehose_Filter(OAUTH_TOKEN, OAUTH_SECRET, Phirehose::METHOD_FILTER);
+		$sc->updateKeywords($this->_get_keywords());
 		$sc->consume();
-
-		//echo "test";
+	    }
 	}
 
-	/**
-	 * Build Twitter Search Query
-	 * @param array $options
-	 * @return void
+
+	/** Get twitter filter options and return a keyword array
+	 *
+	 * @return array
 	 */
-	private function _search($options = array())
-	{
-		include_once Kohana::find_file('vendor', 'twittersearch/twittersearch');
-		
-		$search = new TwitterSearch();
-		foreach ($options as $key => $value)
-		{
-			// Keywords
-			if ($key == 'keywords')
-			{
-				$search->contains($value);
-			}
-
-			// Hashtag
-			if ($key == 'hashtag')
-			{
-				$search->with($value);
-			}
-
-			// From @user
-			if ($key == 'from')
-			{
-				$search->from($value);
-			}
-
-			// To @user
-			if ($key == 'to')
-			{
-				$search->to($value);
-			}
-
-			// Mention @user
-			if ($key == 'mention')
-			{
-				$search->about($value);
+	private function _get_keywords() {
+		$options = Model_Channel_Filter::getChannelFilterOptions('twitter');
+		$keywords = array();
+		foreach($options as $option) {
+			if(isset($option['keyword'])) {
+			    $keywords[] = $option['keyword'];
 			}
 		}
-
-		$results = $search->rpp(50)->results();
-
-		foreach ($results as $result)
-		{
-			if ( $result->text AND ! $this->_is_retweet($result->text) )
-			{
-				if ( isset($result->from_user_id) AND ! empty($result->from_user_id) AND 
-				 	isset($result->id) AND ! empty($result->id) )
-				{
-					$this->_save($result);
-				}
-			};
-			
-		}
+		return $keywords;
 	}
 
 
-	/**
-	 * Save A Tweet!
-	 * @param object $result
-	 * @return void
-	 */
-	private function _save($result = NULL)
-	{
-		if ($result)
-		{
-			// Get droplet template
-			$droplet = Swiftriver_Dropletqueue::get_droplet_template();
-			
-			// Set the droplet properties
-			$droplet['channel'] = 'twitter';
-			$droplet['channel_filter_id'] = '1';
-			$droplet['identity_orig_id'] = $result->from_user_id_str;
-			$droplet['identity_username'] = $result->from_user;
-			$droplet['identity_name'] = '';
-			$droplet['droplet_orig_id'] = trim((string) $result->id);
-			$droplet['droplet_type'] = 'original';
-			$droplet['droplet_title'] = '';
-			$droplet['droplet_content'] = trim(strip_tags(str_replace('<', ' <', $result->text)));
-			$droplet['droplet_locale'] = $result->iso_language_code;
-			$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($result->created_at));
-			
-			// 	Add the droplet to the processing queue
-			Swiftriver_Dropletqueue::add($droplet, FALSE);
-		}
-	}
-
-
-	/**
-	 * Is this an old style retweet i.e. (RT @)
-	 * @param string $str
-	 * @return bool
-	 */
-	private function _is_retweet($str = NULL)
-	{
-		if ($str)
-		{
-			// Case insensitive search on "RT @user"
-			$regex1 = 'RT\s+@[a-zA-Z0-9_]*';
-
-			// Case insensitive search on "RT@user"
-			$regex2 = 'RT@[a-zA-Z0-9_]*';
-
-			if ( preg_match_all("/".$regex1."/is", $str, $matches) OR 
-				preg_match_all("/".$regex2."/is", $str, $matches) )
-			{
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
-		}
-
-		return TRUE;
-	}
 }

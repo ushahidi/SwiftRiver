@@ -55,4 +55,24 @@ class Model_Channel_Filter extends ORM
 
 		return parent::save();
 	}
+
+	/**
+	 * Get all filter options by channel
+	 * 
+	 * return @array
+	 */
+	public static function getChannelFilterOptions($channel) {
+		$options = array();
+		$channel_filters = ORM::factory('channel_filter')
+			->where('channel', '=', $channel)
+			->find_all();
+		foreach($channel_filters as $channel_filter) {
+			$channel_filter_options = $channel_filter->channel_filter_options
+				->find_all();
+			foreach($channel_filter_options as $option) {
+				$options[] = array($option->key => $option->value);
+			}
+		}
+		return $options;
+	}
 }

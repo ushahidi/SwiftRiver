@@ -32,7 +32,7 @@ class Controller_Crawler_Main extends Controller {
 	public function action_index()
 	{
 		// Get all the available services
-		$services = Swiftriver_Plugins::services();
+		$services = Swiftriver_Plugins::channels();
 		foreach ($services as $key => $value)
 		{
 			try
