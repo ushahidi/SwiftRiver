@@ -53,7 +53,6 @@ class Model_Droplet extends ORM
 	 * @var array
 	 */
 	protected $_belongs_to = array(
-		'channel_filter' => array(),
 		'identity' => array()
 	);
 
@@ -73,6 +72,15 @@ class Model_Droplet extends ORM
 		}
 
 		return parent::save($validation);
+	}
+
+	/**
+	 *
+	 */
+	public function mark_as_processed()
+	{
+		$this->droplet_processed = 1;
+		$this->save();
 	}
 	
 	/**
@@ -207,7 +215,7 @@ class Model_Droplet extends ORM
 	 *
 	 * @return array
 	 */
-	public static function get_unprocessed_droplets()
+	public static function get_unprocessed_droplets($limit = 1)
 	{
 		$droplets = array();		
 			
@@ -215,18 +223,12 @@ class Model_Droplet extends ORM
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
 					->order_by('droplet_date_pub', 'DESC')
+					->limit($limit)
 					->find_all();
 					
 		foreach ($result as $droplet)
 		{
-			$droplets[] = array(
-				'id' => $droplet->id,
-				'droplet_content' => $droplet->droplet_content,
-				'droplet_date_pub' => $droplet->droplet_date_pub,
-				'places' => array(),
-				'links' => array(),
-				'tags' => array()
-			);
+			$droplets[] = $droplet;
 		}
 		
 		// Return items

@@ -472,7 +472,6 @@ CREATE  TABLE IF NOT EXISTS `droplets` (
   `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
   `identity_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)' ,
   `channel` VARCHAR(100) NOT NULL ,
-  `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)' ,
   `droplet_hash` VARCHAR(64) NOT NULL ,
   `droplet_orig_id` VARCHAR(255) NOT NULL ,
   `droplet_type` VARCHAR(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision' ,
@@ -616,6 +615,18 @@ CREATE  TABLE IF NOT EXISTS `user_actions` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8, 
 COMMENT = 'Tracks user actions across the system' ;
+
+
+-- -----------------------------------------------------
+-- Table `channel_filter_droplets`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `channel_filter_droplets` (
+  `channel_filter_id` bigint(20) unsigned NOT NULL,
+  `droplet_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`channel_filter_id`,`droplet_id`)
+) ENGINE=InnoDB 
+DEFAULT CHARSET=utf8 
+COMMENT='Link droplets to a user';
 
 
 -- -----------------------------------------------------

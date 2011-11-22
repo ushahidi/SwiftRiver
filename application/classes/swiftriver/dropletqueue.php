@@ -45,13 +45,14 @@ class Swiftriver_Dropletqueue {
 			$droplet = array_pop(self::$_queue);
 			
 			// Submit the droplet to an extraction plugin
-			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
-			
-			// Save the droplet - with the extracted metadata
-			Model_Droplet::create_from_array($droplet);
+			Swiftriver_Event::run('swiftriver.droplet.link_droplet', $droplet);
+			//Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
 			
 			// Add the droplet to the list of processed items
 			self::$_processed[] =  $droplet;
+
+			// Mark the droplet as processed
+			$droplet->mark_as_processed();
 		}
 	}
 	

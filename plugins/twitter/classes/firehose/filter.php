@@ -5,6 +5,8 @@ include_once Kohana::find_file('vendor', 'phirehose/OauthPhirehose');
 
 class Firehose_Filter extends  OauthPhirehose{
 
+	private $_options = array();
+
 	
 	/**
 	 * Enqueue each status
@@ -21,7 +23,6 @@ class Firehose_Filter extends  OauthPhirehose{
 			
 			// Populate the droplet
 			$droplet['channel'] = 'twitter';
-			$droplet['channel_filter_id'] = '1';
 			$droplet['identity_orig_id'] = $data['user']['id'];
 			$droplet['identity_username'] = $data['user']['screen_name'];
 			$droplet['identity_name'] = $data['user']['name'];
@@ -32,6 +33,7 @@ class Firehose_Filter extends  OauthPhirehose{
 			$droplet['droplet_locale'] = $data['user']['lang'];
 			$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($data['created_at']));
 
+
 			Swiftriver_Dropletqueue::add($droplet, FALSE);
 		}
 	}
@@ -41,24 +43,8 @@ class Firehose_Filter extends  OauthPhirehose{
 	 * Update the track words
 	 */
 	public function checkFilterPredicates() {
-            $this->setTrack($this->_get_keywords()); 
+            $this->setTrack(Util_Channel_Filter::get_keywords()); 
 	}
 
 
-
-	/** Get twitter filter options and return a keyword array
-	 * //TODO: Improve this to not query the DB every time.
-	 *
-	 * @return array
-	 */
-	private function _get_keywords() {
-		$options = Model_Channel_Filter::getChannelFilterOptions('twitter');
-		$keywords = array();
-		foreach($options as $option) {
-			if(isset($option['keyword'])) {
-			    $keywords[] = $option['keyword'];
-			}
-		}
-		return $keywords;
-	}
 }
