@@ -133,7 +133,6 @@ class Swiftriver_Imap {
 				// TODO - Handle attachments
 				
 				// Add the droplet to the dropletqueue
-				print_r($droplet);
 				Swiftriver_Dropletqueue::add($droplet, FALSE);
 				
 				// Mark the message as seen

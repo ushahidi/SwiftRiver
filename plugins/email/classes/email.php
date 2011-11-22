@@ -1,7 +1,24 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+/**
+ * Email plugin installer
+ *
+ * PHP version 5
+ * LICENSE: This source file is subject to GPLv3 license 
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/gpl.html
+ * @author     Ushahidi Team <team@ushahidi.com> 
+ * @package    SwiftRiver - http://source.swiftly.org
+ * @category   Plugins
+ * @copyright  Ushahidi - http://www.ushahidi.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ */
 class Email {
 	
+	/**
+	 * Database table prefix
+	 * @var string
+	 */
 	protected static $table_prefix = '';
 	
 	public static function install()
@@ -21,57 +38,16 @@ class Email {
 			CREATE TABLE IF NOT EXISTS `".self::$table_prefix."email_settings`
 			(
 			  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-			  `key` varchar(100) NOT NULL DEFAULT '',
-			  `value` varchar(255) DEFAULT NULL,
-			  PRIMARY KEY (`id`),
-			  UNIQUE KEY `uniq_key` (`key`)
+			  `user_id` int(11) unsgined NOT NULL,
+			  `server_host` varchar(100) NOT NULL,
+			  `server_type` varchar(5) NOT NULL,
+			  `server_ssl` tinyint(1) NOT NULL DEFAULT 0,
+			  `username` varchar(60) NOT NULL,
+			  `password` varchar(100) NOT NULL,
+			  PRIMARY KEY (`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 		";
-		$db->query(NULL, $create, true);
-		
-		// Insert Default Settings Keys
-		// Use ORM to prevent issues with unique keys
-		
-		// Username
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'username')
-			->find();
-		$setting->key = 'username';
-		$setting->save();
-		
-		// Password
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'password')
-			->find();
-		$setting->key = 'password';
-		$setting->save();
 
-		// Server Host
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'server_host')
-			->find();
-		$setting->key = 'server_host';
-		$setting->save();
-
-		// Server Port
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'server_port')
-			->find();
-		$setting->key = 'server_port';
-		$setting->save();
-
-		// Server Type
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'server_host_type')
-			->find();
-		$setting->key = 'server_host_type';
-		$setting->save();
-
-		// Server SSL
-		$setting = ORM::factory('email_setting')
-			->where('key', '=', 'server_ssl')
-			->find();
-		$setting->key = 'server_ssl';
-		$setting->save();
+		$db->query(NULL, $create, TRUE);
 	}
 }
