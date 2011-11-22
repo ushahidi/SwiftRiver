@@ -77,7 +77,7 @@ class Swiftriver_Dropletqueue {
 		
 		
 		// Check if the droplet has already been added to the queue
-		if (Model_Droplet::is_duplicate_droplet($droplet['channel_filter_id'], $droplet['droplet_hash']))
+		if (Model_Droplet::is_duplicate_droplet($droplet['droplet_hash']))
 		{
 			// Delete the droplet from memory
 			unset($droplet);
@@ -132,7 +132,6 @@ class Swiftriver_Dropletqueue {
 	{
 		return array(
 			'channel' => '',
-			'channel_filter_id' => '',
 			'identity_orig_id' => '',
 			'identity_username' => '',
 			'identity_name' => '',

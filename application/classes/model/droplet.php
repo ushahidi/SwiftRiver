@@ -92,7 +92,6 @@ class Model_Droplet extends ORM
 	public static function is_duplicate_droplet($channel_filter_id, $droplet_hash)
 	{
 		return (bool) ORM::factory('droplet')
-						->where('channel_filter_id', '=', $channel_filter_id)
 						->where('droplet_hash', '=', $droplet_hash)
 						->count_all();
 	}
