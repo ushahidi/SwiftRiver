@@ -89,7 +89,7 @@ class Model_Droplet extends ORM
 	 * @param string $channel_filter_id ID of the channel
 	 * @param string $droplet_hash SHA2 Hash of the origin ID of the droplet
 	 */
-	public static function is_duplicate_droplet($channel_filter_id, $droplet_hash)
+	public static function is_duplicate_droplet($droplet_hash)
 	{
 		return (bool) ORM::factory('droplet')
 						->where('droplet_hash', '=', $droplet_hash)
@@ -113,7 +113,6 @@ class Model_Droplet extends ORM
 			// Create the droplet
 			$orm_droplet = new Model_Droplet;
 			$orm_droplet->channel = $droplet['channel'];
-			$orm_droplet->channel_filter_id = $droplet['channel_filter_id'];
 			$orm_droplet->identity_id = $droplet['identity_id'];
 			$orm_droplet->droplet_hash = $droplet['droplet_hash'];
 			$orm_droplet->droplet_orig_id = $droplet['droplet_orig_id'];
