@@ -15,7 +15,7 @@
  */
 
 return array(
-	'rss' => array(				//same name as plugin folder
+	'swiftcore' => array(				//same name as plugin folder
 		'name'			=> 'Swiftcore',
 		'description'	=> 'Extract entities from text using the Swiftcore API',
 		'author'		=> 'Emmanuel Kala',
