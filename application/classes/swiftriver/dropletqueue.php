@@ -44,9 +44,11 @@ class Swiftriver_Dropletqueue {
 			// Pop that droplet!
 			$droplet = array_pop(self::$_queue);
 			
-			// Submit the droplet to an extraction plugin
+			// Link the droplet to the channel filter
 			Swiftriver_Event::run('swiftriver.droplet.link_droplet', $droplet);
-			//Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
+			
+			// Submit the droplet to an extraction plugin
+			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
 			
 			// Add the droplet to the list of processed items
 			self::$_processed[] =  $droplet;

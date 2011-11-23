@@ -28,24 +28,29 @@ class Swiftriver_Imap {
 	 * @param   string  $port Port to connect on
 	 * @param   string  $username The username
 	 * @param   string  $password The passowrd associated with the username
+	 * @param   string  $server_type Type of mail server POP3/IMAP
 	 * @param   bool    $ssl When TRUE, uses SSL to to encrypt the IMAP session
 	 * @param   string  $mailbox_name Name of the mailbox to use - default is INBOX
 	 */
-	public function __construct($server, $port, $username, $password, $ssl = FALSE, $mailbox_name = NULL)
+	public function __construct($server, $port, $username, $password, $server_type = 'imap', 
+		$ssl = FALSE, $mailbox_name = NULL)
 	{
 		// SSL Flag
 		$ssl_flag = $ssl? '/ssl' : '';
 		
+		// Service flag
+		$service = ($server_type == 'imap')? :'/imap' : '/pop3'
+		
 		// Generate the string for accessing the mailbox
 		$mailbox_str = '{'
 				. $server.':'.$port
-				. '/imap'
+				. $service
 				. $ssl_flag
 				. '/novalidate-cert'
 				.'}';
 		
 		// Append the mailbox_name parameter; Default is INBOX
-		$mailbox_str .= empty($mailbox_name)? '': $mailbox_name;
+		$mailbox_str .= empty($mailbox_name OR strtoupper($mailbox) == 'INBOX')? '': $mailbox_name;
 		
 		// Set the timeouts for open and reading
 		imap_timeout(IMAP_OPENTIMEOUT, self::IMAP_OPEN_READ_TIMEOUT);

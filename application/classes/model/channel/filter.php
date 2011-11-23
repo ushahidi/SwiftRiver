@@ -8,16 +8,14 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package    Ushahidi - http://source.swiftly.org
- * @category Models
+ * @package    SwiftRiver - http://source.swiftly.org
+ * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Channel_Filter extends ORM
-{
+class Model_Channel_Filter extends ORM {
 	/**
 	 * A channel_filter has many droplets and channel_filter_options
-	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
@@ -30,7 +28,6 @@ class Model_Channel_Filter extends ORM
 
 	/**
 	 * A channel_filter belongs to an account and a user
-	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
@@ -62,29 +59,39 @@ class Model_Channel_Filter extends ORM
 	/**
 	 * Get channel filters by channel
 	 *
+	 * @param string $channel Name of the channel
+	 * @return Database_Result
 	 */
-	public static function get_channel_filters($channel) {
+	public static function get_channel_filters($channel)
+	{
 		$channel_filters = ORM::factory('channel_filter')
 			->where('channel', '=', $channel)
 			->find_all();
+			
 		return $channel_filters;
 	}
 
 	/**
 	 * Get all filter options by channel
-	 * 
-	 * return @array
+	 *
+	 * @param string $channel
+	 * @return array
 	 */
 	public static function get_channel_filter_options($channel) {
 		$channel_filter_options = array();
 		$channel_filters = self::get_channel_filters($channel);
-		foreach($channel_filters as $channel_filter) {
+		
+		foreach ($channel_filters as $channel_filter)
+		{
 			$options = $channel_filter->channel_filter_options
 				->find_all();
-			foreach($options as $option) {
+			
+			foreach($options as $option)
+			{
 				$channel_filter_options[] = $option;
 			}
 		}
+		
 		return $channel_filter_options;
 	}
 }

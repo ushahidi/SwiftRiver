@@ -33,6 +33,7 @@ class Controller_Crawler_Main extends Controller {
 	{
 		// Get all the available services
 		$services = Swiftriver_Plugins::channels();
+		
 		foreach ($services as $key => $value)
 		{
 			try
@@ -46,15 +47,7 @@ class Controller_Crawler_Main extends Controller {
 				//continue;
 			}
 		}
-	}
-
-	/**
-	 * Run all available extractors
-	 * 
-	 * @return	void
-	 */
-	public function action_process()
-	{
+		
 		Swiftriver_Dropletqueue::process();
 	}
 }

@@ -76,7 +76,7 @@ class Swiftcore_Init {
 				? array_merge($places, $semantics['gpe'])
 				: $places;
 			
-			$places = array_key_exists('loation', $semantics)
+			$places = array_key_exists('location', $semantics)
 				? array_merge($places, $semantics['location'])
 				: $places;
 			
