@@ -21,7 +21,8 @@ class Util_Channel_Filter {
 	{
 		$options = array();
 		$filter_options = Model_Channel_Filter::get_channel_filter_options('twitter');
-		foreach($filter_options as $filter_option) {
+		foreach($filter_options as $filter_option)
+		{
 			$options[] = array($filter_option->key => $filter_option->value);
 		}
 		

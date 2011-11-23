@@ -29,10 +29,14 @@ class Swiftriver_Dropletqueue {
 	 * The queue processing involves extracting metadata from the droplets
 	 * saving these to the database. The extracted metadata could be links,
 	 * named entities, places
+	 *
+	 * @param GearmanJob $job 
 	 */
-	public static function process()
+	public static function process($job = NULL)
 	{
 		// If the queue is empty, fetch the unprocessed items from the DB
+		// TODO - Use configuration param to set the no. of unprocessed
+		// droplets to fetch during processing
 		self::$_queue = empty(self::$_queue)
 			? Model_Droplet::get_unprocessed_droplets(1000)
 			// Reverse the ordering of items in the array - FIFO queue

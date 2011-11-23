@@ -21,7 +21,7 @@ return array(
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
-		'service'		=> TRUE,	// Plugin is a service		
+		'channel'		=> TRUE,	// Plugin is a channel		
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',

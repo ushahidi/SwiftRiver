@@ -22,7 +22,7 @@ return array(
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
 		'settings'		=> TRUE,	// Plugin has settings
-		'service'		=> TRUE,	// Plugin is a service
+		'channel'		=> TRUE,	// Plugin is a channel
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',

@@ -23,15 +23,17 @@ class Twitter_Init {
 		// Get the event data
 		$droplet = Swiftriver_Event::$data;
 		
-		if($droplet->channel != 'twitter')
+		if ($droplet->channel != 'twitter')
 			return;
 	
-		print "Droplet -->" . $droplet->droplet_content . "<br/>";
+		Kohana::$log->add(Log::DEBUG, "Droplet -->" . $droplet->droplet_content);
 
-		$channel_filter_options = Model_Channel_Filter::get_channel_filter_options('twitter');;
-		foreach($channel_filter_options as $option ) {
-			if($option->key == 'keyword' and preg_match("/\b" . $option->value . "\b/i", $droplet->droplet_content)) {
-				print "Matches --> " . $option->value .  "," . $option->id . "<br/>";
+		$channel_filter_options = Model_Channel_Filter::get_channel_filter_options('twitter');
+		foreach ($channel_filter_options as $option )
+		{
+			if ($option->key == 'keyword' AND preg_match("/\b" . $option->value . "\b/i", $droplet->droplet_content))
+			{
+				Kohana::$log(Log::DEBUG, "Matches --> " . $option->value .  "," . $option->id);;
 				$option->channel_filter->add('droplets', $droplet);
 			}
 		}
