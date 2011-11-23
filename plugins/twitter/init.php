@@ -3,21 +3,24 @@
 /**
  * Init for the Swiftcore plugin
  *
- * @package SwiftRiver
- * @author Ushahidi Team
- * @category Plugins
+ * @package   SwiftRiver
+ * @author    Ushahidi Team
+ * @category  Plugins
  * @copyright (c) 2008-2011 Ushahidi Inc <htto://www.ushahidi.com>
  */
 class Twitter_Init {
 
-	public function __construct() {
+	public function __construct()
+	{
 		Swiftriver_Event::add('swiftriver.droplet.link_droplet', array($this, 'link_droplet'));
 	}
 
 	/**
 	 * Call back method for swiftriver.droplet.link_droplet to link droplet to channel filters
 	 */
-	public function link_droplet() {
+	public function link_droplet()
+	{
+		// Get the event data
 		$droplet = Swiftriver_Event::$data;
 		
 		if($droplet->channel != 'twitter')
@@ -35,6 +38,7 @@ class Twitter_Init {
 	}
 }
 
+// Initialize the plugin
 new Twitter_Init;
 
 ?>

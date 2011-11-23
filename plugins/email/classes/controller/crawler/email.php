@@ -26,7 +26,7 @@ class Controller_Crawler_Email extends Controller_Crawler_Main {
 
 	public function action_index()
 	{
-		// Get the user ID from the session
+		// Get the user ID that owns the current river
 		$user_id = Session::instance()->get('user_id');
 		
 		// Get the configured email accounts
@@ -38,9 +38,10 @@ class Controller_Crawler_Email extends Controller_Crawler_Main {
 			// Check for SSL
 			$ssl  = ($account->server_ssl == 1);
 			
-			// Connect to the email
+			// Connect to the mailbox
 			$email_stream = Swiftriver_Imap($account->server_host, $account->server_port, 
-				$account->username, $account->password, $ssl);
+				$account->username, $account->password, $account->server_type, $ssl,
+				$account->mailbox_name);
 			
 			// Fetch the messages
 			$email_stream->get_messages();
