@@ -38,12 +38,20 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 	{
 
 		$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
+
+		//Get URLs
+		$urls = array();
 		foreach($channel_filters as $filter) {
-			$options = array();
 			foreach($filter->channel_filter_options->find_all() as $option) {
-				$options[$option->key] = $option->value;
+				if($option->key == 'url' and !in_array($option->value, $urls)) {
+					$urls[] = $option->value;
+				}
 			}
-			$this->_parse_url($options);
+		}
+
+		//Fetch
+		foreach($urls as $url) {
+			$this->_parse_url(array('url' => $url));
 		}
 	}
 
@@ -91,7 +99,7 @@ class Controller_Crawler_Rss extends Controller_Crawler_Main {
 				{
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
-					$droplet['identity_orig_id'] = $feed->get_link();
+					$droplet['identity_orig_id'] = $options['url'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();
 					$droplet['droplet_orig_id'] = trim((string) $feed_item->get_link());

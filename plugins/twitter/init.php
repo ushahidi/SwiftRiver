@@ -19,9 +19,13 @@ class Twitter_Init {
 	 */
 	public function link_droplet() {
 		$droplet = Swiftriver_Event::$data;
+		
+		if($droplet->channel != 'twitter')
+			return;
+	
 		print "Droplet -->" . $droplet->droplet_content . "<br/>";
 
-		$channel_filter_options = Util_Channel_Filter::get_filter_options();
+		$channel_filter_options = Model_Channel_Filter::get_channel_filter_options('twitter');;
 		foreach($channel_filter_options as $option ) {
 			if($option->key == 'keyword' and preg_match("/\b" . $option->value . "\b/i", $droplet->droplet_content)) {
 				print "Matches --> " . $option->value .  "," . $option->id . "<br/>";

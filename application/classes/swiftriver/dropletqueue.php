@@ -34,7 +34,7 @@ class Swiftriver_Dropletqueue {
 	{
 		// If the queue is empty, fetch the unprocessed items from the DB
 		self::$_queue = empty(self::$_queue)
-			? Model_Droplet::get_unprocessed_droplets()
+			? Model_Droplet::get_unprocessed_droplets(1000)
 			// Reverse the ordering of items in the array - FIFO queue
 			: array_reverse(self::$_queue);
 		
