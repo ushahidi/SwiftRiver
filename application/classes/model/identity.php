@@ -86,6 +86,7 @@ class Model_Identity extends ORM
 				$orm_identity->identity_orig_id = $droplet['identity_orig_id'];
 				$orm_identity->identity_username = $droplet['identity_username'];
 				$orm_identity->identity_name = $droplet['identity_name'];
+				$orm_identity->channel = $droplet['channel'];
 				$orm_identity->save();
 			}
 			
