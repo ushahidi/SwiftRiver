@@ -4,7 +4,7 @@
  * DropletQueue
  *
  * @author      Ushahidi Team
- * @package     Swiftriver <http://www.swiftly.org>
+ * @package     Swiftriver http://github.com/ushahidi/Swiftriver_v2
  * @category    Helpers
  * @copyright   (c) 2008-2011 Ushahidi Inc <http://www.ushahidi.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
