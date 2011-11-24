@@ -22,10 +22,12 @@ class Controller_Crawler_Main extends Controller {
 	private $worker;
 	
 	/**
-	 * Constructor
+	 * @return void
 	 */
-	public function action_index()
-	{
+	public function before()
+	{	
+		parent::before();
+		
 		// Initialize gearman worker
 		$this->worker = new GearmanWorker();
 		
@@ -59,7 +61,11 @@ class Controller_Crawler_Main extends Controller {
 		
 		// Add and register the queue processor
 		$this->worker->addFunction('process_queue', array('Swiftriver_Dropletqueue', 'process'));
-
+	}
+	
+	
+	public function action_index()
+	{
 		// Wait for and perform jobs
 		while ($this->worker->work())
 		{
