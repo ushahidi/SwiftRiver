@@ -53,7 +53,10 @@ class Rss_Init {
 				{
 					//Filter does not have keywords so all droplets will be assocaiated with this filter
 					Kohana::$log->add(Log::DEBUG, "No keywords" . $option['url']. ',' . $option['channel_filter']->id);
-					$option['channel_filter']->add('droplets', $droplet);
+					if(!$option['channel_filter']->has('droplets', $droplet))
+					{
+						$option['channel_filter']->add('droplets', $droplet);
+					}
 				}
 			}
 		}

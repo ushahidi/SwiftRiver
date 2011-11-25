@@ -33,8 +33,11 @@ class Twitter_Init {
 		{
 			if ($option->key == 'keyword' AND preg_match("/\b" . $option->value . "\b/i", $droplet->droplet_content))
 			{
-				Kohana::$log(Log::DEBUG, "Matches --> " . $option->value .  "," . $option->id);;
-				$option->channel_filter->add('droplets', $droplet);
+				//Kohana::$log(Log::DEBUG, "Matches --> " . $option->value .  "," . $option->id);
+				if(!$option->channel_filter->has('droplets', $droplet))
+				{
+					$option->channel_filter->add('droplets', $droplet);
+				}
 			}
 		}
 	}
