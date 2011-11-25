@@ -21,7 +21,8 @@ class Swiftriver_Worker_Channel_Rss extends Swiftriver_Worker_Channel {
 	public function channel_worker($job)
 	{
 		// Get the workload
-		$urls = empty($job->workload())? array() : unserialize($job->workload());
+		$workload = $job->workload();
+		$urls = empty($workload)? array() : unserialize($workload);
 		
 		// Get the links to crawl from the DB
 		if (empty($urls))

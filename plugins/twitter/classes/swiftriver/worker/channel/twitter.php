@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Swifriver_Worker_Channel_Twitter extends Swiftiver_Worker_Channel {
+class Swiftriver_Worker_Channel_Twitter extends Swiftriver_Worker_Channel {
 
 	/**
 	 * Initializes the Twitter channel worker by setting all the parameters

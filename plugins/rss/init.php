@@ -40,7 +40,7 @@ class Rss_Init {
 				{
 					foreach($option['keywords'] as $keyword)
 					{
-						Kohana::$log->add(Log::DEBUG, "Has keywords" . $option['url'] . " " . $keyword . $option['channel_filter']->id));
+						Kohana::$log->add(Log::DEBUG, "Has keywords" . $option['url'] . " " . $keyword . $option['channel_filter']->id);
 						if (preg_match("/\b" . $keyword . "\b/i", $droplet->droplet_content))
 						{
 							Kohana::$log->add(Log::DEBUG, "Keyword matched" . $keyword);
