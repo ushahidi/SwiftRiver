@@ -20,23 +20,18 @@ class Swiftriver_Worker_Channel_Rss extends Swiftriver_Worker_Channel {
 	 */
 	public function channel_worker($job)
 	{
-		// Get the workload
-		$workload = $job->workload();
-		$urls = empty($workload)? array() : unserialize($workload);
-		
+		$urls = array(); //This will be a set of URLs from the DB to process
+
 		// Get the links to crawl from the DB
-		if (empty($urls))
+		$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
+		
+		foreach($channel_filters as $filter)
 		{
-			$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
-			
-			foreach($channel_filters as $filter)
+			foreach($filter->channel_filter_options->find_all() as $option)
 			{
-				foreach($filter->channel_filter_options->find_all() as $option)
+				if ($option->key == 'url' and !in_array($option->value, $urls))
 				{
-					if ($option->key == 'url' and !in_array($option->value, $urls))
-					{
-						$urls[] = $option->value;
-					}
+					$urls[] = $option->value;
 				}
 			}
 		}
