@@ -15,6 +15,7 @@
  */
 class Model_Email_Setting extends ORM
 {
+	protected $_table_name = 'email_settings';
 	/**
 	 * Validation for email settings
 	 * @param array $arr

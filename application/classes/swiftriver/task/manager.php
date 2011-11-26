@@ -13,7 +13,7 @@ class Swiftriver_Task_Manager {
 	/**
 	 * @var GearmanClient
 	 */
-	private static $client = Swiftriver_Util::init_gearman_client();
+	private static $client;
 		
 	/**
 	 * No. of completed tasks
@@ -35,6 +35,11 @@ class Swiftriver_Task_Manager {
 	 */
 	public static function register_task($function_name, $data = NULL)
 	{
+		if (empty(self::$client))
+		{
+			 self::_init_gearman_client();
+		}
+		
 		// Add background task
 		if ( ! array_key_exists($function_name, self::$_tasks))
 		{
@@ -88,17 +93,18 @@ class Swiftriver_Task_Manager {
 		// Increment the no. of completed
 		self::$_completed[] = $task->functionName();
 		
-		if ($task->returnCode() == GEARMAN_SUCCESS AND count(self::$_completed) == count(self::$_tasks))
+		if (count(self::$_completed) == count(self::$_tasks))
 		{
-			// Reset the counter
+			// Reset the list of completed tasks
 			self::$_completed = array();
-			
-			// Log message
-			Kohana::$log->add(Log::INFO, 'Processing the droplet queue');
-			
-			// Process the queue
-			self::$client->doBackground('process_queue', NULL);
 		}
+		
+		// Process the queue as each task completes
+		// Log message
+		Kohana::$log->add(Log::INFO, 'Processing the droplet queue');
+		
+		// Process the queue
+		self::$client->doBackground('process_queue', NULL);
 	}
 	
 	/**
@@ -114,9 +120,20 @@ class Swiftriver_Task_Manager {
 			self::$_completed[] = $task->functionName();
 			
 			// Log the error
-			Kohana::$log->(Log::ERROR, 'Gearman task not completed successfully: :error', 
+			Kohana::$log->add(Log::ERROR, 'Gearman task not completed successfully: :error', 
 				array(':error' => self::$client->error()));
 		}
+	}
+	
+	/**
+	 * Initialzies the Gearman client that will register the tasks
+	 */
+	private static function _init_gearman_client()
+	{
+		self::$client = new GearmanClient();
+		
+		// TODO Fetch the list of servers from a config file
+		self::$client->addServer();
 	}
 }
 

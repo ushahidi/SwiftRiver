@@ -20,22 +20,16 @@ class Swiftriver_Worker_Channel_Rss extends Swiftriver_Worker_Channel {
 	 */
 	public function channel_worker($job)
 	{
-		// Get the workload
-		$urls = empty($job->workload())? array() : unserialize($job->workload());
-		
 		// Get the links to crawl from the DB
-		if (empty($urls))
+		$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
+		$urls = array();
+		foreach($channel_filters as $filter)
 		{
-			$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
-			
-			foreach($channel_filters as $filter)
+			foreach($filter->channel_filter_options->find_all() as $option)
 			{
-				foreach($filter->channel_filter_options->find_all() as $option)
+				if ($option->key == 'url' and !in_array($option->value, $urls))
 				{
-					if ($option->key == 'url' and !in_array($option->value, $urls))
-					{
-						$urls[] = $option->value;
-					}
+					$urls[] = $option->value;
 				}
 			}
 		}
@@ -43,6 +37,9 @@ class Swiftriver_Worker_Channel_Rss extends Swiftriver_Worker_Channel {
 		// Submit URLs for content fetch
 		foreach($urls as $url)
 		{
+			// Debug Log
+			Kohana::$log->add(Log::DEBUG, 'Parsing URL: :url', array(':url' => $url));
+			
 			$this->_parse_url(array('url' => $url));
 		}
 		

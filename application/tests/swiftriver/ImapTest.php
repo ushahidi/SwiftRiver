@@ -12,10 +12,16 @@ class Swiftriver_Imap_Test extends Unittest_TestCase {
 	
 	public function setUp()
 	{
+		// Get a configured account
+		$account = ORM::factory('email_setting')->where('user_id', '=', 1)->find();
+		
 		// Instantiate IMAP library
 		// Substitute username and password with the real values
-		$this->imap_email = new Swiftriver_Imap("imap.example.com", 993, 
-			"username@example.com", "password", TRUE);
+		$ssl = ($account->server_ssl == 1); 
+		$this->imap_email = new Swiftriver_Imap($account->server_host, $account->server_port, 
+			$account->username, $account->password, $account->server_type, $ssl, $account->mailbox_name);
+		
+		unset ($account);
 	}
 	
 	
@@ -26,7 +32,7 @@ class Swiftriver_Imap_Test extends Unittest_TestCase {
 	public function test_get_messages()
 	{
 		// Get messages
-		$result = $this->imap_email->get_messages(20, "ALL");
+		$result = $this->imap_email->get_messages(20);
 		
 		$this->assertTrue($result, "Could not get email messages");
 	}

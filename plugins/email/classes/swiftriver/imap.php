@@ -39,7 +39,7 @@ class Swiftriver_Imap {
 		$ssl_flag = $ssl? '/ssl' : '';
 		
 		// Service flag
-		$service = ($server_type == 'imap')? :'/imap' : '/pop3'
+		$service = ($server_type == 'imap')? '/imap' : '/pop3';
 		
 		// Generate the string for accessing the mailbox
 		$mailbox_str = '{'
@@ -50,7 +50,7 @@ class Swiftriver_Imap {
 				.'}';
 		
 		// Append the mailbox_name parameter; Default is INBOX
-		$mailbox_str .= empty($mailbox_name OR strtoupper($mailbox) == 'INBOX')? '': $mailbox_name;
+		$mailbox_str .= (empty($mailbox_name) OR strtoupper($mailbox_name) == 'INBOX')? '': $mailbox_name;
 		
 		// Set the timeouts for open and reading
 		imap_timeout(IMAP_OPENTIMEOUT, self::IMAP_OPEN_READ_TIMEOUT);
@@ -107,7 +107,7 @@ class Swiftriver_Imap {
 				// Pre-processing - Convert to UTF-8
 				$encoding = mb_detect_encoding($message_body, "auto");
 				$encoding = ($encoding == 'ASCII')? 'iso-8859-1' : $encoding;
-				$message_body = htmlentities(strip_tags($message_body), NULL, $encoding);
+				$message_body = strip_tags($message_body);
 				
 				$from_header = $header_info->from;
 				$sender_address = '';
@@ -132,6 +132,9 @@ class Swiftriver_Imap {
 				$droplet['droplet_content'] = $message_body;
 				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', $header_info->udate);
 				
+				// Kohana::$log->add(Log::DEBUG, "Message id: :id\nContent: :content", 
+				// 	array(":id"=>$header_info->message_id, ":content" => $message_body));
+					
 				// TODO - Figure out how to place the droplet in a user account
 				// This the user account should be set at this stage
 				

@@ -38,9 +38,10 @@ class Email {
 			CREATE TABLE IF NOT EXISTS `".self::$table_prefix."email_settings`
 			(
 			  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-			  `user_id` int(11) usigned NOT NULL,
+			  `user_id` int(11) unsigned NOT NULL,
 			  `server_host` varchar(100) NOT NULL,
 			  `server_type` varchar(5) NOT NULL,
+			  `server_port` int(5) NOT NULL,
 			  `server_ssl` tinyint(1) NOT NULL DEFAULT 0,
 			  `mailbox_name` varchar(50) NOT NULL DEFAULT 'INBOX',
 			  `username` varchar(60) NOT NULL,

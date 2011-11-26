@@ -26,8 +26,8 @@ class Swiftriver_Worker_Channel_Email extends Swiftriver_Worker_Channel {
 		if ( ! empty($user_id))
 		{
 			// Get the configured email accounts
-			$accounts = ORM::factory('email')->where('user_id', '=', $user_id)->find_all();
-		
+			$accounts = ORM::factory('email_setting')->where('user_id', '=', $user_id)->find_all();
+			Kohana::$log->add(Log::DEBUG, Debug::vars($accounts));			
 			// Fetch the email for each of the accounts
 			foreach ($accounts as $account)
 			{
@@ -35,10 +35,10 @@ class Swiftriver_Worker_Channel_Email extends Swiftriver_Worker_Channel {
 				$ssl  = ($account->server_ssl == 1);
 			
 				// Connect to the mailbox
-				$email_stream = Swiftriver_Imap($account->server_host, $account->server_port, 
+				$email_stream = new Swiftriver_Imap($account->server_host, $account->server_port, 
 					$account->username, $account->password, $account->server_type, $ssl,
 					$account->mailbox_name);
-			
+				
 				// Fetch the messages
 				$email_stream->get_messages();
 			}
