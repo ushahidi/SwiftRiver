@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Swiftriver_Worker_Channel_Email extends Swiftriver_Worker_Channel {
+class Swiftriver_Channel_Worker_Email extends Swiftriver_Channel_Worker {
 
 	/**
 	 * @see Swiftriver_Task_Channel->channel_worker

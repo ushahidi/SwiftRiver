@@ -114,7 +114,7 @@ class Controller_Crawler_Main extends Controller {
 				{
 					// Create instance for the channel worker. If not found, the
 					// framework will thrown an exception
-					$instance = Swiftriver_Worker_Channel::factory($key);
+					$instance = Swiftriver_Channel_Worker::factory($key);
 			
 					// Log
 					Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :channel channel', 

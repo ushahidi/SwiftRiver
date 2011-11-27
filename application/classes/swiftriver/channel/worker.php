@@ -9,7 +9,7 @@
  * @copyright (c) 2008-2011 Ushahidi Inc - http://www.ushahidi.com
  */
 
-abstract class Swiftriver_Worker_Channel {
+abstract class Swiftriver_Channel_Worker {
 	
 	/**
 	 * Creates an returns a new task channel
@@ -19,7 +19,7 @@ abstract class Swiftriver_Worker_Channel {
 	public static function factory($channel)
 	{
 		// Set class name
-		$channel = 'Swiftriver_Worker_Channel_'.ucfirst($channel);
+		$channel = 'Swiftriver_Channel_Worker_'.ucfirst($channel);
 		return new $channel;
 	}
 	
