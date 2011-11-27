@@ -27,8 +27,8 @@ class Swiftriver_Worker_Channel_Email extends Swiftriver_Worker_Channel {
 		{
 			// Get the configured email accounts
 			$accounts = ORM::factory('email_setting')->where('user_id', '=', $user_id)->find_all();
-			Kohana::$log->add(Log::DEBUG, Debug::vars($accounts));			
-			// Fetch the email for each of the accounts
+			
+			// Fetch the configs for each registered email account
 			foreach ($accounts as $account)
 			{
 				// Check for SSL

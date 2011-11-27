@@ -31,7 +31,7 @@ class Swiftriver_Task_Manager {
 	 * Registers a task to be executed in the background
 	 *
 	 * @param string $function_name Name of the worker to execute
-	 * @param string $data Raw data string to be passed to the callback
+	 * @param array $data Data to be passed to the worker function
 	 */
 	public static function register_task($function_name, $data = NULL)
 	{
@@ -43,10 +43,23 @@ class Swiftriver_Task_Manager {
 		// Add background task
 		if ( ! array_key_exists($function_name, self::$_tasks))
 		{
-			// Register the event and its data
-			$data = (empty($data) OR is_string($data))? $data : serialize($data);
+			if (empty($data))
+			{
+				// Pass an empty array to the worker function
+				$data = serialize(array());
+			}
+			elseif ( ! empty($data) AND ! is_string($data))
+			{
+				$data  = serialize($data);
+			}
+			
+			// Add the task to the internal register
 			self::$_tasks[$function_name] = $data;
+			
+			return TRUE;
 		}
+		
+		return FALSE;
 		
 	}
 	

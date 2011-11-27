@@ -20,16 +20,40 @@ class Swiftriver_Worker_Channel_Rss extends Swiftriver_Worker_Channel {
 	 */
 	public function channel_worker($job)
 	{
-		// Get the links to crawl from the DB
-		$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
+		// Get the workload from the GearmanJob
+		$workload = $job->workload();
+		
+		// List of URLs in the workload
 		$urls = array();
-		foreach($channel_filters as $filter)
+		
+		if ( ! empty($workload))
 		{
-			foreach($filter->channel_filter_options->find_all() as $option)
+			// Unserialize the workload with exception handling
+			try
 			{
-				if ($option->key == 'url' and !in_array($option->value, $urls))
+				$urls = @unserialize($workload);
+			}
+			catch (ErrorException $e)
+			{
+				$urls = array();
+				// Log the exception
+				Kohana::$log->add(Log::ERROR, $e->getMessage());
+			}
+		}
+		
+		// Did we get anything in the workload?
+		if (empty($urls))
+		{
+			// Get the links to crawl from the DB
+			$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
+			foreach($channel_filters as $filter)
+			{
+				foreach($filter->channel_filter_options->find_all() as $option)
 				{
-					$urls[] = $option->value;
+					if ($option->key == 'url' and !in_array($option->value, $urls))
+					{
+						$urls[] = $option->value;
+					}
 				}
 			}
 		}
