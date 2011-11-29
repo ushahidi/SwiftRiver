@@ -42,7 +42,8 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('droplets', $filter_total)
 			->bind('meter', $meter)
 			->bind('filters', $filters)
-			->bind('channels', $channels);
+			->bind('settings', $settings)
+			->bind('more', $more);
 
 		// First we need to make sure this river
 		// actually exists
@@ -96,7 +97,8 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		$filters = url::site().$this->account->account_path.'/river/filters/';
-		$channels = url::site().$this->account->account_path.'/river/channels/';
+		$settings = url::site().$this->account->account_path.'/river/settings/';
+		$more = url::site().$this->account->account_path.'/river/more/';
 	}
 
 	/**
@@ -108,7 +110,7 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template->content = View::factory('pages/river/new');
 		$this->template->header->js = View::factory('pages/river/js/new');
-		$this->template->header->js->channels = url::site().$this->account->account_path.'/river/channels/';
+		$this->template->header->js->settings = url::site().$this->account->account_path.'/river/settings/';
 
 		// save the river
 		if ($_POST)
@@ -147,18 +149,30 @@ class Controller_River extends Controller_Swiftriver {
 	}
 
 	/**
-	 * Ajax rendered channel control box
+	 * Ajax rendered settings control box
 	 * 
 	 * @return	void
 	 */
-	public function action_channels()
+	public function action_settings()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		$control = View::factory('pages/river/channels_control');
-		$control->channels = $this->channels;
-		echo $control;
+		$settings = View::factory('pages/river/settings_control');
+		$settings->channels = $this->channels;
+		echo $settings;
 	}
+
+	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/river/more_control');
+	}	
 
 	/**
 	 * Ajax Title Editing Inline

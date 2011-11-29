@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>Your Rivers - SwiftRiver</title> 
+	<title>Your account settings - SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -12,8 +12,14 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 	<script src="/js/global.js"></script>
-</head>
-
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('section.panel div.panel_body').load('/account_settings.html');
+		$('section.panel').addClass('preload');
+	});
+	</script>
+</head> 
+ 
 <body> 
 	<header>
 		<div class="left_bar"></div>
@@ -36,7 +42,7 @@
 						<ul class="dropdown">
 							<li><a href="/bucket/">Bucket 1</a></li>
 							<li><a href="/bucket/">Bucket 2</a></li>
-							<li><a><em>Create new</em></a></li>
+							<li><a href="#"><em>Create new</em></a></li>
 						</ul>
 					</li>
 					<div class="account">
@@ -58,56 +64,20 @@
 		<div class="cf center page_title">
 			<hgroup class="edit">
 				<img src="/images/content/avatar3.gif" />
-				<h1><span class="edit_trigger" onclick="">Brandon Rosage</span></h1>
+				<h1><span class="edit_trigger" title="text" onclick="">Brandon Rosage</span></h1>
 			</hgroup>
 		</div>
 		
-		<div class="center canvas cf">
+		<div class="center canvas">
 			<section class="panel">		
 				<nav class="cf">
-					<ul class="views">
-						<li><a href="/">Activity</a></li>
-						<li class="active"><a>Rivers</a></li>
-						<li><a href="/dashboard/buckets.html">Buckets</a></li>
-						<li><a href="/dashboard/teams.html">Teams</a></li>
-						<li class="view_panel"><a href="/dashboard/views.html"><span class="arrow"></span>More</a></li>
-					</ul>
 					<ul class="actions">
 						<li class="view_panel"><a href="/account_settings.html" class="channels"><span class="icon"></span><span class="label">Account settings</span></a></li>
 					</ul>
 				</nav>
 				<div class="panel_body"></div>
 			</section>
-			
-			<div class="list_stream">		
-				<ul>
-					<li>
-						<a href="/river/" class="title">River 1</a>
-						<div class="actions">
-							<span class="button_delete"><a>Delete River</a></span>
-							<ul class="dropdown">
-								<p>Are you sure you want to delete this River?</p>
-								<li class="confirm"><a onclick="">Yep.</a></li>
-								<li class="cancel"><a onclick="">No, nevermind.</a></li>
-							</ul>
-						</div>
-						<span class="subscriber_count"><a href="/river/subscribers.html"><strong>22</strong> subscribers</a></span>
-					</li>
-					<li>
-						<a href="/river/" class="title">River 2</a>
-						<div class="actions">
-							<span class="button_delete"><a>Delete River</a></span>
-							<ul class="dropdown">
-								<p>Are you sure you want to delete this River?</p>
-								<li class="confirm"><a onclick="">Yep.</a></li>
-								<li class="cancel"><a onclick="">No, nevermind.</a></li>
-							</ul>
-						</div>
-						<span class="subscriber_count"><a href="/river/subscribers.html"><strong>4</strong> subscribers</a></span>
-					</li>
-				</ul>
-			</div>
-		</div>	
+		</div>
 	</article>
 	
 	<footer class="center">

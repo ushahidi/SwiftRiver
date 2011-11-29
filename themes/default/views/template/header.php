@@ -12,7 +12,7 @@
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
 	// System and Other CSS
-	echo(Html::script(URL::site().'media/css'));
+	echo(Html::script('media/css'));
 	?>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
@@ -23,12 +23,10 @@
 	// Dynamic JS Files
 	echo(Html::script('media/js'));
 	?>
-	<script type="text/javascript">
-		<?php
+	<script type="text/javascript"><?php
 		// Dynamic inline JS
 		echo $js;
-		?>
-	</script>
+	?></script>
 </head> 
  
 <body> 

@@ -1,29 +1,40 @@
 var inlineInputValue;
-(function($,c,b){$.map("click dblclick mousemove mousedown mouseup mouseover mouseout change select submit keydown keypress keyup".split(" "),function(d){a(d)});a("focusin","focus"+b);a("focusout","blur"+b);$.addOutsideEvent=a;function a(g,e){e=e||g+b;var d=$(),h=g+"."+e+"-special-event";$.event.special[e]={setup:function(){d=d.add(this);if(d.length===1){$(c).bind(h,f)}},teardown:function(){d=d.not(this);if(d.length===0){$(c).unbind(h)}},add:function(i){var j=i.handler;i.handler=function(l,k){l.target=k;j.apply(this,arguments)}}};function f(i){$(d).each(function(){var j=$(this);if(this!==i.target&&!j.has(i.target).length){j.triggerHandler(e,[i.target])}})}}})(jQuery,document,"outside");
 $(document).ready(function() {
 	// Hide dropdowns on click outside
-	$('ul.dropdown').bind('clickoutside', function(event) {
-		$(this).fadeOut('fast');
-		$('section.actions p.button_change').removeClass('active');
+	$('body').live('click', function() {
+	    $('ul.dropdown').fadeOut('fast');
+		$('.actions p, .actions span').removeClass('active');
 		$('.has_dropdown').removeClass('active');
 	});
 	
 	// View or hide a dropdown menu
-	$('.has_dropdown > a').click(function(event) {
+	$('.has_dropdown > a').click(function(e) {
 		// $('ul.dropdown').fadeOut('fast');
 		$(this).parent().toggleClass('active');
 	    $(this).siblings('ul.dropdown').fadeToggle('fast');
-		event.stopPropagation();
+		e.stopPropagation();
+	});
+	$('ul.dropdown li.cancel').click(function() {
+		$(this).parent().fadeOut('fast');
+	});
+	$('.actions .button_delete, .actions p.bucket, .actions p.score').live('click', function(e) {
+		$(this).toggleClass('active');
+		$(this).siblings('ul.dropdown').fadeToggle('fast');
+		e.stopPropagation();
 	});
 	
 	// Create new bucket
-	$('li.create_new').live('click', function() {
+	$('li.create_new').live('click', function(e) {
 		$(this).empty();
 		$(this).parents('ul.dropdown').append('<li class="create_name"><input type="text" value="" placeholder="Name your new bucket"><div class="buttons"><button class="save">Save</button><button class="cancel">Cancel</button></div></li>');
-		$('button.cancel').click(function(event) {
+		e.stopPropagation();
+		$('li.create_name').click(function(e) {
+			e.stopPropagation();	
+		});
+		$('button.cancel').click(function(e) {
 			$(this).closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
 			$(this).closest('li.create_name').remove();
-			event.stopPropagation();
+			e.stopPropagation();
 		});
 	});
 	
@@ -83,12 +94,6 @@ $(document).ready(function() {
 	});
 
 	// Add or remove a droplet from buckets
-	$('section.actions p.bucket').click(function(event) {
-		// $('ul.dropdown').fadeOut('fast');
-		$(this).toggleClass('active');
-		$(this).siblings('ul.dropdown').fadeToggle('fast');
-		event.stopPropagation();
-	});
 	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');
 	jQuery.fn.checkBuckets = function() {
 		if ($('section.actions ul.dropdown li.bucket a').is('.selected')) {
@@ -98,16 +103,12 @@ $(document).ready(function() {
 			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').removeClass('bucket_added');
 		}
 	};
-	$('section.actions ul.dropdown li.bucket a').live('click', function() {
+	$('section.actions ul.dropdown li.bucket a').live('click', function(e) {
 		$(this).toggleClass('selected').checkBuckets();
+		e.stopPropagation();
 	});
 	
 	// Score a droplet
-	$('section.source div.actions p.score').click(function(event) {
-		$(this).toggleClass('active');
-		$(this).siblings('ul.dropdown').fadeToggle('fast');
-		event.stopPropagation();
-	});
 	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
 });
 

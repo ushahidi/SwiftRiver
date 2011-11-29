@@ -147,8 +147,8 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// Header Nav
 		$this->template->header->nav_header = View::factory('template/nav/header');
-		$this->template->header->nav_header->rivers = $this->account->rivers->find_all();
-		$this->template->header->nav_header->buckets = $this->account->buckets->find_all();
+		$this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
+		$this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
 		$this->template->header->nav_header->user = $this->user;
 		$this->template->header->nav_header->account = $this->account;
 

@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>SwiftRiver</title> 
+	<title>Create a River - SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -11,11 +11,10 @@
 	<link rel="stylesheet" href="/css/styles.css" /> 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="/js/jquery.outside.js"></script>
 	<script src="/js/global.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
-		$('section.panel div.panel_body').load('/channels_controls.html');
+		$('section.panel div.panel_body').load('/river_settings.html');
 		$('section.panel').addClass('preload');
 	});
 	</script>
@@ -59,7 +58,7 @@
 	<article>
 		<div class="cf center page_title">
 			<hgroup class="edit">
-				<h1><span class="edit_input"><input type="text" value="" placeholder="Name your River"></span></h1>
+				<h1><span class="edit_input" title="text"><input type="text" value="" placeholder="Name your River"></span></h1>
 			</hgroup>
 		</div>
 		
@@ -67,7 +66,7 @@
 			<section class="panel">		
 				<nav class="cf">
 					<ul class="actions">
-						<li class="view_panel active"><a class="channels"><span class="icon"></span>Edit channels</a></li>
+						<li class="view_panel"><a href="/river_settings.html" class="channels"><span class="icon"></span><span class="label">River settings</span></a></li>
 					</ul>
 				</nav>
 				<div class="panel_body"></div>

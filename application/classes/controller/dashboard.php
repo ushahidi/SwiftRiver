@@ -135,7 +135,56 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		echo View::factory('pages/dashboard/settings_control');
+		$settings = View::factory('pages/dashboard/settings_control');
+		$settings->user = $this->user;
+		echo $settings;
+	}
+
+	/**
+	 * Ajax Settings Editing Inline
+	 *
+	 * Edit User Settings
+	 * 
+	 * @return	void
+	 */
+	public function action_ajax_settings()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		// save settings
+		if ( ! empty($_POST) )
+		{
+			// First validate old password
+			if ( ! empty($_POST['password']) 
+				AND ( Auth::hash($_POST['current_password']) != $this->user->password) )
+			{
+				Message::add('error', __('Current password is incorrect'));
+			}
+			else
+			{
+				// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
+				unset($_POST['current_password'], $_POST['password']);
+			}
+
+			// Save user
+			try
+			{
+				$this->user->update_user($_POST, 
+				array(
+					'username',
+					'password', 
+					'email'
+				));
+			}
+			catch (ORM_Validation_Exception $e)
+			{
+				Message::add('error', __('Error: User could not be saved.'));
+				$errors = $e->errors('user');
+				$errors = array_merge($errors, ( isset($errors['_external']) ? $errors['_external'] : array() ));
+				//$errors
+			}
+		}
 	}
 	
 	/**

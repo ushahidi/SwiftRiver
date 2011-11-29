@@ -254,7 +254,8 @@ header nav li.login ul.dropdown li div.buttons {
 /* --------------------------- BUTTONS */
 
 .button_go a,
-button.save {
+button.save,
+.button_delete a {
    display: block;
    color: #fff;
    font-weight: bold;
@@ -281,10 +282,12 @@ button.save {
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#63c4d8', endColorstr='#18a9c7',GradientType=0 );
 }
 
-.button_go a:hover {
+.button_go a:hover,
+.button_delete a:hover {
    box-shadow: 0 2px 3px rgba(0,0,0,.15);
    -moz-box-shadow: 0 2px 3px rgba(0,0,0,.15);
    -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.15);
+   text-decoration: none;
    background: rgb(138,216,232);
    background: -moz-linear-gradient(top, rgba(138,216,232,1) 0%, rgba(99,196,216,1) 34%, rgba(24,169,199,1) 61%, rgba(24,169,199,1) 100%);
    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(138,216,232,1)), color-stop(34%,rgba(99,196,216,1)), color-stop(61%,rgba(24,169,199,1)), color-stop(100%,rgba(24,169,199,1)));
@@ -293,6 +296,47 @@ button.save {
    background: -ms-linear-gradient(top, rgba(138,216,232,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
    background: linear-gradient(top, rgba(138,216,232,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8ad8e8', endColorstr='#18a9c7',GradientType=0 );
+}
+
+.button_delete a {
+   border: 1px solid #c75c5c;
+   background: rgb(214,70,70);
+   background: -moz-linear-gradient(top, rgba(219,120,120,1) 0%, rgba(219,120,120,1) 34%, rgba(214,70,70,1) 61%, rgba(214,70,70,1) 100%);
+   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(219,120,120,1)), color-stop(34%,rgba(219,120,120,1)), color-stop(61%,rgba(214,70,70,1)), color-stop(100%,rgba(214,70,70,1)));
+   background: -webkit-linear-gradient(top, rgba(219,120,120,1) 0%,rgba(219,120,120,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: -o-linear-gradient(top, rgba(219,120,120,1) 0%,rgba(219,120,120,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: -ms-linear-gradient(top, rgba(219,120,120,1) 0%,rgba(219,120,120,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: linear-gradient(top, rgba(219,120,120,1) 0%,rgba(219,120,120,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#db7878', endColorstr='#d64646',GradientType=0 );
+}
+
+.button_delete a:hover {
+   background: rgb(224,150,150);
+   background: -moz-linear-gradient(top, rgba(224,150,150,1) 0%, rgba(224,150,150,1) 34%, rgba(214,70,70,1) 61%, rgba(214,70,70,1) 100%);
+   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(224,150,150,1)), color-stop(34%,rgba(224,150,150,1)), color-stop(61%,rgba(214,70,70,1)), color-stop(100%,rgba(214,70,70,1)));
+   background: -webkit-linear-gradient(top, rgba(224,150,150,1) 0%,rgba(224,150,150,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: -o-linear-gradient(top, rgba(224,150,150,1) 0%,rgba(224,150,150,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: -ms-linear-gradient(top, rgba(224,150,150,1) 0%,rgba(224,150,150,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   background: linear-gradient(top, rgba(224,150,150,1) 0%,rgba(224,150,150,1) 34%,rgba(214,70,70,1) 61%,rgba(214,70,70,1) 100%);
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#db7878', endColorstr='#d64646',GradientType=0 );
+}
+
+.button_delete_subtle a {
+   box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   border: 1px solid #c2c2c2;
+   background: #c2c2c2;
+}
+
+.button_delete_subtle a:hover,
+.actions .active a {
+   box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
+   text-decoration: none;
+   border: 1px solid #a2a2a2;
+   background: #A2A2A2;
 }
 
 .button_view a,
@@ -395,7 +439,7 @@ div.system_error {
 button.save,
 button.cancel {
    display: inline;
-   font-size: 0.9em;
+   font-size: 12px;
    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
    padding: 5px 10px;
    margin: 5px 0;
@@ -407,6 +451,108 @@ button.save {
 
 button:hover {
    cursor: pointer;
+}
+
+.edit_input textarea {
+   width: 100%;
+}
+
+/* --------------------------- DROPDOWNS */
+
+.actions ul.dropdown {
+   display: none;
+   position: absolute;
+   z-index: 1;
+   right: 0;
+   width: 40%;
+   -moz-box-shadow: 0 1px 15px rgba(0,0,0,.25);
+   -webkit-box-shadow: 0 1px 15px rgba(0,0,0,.25);
+   box-shadow: 0 1px 15px rgba(0,0,0,.25);
+   border: 1px solid #c2c2c2;
+   text-align: center;
+   background: #fff;
+   padding: 10px;
+   margin-top: -5px;
+}
+
+.actions ul.left {
+   left: 0;
+}
+
+.actions ul.dropdown p {
+   font-size: 14px;
+   padding-bottom: 5px;
+}
+
+.actions ul.dropdown li {
+   font-size: 12px;
+   padding: 3px 0;  
+}
+
+.actions ul.dropdown li.confirm a {
+   font-weight: bold;
+   font-size: 16px;
+}
+
+.actions ul.dropdown li.cancel a,
+.actions ul.dropdown li.not_useful a {
+   color: #888888;
+   font-style: italic;
+   font-size: 11px;
+   padding-top: 5px;
+}
+
+.actions ul.dropdown li.bucket a {
+   display: block;
+   color: #acacac;
+   font-weight: bold;
+   font-size: 13px;
+   text-align: left;
+   text-transform: none;
+   padding: 5px 0;
+}
+
+.actions ul.dropdown li.bucket a:hover {
+   color: #999999;
+   text-decoration: none;
+}
+
+.actions ul.dropdown li a.selected {
+   color: #17a9c6;
+}
+
+.actions ul.dropdown li.create_new {
+   font-weight: normal;
+   text-align: left;
+}
+
+.actions ul.dropdown li span.select {
+   float: left;
+   width: 10px;
+   height: 10px;
+   border: 1px solid #c2c2c2;
+   margin: 2px 5px 0 0;
+}
+
+.actions ul.dropdown li.create_name div.buttons {
+   text-align: right;
+}
+
+.actions ul.dropdown li a.selected span.select {
+   background: #17a9c6;
+}
+
+.actions ul.dropdown li.create_name input {
+   width: 95%;
+   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+   border: 1px solid #c2c2c2;
+   background: #FFFAD8;
+   padding: 3px;
+}
+
+.actions ul.dropdown li.create_name button {
+   font-size: 0.8em;
+   padding: 3px;
 }
 
 /* --------------------------- TABS */
@@ -431,7 +577,6 @@ ul.tabs li:last-child {
 
 ul.tabs li.button_view a {
    display: block;
-   font-size: 0.9em;
    -webkit-border-radius: 0px;
    -moz-border-radius: 0px;
    border-radius: 0px;
@@ -453,7 +598,7 @@ ul.tabs li.more {
 ul.tabs li.more a {
    display: block;
    color: #7b7b7b;
-   font-size: 0.9em;
+   font-size: 0.8em;
    padding: 5px;
 }
 
@@ -520,7 +665,31 @@ div.tab_controls {
    font-size: 1.3em;
 }
 
+.list_stream ul li div.actions {
+   float: right;
+}
+
+.list_stream ul li div.actions .button_delete a {
+   font-size: 11px;
+   padding: 3px 10px;
+   margin-left: 10px;
+}
+
 /* --------------------------- CONTROLS */
+
+.controls h2 {
+   color: #888888;
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-weight: 300;
+   font-size: 2em;
+   border-top: 1px solid #bbbbbb;
+   padding: 20px 1.063829787% 5px;
+}
+
+.controls div.row:first-child h2 {
+   border-top: none;
+   padding-top: 0;
+}
 
 .controls h3 {
    font-size: 1.2em;
@@ -528,6 +697,7 @@ div.tab_controls {
 }
 
 .controls input {
+   color: #888888;
    font-size: 1.2em;
    padding: 5px;
 }
@@ -541,9 +711,19 @@ div.tab_controls {
    width: 90%;
 }
 
-.controls div.row {
+.controls div.input p.button_change {
+   margin: 10px 0;
+}
+
+.controls div.input p.button_change a {
+   display: inline;
+   padding: 5px 15px;
+}
+
+.controls div.row,
+.controls div.list_stream {
    clear: both;
-   padding: 0 1.0416666667%;
+   padding: 1.0416666667%;
 }
 
 .controls div.row ul li {
@@ -551,8 +731,17 @@ div.tab_controls {
    padding: 5px 0;
 }
 
+.controls div.list_stream ul {
+   padding: 5px 0;
+}
+
+.controls_buttons {
+   margin: 10px 0;
+}
+
 .controls_buttons p.button_go,
-.controls_buttons p.other {
+.controls_buttons p.other,
+.controls_buttons p.button_delete_subtle {
    float: right;
    margin: 0 1.0416666667%;
 }
@@ -562,6 +751,15 @@ div.tab_controls {
 }
 
 .controls_buttons p.other {
+   padding: 15px 20px;
+}
+
+.controls_buttons p.button_delete_subtle {
+   clear: both;
+   margin-top: 25px;
+}
+
+.controls_buttons p.button_delete_subtle a {
    padding: 15px 20px;
 }
 
@@ -592,7 +790,6 @@ div.tab_controls {
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
    font-weight: 300;
    font-size: 3.2em;
-   text-shadow: 1px 1px 1px #fff;
 }
 
 article.dashboard .page_title h1 {
@@ -689,9 +886,29 @@ article.dashboard .page_title h1 {
    -webkit-animation-timing-function: ease-in-out;
 }
 
+article.dashboard .page_title section.actions {
+   width: 45%;
+}
+
+article#droplet_full section.actions p.button_change a {
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+}
+
 article#droplet_full .page_title p.button_change a.subscribed {
    border: none;
    background: none;
+}
+
+article#droplet_full .page_title section.actions p a span {
+   float: left;
+   width: 27px;
+   margin: 0 10px;
+}
+
+article#droplet_full .page_title section.actions p a strong {
+   line-height: 25px;
 }
 
 article.droplet .page_title section.actions {
@@ -770,6 +987,8 @@ section.panel nav ul.actions li.active a,
 section.panel nav ul.actions li a:hover {
    opacity: 1;
    color: #17a9c6;
+   border: none;
+   background: none;
 }
 
 section.panel nav ul.actions li a span.icon {
@@ -854,6 +1073,45 @@ section.panel #filters .options ul li a span {
 
 section.panel #filters .options ul li a span:before {
    content: "+";
+}
+
+#trends ul li {
+   font-weight: bold;
+   font-size: 1.4em;
+   text-align: center;
+   margin: 15px 1.041666667%;
+}
+
+#trends ul li a {
+   opacity: 0.8;
+   background-position: left center;
+   background-repeat: no-repeat;
+   padding: 5px 0 5px 35px;
+}
+
+#trends ul li a:hover {
+   opacity: 1;
+   text-decoration: none;
+}
+
+#trends ul li.map a {
+   background-image: url(/images/icon_map.png);
+}
+
+#trends ul li.tags a {
+   background-image: url(/images/icon_tags.png);
+}
+
+#trends ul li.links a {
+   background-image: url(/images/icon_links.png);
+}
+
+#trends ul li.sources a {
+   background-image: url(/images/icon_sources.png);
+}
+
+#trends ul li.gallery a {
+   background-image: url(/images/icon_gallery.png);
 }
 
 section.panel .options p.button_go a {
@@ -953,7 +1211,6 @@ article.droplet section.content {
 }
 
 article.droplet section.actions {
-   width: 7.446808511%;
    width: 14.89361702%;
    padding: 0 1.0416666667%;
 }
@@ -1004,6 +1261,10 @@ article.droplet section.source .actions p.score a {
    padding: 1px 0;
 }
 
+article.droplet section.source .actions p.active a {
+   background: #C9C9C9;
+}
+
 article.droplet section.source .actions p.score a span {
    background: url(/images/icon_score.png) left center no-repeat;
    padding-left: 18px;
@@ -1012,33 +1273,6 @@ article.droplet section.source .actions p.score a span {
 article.droplet section.source .actions p.score a.scored {
    border: 1px solid #fff;
    background: #fff;
-}
-
-article.droplet section.source .actions ul.dropdown {
-   display: none;
-   position: absolute;
-   z-index: 1;
-   width: 40%;
-   left: 0;
-   -moz-box-shadow: 0 0 5px rgba(0,0,0,.1);
-   -webkit-box-shadow: 0 0 5px rgba(0,0,0,.1);
-   box-shadow: 0 0 5px rgba(0,0,0,.1);
-   border: 1px solid #c2c2c2;
-   background: #fff;
-   padding: 10px;
-   margin: -5px -10px 0 0;
-}
-
-article.droplet section.source .actions ul.dropdown li.useful a {
-   font-weight: bold;
-   font-size: 1.1em;
-}
-
-article.droplet section.source .actions ul.dropdown li.not_useful a {
-   color: #888888;
-   font-style: italic;
-   font-size: 0.85em;
-   padding-top: 5px;
 }
 
 article.droplet section.content .title p.date {
@@ -1115,73 +1349,6 @@ article.droplet section.actions p.button_change a.subscribed {
 article.droplet section.actions p.active a {
    border: 1px solid #c2c2c2;
    background: #fff;  
-}
-
-article.droplet section.actions ul.dropdown {
-   display: none;
-   position: absolute;
-   z-index: 1;
-   width: 40%;
-   right: 0;
-   text-align: left;
-   -moz-box-shadow: 0 0 5px rgba(0,0,0,.1);
-   -webkit-box-shadow: 0 0 5px rgba(0,0,0,.1);
-   box-shadow: 0 0 5px rgba(0,0,0,.1);
-   border: 1px solid #c2c2c2;
-   background: #fff;
-   padding: 10px;
-   margin: -10px 0 0 -10px;
-}
-
-article.droplet section.actions ul.dropdown li a {
-   display: block;
-   color: #acacac;
-   font-weight: bold;
-   text-transform: none;
-   padding: 5px;
-}
-
-article.droplet section.actions ul.dropdown li a:hover {
-   color: #999999;
-   text-decoration: none;
-}
-
-article.droplet section.actions ul.dropdown li a.selected {
-   color: #17a9c6;
-}
-
-article.droplet section.actions ul.dropdown li.create_new a {
-   font-weight: normal;
-}
-
-article.droplet section.actions ul.dropdown li span.select {
-   float: left;
-   width: 10px;
-   height: 10px;
-   border: 1px solid #c2c2c2;
-   margin: 2px 5px 0 0;
-}
-
-ul.dropdown li.create_name div.buttons {
-   text-align: right;
-}
-
-article.droplet section.actions ul.dropdown li a.selected span.select {
-   background: #17a9c6;
-}
-
-ul.dropdown li.create_name input {
-   width: 95%;
-   font-size: 0.9em;
-   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-   border: 1px solid #c2c2c2;
-   background: #FFFAD8;
-   padding: 3px;
-}
-
-ul.dropdown li.create_name button {
-   font-size: 0.8em;
-   padding: 3px;
 }
 
 article#droplet_full section.actions p.bucket a.bucket_added {
@@ -1297,6 +1464,30 @@ article.droplet aside .item p {
    padding: 3px 0 0 0;
 }
 
+article.droplet aside .item p.button_change {
+   clear: both;
+   font-size: 0.8em;
+   margin-top: 5px;
+}
+
+article.droplet aside .item p.button_change a {
+   display: inline;
+   padding: 2px 10px;
+}
+
+article.droplet aside .item p.button_delete {
+   margin: 20px 0;
+}
+
+article.droplet aside .item p.button_delete a {
+   display: inline;
+   padding: 10px 20px;
+}
+
+article.droplet aside .item p.button_change a:before {
+   content: "+ ";
+}
+
 article.droplet aside .item ul.tags li {
    float: left;
    margin: 2px 2px 6px 2px;
@@ -1349,13 +1540,10 @@ article.droplet section.detail article.droplet section.content .body p {
    font-size: 1em;
 }
 
-article.droplet section.detail article.droplet section.content .body p.button_go {
-   width: 25%;
-}
-
 article.droplet section.detail article.droplet section.content .body p.button_go a {
+   display: inline;
    font-size: 0.8em;
-   padding: 3px 0;
+   padding: 3px 10px;
 }
 
 article.droplet section.detail article.droplet section.actions div.button {
@@ -1444,7 +1632,7 @@ div#summary_full section.content .body {
 }
 
 div#summary_full section.actions div.button {
-   width: auto;
+   width: 100%;
 }
 
 article#droplet_full div.bottom {
@@ -1515,7 +1703,8 @@ div#channels .keywords input {
 }
 
 div#channels .controls ul.tabs li.button_view {
-   padding-left: 25px;
+   font-size: 1em;
+   padding: 0 0 0 25px;
 }
 
 div#channels .controls ul.tabs li.twitter {
@@ -1641,6 +1830,10 @@ footer li a {
 
 ul.tabs li.button_view {
    font-size: 0.75em;
+}
+
+article#droplet_full section.actions p.follow_user a.subscribe strong {
+   display: block;
 }
 
 article.droplet section.detail article.add_reply section.content {
@@ -1787,6 +1980,16 @@ header nav .account li.user span.arrow {
    display: none;
 }
 
+
+.actions ul.dropdown {
+   right: auto;
+   width: auto;
+}
+
+.actions ul.left {
+   left: auto;
+}
+
 ul.tabs {
    width: 22.82608696%;
 }
@@ -1814,6 +2017,20 @@ div#channels .controls ul.tabs li.button_view a span.switch_on {
    padding-right: 10px;
 }
 
+article.dashboard .page_title section.actions {
+   width: 14.89361702%;
+}
+
+article#droplet_full .page_title section.actions p a span {
+   float: none;
+   margin: 0 auto;
+}
+
+article#droplet_full .page_title section.actions p a strong {
+   display: block;
+   text-align: center;
+}
+
 article.dashboard .page_title h1 {
    font-size: 3.2em;
    padding-top: 0;
@@ -1826,17 +2043,27 @@ article.dashboard .page_title h1 {
    margin-top: 3px;
 }
 
+#trends ul li {
+   float: left;
+   width: 22.91666667%;
+}
+
 article.droplet .page_title section.actions {
    float: right;
    clear: none;
    margin: 0;
 }
 
-article#droplet_full .page_title section.actions p a {
-   height: 30px;
+article#droplet_full .page_title section.actions p.button_change a {
    -webkit-border-radius: 6px;
    -moz-border-radius: 6px;
    border-radius: 6px;
+}
+
+.controls_buttons p.button_delete_subtle {
+   float: left;
+   clear: none;
+   margin-top: 0;
 }
 
 article.droplet section.source {
@@ -1878,19 +2105,8 @@ article.droplet section.content .title p.date {
    padding-top: 5px;
 }
 
-article.droplet section.actions ul.dropdown,
-article.droplet section.source .actions ul.dropdown {
-   width: auto;
-   right: auto;
-   left: auto;
-}
-
 article.droplet section.detail article.fullstory h1 {
    padding: 0 0 5px 0;
-}
-
-article.droplet section.detail article.droplet section.content .body p.button_go {
-   width: 17%;
 }
 
 div#summary_full section.source .text h1 {
@@ -1971,34 +2187,33 @@ header nav .account li.login ul.dropdown {
    right: 8%;
 }
 
-article#droplet_full .page_title section.actions p a span {
-   float: left;
-   width: 27px;
-   margin: 0 10px;
-}
-
-article#droplet_full .page_title section.actions p a strong {
-   line-height: 25px;
-}
-
-article.droplet section.actions p.button_view,
-article.droplet section.actions div.button {
+article.droplet section.actions > .button_view,
+article.droplet section.actions > .button_change,
+article.droplet section.actions > .button {
    float: left;
    width: 50%;
-}
-
-article#droplet_full section.actions p {
-   float: none;
-   width: 100%;
 }
 
 article.droplet section.actions p a {
    height: 75px;
 }
 
+article#droplet_full section.actions p.button_change {
+   width: 100%;
+   padding-top: 5px;
+}
+
 article#droplet_full section.actions p.button_change a {
-   height: 65px;
-   padding-top: 15px;
+   height: auto;
+}
+
+article#droplet_full .page_title section.actions p a span {
+   float: left;
+   margin: 0 10px;
+}
+
+article#droplet_full .page_title section.actions p a strong {
+   text-align: left;
 }
 
 article.droplet section.actions p.button_view a {

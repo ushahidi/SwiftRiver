@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>Create an account on SwiftRiver</title> 
+	<title>Create an account - SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -12,7 +12,6 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
 	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
-	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
 	?>
 </head> 

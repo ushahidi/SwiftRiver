@@ -8,9 +8,9 @@
 		{
 			?>
 			<section class="meter">
-				<p style="padding-left:<?php echo $meter; ?>%;"><strong><?php echo $droplets; ?></strong> droplets</p>
+				<p style="padding-left:<?php echo $meter; ?>%;"><strong><?php echo $droplets; ?></strong> <?php echo __('Droplets'); ?></p>
 				<div><span style="width:<?php echo $meter; ?>%;"></span></div>
-			</section>
+			</section>		
 			<?php
 		}
 		?>
@@ -25,10 +25,11 @@
 					<li><a href="#">Tags</a></li>
 					<li><a href="#">Links</a></li>
 					<li><a href="#">Sources</a></li>
+					<li class="view_panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
 				<ul class="actions">
-					<li class="view_panel"><a href="<?php echo $channels; ?>" class="channels"><span class="icon"></span>Edit channels</a></li>
-					<li class="view_panel"><a href="<?php echo $filters; ?>" class="filter"><span class="icon"></span>Edit filter</a></li>
+					<li class="view_panel"><a href="<?php echo $filters; ?>" class="channels"><span class="icon"></span><?php echo __('Edit Filter'); ?></a></li>
+					<li class="view_panel"><a href="<?php echo $settings; ?>" class="filter"><span class="icon"></span><?php echo __('River Settings'); ?></a></li>
 				</ul>
 			</nav>
 			<div class="panel_body"></div>
