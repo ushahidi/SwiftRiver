@@ -26,8 +26,8 @@ class Swiftriver_Model_DropletTest extends Unittest_TestCase {
 		// Verify that the items are ordered in ascending order
 		if (count($unprocessed) > 1)
 		{
-			$_first = $unprocessed[0]['droplet_pub_date'];
-			$_last = end($unprocessed)['droplet_pub_date'];
+			$_first = $unprocessed[0]->droplet_pub_date;
+			$_last = end($unprocessed)->droplet_pub_date;
 			
 			// Compare the first and last items
 			// The pub date of the first item should be earlier than that of the last item

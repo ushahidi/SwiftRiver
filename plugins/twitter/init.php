@@ -21,7 +21,9 @@ class Twitter_Init {
 	public function link_droplet()
 	{
 		// Get the event data
-		$droplet = Swiftriver_Event::$data;
+		$droplet_arr = Swiftriver_Event::$data;
+		
+		$droplet = ORM::factory('droplet', $droplet_arr['id']);
 		
 		if ($droplet->channel != 'twitter')
 			return;

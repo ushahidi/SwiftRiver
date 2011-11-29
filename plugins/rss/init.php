@@ -20,12 +20,12 @@ class Rss_Init {
 	 */
 	public function link_droplet() 
 	{
-		$droplet = Swiftriver_Event::$data;
+		$droplet_arr = Swiftriver_Event::$data;
+		
+		$droplet = ORM::factory('droplet', $droplet_arr['id']);
 
 		if ($droplet->channel != 'rss')
 			return;
-
-		Kohana::$log->add(Log::DEBUG, 'RSS droplet: :droplet', array(':droplet' => $droplet->droplet_content));
 
 		//Link droplet to every channel id that has its url
 		//and it the filter has keywords then only associate 
@@ -53,7 +53,7 @@ class Rss_Init {
 				{
 					//Filter does not have keywords so all droplets will be assocaiated with this filter
 					Kohana::$log->add(Log::DEBUG, "No keywords" . $option['url']. ',' . $option['channel_filter']->id);
-					if(!$option['channel_filter']->has('droplets', $droplet))
+					if( ! $option['channel_filter']->has('droplets', $droplet))
 					{
 						$option['channel_filter']->add('droplets', $droplet);
 					}

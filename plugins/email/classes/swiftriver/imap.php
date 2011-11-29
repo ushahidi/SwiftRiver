@@ -132,9 +132,6 @@ class Swiftriver_Imap {
 				$droplet['droplet_content'] = $message_body;
 				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', $header_info->udate);
 				
-				// Kohana::$log->add(Log::DEBUG, "Message id: :id\nContent: :content", 
-				// 	array(":id"=>$header_info->message_id, ":content" => $message_body));
-					
 				// TODO - Figure out how to place the droplet in a user account
 				// This the user account should be set at this stage
 				

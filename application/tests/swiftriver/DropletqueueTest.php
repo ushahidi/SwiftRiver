@@ -47,7 +47,7 @@ class Swiftriver_Dropletqueue_Test extends PHPUnit_Extensions_Story_TestCase {
 	{
 		$this->given('init_queue')
 			 ->when('add_droplet', $this->get_sample_droplet()) // Call Dropletqueue::add()
-			 ->then('process_queue');	// Call Dropletqueue::process
+			 ->then('process_queue', 'rss');	// Call Dropletqueue::process
 	}
 	
 	public function runGiven(&$world, $action, $arguments)
@@ -72,7 +72,7 @@ class Swiftriver_Dropletqueue_Test extends PHPUnit_Extensions_Story_TestCase {
 		{
 			case 'add_droplet':
 			{
-				$world['dropletqueue']::add($arguments[0]);
+				$world['dropletqueue']::add($arguments[0], FALSE);
 				$world['queue_length']++;
 				
 				// Check if the 'id' array key exists
@@ -93,16 +93,11 @@ class Swiftriver_Dropletqueue_Test extends PHPUnit_Extensions_Story_TestCase {
 		{
 			case 'process_queue':
 			{
-				$world['dropletqueue']::process();
+				$world['dropletqueue']::process($arguments[0]);
 				
-				// Get the processed droplets
+				// Verify that the "procesed" queue is not empty
 				$processed = $world['dropletqueue']::get_processed_droplets();
-				$this->assertEquals($world['queue_length'], count($processed));
-				
-				// Verify that the "processed" queue is empty
-				$empty_queue = $world['dropletqueue']::get_processed_droplets();
-				$this->assertEmpty($empty_queue, 
-					sprintf("The processed queue is not empty. %d droplets found", count($empty_queue)));
+				$this->assertTrue(!empty($processed), 'No droplets processed');
 				
 				// Cleanup
 				foreach ($processed as $test_droplet)

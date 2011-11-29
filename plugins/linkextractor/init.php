@@ -14,7 +14,7 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 
-class link_extractor_init {
+class LinkExtractor_Init {
 	
 	public function __construct()
 	{	
@@ -27,8 +27,8 @@ class link_extractor_init {
 		try
 		{
 			// Get the droplet content
-			$droplet = Swiftriver_Event::$data;
-
+			$droplet = & Swiftriver_Event::$data;
+			
 			$links = Swiftriver_Links::extract($droplet['droplet_content']);
 			foreach ($links as $link)
 			{
@@ -43,4 +43,4 @@ class link_extractor_init {
 	}
 }
 
-new link_extractor_init;
+new LinkExtractor_Init;

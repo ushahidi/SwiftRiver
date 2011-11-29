@@ -24,7 +24,7 @@ class Swiftcore_Init {
 	public function extract_metadata()
 	{
 		// Get the droplet
-		$droplet = Swiftriver_Event::$data;
+		$droplet = & Swiftriver_Event::$data;
 		
 		// URL for extracting semantics
 		$api_url = "http://api.swiftriver.dev/entities.json";
@@ -100,9 +100,6 @@ class Swiftcore_Init {
 			}
 			// Set the tags
 			$droplet['tags'] = $tags;
-			
-			// Set the event data
-			Swiftriver_Event::$data = $droplet;
 		}
 		else
 		{

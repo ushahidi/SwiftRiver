@@ -47,7 +47,7 @@ class Swiftriver_Channel_Worker_Twitter extends Swiftriver_Channel_Worker {
 	}
 
 	/**
-	 * @see Switriver_Worker_Channel::channel_worker
+	 * @see Swiftriver_Channel_Worker->channel_worker
 	 */
 	public function channel_worker($job)
 	{

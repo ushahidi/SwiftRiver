@@ -30,15 +30,15 @@ class Swiftriver_Dropletqueue {
 	 * saving these to the database. The extracted metadata could be links,
 	 * named entities, places
 	 *
-	 * @param GearmanJob $job 
+	 * @param string $channel Name of the channel whose droplets are to be processed
 	 */
-	public static function process($job = NULL)
+	public static function process($channel = NULL)
 	{
 		// If the queue is empty, fetch the unprocessed items from the DB
 		// TODO - Use configuration param to set the no. of unprocessed
 		// droplets to fetch during processing
 		self::$_queue = empty(self::$_queue)
-			? Model_Droplet::get_unprocessed_droplets(1000)
+			? Model_Droplet::get_unprocessed_droplets(500, $channel)
 			// Reverse the ordering of items in the array - FIFO queue
 			: array_reverse(self::$_queue);
 		
@@ -58,7 +58,8 @@ class Swiftriver_Dropletqueue {
 			self::$_processed[] =  $droplet;
 
 			// Mark the droplet as processed
-			$droplet->mark_as_processed();
+			// $droplet->mark_as_processed();
+			Model_Droplet::create_from_array($droplet);
 		}
 	}
 	

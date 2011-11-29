@@ -55,9 +55,12 @@ class Model_Place extends ORM
 	 */
 	public static function get_place_by_lat_lon($coords, $save = FALSE)
 	{
+		if (! is_array($coords))
+			return FALSE;
+			
 		// Retrieve record using lon, lat
 		$orm_place = ORM::factory('place')
-				->where(DB::expr('X(place_point)'), '=', $coords['longitude')
+				->where(DB::expr('X(place_point)'), '=', $coords['longitude'])
 				->where(DB::expr('Y(place_point)'), '=', $coords['latitude'])
 				->find();
 		
@@ -73,7 +76,7 @@ class Model_Place extends ORM
 			{
 				// Create the place record
 				$orm_place->place_name = $coords['name'];
-				$orm_place->place_point = DB::expr("GeoFromText('POINT('".$coords['longitude'] $coords['latitude']."')')");
+				$orm_place->place_point = DB::expr("GeoFromText('POINT('".$coords['longitude']." ".$coords['latitude']."')')");
 				$orm_place->place_source = $coords['source'];
 			
 				return $orm_place->save();

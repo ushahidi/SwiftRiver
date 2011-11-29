@@ -26,12 +26,6 @@ declare(ticks = 1);
 class Controller_Crawler_Main extends Controller {
 	
 	/**
-	 * Gearman worker
-	 * @var GearmanWorker
-	 */
-	private $worker;
-	
-	/**
 	 * Process ID of the current process
 	 * @var int
 	 */
@@ -49,113 +43,125 @@ class Controller_Crawler_Main extends Controller {
 	 */
 	private $signal_queue = array();
 	
-	/**
-	 * @return void
-	 */
+	
 	public function before()
-	{	
+	{
 		parent::before();
 		
 		// Get the current process id
 		$this->current_pid = getmypid();
-		
-		// Register the signal handler
-		pcntl_signal(SIGCHLD, array($this, 'handle_child_signal'));
-		
-		// Initialize gearman worker
-		$this->worker = new GearmanWorker();
-		
-		// TODO - Configuration option for specifying Gearman servers
-		$this->worker->addServer();
-		
-		// Prevent child processes from forking stuff
-		if ( ! isset($this->current_procs[$this->current_pid]))
-		{
-			// Get all the available services
-			$services = Swiftriver_Plugins::channels();
-		
-			// Check if any services have been found
-			if (count($services) == 0)
-			{
-				Kohana::$log->add(Log::ERROR, 'No channel services found');
-				exit;
-			}
-
-			// Create a worker for each channel
-			foreach ($services as $key => $value)
-			{
-				// Fork process for each channel
-				$process_id = pcntl_fork();
-				
-				if ($process_id == -1)
-				{
-					// Error
-					Kohana::$log->add(Log::ERROR, 'Could not fork worker process for the :channel channel', 
-						array(':channel' => $key));
-					
-					exit(1);
-				}
-				elseif ($process_id)
-				{
-					// Add the child process to the job queue
-					$this->current_procs[] = $process_id;
-				
-					// Check if the signal for the current child process has been caught
-					if (isset($this->signal_queue[$process_id]))
-					{
-						// Handle the signal
-						$this->handle_child_signal(SIGCHLD, $process_id, $this->signal_queue[$process_id]);
-						
-						// Remove process from the signal queue
-						unset ($this->signal_queue[$process_id]);
-					}
-				}
-				else
-				{
-					// Create instance for the channel worker. If not found, the
-					// framework will thrown an exception
-					$instance = Swiftriver_Channel_Worker::factory($key);
-			
-					// Log
-					Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :channel channel', 
-						array(':pid' => getmypid(), ':channel' => strtoupper($key)));
-					
-					// Register the crawler's callback function
-					$this->worker->addFunction($key, array($instance, 'channel_worker'));
-					$this->action_index();
-				}
-			}
-		
-			// Add and register the queue processor
-			$this->worker->addFunction('process_queue', array('Swiftriver_Dropletqueue', 'process'));
-			
-			// Wait for the child processes to finish
-			while (count($this->current_procs))
-			{
-				// Prevents PHP from munching the CPU
-				sleep(5);
-			}
-		}
 	}
+	
 	
 	/**
 	 * Run the channel worker
 	 */
 	public function action_index()
-	{
-		// Wait for and perform jobs
-		while ($this->worker->work())
+	{	
+		
+		// Get all the available services
+		$services = Swiftriver_Plugins::channels();
+	
+		// Check if any services have been found
+		if (empty($services))
 		{
-			
-			// Listen for failure
-			if ($this->worker->returnCode() != GEARMAN_SUCCESS)
+			Kohana::$log->add(Log::ERROR, 'No channel services found');
+			exit;
+		}
+		
+		// Register the signal handler
+		pcntl_signal(SIGCHLD, array($this, 'handle_child_signal'));
+		
+		// Create a worker for each channel
+		$this->launch_worker('on_complete_task', array('Swiftriver_Channel_Worker', 'on_complete_task'));
+		
+		foreach ($services as $key => $value)
+		{
+			$this->launch_worker($key);
+		}
+				
+		// Wait for the child processes to finish
+		while (count($this->current_procs))
+		{
+			// Prevents PHP from munching the CPU
+			sleep(10);
+		}
+		
+	}
+	
+	/**
+	 * Launches a worker for the specified job
+	 *
+	 * @param string  $job_name Name of the function to register with the Gearman server
+	 * @param array   $callback The callback to be called when a job for the $job_name is submitted
+	 */
+	protected function launch_worker($job_name, $callback = array())
+	{
+		// Fork process the channel
+		$process_id = pcntl_fork();
+	
+		if ($process_id == -1)
+		{
+			// Error
+			Kohana::$log->add(Log::ERROR, 'Could not fork worker process for the :job job', 
+				array(':channel' => $job_name));
+		
+			exit(1);
+		}
+		elseif ($process_id)
+		{	
+			$this->current_procs[$process_id] = $job_name;
+				
+			// Check if the signal for the current child process has been caught
+			if (isset($this->signal_queue[$process_id]))
 			{
-				// Log the error!
-				Kohana::$log->add(Log::ERROR, 'Gearman worker error :code --- :error', 
-					array(':code' => $this->worker->returnCode(), ':error' => $this->worker->error()));
+				// Handle the signal
+				$this->handle_child_signal(SIGCHLD, $process_id, $this->signal_queue[$process_id]);
+			
+				// Remove process from the signal queue
+				unset ($this->signal_queue[$process_id]);
 			}
 		}
+		else
+		{
+			// Log
+			Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :job', 
+				array(':pid' => getmypid(), ':job' => strtoupper($job_name)));
+
+			// Create the worker object
+			$worker = new GearmanWorker();
+
+			// Add the default server
+			$worker->addServer();
+			
+			if (empty($callback))
+			{
+				// Create instance for the channel worker. If not found, the
+				// framework will throw an exception
+				$instance = Swiftriver_Channel_Worker::factory($job_name);
+			
+				// Register the callback function
+				$worker->addFunction($job_name, array($instance, 'channel_worker'));
+			}
+			else
+			{
+				$worker->addFunction($job_name, $callback);
+			}
+			
+			// Listen for job request
+			while ($worker->work())
+			{
+				// Check for errors in the worker
+				if ($worker->returnCode() != GEARMAN_SUCCESS)
+				{
+					Kohana::$log->add(Log::DEBUG, ':job worker returned an error: :error', 
+						array(':job' => $job_name, ':error' => $worker->error()));
+				}
+			}
+			
+		}		
 	}
+	
 	
 	/**
 	 * Signal handler for the child process

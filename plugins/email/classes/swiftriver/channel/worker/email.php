@@ -16,7 +16,7 @@
 class Swiftriver_Channel_Worker_Email extends Swiftriver_Channel_Worker {
 
 	/**
-	 * @see Swiftriver_Task_Channel->channel_worker
+	 * @see Swiftriver_Channel_Worker->channel_worker
 	 */
 	public function channel_worker($job)
 	{

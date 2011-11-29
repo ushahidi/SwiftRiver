@@ -211,24 +211,39 @@ class Model_Droplet extends ORM
 	 * Gets the list of droplets that are yet to be processed. This method
 	 * is called by Swiftriver_Dropletqueue::process
 	 *
+	 * @param int    $limit The no. of droplets to fetch
+	 * @param string $channel The origin channel of the droplets
 	 * @return array
 	 */
-	public static function get_unprocessed_droplets($limit = 1)
+	public static function get_unprocessed_droplets($limit = 1, $channel = NULL)
 	{
-		$droplets = array();		
-			
+		// Return value
+		$droplets = array();
+		
+		// Predicate for filtering droplets by channel
+		$predicates = empty($channel)
+			? array('id', '>', 0) 
+			: array('channel', '=', $channel);
+		
 		// Get the droplets ordered by pub_date in DESC order
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
+					->where($predicates[0], $predicates[1], $predicates[2])
 					->order_by('droplet_date_pub', 'DESC')
 					->limit($limit)
 					->find_all();
-					
+		
 		foreach ($result as $droplet)
 		{
-			$droplets[] = $droplet;
+			$droplets[] = array(
+				'id' => $droplet->id,
+				'droplet_content' => $droplet->droplet_content,
+				'channel' => $droplet->channel,
+				'tags' => array(),
+				'links' => array(),
+				'places' => array()
+			);
 		}
-		
 		// Return items
 		return $droplets;
 	}
