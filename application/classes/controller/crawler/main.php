@@ -110,6 +110,9 @@ class Controller_Crawler_Main extends Controller {
 		}
 		elseif ($process_id)
 		{	
+			//This is the parent process. $process_id is the child pid
+			
+			
 			$this->current_procs[$process_id] = $job_name;
 				
 			// Check if the signal for the current child process has been caught
@@ -124,6 +127,9 @@ class Controller_Crawler_Main extends Controller {
 		}
 		else
 		{
+
+			//This is the child process. Register the worker and work.
+
 			// Log
 			Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :job', 
 				array(':pid' => getmypid(), ':job' => strtoupper($job_name)));
