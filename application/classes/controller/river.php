@@ -47,23 +47,15 @@ class Controller_River extends Controller_Swiftriver {
 
 		// First we need to make sure this river
 		// actually exists
-		$id = $this->request->param('id');
+		$id = (int) $this->request->param('id', 0);
 		
-		if (is_numeric($id))
+		$river = ORM::factory('river')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+		if ( ! $river->loaded())
 		{
-			$river = ORM::factory('river')
-				->where('id', '=', $id)
-				->where('account_id', '=', $this->account->id)
-				->find();
-			if ( ! $river->loaded())
-			{
-				// It doesn't -- redirect back to dashboard
-				$this->request->redirect('dashboard');
-			}
-		}
-		else
-		{
-			// Non-Numeric ID -- redirect back to dashboard
+			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
 		}			
 		
@@ -96,8 +88,8 @@ class Controller_River extends Controller_Swiftriver {
 			$meter = ($filter_total / $total) * 100;
 		}
 
-		$filters = url::site().$this->account->account_path.'/river/filters/';
-		$settings = url::site().$this->account->account_path.'/river/settings/';
+		$filters = url::site().$this->account->account_path.'/river/filters/'.$id;
+		$settings = url::site().$this->account->account_path.'/river/settings/'.$id;
 		$more = url::site().$this->account->account_path.'/river/more/';
 	}
 
@@ -155,10 +147,19 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_settings()
 	{
+		$id = (int) $this->request->param('id', 0);
+		
+		// Get River (if set)
+		$river = ORM::factory('river')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+
 		$this->template = '';
 		$this->auto_render = FALSE;
 		$settings = View::factory('pages/river/settings_control');
 		$settings->channels = $this->channels;
+		$settings->river = $river;
 		echo $settings;
 	}
 
@@ -204,5 +205,38 @@ class Controller_River extends Controller_Swiftriver {
 				$river->save();
 			}
 		}
-	}	
+	}
+
+	/**
+	 * Ajax Delete River
+	 * 
+	 * @return string - json
+	 */
+	public function action_ajax_delete()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		if ( $_REQUEST AND isset($_REQUEST['id']) AND
+			! empty($_REQUEST['id']) )
+		{
+			$river = ORM::factory('river')
+				->where('id', '=', $_REQUEST['id'])
+				->where('account_id', '=', $this->account->id)
+				->find();
+
+			if ($river->loaded())
+			{
+				$river->delete();
+				echo json_encode(array("status"=>"success"));
+			}
+			else
+			{
+				echo json_encode(array("status"=>"error"));
+			}
+		}
+		else
+		{
+			echo json_encode(array("status"=>"error"));
+		}
+	}
 }

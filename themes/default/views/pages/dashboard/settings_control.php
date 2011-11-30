@@ -28,7 +28,7 @@
 				<div class="input">
 					<h3><?php echo __('Current photo'); ?></h3>
 					<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" />
-					<p class="button_change"><a><?php echo __('Upload new photo'); ?></a></p>
+					<p class="button_change"><a href="http://www.gravatar.com" target="_blank"><?php echo __('Upload new photo'); ?></a></p>
 				</div>
 			</div>
 			<div class="row controls cf">

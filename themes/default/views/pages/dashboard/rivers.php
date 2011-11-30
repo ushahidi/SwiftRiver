@@ -5,17 +5,17 @@
 			foreach ($rivers as $river)
 			{
 				?>
-				<li>
+				<li id="river_<?php echo $river->id; ?>">
 					<a href="<?php echo URL::site().'river/index/'.$river->id; ?>" class="title"><?php echo $river->river_name; ?></a>
 					<div class="actions">
-						<span class="button_delete"><a>Delete River</a></span>
+						<span class="button_delete"><a><?php echo __('Delete River'); ?></a></span>
 						<ul class="dropdown">
-							<p>Are you sure you want to delete this River?</p>
-							<li class="confirm"><a onclick="">Yep.</a></li>
-							<li class="cancel"><a onclick="">No, nevermind.</a></li>
+							<p><?php echo __('Are you sure you want to delete this River?'); ?></p>
+							<li class="confirm"><a onclick="delRiver(<?php echo $river->id; ?>)"><?php echo __('Yep.'); ?></a></li>
+							<li class="cancel"><a onclick=""><?php echo __('No, nevermind.'); ?></a></li>
 						</ul>
 					</div>
-					<span class="subscriber_count"><a href="/river/subscribers.html"><strong>22</strong> subscribers</a></span>
+					<span class="subscriber_count"><a href="#"><strong>22</strong> <?php echo __('subscribers'); ?></a></span>
 				</li>
 				<?php	
 			}

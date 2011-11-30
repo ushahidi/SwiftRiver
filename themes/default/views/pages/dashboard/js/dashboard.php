@@ -25,3 +25,14 @@ $(document).ready(function() {
 		}, 'json');
 	});
 });
+
+function delRiver(id){
+	$.post('<?php echo URL::site()?>river/ajax_delete', { id: id},
+		function(data){
+			if ( typeof(data.status) != 'undefined' ) {
+				if (data.status == 'success') {
+					$('#river_'+id).remove();
+				};
+			}			
+		}, 'json');
+}
