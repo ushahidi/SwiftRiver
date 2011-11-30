@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	// Edit page contents
+	// Dashboard Settings
 	$('.button_go').live('click', function() {
 		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
 			username: $('#username').val(),

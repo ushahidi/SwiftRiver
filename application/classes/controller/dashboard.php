@@ -34,6 +34,8 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('settings', $settings);
 		
 		$settings = url::site().'dashboard/settings/';
+
+		$this->template->header->js = View::factory('pages/dashboard/js/dashboard');
 	}
 
 	/**
@@ -48,8 +50,6 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('following', $following)
 			->bind('followers', $followers);
 		$this->active = 'main';
-
-		$this->template->header->js = View::factory('pages/dashboard/js/settings');
 
 		// Get Following (as_array)
 		// ++ We can cache this array in future
