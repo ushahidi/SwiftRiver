@@ -49,6 +49,8 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('followers', $followers);
 		$this->active = 'main';
 
+		$this->template->header->js = View::factory('pages/dashboard/js/settings');
+
 		// Get Following (as_array)
 		// ++ We can cache this array in future
 		$following = ORM::factory('user_follower')
@@ -155,34 +157,32 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		// save settings
 		if ( ! empty($_POST) )
 		{
-			// First validate old password
-			if ( ! empty($_POST['password']) 
-				AND ( Auth::hash($_POST['current_password']) != $this->user->password) )
-			{
-				Message::add('error', __('Current password is incorrect'));
-			}
-			else
+			if (empty($_POST['password']) || empty($_POST['password_confirm']))
 			{
 				// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
-				unset($_POST['current_password'], $_POST['password']);
+				unset($_POST['password'], $_POST['password_confirm']);
 			}
 
 			// Save user
 			try
 			{
 				$this->user->update_user($_POST, 
-				array(
-					'username',
-					'password', 
-					'email'
-				));
+					array(
+						'username',
+						'password',
+						'email'
+					));
+
+				echo json_encode(array("status"=>"success", "post" => $_POST));
 			}
 			catch (ORM_Validation_Exception $e)
 			{
-				Message::add('error', __('Error: User could not be saved.'));
-				$errors = $e->errors('user');
-				$errors = array_merge($errors, ( isset($errors['_external']) ? $errors['_external'] : array() ));
+
 				//$errors
+				$errors = $e->errors('models/user');
+				$errors = array_merge($errors, ( isset($errors['_external']) ? $errors['_external'] : array() ));
+				unset($errors['_external']);
+				echo json_encode(array("status"=>"error", "errors" => $errors));
 			}
 		}
 	}

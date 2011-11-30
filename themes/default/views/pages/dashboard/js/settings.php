@@ -1,18 +1,27 @@
-function settingsEdit() {
-	$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
-			username: $('#username').val(),
-			email: $('#email').val(),
-			oldpassword: $('#current_password').val(),
-			newpassword: $('#password').val()
-		},
-		function(data){
-			
-		}, "json");
-}
-
 $(document).ready(function() {
 	// Edit page contents
 	$('.button_go').live('click', function() {
-		alert('test');
+		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
+			username: $('#username').val(),
+			email: $('#email').val(),
+			password: $('#password').val(),
+			password_confirm: $('#password_confirm').val()
+		},
+		function(data){
+			if ( typeof(data.status) != 'undefined' ) {
+				if (data.status == 'success') {
+					$('#messages').html('<div class="system_message system_success"><p><strong><?php echo __('Success!'); ?></strong> <?php echo __('Your settings have been saved'); ?>.</p></div>');
+					$('#password').val('');
+					$('#password_confirm').val('');
+				} else if (data.status == 'error') {
+					var errors = data.errors;
+					var html = '';
+					for (i in errors){
+						html += '<div class="system_message system_error"><p><strong><?php echo __('Uh oh.'); ?></strong> '+errors[i]+'</p></div>';
+					}
+					$('#messages').html(html);
+				};
+			}
+		}, 'json');
 	});
 });

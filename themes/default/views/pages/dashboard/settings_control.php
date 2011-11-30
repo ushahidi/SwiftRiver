@@ -1,25 +1,26 @@
 <?php echo Form::open(); ?>
 	<div id="account_settings">
+		<div id="messages"></div>
 		<div class="controls">
 			<div class="row cf">
 				<div class="input">
 					<h3><?php echo __('Username'); ?></h3>
-					<?php echo Form::input("username", $user->username); ?>
+					<?php echo Form::input("username", $user->username, array('id' => 'username')); ?>
 				</div>
 				<div class="input">
 					<h3><?php echo __('Email'); ?></h3>
-					<?php echo Form::input("username", $user->email); ?>
+					<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
 				</div>
 			</div>
 			<div class="row cf">
 				<h2><?php echo __('Change password'); ?></h2>
 				<div class="input">
-					<h3><?php echo __('Current password'); ?></h3>
-					<?php echo Form::password("current_password", ""); ?>
+					<h3><?php echo __('Password'); ?></h3>
+					<?php echo Form::password("password", "", array('id' => 'password')); ?>
 				</div>
 				<div class="input">
-					<h3><?php echo __('New password'); ?></h3>
-					<?php echo Form::password("password", ""); ?>
+					<h3><?php echo __('Confirm password'); ?></h3>
+					<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
 				</div>
 			</div>
 			<div class="row cf">
