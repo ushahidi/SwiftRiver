@@ -100,7 +100,9 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
-		$this->template->content = View::factory('pages/river/new');
+		$this->template->content = View::factory('pages/river/new')
+			->bind('post', $post)
+			->bind('errors', $errors);
 		$this->template->header->js = View::factory('pages/river/js/new');
 		$this->template->header->js->settings = url::site().$this->account->account_path.'/river/settings/';
 
