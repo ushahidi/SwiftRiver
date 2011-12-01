@@ -30,7 +30,30 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
+		$this->template->content = View::factory('pages/bucket/main')
+			->bind('bucket', $bucket)
+			->bind('settings', $settings)
+			->bind('more', $more);
+
+		// First we need to make sure this bucket
+		// actually exists
+		$id = (int) $this->request->param('id', 0);
 		
+		$bucket = ORM::factory('bucket')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+		if ( ! $bucket->loaded())
+		{
+			// It doesn't -- redirect back to dashboard
+			$this->request->redirect('dashboard');
+		}
+
+		// Get this buckets droplets
+		$droplets = $bucket->droplets->find_all()->as_array();
+
+		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
+		$more = url::site().$this->account->account_path.'/bucket/more/';
 	}
 	
 	/**
@@ -68,6 +91,77 @@ class Controller_Bucket extends Controller_Swiftriver {
 			}
 		}
 	}
+
+	/**
+	 * Ajax rendered settings control box
+	 * 
+	 * @return	void
+	 */
+	public function action_settings()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		$id = (int) $this->request->param('id', 0);
+		
+		// Get Bucket
+		$bucket = ORM::factory('bucket')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+
+		$settings = '';
+		if ($bucket->loaded())
+		{
+			$settings = View::factory('pages/bucket/settings_control');
+			$settings->bucket = $bucket;
+			echo $settings;	
+		}
+	}	
+
+	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/bucket/more_control');
+	}
+
+	/**
+	 * Ajax Title Editing Inline
+	 *
+	 * Edit Bucket Name
+	 * 
+	 * @return	void
+	 */
+	public function action_ajax_title()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		// check, has the form been submitted, if so, setup validation
+		if ($_REQUEST AND
+			isset($_REQUEST['edit_id'], $_REQUEST['edit_value']) AND
+			! empty($_REQUEST['edit_id']) AND 
+			! empty($_REQUEST['edit_value']) )
+		{
+
+			$bucket = ORM::factory('bucket')
+				->where('id', '=', $_REQUEST['edit_id'])
+				->where('account_id', '=', $this->account->id)
+				->find();
+
+			if ($bucket->loaded())
+			{
+				$bucket->bucket_name = $_REQUEST['edit_value'];
+				$bucket->save();
+			}
+		}
+	}	
 
 	/**
 	 * Ajax Delete Bucket

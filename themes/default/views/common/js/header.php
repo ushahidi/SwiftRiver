@@ -26,8 +26,22 @@ function channelOptionR(id){
 	}
 }
 
-// New Bucket
+var inlineInputValue;
 $(document).ready(function() {
+
+	// Inline Editing
+	$('.edit_trigger').live('click', function() {
+		inlineInputValue = $(this).text();
+		inlineInputType = $(this).attr('title');
+		inlineInputId = $(this).attr('id').replace(/[^0-9]/g, '');
+		$(this).replaceWith('<span class="edit_input"><input type="hidden" id="inline_edit_id" value="'+ inlineInputId +'"><input type="hidden" id="inline_edit_name" value="'+ inlineInputType +'"><input type="text" id="inline_edit_text" value="'+ inlineInputValue +'" placeholder="Enter the name of your River"></span>');
+		$('.edit').append('<div class="buttons"><button class="save" onclick="inlineEdit()"><?php echo __('Save'); ?></button><button class="cancel"><?php echo __('Cancel'); ?></button></div>');
+		$('button.cancel').click(function() {
+			$(this).parent().remove();
+			$('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
+		});
+	});
+
 	// Create new bucket
 	$('li.create_new').live('click', function(e) {
 		$(this).empty();
@@ -57,7 +71,7 @@ $(document).ready(function() {
 			}, 'json');			
 		});
 		$('button.cancel').click(function(e) {
-			$(this).closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
+			$(this).closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em><?php echo __('Create new'); ?></em></span></a>');
 			$(this).closest('li.create_name').remove();
 			e.stopPropagation();
 		});

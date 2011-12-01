@@ -1,4 +1,3 @@
-var inlineInputValue;
 $(document).ready(function() {
 	// Hide dropdowns on click outside
 	$('body').live('click', function() {
@@ -21,19 +20,6 @@ $(document).ready(function() {
 		$(this).toggleClass('active');
 		$(this).siblings('ul.dropdown').fadeToggle('fast');
 		e.stopPropagation();
-	});
-	
-	// Edit page contents
-	$('.edit_trigger').live('click', function() {
-		inlineInputValue = $(this).text();
-		inlineInputName = $(this).attr('title');
-		inlineInputId = $(this).attr('id').replace(/[^0-9]/g, '');
-		$(this).replaceWith('<span class="edit_input"><input type="hidden" id="inline_edit_id" value="'+ inlineInputId +'"><input type="hidden" id="inline_edit_name" value="'+ inlineInputName +'"><input type="text" id="inline_edit_text" value="'+ inlineInputValue +'" placeholder="Enter the name of your River"></span>');
-		$('.edit').append('<div class="buttons"><button class="save" onclick="inlineEdit()">Save</button><button class="cancel">Cancel</button></div>');
-		$('button.cancel').click(function() {
-			$(this).parent().remove();
-			$('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputName +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
-		});
 	});
 	
 	// View or hide page actions panel
