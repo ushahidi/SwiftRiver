@@ -14,10 +14,14 @@
 		</li>
 		<li class="buckets has_dropdown">
 			<a><span class="arrow"></span><?php echo __('Buckets');?></a>
-			<ul class="dropdown">
-				<li><a href="/bucket/">Bucket 1</a></li>
-				<li><a href="/bucket/">Bucket 2</a></li>
-				<li><a><em><?php echo __('Create new');?></em></a></li>
+			<ul class="dropdown" id="dropdown_buckets">
+				<?php
+				foreach ($buckets as $bucket)
+				{
+					?><li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li><?php
+				}
+				?>
+				<li class="create_new"><a><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
 		<div class="account">

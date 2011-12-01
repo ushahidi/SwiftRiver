@@ -26,12 +26,12 @@ $(document).ready(function() {
 	});
 });
 
-function delRiver(id){
-	$.post('<?php echo URL::site()?>river/ajax_delete', { id: id},
+function deleteItem(id, item){
+	$.post('<?php echo URL::site()?>'+item+'/ajax_delete', { id: id},
 		function(data){
 			if ( typeof(data.status) != 'undefined' ) {
 				if (data.status == 'success') {
-					$('#river_'+id).remove();
+					$('#item_'+id).remove();
 				};
 			}			
 		}, 'json');

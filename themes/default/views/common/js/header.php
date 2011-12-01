@@ -25,3 +25,41 @@ function channelOptionR(id){
 		$('#'+id).remove();
 	}
 }
+
+// New Bucket
+$(document).ready(function() {
+	// Create new bucket
+	$('li.create_new').live('click', function(e) {
+		$(this).empty();
+		$(this).parents('ul.dropdown').append('<li class="create_name"><input type="text" id="bucket_name" name="bucket_name" value="" placeholder="<?php echo __('Name your new bucket'); ?>"><div class="buttons"><button class="save"><?php echo __('Save'); ?></button><button class="cancel"><?php echo __('Cancel'); ?></button></div></li>');
+		e.stopPropagation();
+		$('li.create_name').click(function(e) {
+			e.stopPropagation();	
+		});
+		$('button.save').click(function(e) {
+			$.post('<?php echo URL::site()?>bucket/ajax_new', { bucket_name: $('#bucket_name').val() },
+			function(data){
+				if ( typeof(data.status) != 'undefined' ) {
+					if (data.status == 'success') {
+						$('<li>'+data.bucket+'</li>').insertBefore('li.create_new');
+						$('button.cancel').closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
+						$('button.cancel').closest('li.create_name').remove();
+						e.stopPropagation();
+					} else if (data.status == 'error') {
+						var errors = data.errors;
+						var html = '';
+						for (i in errors){
+							html += '<?php echo __('Uh oh.'); ?> '+errors[i]+'\n';
+						}
+						alert(html);
+					};
+				}
+			}, 'json');			
+		});
+		$('button.cancel').click(function(e) {
+			$(this).closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
+			$(this).closest('li.create_name').remove();
+			e.stopPropagation();
+		});
+	});
+});

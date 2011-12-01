@@ -37,7 +37,7 @@ class Model_River extends ORM
 	protected $_belongs_to = array('account' => array());
 	
 	/**
-	 * Validation for accounts
+	 * Validation for rivers
 	 * @param array $arr
 	 * @return array
 	 */

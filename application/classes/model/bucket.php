@@ -35,7 +35,20 @@ class Model_Bucket extends ORM
 	protected $_belongs_to = array(
 		'account' => array(),
 		'user' => array()
-		);		
+		);
+
+	/**
+	 * Validation for buckets
+	 * @param array $arr
+	 * @return array
+	 */
+	public function validate($arr)
+	{
+		return Validation::factory($arr)
+			->rule('bucket_name', 'not_empty')
+			->rule('bucket_name', 'min_length', array(':value', 3))
+			->rule('bucket_name', 'max_length', array(':value', 255));
+	}		
 		
 	/**
 	 * Overload saving to perform additional functions on the bucket
@@ -49,6 +62,11 @@ class Model_Bucket extends ORM
 			$this->bucket_date_add = date("Y-m-d H:i:s", time());
 		}
 
-		return parent::save();
+		$bucket = parent::save();
+
+		// Swiftriver Plugin Hook -- execute after saving a bucket
+		Swiftriver_Event::run('swiftriver.bucket.save', $bucket);
+
+		return $bucket;
 	}			
 }

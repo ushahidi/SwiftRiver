@@ -109,7 +109,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		
 		// Get Rivers (as_array)
 		// ++ We can cache this array in future
-		$rivers = ORM::factory('bucket')
+		$buckets = ORM::factory('bucket')
 			->join('accounts', 'INNER')
 				->on('bucket.account_id', '=', 'accounts.id')
 			->where('accounts.user_id', '=', $this->user->id)
@@ -173,15 +173,15 @@ class Controller_Dashboard extends Controller_Swiftriver {
 						'email'
 					));
 
-				echo json_encode(array("status"=>"success", "post" => $_POST));
+				echo json_encode(array("status"=>"success"));
 			}
 			catch (ORM_Validation_Exception $e)
 			{
 
 				//$errors
-				$errors = $e->errors('models/user');
-				$errors = array_merge($errors, ( isset($errors['_external']) ? $errors['_external'] : array() ));
-				unset($errors['_external']);
+				$errors = $e->errors('user');
+				//$errors = array_merge($errors, ( isset($errors['_external']) ? $errors['_external'] : array() ));
+				//unset($errors['_external']);
 				echo json_encode(array("status"=>"error", "errors" => $errors));
 			}
 		}

@@ -23,21 +23,6 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	
-	// Create new bucket
-	$('li.create_new').live('click', function(e) {
-		$(this).empty();
-		$(this).parents('ul.dropdown').append('<li class="create_name"><input type="text" value="" placeholder="Name your new bucket"><div class="buttons"><button class="save">Save</button><button class="cancel">Cancel</button></div></li>');
-		e.stopPropagation();
-		$('li.create_name').click(function(e) {
-			e.stopPropagation();	
-		});
-		$('button.cancel').click(function(e) {
-			$(this).closest('ul.dropdown').children('li.create_new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
-			$(this).closest('li.create_name').remove();
-			e.stopPropagation();
-		});
-	});
-	
 	// Edit page contents
 	$('.edit_trigger').live('click', function() {
 		inlineInputValue = $(this).text();
