@@ -57,10 +57,7 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
-		}			
-		
-		// This River's total droplets
-		$total_droplets = $river->droplets->count_all();
+		}
 
 		// Build River Query
 		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'))
@@ -77,15 +74,18 @@ class Controller_River extends Controller_Swiftriver {
 		// SwiftRiver Plugin Hook -- Hook into River Droplet Query
 		Swiftriver_Event::run('swiftriver.river.filter', $query);
 
+		// First Pass (Limit 20)
+		$query->limit(20);
+
 		// Get our droplets
 		$droplets = $query->execute()->as_array();
 		$filter_total = (int) count($droplets);
 
 		// Droplets Meter
 		$meter = 0;
-		if ($total)
+		if ($total > 0)
 		{
-			$meter = ($filter_total / $total) * 100;
+			$meter = round( ($filter_total / $total) * 100 );
 		}
 
 		$filters = url::site().$this->account->account_path.'/river/filters/'.$id;

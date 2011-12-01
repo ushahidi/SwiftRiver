@@ -147,7 +147,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	 *
 	 * Edit User Settings
 	 * 
-	 * @return	void
+	 * @return	string - json
 	 */
 	public function action_ajax_settings()
 	{

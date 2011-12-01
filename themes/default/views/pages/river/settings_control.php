@@ -109,7 +109,7 @@ $(document).ready(function() {
 			</div>
 		<?php endif; ?>
 		<div class="row controls_buttons cf">
-			<p class="button_go"><a href="#">Apply changes</a></p>
+			<p class="button_go"><a onclick="submitForm(this)">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
 			<?php if ( $river->loaded() ) : ?>
 				<div class="item actions">
