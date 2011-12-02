@@ -68,13 +68,29 @@ class Swiftriver_Task_Manager {
 		$submitted = array();
 		foreach (self::$_tasks as $task => $data)
 		{
-			$handle = self::$client->doBackground($task, $data);
-			
-			$submitted[$task] = $handle;
+			try
+			{
+				$handle = self::$client->doBackground($task, $data);
+				$submitted[$task] = $handle;
+			}
+			catch (ErrorException $e)
+			{
+				// Gearman could not connect to the server
+				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				return FALSE;
+			}
 		}
 		
 		// Ensure that the droplet queues are processed
-		self::$client->doBackground('on_complete_task', serialize($submitted));
+		try
+		{
+			self::$client->doBackground('on_complete_task', serialize($submitted));
+		}
+		catch (ErrorException $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
 		
 		return TRUE;
 	}

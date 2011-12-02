@@ -97,7 +97,7 @@ class Controller_Crawler_Main extends Controller {
 	 */
 	protected function launch_worker($job_name, $callback = array())
 	{
-		// Fork process the channel
+		// Fork process for the specified job
 		$process_id = pcntl_fork();
 	
 		if ($process_id == -1)

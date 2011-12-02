@@ -24,7 +24,7 @@ enabled in your PHP configuration file:
   * MySQL (http://php.net/mysql) for database access
   * mcrypt (http://php.net/mcrypt) for cryptography services
   * PCNTL (http://php.net/pcntl) for process control
-  * Gearman (htto://php.net/gearman) - For communicating with the Gearman server
+  * Gearman (http://php.net/gearman) - For communicating with the Gearman server
 
 
 Installation of Required Extensions
