@@ -27,39 +27,26 @@ $(document).ready(function() {
 			<h2>Channels</h2>
 			<div class="tab_controls cf">
 				<ul class="tabs">
-					<?php
-					foreach ($channels as $key => $channel)
-					{
-						?>
+					<?php foreach ($channels as $key => $channel): ?>
 						<li class="button_view <?php echo $key; ?>"><a href="#<?php echo $key; ?>"><span class="switch_on"></span><span class="label"><?php echo $channel['name']; ?></span></a></li>
-						<?php
-					}
-					?>
+					<?php endforeach; ?>
 				    <li class="button_view facebook"><a href="#facebook"><span class="switch switch_off"></span><span class="label">Facebook</span></a></li>
 					<li class="button_view rss"><a href="#rss"><span class="switch switch_off"></span><span class="label">RSS</span></a></li>
 				    <li class="button_view sms"><a href="#sms"><span class="switch switch_off"></span><span class="label">SMS</span></a></li>
 					<li class="more"><a href="#">More channels</a></li>
 				</ul>				
 				<div class="tab_container">
-					<?php
-					foreach ($channels as $key => $channel)
-					{
-						?>
+					<?php foreach ($channels as $key => $channel): ?>
 						<article id="<?php echo $key; ?>" class="tab_content">
+							<?php if (isset($channel['options'])): ?>
 							<ul class="channel_options cf">
-								<?php
-								foreach ($channel['options'] as $option_key => $option_value)
-								{
-									?>
+								<?php foreach ($channel['options'] as $option_key => $option_value): ?>
 									<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', '<?php echo $option_value; ?>')"><span></span><?php echo $option_value; ?></a></li>
-									<?php	
-								}
-								?>
+								<?php endforeach; ?>
 							</ul>
+							<?php endif; ?>
 						</article>				
-						<?php
-					}
-					?>
+					<?php endforeach; ?>
 				    <article id="facebook" class="tab_content">
 				       <!--Content-->
 				    </article>
