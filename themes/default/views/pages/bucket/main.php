@@ -27,7 +27,7 @@
 
 		?>
 		<div class="page_buttons">
-		<p class="button_view"><a href="/droplet">View more</a></p>
+		<p class="button_view"><a href="#">View more</a></p>
 		</div>
 	</div>
 </article>	
