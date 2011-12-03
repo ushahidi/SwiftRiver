@@ -35,10 +35,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('settings', $settings)
 			->bind('more', $more);
 
-		// First we need to make sure this bucket
-		// actually exists
+		// First we need to make sure this bucket exists
 		$id = (int) $this->request->param('id', 0);
-		
 		$bucket = ORM::factory('bucket')
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
@@ -52,6 +50,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Get this buckets droplets
 		$droplets = $bucket->droplets->find_all()->as_array();
 
+		// Links to ajax rendered menus
 		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
 	}
@@ -102,15 +101,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
+		// First we need to make sure this bucket exists
 		$id = (int) $this->request->param('id', 0);
-		
-		// Get Bucket
 		$bucket = ORM::factory('bucket')
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
 			->find();
 
-		$settings = '';
+		// Return this control only if bucket is loaded
 		if ($bucket->loaded())
 		{
 			$settings = View::factory('pages/bucket/settings_control');

@@ -3,24 +3,18 @@
 		<li class="rivers has_dropdown">
 			<a><span class="arrow"></span><?php echo __('Rivers');?></a>
 			<ul class="dropdown">
-				<?php
-				foreach ($rivers as $river)
-				{
-					?><li><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a></li><?php
-				}
-				?>
+				<?php foreach ($rivers as $river): ?>
+					<li><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a></li>
+				<?php endforeach; ?>
 				<li><a href="<?php echo URL::site().'river/new'; ?>"><em><?php echo __('Create New');?></em></a></li>
 			</ul>
 		</li>
 		<li class="buckets has_dropdown">
 			<a><span class="arrow"></span><?php echo __('Buckets');?></a>
 			<ul class="dropdown" id="dropdown_buckets">
-				<?php
-				foreach ($buckets as $bucket)
-				{
-					?><li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li><?php
-				}
-				?>
+				<?php foreach ($buckets as $bucket): ?>
+					<li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li>
+				<?php endforeach; ?>
 				<li class="create_new"><a><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
@@ -45,7 +39,7 @@
 						</ul>
 					</li>
 				<?php echo Form::close(); ?>			
-			<?php endif ?>
+			<?php endif; ?>
 		</div>	
 	</ul>
 </nav>

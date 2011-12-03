@@ -1,7 +1,6 @@
 <div class="list_stream">
 	<ul>
-		<?php if (count($rivers))
-		{
+		<?php if (count($rivers)) :
 			foreach ($rivers as $river)
 			{
 				?>
@@ -17,15 +16,9 @@
 					</div>
 					<span class="subscriber_count"><a href="#"><strong>22</strong> <?php echo __('subscribers'); ?></a></span>
 				</li>
-				<?php	
-			}
-			?>
-		<?php
-		}
-		else
-		{?>
+			<?php } 
+		else:?>
 			<li><?php echo __('No Rivers to Display Yet'); ?></li>
-		<?php
-		}?>
+		<?php endif; ?>
 	</ul>
 </div>

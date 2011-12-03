@@ -1,10 +1,8 @@
 <div class="list_stream">
 	<ul>
-		<?php if (count($buckets))
-		{
+		<?php if (count($buckets)):
 			foreach ($buckets as $bucket)
-			{
-				?>
+			{?>
 				<li id="item_<?php echo $bucket->id; ?>">
 					<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>" class="title"><?php echo $bucket->bucket_name; ?></a>
 					<div class="actions">
@@ -17,15 +15,10 @@
 					</div>
 					<span class="subscriber_count"><a href="#"><strong>22</strong> <?php echo __('subscribers'); ?></a></span>
 				</li>
-				<?php	
-			}
-			?>
-		<?php
+			<?php
 		}
-		else
-		{?>
+		else: ?>
 			<li><?php echo __('No Buckets to Display Yet'); ?></li>
-		<?php
-		}?>
+		<?php endif; ?>
 	</ul>
 </div>
