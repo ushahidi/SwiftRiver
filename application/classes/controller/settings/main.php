@@ -15,6 +15,9 @@
  */
 class Controller_Settings_Main extends Controller_Swiftriver {
 	
+	// Active settings menu
+	private $active;
+
 	/**
 	 * Access privileges for this controller and its children
 	 */
@@ -28,10 +31,9 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->template->header->page_title = __('Settings');
-		$this->template->header->tab_menu = View::factory('pages/settings/menu');
-		$this->template->header->tab_menu->active = "";
-		$this->template->header->tab_menu->plugin_settings = $this->_plugin_settings();
+		$this->template->content = View::factory('pages/settings/layout')
+			->bind('active', $this->active)
+			->bind('sub_content', $this->sub_content);
 	}
 	
 	/**
@@ -41,7 +43,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
-		
+		$this->sub_content = View::factory('pages/settings/main');
+		$this->active = 'main';	
 	}
 	
 	/**

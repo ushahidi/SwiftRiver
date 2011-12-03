@@ -185,6 +185,16 @@ Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
 		'action'     => 'index',
 	));
 
+/**
+ * Swiftriver Settings Route
+ */	
+Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'settings'
+	));	
+
 
 //*********** WHEN NOT LOGGED IN USE ACCOUNT NAMESPACE ***********//
 
@@ -225,16 +235,6 @@ Route::set('trend_river', '<account>/river/trend(/<controller>(/<action>(/<id>))
 		'action'     => 'index',
 		'directory'  => 'trend'
 	));	
-
-/**
- * Swiftriver Settings Route
- */	
-Route::set('settings', '<account>/settings(/<controller>(/<action>(/<id>)))')
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'settings'
-	));
 
 /**
  * Swiftriver Default Route

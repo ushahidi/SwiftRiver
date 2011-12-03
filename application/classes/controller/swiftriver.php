@@ -130,6 +130,11 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// Logged In User
 		$this->user = Auth::instance()->get_user();
+		// Is this user an admin?
+		if ($this->user->has('roles',ORM::factory('role',array('name'=>'admin'))))
+		{
+			$this->admin = TRUE;
+		}		
 
 		// Does this user have an account space?
 		$this->account = ORM::factory('account')
@@ -150,6 +155,7 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
 		$this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
 		$this->template->header->nav_header->user = $this->user;
+		$this->template->header->nav_header->admin = $this->admin;
 		$this->template->header->nav_header->account = $this->account;
 
 		$this->template->content = '';
