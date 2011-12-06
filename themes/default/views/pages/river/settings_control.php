@@ -28,7 +28,7 @@ $(document).ready(function() {
 			<div class="tab_controls cf">
 				<ul class="tabs">
 					<?php foreach ($channels as $key => $channel): ?>
-						<li class="button_view <?php echo $key; ?>"><a href="#<?php echo $key; ?>"><span class="switch_on"></span><span class="label"><?php echo $channel['name']; ?></span></a></li>
+						<li class="button_view <?php echo $key; ?>"><a href="#<?php echo $key; ?>"><span class="switch switch_on"></span><span class="label"><?php echo $channel['name']; ?></span></a></li>
 					<?php endforeach; ?>
 				    <li class="button_view facebook"><a href="#facebook"><span class="switch switch_off"></span><span class="label">Facebook</span></a></li>
 					<li class="button_view rss"><a href="#rss"><span class="switch switch_off"></span><span class="label">RSS</span></a></li>
