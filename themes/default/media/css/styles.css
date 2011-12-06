@@ -675,6 +675,15 @@ div.tab_controls {
    margin-left: 10px;
 }
 
+/* David K */
+.list_stream ul li span.description {
+   font-size: 0.6em;
+   color:#999;
+}
+.list_stream ul li.alt_row{
+   background-color:#eee;
+}
+
 /* --------------------------- CONTROLS */
 
 .controls h2 {
@@ -2338,5 +2347,5 @@ article.dashboard div.activity_feed {
    float: left;
    width: 73.40425532%;
 }
-   
+
 }

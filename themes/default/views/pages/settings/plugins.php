@@ -4,11 +4,13 @@
 	<div class="list_stream">
 		<ul>
 			<?php if ($plugins->count()):
+				$i = 0;
 				foreach ($plugins as $plugin)
 				{
 					?>
-					<li id="item_<?php echo $plugin->id; ?>">
-						<a href="#" class="title"><?php echo $plugin->plugin_name;; ?></a>
+					<li id="item_<?php echo $plugin->id; ?>" <?php if($i == 0) echo ' class="alt_row"'; ?>>
+						<a href="#" class="title"><?php echo $plugin->plugin_name; ?></a>
+						<span class="description"><?php echo $plugin->plugin_description; ?></span>
 						<div class="actions">
 							<?php if ($plugin->plugin_enabled): ?>
 								<span class="button_delete active"><a><?php echo __('Deactivate Plugin'); ?></a></span>
@@ -27,7 +29,9 @@
 							<?php endif; ?>
 						</div>
 					</li>
-				<?php } 
+				<?php
+					$i = ($i == 0) ? 1 : 0;
+				} 
 			else:?>
 				<li><?php echo __('No Plugins in the System'); ?></li>
 			<?php endif; ?>
