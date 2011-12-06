@@ -33,7 +33,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		
 		$this->template->content = View::factory('pages/settings/layout')
 			->bind('active', $this->active)
-			->bind('sub_content', $this->sub_content);
+			->bind('settings_content', $this->settings_content);
 	}
 	
 	/**
@@ -43,30 +43,119 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
-		$this->sub_content = View::factory('pages/settings/main');
+		$this->settings_content = View::factory('pages/settings/main');
 		$this->active = 'main';	
 	}
-	
+
 	/**
-	 * Find out which plugins have settings
+	 * List all the Plugins
 	 *
-	 * @return  array $menu - array of plugins that have settings
+	 * @param	string $page - page uri
+	 * @return	void
 	 */
-	private function _plugin_settings()
+	public function action_plugins()
 	{
-		$menu = array();
+		$this->settings_content = View::factory('pages/settings/plugins')
+			->bind('plugins', $plugins)
+			->bind('default_sort', $sort);
+
+		$this->active = 'plugins';	
 		
-		$plugin_configs = Kohana::$config->load('plugin');
-		foreach ($plugin_configs as $key => $config)
+		// Process Plugins
+		$this->_process_plugins();
+		
+		// save the data
+		if ($_POST)
 		{
-			if ( is_array($config) 
-				AND isset($config['settings']) 
-				AND $config['settings'] == TRUE )
+			if ( isset($_POST['id']) 
+				AND isset($_POST['action']) 
+				AND is_numeric($_POST['id']) 
+				AND in_array($_POST['action'], array(0, 1)) )
 			{
-				$menu[] = $key;
+				$plugin = ORM::factory('plugin', $_POST['id']);
+				if ($plugin->loaded())
+				{
+					if ($_POST['action'] == 1)
+					{
+						$plugin->plugin_enabled = 1;
+						$plugin->save();
+						
+						// Load this plugin into the system
+						Kohana::modules(array_merge(Kohana::modules(), array(
+							$plugin->plugin_path => PLUGINPATH.$plugin->plugin_path
+						)));
+						
+						$check = Kohana::modules();
+						// Was plugin loaded?
+						if ( ! isset($check[$plugin->plugin_path]))
+						{
+							$plugin->plugin_enabled = 0;
+							$plugin->save();
+						}
+						else
+						{
+							// Run default plugin functions
+							$class = ucfirst($plugin->plugin_path);
+							if (class_exists($class))
+							{
+								// Does an install exist?
+								if (method_exists($class,'install'))
+								{
+									$class::install();
+								}
+							}
+						}
+					}
+					else
+					{
+						$plugin->plugin_enabled = 0;
+						$plugin->save();
+					}
+				}
 			}
 		}
 		
-		return $menu;
+		// Get the items for the query
+		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'plugin_name'; // set default sorting
+		$dir = isset($_GET['dir']) ? 'DESC' : 'ASC'; // set order_by
+		$plugins = ORM::factory('plugin')
+			->order_by($sort, $dir)
+			->find_all();
 	}
+	
+	/**
+	 * Private function to go through plugin directory and extract
+	 * plugins in the system, then save them in the database
+	 * so that they're available for activation in admin
+	 *
+	 * @return	void
+	 */
+	private function _process_plugins()
+	{
+		$configs = Swiftriver_Plugins::load_configs();
+		
+		// Sync the folder with the database
+		foreach ($configs as $key => $value)
+		{
+			if ( ORM::factory('plugin')
+				->where('plugin_path', '=', $key)
+				->count_all() == 0 )
+			{
+				$plugin = ORM::factory('plugin');
+				$plugin->plugin_path = $key;
+				$plugin->plugin_name = $value['name'];
+				$plugin->plugin_description = $value['description'];
+				$plugin->save();
+			}
+		}
+		
+		// Remove Any Plugins not found in the plugins folder from the database
+		foreach (ORM::factory('plugin')->find_all() as $plugin)
+		{
+			if ( ! array_key_exists($plugin->plugin_path, $configs))
+			{
+				$plugin->delete();
+			}
+		}
+	}	
 }

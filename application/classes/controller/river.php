@@ -39,11 +39,12 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $river)
-			->bind('droplets', $filter_total)
+			->bind('droplets', $droplets)
+			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
-			->bind('filters', $filters)
-			->bind('settings', $settings)
-			->bind('more', $more);
+			->bind('filters_url', $filters_url)
+			->bind('settings_url', $settings_url)
+			->bind('more_url', $more_url);
 
 		// First we need to make sure this river
 		// actually exists
@@ -72,25 +73,27 @@ class Controller_River extends Controller_Swiftriver {
 		$total = (int) $pre_filter->execute()->count();
 
 		// SwiftRiver Plugin Hook -- Hook into River Droplet Query
+		//++ Allows for adding for more filters via Plugin
 		Swiftriver_Event::run('swiftriver.river.filter', $query);
 
 		// First Pass (Limit 20)
 		$query->limit(20);
 
-		// Get our droplets
+		// Get our droplets as an Array (not Object)
 		$droplets = $query->execute()->as_array();
-		$filter_total = (int) count($droplets);
+		$filtered_total = (int) count($droplets);
 
-		// Droplets Meter
+		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
 		if ($total > 0)
 		{
-			$meter = round( ($filter_total / $total) * 100 );
+			$meter = round( ($filtered_total / $total) * 100 );
 		}
 
-		$filters = url::site().$this->account->account_path.'/river/filters/'.$id;
-		$settings = url::site().$this->account->account_path.'/river/settings/'.$id;
-		$more = url::site().$this->account->account_path.'/river/more/';
+		// URL's to pages that are ajax rendered on demand
+		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
+		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
+		$more_url = url::site().$this->account->account_path.'/river/more/';
 	}
 
 	/**
