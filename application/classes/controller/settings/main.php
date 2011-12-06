@@ -59,6 +59,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			->bind('plugins', $plugins)
 			->bind('default_sort', $sort);
 
+		$this->template->header->js = View::factory('pages/settings/js/plugins');
+
 		$this->active = 'plugins';	
 		
 		// Process Plugins
@@ -101,7 +103,10 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 								// Does an install exist?
 								if (method_exists($class,'install'))
 								{
-									$class::install();
+									// Run the installer
+									// declare it first to prevent T_PAAMAYIM_NEKUDOTAYIM
+									$install = new $class;
+									$install->install();
 								}
 							}
 						}

@@ -44,11 +44,13 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 			->bind('plugins', $result)
 			->bind('paging', $pagination)
 			->bind('default_sort', $sort);
-		$this->template->header->js = View::factory('common/js/utility');
+		$this->template->header->js = View::factory('pages/settings/js/plugins');
 		
 		// Process Plugins
 		$this->_process_plugins();
 		
+		print_r($_POST);
+
 		// save the data
 		if ($_POST)
 		{
