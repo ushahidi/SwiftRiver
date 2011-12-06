@@ -47,7 +47,7 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 		$this->template->header->js = View::factory('pages/settings/js/plugins');
 		
 		// Process Plugins
-		$this->_process_plugins();
+		$this->_process_plugins(); 
 
 		// save the data
 		if ($_POST)
