@@ -129,6 +129,10 @@ class Controller_Crawler_Main extends Controller {
 		{
 
 			//This is the child process. Register the worker and work.
+			
+			//Force the child to get its own connection resource otherwise
+			//we'll start getting wierd packet out of order errors
+			Database::instance()->disconnect();
 
 			// Log
 			Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :job', 
