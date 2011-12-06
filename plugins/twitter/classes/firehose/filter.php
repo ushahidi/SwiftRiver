@@ -28,7 +28,7 @@ class Firehose_Filter extends  OauthPhirehose{
 			$droplet['identity_name'] = $data['user']['name'];
 			$droplet['droplet_orig_id'] = $data['id'];
 			$droplet['droplet_type'] = 'original';
-			$droplet['droplet_title'] = '';
+			$droplet['droplet_title'] = $data['text'];
 			$droplet['droplet_content'] = $data['text'];
 			$droplet['droplet_locale'] = $data['user']['lang'];
 			$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($data['created_at']));

@@ -75,6 +75,9 @@ class Controller_Crawler_Main extends Controller {
 		// Create a worker for each channel
 		$this->launch_worker('on_complete_task', array('Swiftriver_Channel_Worker', 'on_complete_task'));
 		
+		// Worker for droplet processing
+		$this->launch_worker('process', array('Swiftriver_Dropletqueue', 'process'));
+		
 		foreach ($services as $key => $value)
 		{
 			$this->launch_worker($key);
@@ -129,6 +132,10 @@ class Controller_Crawler_Main extends Controller {
 		{
 
 			//This is the child process. Register the worker and work.
+			
+			//Force the child to get its own connection resource otherwise
+			//we'll start getting wierd packet out of order errors
+			Database::instance()->disconnect();
 
 			// Log
 			Kohana::$log->add(Log::DEBUG, 'Forked process :pid for :job', 
@@ -154,6 +161,8 @@ class Controller_Crawler_Main extends Controller {
 				$worker->addFunction($job_name, $callback);
 			}
 			
+			Kohana::$log->write();
+			
 			// Listen for job request
 			while ($worker->work())
 			{
@@ -163,6 +172,7 @@ class Controller_Crawler_Main extends Controller {
 					Kohana::$log->add(Log::DEBUG, ':job worker returned an error: :error', 
 						array(':job' => $job_name, ':error' => $worker->error()));
 				}
+				Kohana::$log->write();
 			}
 			
 		}		
