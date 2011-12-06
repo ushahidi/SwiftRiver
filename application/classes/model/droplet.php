@@ -84,9 +84,8 @@ class Model_Droplet extends ORM
 	}
 	
 	/**
-	 * Checks if a droplet already exists based on its channel filter and origin id
+	 * Checks if a droplet already exists based on its hash
 	 *
-	 * @param string $channel_filter_id ID of the channel
 	 * @param string $droplet_hash SHA2 Hash of the origin ID of the droplet
 	 */
 	public static function is_duplicate_droplet($droplet_hash)

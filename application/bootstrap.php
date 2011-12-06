@@ -184,6 +184,15 @@ Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
 		'controller' => 'river',
 		'action'     => 'index',
 	));
+	
+/**
+ * Swiftriver River Route
+ */	
+Route::set('droplet', 'droplet(/<action>(/<id>))', array('id' => '\d+'))
+	->defaults(array(
+		'controller' => 'droplet',
+		'action'     => 'index',
+	));
 
 /**
  * Swiftriver Settings Route

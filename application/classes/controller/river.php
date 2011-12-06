@@ -61,12 +61,18 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// Build River Query
-		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'))
-			->from('droplets');
-		$query->join('rivers_droplets', 'INNER')
-			->on('rivers_droplets.droplet_id', '=', 'droplets.id');
-		$query->where('rivers_droplets.river_id', '=', $river->id);
-		$query->order_by('droplet_date_pub', 'DESC');
+		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+		                    'droplet_title', 'droplet_content', 
+		                    'droplets.channel','identity_name', 'droplet_date_pub')
+		    ->from('droplets')
+		    ->join('channel_filter_droplets', 'INNER')
+		    ->on('channel_filter_droplets.droplet_id', '=', 'droplets.id')
+	        ->join('channel_filters', 'INNER')
+	        ->on('channel_filters.id', '=', 'channel_filter_droplets.channel_filter_id')
+	        ->join('identities')
+	        ->on('droplets.identity_id', '=', 'identities.id')		    
+		    ->where('channel_filters.river_id', '=', $river->id)
+		    ->order_by('droplet_date_pub', 'DESC');
 
 		// Clone query before any filters have been applied
 		$pre_filter = clone $query;
