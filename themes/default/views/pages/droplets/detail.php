@@ -41,17 +41,11 @@
 		<article class="fullstory">
 			<hgroup>
 				<h2>Full story</h2>
-				<h1 class="edit"><span class="edit_trigger" title="text" onclick="">Liveblogging: Maximise the Moment</span></h1>
+				<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $droplet->droplet_title ?></span></h1>
 			</hgroup>
 			<div class="edit">
 			<span class="edit_trigger" title="textarea" onclick="">
-			<img src="/images/content/juliana.jpg" />
-			<p>In 2008 Kenya had some “contentious” elections. She, and other Kenyans living abroad, were traumatised by what was happening in the country. They ended up setting up a mashup to show what was going on where, because TV was failing them. It was showing movies while homes were burning. Internet penetration was not high in Kenya then, but a mobile component allowed people to text in. In Africa SMS is key.</p>
-			<p>They’ve iterated on the platform – <a href="#">Ushahidi</a> –  since then and made it open source. Twitter has a fail whale, they have a fail elephant. One of their first mistakes was putting a sign up sheet in front of their open source code…</p>
-			<p>They have a core team spilt between seven time zones. When the Japanese earthquake happened, there was a local developer already playing with the code. Soon, <a href="#">there was a site.</a></p>
-			<p>It’s also used for election monitoring: Bantu Watch, Uchaguzi.</p>
-			<p>It's been used for citizen journalism: Harassmap in Cairo tracks harassment of women. The Oil Spill Crisis Map added data to what you saw on TV. By the City / For the City and Fix Your Street crowd source and map urban improvement and repair ideas.</p>
-			<p>The age of being told “hey, this is the news” is over. We’ve seen it again and again with the fall of dictatorships. We’re discovering what it means to have a two way exchange of information instead. It gives people a voice in marginalised communities: <a href="#">Voiceofkibera.org</a></p>
+			<?php echo $droplet->droplet_content ?>
 			</span>
 			</div>
 		</article>

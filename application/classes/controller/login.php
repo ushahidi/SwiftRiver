@@ -35,7 +35,7 @@ class Controller_Login extends Controller_Template {
 		// If user already signed-in
 		if (Auth::instance()->logged_in() != 0)
 		{
-			$this->_redirect();
+			$this->request->redirect('dashboard');
 		}
 		
 		// check, has the form been submitted, if so, setup validation

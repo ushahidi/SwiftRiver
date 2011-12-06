@@ -20,6 +20,7 @@ In addition to the software packages outlined above, the following PHP libraries
 enabled in your PHP configuration file:
  
   * cURL (http://php.net/curl) for accessing remote sites
+  * OpenSSL (http://php.net/openssl) secure comms
   * IMAP (http://php.net/imap) for accessing local and remote mailboxes
   * MySQL (http://php.net/mysql) for database access
   * mcrypt (http://php.net/mcrypt) for cryptography services
@@ -40,10 +41,11 @@ Run the following commands from the terminal:
         $ sudo port install php5-mysql
         $ sudo port install php5-pcntl
         $ sudo port install php5-gearman
+        $ sudo port install php5-openssl
     
 Alternatively, you can specify all the extensions to be installed on one line as follows:
     
-        $ sudo port install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman
+        $ sudo port install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
         
 Restart Apache:
     
@@ -52,7 +54,7 @@ Restart Apache:
 Debian/Ubuntu/Linux Mint Installation
 -------------------------------------
 
-        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman
+        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
 
 Restart Apache:
 
@@ -61,7 +63,7 @@ Restart Apache:
 Fedora/CentOS Installation
 --------------------------
 
-        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman
+        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
 
 Restart Apache:
 

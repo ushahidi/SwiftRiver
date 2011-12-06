@@ -38,7 +38,7 @@ class Swiftriver_Dropletqueue {
 		// TODO - Use configuration param to set the no. of unprocessed
 		// droplets to fetch during processing
 		self::$_queue = empty(self::$_queue)
-			? Model_Droplet::get_unprocessed_droplets(500, $channel)
+			? Model_Droplet::get_unprocessed_droplets(1000)
 			// Reverse the ordering of items in the array - FIFO queue
 			: array_reverse(self::$_queue);
 		
@@ -58,7 +58,6 @@ class Swiftriver_Dropletqueue {
 			self::$_processed[] =  $droplet;
 
 			// Mark the droplet as processed
-			// $droplet->mark_as_processed();
 			Model_Droplet::create_from_array($droplet);
 		}
 	}
@@ -76,7 +75,7 @@ class Swiftriver_Dropletqueue {
 	public static function add(array & $droplet, $queue_droplet = TRUE)
 	{
 		// Set the SHA-256 hash value for the droplet
-		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_orig_id']);
+		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_content']);
 		
 		// Set the raw content and strip the content of any HTML tags
 		$droplet['droplet_raw'] = $droplet['droplet_content'];

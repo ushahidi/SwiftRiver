@@ -1,11 +1,11 @@
 <?php foreach ($droplets as $droplet): ?>
 	<article class="droplet cf">
 		<div class="summary">
-			<section class="source twitter">
-				<a href="/user"><img src="/images/content/avatar1.gif" /></a>
+			<section class="source <?php echo $droplet['channel'] ?>">
+				<a href="/user"><img src="/themes/default/media/img/content/avatar1.gif" /></a>
 				<div class="actions">
 					<span class="type"></span>
-					<p class="button_change score"><a onclick=""><span>45</span></a><p>
+					<p class="button_change score"><a onclick=""><span>0</span></a><p>
 					<div class="clear"></div>
 					<ul class="dropdown left">
 						<li class="confirm"><a onclick="">This is useful</a></li>
@@ -15,15 +15,15 @@
 			</section>
 			<section class="content">
 				<div class="title">
-					<p class="date">July 4, 2011</p>
-					<h1>Adam Tinworth</h1>
+					<p class="date"><?php echo $droplet['droplet_date_pub'] ?></p>
+					<h1><?php echo $droplet['identity_name'] ?></h1>
 				</div>
 				<div class="body">
-					<p>OK, the Ushahidi section of this afternoon's #likeminds post should now be more link rich and comprehensible: <a href="#">t.co/D2lk9lRg</a></p>
+					<p><?php echo $droplet['droplet_title'] ?></p>
 				</div>
 			</section>
 			<section class="actions">
-				<p class="button_view"><a href="/droplet/detailA.html" class="detail_view"><span></span><strong>detail</strong></a></p>
+				<p class="button_view"><a href="/droplet/detail/<?php echo $droplet['id'];?>" class="detail_view"><span></span><strong>detail</strong></a></p>
 				<div class="button">
 					<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
 					<div class="clear"></div>
