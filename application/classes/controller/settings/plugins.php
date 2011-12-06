@@ -48,8 +48,6 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 		
 		// Process Plugins
 		$this->_process_plugins();
-		
-		print_r($_POST);
 
 		// save the data
 		if ($_POST)
