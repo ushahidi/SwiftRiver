@@ -40,6 +40,7 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $river)
 			->bind('droplets', $droplets)
+			->bind('droplets_list', $droplets_list)
 			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
@@ -82,6 +83,10 @@ class Controller_River extends Controller_Swiftriver {
 		// Get our droplets as an Array (not Object)
 		$droplets = $query->execute()->as_array();
 		$filtered_total = (int) count($droplets);
+
+		// Generate the List HTML
+		$droplets_list = View::factory('pages/droplets/list')
+			->bind('droplets', $droplets);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
