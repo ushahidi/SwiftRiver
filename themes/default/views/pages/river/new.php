@@ -20,13 +20,8 @@
 				}
 			}
 			?>
-			<section class="panel">		
-				<nav class="cf">
-					<ul class="actions">
-						<li class="view_panel active"><a class="channels"><span class="icon"></span>Edit channels</a></li>
-					</ul>
-				</nav>
-				<div class="panel_body"></div>
+			<section class="panel">
+				<div class="panel_body"><?php echo $settings_control; ?></div>
 			</section>
 		</div>
 	<?php echo Form::close(); ?>

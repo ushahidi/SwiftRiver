@@ -44,7 +44,22 @@ $(document).ready(function() {
 									<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', '<?php echo $option_value; ?>')"><span></span><?php echo $option_value; ?></a></li>
 								<?php endforeach; ?>
 							</ul>
-							<?php endif; ?>
+							<?php
+							endif;
+
+							// Get submitted form variables from previous POST
+							$c = 0;
+							foreach ($channel['options'] as $option_key => $option_value):
+								if ( isset($post[$key.'_'.$option_key]) )
+								{
+									for ($i=0; $i < count($post[$key.'_'.$option_key]) ; $i++)
+									{
+										echo '<div class="input" id="channel_option_'.$c.'"><h3>'.$option_value.' <span>[ <a href="javascript:channelOptionR(\'channel_option_'.$c.'\')">&#8212;</a> ]</span></h3><input type="text" name="'.$key.'_'.$option_key.'[]" value="'.$post[$key.'_'.$option_key][$i].'" /></div>';
+										$c++;
+									}
+								}
+							endforeach;
+							?>
 						</article>				
 					<?php endforeach; ?>
 				    <article id="facebook" class="tab_content">
@@ -59,7 +74,7 @@ $(document).ready(function() {
 				</div>
 			</div>
 		</div>
-		<?php if ( $river->loaded() ) : ?>
+		<?php if ( isset($river) AND $river->loaded() ) : ?>
 			<div class="row controls cf">
 				<h2>Collaborators</h2>
 				<div class="input">
@@ -98,7 +113,7 @@ $(document).ready(function() {
 		<div class="row controls_buttons cf">
 			<p class="button_go"><a onclick="submitForm(this)">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
-			<?php if ( $river->loaded() ) : ?>
+			<?php if ( isset($river) AND $river->loaded() ) : ?>
 				<div class="item actions">
 					<p class="button_delete button_delete_subtle"><a onclick="">Delete River</a></p>
 					<div class="clear"></div>

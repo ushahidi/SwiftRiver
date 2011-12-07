@@ -116,15 +116,25 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template->content = View::factory('pages/river/new')
 			->bind('post', $post)
+			->bind('settings_control', $settings_control)
 			->bind('errors', $errors);
-		$this->template->header->js = View::factory('pages/river/js/new');
-		$this->template->header->js->settings = url::site().$this->account->account_path.'/river/settings/';
+
+		// Get the settings control
+		$settings_control = View::factory('pages/river/settings_control')
+			->bind('channels', $this->channels)
+			->bind('post', $post);
 
 		// save the river
 		if ($_POST)
 		{
 			$river = ORM::factory('river');
 			$post = $river->validate($_POST);
+
+			// Swiftriver Plugin Hook -- execute before saving a river
+			// Allows plugins to perform further validation checks
+			// ** Plugins can then use 'swiftriver.river.save' after the river
+			// has been saved
+			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
 
 			if ($post->check())
 			{
@@ -176,6 +186,7 @@ class Controller_River extends Controller_Swiftriver {
 		$settings = View::factory('pages/river/settings_control');
 		$settings->channels = $this->channels;
 		$settings->river = $river;
+		$settings->post = $_POST;
 		echo $settings;
 	}
 
