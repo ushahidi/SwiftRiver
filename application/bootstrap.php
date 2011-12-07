@@ -186,8 +186,8 @@ Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
 	));
 	
 /**
- * Swiftriver River Route
- */	
+ * Swiftriver Droplet Route
+ */
 Route::set('droplet', 'droplet(/<action>(/<id>))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',

@@ -79,6 +79,21 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 	
+	//Delete a droplet
+	$('section.detail .actions #delete_droplet .confirm a').live('click', function(e) {
+	   var article = $(this).closest('article.droplet');
+	   var url = $(this).attr('href');
+	   $.get(url, function() {
+           article.hide('slow');
+         })
+         .success(function() {  })
+         .error(function() { 
+             //TODO: flash message that something went wrong?
+              })
+         .complete(function() { });
+	   e.preventDefault();
+	});
+	
 	// Score a droplet
 	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
 });

@@ -4,9 +4,9 @@
 		<div class="item actions cf">
 			<p class="button_delete"><a>Delete droplet</a></p>
 			<div class="clear"></div>
-			<ul class="dropdown left">
+			<ul id="delete_droplet" class="dropdown left">
 				<p>Are you sure you want to delete this droplet?</p>
-				<li class="confirm"><a onclick="">Yep.</a></li>
+				<li class="confirm"><a href="/droplet/delete/<?php echo $droplet->id ?>" onclick="">Yep.</a></li>
 				<li class="cancel"><a onclick="">No, nevermind.</a></li>
 			</ul>
 		</div>

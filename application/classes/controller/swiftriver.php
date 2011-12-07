@@ -147,19 +147,22 @@ class Controller_Swiftriver extends Controller_Template {
 		}	
 		
 		// Load Header & Footer & variables
-		$this->template->header = View::factory('template/header');
-		$this->template->header->js = ''; // Dynamic Javascript
-
-		// Header Nav
-		$this->template->header->nav_header = View::factory('template/nav/header');
-		$this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
-		$this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
-		$this->template->header->nav_header->user = $this->user;
-		$this->template->header->nav_header->admin = $this->admin;
-		$this->template->header->nav_header->account = $this->account;
-
-		$this->template->content = '';
-		$this->template->footer = View::factory('template/footer');
+		if($this->auto_render) 
+		{
+		    $this->template->header = View::factory('template/header');
+		    $this->template->header->js = ''; // Dynamic Javascript
+            
+		    // Header Nav
+		    $this->template->header->nav_header = View::factory('template/nav/header');
+		    $this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
+		    $this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
+		    $this->template->header->nav_header->user = $this->user;
+		    $this->template->header->nav_header->admin = $this->admin;
+		    $this->template->header->nav_header->account = $this->account;
+            
+		    $this->template->content = '';
+		    $this->template->footer = View::factory('template/footer');
+		}
 	}
 	
 
