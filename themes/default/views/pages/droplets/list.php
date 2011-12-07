@@ -2,7 +2,7 @@
 	<article class="droplet cf">
 		<div class="summary">
 			<section class="source <?php echo $droplet['channel'] ?>">
-				<a href="/user"><img src="/themes/default/media/img/content/avatar1.gif" /></a>
+				<a><img src="<?php echo $droplet['identity_avatar'] ?>" /></a>
 				<div class="actions">
 					<span class="type"></span>
 					<p class="button_change score"><a onclick=""><span>0</span></a><p>

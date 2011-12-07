@@ -114,6 +114,7 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 					$droplet['identity_orig_id'] = $options['url'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();
+					$droplet['identity_avatar'] = $feed->get_image_url();
 					$droplet['droplet_orig_id'] = trim((string) $feed_item->get_link());
 					$droplet['droplet_type'] = 'original';
 					$droplet['droplet_title'] = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));

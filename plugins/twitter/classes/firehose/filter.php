@@ -16,6 +16,10 @@ class Firehose_Filter extends  OauthPhirehose{
 	public function enqueueStatus($status)
 	{
 		$data = json_decode($status, TRUE);
+		
+		//Kohana::$log->add(Log::DEBUG, 'Tweet --> :data', 
+		//	array(':data' => $status));		
+		
 		if (is_array($data) AND isset($data['user']['name']))
 		{
 			// Get the droplet template
@@ -26,6 +30,7 @@ class Firehose_Filter extends  OauthPhirehose{
 			$droplet['identity_orig_id'] = $data['user']['id'];
 			$droplet['identity_username'] = $data['user']['screen_name'];
 			$droplet['identity_name'] = $data['user']['name'];
+			$droplet['identity_avatar'] = $data['user']['profile_image_url'];
 			$droplet['droplet_orig_id'] = $data['id'];
 			$droplet['droplet_type'] = 'original';
 			$droplet['droplet_title'] = $data['text'];
@@ -36,6 +41,8 @@ class Firehose_Filter extends  OauthPhirehose{
 
 			Swiftriver_Dropletqueue::add($droplet, FALSE);
 		}
+		
+		Kohana::$log->write();
 	}
 
 

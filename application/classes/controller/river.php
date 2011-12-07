@@ -64,7 +64,7 @@ class Controller_River extends Controller_Swiftriver {
 		// Build River Query
 		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 		                    'droplet_title', 'droplet_content', 
-		                    'droplets.channel','identity_name', 'droplet_date_pub')
+		                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
 		    ->from('droplets')
 		    ->join('channel_filter_droplets', 'INNER')
 		    ->on('channel_filter_droplets.droplet_id', '=', 'droplets.id')
