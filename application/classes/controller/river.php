@@ -163,6 +163,10 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_settings()
 	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		// Get the ID of the river
 		$id = (int) $this->request->param('id', 0);
 		
 		// Get River (if set)
@@ -170,13 +174,62 @@ class Controller_River extends Controller_Swiftriver {
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
 			->find();
-
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$settings = View::factory('pages/river/settings_control');
-		$settings->channels = $this->channels;
-		$settings->river = $river;
-		echo $settings;
+		
+		// Verify that the river exists
+		if ($river->loaded())
+		{
+			// Add the enabled property
+			$filters = $river->get_channel_filters();
+			foreach ($this->channels as $key => $channel)
+			{
+				if (isset($filters[$key]))
+				{
+					$this->channels[$key]['enabled'] = $filters[$key];
+				}
+				else
+				{
+					$this->channels[$key]['enabled'] = 0;
+				}
+			}
+			
+			// Get the list of channel filter options from the DB
+			$filters = ORM::factory('channel_filter')
+					->select('channel_filter.channel', array('channel_filter_options.id', 'filter_option_id'), 
+						'channel_filter_options.key', 'channel_filter_options.value')
+					->join('channel_filter_options', 'INNER')
+					->on('channel_filter_options.channel_filter_id', '=', 'channel_filter.id')
+					->where('channel_filter.user_id', '=', $this->user->id)
+					->where('channel_filter.river_id', '=', $river->id)
+					->find_all();
+			
+			// Filter options for the channels
+			$filter_options = array();
+			
+			// Store the fetched filter options in a key->value array
+			foreach ($filters as $filter_option)
+			{
+				if ( ! isset($filter_options[$filter_option->channel]))
+				{
+					$filter_options[$filter_option->channel] = array();
+				}
+				
+				// Add the filter options
+				$filter_options[$filter_option->channel][] = array(
+					'id' => $filter_option->filter_option_id, 
+					'key' => $filter_option->key,
+					'value' => $filter_option->value
+				);
+			}
+			
+			// Load the template and set the values
+			$settings = View::factory('pages/river/settings_control');
+			$settings->channels = $this->channels;
+			$settings->base_url = URL::site().$this->account->account_path.'/river/';
+			$settings->river = $river;
+			$settings->filter_options = $filter_options;
+		
+			echo $settings;
+		}
 	}
 
 	/**
@@ -255,4 +308,136 @@ class Controller_River extends Controller_Swiftriver {
 			echo json_encode(array("status"=>"error"));
 		}
 	}
+	
+	/**
+	 * Enables/disables channel filters for a river
+	 */
+	public function action_ajax_channels()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$succeed = FALSE;
+		
+		if ($_REQUEST AND isset($_REQUEST['river_id']))
+		{
+			// TODO - Validation checks for the river id
+			
+			// Get enable/disable flag
+			$enabled = $_REQUEST['enabled'];
+			$channel  = $_REQUEST['channel'];
+			
+			// Check if the channel exists
+			$filter = ORM::factory('channel_filter')
+				->where('channel', '=', $channel)
+				->where('user_id', '=', $this->user->id)
+				->where('river_id', '=', $_REQUEST['river_id'])
+				->find();
+			
+			if ($filter->loaded())
+			{
+				// Modify existing channel fitler
+				$filter->filter_enabled = $enabled;
+				$filter->filter_date_modified = date('Y-m-d H:i:s');
+				$filter->save();
+				
+				$succeed = TRUE;
+			}
+			else
+			{
+				// Create a new channel fitler
+				$filter = new Model_Channel_Filter();
+				$filter->channel = $channel;
+				$filter->river_id = $_REQUEST['river_id'];
+				$filter->user_id = $this->user->id;
+				$filter->filter_enabled = $enabled;
+				$filter->filter_date_add = date('Y-m-d H:i:s');
+				$filter->save();
+				$succeed = TRUE;
+			}
+		}
+		
+		echo json_encode(array('success' => $succeed));
+	}
+	
+	/**
+	 * Adds/Removes channel options via ajax
+	 */
+	public function action_ajax_channel_options()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		$success = FALSE;
+		
+		// Check for input variables
+		if (isset($_REQUEST['river_id']))
+		{
+			// Verify that the river identified by 'id' exists
+			$river = ORM::factory('river', $_REQUEST['river_id']);
+			if ($river->loaded() AND isset($_REQUEST['options']))
+			{
+				foreach ($_REQUEST['options'] as $key => $filter_option)
+				{
+					// Import the variables from the $filter_option array
+					extract($filter_option);
+					
+					if ( ! empty($filter_option_id))
+					{
+						// TODO - Validation
+						// Update channel filter option
+						$orm = ORM::factory('channel_filter_option', $filter_option_id);
+						$orm->key = $filter_option_key;
+						$orm->value = $filter_option_value;
+						$orm->save();
+						$success = TRUE;
+					}
+					else
+					{
+						// Check if the specified channel filter exists for the current user
+						// and river
+						$channel_filter = ORM::factory('channel_filter')
+							->where('channel', '=', $filter_channel)
+							->where('river_id', '=', $river->id)
+							->where('user_id', '=', $this->user->id)
+							->find();
+						
+						if ($channel_filter->loaded())
+						{
+							// TODO - Apply validation rules
+							$orm = new Model_Channel_Filter_Option();
+							$orm->channel_filter_id = $channel_filter->id;
+							$orm->key = $filter_option_key;
+							$orm->value = $filter_option_value;
+							$orm->save();
+							
+							$success = TRUE;
+						}
+					} // endforeach
+				} // endif
+			} // endif
+		} // endif
+		
+		echo json_encode(array('success' => $success));
+	}
+	
+	/**
+	 * Deletes a channel filter option via Ajax
+	 */
+	public function action_ajax_delete_option()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$success = FALSE;
+		if (isset($_REQUEST['filter_option_id']))
+		{
+			// Delete the filter option
+			$option = ORM::factory('channel_filter_option', $_REQUEST['filter_option_id']);
+			
+			$success = $option->delete()? TRUE : FALSE;
+		}
+		
+		echo json_encode(array('success' => $success));
+	}
+	
 }

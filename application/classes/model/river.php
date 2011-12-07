@@ -67,5 +67,28 @@ class Model_River extends ORM
 		Swiftriver_Event::run('swiftriver.river.save', $river);
 
 		return $river;
-	}	
+	}
+	
+	/**
+	 * Gets the list of the channel filters for the current river and returns the
+	 * result as an array
+	 *
+	 * @return array
+	 */
+	public function get_channel_filters()
+	{
+		// Get the channel filters
+		$results = ORM::factory('channel_filter')
+			->select('channel', 'filter_enabled')
+			->where('river_id', '=', $this->id)
+			->find_all();
+		
+		$filters = array();
+		foreach ($results as $result)
+		{
+			$filters[$result->channel] = $result->filter_enabled;
+		}
+		
+		return $filters;
+	}
 }

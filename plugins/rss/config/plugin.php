@@ -21,7 +21,10 @@ return array(
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
-		'channel'		=> TRUE,	// Plugin is a channel		
+		'channel'		=> TRUE,	// Plugin is a channel
+		'channel_options' => array(
+			'url' => __('Feed/Atom URL'),
+		),
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
