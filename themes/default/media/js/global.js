@@ -98,6 +98,7 @@ $(document).ready(function() {
 	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
 });
 
+
 function submitForm(button){
 	var form = $(button).parents('form:first');
 	form.submit();

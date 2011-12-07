@@ -29,7 +29,9 @@
 	
 		<div class="item cf">
 			<h2>Links</h2>
-			<p class="edit"><span class="edit_trigger" title="text" onclick="">http://ushahidi.com</span></p>
+			<?php foreach ($droplet->links->find_all() as $link): ?>
+			    <p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $link->link ?></span></p>
+			<?php endforeach; ?>
 		</div>
 	
 		<div class="item cf">
