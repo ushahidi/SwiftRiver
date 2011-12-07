@@ -13,11 +13,10 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Channel_Filter_Option extends ORM
-{
+class Model_Channel_Filter_Option extends ORM {
+	
 	/**
 	 * A channel_filter_option belongs to a channel_filter
-	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
