@@ -56,7 +56,7 @@ class Model_Link extends ORM
 	 */
 	public static function get_link_by_url($url, $save = FALSE)
 	{
-		$orm_link = ORM::factory('links')
+		$orm_link = ORM::factory('link')
 					->where('link', '=', $url)
 					->or_where('link_full', '=', $url)
 					->find();
@@ -70,8 +70,8 @@ class Model_Link extends ORM
 			// Get the full URL
 			$full_link = Swiftriver_Links::full($url);
 			$orm_link->link = $url;
-			$orm_link->link_full = $full_link
-			$orm_link->domain = parse_url($full_link, PHP_URL_HOST);
+			$orm_link->link_full = $full_link;
+			$orm_link->link_domain = parse_url($full_link, PHP_URL_HOST);
 			
 			// Save and return
 			return $orm_link->save();
