@@ -14,17 +14,18 @@
 		<div class="item cf">
 			<h2>Tags</h2>
 			<ul class="tags cf">
-				<li><a href="#">ushahidi</a></li>
-				<li><a href="#">likeminds</a></li>
-				<li><a href="#">comprehensible</a></li>
-				<li><a href="#">afternoon</a></li>
+				<?php foreach($droplet->tags->find_all() as $tag): ?>
+				    <li><a href="#"><?php echo $tag->tag ?></a></li>
+				<?php endforeach; ?>
 			</ul>
 			<p class="button_change"><a>Add tag</a></p>
 		</div>
 	
 		<div class="item cf">
 			<h2>Location</h2>
-			<p class="edit"><span class="edit_trigger" title="text" onclick="">Los Angeles, California</span></p>
+			<?php foreach($droplet->places->find_all() as $place): ?>
+			<p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $place->place_name ?></span></p>
+			<?php endforeach; ?>
 		</div>
 	
 		<div class="item cf">

@@ -151,10 +151,10 @@ class Model_Droplet extends ORM
 	 */
 	public static function add_tags($orm_droplet, $tags)
 	{
-		foreach ($tags as $entity)
+		foreach ($tags as $tag)
 		{
 			// Check if the tag already exists
-			$orm_tag = Model_Tag::get_tag_by_name($entity, TRUE);
+			$orm_tag = Model_Tag::get_tag_by_name($tag, TRUE);
 			if ($orm_tag AND !$orm_droplet->has('tags', $orm_tag))
 			{
 				$orm_droplet->add('tags', $orm_tag);

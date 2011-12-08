@@ -76,7 +76,7 @@ class Model_Place extends ORM
 			{
 				// Create the place record
 				$orm_place->place_name = $coords['name'];
-				$orm_place->place_point = DB::expr("GeoFromText('POINT('".$coords['longitude']." ".$coords['latitude']."')')");
+				$orm_place->place_point = DB::expr("GeomFromText('POINT(".$coords['longitude']." ".$coords['latitude'].")')");
 				$orm_place->place_source = $coords['source'];
 			
 				return $orm_place->save();

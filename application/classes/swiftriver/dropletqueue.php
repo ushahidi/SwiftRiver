@@ -38,7 +38,7 @@ class Swiftriver_Dropletqueue {
 		// TODO - Use configuration param to set the no. of unprocessed
 		// droplets to fetch during processing
 		self::$_queue = empty(self::$_queue)
-			? Model_Droplet::get_unprocessed_droplets(1000)
+			? Model_Droplet::get_unprocessed_droplets(100)
 			// Reverse the ordering of items in the array - FIFO queue
 			: array_reverse(self::$_queue);
 		
@@ -60,6 +60,8 @@ class Swiftriver_Dropletqueue {
 			// Mark the droplet as processed
 			Model_Droplet::create_from_array($droplet);
 		}
+		
+		Kohana::$log->write();
 	}
 	
 	/**

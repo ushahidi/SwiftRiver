@@ -53,15 +53,20 @@ class Model_Tag extends ORM
 	}
 	
 	/**
-	 * Checks if a given tag already exists
+	 * Checks if a given tag already exists. 
+	 * The parameter $tag is a hash containing the tag name and type as below
+	 * E.g: $tag = array('tag_name' => 'bubba', tag_type => 'junk');
 	 *
-	 * @param string $tag_name Name of the tag
+	 * @param string $tag Has containing the tag name and tag type
 	 * @param bool $save Optionally saves the tag if does not exist
 	 * @return mixed Model_Tag if the tag exists, FALSE otherwise
 	 */
-	public static function get_tag_by_name($tag_name, $save = FALSE)
+	public static function get_tag_by_name($tag, $save = FALSE)
 	{
-		$result = ORM::factory('tag')->where('tag', '=', $tag_name)->find();
+		$result = ORM::factory('tag')
+		            ->where('tag', '=', $tag['tag_name'])
+		            ->where('tag_type', '=', $tag['tag_type'])
+		            ->find();
 		if ($result->loaded())
 		{
 			return $result;
@@ -70,8 +75,8 @@ class Model_Tag extends ORM
 		{
 			// Save the tag
 			$orm_tag = new Model_Tag;
-			$orm_tag->tag  =$tag_name;
-			// $orm_tag->tag_source = '';
+			$orm_tag->tag  = $tag['tag_name'];
+			$orm_tag->tag_type = $tag['tag_type'];
 			$orm_tag->tag_date_add = date('Y-m-d H:i:s', time());
 			
 			return $orm_tag->save();

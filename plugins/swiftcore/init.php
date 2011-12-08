@@ -14,6 +14,8 @@ class Swiftcore_Init {
 	{
 		// Register the callback method for the extract_metadata event
 		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'extract_metadata'));
+		
+		
 	}
 	
 	/**
@@ -27,7 +29,7 @@ class Swiftcore_Init {
 		$droplet = & Swiftriver_Event::$data;
 		
 		// URL for extracting semantics
-		$api_url = "http://api.swiftriver.dev/entities.json";
+		$api_url = Kohana::$config->load('swiftcore.api_url');
 		
 		// Initialize cURL session
 		$ch = curl_init();
@@ -64,37 +66,42 @@ class Swiftcore_Init {
 		
 		// Get the response code
 		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
+			
 		if ($response AND $status ==  200)
 		{
+		    Kohana::$log->add(Log::DEBUG, $response);
+		    
 			// Convert the response to JSON
 			$semantics = get_object_vars(json_decode($response));
+			
 			$places = array();
-						
-			// Check for "gpe" and "location" properties
-			$places = array_key_exists('gpe', $semantics)
-				? array_merge($places, $semantics['gpe'])
-				: $places;
-			
-			$places = array_key_exists('location', $semantics)
-				? array_merge($places, $semantics['location'])
-				: $places;
-			
-			// Populate the places property of the droplet
-			foreach ($places as $place_item)
-			{
-				$droplet['places'][] = $place_item;
+			if(array_key_exists('gpe', $semantics)) 
+			{			    
+			    foreach($semantics['gpe'] as $gpe) 
+			    {
+			        if($gpe[1])
+			        {
+			            $places[] = array(
+			                'name' => $gpe[0],
+			                'latitude' => $gpe[1]->lat,
+			                'longitude' => $gpe[1]->lng,
+			                'source' => null
+			                );
+		            }
+			    }
 			}
+			$droplet['places'] = $places;
+			
 			
 			// Get the other semantics and generalize them as "tags"
 			$tags = array();
 			foreach ($semantics as $key => $entities)
 			{
-				if ($key != 'gpe' OR $key != 'location')
+				if ($key != 'gpe' and $key != 'location')
 				{
 					foreach ($entities as $entity)
 					{
-						$tags[] = $entity;
+						$tags[] = array('tag_name' => $entity, 'tag_type' => $key);
 					}
 				}
 			}
@@ -112,9 +119,8 @@ class Swiftcore_Init {
 		}
 		
 		// Close session
-		curl_close($ch);
-	}
-	
+		curl_close($ch);		
+	}	
 }
 
 // Initialize the plugin

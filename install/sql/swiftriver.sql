@@ -45,20 +45,19 @@ COMMENT = 'Track followers' ;
 -- -----------------------------------------------------
 -- Table `tags`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tags` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `tag` VARCHAR(255) NOT NULL ,
-  `tag_type` VARCHAR(255) NULL DEFAULT NULL ,
-  `tag_source` VARCHAR(100) NULL DEFAULT NULL ,
-  `tag_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  UNIQUE INDEX (`tag` ASC) ,
-  PRIMARY KEY (`id`) ,
-  INDEX `tag_idx` (`tag` ASC) ,
-  INDEX `tag_type_idx` (`tag_type` ASC) ,
-  INDEX `tag_source_idx` (`tag_source` ASC) ,
-  INDEX `tag_date_add_idx` (`tag_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CREATE TABLE `tags` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tag` varchar(255) NOT NULL,
+  `tag_type` varchar(255) DEFAULT NULL,
+  `tag_source` varchar(100) DEFAULT NULL,
+  `tag_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tag_un_tag_tag_type` (`tag`,`tag_type`),
+  KEY `tag_idx` (`tag`),
+  KEY `tag_type_idx` (`tag_type`),
+  KEY `tag_source_idx` (`tag_source`),
+  KEY `tag_date_add_idx` (`tag_date_add`)
+) ENGINE=InnoDB AUTO_INCREMENT=366 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
