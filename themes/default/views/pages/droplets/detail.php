@@ -14,7 +14,7 @@
 		<div class="item cf">
 			<h2>Tags</h2>
 			<ul class="tags cf">
-				<?php foreach($droplet->tags->find_all() as $tag): ?>
+				<?php foreach ($droplet->tags->find_all() as $tag): ?>
 				    <li><a href="#"><?php echo $tag->tag ?></a></li>
 				<?php endforeach; ?>
 			</ul>
@@ -23,8 +23,8 @@
 	
 		<div class="item cf">
 			<h2>Location</h2>
-			<?php foreach($droplet->places->find_all() as $place): ?>
-			<p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $place->place_name ?></span></p>
+			<?php foreach ($droplet->places->find_all() as $place): ?>
+			    <p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $place->place_name ?></span></p>
 			<?php endforeach; ?>
 		</div>
 	

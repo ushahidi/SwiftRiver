@@ -75,11 +75,11 @@ class Swiftcore_Init {
 			$semantics = get_object_vars(json_decode($response));
 			
 			$places = array();
-			if(array_key_exists('gpe', $semantics)) 
+			if (array_key_exists('gpe', $semantics)) 
 			{			    
-			    foreach($semantics['gpe'] as $gpe) 
+			    foreach ($semantics['gpe'] as $gpe) 
 			    {
-			        if($gpe[1])
+			        if ($gpe[1])
 			        {
 			            $places[] = array(
 			                'name' => $gpe[0],
