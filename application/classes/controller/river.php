@@ -240,6 +240,7 @@ class Controller_River extends Controller_Swiftriver {
 				
 				// Add the filter options
 				$post[$filter_option->channel][] = array(
+					'id' => $filter_option->filter_option_id,
 					'key' => $filter_option->key,
 					'value' => $filter_option->value
 				);
@@ -338,7 +339,7 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$succeed = FALSE;
 		
-		if ($_REQUEST AND isset($_REQUEST['river_id']))
+		if (isset($_REQUEST['river_id']))
 		{
 			// TODO - Validation checks for the river id
 			

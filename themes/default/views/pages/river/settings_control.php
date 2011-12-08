@@ -150,13 +150,11 @@ $(document).ready(function() {
 							</ul>
 							<?php endif; ?>
 							
-							<?php
-							$c = 0;
-							if (isset($post[$key])): ?>
+							<?php if (isset($post[$key])): ?>
 								<!-- Display each of the  configured channel filter options -->
 								<?php foreach ($post[$key] as $option): ?>
-								
-								<div id="channel_option_<?php echo $c; ?>" class="input">
+								<?php $channel_option_id = 'channel_option_'.$option['id']; ?>
+								<div id="<?php echo $channel_option_id; ?>" class="input">
 									<h3>
 										<?php echo $channel['options'][$option['key']]; ?>
 										<span>[<a href="javascript:channelOptionR('<?php echo $channel_option_id; ?>')">&mdash;</a>]</span>
@@ -164,9 +162,7 @@ $(document).ready(function() {
 									<input type="text" class="filter_option" id="filter_option_<?php echo $option['id']; ?>" name="<?php echo $key."_".$option['key']?>[]" value="<?php echo $option['value']; ?>">
 								</div>
 								
-								<?php
-								$c++;
-								endforeach; ?>
+								<?php endforeach; ?>
 							<?php endif; ?>
 						</article>				
 					<?php endforeach; ?>
@@ -174,7 +170,7 @@ $(document).ready(function() {
 			</div>
 		</div>
 
-		<?php if ( isset($river) AND $river->loaded() ) : ?>
+		<?php if (isset($river) AND $river->loaded()): ?>
 			<div class="row controls cf">
 				<h2>Collaborators</h2>
 				<div class="input">
@@ -209,7 +205,7 @@ $(document).ready(function() {
 		<div class="row controls_buttons cf">
 			<p class="button_go"><a id="settings_apply">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
-			<?php if ( isset($river) AND $river->loaded() ) : ?>
+			<?php if (isset($river) AND $river->loaded()) : ?>
 				<div class="item actions">
 					<p class="button_delete button_delete_subtle"><a onclick="">Delete River</a></p>
 					<div class="clear"></div>
