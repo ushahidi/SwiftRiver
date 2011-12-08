@@ -58,7 +58,7 @@ $(document).ready(function() {
 		var data = {
 			enabled: enabled, 
 			channel: channel, 
-			river_id: <?php echo $river->id; ?>
+			river_id: <?php echo (isset($river) ? $river->id : 0); ?>
 		};
 		
 		// Submit the data
@@ -104,7 +104,7 @@ $(document).ready(function() {
 		});
 		
 		// Add the River ID
-		filterOptions.river_id = <?php echo $river->id; ?>;
+		filterOptions.river_id = <?php echo (isset($river) ? $river->id : 0); ?>;
 		
 		// Submit the data for saving
 		$.post('<?php echo $base_url; ?>ajax_channel_options', filterOptions, function(response) {
@@ -150,13 +150,10 @@ $(document).ready(function() {
 							</ul>
 							<?php endif; ?>
 							
-							<?php if (isset($filter_options[$key])): ?>
+							<?php if (isset($post[$key])): ?>
 								<!-- Display each of the  configured channel filter options -->
-								<?php foreach ($filter_options[$key] as $option): ?>
-								
-								<!-- Generate the CSS ID for the filter option div -->
-								<?php $channel_option_id = "channel_option_".$option['id']; ?>
-								
+								<?php foreach ($post[$key] as $option): ?>
+								<?php $channel_option_id = 'channel_option_'.$option['id']; ?>
 								<div id="<?php echo $channel_option_id; ?>" class="input">
 									<h3>
 										<?php echo $channel['options'][$option['key']]; ?>
@@ -167,13 +164,13 @@ $(document).ready(function() {
 								
 								<?php endforeach; ?>
 							<?php endif; ?>
-							
 						</article>				
 					<?php endforeach; ?>
 				</div>
 			</div>
 		</div>
-		<?php if ($river->loaded()): ?>
+
+		<?php if (isset($river) AND $river->loaded()): ?>
 			<div class="row controls cf">
 				<h2>Collaborators</h2>
 				<div class="input">
@@ -208,7 +205,7 @@ $(document).ready(function() {
 		<div class="row controls_buttons cf">
 			<p class="button_go"><a id="settings_apply">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
-			<?php if ($river->loaded()) : ?>
+			<?php if (isset($river) AND $river->loaded()) : ?>
 				<div class="item actions">
 					<p class="button_delete button_delete_subtle"><a onclick="">Delete River</a></p>
 					<div class="clear"></div>

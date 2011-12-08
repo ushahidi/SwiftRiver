@@ -116,15 +116,33 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template->content = View::factory('pages/river/new')
 			->bind('post', $post)
+			->bind('settings_control', $settings_control)
 			->bind('errors', $errors);
-		$this->template->header->js = View::factory('pages/river/js/new');
-		$this->template->header->js->settings = url::site().$this->account->account_path.'/river/settings/';
+
+		// Get the settings control
+		$settings_control = View::factory('pages/river/settings_control')
+			->bind('channels', $this->channels)
+			->bind('post', $post)
+			->bind('base_url', $base_url);
+
+		$base_url = URL::site().$this->account->account_path.'/river/';
+		
+		foreach ($this->channels as $key => $channel)
+		{
+			$this->channels[$key]['enabled'] = 0;
+		}	
 
 		// save the river
 		if ($_POST)
 		{
 			$river = ORM::factory('river');
 			$post = $river->validate($_POST);
+
+			// Swiftriver Plugin Hook -- execute before saving a river
+			// Allows plugins to perform further validation checks
+			// ** Plugins can then use 'swiftriver.river.save' after the river
+			// has been saved
+			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
 
 			if ($post->check())
 			{
@@ -165,6 +183,13 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+
+		// Load the template and set the values
+		$settings = View::factory('pages/river/settings_control')
+			->bind('channels', $this->channels)
+			->bind('river', $river)
+			->bind('post', $post)
+			->bind('base_url', $base_url);
 		
 		// Get the ID of the river
 		$id = (int) $this->request->param('id', 0);
@@ -203,33 +228,28 @@ class Controller_River extends Controller_Swiftriver {
 					->find_all();
 			
 			// Filter options for the channels
-			$filter_options = array();
+			$post = array();
 			
 			// Store the fetched filter options in a key->value array
 			foreach ($filters as $filter_option)
 			{
 				if ( ! isset($filter_options[$filter_option->channel]))
 				{
-					$filter_options[$filter_option->channel] = array();
+					$post[$filter_option->channel] = array();
 				}
 				
 				// Add the filter options
-				$filter_options[$filter_option->channel][] = array(
-					'id' => $filter_option->filter_option_id, 
+				$post[$filter_option->channel][] = array(
+					'id' => $filter_option->filter_option_id,
 					'key' => $filter_option->key,
 					'value' => $filter_option->value
 				);
 			}
-			
-			// Load the template and set the values
-			$settings = View::factory('pages/river/settings_control');
-			$settings->channels = $this->channels;
-			$settings->base_url = URL::site().$this->account->account_path.'/river/';
-			$settings->river = $river;
-			$settings->filter_options = $filter_options;
-		
-			echo $settings;
 		}
+
+		$base_url = URL::site().$this->account->account_path.'/river/';
+
+		echo $settings;
 	}
 
 	/**
@@ -319,7 +339,7 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$succeed = FALSE;
 		
-		if ($_REQUEST AND isset($_REQUEST['river_id']))
+		if (isset($_REQUEST['river_id']))
 		{
 			// TODO - Validation checks for the river id
 			

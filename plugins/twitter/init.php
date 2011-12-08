@@ -13,6 +13,12 @@ class Twitter_Init {
 	public function __construct()
 	{
 		Swiftriver_Event::add('swiftriver.droplet.link_droplet', array($this, 'link_droplet'));
+
+		// Validate Channel Settings Input
+		Swiftriver_Event::add('swiftriver.river.pre_save', array($this, 'channel_validate'));
+
+		// Save Channel Settings
+		//Swiftriver_Event::add('swiftriver.river.save', array($this, 'channel_save'));
 	}
 
 	/**
@@ -43,9 +49,41 @@ class Twitter_Init {
 			}
 		}
 	}
+
+	/**
+	 * Call back method for swiftriver.river.pre_save to validate channel settings
+	 */
+	public function channel_validate()
+	{
+		// Get the event data
+		$post = Swiftriver_Event::$data;
+
+		// Run it through additional validation
+		$post->rule('twitter_keyword', array($this, 'validate_array_length'), array(':validation',':field'))
+			->rule('twitter_person', array($this, 'validate_array_length'), array(':validation',':field'))
+			->rule('twitter_place', array($this, 'validate_array_length'), array(':validation',':field'));
+	}
+
+	/**
+	 * The twitter channel input items are arrays (e.g. item[]) so we need to run
+	 * through each
+	 * 
+	 * @param	Validation	Validation object
+	 * @param	string field name
+	 * @return	void
+	 */ 
+	public function validate_array_length($validation, $field)
+	{
+		for ($i=0; $i < count($validation[$field]) ; $i++)
+		{
+			if ( strlen($validation[$field][$i]) < 255 )
+			{
+				$validation->error($field, 'max_length', array(':value', 255));
+			}			
+		}
+	}
 }
 
 // Initialize the plugin
 new Twitter_Init;
-
 ?>

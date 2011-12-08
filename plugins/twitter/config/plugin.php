@@ -26,7 +26,7 @@ return array(
 		'channel_options' => array( // Array of available channel options
 			'keyword' => __('Keyword'),
 			'person' => __('Person'),
-			'location' => __('Location')
+			'place' => __('Place')
 		),
 		'dependencies'	=> array(
 			'core' => array(
