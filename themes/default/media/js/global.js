@@ -51,14 +51,19 @@ $(document).ready(function() {
 	});
 	
 	// Show/Hide a droplet's detail drawer
-	$('section.actions p.button_view a').toggle(function(e) {
+	$('section.actions p.button_view a').live('click', function(e) {
+	    if ($(this).hasClass('detail_hide')) 
+	    {
+	        $(this).removeClass('detail_hide').closest('article.droplet').children('section.detail').slideUp('slow').empty();
+			e.preventDefault();			
+	    }
+	    else
+	    {
 			var url = $(this).attr('href');
 			$(this).addClass('detail_hide').closest('article.droplet').children('section.detail').slideDown('slow').load(url);
-			e.preventDefault();				
-		}, function(e) {
-			$(this).removeClass('detail_hide').closest('article.droplet').children('section.detail').slideUp('slow').empty();
-			e.preventDefault();
-	});
+			e.preventDefault();					        
+	    }
+	    });
 	$('section.detail div.bottom a.close').live('click', function() {
 		$(this).closest('article.droplet').find('section.actions p.button_view a').removeClass('detail_hide');
 		$(this).closest('article.droplet').children('section.detail').slideUp('slow').empty();
