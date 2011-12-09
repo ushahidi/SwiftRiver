@@ -19,6 +19,11 @@ class Controller_River extends Controller_Swiftriver {
 	 * Channels
 	 */
 	protected $channels;
+	
+	/**
+	 * Number of droplets to show per page
+	 */
+	const DROPLETS_PER_PAGE = 20;
 
 	/**
 	 * @return	void
@@ -73,7 +78,7 @@ class Controller_River extends Controller_Swiftriver {
 	        ->join('identities')
 	        ->on('droplets.identity_id', '=', 'identities.id')		    
 		    ->where('channel_filters.river_id', '=', $river->id)
-		    ->order_by('droplet_date_pub', 'DESC');
+		    ->order_by('droplets.id', 'DESC');
 
 		// Clone query before any filters have been applied
 		$pre_filter = clone $query;
@@ -83,13 +88,38 @@ class Controller_River extends Controller_Swiftriver {
 		//++ Allows for adding for more filters via Plugin
 		Swiftriver_Event::run('swiftriver.river.filter', $query);
 
-		// First Pass (Limit 20)
-		$query->limit(20);
-
+		//Use page paramter or default to page 1
+		$page = $this->request->query('page') ? $this->request->query('page') : 1;
+		
+		//Check if we have max droplet id stored from a previous
+		//request. If so, use it to prevent pagination from getting
+		//screwed by new droplets coming in...
+		$max_droplet_id = $this->session->get('river_pagination_max_droplet');
+		if ($max_droplet_id)
+		{
+		   $query->where('droplets.id', '<', $max_droplet_id);	   
+		}
+		
+		
+		
+		// Pagination offset
+		$query->limit(self::DROPLETS_PER_PAGE);	
+	    $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+	    	    
+		
 		// Get our droplets as an Array (not Object)
 		$droplets = $query->execute()->as_array();
 		$filtered_total = (int) count($droplets);
-
+		
+		//Get the max id form the session if already set
+		//and use this in our query to stop new droplets
+		//coming in from messing up the pagination
+		if ($filtered_total and ! $max_droplet_id) 
+		{
+		    $this->session->set('river_pagination_max_droplet', $droplets[0]['id']);
+		}
+		
+		
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplets', $droplets);
@@ -104,7 +134,7 @@ class Controller_River extends Controller_Swiftriver {
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
-		$more_url = url::site().$this->account->account_path.'/river/more/';
+		$more_url = url::site().'river/index/'.$id.'?page='.($page+1);
 	}
 
 	/**
