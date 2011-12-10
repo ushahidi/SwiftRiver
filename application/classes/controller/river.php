@@ -134,7 +134,7 @@ class Controller_River extends Controller_Swiftriver {
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
-		$more_url = url::site().'river/index/'.$id.'?page='.($page+1);
+		$more_url = url::site().$this->account->account_path.'/river/more/'.$id;
 	}
 
 	/**
@@ -144,6 +144,7 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		// The main template
 		$this->template->content = View::factory('pages/river/new')
 			->bind('post', $post)
 			->bind('settings_control', $settings_control)
@@ -157,12 +158,13 @@ class Controller_River extends Controller_Swiftriver {
 
 		$base_url = URL::site().$this->account->account_path.'/river/';
 		
+		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
 		{
 			$this->channels[$key]['enabled'] = 0;
-		}	
+		}
 
-		// save the river
+		// Save the river
 		if ($_POST)
 		{
 			$river = ORM::factory('river');
@@ -180,6 +182,9 @@ class Controller_River extends Controller_Swiftriver {
 				$river->account_id = $this->account->id;
 				$river->save();
 
+				// Save channel filters
+				$this->_save_filters($post, $river);
+
 				// Always redirect after a successful POST to prevent refresh warnings
 				$this->request->redirect('river/index/'.$river->id);
 			}
@@ -187,6 +192,7 @@ class Controller_River extends Controller_Swiftriver {
 			{
 				//validation failed, get errors
 				$errors = $post->errors('river');
+				//print_r($post);
 			}
 
 		}
@@ -248,32 +254,21 @@ class Controller_River extends Controller_Swiftriver {
 			}
 			
 			// Get the list of channel filter options from the DB
-			$filters = ORM::factory('channel_filter')
-					->select('channel_filter.channel', array('channel_filter_options.id', 'filter_option_id'), 
-						'channel_filter_options.key', 'channel_filter_options.value')
-					->join('channel_filter_options', 'INNER')
-					->on('channel_filter_options.channel_filter_id', '=', 'channel_filter.id')
-					->where('channel_filter.user_id', '=', $this->user->id)
-					->where('channel_filter.river_id', '=', $river->id)
-					->find_all();
-			
-			// Filter options for the channels
 			$post = array();
-			
-			// Store the fetched filter options in a key->value array
-			foreach ($filters as $filter_option)
+			//$post['filter']
+			$channel_filters = $river->channel_filters->find_all();
+			foreach ($channel_filters as $filter)
 			{
-				if ( ! isset($filter_options[$filter_option->channel]))
+				//$post['filter'][] = $filter->channel;
+				// Get Channel Options
+				$channel_filter_options = $filter->channel_filter_options->find_all();
+				foreach ($channel_filter_options as $option)
 				{
-					$post[$filter_option->channel] = array();
+					$post['filter'][$filter->channel][$option->key][] = array(
+							'value' => $option->value,
+							'type' => $option->type
+						);
 				}
-				
-				// Add the filter options
-				$post[$filter_option->channel][] = array(
-					'id' => $filter_option->filter_option_id,
-					'key' => $filter_option->key,
-					'value' => $filter_option->value
-				);
 			}
 		}
 
@@ -411,83 +406,101 @@ class Controller_River extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Adds/Removes channel options via ajax
+	 * Adds/Removes channel filter settings via ajax
 	 */
-	public function action_ajax_channel_options()
+	public function action_ajax_channel_filters()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		$success = FALSE;
-		
-		// Check for input variables
-		if (isset($_REQUEST['river_id']))
+
+		if ($_POST AND isset($_REQUEST['river_id']))
 		{
 			// Verify that the river identified by 'id' exists
-			$river = ORM::factory('river', $_REQUEST['river_id']);
-			if ($river->loaded() AND isset($_REQUEST['options']))
+			// for this account
+			$river = ORM::factory('river')
+				->where('id', '=', $_REQUEST['river_id'])
+				->where('account_id', '=', $this->account->id)
+				->find();
+			if ($river->loaded())
 			{
-				foreach ($_REQUEST['options'] as $key => $filter_option)
+				$post = Validation::factory($_POST);
+
+				// Swiftriver Plugin Hook -- execute before saving a river
+				// Allows plugins to perform further validation checks
+				// ** Plugins can then use 'swiftriver.river.save' after the river
+				// has been saved
+				Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+
+				if ($post->check())
 				{
-					// Import the variables from the $filter_option array
-					extract($filter_option);
-					
-					if ( ! empty($filter_option_id))
-					{
-						// TODO - Validation
-						// Update channel filter option
-						$orm = ORM::factory('channel_filter_option', $filter_option_id);
-						$orm->key = $filter_option_key;
-						$orm->value = $filter_option_value;
-						$orm->save();
-						$success = TRUE;
-					}
-					else
-					{
-						// Check if the specified channel filter exists for the current user
-						// and river
-						$channel_filter = ORM::factory('channel_filter')
-							->where('channel', '=', $filter_channel)
-							->where('river_id', '=', $river->id)
-							->where('user_id', '=', $this->user->id)
-							->find();
-						
-						if ($channel_filter->loaded())
-						{
-							// TODO - Apply validation rules
-							$orm = new Model_Channel_Filter_Option();
-							$orm->channel_filter_id = $channel_filter->id;
-							$orm->key = $filter_option_key;
-							$orm->value = $filter_option_value;
-							$orm->save();
-							
-							$success = TRUE;
-						}
-					} // endforeach
-				} // endif
-			} // endif
-		} // endif
-		
-		echo json_encode(array('success' => $success));
-	}
-	
-	/**
-	 * Deletes a channel filter option via Ajax
-	 */
-	public function action_ajax_delete_option()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		
-		$success = FALSE;
-		if (isset($_REQUEST['filter_option_id']))
-		{
-			// Delete the filter option
-			$option = ORM::factory('channel_filter_option', $_REQUEST['filter_option_id']);
-			
-			$success = $option->delete()? TRUE : FALSE;
+					// Save channel filters
+					$this->_save_filters($post, $river);
+
+					echo json_encode(array('status' => "success"));
+
+				}
+				else
+				{
+					//validation failed, get errors
+					$errors = $post->errors('river');
+
+					echo json_encode(array("status"=>"error", "errors" => $errors));
+				}
+			}		
 		}
-		
-		echo json_encode(array('success' => $success));
+	}
+
+	/**
+	 * Save the rivers channel filters
+	 *
+	 * @param	POST $post object
+	 * @param	RIVER $river object
+	 * @return	void
+	 */
+	private function _save_filters($post = NULL, $river = NULL)
+	{
+		if ($post AND $river)
+		{
+			if (isset($post['filter']) AND is_array($post['filter']))
+			{
+				foreach ($post['filter'] AS $channel => $options)
+				{
+					// 1. Save Channel Filter
+					$channel_filter = ORM::factory('channel_filter')
+						->where('river_id', '=', $river->id)
+						->where('channel', '=', $channel)
+						->find();
+					if ( ! $channel_filter->loaded() )
+					{
+						$channel_filter->channel = $channel;
+						$channel_filter->river_id = $river->id;
+						$channel_filter->user_id = $this->user->id;
+						$channel_filter->save();
+					}
+
+					// 2. Save Channel Filter Options
+					// Better to reset all the filter options before a new save
+					DB::delete('channel_filter_options')
+						->where('channel_filter_id', '=', $channel_filter->id)
+						->execute();
+
+					// Loop through each option
+					foreach ($options as $key => $option)
+					{
+						// Loop through each of the return values
+						foreach ($option as $input)
+						{
+							$channel_filter_option = ORM::factory('channel_filter_option');
+							$channel_filter_option->channel_filter_id = $channel_filter->id;
+							$channel_filter_option->key = $key;
+							$channel_filter_option->value = $input['value'];
+							$channel_filter_option->type = $input['type'];
+							$channel_filter_option->save();
+						}
+					}
+				}
+			}
+		}
 	}
 	
 }

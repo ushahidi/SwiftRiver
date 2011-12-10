@@ -1,32 +1,35 @@
 <script type="text/javascript">
 // Adds channel options
 var ci = 0;
-function channelOption(channel, option, label){
+function channelOption(channel, option, option_values){
 	if (ci == 0) {
 		ci = $('input.filter_option').length;
 	}
 	if ( typeof (channel) != 'undefined' && channel ) {
 		ci++;
-		$('#'+channel).append('<div class="input" id="channel_option_'+ci+'"><h3>'+label+' <span>[ <a href="javascript:channelOptionR(\'channel_option_'+ci+'\')">&#8212;</a> ]</span></h3><input type="text" class="filter_option" name="'+channel+'_'+option+'[]" /></div>');
+		field_type = option_values.type;
+		input_name = 'filter['+channel+']['+option+']['+ci+'][value]';
+		input_type = 'filter['+channel+']['+option+']['+ci+'][type]';
+		$('#'+channel).append('<div class="input" id="channel_option_'+ci+'"><h3>'+option_values.label+' <span>[ <a href="javascript:channelOptionR('+ci+')">&#8212;</a> ]</span></h3>'+channelOptiontype(ci, field_type, input_name, input_type)+'</div>');
+		// Focus on the new field[s]
+		$('#filter_option_'+ci).focus();
 	}
+}
+// Generate the field and type (text, radio, checkbox etc)
+function channelOptiontype(id, field_type, input_name, input_type){
+	switch(field_type) {
+		case 'password':
+			return '<input type="password" class="filter_option" id="filter_option_'+id+'" name="'+input_name+'" /><input type="hidden" class="filter_option" name="'+input_type+'" value="password" />';
+			break;
+		default:
+			return '<input type="text" class="filter_option" id="filter_option_'+id+'" name="'+input_name+'" /><input type="hidden" class="filter_option" name="'+input_type+'" value="text" />';
+	}	
 }
 
 // Deletes channel options
 function channelOptionR(id){
 	if ( typeof (id) != 'undefined' && id ) {
-		$('#'+id).remove();
-		var data = {
-			filter_option_id: id.substr("channel_option_".length)
-		}
-		
-		// Submit the selected channel filter option for deleting
-		$.post('<?php echo $base_url; ?>ajax_delete_option', data, function(response) {
-			if (response.success) {
-				// Show success message
-			} else {
-				// Show delete message
-			}
-		}, 'json');
+		$('#channel_option_'+id).remove();
 	}
 }
 	
@@ -72,50 +75,37 @@ $(document).ready(function() {
 	});
 	
 	// When an filter option is about to be removed
-	$("div.input").each(function(index) {
-		$(this).addEventListener('remove', function() {
-			console.log('deleting item');
-		}, false);
-	});
+//	$("div.input").each(function(index) {
+//		$(this).addEventListener('remove', function() {
+//			console.log('deleting item');
+//		}, false);
+//	});
 
 	// When the "Apply Changes" button is clicked
 	$("#settings_apply").click(function() {
-		var filterOptions = {};
-		filterOptions.options = [];
-		
-		// Get all the input fields
-		$("input.filter_option").each(function(index) {
-			// Get the element name
-			var channelKey = $(this).attr("name").split("_");
-			var optionItem = {};
-		
-			// Get the channel filter option and value
-			if (typeof($(this).attr("id")) !=  'undefined') {
-				optionId = $(this).attr("id").substr("filter_option_".length);
-				optionItem.filter_option_id = optionId;
-			} else {
-				optionItem.filter_option_id = '';
-			}
-		
-			optionItem.filter_channel = channelKey[0];
-			optionItem.filter_option_key = channelKey[1].substring(0, channelKey[1].length-2)
-			optionItem.filter_option_value = $(this).val();
-			filterOptions.options.push(optionItem);
-		});
-		
-		// Add the River ID
-		filterOptions.river_id = <?php echo (isset($river) ? $river->id : 0); ?>;
-		
-		// Submit the data for saving
-		$.post('<?php echo $base_url; ?>ajax_channel_options', filterOptions, function(response) {
-			if (response.success) {
-				// Changes saved - show success message
-			} else {
-				// An error occurred while saving
-				// Backtrack to the affected filter option
-			}
-		}, 'json');
-		
+		<?php if (isset($river) AND $river->loaded()): ?>
+			var filters = $("input.filter_option").serializeArray();
+			filters.push({name: 'river_id', value: <?php echo $river->id; ?>})
+			$.post('<?php echo $base_url; ?>ajax_channel_filters', filters, function(response){
+				//console.log(response);
+				if ( typeof(response.status) != 'undefined' ) {
+					if (response.status == 'success') {
+						$('#messages').html('<div class="system_message system_success"><p><strong><?php echo __('Success!'); ?></strong> <?php echo __('Your filters have been updated'); ?>.</p></div>');
+					} else if (response.status == 'error') {
+						var errors = response.errors;
+						var html = '';
+						for (i in errors){
+							html += '<div class="system_message system_error"><p><strong><?php echo __('Uh oh.'); ?></strong> '+errors[i]+'</p></div>';
+						}
+						$('#messages').html(html);
+					};
+				}
+			}, 'json');
+		<?php else: ?>
+			var form = $(this).parents('form:first');
+			form.submit();
+		<?php endif; ?>
+
 		return false;
 	});
 	
@@ -123,6 +113,7 @@ $(document).ready(function() {
 </script>
 
 <div id="channels">
+	<div id="messages"></div>
 	<div class="controls">
 		<div class="row cf">
 			<h2>Channels</h2>
@@ -144,26 +135,42 @@ $(document).ready(function() {
 						<article id="<?php echo $key; ?>" class="tab_content">
 							<?php if (isset($channel['options'])): ?>
 							<ul class="channel_options cf">
-								<?php foreach ($channel['options'] as $option_key => $option_value): ?>
-									<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', '<?php echo $option_value; ?>')"><span></span><?php echo $option_value; ?></a></li>
+								<?php foreach ($channel['options'] as $option_key => $option): ?>
+									<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', <?php echo rawurlencode(json_encode($option)); ?>)"><span></span><?php echo $option['label']; ?></a></li>
 								<?php endforeach; ?>
 							</ul>
 							<?php endif; ?>
 							
-							<?php if (isset($post[$key])): ?>
+							<?php if (isset($post['filter'][$key])): ?>
 								<!-- Display each of the  configured channel filter options -->
-								<?php foreach ($post[$key] as $option): ?>
-								<?php $channel_option_id = 'channel_option_'.$option['id']; ?>
-								<div id="<?php echo $channel_option_id; ?>" class="input">
-									<h3>
-										<?php echo $channel['options'][$option['key']]; ?>
-										<span>[<a href="javascript:channelOptionR('<?php echo $channel_option_id; ?>')">&mdash;</a>]</span>
-									</h3>
-									<input type="text" class="filter_option" id="filter_option_<?php echo $option['id']; ?>" name="<?php echo $key."_".$option['key']?>[]" value="<?php echo $option['value']; ?>">
-								</div>
-								
-								<?php endforeach; ?>
-							<?php endif; ?>
+								<?php 
+								$ci = 0;
+								foreach ($post['filter'][$key] as $option_key => $option):
+									foreach ($post['filter'][$key][$option_key] as $option_value): ?>
+										<div id="<?php echo 'channel_option_'.$ci; ?>" class="input">
+											<h3>
+												<?php echo $channel['options'][$option_key]['label']; ?>
+												<span>[<a href="javascript:channelOptionR('<?php echo $ci; ?>')">&mdash;</a>]</span>
+											</h3>
+											<?php
+											switch ($channel['options'][$option_key]['type']):
+												case 'password': ?>
+													<input type="password" class="filter_option" name="filter[<?php echo $key.']['.$option_key.']['.$ci.'][value]'; ?>" value="<?php echo $option_value['value']; ?>" />
+													<input type="hidden" class="filter_option" name="filter[<?php echo $key.']['.$option_key.']['.$ci.'][type]'; ?>" value="password" />
+													<?php break;												
+												default: ?>
+													<input type="text" class="filter_option" name="filter[<?php echo $key.']['.$option_key.']['.$ci.'][value]'; ?>" value="<?php echo $option_value['value']; ?>" />
+													<input type="hidden" class="filter_option" name="filter[<?php echo $key.']['.$option_key.']['.$ci.'][type]'; ?>" value="text" />
+													<?php
+													break;
+											endswitch;
+											?>					
+										</div>
+										<?php
+										$ci++;
+									endforeach;
+								endforeach;
+							endif; ?>
 						</article>				
 					<?php endforeach; ?>
 				</div>
@@ -203,8 +210,8 @@ $(document).ready(function() {
 			</div>
 		<?php endif; ?>
 		<div class="row controls_buttons cf">
-			<p class="button_go"><a id="settings_apply">Apply changes</a></p>
-			<p class="other"><a class="close" onclick="">Cancel</a></p>
+			<p class="button_go"><a href="#" id="settings_apply" onclick="">Apply changes</a></p>
+			<p class="other"><a href="#" class="close" onclick="">Cancel</a></p>
 			<?php if (isset($river) AND $river->loaded()) : ?>
 				<div class="item actions">
 					<p class="button_delete button_delete_subtle"><a onclick="">Delete River</a></p>

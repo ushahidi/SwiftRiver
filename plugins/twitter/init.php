@@ -58,10 +58,9 @@ class Twitter_Init {
 		// Get the event data
 		$post = Swiftriver_Event::$data;
 
-		// Run it through additional validation
-		$post->rule('twitter_keyword', array($this, 'validate_array_length'), array(':validation',':field'))
-			->rule('twitter_person', array($this, 'validate_array_length'), array(':validation',':field'))
-			->rule('twitter_place', array($this, 'validate_array_length'), array(':validation',':field'));
+		// Run the filter options set through validation
+		$post->rule('filter', array($this, 'validate_input'), array(':validation',':field'))
+			->label('filter', __('Twitter Channel Item'));
 	}
 
 	/**
@@ -72,14 +71,31 @@ class Twitter_Init {
 	 * @param	string field name
 	 * @return	void
 	 */ 
-	public function validate_array_length($validation, $field)
+	public function validate_input($validation, $field)
 	{
-		for ($i=0; $i < count($validation[$field]) ; $i++)
+		foreach ($validation[$field] as $type => $options)
 		{
-			if ( strlen($validation[$field][$i]) < 255 )
+			if ($type == 'twitter')
 			{
-				$validation->error($field, 'max_length', array(':value', 255));
-			}			
+				foreach ($options as $key => $inputs)
+				{
+					foreach ($inputs as $input)
+					{
+						// Perform validation on the returned $values
+
+						// String length should be less than 255
+						if ( $input['value'] AND strlen($input['value']) > 255 )
+						{
+							$validation->error($field, 'max_length', array(':value', 255));
+						}
+						// String length should be greater than 3
+						if ( $input['value'] AND strlen($input['value']) < 3 )
+						{
+							$validation->error($field, 'min_length', array(':value', 3));
+						}
+					}
+				}
+			}
 		}
 	}
 }
