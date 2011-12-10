@@ -7,7 +7,7 @@
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
-	<link rel="icon" href="/themes/default/media/img/favicon.png" type="image/png">
+	<link rel="icon" href="<?php echo url::base(); ?>themes/default/media/img/favicon.png" type="image/png">
 	<?php
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
