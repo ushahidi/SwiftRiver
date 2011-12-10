@@ -23,8 +23,14 @@ return array(
 		'version'		=> '0.1.0',
 		'channel'		=> TRUE,	// Plugin is a channel
 		'channel_options' => array(
-			'url' => __('Feed/Atom URL'),
-		),
+			'url' => array(
+				'label' => __('Feed/Atom URL'),
+				// Option type (text, textarea, password, radio)
+				'type' => 'text',
+				// Available values for this option
+				'values' => array()
+			)
+		),		
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',

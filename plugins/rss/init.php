@@ -13,6 +13,9 @@ class Rss_Init {
 	public function __construct() 
 	{
 		Swiftriver_Event::add('swiftriver.droplet.link_droplet', array($this, 'link_droplet'));
+
+		// Validate Channel Filter Settings Input
+		Swiftriver_Event::add('swiftriver.river.pre_save', array($this, 'channel_validate'));
 	}
 
 	/**
@@ -93,6 +96,47 @@ class Rss_Init {
 		}
 		return $options;
 	}
+
+	/**
+	 * Call back method for swiftriver.river.pre_save to validate channel settings
+	 */
+	public function channel_validate()
+	{
+		// Get the event data
+		$post = Swiftriver_Event::$data;
+
+		// Run the filter options set through validation
+		$post->rule('filter', array($this, 'validate_input'), array(':validation',':field'))
+			->label('filter', __('RSS/Atom URL'));
+	}
+
+	/**
+	 * The RSS channel input items are arrays (e.g. item[]) so we need to run
+	 * through each
+	 * 
+	 * @param	Validation	Validation object
+	 * @param	string field name
+	 * @return	void
+	 */ 
+	public function validate_input($validation, $field)
+	{
+		foreach ($validation[$field] as $type => $options)
+		{
+			if ($type == 'rss')
+			{
+				foreach ($options as $key => $inputs)
+				{
+					foreach ($inputs as $input)
+					{
+						if ( ! Valid::url($input['value']))
+						{
+							$validation->error($field, 'url', array(':value', 3));
+						}
+					}
+				}
+			}
+		}
+	}	
 }
 
 new Rss_Init;

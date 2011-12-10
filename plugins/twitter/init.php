@@ -14,7 +14,7 @@ class Twitter_Init {
 	{
 		Swiftriver_Event::add('swiftriver.droplet.link_droplet', array($this, 'link_droplet'));
 
-		// Validate Channel Settings Input
+		// Validate Channel Filter Settings Input
 		Swiftriver_Event::add('swiftriver.river.pre_save', array($this, 'channel_validate'));
 
 		// Save Channel Settings
@@ -84,12 +84,12 @@ class Twitter_Init {
 						// Perform validation on the returned $values
 
 						// String length should be less than 255
-						if ( $input['value'] AND strlen($input['value']) > 255 )
+						if ( ! Valid::max_length($input['value'], 255))
 						{
 							$validation->error($field, 'max_length', array(':value', 255));
 						}
 						// String length should be greater than 3
-						if ( $input['value'] AND strlen($input['value']) < 3 )
+						if ( ! Valid::min_length($input['value'], 3))
 						{
 							$validation->error($field, 'min_length', array(':value', 3));
 						}
