@@ -168,13 +168,35 @@ Route::set('welcome', 'welcome(/<action>(/<id>))')
 	));
 
 /**
+ * Swiftriver Visualize Rivers Route
+ */	
+Route::set('trend_river', 'river/trend(/<controller>(/<id>))',
+	array('id' => '\d+'))
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'trend'
+	));
+
+/**
+ * Swiftriver Visualize Buckets Route
+ */	
+Route::set('trend_bucket', 'bucket/trend(/<controller>(/<id>))',
+	array('id' => '\d+'))
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'index',
+		'directory'  => 'trend'
+	));	
+
+/**
  * Swiftriver Bucket Route
  */
 Route::set('bucket', 'bucket(/<action>(/<id>))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'bucket',
 		'action'     => 'index',
-	));	
+	));
 
 /**
  * Swiftriver River Route
@@ -202,7 +224,7 @@ Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 		'controller' => 'main',
 		'action'     => 'index',
 		'directory'  => 'settings'
-	));	
+	));
 
 
 //*********** WHEN NOT LOGGED IN USE ACCOUNT NAMESPACE ***********//
@@ -228,7 +250,7 @@ Route::set('river_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id'
 /**
  * Swiftriver Trends Buckets Route
  */	
-Route::set('trend_bucket', '<account>/bucket/trend(/<controller>(/<action>(/<id>)))')
+Route::set('trend_bucket_ext', '<account>/bucket/trend(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
@@ -238,7 +260,7 @@ Route::set('trend_bucket', '<account>/bucket/trend(/<controller>(/<action>(/<id>
 /**
  * Swiftriver Visualize Rivers Route
  */	
-Route::set('trend_river', '<account>/river/trend(/<controller>(/<action>(/<id>)))')
+Route::set('trend_river_ext', '<account>/river/trend(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',

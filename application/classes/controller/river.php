@@ -19,11 +19,6 @@ class Controller_River extends Controller_Swiftriver {
 	 * Channels
 	 */
 	protected $channels;
-	
-	/**
-	 * Number of droplets to show per page
-	 */
-	const DROPLETS_PER_PAGE = 20;
 
 	/**
 	 * @return	void
@@ -66,59 +61,18 @@ class Controller_River extends Controller_Swiftriver {
 			$this->request->redirect('dashboard');
 		}
 
-		// Build River Query
-		$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
-		                    'droplet_title', 'droplet_content', 
-		                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
-		    ->from('droplets')
-		    ->join('channel_filter_droplets', 'INNER')
-		    ->on('channel_filter_droplets.droplet_id', '=', 'droplets.id')
-	        ->join('channel_filters', 'INNER')
-	        ->on('channel_filters.id', '=', 'channel_filter_droplets.channel_filter_id')
-	        ->join('identities')
-	        ->on('droplets.identity_id', '=', 'identities.id')		    
-		    ->where('channel_filters.river_id', '=', $river->id)
-		    ->order_by('droplets.id', 'DESC');
-
-		// Clone query before any filters have been applied
-		$pre_filter = clone $query;
-		$total = (int) $pre_filter->execute()->count();
-
-		// SwiftRiver Plugin Hook -- Hook into River Droplet Query
-		//++ Allows for adding for more filters via Plugin
-		Swiftriver_Event::run('swiftriver.river.filter', $query);
-
 		//Use page paramter or default to page 1
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
-		
-		//Check if we have max droplet id stored from a previous
-		//request. If so, use it to prevent pagination from getting
-		//screwed by new droplets coming in...
-		$max_droplet_id = $this->session->get('river_pagination_max_droplet');
-		if ($max_droplet_id)
-		{
-		   $query->where('droplets.id', '<', $max_droplet_id);	   
-		}
-		
-		
-		
-		// Pagination offset
-		$query->limit(self::DROPLETS_PER_PAGE);	
-	    $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-	    	    
-		
-		// Get our droplets as an Array (not Object)
-		$droplets = $query->execute()->as_array();
+
+		//Get Droplets
+		$droplets_array = Model_Droplet::get_river($river->id, $page);
+
+		// Total Droplets Before Filtering
+		$total = $droplets_array['total'];
+		// The Droplets
+		$droplets = $droplets_array['droplets'];
+		// Total Droplets After Filtering
 		$filtered_total = (int) count($droplets);
-		
-		//Get the max id form the session if already set
-		//and use this in our query to stop new droplets
-		//coming in from messing up the pagination
-		if ($filtered_total and ! $max_droplet_id) 
-		{
-		    $this->session->set('river_pagination_max_droplet', $droplets[0]['id']);
-		}
-		
 		
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')

@@ -15,6 +15,12 @@
  */
 class Controller_Trend_Main extends Controller_Swiftriver {
 
+	// The Droplets Array
+	private $droplets = array(
+		'total' => 0,
+		'droplets' => array()
+		);
+
 	/**
 	 * @return	void
 	 */
@@ -22,10 +28,42 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
-	}
 
-	public function action_index()
-	{
-		
+		$id = (int) $this->request->param('id', 0);
+
+		// Is this a River or a Bucket?
+		if ( strpos($this->request->uri(), 'river/') !== FALSE)
+		{
+			// Make sure River exists
+			$river = ORM::factory('river')
+				->where('id', '=', $id)
+				->where('account_id', '=', $this->account->id)
+				->find();
+			if ( ! $river->loaded())
+			{
+				// It doesn't -- redirect back to dashboard
+				$this->request->redirect('dashboard');
+			}			
+
+			$this->droplets = Model_Droplet::get_river($river->id);
+		}
+
+		if ( strpos($this->request->uri(), 'bucket/') !== FALSE)
+		{
+			// Make sure Bucket exists
+			$bucket = ORM::factory('bucket')
+				->where('id', '=', $id)
+				->where('account_id', '=', $this->account->id)
+				->find();
+			if ( ! $bucket->loaded())
+			{
+				// It doesn't -- redirect back to dashboard
+				$this->request->redirect('dashboard');
+			}
+
+			$this->droplets = Model_Droplet::get_bucket($bucket->id);
+		}
+
+
 	}
 }
