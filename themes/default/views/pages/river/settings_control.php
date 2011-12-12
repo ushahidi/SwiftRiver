@@ -210,16 +210,16 @@ $(document).ready(function() {
 			</div>
 		<?php endif; ?>
 		<div class="row controls_buttons cf">
-			<p class="button_go"><a href="#" id="settings_apply" onclick="">Apply changes</a></p>
-			<p class="other"><a href="#" class="close" onclick="">Cancel</a></p>
+			<p class="button_go"><a href="#" id="settings_apply" onclick=""><?php echo __('Apply changes'); ?></a></p>
+			<p class="other"><a href="#" class="close" onclick=""><?php echo __('Cancel / Close'); ?></a></p>
 			<?php if (isset($river) AND $river->loaded()) : ?>
 				<div class="item actions">
-					<p class="button_delete button_delete_subtle"><a onclick="">Delete River</a></p>
+					<p class="button_delete button_delete_subtle"><a onclick=""><?php echo __('Delete River'); ?></a></p>
 					<div class="clear"></div>
 					<ul class="dropdown">
-						<p>Are you sure you want to delete this River?</p>
-						<li class="confirm"><a onclick="">Yep.</a></li>
-						<li class="cancel"><a onclick="">No, nevermind.</a></li>
+						<p><?php echo __('Are you sure you want to delete this River?'); ?></p>
+						<li class="confirm"><a onclick=""><?php echo __('Yep.'); ?></a></li>
+						<li class="cancel"><a onclick=""><?php echo __('No, nevermind.'); ?></a></li>
 					</ul>
 				</div>
 			<?php endif; ?>
