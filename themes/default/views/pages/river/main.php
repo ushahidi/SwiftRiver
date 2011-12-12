@@ -49,7 +49,7 @@
         
 
 		<div class="page_buttons">
-		<p class="button_view"><a href="<?php echo $more_url ?>">View more</a></p>
+		<p class="button_view"><a href="<?php echo $view_more_url ?>">View more</a></p>
 		</div>
 	</div>
 </article>	

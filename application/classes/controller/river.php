@@ -45,7 +45,8 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
 			->bind('settings_url', $settings_url)
-			->bind('more_url', $more_url);
+			->bind('more_url', $more_url)
+			->bind('view_more_url', $view_more_url);
 
 		// First we need to make sure this river
 		// actually exists
@@ -89,6 +90,7 @@ class Controller_River extends Controller_Swiftriver {
 		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
 		$more_url = url::site().$this->account->account_path.'/river/more/'.$id;
+		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$id.'?page='.($page+1);;
 	}
 
 	/**
