@@ -42,9 +42,10 @@ class Twitter_Init {
 			if ($option->key == 'keyword' AND preg_match("/\b" . $option->value . "\b/i", $droplet->droplet_content))
 			{
 				//Kohana::$log(Log::DEBUG, "Matches --> " . $option->value .  "," . $option->id);
-				if(!$option->channel_filter->has('droplets', $droplet))
+				$river = $option->channel_filter->river;
+				if(!$river->has('droplets', $droplet))
 				{
-					$option->channel_filter->add('droplets', $droplet);
+					$river->add('droplets', $droplet);
 				}
 			}
 		}

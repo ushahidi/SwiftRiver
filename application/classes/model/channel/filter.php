@@ -32,7 +32,8 @@ class Model_Channel_Filter extends ORM {
 	 */
 	protected $_belongs_to = array(
 		'account' => array(),
-		'user' => array()
+		'user' => array(),
+		'river' => array()
 		);
 
 	

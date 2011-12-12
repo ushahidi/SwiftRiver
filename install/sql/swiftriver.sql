@@ -617,18 +617,6 @@ COMMENT = 'Tracks user actions across the system' ;
 
 
 -- -----------------------------------------------------
--- Table `channel_filter_droplets`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `channel_filter_droplets` (
-  `channel_filter_id` bigint(20) unsigned NOT NULL,
-  `droplet_id` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`channel_filter_id`,`droplet_id`)
-) ENGINE=InnoDB 
-DEFAULT CHARSET=utf8 
-COMMENT='Link droplets to a user';
-
-
--- -----------------------------------------------------
 -- Data for table `roles`
 -- -----------------------------------------------------
 START TRANSACTION;

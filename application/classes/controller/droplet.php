@@ -55,29 +55,27 @@ class Controller_Droplet extends Controller_Swiftriver {
 	{
 	    $droplet_id = (int) $this->request->param('id', 0);
 	    
-	    $channel_filter_id_arr = DB::Select('channel_filter_id')
-	                ->from('channel_filter_droplets')
-	                ->join('channel_filters', 'INNER')
-        	        ->on('channel_filters.id', '=', 'channel_filter_droplets.channel_filter_id')
+	    $river_id_arr = DB::Select('river_id')
+	                ->from('rivers_droplets')
         	        ->join('rivers', 'INNER')
-        	        ->on('channel_filters.river_id', '=', 'rivers.id')
-        	        ->where('channel_filter_droplets.droplet_id', '=', $droplet_id)
+        	        ->on('rivers_droplets.river_id', '=', 'rivers.id')
+        	        ->where('rivers_droplets.droplet_id', '=', $droplet_id)
         	        ->where('rivers.account_id', '=', $this->account->id)
         	        ->execute()
         	        ->as_array();
         
-	    if(empty($channel_filter_id_arr))
+	    if(empty($river_id_arr))
 	        throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
 		                    array(':droplet' => $droplet_id));
 	    
 	    $droplet = ORM::factory('droplet', $droplet_id);
-	    $channel_filter = ORM::factory('channel_filter', 
-	                                $channel_filter_id_arr[0]['channel_filter_id']);
+	    $river = ORM::factory('river', 
+	                                $river_id_arr[0]['river_id']);
 			
-		if ( ! $droplet->loaded() || ! $channel_filter->loaded())
+		if ( ! $droplet->loaded() || ! $river->loaded())
 		    throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
 		    array(':droplet' => $droplet_id));	
 		    
-		$channel_filter->remove('droplets', $droplet);	    
+		$river->remove('droplets', $droplet);	    
 	}
 }

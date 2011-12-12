@@ -47,7 +47,11 @@ class Rss_Init {
 						if (preg_match("/\b" . $keyword . "\b/i", $droplet->droplet_content))
 						{
 							Kohana::$log->add(Log::DEBUG, "Keyword matched" . $keyword);
-							$option['channel_filter']->add('droplets', $droplet);
+							$river = $option['channel_filter']->river;
+							if ( ! $river->has('droplets', $droplet))
+							{
+							    $river->add('droplets', $droplet);
+							}
 							break;
 						}
 					}
@@ -56,9 +60,10 @@ class Rss_Init {
 				{
 					//Filter does not have keywords so all droplets will be assocaiated with this filter
 					Kohana::$log->add(Log::DEBUG, "No keywords" . $option['url']. ',' . $option['channel_filter']->id);
-					if( ! $option['channel_filter']->has('droplets', $droplet))
+					$river = $option['channel_filter']->river;
+					if ( ! $river->has('droplets', $droplet))
 					{
-						$option['channel_filter']->add('droplets', $droplet);
+						$river->add('droplets', $droplet);
 					}
 				}
 			}

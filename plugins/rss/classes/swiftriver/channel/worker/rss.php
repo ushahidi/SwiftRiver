@@ -50,7 +50,7 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 			{
 				foreach($filter->channel_filter_options->find_all() as $option)
 				{
-					if ($option->key == 'url' and !in_array($option->value, $urls))
+					if ($option->key == 'url' and ! in_array($option->value, $urls))
 					{
 						$urls[] = $option->value;
 					}
