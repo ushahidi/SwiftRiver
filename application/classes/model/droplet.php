@@ -275,8 +275,8 @@ class Model_Droplet extends ORM
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-		        ->join('identities')
-		        ->on('droplets.identity_id', '=', 'identities.id')		    
+			    ->join('identities')
+			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('rivers_droplets.river_id', '=', $id);
 
 			// Clone query before any filters have been applied
