@@ -27,7 +27,7 @@ class LinkExtractor_Init {
 		try
 		{
 			// Get the droplet content
-			$droplet_arr = & Swiftriver_Event::$data;
+			$droplet_arr = Swiftriver_Event::$data;
 			
 			$droplet = ORM::factory('droplet', $droplet_arr['id']);
 			
@@ -35,10 +35,6 @@ class LinkExtractor_Init {
 			//TODO: Create a dedicated stream for droplets with links...
 			$links = Swiftriver_Links::extract($droplet->droplet_content);
 			
-			foreach ($links as $link) {
-			    Kohana::$log->add(Log::DEBUG, $link);
-			    Kohana::$log->write();			    
-			}
 			Model_Droplet::add_links($droplet, $links);
 		}
 		catch (Exception $e) //FIXME: Catch specific exceptions...
