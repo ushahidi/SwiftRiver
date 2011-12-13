@@ -72,12 +72,10 @@ class Controller_Crawler_Main extends Controller {
 		// Register the signal handler
 		pcntl_signal(SIGCHLD, array($this, 'handle_child_signal'));
 		
-		// Create a worker for each channel
+		// Launch on_complete_task worker - It will be "woken up" when a background job finishes
 		$this->launch_worker('on_complete_task', array('Swiftriver_Channel_Worker', 'on_complete_task'));
 		
-		// Worker for droplet processing
-		$this->launch_worker('process', array('Swiftriver_Dropletqueue', 'process'));
-		
+		// Create a worker for each channel
 		foreach ($services as $key => $value)
 		{
 			$this->launch_worker($key);
@@ -113,8 +111,7 @@ class Controller_Crawler_Main extends Controller {
 		}
 		elseif ($process_id)
 		{	
-			//This is the parent process. $process_id is the child pid
-			
+			// This is the parent process. $process_id is the child pid
 			
 			$this->current_procs[$process_id] = $job_name;
 				
@@ -133,8 +130,8 @@ class Controller_Crawler_Main extends Controller {
 
 			//This is the child process. Register the worker and work.
 			
-			//Force the child to get its own connection resource otherwise
-			//we'll start getting wierd packet out of order errors
+			// Force the child to get its own connection resource otherwise
+			// we'll start getting wierd packet out of order errors
 			Database::instance()->disconnect();
 
 			// Log

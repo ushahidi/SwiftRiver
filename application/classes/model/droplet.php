@@ -101,6 +101,20 @@ class Model_Droplet extends ORM
 	}
 	
 	/**
+	 * Retrives a droplet from the DB based on its droplet_hash. The hash is 
+	 * unique for every droplet.
+	 *
+	 * @param string $droplet_hash Has value of the droplet to retrieve
+	 * @return Model_Droplet
+	 */
+	public static function get_droplet_by_hash($droplet_hash)
+	{
+		return ORM::factory('droplet')
+		    ->where('droplet_hash', '=', $droplet_hash)
+		    ->find();
+	}
+	
+	/**
 	 * Creates a droplet from an array. 
 	 * The array keys should correspond to the column names of the droplet 
 	 * table. The method also checks for 3 other keys namely: links, tags 
@@ -128,6 +142,13 @@ class Model_Droplet extends ORM
 			$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
 			$orm_droplet->droplet_processed = 0;
 			$orm_droplet->save();
+			
+			// Check if the 'river_id' key is set
+			if ($droplet['river_id'])
+			{
+				// Add the droplet to the river
+				Model_River::add_droplet($droplet['river_id'], $orm_droplet);
+			}
 			
 			$droplet['id'] = $orm_droplet->id;
 		}
@@ -160,7 +181,7 @@ class Model_Droplet extends ORM
 		{
 			// Check if the tag already exists
 			$orm_tag = Model_Tag::get_tag_by_name($tag, TRUE);
-			if ($orm_tag AND !$orm_droplet->has('tags', $orm_tag))
+			if ($orm_tag AND ! $orm_droplet->has('tags', $orm_tag))
 			{
 				$orm_droplet->add('tags', $orm_tag);
 			}
@@ -177,11 +198,20 @@ class Model_Droplet extends ORM
 	{
 		foreach ($links as $url)
 		{
-			// Add the link
-			$orm_link = Model_Link::get_link_by_url($url, TRUE);
-			if ($orm_link AND !$orm_droplet->has('links', $orm_link))
+			try
 			{
-				$orm_droplet->add('links', $orm_link);
+				// Add the link
+				$orm_link = Model_Link::get_link_by_url($url, TRUE);
+				if ($orm_link AND ! $orm_droplet->has('links', $orm_link))
+				{
+					$orm_droplet->add('links', $orm_link);
+				}
+			}
+			catch (Database_Exception $e)
+			{
+				// Log the error and proceed to process the next item on the list
+				Kohana::$log->add(Log::ERROR, 'A database error has occurred: '.$e->getMessage());
+				continue;
 			}
 		}
 	}
@@ -233,7 +263,7 @@ class Model_Droplet extends ORM
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
 					->where($predicates[0], $predicates[1], $predicates[2])
-					->order_by('droplet_date_pub', 'DESC')
+					->order_by('id', 'DESC')
 					->limit($limit)
 					->find_all();
 		

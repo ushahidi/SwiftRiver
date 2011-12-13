@@ -148,7 +148,6 @@ class Controller_River extends Controller_Swiftriver {
 			{
 				//validation failed, get errors
 				$errors = $post->errors('river');
-				//print_r($post);
 			}
 
 		}
