@@ -21,7 +21,7 @@ return array(
 		// Name of the plugin
 		'name'			=> 'Twitter',
 		// Description of the plugin
-		'description'	=> 'Adds the twitter service to Sweeper.',
+		'description'	=> 'Adds a Twitter channel to SwiftRiver.',
 		// Author of the plugin
 		'author'		=> 'David Kobia',
 		// Email of the author the plugin

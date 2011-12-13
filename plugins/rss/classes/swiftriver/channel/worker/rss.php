@@ -44,6 +44,7 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 		// Did we get anything in the workload?
 		if (empty($urls))
 		{
+			$urls = array();
 			// Get the links to crawl from the DB
 			$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
 			foreach($channel_filters as $filter)

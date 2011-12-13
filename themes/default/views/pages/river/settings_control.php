@@ -15,6 +15,11 @@ function channelOption(channel, option, option_values){
 		$('#filter_option_'+ci).focus();
 	}
 }
+
+function channelOptionGroup(channel, option, option_values){
+	
+}
+
 // Generate the field and type (text, radio, checkbox etc)
 function channelOptiontype(id, field_type, input_name, input_type){
 	switch(field_type) {
@@ -135,9 +140,13 @@ $(document).ready(function() {
 						<article id="<?php echo $key; ?>" class="tab_content">
 							<?php if (isset($channel['options'])): ?>
 							<ul class="channel_options cf">
-								<?php foreach ($channel['options'] as $option_key => $option): ?>
-									<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', <?php echo rawurlencode(json_encode($option)); ?>)"><span></span><?php echo $option['label']; ?></a></li>
-								<?php endforeach; ?>
+								<?php if ($channel['group_options']): ?>
+									<li><a href="javascript:channelOptionGroup('<?php echo $key; ?>', '<?php echo $channel['group']['key']; ?>', <?php echo rawurlencode(json_encode($channel['options'])); ?>)"><span></span><?php echo $channel['group']['label']; ?></a></li>
+								<?php else: ?>
+									<?php foreach ($channel['options'] as $option_key => $option): ?>
+										<li><a href="javascript:channelOption('<?php echo $key; ?>', '<?php echo $option_key; ?>', <?php echo rawurlencode(json_encode($option)); ?>)"><span></span><?php echo $option['label']; ?></a></li>
+									<?php endforeach; ?>
+								<?php endif; ?>
 							</ul>
 							<?php endif; ?>
 							
