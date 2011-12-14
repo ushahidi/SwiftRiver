@@ -23,9 +23,10 @@
 			<div class="panel_body"></div>
 		</section>
 
-		<?php
+		<div class="trend_container cf">
+			<?php echo $droplets_list; ?>
+		</div>
 
-		?>
 		<div class="page_buttons">
 		<p class="button_view"><a href="#">View more</a></p>
 		</div>

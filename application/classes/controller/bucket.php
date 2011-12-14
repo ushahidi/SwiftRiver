@@ -32,6 +32,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $bucket)
+			->bind('droplets_list', $droplets_list)
 			->bind('settings', $settings)
 			->bind('more', $more);
 
@@ -47,8 +48,22 @@ class Controller_Bucket extends Controller_Swiftriver {
 			$this->request->redirect('dashboard');
 		}
 
-		// Get this buckets droplets
-		$droplets = $bucket->droplets->find_all()->as_array();
+		// Generate the List HTML
+		$droplets_list = View::factory('pages/droplets/list')
+			->bind('droplets', $droplets)
+			->bind('buckets', $buckets);
+
+		//Get Droplets
+		$droplets_array = Model_Droplet::get_bucket($bucket->id);
+
+		// Total Droplets Before Filtering
+		$total = $droplets_array['total'];
+		// The Droplets
+		$droplets = $droplets_array['droplets'];
+
+		$buckets = ORM::factory('bucket')
+			->where('account_id', '=', $this->account->id)
+			->find_all();
 
 		// Links to ajax rendered menus
 		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
@@ -80,7 +95,10 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$bucket->save();
 
 				echo json_encode(array("status"=>"success",
-					"bucket" => "<a href=\"". URL::site().'bucket/index/'.$bucket->id."\">".$bucket->bucket_name."</a>"));
+					"bucket" => array(
+						'id' => $bucket->id,
+						'name' => $bucket->bucket_name
+						)));
 			}
 			else
 			{
@@ -90,6 +108,62 @@ class Controller_Bucket extends Controller_Swiftriver {
 			}
 		}
 	}
+
+	/**
+	 * Ajax Add Droplet to Bucket
+	 * 
+	 * @return string - json
+	 */
+	public function action_ajax_droplet()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		// check, has the form been submitted
+		if ($_REQUEST AND
+			isset($_REQUEST['bucket_id'], $_REQUEST['droplet_id'], $_REQUEST['action']) AND
+			! empty($_REQUEST['bucket_id']) AND 
+			! empty($_REQUEST['droplet_id']) AND 
+			in_array($_REQUEST['action'], array('add', 'remove')) )
+		{
+			// First make sure this account owns this bucket
+			$bucket = ORM::factory('bucket')
+				->where('id', '=', $_REQUEST['bucket_id'])
+				->where('account_id', '=', $this->account->id)
+				->find();
+
+			// Get Droplet
+			$droplet = ORM::factory('droplet', $_REQUEST['droplet_id']);
+
+			if ($bucket->loaded() AND $droplet->loaded())
+			{
+				switch ($_REQUEST['action'])
+				{
+					// Add droplet to bucket
+					case 'add':
+						if ( ! $bucket->has('droplets', $droplet))
+						{
+							$bucket->add('droplets', $droplet);
+						}
+						break;
+					// Remove droplet
+					default:
+						$bucket->remove('droplets', $droplet);
+						break;
+				}
+
+				echo json_encode(array("status"=>"success"));
+			}
+			else
+			{
+				echo json_encode(array("status"=>"error"));
+			}
+		}
+		else
+		{
+			echo json_encode(array("status"=>"error"));
+		}
+	}	
 
 	/**
 	 * Ajax rendered settings control box

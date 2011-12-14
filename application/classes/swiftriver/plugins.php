@@ -106,9 +106,27 @@ class Swiftriver_Plugins {
 					$channels[$key]['name'] = $plugin['name'];
 
 					// Get Channel Options
+					$channels[$key]['options'] = array();
 					if (isset($plugin['channel_options']) AND is_array($plugin['channel_options']))
 					{
 						$channels[$key]['options'] = $plugin['channel_options'];
+					}
+
+					// Group Options?
+					$channels[$key]['group_options'] = FALSE;
+					if (isset($plugin['channel_group_options']))
+					{
+						$channels[$key]['group_options'] = $plugin['channel_group_options'];
+					}
+
+					// Group Information
+					$channels[$key]['group'] = array(
+						'key' => '',
+						'label' => ''
+						);
+					if (isset($plugin['channel_group']))
+					{
+						$channels[$key]['group'] = $plugin['channel_group'];
 					}
 				}
 			}

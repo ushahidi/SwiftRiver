@@ -83,21 +83,6 @@ $(document).ready(function() {
 		$(this).closest('article.droplet').find('section.actions p.button_view a').removeClass('detail_hide');
 		$(this).closest('article.droplet').children('section.detail').slideUp('slow').empty();
 	});
-
-	// Add or remove a droplet from buckets
-	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');
-	jQuery.fn.checkBuckets = function() {
-		if ($('section.actions ul.dropdown li.bucket a').is('.selected')) {
-			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').addClass('bucket_added');
-		}
-		else {
-			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').removeClass('bucket_added');
-		}
-	};
-	$('section.actions ul.dropdown li.bucket a').live('click', function(e) {
-		$(this).toggleClass('selected').checkBuckets();
-		e.stopPropagation();
-	});
 	
 	//Delete a droplet
 	$('section.detail .actions #delete_droplet .confirm a').live('click', function(e) {

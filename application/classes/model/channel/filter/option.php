@@ -22,4 +22,19 @@ class Model_Channel_Filter_Option extends ORM {
 	protected $_belongs_to = array(
 		'channel_filter' => array()
 		);
+	
+	
+	/**
+	 * Parses the "value" column of the channel filter option and returns it 
+	 * as an array
+	 *
+	 * @return array
+	 */
+	public function get_option_as_array()
+	{
+		// Decode the JSON string for the options
+		$options =  json_decode($this->value, TRUE);
+		
+		return array($this->key => $options);
+	}
 }

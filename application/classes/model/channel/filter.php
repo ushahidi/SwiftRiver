@@ -61,12 +61,14 @@ class Model_Channel_Filter extends ORM {
 	 * Get channel filters by channel
 	 *
 	 * @param string $channel Name of the channel
+	 * @param int $river_id Database ID of the river associated with the channel
 	 * @return Database_Result
 	 */
-	public static function get_channel_filters($channel)
+	public static function get_channel_filters($channel, $river_id)
 	{
 		$channel_filters = ORM::factory('channel_filter')
 			->where('channel', '=', $channel)
+			->where('river_id', '=', $river_id)
 			->find_all();
 			
 		return $channel_filters;
@@ -78,18 +80,18 @@ class Model_Channel_Filter extends ORM {
 	 * @param string $channel
 	 * @return array
 	 */
-	public static function get_channel_filter_options($channel) {
+	public static function get_channel_filter_options($channel, $river_id)
+	{
 		$channel_filter_options = array();
-		$channel_filters = self::get_channel_filters($channel);
+		$channel_filters = self::get_channel_filters($channel, $river_id);
 		
 		foreach ($channel_filters as $channel_filter)
 		{
-			$options = $channel_filter->channel_filter_options
-				->find_all();
+			$options = $channel_filter->channel_filter_options->find_all();
 			
 			foreach($options as $option)
 			{
-				$channel_filter_options[] = $option;
+				$channel_filter_options[] = $option->get_option_as_array();
 			}
 		}
 		

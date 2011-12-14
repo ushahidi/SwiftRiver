@@ -91,4 +91,45 @@ class Model_River extends ORM
 		
 		return $filters;
 	}
+	
+	/**
+	 * Adds a droplet to river
+	 *
+	 * @param int $river_id Dataabse ID of the river
+	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
+	 * @return bool TRUE on succeed, FALSE otherwise
+	 */
+	public static function add_droplet($river_id, $droplet)
+	{
+		if ( ! $droplet instanceof Model_Droplet)
+		{
+			// Log the error
+			Kohana::$log->add(Log::ERROR, "Expected Model_Droplet in parameter droplet. Found :type instead.", 
+			    array(":type" => gettype($droplet)));
+			return FALSE;
+		}
+		
+		// Get ORM reference for the river
+		$river = ORM::factory('river', $river_id);
+		
+		// Check if the river exists and if its associated with the current droplet
+		if ($river->loaded() AND ! $river->has('droplets', $droplet))
+		{
+			$river->add('droplets', $droplet);
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+	
+	/**
+	 * Checks if the specified river id exists in the database
+	 *
+	 * @param int $river_id Database ID of the river to lookup
+	 * @return bool
+	 */
+	public static function is_valid_river_id($river_id)
+	{
+		return (bool) ORM::factory('river', $river_id)->loaded();
+	}
 }

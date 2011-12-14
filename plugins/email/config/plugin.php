@@ -15,20 +15,63 @@
  */
 
 return array(
-	'email' => array(				//same name as plugin folder
+	'email' => array(
 		'name'			=> 'Email',
-		'description'	=> 'Adds the Email service to Sweeper.',
+		'description'	=> 'Adds the Email service to SwiftRiver.',
 		'author'		=> 'David Kobia',
+		// Email of the author the plugin
 		'email'			=> 'david@ushahidi.com',
+		// Version the plugin
 		'version'		=> '0.1.0',
-		'settings'		=> TRUE,	// Plugin has settings
-		'channel'		=> TRUE,	// Plugin is a channel
+
+		'channel'		=> TRUE,
+		// Group the channel options
+		'channel_group_options' => TRUE,
+		
+		// Name of the group
+		'channel_group_name' => array('email' => 'Email Account'),
+		
+		// Fields for an email account
+		'channel_options' => array(
+			// Server host
+			'host' => array(
+				'label' => __('Server Host'),
+				'type' => 'text',
+			),
+			
+			// Server port
+			'port' => array(
+				'label' => array('Server Port'),
+				'type' => 'text'
+			),
+			// Email server username
+			'username' => array(
+				'label' => __('Username'),
+				'type' => 'text'
+			),
+			// Password for the email account above
+			'password' => array(
+				'label' => __('Password'), 
+				'type' => 'password'
+			),
+			'server_type' => array(
+				'label' => __('Server Type (IMAP/POP3)'),
+				'type' => 'dropdown',
+				'values' => array('IMAP', 'POP')
+			),
+			'ssl' => array(
+				'label' => __('SSL Enabled?'),
+				'type' => 'dropdown',
+				'values' => array('Yes', 'No')
+			)
+		),
+		
+		// Plugin dependencies
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
 				'max' => '10.0.0',
 			),
-			'plugins' => array()	// unique plugin names
 		)	
 	),
 );
