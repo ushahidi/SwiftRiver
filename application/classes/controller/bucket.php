@@ -47,10 +47,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
 		}
+		
+		//Use page paramter or default to page 1
+		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplets', $droplets)
+			->bind('view_more_url', $view_more_url)
 			->bind('buckets', $buckets);
 
 		//Get Droplets
@@ -68,6 +72,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Links to ajax rendered menus
 		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
+		$view_more_url = url::site().$this->account->account_path.'/bucket/index/'.$id.'?page='.($page+1);
 	}
 	
 	/**

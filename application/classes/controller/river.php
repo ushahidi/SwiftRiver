@@ -95,7 +95,7 @@ class Controller_River extends Controller_Swiftriver {
 		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
 		$more_url = url::site().$this->account->account_path.'/river/more/'.$id;
-		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$id.'?page='.($page+1);;
+		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$id.'?page='.($page+1);
 	}
 
 	/**
