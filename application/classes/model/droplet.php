@@ -335,10 +335,15 @@ class Model_Droplet extends ORM
 		
 		if ($id)
 		{
-			$query = DB::select()
+			// Build Buckets Query
+			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			                    'droplet_title', 'droplet_content', 
+			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
-				->on('buckets_droplets.droplet_id', '=', 'droplets.id')    
+				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+				->join('identities')
+			    ->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->order_by('droplets.id', 'DESC');
 

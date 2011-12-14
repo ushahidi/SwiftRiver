@@ -27,10 +27,12 @@
 				<div class="button">
 					<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
 					<div class="clear"></div>
-					<ul class="dropdown">
-						<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
-						<li class="bucket"><a onclick=""><span class="select"></span>Bucket 2</a></li>
-						<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
+					<ul class="dropdown river">
+						<?php foreach ($buckets as $bucket) :
+							$bucket_action = Swiftriver_Droplets::bucket_action($bucket->id, $droplet['id']);?>
+							<li class="bucket"><a onclick="addBucketDroplet(this, <?php echo $bucket->id.','.$droplet['id']; ?>)" title="<?php echo $bucket_action; ?>" class="<?php echo ($bucket_action == 'remove') ? 'selected' : ''; ?>" ><span class="select"></span><?php echo $bucket->bucket_name; ?></a></li>
+						<?php endforeach; ?>
+						<li class="create_new"><a onclick="createBucket(this, 'droplet', <?php echo $droplet['id']; ?>)"><span class="create_trigger"><em>Create new</em></span></a></li>
 					</ul>
 				</div>
 			</section>

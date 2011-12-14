@@ -77,7 +77,11 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
-			->bind('droplets', $droplets);
+			->bind('droplets', $droplets)
+			->bind('buckets', $buckets);
+		$buckets = ORM::factory('bucket')
+			->where('account_id', '=', $this->account->id)
+			->find_all();
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
