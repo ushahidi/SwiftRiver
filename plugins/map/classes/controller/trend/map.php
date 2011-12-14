@@ -18,16 +18,13 @@ class Controller_Trend_Map extends Controller_Trend_Main {
     public function action_index() {       
         
         $id = $this->request->param('id');
-                 
-        $view =  View::factory('map/index')
+                
+        $this->template->content->trend =  View::factory('map/index')
                         ->bind("geojson_url", $geojson_url)
                         ->bind("droplet_base_url", $droplet_base_url);
                         
         $geojson_url = url::site().'river/geojson/'.$id;
         $droplet_base_url = url::site().'droplet/detail/';
-        
-        $this->auto_render = false;
-        echo $view;
     }
         
 }

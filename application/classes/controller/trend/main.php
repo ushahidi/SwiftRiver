@@ -20,6 +20,12 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 		'total' => 0,
 		'droplets' => array()
 		);
+	
+	private $more_url;
+
+	private $active;
+
+	private $trend;
 
 	/**
 	 * @return	void
@@ -46,6 +52,14 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 			}			
 
 			$this->droplets = Model_Droplet::get_river($river->id);
+
+			// Default template for river trends
+			$this->template->content = View::factory('pages/trend/river')
+				->bind('river', $river)
+				->bind('droplets', $this->droplets)
+				->bind('more_url', $this->more_url)
+				->bind('active', $this->active)
+				->bind('trend', $this->trend);
 		}
 
 		if ( strpos($this->request->uri(), 'bucket/') !== FALSE)
@@ -62,8 +76,14 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 			}
 
 			$this->droplets = Model_Droplet::get_bucket($bucket->id);
-		}
-
-
+			
+			// Default template for bucket trends
+			$this->template->content = View::factory('pages/trend/river')
+				->bind('bucket', $bucket)
+				->bind('droplets', $this->droplets)
+				->bind('more_url', $this->more_url)
+				->bind('active', $this->active)
+				->bind('trend', $this->trend);		
+		}		
 	}
 }

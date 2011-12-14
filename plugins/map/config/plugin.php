@@ -15,7 +15,7 @@
   */
 
  return array(
- 	'email' => array(
+ 	'map' => array(
  		'name'			=> 'Map',
  		'description'	=> 'Visualize droplets in a map',
  		'author'		=> 'Brian Muita',
