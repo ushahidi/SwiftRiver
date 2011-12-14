@@ -21,61 +21,35 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 	public function channel_worker($job)
 	{
 		// Get the workload from the GearmanJob
-		$workload = $job->workload();
+		$river_id = $job->workload();
 		
-		// List of URLs in the workload
-		$urls = array();
-		
-		if ( ! empty($workload))
+		// If the river ID is NULL or non-existent, exit
+		if (empty($river_id) OR ! ORM::factory('river', $river_id)->loaded())
 		{
-			// Unserialize the workload with exception handling
-			try
-			{
-				$urls = @unserialize($workload);
-			}
-			catch (ErrorException $e)
-			{
-				$urls = array();
-				// Log the exception
-				Kohana::$log->add(Log::ERROR, $e->getMessage());
-			}
-		}
-		
-		// Did we get anything in the workload?
-		if (empty($urls))
-		{
-			$urls = array();
-			// Get the links to crawl from the DB
-			$channel_filters = Model_Channel_Filter::get_channel_filters('rss');
-			foreach($channel_filters as $filter)
-			{
-				foreach($filter->channel_filter_options->find_all() as $option)
-				{
-					if ($option->key == 'url' and ! in_array($option->value, $urls))
-					{
-						$urls[] = $option->value;
-					}
-				}
-			}
-		}
-		
-		// Submit URLs for content fetch
-		foreach($urls as $url)
-		{
-			// Debug Log
-			Kohana::$log->add(Log::DEBUG, 'Parsing URL: :url', array(':url' => $url));
+			Kohana::$log->add(Log::ERROR, 'Invalid database river id: :river_id', 
+			    array(':river_id' => $river_id));
 			
-			$this->_parse_url(array('url' => $url));
+			return;
+		}
+		
+		// Get the links to crawl from the DB
+		$filter_options = Model_Channel_Filter::get_channel_filter_options('rss', $river_id);
+		foreach ($filter_options as $option)
+		{
+			$url = $option['url']['value'];
+			$this->_parse_url(array('url' => $url), $river_id);
 		}
 		
 	}
 
 	/**
 	 * Retrieve RSS from URL
+	 *
 	 * @param array $options
+	 * @param int $river_id
 	 * @return void
 	 */
-	private function _parse_url($options = array())
+	private function _parse_url($options = array(), $river_id)
 	{
 		include_once Kohana::find_file('vendor', 'simplepie/SimplePieAutoloader');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
@@ -85,7 +59,7 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 			$feed = new SimplePie();
 			
 			// Set which feed to process.
-			$feed->set_feed_url( $options['url'] );
+			$feed->set_feed_url($options['url']);
 			
 			// Allow us to choose to not re-order the items by date.
 			$feed->enable_order_by_date(true);
@@ -108,10 +82,12 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 					$locale = $locale_array[0];
 				}
 				
+				// Create and queue a droplet for each item in the feed
 				foreach($feed->get_items() as $feed_item)
 				{
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
+					$droplet['river_id'] = $river_id;
 					$droplet['identity_orig_id'] = $options['url'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();

@@ -35,10 +35,8 @@ class Swiftriver_Dropletqueue {
 	public static function process($channel = NULL)
 	{
 		// If the queue is empty, fetch the unprocessed items from the DB
-		// TODO - Use configuration param to set the no. of unprocessed
-		// droplets to fetch during processing
 		self::$_queue = empty(self::$_queue)
-			? Model_Droplet::get_unprocessed_droplets(100)
+			? Model_Droplet::get_unprocessed_droplets(100, $channel)
 			// Reverse the ordering of items in the array - FIFO queue
 			: array_reverse(self::$_queue);
 		
@@ -49,7 +47,7 @@ class Swiftriver_Dropletqueue {
 			$droplet = array_pop(self::$_queue);
 			
 			// Link the droplet to the channel filter
-			Swiftriver_Event::run('swiftriver.droplet.link_droplet', $droplet);
+			// Swiftriver_Event::run('swiftriver.droplet.link_droplet', $droplet);
 			
 			// Submit the droplet to an extraction plugin
 			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
@@ -87,8 +85,14 @@ class Swiftriver_Dropletqueue {
 		// Check if the droplet has already been added to the queue
 		if (Model_Droplet::is_duplicate_droplet($droplet['droplet_hash']))
 		{
+			// Get the droplet ORM based on the hash
+			$droplet_orm = Model_Droplet::get_droplet_by_hash($droplet['droplet_hash']);
+			
+			// Add the droplet to the current river
+			Model_River::add_droplet($droplet['river_id'], $droplet_orm);
+			
 			// Delete the droplet from memory
-			unset($droplet);
+			unset ($droplet, $droplet_orm);
 			return FALSE;
 		}
 		
@@ -140,6 +144,7 @@ class Swiftriver_Dropletqueue {
 	{
 		return array(
 			'channel' => '',
+			'river_id' => '',
 			'identity_orig_id' => '',
 			'identity_username' => '',
 			'identity_name' => '',

@@ -67,37 +67,40 @@ class Swiftcore_Init {
 		// Get the response code
 		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			
-		if ($response AND $status ==  200)
+		if ($response AND intval($status) == 200)
 		{
-		    Kohana::$log->add(Log::DEBUG, $response);
-		    
 			// Convert the response to JSON
 			$semantics = get_object_vars(json_decode($response));
 			
-			$places = array();
-			if (array_key_exists('gpe', $semantics)) 
-			{			    
-			    foreach ($semantics['gpe'] as $gpe) 
-			    {
-			        if ($gpe[1])
-			        {
-			            $places[] = array(
-			                'name' => $gpe[0],
-			                'latitude' => $gpe[1]->lat,
-			                'longitude' => $gpe[1]->lng,
-			                'source' => null
-			                );
-		            }
-			    }
-			}
-			$droplet['places'] = $places;
+			// Add Geo-political entries
+			$place_items = array();
+			$place_items =  (array_key_exists('gpe', $semantics))
+			    ? array_merge($semantics['gpe'])
+			    : array();
 			
+			// Add location entries
+			$place_items = (array_key_exists('location', $semantics))
+			    ? array_merge($place_items, $semantics['location'])
+			    : $place_items;
+
+			$places = array();
+			foreach ($place_items as $place)
+			{
+				$places[] = array(
+					'name' => $place,
+					'latitude' => '',
+					'longitude' => '',
+					'source' => NULL
+				);
+			}
+			
+			$droplet['places'] = $places;
 			
 			// Get the other semantics and generalize them as "tags"
 			$tags = array();
 			foreach ($semantics as $key => $entities)
 			{
-				if ($key != 'gpe' and $key != 'location')
+				if ($key != 'gpe' AND $key != 'location')
 				{
 					foreach ($entities as $entity)
 					{

@@ -20,32 +20,42 @@ class Swiftriver_Channel_Worker_Email extends Swiftriver_Channel_Worker {
 	 */
 	public function channel_worker($job)
 	{
-		// Get the user id from the job workload
-		$user_id = $job->workload();
+		// Get the river id from the job workload
+		$river_id = $job->workload();
 		
-		if ( ! empty($user_id))
+		if (Model_River::is_valid_river_id($river_id))
 		{
-			// Get the configured email accounts
-			$accounts = ORM::factory('email_setting')->where('user_id', '=', $user_id)->find_all();
+			// Get the list of configured email accounts for the river
+			$accounts = Model_Channel_Filter::get_channel_filter_options('email', $river_id);
 			
 			// Fetch the configs for each registered email account
 			foreach ($accounts as $account)
 			{
-				// Check for SSL
-				$ssl  = ($account->server_ssl == 1);
+				foreach ($account['email'] as $email_account)
+				{
+					// Get the config parameters
+					$server_host = $email_account['host']['value'];
+					$port = $email_account['port']['value'];
+					$username = $email_account['username']['value'];
+					$password = $email_account['password']['value'];
+					$server_type = $email_account['server_type']['value'];
+					$ssl = $email_account['ssl']['value'];
+					
+					// Check for SSL
+					$ssl  = (strtoupper($ssl) == 'YES');
 			
-				// Connect to the mailbox
-				$email_stream = new Swiftriver_Imap($account->server_host, $account->server_port, 
-					$account->username, $account->password, $account->server_type, $ssl,
-					$account->mailbox_name);
+					// Connect to the mailbox
+					$email_stream = new Swiftriver_Imap($server_host, $server_port, $username, 
+					    $password, $server_type, $ssl);
 				
-				// Fetch the messages
-				$email_stream->get_messages();
+					// Fetch the messages
+					$email_stream->get_messages();
+				}
 			}
 		}
 		else
 		{
-			Kohana::$log->add(Log::ERROR, 'No user id found in the job workload');
+			Kohana::$log->add(Log::ERROR, 'Invalid river id found in the job workload');
 		}
 	}
 }

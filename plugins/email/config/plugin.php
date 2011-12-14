@@ -15,76 +15,63 @@
  */
 
 return array(
-	// Unique identifier of the plugin
-	// ** same name as the plugin folder
 	'email' => array(
-		// Name of the plugin
 		'name'			=> 'Email',
-		// Description of the plugin
-		'description'	=> 'Adds an Email channel to SwiftRiver.',
-		// Author of the plugin
+		'description'	=> 'Adds the Email service to SwiftRiver.',
 		'author'		=> 'David Kobia',
 		// Email of the author the plugin
 		'email'			=> 'david@ushahidi.com',
 		// Version the plugin
 		'version'		=> '0.1.0',
-		// Is plugin a channel?
+
 		'channel'		=> TRUE,
-		// Does plugin have a crawler?
-		'crawler'		=> TRUE,
-		// Array of available channel options
+		// Group the channel options
+		'channel_group_options' => TRUE,
+		
+		// Name of the group
+		'channel_group_name' => array('email' => 'Email Account'),
+		
+		// Fields for an email account
 		'channel_options' => array(
-			// Channel option with type
+			// Server host
+			'host' => array(
+				'label' => __('Server Host'),
+				'type' => 'text',
+			),
+			
+			// Server port
+			'port' => array(
+				'label' => array('Server Port'),
+				'type' => 'text'
+			),
+			// Email server username
 			'username' => array(
-				// Label of the option (*tip use i18n __('xxx'))
 				'label' => __('Username'),
-				// Option type (text, textarea, password, radio)
-				'type' => 'text',
-				// Available values for this option
-				'values' => array()
+				'type' => 'text'
 			),
+			// Password for the email account above
 			'password' => array(
-				'label' => __('Password'),
-				'type' => 'password',
-				'values' => array()
-			),
-			'server_host' => array(
-				'label' => __('Host'),
-				'type' => 'text',
-				'values' => array()
-			),
-			'server_port' => array(
-				'label' => __('Port'),
-				'type' => 'text',
-				'values' => array()
+				'label' => __('Password'), 
+				'type' => 'password'
 			),
 			'server_type' => array(
-				'label' => __('Type (IMAP/POP3)'),
-				'type' => 'text',
-				'values' => array()
+				'label' => __('Server Type (IMAP/POP3)'),
+				'type' => 'dropdown',
+				'values' => array('IMAP', 'POP')
 			),
-			'server_ssl' => array(
-				'label' => __('SSL'),
-				'type' => 'select',
-				'values' => array(
-					'yes' => __('yes'),
-					'no' => __('no')
-				)
-			),					
+			'ssl' => array(
+				'label' => __('SSL Enabled?'),
+				'type' => 'dropdown',
+				'values' => array('Yes', 'No')
+			)
 		),
-		// Group options?
-		'channel_group_options' => TRUE,
-		// Group Key and Label
-		'channel_group' => array(
-			'key' => 'email',
-			'label'=> __('Email Account')
-		),
+		
+		// Plugin dependencies
 		'dependencies'	=> array(
 			'core' => array(
 				'min' => '0.2.0',
 				'max' => '10.0.0',
 			),
-			'plugins' => array()	// unique plugin names
-		)
+		)	
 	),
 );

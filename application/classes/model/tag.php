@@ -67,19 +67,28 @@ class Model_Tag extends ORM
 		            ->where('tag', '=', $tag['tag_name'])
 		            ->where('tag_type', '=', $tag['tag_type'])
 		            ->find();
+		
 		if ($result->loaded())
 		{
 			return $result;
 		}
 		elseif ( ! $result->loaded() AND $save == TRUE)
 		{
-			// Save the tag
-			$orm_tag = new Model_Tag;
-			$orm_tag->tag  = $tag['tag_name'];
-			$orm_tag->tag_type = $tag['tag_type'];
-			$orm_tag->tag_date_add = date('Y-m-d H:i:s', time());
+			try
+			{
+				// Save the tag
+				$orm_tag = new Model_Tag;
+				$orm_tag->tag  = $tag['tag_name'];
+				$orm_tag->tag_type = $tag['tag_type'];
+				$orm_tag->tag_date_add = date('Y-m-d H:i:s', time());
 			
-			return $orm_tag->save();
+				return $orm_tag->save();
+			}
+			catch (Database_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				return FALSE;
+			}
 		}
 		else
 		{
