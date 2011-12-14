@@ -356,7 +356,7 @@ class Model_Droplet extends ORM
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_bucket($id = NULL)
+	public static function get_bucket($id = NULL, $page = NULL)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -376,6 +376,14 @@ class Model_Droplet extends ORM
 			    ->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->order_by('droplets.id', 'DESC');
+				
+			// Order & Pagination offset
+			$query->order_by('droplets.id', 'DESC');
+			if($page)
+			{
+			    $query->limit(self::DROPLETS_PER_PAGE);	
+		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+	        }				
 
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();

@@ -58,7 +58,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('buckets', $buckets);
 
 		//Get Droplets
-		$droplets_array = Model_Droplet::get_bucket($bucket->id);
+		$droplets_array = Model_Droplet::get_bucket($bucket->id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
