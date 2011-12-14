@@ -185,7 +185,7 @@ Route::set('welcome', 'welcome(/<action>(/<id>))')
 /**
  * Swiftriver Visualize Rivers Route
  */	
-Route::set('trend_river', 'river/trend(/<controller>(/<id>))',
+Route::set('trend_river', 'river/trend(/<controller>(/<id>(/<action>)))',
 	array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'main',
@@ -196,7 +196,7 @@ Route::set('trend_river', 'river/trend(/<controller>(/<id>))',
 /**
  * Swiftriver Visualize Buckets Route
  */	
-Route::set('trend_bucket', 'bucket/trend(/<controller>(/<id>))',
+Route::set('trend_bucket', 'bucket/trend(/<controller>(/<id>(/<action>)))',
 	array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'main',
