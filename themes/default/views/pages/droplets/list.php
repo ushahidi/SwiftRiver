@@ -1,3 +1,4 @@
+<div id="river_droplets">
 <?php foreach ($droplets as $droplet): ?>
 	<article class="droplet cf">
 		<div class="summary">
@@ -38,3 +39,22 @@
 		<section class="detail cf"></section>
 	</article>
 <?php endforeach; ?>
+</div>
+
+<?php echo(Html::script("themes/default/media/js/jquery.infinitescroll.min.js")); ?>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('article #river_droplets').infinitescroll({
+    		navSelector  	: "article .page_buttons",
+    		nextSelector 	: "article .page_buttons .button_view a",
+    		itemSelector 	: "article #river_droplets",
+    		debug		 	: true,
+    		dataType	 	: 'html',
+        })
+});
+</script>
+
+
+<div class="page_buttons">
+<p class="button_view"><a href="<?php echo $view_more_url ?>">View more</a></p>
+</div>

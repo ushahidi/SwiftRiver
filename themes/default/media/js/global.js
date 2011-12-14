@@ -44,6 +44,21 @@ $(document).ready(function() {
 		$('section.panel div.panel_body').slideUp('fast').empty();
 	});
 	
+	//Show a trend
+	$('section.panel ul.views li.view_trend a').live('click', function(e) {
+	    //Make the clicked tab the only one active
+	    $('section.panel ul.views li').each(function(){
+	        $(this).removeClass('active');
+	    });
+	    $(this).parent('li').addClass('active');
+	    
+	    //Load the referenced URL into the viewport
+	    var url = $(this).attr('href');	    
+	    $('article .trend_container').load(url);
+		e.preventDefault();
+	});	
+	
+	
 	// Toggle following or subscribing
 	$('.button_change a.subscribe').click(function() {
 		$(this).parent().toggleClass('active');

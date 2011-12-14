@@ -37,9 +37,8 @@ class Controller_Droplet extends Controller_Swiftriver {
 		    throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
 		    array(':droplet' => $id));	
 		
-		$view = View::factory('pages/droplets/detail')
+		echo View::factory('pages/droplets/detail')
 		        ->bind('droplet', $droplet);	
-		echo $view;
 			
 	}
 	

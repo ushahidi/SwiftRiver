@@ -15,8 +15,8 @@
 		<section class="panel">		
 			<nav class="cf">
 				<ul class="views">
-					<li class="droplets active"><a href="#"><?php echo __('Droplets');?></a></li>
-					<li><a href="#">Map</a></li>
+					<li class="droplets active"><a href="/river/index/1"><?php echo __('Droplets');?></a></li>
+					<li class="view_trend"><a href="/river/trend/map/1">Map</a></li>
 					<li><a href="#">Tags</a></li>
 					<li><a href="#">Links</a></li>
 					<li><a href="#">Sources</a></li>
@@ -30,26 +30,9 @@
 			<div class="panel_body"></div>
 		</section>
 
-		<div class="trend_container cf" id="river_droplets">
-			<?php echo $droplets_list; ?>
+		<div class="trend_container cf">
+		    <?php echo $droplets_list; ?>
 		</div>
 
-        <?php echo(Html::script("themes/default/media/js/jquery.infinitescroll.min.js")); ?>
-        <script type="text/javascript">
-        $(document).ready(function() {
-            $('article #river_droplets').infinitescroll({
-            		navSelector  	: "article .page_buttons",
-            		nextSelector 	: "article .page_buttons .button_view a",
-            		itemSelector 	: "article #river_droplets",
-            		debug		 	: true,
-            		dataType	 	: 'html',
-                })
-        });
-    	</script>
-        
-
-		<div class="page_buttons">
-		<p class="button_view"><a href="<?php echo $view_more_url ?>">View more</a></p>
-		</div>
 	</div>
 </article>	
