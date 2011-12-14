@@ -139,15 +139,30 @@ Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
 		'action'     => 'index',
 		'directory'  => 'crawler'
 	));	
+	
 
 /**
  * Swiftriver Media Router (JS/CSS)
  */	
-Route::set('media', 'media(/<action>(/<id>))')
+Route::set('media_js', 'media/js')
 	->defaults(array(
 		'controller' => 'media',
-		'action'     => 'index',
+		'action'     => 'js',
 	));
+	
+Route::set('media_css', 'media/css')
+	->defaults(array(
+		'controller' => 'media',
+		'action'     => 'css',
+	));	 
+	
+Route::set('media', 'media(/<file>)', array('file' => '.+'))
+    ->defaults(array(
+    'controller'    => 'media',
+    'action'        => 'index',
+    'file'          => NULL,
+));
+
 
 /**
  * Swiftriver Dashboard Route
