@@ -51,7 +51,7 @@ $(document).ready(function() {
     		nextSelector 	: "article .page_buttons .button_view a",
     		itemSelector 	: "article #river_droplets",
     		debug		 	: true,
-    		dataType	 	: 'html',
+    		dataType	 	: 'html'
         })
 });
 </script>

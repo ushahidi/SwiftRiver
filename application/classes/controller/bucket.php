@@ -29,7 +29,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 
 	public function action_index()
-	{
+	{	    
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $bucket)
 			->bind('droplets_list', $droplets_list)
@@ -64,6 +64,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$total = $droplets_array['total'];
 		// The Droplets
 		$droplets = $droplets_array['droplets'];
+		
+		//Throw a 404 if a non existent page is requested
+		if($page > 1 and empty($droplets)) {
+		    throw new HTTP_Exception_404(
+		        'The requested page :page was not found on this server.',
+		        array(':page' => $page)
+		        );
+		}
 
 		$buckets = ORM::factory('bucket')
 			->where('account_id', '=', $this->account->id)
