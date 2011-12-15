@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access'); 
 /**
- * Helper class for registering and running Gearman tasks
+ * Library for registering and running background tasks
  *
  * @author     Ushahidi Team
  * @package    SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
@@ -8,7 +8,7 @@
  * @copyright  (c) 2008-2011 Ushahidi Inc - http://www.ushahidi.com
  */
 
-class Swiftriver_Task_Manager {
+class Swiftriver_Task_Runner {
 	
 	/**
 	 * @var GearmanClient

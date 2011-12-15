@@ -38,7 +38,7 @@ class Swiftriver_Channel_Worker_Email extends Swiftriver_Channel_Worker {
 					$port = $email_account['port']['value'];
 					$username = $email_account['username']['value'];
 					$password = $email_account['password']['value'];
-					$server_type = $email_account['server_type']['value'];
+					$server_type = $email_account['servertype']['value'];
 					$ssl = $email_account['ssl']['value'];
 					
 					// Check for SSL

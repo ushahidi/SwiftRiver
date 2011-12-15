@@ -153,7 +153,7 @@ class Controller_River extends Controller_Swiftriver {
 				$river->save();
 
 				// Save channel filters
-				$this->_save_filters($post, $river);
+				// $this->_save_filters($post, $river);
 
 				// Always redirect after a successful POST to prevent refresh warnings
 				$this->request->redirect('river/index/'.$river->id);
@@ -196,6 +196,8 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('post', $post)
 			->bind('base_url', $base_url);
 		
+		$base_url = URL::site().$this->account->account_path.'/river/';
+		
 		// Get the ID of the river
 		$id = (int) $this->request->param('id', 0);
 		
@@ -204,6 +206,8 @@ class Controller_River extends Controller_Swiftriver {
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
 			->find();
+		
+		$post = array();
 		
 		// Verify that the river exists
 		if ($river->loaded())
@@ -223,25 +227,15 @@ class Controller_River extends Controller_Swiftriver {
 			}
 			
 			// Get the list of channel filter options from the DB
-			$post = array();
-			//$post['filter']
 			$channel_filters = $river->channel_filters->find_all();
 			foreach ($channel_filters as $filter)
 			{
-				//$post['filter'][] = $filter->channel;
-				// Get Channel Options
-				$channel_filter_options = $filter->channel_filter_options->find_all();
-				foreach ($channel_filter_options as $option)
-				{
-					$post['filter'][$filter->channel][$option->key][] = array(
-							'value' => $option->value,
-							'type' => $option->type
-						);
-				}
+				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
+				    $river->id);
+				
+				$post[$filter->channel] = $filter_options;
 			}
 		}
-
-		$base_url = URL::site().$this->account->account_path.'/river/';
 
 		echo $settings;
 	}
@@ -384,92 +378,244 @@ class Controller_River extends Controller_Swiftriver {
 
 		if ($_POST AND isset($_REQUEST['river_id']))
 		{
-			// Verify that the river identified by 'id' exists
-			// for this account
+			// Verify that the river identified by 'id' exists for this account
 			$river = ORM::factory('river')
 				->where('id', '=', $_REQUEST['river_id'])
 				->where('account_id', '=', $this->account->id)
 				->find();
+			
 			if ($river->loaded())
 			{
-				$post = Validation::factory($_POST);
-
+				// Marshall the channel options - structure them into the standard
+				// format for representing plugin config data
+				$filter_options = $this->_marshall_channel_options($_POST['options']);
+				
 				// Swiftriver Plugin Hook -- execute before saving a river
 				// Allows plugins to perform further validation checks
 				// ** Plugins can then use 'swiftriver.river.save' after the river
 				// has been saved
-				Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+				// Swiftriver_Event::run('swiftriver.river.pre_save', $filter_options);
 
-				if ($post->check())
-				{
-					// Save channel filters
-					$this->_save_filters($post, $river);
-
-					echo json_encode(array('status' => "success"));
-
-				}
-				else
-				{
-					//validation failed, get errors
-					$errors = $post->errors('river');
-
-					echo json_encode(array("status"=>"error", "errors" => $errors));
-				}
+				// Save channel filters
+				$this->_save_filters($filter_options, $river);
+			
+				echo json_encode(array('success' => TRUE));
 			}		
+		}
+		else
+		{
+			echo json_encode(array("success" => FALSE));
 		}
 	}
 
 	/**
+	 * Generates the data for channel filter options
+	 *
+	 * @param array $options The list of submitted channel options
+	 * @return array An array of channel options per channel, FALSE otherwise
+	 */
+	private function _marshall_channel_options($options)
+	{
+		$channel_options = array();
+		$group_count = 0;
+		
+		// Start with the singles
+		foreach ($options['singles'] as $option)
+		{
+			$name = explode("_", $option['name']);
+			$value = $option['value'];
+			
+			// Get the channel config - always the first element in the array
+			$config = $this->channels[$name[0]];
+			if ( ! isset($channel_options[$name[0]]))
+			{
+				$options[$name[0]] = array();
+			}
+			
+			// Single option item
+			$channel_options[$name[0]][] = array(
+				$name[1] => array(
+					'label' => $config['options'][$name[1]]['label'],
+					'type' => $name[2],
+					'value' => $value
+				)
+			);
+		}
+		
+		// Tackle the groups
+		if (isset($options['groups']))
+		{
+			foreach ($options['groups'] as $k => $group)
+			{
+				$group_items = array();
+				$group_name = '';
+				$channel = '';
+				$config = NULL;
+			
+				// Process channel options for each group
+				foreach ($group as $option)
+				{
+					$names = explode("_", $option['name']);
+					$value = $option['value'];
+				
+					// Get the config for the plugin - only when the
+					if ($channel != $names[0])
+					{
+						$channel = $names[0];
+						$group_name = $names[1];
+						$config = $this->channels[$channel];
+					}
+				
+					// Store the items of the group
+					$group_items[$names[2]] = array(
+						'label' => $config['options'][$names[2]]['label'],
+						'type' => $names[3],
+						'value' => $value
+					);
+				}
+			
+				// Save the group items
+				$channel_options[$channel][$k][$group_name] = $group_items;
+			}
+		}
+		
+		return $channel_options;
+	}
+	
+	/**
 	 * Save the rivers channel filters
 	 *
-	 * @param	POST $post object
-	 * @param	RIVER $river object
+	 * @param	array $filter_options List of validated channel options
+	 * @param	Model_River $river ORM instance of a river
 	 * @return	void
 	 */
-	private function _save_filters($post = NULL, $river = NULL)
+	private function _save_filters($filter_options, $river)
 	{
-		if ($post AND $river)
+		if ($filter_options AND $river)
 		{
-			if (isset($post['filter']) AND is_array($post['filter']))
+			$channel_name = '';
+			$channel_filter = NULL;
+			
+			foreach ($filter_options as $channel => $data)
 			{
-				foreach ($post['filter'] AS $channel => $options)
+				// Check if the channel name has been set
+				if ($channel_name != $channel)
 				{
-					// 1. Save Channel Filter
+					$channel_name = $channel;
+					
+					// Find the channel filter
 					$channel_filter = ORM::factory('channel_filter')
-						->where('river_id', '=', $river->id)
-						->where('channel', '=', $channel)
+					    ->where('river_id', '=', $river->id)
+					    ->where('channel', '=', $channel)
 						->find();
-					if ( ! $channel_filter->loaded() )
-					{
-						$channel_filter->channel = $channel;
-						$channel_filter->river_id = $river->id;
-						$channel_filter->user_id = $this->user->id;
-						$channel_filter->save();
-					}
-
+						
 					// 2. Save Channel Filter Options
 					// Better to reset all the filter options before a new save
+					
 					DB::delete('channel_filter_options')
 						->where('channel_filter_id', '=', $channel_filter->id)
 						->execute();
-
-					// Loop through each option
-					foreach ($options as $key => $option)
+				}
+				
+				// 	Save the channel filter
+				if ( ! $channel_filter->loaded())
+				{
+					$channel_filter->channel = $channel;
+					$channel_filter->river_id = $river->id;
+					$channel_filter->user_id = $this->user->id;
+					$channel_filter->save();
+				}
+				
+				// Save the channel options
+				foreach ($data as $k => $item)
+				{
+					foreach ($item as $option => $values)
 					{
-						// Loop through each of the return values
-						foreach ($option as $input)
-						{
-							$channel_filter_option = ORM::factory('channel_filter_option');
-							$channel_filter_option->channel_filter_id = $channel_filter->id;
-							$channel_filter_option->key = $key;
-							$channel_filter_option->value = $input['value'];
-							$channel_filter_option->type = $input['type'];
-							$channel_filter_option->save();
-						}
+						$channel_filter_option = new Model_Channel_Filter_Option();
+						$channel_filter_option->channel_filter_id = $channel_filter->id;
+						$channel_filter_option->key = $option;
+						$channel_filter_option->value = json_encode($values);
+						$channel_filter_option->save();
 					}
 				}
+			} // endforeach
+		} // endif;
+	}
+	
+	
+	/**
+	 * Renders the UI for a channel option
+	 * @return void
+	 */
+	public function action_ajax_channel_option_ui()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		// HTML for the UI
+		$ui_html = '';
+		
+		// Get the channel config
+		$channel = $_REQUEST['channel'];
+		$config = $this->channels[$channel];
+		
+		// Get the item no. and lookup option
+		$item_no = intval($_REQUEST['item_no']);
+		$lookup_option = $_REQUEST['option'];
+		
+		// Check if the channel options are grouped
+		if (isset($config['group']))
+		{
+			if ($config['group']['key'] == $lookup_option)
+			{
+				// Generate the CSS ID
+				$css_id = $lookup_option."-".$item_no;
+				
+				$ui_html = "<div id=\"".$css_id."\" class=\"group-item\">"
+				    ."<h2>"
+				    .$config['group']['label']
+					."<span>[<a href=\"javascript:channelOptionR('".$css_id."');\">&mdash;</a>]</span>"
+				    ."</h2>";
+				
+				$i = 1;
+				foreach ($config['options'] as $key => $option)
+				{
+					// Build the name of the option
+					$option_name = sprintf("%s_%s_%s_%s_%d_%d", $channel, $lookup_option, $key, 
+					    $option['type'], $item_no, $i);
+					
+					$ui_html .= "<div class=\"input\">"
+					    ."<h3>".$option['label']."</h3>"
+					    .Swiftriver_Plugins::get_channel_option_html($option, $option_name)
+					    ."</div>";
+					$i++;
+				}
+			
+				$ui_html .= "</div>";
 			}
 		}
+		else
+		{
+			// Get the configured option
+			$option = $config['options'][$lookup_option];
+			
+			// CSS id for the parent <div>
+			$css_id = "channel-option-".$item_no;
+			
+			// Build the option name
+			$option_name = sprintf("%s_%s_%s_%d", $channel, $lookup_option, $option['type'], $item_no);
+			
+			$ui_html .= "<div class=\"input single\" id=\"".$css_id."\">"
+			    ."<h3>"
+			    .$option['label']
+			    ."<span>[<a href=\"javascript:javascriptOptionR('".$css_id."')\">&mdash;</a>]</span>"
+			    ."</h3>"
+			    .Swiftriver_Plugins::get_channel_option_html($option, $option_name)
+			    ."</div>";
+		}
+		
+		// Render the UI
+		echo json_encode(array("success" => TRUE, "html" => $ui_html));
 	}
 
 }

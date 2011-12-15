@@ -16,14 +16,14 @@
 
 return array(
 	'rss' => array(
-		'name'			=> 'RSS',
-		'description'	=> 'Adds an RSS/Atom channel to SwiftRiver to parse RSS and Atom Feeds.',
-		'author'		=> 'David Kobia',
-		'email'			=> 'david@ushahidi.com',
-		'version'		=> '0.1.0',
+		'name'          => 'RSS',
+		'description'   => 'Adds an RSS/Atom channel to SwiftRiver to parse RSS and Atom Feeds.',
+		'author'        => 'David Kobia',
+		'email'         => 'david@ushahidi.com',
+		'version'       => '0.1.0',
 		
 		// Plugin is a channel
-		'channel'		=> TRUE,
+		'channel'       => TRUE,
 		
 		// Fields
 		'channel_options' => array(

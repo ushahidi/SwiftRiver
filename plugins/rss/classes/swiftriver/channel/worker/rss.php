@@ -62,7 +62,7 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 			$feed->set_feed_url($options['url']);
 			
 			// Allow us to choose to not re-order the items by date.
-			$feed->enable_order_by_date(true);
+			$feed->enable_order_by_date(TRUE);
 
 			// Set Simplepie Cache Location
 			$feed->set_cache_location( Kohana::$cache_dir );

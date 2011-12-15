@@ -41,7 +41,7 @@ return array(
 			
 			// Server port
 			'port' => array(
-				'label' => array('Server Port'),
+				'label' => __('Server Port'),
 				'type' => 'text'
 			),
 			// Email server username
@@ -54,14 +54,14 @@ return array(
 				'label' => __('Password'), 
 				'type' => 'password'
 			),
-			'server_type' => array(
+			'servertype' => array(
 				'label' => __('Server Type (IMAP/POP3)'),
-				'type' => 'dropdown',
+				'type' => 'select',
 				'values' => array('IMAP', 'POP')
 			),
 			'ssl' => array(
 				'label' => __('SSL Enabled?'),
-				'type' => 'dropdown',
+				'type' => 'select',
 				'values' => array('Yes', 'No')
 			)
 		),

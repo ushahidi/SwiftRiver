@@ -14,8 +14,6 @@ class Swiftcore_Init {
 	{
 		// Register the callback method for the extract_metadata event
 		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'extract_metadata'));
-		
-		
 	}
 	
 	/**
@@ -45,6 +43,7 @@ class Swiftcore_Init {
 		{
 			$fields_str .= $key."=".$value."&";
 		}
+		
 		rtrim($fields_str, "&");
 		
 		// cURL options
