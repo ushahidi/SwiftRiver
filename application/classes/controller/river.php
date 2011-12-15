@@ -462,39 +462,5 @@ class Controller_River extends Controller_Swiftriver {
 			}
 		}
 	}
-	
-	/**
-	 * Return GeoJSON representation of the river
-	 *
-	 */
-	public function action_geojson() {
-	    $id = (int) $this->request->param('id', 0);
-	    
-	    $droplets_array = Model_Droplet::get_geo_river($id);
-	    
-	    //Prepare the GeoJSON object
-	    $ret{'type'} = 'FeatureCollection';
-	    $ret{'features'} = array();
-	    
-	    //Add each droplet as a feature with point geometry and the droplet details
-	    //as the feature attributes
-	    foreach ($droplets_array['droplets'] as $droplet) 
-	    {
-	        $geo_droplet['type'] = 'Feature';
-	        $geo_droplet['geometry'] = array(
-	            'type' => 'Point',
-	            'coordinates' => array($droplet['longitude'], $droplet['latitude'])
-	        );
-	        $geo_droplet['properties'] = array(
-	            'droplet_id' => $droplet['id'],
-	            'droplet_title' => $droplet['droplet_title'],
-	            'droplet_content' => $droplet['droplet_content']
-	        );
-	        $ret{'features'}[] = $geo_droplet;
-	    }
-        
-        $this->auto_render = false;
-        echo json_encode($ret);
-    }
-	
+
 }
