@@ -73,6 +73,15 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets = $droplets_array['droplets'];
 		// Total Droplets After Filtering
 		$filtered_total = (int) count($droplets);
+
+		
+		//Throw a 404 if a non existent page is requested
+		if($page > 1 and empty($droplets)) {
+		    throw new HTTP_Exception_404(
+		        'The requested page :page was not found on this server.',
+		        array(':page' => $page)
+		        );
+		}
 		
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
