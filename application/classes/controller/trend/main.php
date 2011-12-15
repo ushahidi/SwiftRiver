@@ -21,9 +21,10 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 		'droplets' => array()
 		);
 	
-	private $more_url;
+	private $more_url = '#';
 
-	private $active;
+	// Active Menu
+	public static $active = 'droplets';
 
 	private $trend;
 
@@ -58,8 +59,10 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				->bind('river', $river)
 				->bind('droplets', $this->droplets)
 				->bind('more_url', $this->more_url)
-				->bind('active', $this->active)
+				->bind('active', self::$active)
 				->bind('trend', $this->trend);
+
+			$this->more_url = url::site().$this->account->account_path.'/river/more/'.$river->id;
 		}
 
 		if ( strpos($this->request->uri(), 'bucket/') !== FALSE)
@@ -82,8 +85,10 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				->bind('bucket', $bucket)
 				->bind('droplets', $this->droplets)
 				->bind('more_url', $this->more_url)
-				->bind('active', $this->active)
-				->bind('trend', $this->trend);		
+				->bind('active', self::$active)
+				->bind('trend', $this->trend);
+
+			$this->more_url = url::site().$this->account->account_path.'/bucket/more/'.$river->id;
 		}		
 	}
 }
