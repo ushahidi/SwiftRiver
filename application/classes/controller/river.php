@@ -390,12 +390,13 @@ class Controller_River extends Controller_Swiftriver {
 				// format for representing plugin config data
 				$filter_options = $this->_marshall_channel_options($_POST['options']);
 				
-				// Swiftriver Plugin Hook -- execute before saving a river
-				// Allows plugins to perform further validation checks
-				// ** Plugins can then use 'swiftriver.river.save' after the river
-				// has been saved
-				// Swiftriver_Event::run('swiftriver.river.pre_save', $filter_options);
-
+				/**
+				 * Execute the 'pre_save' event -- execute before saving a river
+				 * This event allows plugins to validate the channel options before
+				 * they are saved
+				 */
+				Swiftriver_Event::run('swiftriver.river.pre_save', $filter_options);
+				
 				// Save channel filters
 				$this->_save_filters($filter_options, $river);
 			

@@ -15,6 +15,12 @@
 class Swiftriver_Plugins {
 	
 	/**
+	 * List of plugins configured as channels
+	 * @var array
+	 */
+	private static $channels = array();
+	
+	/**
 	 * Load all active plugins into the Kohana system
 	 *
 	 * @return	void
@@ -85,42 +91,51 @@ class Swiftriver_Plugins {
 	/**
 	 * Find all the active plugins with channel services
 	 *
+	 * @param   bool $reload Reloads the channel configs when TRUE
 	 * @return	array $channels
 	 */
-	public static function channels()
+	public static function channels($reload = FALSE)
 	{
-		$channels = array();
-		
-		// Load the plugin configs and fetch only those that 
-		// have the channel property set to TRUE
-		$plugins = Kohana::$config->load('plugin');
-		foreach($plugins as $key => $plugin)
+		if ( ! $reload AND ! empty(self::$channels))
 		{
-			if (isset($plugin['channel']) AND $plugin['channel'] == TRUE)
+			return self::$channels;
+		}
+		else
+		{
+			$channels = array();
+		
+			// Load the plugin configs and fetch only those that 
+			// have the channel property set to TRUE
+			$plugins = Kohana::$config->load('plugin');
+			foreach($plugins as $key => $plugin)
 			{
-				$active = ORM::factory('plugin')
-					->where('plugin_path', '=', $key)
-					->where('plugin_enabled', '=', '1')
-					->find();
-					
-				if ($active->loaded())
+				if (isset($plugin['channel']) AND $plugin['channel'] == TRUE)
 				{
-					$channel_config = array();
+					$active = ORM::factory('plugin')
+						->where('plugin_path', '=', $key)
+						->where('plugin_enabled', '=', '1')
+						->find();
 					
-					// Validate the channel configuration
-					if ( ! self::_validate_channel_plugin_config($plugin, $channel_config))
-						continue;
+					if ($active->loaded())
+					{
+						$channel_config = array();
 					
-					// Set the plugin name
-					$channel_config['name'] = $plugin['name'];
+						// Validate the channel configuration
+						if ( ! self::_validate_channel_plugin_config($plugin, $channel_config))
+							continue;
 					
-					$channels[$key] = $channel_config;
+						// Set the plugin name
+						$channel_config['name'] = $plugin['name'];
 					
+						$channels[$key] = $channel_config;
+					}
 				}
 			}
+		
+			self::$channels = $channels;
 		}
-
-		return $channels;
+		
+		return self::$channels;
 	}
 	
 	/**
@@ -166,7 +181,7 @@ class Swiftriver_Plugins {
 			else
 			{
 				// Log the config error
-				Kohana::$log->add(Log::ERROR, ":plugin config error. 'channel_group_options MUST be set to TRUE'", 
+				Kohana::$log->add(Log::ERROR, ":plugin config error. 'channel_group_options' MUST be set to TRUE", 
 				    array(':plugin' => $plugin_name));
 				
 				return FALSE;
@@ -226,6 +241,7 @@ class Swiftriver_Plugins {
 		}
 	}
 
+
 	/**
 	 * Determine if a plugin has feed service options
 	 *
@@ -253,6 +269,7 @@ class Swiftriver_Plugins {
 			return FALSE;
 		}
 	}
+
 	
 	/**
 	 * Helper function that generates the HTML for a channel option item
@@ -284,6 +301,61 @@ class Swiftriver_Plugins {
 		}
 		
 		return $ui_html;
+	}
+
+	
+	/**
+	 * Validates the option data for the specified plugin. If an item
+	 * fails the validation test, it's removed from the option data
+	 *
+	 * @param array $options Plugin option data to validate
+	 * @param string $plugin Name of the plugin
+	 */
+	public static function validate_channel_options(array & $options, $channel)
+	{
+		// Verify that the channel exists in the submitted data
+		if ( ! isset($options[$channel]))
+			return;
+			
+		// Check if the plugin uses grouped options
+		$configs = self::channels();
+		$has_group = array_key_exists('group', $configs[$channel]);
+		
+		// Validation for each of the options
+		foreach ($options[$channel] as $index => $option)
+		{
+			foreach ($option as $key => $values)
+			{
+				if ($has_group)
+				{
+					$valid = TRUE;
+					// Grouped option items - validate each item in the group
+					foreach ($values as $option_key => $items)
+					{
+						if (empty($items['value']))
+						{
+							$valid = FALSE;
+						}
+					}
+					
+					// If all the options did not pass the validation checks,
+					// remove the group from the list of options
+					if ( ! $valid)
+					{
+						unset ($options[$channel][$index][$key]);
+					}
+				}
+				else
+				{
+					// Single option item
+					if (empty($values['value']))
+					{
+						// Remove the option item from the list of options
+						unset ($options[$channel][$index][$key]);
+					}
+				}
+			}
+		}
 	}
 	
 }

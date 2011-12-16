@@ -56,6 +56,9 @@ class Swiftriver_Channel_Worker_Twitter extends Swiftriver_Channel_Worker {
 			AND defined('TWITTER_CONSUMER_KEY') 
 			AND defined('TWITTER_CONSUMER_SECRET'))
 		{ 
+			// TODO - Get the keywords associated/filter options with the river
+			// in $job->workload()
+			
 			// Consume the firehose!
 			$sc = new Firehose_Filter(OAUTH_TOKEN, OAUTH_SECRET, Phirehose::METHOD_FILTER);
 			$sc->consume();
