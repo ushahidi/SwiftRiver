@@ -10,10 +10,10 @@
 			<nav class="cf">
 				<ul class="views">
 					<li class="droplets active"><a href="#"><?php echo __('Droplets');?></a></li>
-					<li><a href="#">Map</a></li>
-					<li><a href="#">Tags</a></li>
-					<li><a href="#">Links</a></li>
-					<li><a href="#">Sources</a></li>
+					<?php
+					// SwiftRiver Plugin Hook -- Add Bucket Nav Item
+					Swiftriver_Event::run('swiftriver.bucket.nav', $bucket);
+					?>
 					<li class="view_panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
 				<ul class="actions">

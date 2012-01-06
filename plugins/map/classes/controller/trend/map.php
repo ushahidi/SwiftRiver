@@ -15,7 +15,8 @@
  */
 class Controller_Trend_Map extends Controller_Trend_Main {
     
-    public function action_index() {       
+    public function action_index() 
+    {       
         
         $id = $this->request->param('id');
         
@@ -24,7 +25,7 @@ class Controller_Trend_Map extends Controller_Trend_Main {
                         ->bind("geojson_url", $geojson_url)
                         ->bind("droplet_base_url", $droplet_base_url);
                         
-        $geojson_url = url::site().'river/trend/map/'.$id.'/geojson';
+        $geojson_url = url::site().$this->context.'/trend/map/'.$id.'/geojson';
         $droplet_base_url = url::site().'droplet/detail/';
     }
     
@@ -32,10 +33,18 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 	 * Return GeoJSON representation of the river
 	 *
 	 */
-	public function action_geojson() {
+	public function action_geojson() 
+	{
 	    $id = (int) $this->request->param('id', 0);
 	    
-	    $droplets_array = $this->_get_geo_river($id);
+	    if ($this->context == 'river')
+	    {
+	        $droplets_array = $this->_get_geo_river($id);
+        }
+        else if ($this->context == 'bucket')
+        {
+            $droplets_array = $this->_get_geo_bucket($id);
+        }
 	    
 	    //Prepare the GeoJSON object
 	    $ret{'type'} = 'FeatureCollection';
@@ -67,7 +76,8 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 	 *
 	 * @param int $id ID of the river	
 	 */
-	 private function _get_geo_river($id = NULL) {
+	 private function _get_geo_river($id = NULL) 
+	 {
 	     $droplets = array(
  			'total' => 0,
  			'droplets' => array()
@@ -99,7 +109,46 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 	     
 	     return $droplets;
 	 }    
-        
+
+ 	/**
+ 	 * Get geotagged droplets from a Bucket
+ 	 *
+ 	 * @param int $id ID of the bucket	
+ 	 */
+ 	 private function _get_geo_bucket($id = NULL) 
+ 	 {
+ 	     $droplets = array(
+  			'total' => 0,
+  			'droplets' => array()
+  			);
+
+ 	     if ($id) 
+ 	     {
+  			$query = DB::select('droplets.id', 'droplet_title', 
+  			                    'droplet_content', 'droplets.channel',
+  			                    'identity_name', 'identity_avatar', 
+  			                    'droplet_date_pub', 
+  			                    array(DB::expr('X(place_point)'), 'longitude'), 
+  			                    array(DB::expr('Y(place_point)'), 'latitude'))
+  			    ->from('droplets')
+  			    ->join('buckets_droplets', 'INNER')
+  			    ->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+  			    ->join('identities')
+  			    ->on('droplets.identity_id', '=', 'identities.id')
+  			    ->join('droplets_places')
+  			    ->on('droplets_places.droplet_id', '=', 'droplets.id')
+  			    ->join('places')
+  			    ->on('droplets_places.place_id', '=', 'places.id')
+  			    ->where('buckets_droplets.bucket_id', '=', $id);
+
+ 	         // Get our droplets as an Array		
+  			$droplets['droplets'] = $query->execute()->as_array();
+  			$droplets['total'] = (int) count($droplets['droplets']);
+ 	     }
+
+ 	     return $droplets;
+ 	 }
+
 }
 
 ?>
