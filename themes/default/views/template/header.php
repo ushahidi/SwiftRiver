@@ -27,6 +27,11 @@
 		// Dynamic inline JS
 		echo $js;
 	?></script>
+	
+	<?php
+	    // SwiftRiver Plugin Hook -- Add Bucket Nav Item
+	    Swiftriver_Event::run('swiftriver.template.header');
+	?>
 </head> 
  
 <body> 

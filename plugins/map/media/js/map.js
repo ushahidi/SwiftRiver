@@ -1,5 +1,5 @@
-$.getScript('http://openlayers.org/api/OpenLayers.js', function(data, textStatus){    
-
+$(document).ready(function() {
+    
     // Popup close event
     function onPopupClose(evt) {
         // 'this' is the popup.
@@ -45,7 +45,9 @@ $.getScript('http://openlayers.org/api/OpenLayers.js', function(data, textStatus
     var map = new OpenLayers.Map('map');
     var osm = new OpenLayers.Layer.OSM( "OpenLayers OSM");
     map.addLayer(osm);
-   map.setCenter(new OpenLayers.LonLat(0, 0), 1);
+    
+    //FIXME: Determine this from bounds obtained from droplet contents.
+    map.setCenter(new OpenLayers.LonLat(0, 0), 2);
     
     // The marker layer
     var markerRadius = 4;
@@ -187,6 +189,34 @@ $.getScript('http://openlayers.org/api/OpenLayers.js', function(data, textStatus
     selectControl = new OpenLayers.Control.SelectFeature(vLayer);
     map.addControl(selectControl);
     selectControl.activate(); 
+
+
+    // Full screen map borrowed from the Ushahidi fullscreenmap plugin
+    var orig_width = $("#map").width();
+    var orig_height = $("#map").height();
+    
+    $(".fullscreenmap_click").colorbox({
+    	width:"100%", 
+    	height:"100%", 
+    	inline:true, 
+    	href:"#map",
+    	// Resize Map DIV and Refresh
+    	onComplete:function(){                	    
+    	    $("#map").width("99%");
+    		$("#map").height("99%");
+    		map.setCenter(currCenter, currZoom, false, false);
+    	},
+    	// Return DIV to original state
+    	onClosed:function(){
+    	    currZoom = map.getZoom();
+            currCenter = map.getCenter();
+    		$("#map").width(orig_width);
+    		$("#map").height(orig_height);
+    		$("#map").show();
+    		map.setCenter(currCenter, currZoom, false, false);
+    	}
+    });    
+
   
 });
 

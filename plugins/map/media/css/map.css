@@ -1,5 +1,22 @@
 div.map {
     border: 1px solid #999999;
-    height: 366px;
+    height: 420px;
     position: relative;
-    width: 573px;
+    width: 100%;
+}
+
+div.fullscreenmap-btn{
+	background-image:url(media/imigis/window.png);
+	background-repeat:no-repeat;
+	background-position:5px;
+	background-color:#eee;
+	padding:5px 5px 5px 28px;
+	line-height:16px;
+	border:1px solid #ccc;
+}
+
+div.fullscreenmap-btn a{
+	padding:0 5px 0 5px;
+	background-color:darkblue;
+	color:#fff;
+}
