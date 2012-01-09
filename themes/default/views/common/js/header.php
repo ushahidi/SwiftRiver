@@ -1,17 +1,3 @@
-function inlineEdit() {
-	inputID = $('#inline_edit_id').val();
-	inputName = $('#inline_edit_name').val();
-	inputValue = $('#inline_edit_text').val();
-
-	if ( (typeof (inputID) != 'undefined' && inputID) && (typeof (inputName) != 'undefined' && inputName) && (typeof (inputValue) != 'undefined' && inputValue) ) {
-		$.post('<?php echo URL::site()?>'+inputName+'/ajax_title', { edit_id: inputID, edit_value: inputValue },
-			function(data){
-				$('button.cancel').parent().remove();
-				$('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inputName +'" id="'+ inputID +'" onclick="">' + inputValue + '</span>');
-			}, "json");
-	}
-}
-
 // Add/Remove Droplet from Bucket
 function addBucketDroplet(bucket, bucket_id, droplet_id){
 	// get the new action from the link title
@@ -86,21 +72,44 @@ function createBucket(create, where, droplet_id){
 	});	
 }
 
-var inlineInputValue;
 $(document).ready(function() {
 
 	// Inline Editing
 	$('.edit_trigger').live('click', function() {
-		inlineInputValue = $(this).text();
-		inlineInputType = $(this).attr('title');
-		inlineInputId = $(this).attr('id').replace(/[^0-9]/g, '');
-		$(this).replaceWith('<span class="edit_input"><input type="hidden" id="inline_edit_id" value="'+ inlineInputId +'"><input type="hidden" id="inline_edit_name" value="'+ inlineInputType +'"><input type="text" id="inline_edit_text" value="'+ inlineInputValue +'" placeholder="Enter the name of your River"></span>');
-		$('.edit').append('<div class="buttons"><button class="save" onclick="inlineEdit()"><?php echo __('Save'); ?></button><button class="cancel"><?php echo __('Cancel'); ?></button></div>');
-		$('button.cancel').click(function() {
-			$(this).parent().remove();
-			$('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
+	    
+	    // Declare these vars as local to create a closure
+	    // and avoid weird problems if multiple inline edits
+	    // are being done at once.
+		var inlineInputValue = $(this).text();
+		var inlineInputType = $(this).attr('title');
+		var inlineInputId = $(this).attr('id').replace(/[^0-9]/g, '');
+		
+		// Replace the text with a text box and hidden input field registers
+		$(this).closest('.edit').append('<div class="buttons"><button class="save"><?php echo __('Save'); ?></button><button class="cancel"><?php echo __('Cancel'); ?></button></div>');
+		$(this).replaceWith('<span class="edit_input"><input type="hidden" id="inline_edit_id" value="'+ inlineInputId +'"><input type="hidden" id="inline_edit_name" value="'+ inlineInputType +'"><input type="text" id="inline_edit_text" value="'+ inlineInputValue +'"></span>');		
+		
+		// When the cancel button is clicked
+		$('.edit .buttons button.cancel').click(function() {
+		    $(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
+			$(this).parent().remove();			
 		});
+		
+		// When the save button is clicked
+		$('.edit .buttons button.save').click(function() {
+		    var inputValue = $(this).closest('.edit').find('.edit_input #inline_edit_text').val();
+		    var save_button = $(this);
+        	if ( (typeof (inlineInputId) != 'undefined' && inlineInputId) && 
+        	    (typeof (inlineInputType) != 'undefined' && inlineInputType) && 
+        	    (typeof (inputValue) != 'undefined' && inputValue) ) {
+        		$.post('<?php echo URL::site()?>'+inlineInputType+'/ajax_title', { edit_id: inlineInputId, edit_value: inputValue },
+        			function(data){
+        				save_button.closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="'+ inlineInputId +'" onclick="">' + inputValue + '</span>');
+        				save_button.parent().remove();
+        			}, "json");
+        	}		    
+	    });
 	});
+	
 
 	// Add or remove a droplet from buckets
 	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');

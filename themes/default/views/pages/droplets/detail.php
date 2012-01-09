@@ -24,15 +24,17 @@
 		<div class="item cf">
 			<h2>Location</h2>
 			<?php foreach ($droplet->places->find_all() as $place): ?>
-			    <p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $place->place_name ?></span></p>
+			    <p class="edit"><span class="edit_trigger" title="place" id="edit_<?php echo $place->id; ?>" onclick=""><?php echo $place->place_name ?></span></p>
 			<?php endforeach; ?>
+			<p class="button_change"><a>Add location</a></p>
 		</div>
 	
 		<div class="item cf">
 			<h2>Links</h2>
 			<?php foreach ($droplet->links->find_all() as $link): ?>
-			    <p class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $link->link ?></span></p>
+			    <p class="edit"><span class="edit_trigger" title="link" id="edit_<?php echo $link->id; ?>" onclick=""><?php echo $link->link ?></span></p>
 			<?php endforeach; ?>
+			<p class="button_change"><a>Add links</a></p>
 		</div>
 	
 		<div class="item cf">
@@ -44,10 +46,10 @@
 		<article class="fullstory">
 			<hgroup>
 				<h2>Full story</h2>
-				<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><?php echo $droplet->droplet_title ?></span></h1>
+				<h1 class="edit"><span class="edit_trigger" title="droplet" id="edit_<?php echo $droplet->id; ?>" onclick=""><?php echo $droplet->droplet_title ?></span></h1>
 			</hgroup>
 			<div class="edit">
-			<span class="edit_trigger" title="textarea" onclick="">
+			<span class="edit_trigger" title="droplet" id="edit_<?php echo $droplet->id; ?>" onclick="">
 			<?php echo $droplet->droplet_content ?>
 			</span>
 			</div>
