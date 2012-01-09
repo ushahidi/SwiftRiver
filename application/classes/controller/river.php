@@ -65,18 +65,20 @@ class Controller_River extends Controller_Swiftriver {
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 
 		//Get Droplets
-		$droplets_array = Model_Droplet::get_river($river->id, $page);
+		$droplets_array = Model_River::get_droplets($river->id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
+		
 		// The Droplets
 		$droplets = $droplets_array['droplets'];
+		
 		// Total Droplets After Filtering
-		$filtered_total = (int) count($droplets);
-
+		$filtered_total = count($droplets);
 		
 		//Throw a 404 if a non existent page is requested
-		if($page > 1 and empty($droplets)) {
+		if ($page > 1 AND empty($droplets))
+		{
 		    throw new HTTP_Exception_404(
 		        'The requested page :page was not found on this server.',
 		        array(':page' => $page)

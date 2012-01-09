@@ -13,8 +13,13 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_River extends ORM
-{
+class Model_River extends ORM {
+	
+	/**
+	 * Number of droplets to show per page
+	 */
+	const DROPLETS_PER_PAGE = 20;
+	
 	/**
 	 * A river has many channel_filters
 	 * A river has and belongs to many droplets
@@ -27,7 +32,7 @@ class Model_River extends ORM
 			'model' => 'droplet',
 			'through' => 'rivers_droplets'
 			)					
-		);		
+		);
 	
 	/**
 	 * An account belongs to an account
@@ -131,5 +136,82 @@ class Model_River extends ORM
 	public static function is_valid_river_id($river_id)
 	{
 		return (bool) ORM::factory('river', $river_id)->loaded();
+	}
+	
+	/**
+	 * Gets the droplets for the specified river
+	 *
+	 * @param int $river_id Database ID of the river
+	 * @param int $page Offset to use for fetching the droplets
+	 * @param string $sort Sorting order
+	 * @return array
+	 */
+	public static function get_droplets($river_id, $page = 1, $sort = 'DESC')
+	{
+		$droplets = array(
+			'total' => 0,
+			'droplets' => array()
+			);
+
+		if ($river_id)
+		{
+			// Build River Query
+			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			                    'droplet_title', 'droplet_content', 
+			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+			    ->from('droplets')
+			    ->join('rivers_droplets', 'INNER')
+			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+			    ->join('identities')
+			    ->on('droplets.identity_id', '=', 'identities.id')
+			    ->where('rivers_droplets.river_id', '=', $river_id);
+			
+			// Clone query before any filters have been applied
+			$pre_filter = clone $query;
+			
+			// Order the dataset by droplet id
+			$pre_filter->order_by('droplets.id', $sort);
+			$pre_filter_data = $pre_filter->execute()->as_array();
+			
+			$droplets['total'] = count($pre_filter_data);
+
+			// SwiftRiver Plugin Hook -- Hook into River Droplet Query
+			//++ Allows for adding for more filters via Plugin
+			Swiftriver_Event::run('swiftriver.river.filter', $query);
+
+			// Check if we have max droplet id stored from a previous request
+			$session = Session::instance();
+			$max_droplet_id = $session->get('river_pagination_max_droplet');
+			
+			// Get the max droplet id from the returned data
+			$current_max_id = count($pre_filter_data) > 0 
+			    ? $pre_filter_data[0]['id'] 
+			    : 0;
+			
+			if ($max_droplet_id > $current_max_id)
+			{
+			   $query->where('droplets.id', '<', $max_droplet_id);	   
+			}
+			else
+			{
+				$query->where('droplets.id', '<', $current_max_id);
+				
+				// Set the new max droplet id
+				$session->set('river_pagination_max_droplet', $current_max_id);
+			}
+
+			// Order & Pagination offset
+			$query->order_by('droplets.id', $sort);
+			if ($page > 0)
+			{
+			    $query->limit(self::DROPLETS_PER_PAGE);	
+		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+	        }
+	
+			// Get our droplets as an Array
+			$droplets['droplets'] = $query->execute()->as_array();
+		}
+
+		return $droplets;
 	}
 }

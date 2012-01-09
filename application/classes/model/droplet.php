@@ -15,10 +15,6 @@
  */
 class Model_Droplet extends ORM
 {
-	/**
-	 * Number of droplets to show per page
-	 */
-	const DROPLETS_PER_PAGE = 20;
 
 	/**
 	 * A droplet has and belongs to many links, places, tags and attachments
@@ -282,73 +278,6 @@ class Model_Droplet extends ORM
 		return $droplets;
 	}
 
-
-	/**
-	 * Get Droplets by River
-	 *
-	 * @param int $id ID of the River
-	 * @return array $droplets Total and Array of Droplets
-	 */
-	public static function get_river($id = 0, $page = Null)
-	{
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
-
-		if ($id)
-		{
-			// Build River Query
-			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
-			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
-			    ->from('droplets')
-			    ->join('rivers_droplets', 'INNER')
-			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-			    ->join('identities')
-			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->where('rivers_droplets.river_id', '=', $id);
-
-			// Clone query before any filters have been applied
-			$pre_filter = clone $query;
-			$droplets['total'] = (int) $pre_filter->execute()->count();
-
-			// SwiftRiver Plugin Hook -- Hook into River Droplet Query
-			//++ Allows for adding for more filters via Plugin
-			Swiftriver_Event::run('swiftriver.river.filter', $query);
-			
-			//Check if we have max droplet id stored from a previous
-			//request. If so, use it to prevent pagination from getting
-			//screwed by new droplets coming in...
-			$session = Session::instance();
-			$max_droplet_id = $session->get('river_pagination_max_droplet');
-			if ($max_droplet_id)
-			{
-			   $query->where('droplets.id', '<', $max_droplet_id);	   
-			}
-			
-			// Order & Pagination offset
-			$query->order_by('droplets.id', 'DESC');
-			if($page)
-			{
-			    $query->limit(self::DROPLETS_PER_PAGE);	
-		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-	        }
-		    	    
-			// Get our droplets as an Array
-			$droplets['droplets'] = $query->execute()->as_array();
-
-			//Get the max id form the session if already set
-			//and use this in our query to stop new droplets
-			//coming in from messing up the pagination
-			if ((int) count($droplets['droplets']) AND ! $max_droplet_id) 
-			{
-			    $session->set('river_pagination_max_droplet', $droplets['droplets'][0]['id']);
-			}			
-		}
-
-		return $droplets;
-	}
 
 	/**
 	 * Get Droplets by Bucket
