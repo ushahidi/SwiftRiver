@@ -45,7 +45,7 @@ COMMENT = 'Track followers' ;
 -- -----------------------------------------------------
 -- Table `tags`
 -- -----------------------------------------------------
-CREATE TABLE `tags` (
+CREATE  TABLE IF NOT EXISTS `tags` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   `tag_type` varchar(255) DEFAULT NULL,
