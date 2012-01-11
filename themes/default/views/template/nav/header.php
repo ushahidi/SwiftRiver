@@ -23,7 +23,7 @@
 				<li class="user has_dropdown">
 					<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /><span class="arrow"></span><span class="label"><?php echo $user->name; ?></span></a>
 					<ul class="dropdown">
-						<li><a href="<?php echo URL::site().'dashboard'; ?>"><?php echo __('Your account');?></a></li>
+						<li><a href="<?php echo URL::site().'dashboard/settings'; ?>"><?php echo __('Your account');?></a></li>
 						<?php if ($admin): ?>
 							<li><a href="<?php echo URL::site().'settings'; ?>"><?php echo __('Site settings');?></a></li>
 						<?php endif; ?>						
