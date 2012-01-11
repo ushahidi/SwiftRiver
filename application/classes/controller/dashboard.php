@@ -30,11 +30,9 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/dashboard/layout')
 			->bind('user', $this->user)
 			->bind('active', $this->active)
-			->bind('sub_content', $this->sub_content)
-			->bind('settings', $settings);
+			->bind('template_type', $this->template_type)
+			->bind('sub_content', $this->sub_content);
 		
-		$settings = url::site().'dashboard/settings/';
-
 		$this->template->header->js = View::factory('pages/dashboard/js/dashboard');
 	}
 
@@ -50,6 +48,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('following', $following)
 			->bind('followers', $followers);
 		$this->active = 'main';
+		$this->template_type = 'dashboard';
 
 		// Get Following (as_array)
 		// ++ We can cache this array in future
@@ -85,6 +84,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/dashboard/rivers')
 			->bind('rivers', $rivers);
 		$this->active = 'rivers';
+		$this->template_type = 'list';
 		
 		// Get Rivers (as_array)
 		// ++ We can cache this array in future
@@ -106,6 +106,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/dashboard/buckets')
 			->bind('buckets', $buckets);
 		$this->active = 'buckets';
+		$this->template_type = 'list';
 		
 		// Get Rivers (as_array)
 		// ++ We can cache this array in future
@@ -126,20 +127,18 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	{
 		$this->sub_content = View::factory('pages/dashboard/teams');
 		$this->active = 'teams';
+		$this->template_type = 'list';
 	}
 
 	/**
-	 * Ajax rendered settings control box
+	 * Account settings controls
 	 * 
 	 * @return	void
 	 */
 	public function action_settings()
 	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$settings = View::factory('pages/dashboard/settings_control');
-		$settings->user = $this->user;
-		echo $settings;
+		$this->template->content = View::factory('pages/dashboard/settings')
+			->bind('user', $this->user);
 	}
 
 	/**
@@ -212,5 +211,37 @@ class Controller_Dashboard extends Controller_Swiftriver {
 				$this->user->save();
 			}
 		}
+	}
+
+	/**
+	 * Ajax rendered list of all tabs, for small screens
+	 * 
+	 * @return	void
+	 */
+	public function action_view_tabs()
+	{
+		$this->template->content = View::factory('pages/dashboard/views')
+			->bind('user', $this->user);
+	}
+
+	/**
+	 * Ajax rendered filter for list of Rivers
+	 * 
+	 * @return	void
+	 */
+	public function action_filter_rivers()
+	{
+		$this->sub_content = View::factory('pages/dashboard/filter_rivers');
+		$this->active = 'rivers';
+	}
+
+	/**
+	 * Ajax rendered form for editing multiple rivers in a list
+	 * 
+	 * @return	void
+	 */
+	public function action_edit_multiple_rivers()
+	{
+		$this->template = View::factory('pages/dashboard/edit_multiple_rivers');
 	}		
 }

@@ -1,15 +1,55 @@
-<div class="list_stream">		
-	<ul>
-		<li>
-			<a href="/bucket/" class="title">Team 1</a>
-			<div class="actions">
-				<span class="button_delete"><a>Leave team</a></span>
-				<ul class="dropdown">
-					<p>Are you sure you want to leave this team?</p>
-					<li class="confirm"><a onclick="">Yep.</a></li>
-					<li class="cancel"><a onclick="">No, nevermind.</a></li>
-				</ul>
-			</div>
-		</li>
-	</ul>
+<div class="container select data">
+	<div class="controls edit_advanced">
+		<div class="row cf">
+			<p class="button_go edit_single"><a href="#">Edit team</a></p>
+			<p class="button_view edit_multiple"><a href="<?php echo URL::site()?>dashboard/edit_multiple_teams">Edit multiple</a></p>
+			<p class="button_view"><a href="<?php echo URL::site()?>dashboard/filter_rivers">Filter</a></p>
+			<p class="button_go create_new"><a href="#">Create new</a></p>
+		</div>
+		<div class="detail cf"></div>
+	</div>
+	
+	<article class="item cf">
+		<div class="content">
+			<div class="checkbox"><input type="checkbox" /></div>
+			<h1><a href="/team/" class="title">Team 1</a></h1>
+		</div>
+		<div class="summary">
+			<section class="actions">
+				<div class="button">
+					<p class="button_change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
+					<div class="clear"></div>
+					<div class="dropdown container">
+						<p>Are you sure you want to leave Team 1?</p>
+						<ul>
+							<li class="confirm"><a onclick="">Yep.</a></li>
+							<li class="cancel"><a onclick="">No, nevermind.</a></li>
+						</ul>
+					</div>
+				</div>
+			</section>
+		</div>
+	</article>
+	
+	<article class="item cf">
+		<div class="content">
+			<div class="checkbox"><input type="checkbox" /></div>
+			<h1><a href="/team/" class="title">Team 2</a></h1>
+		</div>
+		<div class="summary">
+			<section class="actions">
+				<div class="button">
+					<p class="button_change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
+					<div class="clear"></div>
+					<div class="dropdown container">
+						<p>Are you sure you want to leave Team 2?</p>
+						<ul>
+							<li class="confirm"><a onclick="">Yep.</a></li>
+							<li class="cancel"><a onclick="">No, nevermind.</a></li>
+						</ul>
+					</div>
+				</div>
+			</section>
+		</div>
+	</article>
 </div>
