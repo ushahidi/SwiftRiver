@@ -1,7 +1,7 @@
 <nav>
 	<ul>
 		<li class="rivers has_dropdown">
-			<a><span class="arrow"></span><?php echo __('Rivers');?></a>
+			<a href="<?php echo URL::site().'dashboard/rivers' ?>" class="arrow"><span class="icon"></span><?php echo __('Rivers');?></a>
 			<ul class="dropdown">
 				<?php foreach ($rivers as $river): ?>
 					<li><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a></li>
@@ -10,7 +10,7 @@
 			</ul>
 		</li>
 		<li class="buckets has_dropdown">
-			<a><span class="arrow"></span><?php echo __('Buckets');?></a>
+			<a href="<?php echo URL::site().'dashboard/buckets' ?>" class="arrow"><span class="icon"></span><?php echo __('Buckets');?></a>
 			<ul class="dropdown" id="dropdown_buckets">
 				<?php foreach ($buckets as $bucket): ?>
 					<li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li>
@@ -21,7 +21,7 @@
 		<div class="account">
 			<?php if ($user): ?>
 				<li class="user has_dropdown">
-					<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /><span class="arrow"></span><span class="label"><?php echo $user->name; ?></span></a>
+					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /><span class="icon"></span><span class="label"><?php echo $user->name; ?></span></a>
 					<ul class="dropdown">
 						<li><a href="<?php echo URL::site().'dashboard/settings'; ?>"><?php echo __('Your account');?></a></li>
 						<?php if ($admin): ?>

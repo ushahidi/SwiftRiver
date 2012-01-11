@@ -1,12 +1,12 @@
 <div id="river_droplets">
 <?php foreach ($droplets as $droplet): ?>
-	<article class="droplet cf">
-		<div class="summary">
+	<article class="item">
+		<div class="summary cf">
 			<section class="source <?php echo $droplet['channel'] ?>">
 				<a><img src="<?php echo $droplet['identity_avatar'] ?>" /></a>
 				<div class="actions">
 					<span class="type"></span>
-					<p class="button_change score"><a onclick=""><span>0</span></a><p>
+					<p class="button_change"><a class="score" onclick=""><span class="icon">0</span></a><p>
 					<div class="clear"></div>
 					<ul class="dropdown left">
 						<li class="confirm"><a onclick="">This is useful</a></li>
@@ -14,31 +14,35 @@
 					</ul>
 				</div>
 			</section>
-			<section class="content">
-				<div class="title">
+			<div class="content">
+				<hgroup>
 					<p class="date"><?php echo $droplet['droplet_date_pub'] ?></p>
 					<h1><?php echo $droplet['identity_name'] ?></h1>
-				</div>
+				</hgroup>
 				<div class="body">
 					<p><?php echo $droplet['droplet_title'] ?></p>
 				</div>
-			</section>
-			<section class="actions">
-				<p class="button_view"><a href="/droplet/detail/<?php echo $droplet['id'];?>" class="detail_view"><span></span><strong>detail</strong></a></p>
 				<div class="button">
-					<p class="button_change bucket"><a><span></span><strong>buckets</strong></a></p>
+					<p class="button_change checkbox_options" onclick=""><a><span class="icon"></span></a></p>
 					<div class="clear"></div>
-					<ul class="dropdown river">
-						<?php foreach ($buckets as $bucket) :
-							$bucket_action = Swiftriver_Droplets::bucket_action($bucket->id, $droplet['id']);?>
-							<li class="bucket"><a onclick="addBucketDroplet(this, <?php echo $bucket->id.','.$droplet['id']; ?>)" title="<?php echo $bucket_action; ?>" class="<?php echo ($bucket_action == 'remove') ? 'selected' : ''; ?>" ><span class="select"></span><?php echo $bucket->bucket_name; ?></a></li>
-						<?php endforeach; ?>
-						<li class="create_new"><a onclick="createBucket(this, 'droplet', <?php echo $droplet['id']; ?>)"><span class="create_trigger"><em>Create new</em></span></a></li>
-					</ul>
+					<div class="dropdown">
+						<div class="container">
+							<h3>Add to Bucket</h3>
+							<ul>
+							<?php foreach ($buckets as $bucket) :
+								$bucket_action = Swiftriver_Droplets::bucket_action($bucket->id, $droplet['id']);?>
+								<li class="checkbox"><a onclick="addBucketDroplet(this, <?php echo $bucket->id.','.$droplet['id']; ?>)" title="<?php echo $bucket_action; ?>" class="<?php echo ($bucket_action == 'remove') ? 'selected' : ''; ?>" ><span class="input"></span><?php echo $bucket->bucket_name; ?></a></li>
+							<?php endforeach; ?>
+							</ul>
+							<p class="create_new"><a onclick="createBucket(this, 'droplet', <?php echo $droplet['id']; ?>)" class="plus"><span class="create_trigger"><em>Create new</em></span></a></li>
+						</div>
+					</div>
 				</div>
 			</section>
+			<section class="actions">
+				<p class="button_view"><a href="/droplet/detail/<?php echo $droplet['id'];?>" class="detail_view"><span class="icon"></span></a></p>
+			</section>
 		</div>
-		<section class="detail cf"></section>
 	</article>
 <?php endforeach; ?>
 </div>

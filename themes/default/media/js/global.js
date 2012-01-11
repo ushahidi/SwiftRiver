@@ -1,19 +1,23 @@
 $(document).ready(function() {	
-	// View or hide a dropdown menu
-	$('.has_dropdown > a').live('click', function(e) {
-		// $('ul.dropdown').fadeOut('fast');
-		$(this).parent().toggleClass('active');
-	    $(this).siblings('ul.dropdown').fadeToggle('fast');
-		e.stopPropagation();
+	// MOVE ARTICLE ACTIONS	
+	$.each($('div.canvas article.item section.actions, article.single > div.canvas > div.summary > section.actions'), function() {
+		var articleTools = $(this).siblings('div.content').children('div.button');
+		$(this).append(articleTools);
+		if ($(this).children().length > 1) {
+			$(this).addClass('two_buttons');
+		}
 	});
+
+	// TOGGLE DROPDOWN
 	$('.dropdown .cancel').live('click', function(e) {
 		$(this).closest('.dropdown').fadeOut('fast');
 		$(this).closest('.dropdown').siblings('p').removeClass('active');
 	});
-	$('.actions .button_delete, .actions .button_change').live('click', function(e) {
+	$('.has_dropdown > a, .actions .button_delete, .actions .button_change').live('click', function(e) {
 		$(this).toggleClass('active');
-		$(this).siblings('.dropdown').fadeToggle('fast');
+		$(this).siblings('.dropdown').fadeToggle('fast')
 		e.stopPropagation();
+		return false;
 	});
 	$('.actions .dropdown').live('click', function(e) {
 		e.stopPropagation();
@@ -150,9 +154,17 @@ $(document).ready(function() {
 	$(document).click(function(e) {
 		if(e.isPropagationStopped()) return;
 	    $('.dropdown').fadeOut('fast');
-		$('.actions p, .actions span').removeClass('active');
+		$('.actions p, .actions span, .actions h3').removeClass('active');
+		$('.actions .button_change, .actions span').removeClass('active');
 		$('.has_dropdown').removeClass('active');
 	});
+});
+
+// Hide mobile address bar
+window.addEventListener("load",function() {
+  setTimeout(function(){
+    window.scrollTo(0, 1);
+  }, 0);
 });
 
 
