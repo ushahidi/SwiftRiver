@@ -6,35 +6,46 @@
 			<div class="clear"></div>
 			<ul id="delete_droplet" class="dropdown left">
 				<p>Are you sure you want to delete this droplet?</p>
-				<li class="confirm"><a href="/droplet/delete/<?php echo $droplet->id ?>" onclick="">Yep.</a></li>
+				<li class="confirm"><a href="<?php echo URL::site(); ?>droplet/delete/<?php echo $droplet->id ?>" onclick="">Yep.</a></li>
 				<li class="cancel"><a onclick="">No, nevermind.</a></li>
 			</ul>
 		</div>
 		
-		<div class="item cf">
+		<div class="item cf has_inline_add">
 			<h2>Tags</h2>
-			<ul class="tags cf">
+			<ul class="tags cf" id="inline_tag_add">
 				<?php foreach ($droplet->tags->find_all() as $tag): ?>
 				    <li><a href="#"><?php echo $tag->tag ?></a></li>
 				<?php endforeach; ?>
+				<?php foreach ($droplet->account_droplet_tags->where('account_id', '=', $account->id)->find_all() as $account_tag): ?>
+				    <li><a><?php echo $account_tag->tag->tag ?></a></li>
+				<?php endforeach; ?>				
 			</ul>
-			<p class="button_change"><a>Add tag</a></p>
+			<p class="button_change"><a href="<?php echo URL::site(); ?>droplet" title="tag" id='add_tag_<?php echo $droplet->id ?>'>Add tag</a></p>
 		</div>
 	
-		<div class="item cf">
+		<div class="item cf has_inline_add">
 			<h2>Location</h2>
 			<?php foreach ($droplet->places->find_all() as $place): ?>
-			    <p class="edit"><span class="edit_trigger" title="place" id="edit_<?php echo $place->id; ?>" onclick=""><?php echo $place->place_name ?></span></p>
+			    <p class="edit"><span class="edit_trigger" title="place" id="edit_<?php echo $place->id; ?>"><?php echo $place->place_name ?></span></p>
 			<?php endforeach; ?>
-			<p class="button_change"><a>Add location</a></p>
+			<?php foreach ($droplet->account_droplet_places->where('account_id', '=', $account->id)->find_all() as $account_place): ?>
+			    <p class="edit"><span class="edit_trigger" title="place" id="edit_<?php echo $account_place->place->id; ?>"><?php echo $account_place->place->place_name ?></span></p>
+			<?php endforeach; ?>			
+			<div id="inline_place_add"></div>
+			<p class="button_change"><a href="<?php echo URL::site(); ?>droplet" title="place" id='add_place_<?php echo $droplet->id ?>'>Add location</a></p>
 		</div>
 	
-		<div class="item cf">
+		<div class="item cf has_inline_add">
 			<h2>Links</h2>
 			<?php foreach ($droplet->links->find_all() as $link): ?>
-			    <p class="edit"><span class="edit_trigger" title="link" id="edit_<?php echo $link->id; ?>" onclick=""><?php echo $link->link ?></span></p>
+			    <p class="edit"><span class="edit_trigger" title="link" id="edit_<?php echo $link->id; ?>"><?php echo $link->link_full ?></span></p>
 			<?php endforeach; ?>
-			<p class="button_change"><a>Add links</a></p>
+			<?php foreach ($droplet->account_droplet_links->where('account_id', '=', $account->id)->find_all() as $account_link): ?>
+			    <p class="edit"><span class="edit_trigger" title="link" id="edit_<?php echo $account_link->link->id; ?>"><?php echo $account_link->link->link_full ?></span></p>
+			<?php endforeach; ?>
+			<div id="inline_link_add"></div>
+			<p class="button_change"><a href="<?php echo URL::site(); ?>droplet" title="link" id='add_tag_<?php echo $droplet->id ?>'>Add links</a></p>
 		</div>
 	
 		<div class="item cf">
@@ -49,7 +60,7 @@
 				<h1 class="edit"><span class="edit_trigger" title="droplet" id="edit_<?php echo $droplet->id; ?>" onclick=""><?php echo $droplet->droplet_title ?></span></h1>
 			</hgroup>
 			<div class="edit">
-			<span class="edit_trigger" title="droplet" id="edit_<?php echo $droplet->id; ?>" onclick="">
+			<span title="droplet" id="edit_<?php echo $droplet->id; ?>" onclick="">
 			<?php echo $droplet->droplet_content ?>
 			</span>
 			</div>

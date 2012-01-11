@@ -7,13 +7,13 @@ $(document).ready(function() {
 	});
 	
 	// View or hide a dropdown menu
-	$('.has_dropdown > a').click(function(e) {
+	$('.has_dropdown > a').live('click', function(e) {
 		// $('ul.dropdown').fadeOut('fast');
 		$(this).parent().toggleClass('active');
 	    $(this).siblings('ul.dropdown').fadeToggle('fast');
 		e.stopPropagation();
 	});
-	$('ul.dropdown li.cancel').click(function() {
+	$('ul.dropdown li.cancel').live('click', function() {
 		$(this).parent().fadeOut('fast');
 	});
 	$('.actions .button_delete, .actions p.bucket, .actions p.score').live('click', function(e) {

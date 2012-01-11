@@ -92,6 +92,8 @@ $(document).ready(function() {
 			groups.push($(item).find(".input .filter-option").serializeArray());
 		});
 		
+		<?php if (isset($river) AND $river->loaded()): ?>		
+		
 		// Filter data to be submitted for saving
 		var filters = {
 			options: {
@@ -101,7 +103,6 @@ $(document).ready(function() {
 			river_id: <?php echo $river->id; ?>
 		};
 			
-		<?php if (isset($river) AND $river->loaded()): ?>
 		// Submit the data
 		$.post('<?php echo $base_url; ?>ajax_channel_filters', filters, function(response) {
 			if (response.success) {

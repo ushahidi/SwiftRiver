@@ -42,6 +42,15 @@ class Model_Droplet extends ORM
 			'model' => 'tag',
 			'through' => 'droplets_tags'
 			),
+		'account_droplet_tags' => array(
+ 			'model' => 'account_droplet_tag'
+			),			
+		'account_droplet_links' => array(
+ 			'model' => 'account_droplet_link'
+			),			
+		'account_droplet_places' => array(
+ 			'model' => 'account_droplet_place'
+			),			
 		'links' => array(
 			'model' => 'link',
 			'through' => 'droplets_links'
@@ -183,6 +192,7 @@ class Model_Droplet extends ORM
 			}
 		}
 	}
+	
 	
 	/**
 	 * Adds links to a droplet
