@@ -278,48 +278,5 @@ class Model_Droplet extends ORM
 		return $droplets;
 	}
 
-
-	/**
-	 * Get Droplets by Bucket
-	 *
-	 * @param int $id ID of the Bucket
-	 * @return array $droplets Total and Array of Droplets
-	 */
-	public static function get_bucket($id = NULL, $page = NULL)
-	{
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
-		
-		if ($id)
-		{
-			// Build Buckets Query
-			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
-			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
-				->from('droplets')
-				->join('buckets_droplets', 'INNER')
-				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
-				->join('identities')
-			    ->on('droplets.identity_id', '=', 'identities.id')				
-				->where('buckets_droplets.bucket_id', '=', $id)
-				->order_by('droplets.id', 'DESC');
-				
-			// Order & Pagination offset
-			$query->order_by('droplets.id', 'DESC');
-			if($page)
-			{
-			    $query->limit(self::DROPLETS_PER_PAGE);	
-		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-	        }				
-
-			// Get our droplets as an Array		
-			$droplets['droplets'] = $query->execute()->as_array();
-			$droplets['total'] = (int) count($droplets['droplets']);
-		}
-
-		return $droplets;
-	}
 }
 ?>

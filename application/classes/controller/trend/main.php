@@ -64,7 +64,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 			    	$this->request->redirect('dashboard');
 			    }			
                 
-			    $this->droplets = Model_Droplet::get_river($river->id);
+			    $this->droplets = Model_River::get_droplets($river->id);
                 
 			    // Default template for river trends
 			    $this->template->content = View::factory('pages/trend/river')
@@ -89,7 +89,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 			    	$this->request->redirect('dashboard');
 			    }
                 
-			    $this->droplets = Model_Droplet::get_bucket($bucket->id);
+			    $this->droplets = Model_Bucket::get_droplets($bucket->id);
 			    
 			    // Default template for bucket trends
 			    $this->template->content = View::factory('pages/trend/bucket')

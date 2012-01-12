@@ -86,14 +86,24 @@ class Controller_River extends Controller_Swiftriver {
 		}
 		
 		// Generate the List HTML
+		// $droplets_list = View::factory('pages/droplets/list')
+		// 	->bind('droplets', $droplets)
+		// 	->bind('view_more_url', $view_more_url)
+		// 	->bind('buckets', $buckets);
+		
+		$droplet_js = View::factory('common/js/droplets')
+		    ->bind('fetch_url', $fetch_url);
+		
+		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$id;
+		
 		$droplets_list = View::factory('pages/droplets/list')
-			->bind('droplets', $droplets)
-			->bind('view_more_url', $view_more_url)
-			->bind('buckets', $buckets);
+		    ->bind('droplet_js', $droplet_js);
 
-		$buckets = ORM::factory('bucket')
-			->where('account_id', '=', $this->account->id)
-			->find_all();
+		
+		
+		// $buckets = ORM::factory('bucket')
+		// 	->where('account_id', '=', $this->account->id)
+		// 	->find_all();
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
@@ -107,6 +117,19 @@ class Controller_River extends Controller_Swiftriver {
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
 		$more_url = url::site().$this->account->account_path.'/river/more/'.$id;
 		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$id.'?page='.($page+1);
+		
+	}
+	
+	public function action_droplets()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$river_id = $this->request->param('id', 0);
+		
+		$droplets = Model_River::get_droplets($river_id);
+		
+		echo json_encode($droplets['droplets']);
 	}
 
 	/**
