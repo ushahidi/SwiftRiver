@@ -17,11 +17,6 @@
 					<p class="date"><%= droplet_date_pub %></p>
 					<h1><%= identity_name %></h1>
 				</div>
-			<div class="content">
-				<hgroup>
-					<p class="date"><?php echo $droplet['droplet_date_pub'] ?></p>
-					<h1><?php echo $droplet['identity_name'] ?></h1>
-				</hgroup>
 				<div class="body">
 					<p><%= droplet_title %></p>
 				</div>
@@ -32,9 +27,6 @@
 					<p class="button-change bucket"><a href="#" class="detail-view"><span></span><strong>buckets</strong></a></p>
 				</div>
 				<div class="clear"></div>
-			</section>
-			<section class="actions">
-				<p class="button_view"><a href="/droplet/detail/<?php echo $droplet['id'];?>" class="detail_view"><span class="icon"></span></a></p>
 			</section>
 		</div>
 	

@@ -85,12 +85,6 @@ class Controller_River extends Controller_Swiftriver {
 		        );
 		}
 		
-		// Generate the List HTML
-		// $droplets_list = View::factory('pages/droplets/list')
-		// 	->bind('droplets', $droplets)
-		// 	->bind('view_more_url', $view_more_url)
-		// 	->bind('buckets', $buckets);
-		
 		$droplet_js = View::factory('common/js/droplets')
 		    ->bind('fetch_url', $fetch_url);
 		

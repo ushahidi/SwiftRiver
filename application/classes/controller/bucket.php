@@ -58,7 +58,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('buckets', $buckets);
 
 		//Get Droplets
-		$droplets_array = Model_Droplet::get_bucket($bucket->id, $page);
+		$droplets_array = Model_Bucket::get_droplets($bucket->id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -107,7 +107,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$bucket->account_id = $this->account->id;
 				$bucket->save();
 
-				echo json_encode(array("status"=>"success",
+				echo json_encode(array(
+					"status"=>"success",
 					"bucket" => array(
 						'id' => $bucket->id,
 						'name' => $bucket->bucket_name

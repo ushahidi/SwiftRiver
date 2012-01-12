@@ -19,9 +19,11 @@
 	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
+	echo(Html::script("themes/default/media/js/underscore-min.js"));
+	echo(Html::script("themes/default/media/js/backbone-min.js"));
 
 	// Dynamic JS Files
-	echo(Html::script('media/js'));
+	// echo(Html::script('media/js'));
 	?>
 	<script type="text/javascript"><?php
 		// Dynamic inline JS

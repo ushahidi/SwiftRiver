@@ -13,11 +13,15 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Bucket extends ORM
-{
+class Model_Bucket extends ORM {
+	
+	/**
+	 * No. of droplets to return on each fetch
+	 */
+	const DROPLETS_PER_PAGE = 20;
+	
 	/**
 	 * A bucket has and belongs to many droplets
-	 *
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
@@ -68,5 +72,49 @@ class Model_Bucket extends ORM
 		Swiftriver_Event::run('swiftriver.bucket.save', $bucket);
 
 		return $bucket;
-	}			
+	}
+	
+	/**
+	 * Get the droplets for the specified bucket
+	 *
+	 * @param int $id ID of the Bucket
+	 * @return array $droplets Total and Array of Droplets
+	 */
+	public static function get_droplets($id = NULL, $page = NULL)
+	{
+		$droplets = array(
+			'total' => 0,
+			'droplets' => array()
+			);
+		
+		if ($id)
+		{
+			// Build Buckets Query
+			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			                    'droplet_title', 'droplet_content', 
+			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+				->from('droplets')
+				->join('buckets_droplets', 'INNER')
+				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+				->join('identities')
+			    ->on('droplets.identity_id', '=', 'identities.id')				
+				->where('buckets_droplets.bucket_id', '=', $id)
+				->order_by('droplets.id', 'DESC');
+				
+			// Order & Pagination offset
+			$query->order_by('droplets.id', 'DESC');
+			if ($page)
+			{
+			    $query->limit(self::DROPLETS_PER_PAGE);	
+		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+	        }				
+
+			// Get our droplets as an Array		
+			$droplets['droplets'] = $query->execute()->as_array();
+			$droplets['total'] = count($droplets['droplets']);
+		}
+
+		return $droplets;
+	}
+	
 }
