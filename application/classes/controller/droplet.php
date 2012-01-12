@@ -38,7 +38,8 @@ class Controller_Droplet extends Controller_Swiftriver {
 		    array(':droplet' => $id));	
 		
 		echo View::factory('pages/droplets/detail')
-		        ->bind('droplet', $droplet);	
+		        ->bind('droplet', $droplet)
+		        ->bind('account', $this->account);	
 			
 	}
 	
@@ -77,4 +78,131 @@ class Controller_Droplet extends Controller_Swiftriver {
 		    
 		$river->remove('droplets', $droplet);	    
 	}
+	
+	
+	/**
+	 * Handle user defined tag addition
+	 * 
+	 * @return	void
+	 */
+	public function action_ajax_add_tag()	
+	{
+	    $this->template = '';
+		$this->auto_render = FALSE;
+		
+		$post = Validation::factory($this->request->post())
+		                        ->rule('edit_value', 'not_empty')
+		                        ->rule('edit_value', 'alpha_dash')
+		                        ->rule('id', 'not_empty')
+		                        ->rule('id', 'numeric');
+		                        
+		if ( ! $post->check())
+		{
+		   echo json_encode(array(
+		                        'status'=>'error',
+		                        'errors' => $post->errors('add_tag')		 
+		   ));
+		   return;
+		}	        
+		                        
+		
+	    $droplet_id = (int) $this->request->post('id');
+	    $tag_name = $this->request->post('edit_value');
+	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
+	    	    
+	    if ( ! $orm_droplet->loaded())
+	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+		    array(':droplet' => $droplet_id));
+		
+		$account_tag = Model_Account_Droplet_Tag::get_tag($tag_name, $orm_droplet, $this->account);
+	    
+		echo json_encode(array(
+		                    'status'=>'success',
+		                    'html'=>'<li><a href="#">'.$account_tag->tag->tag.'</a></li>'
+		));
+	}	
+	
+	/**
+	 * Handle user defined place addition
+	 * 
+	 * @return	void
+	 */
+	public function action_ajax_add_place()	
+	{
+	    $this->template = '';
+		$this->auto_render = FALSE;
+		
+		$post = Validation::factory($this->request->post())
+		                        ->rule('edit_value', 'not_empty')
+		                        ->rule('edit_value', 'alpha_dash')
+		                        ->rule('id', 'not_empty')
+		                        ->rule('id', 'numeric');
+		                        
+		if ( ! $post->check())
+		{
+		   echo json_encode(array(
+		                        'status'=>'error',
+		                        'errors' => $post->errors('add_place')		 
+		   ));
+		   return;
+		}	        
+		
+		
+	    $droplet_id = (int) $this->request->post('id');
+	    $place_name = $this->request->post('edit_value');
+	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
+	    	    
+	    if ( ! $orm_droplet->loaded())
+	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+		    array(':droplet' => $droplet_id));
+		
+		$account_place = Model_Account_Droplet_Place::get_place($place_name, $orm_droplet, $this->account);
+	    
+	    echo json_encode(array(
+		                    'status'=>'success',
+		                    'html'=>'<p class="edit"><span class="edit_trigger" title="place" id="edit_'.$account_place->place->id.'">'.$account_place->place->place_name.'</span></p>'
+		));
+	}
+
+	/**
+	 * Handle user defined link addition
+	 * 
+	 * @return	void
+	 */
+	public function action_ajax_add_link()	
+	{
+	    $this->template = '';
+		$this->auto_render = FALSE;
+		
+		$post = Validation::factory($this->request->post())
+		                        ->rule('edit_value', 'not_empty')
+		                        ->rule('edit_value', 'url')
+		                        ->rule('id', 'not_empty')
+		                        ->rule('id', 'numeric');
+		                        
+		if ( ! $post->check())
+		{
+		   echo json_encode(array(
+		                        'status'=>'error',
+		                        'errors' => $post->errors('add_place')		 
+		   ));
+		   return;
+		}		
+		
+	    $droplet_id = (int) $this->request->post('id');
+	    $url = $this->request->post('edit_value');
+	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
+	    	    
+	    if ( ! $orm_droplet->loaded())
+	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+		    array(':droplet' => $droplet_id));
+		
+		$account_link = Model_Account_Droplet_Link::get_link($url, $orm_droplet, $this->account);
+	    
+	    echo json_encode(array(
+		                    'status'=>'success',
+		                    'html'=>'<p class="edit"><span class="edit_trigger" title="link" id="edit_'.$account_link->link->id.'">'.$account_link->link->link_full.'</span></p>'
+		));
+	    
+	}		
 }

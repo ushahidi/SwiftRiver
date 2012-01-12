@@ -87,4 +87,32 @@ class Model_Place extends ORM
 			return FALSE;
 		}
 	}
+	
+	/**
+	 * Retrives a place using its name
+	 *
+	 * @param string $place_name Name of the place
+	 * @param bool $save Optionally saves the place record if no match is found
+	 * @return mixed Model_Place if a record is found, FALSE otherwise
+	 */
+	public static function get_place_by_name($place_name, $save = FALSE)
+	{
+		
+		// Retrieve record using lon, lat
+		$orm_place = ORM::factory('place')
+				->where('place_name', '=', $place_name)
+				->find();
+		
+		if ($orm_place->loaded())
+		{
+			return $orm_place;
+		}
+		
+		if ( ! $orm_place->loaded() AND $save)
+		{
+			// Create the place record
+			$orm_place->place_name = $place_name;		
+			return $orm_place->save();
+		}
+	}	
 }

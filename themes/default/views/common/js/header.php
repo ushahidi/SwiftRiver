@@ -110,6 +110,42 @@ $(document).ready(function() {
 	    });
 	});
 	
+	
+	//Inline additions
+	$('.has_inline_add .button_change a').live('click', function(e) {
+	   $(this).closest('.item').append('<div class="add"><span class="edit_input"><input type="text" id="inline_edit_text" placeholder="<?php echo __('Name your tag'); ?>"/></span><div class="buttons"><button class="save"><?php echo __('Save'); ?></button><button class="cancel"><?php echo __('Cancel'); ?></button></div></div>');
+	   
+	   var ajaxTarget = $(this).attr('href');
+	   var ajaxType = $(this).attr('title');	
+	   var inputId = $(this).attr('id').replace(/[^0-9]/g, '');   
+	   
+	   // When the add button is clicked
+	   $('.add .buttons .save').click(function() {
+	       var save_button = $(this);	       
+	       var inputValue = $(this).closest('.add').find('.edit_input #inline_edit_text').val();
+
+	       if( (typeof(ajaxTarget) != 'undefined' && ajaxTarget) &&
+	           (typeof(ajaxType) != 'undefined' && ajaxType) &&
+	           (typeof(inputId) != 'undefined' && inputId) &&
+	           (typeof(inputValue) != 'undefined' && inputValue)) {	               	           	           	       	       
+	               $.post(ajaxTarget+'/ajax_add_'+ajaxType, { edit_value: inputValue, id: inputId }, function(data) {
+	                   if(data["status"] == "success") {
+	                       $('#inline_'+ajaxType+'_add').append(data["html"]);
+	                       save_button.closest('.add').remove();
+	                   }
+	               }, "json");	       
+            }
+	       
+       });
+	   
+	   
+	   	// When the cancel button is clicked
+		$('.add .buttons .cancel').click(function() {
+			$(this).closest('.add').remove();			
+		});
+		e.preventDefault();
+	});
+	
 
 	// Add or remove a droplet from buckets
 	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');

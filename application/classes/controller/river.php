@@ -142,8 +142,14 @@ class Controller_River extends Controller_Swiftriver {
 		// The main template
 		$this->template->content = View::factory('pages/river/new')
 			->bind('post', $post)
+			->bind('template_type', $this->template_type)
+			->bind('user', $this->user)
+			->bind('active', $this->active)
 			->bind('settings_control', $settings_control)
 			->bind('errors', $errors);
+
+		$this->template_type = 'dashboard';
+		$this->active = 'rivers';
 
 		// Get the settings control
 		$settings_control = View::factory('pages/river/settings_control')

@@ -38,3 +38,4 @@ class Model_Channel_Filter_Option extends ORM {
 		return array($this->key => $options);
 	}
 }
+?>

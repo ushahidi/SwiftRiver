@@ -29,7 +29,7 @@
 	?></script>
 	
 	<?php
-	    // SwiftRiver Plugin Hook -- Add Bucket Nav Item
+	    // SwiftRiver Plugin Hook
 	    Swiftriver_Event::run('swiftriver.template.header');
 	?>
 </head> 

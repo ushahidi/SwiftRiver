@@ -135,6 +135,13 @@ header nav li a:hover, header nav li.active a, header nav li.active ul.dropdown 
   color: #fff;
   text-decoration: none;
 }
+header nav li.has_dropdown a span.icon {
+  float: right;
+  width: 14px;
+  height: 14px;
+  background-position: center -24px;
+  margin: 11px 5px 0;
+}
 header nav li ul.dropdown {
   display: none;
   position: absolute;
@@ -2207,19 +2214,11 @@ footer li a {
     font-size: 1em;
     padding: 0;
   }
-  header nav li a span.arrow {
-    float: right;
-    display: block;
-    width: 12px;
-    height: 59px;
-    background: url(/themes/default/media/img/arrows.png) left center no-repeat;
-    margin: 0 7px;
-  }
-  header nav li.active a span.arrow {
-    background-position: -12px center;
-  }
   header nav .account li.user img {
     margin: 16px 7px 15px 0;
+  }
+  header nav li.has_dropdown a span.icon {
+    margin: 21px 5px 0;
   }
   header nav li ul.dropdown {
     left: auto;

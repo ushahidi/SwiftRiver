@@ -27,10 +27,9 @@
 					<li class="view_panel"><a href="<?php echo $settings_url; ?>" class="filter"><span class="icon"></span><?php echo __('River Settings'); ?></a></li>
 				</ul>
 			</nav>
-			<div class="panel_body"></div>
 		</section>
 
-		<div class="trend_container cf">
+		<div class="container stream insights">
 		    <?php echo $droplets_list; ?>
 		</div>
 

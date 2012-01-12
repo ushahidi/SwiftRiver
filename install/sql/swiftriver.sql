@@ -200,18 +200,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `accounts_droplets_links`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts_droplets_links` (
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplets_link_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  INDEX `account_id_idx` (`account_id` ASC) ,
-  INDEX `droplets_link_id_idx` (`droplets_link_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `user_identities`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `user_identities` (
@@ -294,17 +282,6 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
--- -----------------------------------------------------
--- Table `accounts_droplets_places`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts_droplets_places` (
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplets_place_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  INDEX `account_id_idx` (`account_id` ASC) ,
-  INDEX `droplets_place_id_idx` (`droplets_place_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
 
 -- -----------------------------------------------------
 -- Table `links`
@@ -339,17 +316,6 @@ CREATE  TABLE IF NOT EXISTS `plugins` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
-
--- -----------------------------------------------------
--- Table `accounts_droplets_tags`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts_droplets_tags` (
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplets_tag_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  INDEX `account_id_idx` (`account_id` ASC) ,
-  INDEX `droplets_tag_id_idx` (`droplets_tag_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -614,6 +580,43 @@ CREATE  TABLE IF NOT EXISTS `user_actions` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8, 
 COMMENT = 'Tracks user actions across the system' ;
+
+
+-- -----------------------------------------------------
+-- Create syntax for TABLE 'account_droplet_tags'
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_droplet_tags` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `tag_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UN_ACCOUNT_DROPLET_TAG` (`account_id`,`droplet_id`,`tag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Create syntax for TABLE 'account_droplet_links'
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_droplet_links` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `link_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UN_ACCOUNT_DROPLET_LINK` (`account_id`,`droplet_id`,`link_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Create syntax for TABLE 'account_droplet_places'
+-- -----------------------------------------------------
+CREATE TABLE `account_droplet_places` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `place_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`place_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

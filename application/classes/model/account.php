@@ -48,7 +48,16 @@ class Model_Account extends ORM
 		'plugins' => array(
 			'model' => 'plugin',
 			'through' => 'accounts_plugins'
-			)			
+			),
+		'account_droplet_tags' => array(
+ 			'model' => 'account_droplet_tag'
+			),
+		'account_droplet_links' => array(
+ 			'model' => 'account_droplet_link'
+			),						
+		'account_droplet_places' => array(
+ 			'model' => 'account_droplet_place'
+			),			
 		);		
 	
 	/**
