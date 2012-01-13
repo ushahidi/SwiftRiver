@@ -119,8 +119,9 @@ class Controller_River extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		$river_id = $this->request->param('id', 0);
+		$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 		
-		$droplets = Model_River::get_droplets($river_id);
+		$droplets = Model_River::get_droplets($river_id, $page);
 		
 		echo json_encode($droplets['droplets']);
 	}

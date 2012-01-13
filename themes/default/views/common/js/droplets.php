@@ -2,6 +2,8 @@
  * Backbone.js wiring for the droplets MVC
  */
 (function() {
+	var pageNo = 1;
+	
 	// Droplet model
 	window.Droplet = Backbone.Model.extend({
 		initialize: function() {
@@ -150,7 +152,6 @@
 	// 
 	// Views for the tags, places and link 
 	// 
-	
 	window.SemanticsView = Backbone.View.extend({
 		
 		initialize: function() {
@@ -183,8 +184,7 @@
 
 	var AppRouter = Backbone.Router.extend({
 		routes: {
-			"" : "list",
-			"droplet/index/:id" : "dropletDetails"
+			"" : "list"
 		},
 	
 		list: function() {
@@ -197,4 +197,20 @@
 
 	var app = new AppRouter();
 	Backbone.history.start();
+	
+	// Load content while scrolling
+	$(window).scroll(function() {
+		if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+			// Increase the page count
+			pageNo += 1;
+			
+			var droplets = new DropletCollection();
+			droplets.url = droplets.url + "?page="+pageNo;
+			
+			listView = new DropletListView({model: droplets});
+			droplets.fetch();
+			listView.render();
+			
+		}
+	});
 })();
