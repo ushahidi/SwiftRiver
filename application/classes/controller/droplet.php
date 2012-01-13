@@ -18,30 +18,59 @@ class Controller_Droplet extends Controller_Swiftriver {
 	/**
 	 * @var boolean Whether the template file should be rendered automatically.
 	 */
-	public $auto_render = FALSE;   
-	 
-    
-    /**
-	 * @return	void
-	 */
-	public function action_detail()
+	public $auto_render = FALSE;
+	
+	public function action_index()
 	{
-	    
-	    $id = (int) $this->request->param('id', 0);
-	    
-	    $droplet = ORM::factory('droplet')
-			->where('id', '=', $id)
-			->find();
-			
-		if ( ! $droplet->loaded())
-		    throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
-		    array(':droplet' => $id));	
+		$droplet_id = intval($this->request->param('id'));
 		
-		echo View::factory('pages/droplets/detail')
-		        ->bind('droplet', $droplet)
-		        ->bind('account', $this->account);	
+		$semantics = $_GET['semantics'];
+		Kohana::$log->add(Log::INFO, $semantics);
+		if ( ! empty($semantics))
+		{
+			$droplet = ORM::factory('droplet', $droplet_id);
 			
+			switch ($semantics)
+			{
+				case 'tags':
+				$tags = array();
+				foreach ($droplet->tags->find_all() as $tag)
+				{
+					$tags[] = array(
+						'id' => $tag->id,
+						'tag' => $tag->tag
+					);
+				}
+				echo json_encode($tags);
+				break;
+				
+				case 'places':
+				$places = array();
+				foreach ($droplet->places->find_all() as $place)
+				{
+					$places[] = array(
+						'id' => $place->id,
+						'place_name' => $place->place_name
+					);
+				}
+				echo json_encode($places);
+				break;
+				
+				case 'links':
+				$links = array();
+				foreach ($droplet->links->find_all() as $link)
+				{
+					$links[] = array(
+						'id' => $link->id,
+						'link' => $link->link_full
+					);
+				}
+				echo json_encode($links);
+				break;
+			}
+		}
 	}
+
 	
 	/**
 	 * Delete the specified droplet from the account. 

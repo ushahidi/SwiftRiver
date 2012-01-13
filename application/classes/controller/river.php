@@ -55,6 +55,7 @@ class Controller_River extends Controller_Swiftriver {
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
 			->find();
+		
 		if ( ! $river->loaded())
 		{
 			// It doesn't -- redirect back to dashboard
@@ -63,7 +64,7 @@ class Controller_River extends Controller_Swiftriver {
 
 		//Use page paramter or default to page 1
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
-
+				
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($river->id, $page);
 
@@ -93,8 +94,6 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_list = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js);
 
-		
-		
 		// $buckets = ORM::factory('bucket')
 		// 	->where('account_id', '=', $this->account->id)
 		// 	->find_all();

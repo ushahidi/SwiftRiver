@@ -3,13 +3,44 @@
  */
 (function() {
 	// Droplet model
-	window.Droplet = Backbone.Model.extend();
+	window.Droplet = Backbone.Model.extend({
+		initialize: function() {
+			var dropletId = this.toJSON().id;
+			this.places = new DropletPlaceCollection;
+			this.places.url = '/droplet/index/'+dropletId+'?semantics=places';
+			
+			this.tags = new DropletTagCollection;
+			this.tags.url = '/droplet/index/'+dropletId+'?semantics=tags';
+			
+			this.links = new DropletLinkCollection;
+			this.links.url = '/droplet/index/'+dropletId+'?semantics=link';
+		}
+	});
+	
+	// Models for the droplet places, tags and links 
+	window.DropletPlace = Backbone.Model.extend();
+	window.DropletTag = Backbone.Model.extend();
+	window.DropletLink = Backbone.Model.extend();
 
 	// Droplet collection
 	window.DropletCollection = Backbone.Collection.extend({
 		model: Droplet,
 		url: "<?php echo $fetch_url; ?>"
 	});
+	
+	// Collections for droplet
+	window.DropletPlaceCollection = Backbone.Collection.extend({
+		model: DropletPlace
+	})
+	
+	window.DropletTagCollection = Backbone.Collection.extend({
+		model: DropletTag
+	});
+	
+	window.DropletLinkCollection = Backbone.Collection.extend({
+		model: DropletTag
+			});
+	
 
 	// Rendering for a list of droplets
 	window.DropletListView = Backbone.View.extend({
@@ -24,6 +55,7 @@
 			_.each(this.model.models, function(droplet) {
 				$(this.el).append(new DropletListItem({model: droplet}).render().el);
 			}, this);
+			return this;
 		}
 	});
 
@@ -38,7 +70,7 @@
 		template: _.template($("#droplet-list-item").html()),
 		
 		events: {
-			"click .detail-view": "showDetail"
+			"click a.detail-view": "showDetail"
 		},
 		
 		render: function(eventName) {
@@ -46,25 +78,108 @@
 			return this;
 		},
 		
-		showDetail: function() {
-			// TODO: Toggle the state of the "view more" button
-			// TODO: Display the droplet detail + tags
-			// console.log(this.model.toJSON().droplet_content);
+		showDetail: function(event) {
+			// Toggle the state of the "view more" button
+			$(event.currentTarget).toggleClass("detail-hide");
+			
+			var dropletId = this.model.toJSON().id;
+			var _obj = $("#detail-section-"+dropletId);
+			
+			// Display the droplet detail
+			if ($(event.currentTarget).hasClass("detail-hide")) {
+				_obj.slideDown(200);
+				
+				var dropletView = new DropletDetailView({model: this.model});
+				$("#droplet-view", this.el).html(dropletView.render().el);
+				
+				// Fetch and render the places
+				this.model.places.fetch();
+				var placeView = new SemanticsView({
+					el: $("#droplet-locations-"+dropletId),
+					model: this.model.places,
+					itemTagName: "span",
+					itemTemplate: "#droplet-place-item"
+				});
+				placeView.render();
+				
+				// Fetch and render the tags
+				this.model.tags.fetch();
+				var tagView = new SemanticsView({
+					el: $("#droplet-tags-"+dropletId),
+					model: this.model.tags,
+					itemTagName: "li",
+					itemTemplate: "#droplet-tag-item"
+				});
+				tagView.render();
+				
+				// Render the links
+				this.model.links.fetch();
+				var linksView = new SemanticsView({
+					el: $("#droplet-links-"+dropletId),
+					model: this.model.links,
+					itemTagName: "li",
+					itemTemplate: "#droplet-link-item"
+				});
+				linksView.render();
+				
+			} else {
+				_obj.slideUp(50);
+				_obj.hide();
+			}
+			
 			return false;
 		}
 	});
 
 
-	// // Rendering for the droplet detail
-	// window.DropletDetailView = Backbone.View.extend({
-	// 	el: $("#droplet-view"),
-	// 	template: _.template($("#droplet-details").html()),
-	// 	render: function(eventName) {
-	// 		$(this.el).html(this.template(this.model.toJSON()));
-	// 		return this;
-	// 	}
-	// });
+	// View for the droplet detail
+	window.DropletDetailView = Backbone.View.extend({
+
+		tagName: "article",
+		
+		className: "fullstory",
+		
+		template: _.template($("#droplet-details").html()),
+		
+		render: function(eventName) {
+			$(this.el).html(this.template(this.model.toJSON()));
+			return this;
+		}
+	});
+	
 	// 
+	// Views for the tags, places and link 
+	// 
+	
+	window.SemanticsView = Backbone.View.extend({
+		
+		initialize: function() {
+			this.model.bind("reset", this.render, this);
+		},
+		
+		render: function(eventName) {
+			_.each(this.model.models, function(tag) {
+				$(this.el).html(new SemanticItemView({
+					model: tag, 
+					itemTemplate: this.options.itemTemplate, 
+					tagName: this.options.itemTagName
+				}).render().el);
+			}, this);
+			return this;
+		}
+	});
+	
+	window.SemanticItemView = Backbone.View.extend({
+		
+		render: function(eventName) {
+			this.template = _.template($(this.options.itemTemplate).html());
+			$(this.el).html(this.template(this.model.toJSON()));
+			return this;
+		}
+	});
+		
+	// ------------------------------------------------------------------------
+	
 
 	var AppRouter = Backbone.Router.extend({
 		routes: {
@@ -76,13 +191,8 @@
 			this.dropletList = new DropletCollection();
 			this.dropletListView = new DropletListView({model: this.dropletList});
 			this.dropletList.fetch();
-		},
-	
-		dropletDetails: function(id) {
-			this.droplet = this.dropletList.get(id);
-			this.dropletDetailView = new DropletDetailView({model: this.droplet});
-			this.dropletDetailView.render();
 		}
+	
 	});
 
 	var app = new AppRouter();
