@@ -159,8 +159,9 @@
 		},
 		
 		render: function(eventName) {
+			$(this.el).html("");
 			_.each(this.model.models, function(tag) {
-				$(this.el).html(new SemanticItemView({
+				$(this.el).append(new SemanticItemView({
 					model: tag, 
 					itemTemplate: this.options.itemTemplate, 
 					tagName: this.options.itemTagName
