@@ -1349,16 +1349,16 @@ article#droplet_full .canvas {
 }
 div.arrow {
   height: 21px;
-  background: url(/themes/default/media/img/droplet-detail_shadow.gif) top repeat-x;
+  background: url(/themes/default/media/img/detail_shadow.gif) top repeat-x;
 }
 div.bottom {
   text-align: center;
-  background: url(/themes/default/media/img/droplet-detail_shadow.gif) bottom repeat-x;
+  background: url(/themes/default/media/img/detail_shadow.gif) bottom repeat-x;
 }
 div.top span {
   display: block;
   height: 21px;
-  background: url(/themes/default/media/img/droplet-detail_arrow.gif) center top no-repeat;
+  background: url(/themes/default/media/img/detail_arrow.gif) center top no-repeat;
 }
 div.bottom a.close {
   color: #888888;

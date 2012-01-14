@@ -41,7 +41,7 @@
 
 					<div class="item cf">
 						<h2><?php echo __('Locations'); ?></h2>
-						<p class="edit" id="droplet-locations-<%= id %>"></p>
+						<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
 					</div>
 					<div class="item cf">
 						<h2><?php echo __('Links'); ?></h2>
@@ -77,7 +77,7 @@
 </script>
 
 <script type="text/template" id="droplet-place-item">
-	<%= place_name %>
+	<a href="#"><%= place_name %></a>
 </script>
 
 <script type="text/template" id="droplet-link-item">

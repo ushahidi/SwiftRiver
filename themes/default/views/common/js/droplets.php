@@ -99,7 +99,7 @@
 				var placeView = new SemanticsView({
 					el: $("#droplet-locations-"+dropletId),
 					model: this.model.places,
-					itemTagName: "span",
+					itemTagName: "li",
 					itemTemplate: "#droplet-place-item"
 				});
 				placeView.render();
@@ -201,7 +201,7 @@
 	
 	// Load content while scrolling
 	$(window).scroll(function() {
-		if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+		if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
 			// Increase the page count
 			pageNo += 1;
 			
