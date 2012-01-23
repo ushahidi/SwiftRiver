@@ -25,7 +25,7 @@
 <!-- template for rendering the options for each channel -->
 <script type="text/template" id="channel-panel-view">
     <article id="<%= channel %>" class="tab-content" style="display:none">
-		<ul class="channel-options cf"></ul>
+        <ul class="channel-options cf"></ul>
     </article>
 </script>
 

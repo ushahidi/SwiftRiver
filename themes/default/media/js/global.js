@@ -1,5 +1,3 @@
-var appRouter = null;
-
 $(document).ready(function() {	
 	// MOVE ARTICLE ACTIONS	
 	$.each($('div.canvas article.item section.actions, article.single > div.canvas > div.summary > section.actions'), function() {

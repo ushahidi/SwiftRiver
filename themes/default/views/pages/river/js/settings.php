@@ -105,7 +105,7 @@
 		toggleChannelStatus: function(event) {
 			$(event.currentTarget).toggleClass("switch-on").toggleClass("switch-off");
 			
-			// TODO Update the status of the channel in the DB
+			// TODO: Update the status of the channel in the DB via HTTP POST
 			return false;
 		},
 		
@@ -125,6 +125,8 @@
 		
 		// Events
 		events: {
+			// Add a config option form field to the UI
+			// TODO: Implement adding of group options
 			"click a": "addOptionItem"
 		},
 		
@@ -154,6 +156,7 @@
 		
 		// Events
 		events: {
+			// Removes a channel config value from the UI
 			"click span > a": "removeOption"
 		},
 		
@@ -172,10 +175,14 @@
 	
 	
 	// Fetch the channels and display them
-	var channels = new ChannelsCollection();
-	var channelListView = new ChannelListView({model: channels});
-	channels.fetch();
-	channelListView.render();
+	bootstrap = function() {
+		this.channels = new ChannelsCollection();
+		this.channels.fetch();
+		this.channelListView = new ChannelListView({model: this.channels});
+		this.channelListView.render();
+	}
+	
+	bootstrap();
 	
 })();
 </script>

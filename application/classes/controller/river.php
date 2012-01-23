@@ -44,7 +44,7 @@ class Controller_River extends Controller_Swiftriver {
 			->where('account_id', '=', $this->account->id)
 			->find();
 		
-		if ( ! $this->_river->loaded())
+		if ($river_id != 0 AND ! $this->_river->loaded())
 		{
 			// Redirect to the dashboard
 			$this->request->redirect('dashboard');
@@ -156,11 +156,12 @@ class Controller_River extends Controller_Swiftriver {
 
 		// Get the settings control
 		$settings_control = View::factory('pages/river/settings_control')
-			->bind('channels', $this->channels)
-			->bind('post', $post)
-			->bind('base_url', $base_url);
+		    ->bind('settings_js', $settings_js);
+		
+		$settings_js = View::factory('pages/river/js/settings')
+		    ->bind('channels_url', $channels_url);
 
-		$base_url = URL::site().$this->account->account_path.'/river/';
+		$channels_url = URL::site().$this->account->account_path.'/river/channels';
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
@@ -178,7 +179,7 @@ class Controller_River extends Controller_Swiftriver {
 			// Allows plugins to perform further validation checks
 			// ** Plugins can then use 'swiftriver.river.save' after the river
 			// has been saved
-			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+			// Swiftriver_Event::run('swiftriver.river.pre_save', $post);
 
 			if ($post->check())
 			{
@@ -248,24 +249,45 @@ class Controller_River extends Controller_Swiftriver {
 		// Store for the channel config data
 		$channels_config = array();
 		
-		// Get the list of channel filter options from the DB
-		$channel_filters = $this->_river->channel_filters->find_all();
-		foreach ($channel_filters as $filter)
+		$exists = $this->_river->loaded();
+		
+		// Get the list of channel filters and their options
+		$filters = ($exists) 
+		    ? $this->_river->channel_filters->find_all()
+		    : array_keys($this->channels);
+		
+		if (count($filters) == 0)
 		{
-			$channel = $filter->channel;
+			$exists = FALSE;
+			$filters = array_keys($this->channels);
+		}
+		
+		foreach ($filters as $filter)
+		{
+			// Get the channel name
+			$channel = ($exists) ? $filter->channel : $filter;
+			
+			$filter_options = array();
+			$switch_class = "switch-off";
 			
 			// Check if the channel's plugin is enabled in the system config
-			if (isset($this->channels[$channel]))
+			if ($exists)
 			{
 				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
 				    $this->_river->id);
+				
+				// on/off state for the channel on the UI
+				$switch_class = ($filter->filter_enabled == 0)
+				    ? 'switch-off' 
+				    : 'switch-on';
+			}
 			
+			if (isset($this->channels[$channel]))
+			{
 				$channels_config[] = array(
 					'channel' => $channel,
 					'channel_name' => $this->channels[$channel]['name'],
-					'switch_class' => ($filter->filter_enabled == 0) 
-					    ? 'switch-off' 
-					    : 'switch-on',
+					'switch_class' => $switch_class,
 					'channel_data' => $filter_options,
 					'config_options' => $this->channels[$channel]['options']
 				);

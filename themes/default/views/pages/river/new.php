@@ -17,7 +17,11 @@
 					<li <?php if ($active == 'teams') echo 'class="active"'; ?>><a href="<?php echo URL::site().'dashboard/teams';?>"><?php echo __('Teams'); ?></a></li>
 				</ul>
 				<ul class="actions">
-					<li class="view_panel"><a href="<?php echo URL::site().'dashboard/settings';?>" class="settings"><span class="icon"></span><span class="label"><?php echo __('Account settings'); ?></span></a></li>
+					<li class="view_panel">
+						<a href="<?php echo URL::site().'dashboard/settings';?>" class="settings">
+							<span class="icon"></span><span class="label"><?php echo __('Account settings'); ?></span>
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</section>
@@ -26,8 +30,7 @@
 			<div class="controls">
 				<div class="row cf">
 					<h2>Create a new River</h2>
-
-			<?php echo Form::open(); ?>
+					<?php echo Form::open(); ?>
 					<div class="input">
 						<h3>River name</h3>
 						<?php echo Form::input('river_name', $post['river_name']); ?>

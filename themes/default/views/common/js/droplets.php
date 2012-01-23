@@ -197,9 +197,7 @@
 			}
 		});
 
-		if (appRouter == null) {
-			appRouter = new AppRouter();
-		}
+		appRouter = new AppRouter();
 		Backbone.history.start();
 	
 		// Load content while scrolling
