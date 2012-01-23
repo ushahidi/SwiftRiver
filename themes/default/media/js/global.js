@@ -1,3 +1,5 @@
+var appRouter = null;
+
 $(document).ready(function() {	
 	// MOVE ARTICLE ACTIONS	
 	$.each($('div.canvas article.item section.actions, article.single > div.canvas > div.summary > section.actions'), function() {
@@ -30,35 +32,28 @@ $(document).ready(function() {
 	else {
 		$('ul.views li.more').remove();
 	}
-	$('section.panel nav ul li.view_panel a, section.actions p.button_view a, div.edit_advanced p.button_view a').toggle(function(e) {
-			var url = $(this).attr('href');
-			if ( url == '/map/reports/filters.php' ) {
-				$.getScript('/js/filters.js');
-			}
-			$(this).addClass('detail_hide').closest('section.panel, article.item, div.edit_advanced').append('<div class="drawer"></div>');
-			if ( $(this).is('section.panel nav ul li.view_panel a') ) {
-				$('ul.views li, ul.actions li').fadeTo('fast', 0); // for panel
-				$(this).parent('li').addClass('open').fadeTo('fast', 1); // for panel
-				$(this).closest('section.panel').children('div.drawer').slideDown('slow').load(url + ' section.panel .panel_body');
-			}
-			else {
-				$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideDown('slow').load(url + ' div.detail', function() {
-					convertForm();
-					$('section.discussion').remove();
-				});
-				$(this).closest('.row').find('p a').not('p a.detail_hide').fadeTo('fast', 0); // for drawer
-			}		
-			e.preventDefault();				
-		}, function(e) {
-			$('ul.views li, ul.actions li').fadeTo('fast', 1);
-			$(this).parent('li').removeClass('open');
-			$(this).removeClass('detail_hide').closest('section.panel, article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();				
-			$(this).closest('.row').find('p a').not('p a.detail_hide').fadeTo('fast', 1); // for drawer
-			e.preventDefault();
-	});
-	$('section.panel nav ul.actions li.view_panel a').one('click', function() {
-		$.getScript('/themes/default/media/js/settings.js');
-	});
+	
+    $("section.panel nav ul li.view_panel a").toggle(
+        function(e) {
+            var url = $(this).attr("href");
+            $('ul.views li, ul.actions li').fadeTo('fast', 0);
+            $(this).parent('li').addClass('active').fadeTo('fast', 1);
+            $('section.panel div.panel_body').slideDown(200).load(url);
+            e.preventDefault();
+        }, 
+        function(e) {
+            $('ul.views li, ul.actions li').fadeTo('fast', 1);
+            $(this).parent('li').removeClass('active');
+            $('section.panel div.panel_body').slideUp(200).empty();
+            e.preventDefault();
+        }
+    );
+	
+    // TODO: E.Kala Review this segment
+    $('section.panel nav ul.actions li.view_panel a').live('click', function() {
+        $.getScript('/themes/default/media/js/settings.js');
+    });
+    
 	$('section.panel a.close').live('click', function() {
 		$('section.panel nav, .canvas > .container').fadeIn('fast');
 		$('ul.views li, ul.actions li').fadeTo('fast', 1);
@@ -158,6 +153,8 @@ $(document).ready(function() {
 		$('.actions .button_change, .actions span').removeClass('active');
 		$('.has_dropdown').removeClass('active');
 	});
+	
+	
 });
 
 // Hide mobile address bar
@@ -166,7 +163,6 @@ window.addEventListener("load",function() {
     window.scrollTo(0, 1);
   }, 0);
 });
-
 
 function submitForm(button){
 	var form = $(button).parents('form:first');
@@ -177,3 +173,4 @@ function submitAjax(button){
 	var form = $(button).parents('form:first');
 	form.submit();
 }
+

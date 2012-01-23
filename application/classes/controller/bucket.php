@@ -29,44 +29,51 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 
 	public function action_index()
-	{	    
-		$this->template->content = View::factory('pages/bucket/main')
-			->bind('bucket', $bucket)
-			->bind('droplets_list', $droplets_list)
-			->bind('settings', $settings)
-			->bind('more', $more);
-
+	{
 		// First we need to make sure this bucket exists
 		$id = (int) $this->request->param('id', 0);
+		
 		$bucket = ORM::factory('bucket')
 			->where('id', '=', $id)
 			->where('account_id', '=', $this->account->id)
 			->find();
+		
 		if ( ! $bucket->loaded())
 		{
 			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
 		}
 		
+		$this->template->content = View::factory('pages/bucket/main')
+			->bind('bucket', $bucket)
+			->bind('droplets_list', $droplets_list)
+			->bind('settings', $settings)
+			->bind('more', $more);
+			
 		//Use page paramter or default to page 1
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 
+		$droplet_js = View::factory('common/js/droplets')
+				->bind('fetch_url', $fetch_url);
+		
+		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$id;
+				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
-			->bind('droplets', $droplets)
-			->bind('view_more_url', $view_more_url)
-			->bind('buckets', $buckets);
-
+			->bind('droplet_js', $droplet_js);
+		
 		//Get Droplets
 		$droplets_array = Model_Bucket::get_droplets($bucket->id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
+		
 		// The Droplets
 		$droplets = $droplets_array['droplets'];
 		
 		//Throw a 404 if a non existent page is requested
-		if($page > 1 and empty($droplets)) {
+		if ($page > 1 AND empty($droplets))
+		{
 		    throw new HTTP_Exception_404(
 		        'The requested page :page was not found on this server.',
 		        array(':page' => $page)
@@ -81,6 +88,27 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
 		$view_more_url = url::site().$this->account->account_path.'/bucket/index/'.$id.'?page='.($page+1);
+	}
+	
+	/**
+	 * Gets the droplets for the specified bucket and page no. contained
+	 * in the URL variable "page"
+	 * The result is packed into JSON and returned to the requesting client
+	 */
+	public function action_droplets()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$bucket_id = intval($this->request->param('id'));
+		
+		// Get the page number
+		$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+		
+		$droplets = Model_Bucket::get_droplets($bucket_id, $page);
+		
+		// Return the droplets
+		echo json_encode($droplets['droplets']);
 	}
 	
 	/**

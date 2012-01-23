@@ -83,15 +83,6 @@ class Model_Droplet extends ORM
 
 		return parent::save($validation);
 	}
-
-	/**
-	 *
-	 */
-	public function mark_as_processed()
-	{
-		$this->droplet_processed = 1;
-		$this->save();
-	}
 	
 	/**
 	 * Checks if a droplet already exists based on its hash
@@ -162,15 +153,18 @@ class Model_Droplet extends ORM
 			// Get the droplet id
 			$droplet_id = $droplet['id'];
 			
-			// Update the droplet entry in the DB
+			// Get the droplet ORM reference
 			$orm_droplet = ORM::factory('droplet', $droplet_id);
-			$orm_droplet->droplet_processed = 1;
-			$orm_droplet->save();
 			
 			// Save the tags, links and places
 			self::add_tags($orm_droplet, $droplet['tags']);
 			self::add_links($orm_droplet, $droplet['links']);
 			self::add_places($orm_droplet, $droplet['places']);
+			
+			// Mark the droplet as processed
+			$orm_droplet->droplet_processed = 1;
+			$orm_droplet->save();
+			
 		}
 	}
 	

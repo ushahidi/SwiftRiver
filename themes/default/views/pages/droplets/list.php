@@ -25,7 +25,7 @@
 		<section class="actions">
 			<p class="button-view"><a href="#" class="detail-view"><span></span><strong>detail</strong></a></p>
 			<div class="button">
-				<p class="button-change bucket"><a href="#" class="detail-view"><span></span><strong>buckets</strong></a></p>
+				<p class="button-change bucket"><a href="#" class="detail-view"><span></span><strong><?php echo __('Add to Bucket'); ?></strong></a></p>
 			</div>
 			<div class="clear"></div>
 		</section>
@@ -84,7 +84,4 @@
 	<%= link_full %>
 </script>
 
-
-<script type="text/javascript">
-	<?php echo $droplet_js; ?>
-</script>
+<?php echo $droplet_js; ?>

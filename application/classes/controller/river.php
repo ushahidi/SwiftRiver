@@ -19,6 +19,12 @@ class Controller_River extends Controller_Swiftriver {
 	 * Channels
 	 */
 	protected $channels;
+	
+	/**
+	 * ORM reference for the currently selected river
+	 * @var Model_River
+	 */
+	private $_river;
 
 	/**
 	 * @return	void
@@ -27,6 +33,22 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
+		
+		// Get the id (if set)
+		$river_id = intval($this->request->param('id', 0));
+		
+		// This check should be made when this controller is accessed
+		// and the database id of the rive is non-zero
+		$this->_river = ORM::factory('river')
+			->where('id', '=', $river_id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+		
+		if ( ! $this->_river->loaded())
+		{
+			// Redirect to the dashboard
+			$this->request->redirect('dashboard');
+		}
 
 		// Get all available channels from plugins
 		$this->channels = Swiftriver_Plugins::channels();
@@ -37,8 +59,11 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
+		// Get the id of the current river
+		$river_id = $this->_river->id;
+		
 		$this->template->content = View::factory('pages/river/main')
-			->bind('river', $river)
+			->bind('river', $this->_river)
 			->bind('droplets', $droplets)
 			->bind('droplets_list', $droplets_list)
 			->bind('filtered_total', $filtered_total)
@@ -47,26 +72,11 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('settings_url', $settings_url)
 			->bind('more_url', $more_url);
 
-		// First we need to make sure this river
-		// actually exists
-		$id = (int) $this->request->param('id', 0);
-		
-		$river = ORM::factory('river')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->account->id)
-			->find();
-		
-		if ( ! $river->loaded())
-		{
-			// It doesn't -- redirect back to dashboard
-			$this->request->redirect('dashboard');
-		}
-
 		//Use page paramter or default to page 1
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 				
 		//Get Droplets
-		$droplets_array = Model_River::get_droplets($river->id, $page);
+		$droplets_array = Model_River::get_droplets($river_id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -89,7 +99,7 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js = View::factory('common/js/droplets')
 		    ->bind('fetch_url', $fetch_url);
 		
-		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$id;
+		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$river_id;
 		
 		$droplets_list = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js);
@@ -106,10 +116,10 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// URL's to pages that are ajax rendered on demand
-		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$id;
-		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$id;
-		$more_url = url::site().$this->account->account_path.'/river/more/'.$id;
-		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$id.'?page='.($page+1);
+		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$river_id;
+		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$river_id;
+		$more_url = url::site().$this->account->account_path.'/river/more/'.$river_id;
+		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$river_id.'?page='.($page+1);
 		
 	}
 	
@@ -118,10 +128,9 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		$river_id = $this->request->param('id', 0);
 		$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 		
-		$droplets = Model_River::get_droplets($river_id, $page);
+		$droplets = Model_River::get_droplets($this->_river->id, $page);
 		
 		echo json_encode($droplets['droplets']);
 	}
@@ -213,56 +222,57 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-
-		// Load the template and set the values
+		
+		// Load the view for the settings UI
 		$settings = View::factory('pages/river/settings_control')
-			->bind('channels', $this->channels)
-			->bind('river', $river)
-			->bind('post', $post)
-			->bind('base_url', $base_url);
+			->bind('settings_js', $settings_js);
 		
-		$base_url = URL::site().$this->account->account_path.'/river/';
+		// JavaScript for settings UI
+		$settings_js = View::factory('pages/river/js/settings')
+		    ->bind('channels_url', $channels_url);
 		
-		// Get the ID of the river
-		$id = (int) $this->request->param('id', 0);
-		
-		// Get River (if set)
-		$river = ORM::factory('river')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->account->id)
-			->find();
-		
-		$post = array();
-		
-		// Verify that the river exists
-		if ($river->loaded())
-		{
-			// Add the enabled property
-			$filters = $river->get_channel_filters();
-			foreach ($this->channels as $key => $channel)
-			{
-				if (isset($filters[$key]))
-				{
-					$this->channels[$key]['enabled'] = $filters[$key];
-				}
-				else
-				{
-					$this->channels[$key]['enabled'] = 0;
-				}
-			}
-			
-			// Get the list of channel filter options from the DB
-			$channel_filters = $river->channel_filters->find_all();
-			foreach ($channel_filters as $filter)
-			{
-				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
-				    $river->id);
-				
-				$post[$filter->channel] = $filter_options;
-			}
-		}
+		// URL for fetching the channels for the river
+		$channels_url = URL::site().$this->account->account_path.'/river/channels/'.$this->_river->id;
 
 		echo $settings;
+	}
+	
+	/**
+	 * Gets the list of available channels for the specified river
+	 */
+	public function action_channels()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		// Store for the channel config data
+		$channels_config = array();
+		
+		// Get the list of channel filter options from the DB
+		$channel_filters = $this->_river->channel_filters->find_all();
+		foreach ($channel_filters as $filter)
+		{
+			$channel = $filter->channel;
+			
+			// Check if the channel's plugin is enabled in the system config
+			if (isset($this->channels[$channel]))
+			{
+				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
+				    $this->_river->id);
+			
+				$channels_config[] = array(
+					'channel' => $channel,
+					'channel_name' => $this->channels[$channel]['name'],
+					'switch_class' => ($filter->filter_enabled == 0) 
+					    ? 'switch-off' 
+					    : 'switch-on',
+					'channel_data' => $filter_options,
+					'config_options' => $this->channels[$channel]['options']
+				);
+			}
+		}
+		
+		echo json_encode($channels_config);
 	}
 
 	/**

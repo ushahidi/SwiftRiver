@@ -13,18 +13,18 @@ $(document).ready(function() {
 		}
 		$(this).closest('section.panel').children('div.drawer').load(url + ' section.panel .panel_body', function() {
 			/* TABS */
-			$(".tab_content").hide(); //Hide all content
+			$(".tab-content").hide(); //Hide all content
 			$("ul.tabs li:first").addClass("active").show(); //Activate first tab
-			$(".tab_content:first").show(); //Show first tab content	
+			$(".tab-content:first").show(); //Show first tab content	
 			$("ul.tabs li").click(function() {
 				$("ul.tabs li").removeClass("active"); //Remove any "active" class
 				$(this).addClass("active"); //Add "active" class to selected tab
-				$(".tab_content").hide(); //Hide all tab content
+				$(".tab-content").hide(); //Hide all tab content
 				var activeTab = $(this).find("a").attr("href"); //Find the href attribute value to identify the active tab + content
 				$(activeTab).fadeIn(); //Fade in the active ID content
 				return false;
 			});
-			$('ul.tabs li.button_view a span.switch').live('click', function() {
+			$('ul.tabs li.button-view a span.switch').live('click', function() {
 				$(this).toggleClass('switch_on').toggleClass('switch_off');
 			});
 			Modernizr.load({
@@ -42,7 +42,7 @@ $(document).ready(function() {
 	});
 
 	/* Show added inputs */
-	$('p.button_view a').live('click', function(e) {
+	$('p.button-view a').live('click', function(e) {
 		var url = $(this).attr('href');
 		var detailDrawer= $(this).closest('div.row').children('div.detail');
 		e.preventDefault();

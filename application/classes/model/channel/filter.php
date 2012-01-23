@@ -91,7 +91,10 @@ class Model_Channel_Filter extends ORM {
 			
 			foreach($options as $option)
 			{
-				$channel_filter_options[] = $option->get_option_as_array();
+				$channel_filter_options[] = array(
+					"key" => $option->key,
+					"data" => json_decode($option->value, TRUE)
+				);
 			}
 		}
 		
