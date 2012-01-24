@@ -20,14 +20,24 @@
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $river);
 					?>
-					<li class="view_panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
 				<ul class="actions">
-					<li class="view_panel"><a href="<?php echo $filters_url; ?>" class="channels"><span class="icon"></span><?php echo __('Edit Filter'); ?></a></li>
-					<li class="view_panel"><a href="<?php echo $settings_url; ?>" class="filter"><span class="icon"></span><?php echo __('River Settings'); ?></a></li>
+					<li class="view-panel">
+						<a href="<?php echo $filters_url; ?>" class="channels">
+							<span class="icon"></span>
+							<span class="label"><?php echo __("Edit Filter"); ?></span>
+						</a>
+					</li>
+					<li class="view-panel">
+						<a href="<?php echo $settings_url; ?>" class="filter">
+							<span class="icon"></span>
+							<span class="label"><?php echo __("River Settings"); ?></span>
+						</a>
+					</li>
 				</ul>
 			</nav>
-			<div class="panel_body"></div>
+			<div class="panel-body"></div>
 		</section>
 
 		<div class="container stream insights">

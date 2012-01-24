@@ -5,7 +5,13 @@
  */
 (function() {
 	
+	// Stores the views for the channel config parameters
+	var channelSettings = {};
+	
+	// Channel (RSS, Twitter etc) model
 	window.Channel = Backbone.Model.extend();
+	
+	// Collection for the channels
 	window.ChannelsCollection = Backbone.Collection.extend({
 		model: Channel,
 		url: "<?php echo $channels_url; ?>"
@@ -13,6 +19,7 @@
 	
 	// Channel listing view
 	window.ChannelListView = Backbone.View.extend({
+		
 		// Parent container for the channel listing
 		el: $("#channels ul.tabs"),
 		
@@ -24,20 +31,23 @@
 		},
 		
 		render: function(eventName) {
+			// Clear out any content
+			$(this.el).empty();
+			
 			_.each(this.model.models, function(channel) {
-				$(this.el).append(new ChannelItemView({model: channel}).render().el);
+				$(this.el).append(new ChannelView({model: channel}).render().el);
 				
 				$("#channels .tab-container").append(this.panelTemplate(channel.toJSON()));
 			}, this);
 			
-			// TODO: Select the first channel in the river and display its 
-			// config options
+			// Select the first channel and display its config options
+			this.$("li:first").trigger("click");
 			return this;
 		}
 	});
 	
-	// View for a single channel item
-	window.ChannelItemView = Backbone.View.extend({
+	// View for a single channel + it's configured options
+	window.ChannelView = Backbone.View.extend({
 		tagName: "li",
 		
 		template: _.template($("#channel-list-item").html()),
@@ -75,12 +85,26 @@
 			if (panel.children().length == 1) {
 				// Show the tab+content for the selected channel
 				_.each(_model.channel_data, function(item) {
-					panel.append(new ChannelOptionItemView({model: item.data}).render().el);
+					
+					// Display each config param for the channel and bid the
+					// channel config values, config key + channel to the view
+					panel.append(new ChannelOptionItemView({
+						
+						// Channel associated with this config param
+						channel: _model.channel,
+						
+						// Key used to store an indivdiual channel config param
+						channelKey: item.key,
+						
+						// Unique id for this view object
+						objectId: _.uniqueId('param_'),
+						
+						model: item.data
+					}).render().el);
 				});
 			}
 			
-			// Rendering for the channel config options - used to add new items
-			// to the UI
+			// Render buttons used to add new channel config items to the UI
 			var configPanel = $(".channel-options", panel);
 			if (configPanel.children().length == 0) {
 				
@@ -90,10 +114,20 @@
 					// Model reference for the current config option
 					var configModel = _model.config_options[opt];
 					
-					// Add the config item item to the display
-					configPanel.append(new ChannelOptionConfigItem({
-						configItem: opt,
+					// Add the button
+					// Extra properties (options) to be passed on to the option item view
+					// at their time of creation
+					configPanel.append(new AddChannelConfigParamButton({
+						
+						// Channel associated with this config item
+						channel: _model.channel,
+						
+						// Key used to store an individual channel config param
+						channelKey: opt,
+						
+						// Parent element
 						parentEl: panel,
+						
 						model: configModel
 					}).render().el);
 				});
@@ -105,7 +139,16 @@
 		toggleChannelStatus: function(event) {
 			$(event.currentTarget).toggleClass("switch-on").toggleClass("switch-off");
 			
-			// TODO: Update the status of the channel in the DB via HTTP POST
+			// Update the status of the channel in the DB
+			var params = {
+				channel: this.model.get("channel"),
+				enabled: $(event.currentTarget).hasClass("switch-on") ? 1: 0,
+				command: "update_status"
+			};
+			
+			// Update status via XHR
+			$.post("<?php echo $channels_url; ?>", params);
+			
 			return false;
 		},
 		
@@ -117,12 +160,12 @@
 		}
 	});
 	
-	// View for the channel option listing
-	window.ChannelOptionConfigItem = Backbone.View.extend({
+	// View for the button(s) used for adding channel config parameters
+	window.AddChannelConfigParamButton = Backbone.View.extend({
 		tagName: "li",
 		
 		template: _.template($("#channel-option-listing").html()),
-		
+				
 		// Events
 		events: {
 			// Add a config option form field to the UI
@@ -136,7 +179,30 @@
 				this.model.value = "";
 			}
 			
-			this.options.parentEl.append(new ChannelOptionItemView({model: this.model}).render().el);
+			// TODO: Handle various types of input fields - use separate templates
+			// for each one of them
+			
+			// Create the item independently to enable shifting focus to it
+			// after creation
+			var optionItem = new ChannelOptionItemView({
+				
+				// Name of the channel associated with this view item
+				channel: this.options.channel, 
+				
+				// Config key for this config parameter
+				channelKey: this.options.channelKey,
+				
+				// Unique Id for the view object
+				objectId: _.uniqueId('param_'),
+				
+				model: this.model
+			});
+			
+			this.options.parentEl.append(optionItem.render().el);
+			
+			// Shift focus to the newly created item
+			$(":input", optionItem.el).focus();
+			
 			return false;
 		},
 		
@@ -154,6 +220,10 @@
 		
 		template: _.template($("#channel-option-item").html()),
 		
+		initialize: function() {
+			channelSettings[this.options.objectId] = this;
+		},
+		
 		// Events
 		events: {
 			// Removes a channel config value from the UI
@@ -162,8 +232,11 @@
 		
 		// Deletes the option item
 		removeOption: function() {
-			var _object = this;
-			$(_object.el).remove();
+			var _obj = this;
+			$(_obj.el).remove();
+			
+			// Delete view object from the working list
+			delete channelSettings[_obj.options.objectId];
 			return false;
 		},
 		
@@ -175,14 +248,61 @@
 	
 	
 	// Fetch the channels and display them
-	bootstrap = function() {
-		this.channels = new ChannelsCollection();
-		this.channels.fetch();
-		this.channelListView = new ChannelListView({model: this.channels});
-		this.channelListView.render();
-	}
+	var channels = new ChannelsCollection();
+	channels.fetch();
+	var channelListView = new ChannelListView({model: channels});
+	channelListView.render();
 	
-	bootstrap();
+	// 	
+	// Event bindings for the action buttons ("Delete River", Cancel, "Apply Changes")
+	//
+	
+	// "Apply changes"
+	$(".controls-buttons p.button-go > a").live('click', function() {
+		
+		// To hold the post data to be submitted via XHR
+		var _post = {};
+		_post["channels"] = {};
+		
+		// Get the config params for all the channels
+		$.each(channelSettings, function(k, view) {
+			var c = view.options.channel;
+			if (typeof(_post["channels"][c]) == 'undefined') {
+				_post["channels"][c] = [];
+			}
+			
+			if (! $(view.el).hasClass("group-item")) {
+				var _data = {
+					key: view.options.channelKey, 
+					label: view.model.label, 
+					type: view.model.type, 
+					value: view.$(":input").val()
+				};
+			
+				_post["channels"][c].push(_data);
+			} else {
+				// TODO: Handle grouped config options
+			}
+			
+			// Get the collaborators
+			_post["collaborators"] = {};
+			
+			// Get the status of the river (private/public)
+			_post["public"] = {};
+		});
+		
+		// Update the settings 
+		$.post("<?php echo $save_settings_url; ?>", _post, function(response) {
+			if (response.success) {
+				// Reload the channels list
+				channelListView.model.trigger("reset");
+			}
+		});
+		return false;
+	});
+	
+	// -------------------------------------------------------------
+	
 	
 })();
 </script>

@@ -31,31 +31,31 @@ $(document).ready(function() {
 		$('ul.views li.more').remove();
 	}
 	
-    $("section.panel nav ul li.view_panel a").toggle(
+    $("section.panel nav ul li.view-panel a").toggle(
         function(e) {
             var url = $(this).attr("href");
             $('ul.views li, ul.actions li').fadeTo('fast', 0);
             $(this).parent('li').addClass('active').fadeTo('fast', 1);
-            $('section.panel div.panel_body').slideDown(200).load(url);
+            $('section.panel div.panel-body').slideDown(200).load(url);
             e.preventDefault();
         }, 
         function(e) {
             $('ul.views li, ul.actions li').fadeTo('fast', 1);
             $(this).parent('li').removeClass('active');
-            $('section.panel div.panel_body').slideUp(200).empty();
+            $('section.panel div.panel-body').slideUp(200).empty();
             e.preventDefault();
         }
     );
 	
     // TODO: E.Kala Review this segment
-    $('section.panel nav ul.actions li.view_panel a').live('click', function() {
+    $('section.panel nav ul.actions li.view-panel a').live('click', function() {
         $.getScript('/themes/default/media/js/settings.js');
     });
     
 	$('section.panel a.close').live('click', function() {
 		$('section.panel nav, .canvas > .container').fadeIn('fast');
 		$('ul.views li, ul.actions li').fadeTo('fast', 1);
-		$('section.panel nav ul.actions li.view_panel').removeClass('active');
+		$('section.panel nav ul.actions li.view-panel').removeClass('active');
 		$('section.panel div.drawer').slideUp('fast').remove();
 		return false;
 	});

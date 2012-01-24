@@ -220,30 +220,44 @@ header nav li.login ul.dropdown li div.buttons {
   text-align: right;
 }
 /* --------------------------- BUTTONS */
-.button_go a, button.save, .button_delete a {
-  display: block;
-  color: #fff;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
-  -moz-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
-  -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
-  border: 1px solid #17a9c6;
-  background: #17a9c6;
-  background: -moz-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #63c4d8), color-stop(34%, #63c4d8), color-stop(61%, #17a9c6), color-stop(100%, #17a9c6));
-  background: -webkit-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
-  background: -o-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
-  background: -ms-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
-  background: linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='@product-primary_color_start', endColorstr='@product-primary_color', GradientType=0);
+.button-delete a {
+  border: 1px solid #c75c5c;
+  background: #d64646;
+  background: -moz-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #db7878), color-stop(34%, #db7878), color-stop(61%, #d64646), color-stop(100%, #d64646));
+  background: -webkit-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -o-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -ms-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
 }
-.button_go a:hover, .button_delete a:hover {
+.button-go a, button.save, .button-delete a {
+   display: block;
+   color: #fff;
+   font-weight: bold;
+   text-align: center;
+   text-transform: uppercase;
+   text-shadow: 1px 1px 1px rgba(0,0,0,.25);
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   border: 1px solid #0f9ebb;
+   box-shadow: 0 2px 3px rgba(0,0,0,.25),
+      0 1px 1px rgba(256,256,256,.4) inset;
+   -moz-box-shadow: 0 2px 3px rgba(0,0,0,.25),
+      0 1px 1px rgba(256,256,256,.4) inset;
+   -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.25),
+      0 1px 1px rgba(256,256,256,.4) inset;
+   background: rgb(99,196,216);
+   background: -moz-linear-gradient(top, rgba(99,196,216,1) 0%, rgba(99,196,216,1) 34%, rgba(24,169,199,1) 61%, rgba(24,169,199,1) 100%);
+   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(99,196,216,1)), color-stop(34%,rgba(99,196,216,1)), color-stop(61%,rgba(24,169,199,1)), color-stop(100%,rgba(24,169,199,1)));
+   background: -webkit-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
+   background: -o-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
+   background: -ms-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
+   background: linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#63c4d8', endColorstr='#18a9c7',GradientType=0 );
+}
+.button-go a:hover, .button-delete a:hover {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
   -moz-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
   -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
@@ -258,18 +272,7 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #17a9c6 0%, #17a9c6 34%, #63c4d8 61%, #63c4d8 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='@product-primary_color', endColorstr='@product-primary_color_start', GradientType=0);
 }
-.button_delete a {
-  border: 1px solid #c75c5c;
-  background: #d64646;
-  background: -moz-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #db7878), color-stop(34%, #db7878), color-stop(61%, #d64646), color-stop(100%, #d64646));
-  background: -webkit-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -o-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -ms-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
-}
-.button_delete a:hover {
+.button-delete a:hover {
   background: #e09696;
   background: -moz-linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #e09696), color-stop(34%, #e09696), color-stop(61%, #d64646), color-stop(100%, #d64646));
@@ -279,14 +282,16 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
 }
-.button_delete_subtle a {
-  box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-  -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-  -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-  border: 1px solid #c2c2c2;
-  background: #c2c2c2;
+
+.button-delete-subtle a{
+    box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+    -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+    -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+    border: 1px solid #C2C2C2;
+    background: #C2C2C2;
 }
-.button_delete_subtle a:hover, .actions .active a, .actions .active a:hover {
+
+.button-delete-subtle a:hover, .actions .active a, .actions .active a:hover {
   color: #fff;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
@@ -304,7 +309,7 @@ header nav li.login ul.dropdown li div.buttons {
   text-shadow: 1px 1px 1px #fff;
   border: 1px solid #c2c2c2;
 }
-.button_go a:hover, .button-view a:hover, .button-change a:hover {
+.button-go a:hover, .button-view a:hover, .button-change a:hover {
   text-decoration: none;
 }
 .button-view a {
@@ -646,11 +651,11 @@ div#channels ul.tabs li.button-view a span.switch-off:before {
   padding-left: 20px;
 }
 /* David K */
-.list_stream ul li span.description {
+.list-stream ul li span.description {
   font-size: 0.6em;
   color: #999;
 }
-.list_stream ul li.alt_row {
+.list-stream ul li.alt_row {
   background-color: #eee;
 }
 /* --------------------------- CONTROLS */
@@ -704,18 +709,39 @@ div#channels ul.tabs li.button-view a span.switch-off:before {
   padding: 3px;
   margin-bottom: 10px;
 }
-.controls .row {
-  clear: both;
-  padding: 1.0416666667%;
+.controls div.row, .controls div.list-stream {
+    clear: both;
+    padding: 1.0416666667%;
+}
+.controls div.row {
+    padding: 10px 1.0416666667%;
 }
 section.panel .controls .row {
   border-top: 1px solid #D4D4D4;
 }
-section.panel .controls .row:first-child, section.panel .controls .row:only-child, section.panel .controls .controls_buttons {
+section.panel .controls .row:first-child, section.panel .controls .row:only-child, section.panel .controls .controls-buttons {
   border-top: none;
 }
 .controls .buttons {
   float: right;
+}
+.controls-buttons {
+    margin: 10px 0;
+}
+.controls-buttons p.button-delete-subtle {
+    float: left;
+    clear: none;
+    margin-top: 0;
+}
+.controls-buttons p.button-go, .controls-buttons p.other, .controls-buttons p.button-delete_subtle {
+  float: right;
+  margin: 0 1.0416666667%;
+}
+.controls-buttons p.button-delete-subtle a {
+    padding: 15px 20px;
+}
+.controls-buttons p.button-go a {
+    padding: 15px 50px;
 }
 .controls .input {
   text-align: left;
@@ -818,7 +844,7 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-.controls .actions p.button_go a {
+.controls .actions p.button-go a {
   float: left;
   font-size: 0.9em;
   padding: 5px 10px;
@@ -830,9 +856,6 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
 .controls .actions p a.add:before {
   content: "+ ";
 }
-.controls div.actions {
-  padding: 10px 0;
-}
 .controls .row div.detail {
   display: none;
   -webkit-border-radius: 5px;
@@ -841,28 +864,21 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   border: 1px solid #DBDBDB;
   background: #E2E2E2;
 }
-.canvas .controls .controls_buttons {
+/*.canvas .controls .controls-buttons {
   border: none;
   padding: 15px 1.0416666667%;
-}
-.controls_buttons p.button_go, .controls_buttons p.other, .controls_buttons p.button_delete_subtle {
-  float: right;
-  margin: 0 1.0416666667%;
-}
-.controls_buttons p.button_go a {
-  padding: 10px 20px;
-}
-.controls_buttons p.other {
+}*/
+.controls-buttons p.other {
   padding: 15px 20px;
 }
-.controls_buttons p.button_delete_subtle {
+.controls-buttons p.button-delete_subtle {
   clear: both;
   margin-top: 25px;
 }
-.controls_buttons p.button_delete_subtle a {
+.controls-buttons p.button-delete_subtle a {
   padding: 15px 20px;
 }
-.controls_buttons p.button_delete_subtle a span.icon {
+.controls-buttons p.button-delete_subtle a span.icon {
   float: left;
   width: 14px;
   height: 14px;
@@ -1211,7 +1227,7 @@ section.panel nav ul.views li.active a span.badge {
   color: #fff;
   background: #17a9c6;
 }
-section.panel nav ul.views li.view_panel.open a {
+section.panel nav ul.views li.view-panel.open a {
   color: #999999;
   font-weight: bold;
   -moz-box-shadow: none;
@@ -1219,7 +1235,7 @@ section.panel nav ul.views li.view_panel.open a {
   box-shadow: none;
   background: none;
 }
-section.panel nav ul.views li.view_panel.open a span.icon {
+section.panel nav ul.views li.view-panel.open a span.icon {
   display: none;
 }
 section.panel nav ul.actions li a {
@@ -1284,7 +1300,7 @@ section.panel .row {
 #trends ul li.gallery a {
   background-image: url(/themes/default/media/img/icon_gallery.png);
 }
-section.panel .options p.button_go a {
+section.panel .options p.button-go a {
   float: right;
   width: 20%;
   font-size: 1.1em;
@@ -1315,7 +1331,7 @@ article#droplet_full .canvas {
 .select .edit_advanced {
   padding-top: 4.166666667%;
 }
-.edit_advanced > .row p.button_go a, .edit_advanced > .row p.button-view a, .edit_advanced > .row p.button-change a {
+.edit_advanced > .row p.button-go a, .edit_advanced > .row p.button-view a, .edit_advanced > .row p.button-change a {
   float: left;
   font-size: 0.9em;
   padding: 5px 10px;
@@ -1495,10 +1511,10 @@ article.item .summary .content .body h2 a {
 article.item .summary .content .body p {
   padding: 5px 0;
 }
-article.item .summary .content .body p.button_go {
+article.item .summary .content .body p.button-go {
   padding: 0;
 }
-article.item .summary .content .body p.button_go a {
+article.item .summary .content .body p.button-go a {
   float: left;
   font-size: 0.8em;
   padding: 3px 5px;
@@ -1755,11 +1771,11 @@ article.item .detail section.meta .item p.button-change a {
   display: inline;
   padding: 2px 10px;
 }
-article.item .detail section.meta .item p.button_delete {
+article.item .detail section.meta .item p.button-delete {
   padding: 0;
   margin: 5px 0 10px;
 }
-article.item .detail section.meta .item p.button_delete a {
+article.item .detail section.meta .item p.button-delete a {
   display: inline;
   font-size: 0.9em;
   padding: 5px 10px;
@@ -1811,7 +1827,7 @@ article.droplet section.detail article.droplet section.content .title h1 {
 article.droplet section.detail article.droplet section.content .body p {
   font-size: 1em;
 }
-article.droplet section.detail article.droplet section.content .body p.button_go a {
+article.droplet section.detail article.droplet section.content .body p.button-go a {
   display: inline;
   font-size: 0.8em;
   padding: 3px 10px;
@@ -1835,11 +1851,11 @@ article.droplet section.detail article.add_reply {
 article.droplet section.detail article.add_reply section.content textarea {
   width: 100%;
 }
-article.droplet section.detail article.add_reply section.content p.button_go {
+article.droplet section.detail article.add_reply section.content p.button-go {
   float: right;
   margin-top: 10px;
 }
-article.droplet section.detail article.add_reply section.content p.button_go a {
+article.droplet section.detail article.add_reply section.content p.button-go a {
   font-size: 1.1em;
   padding: 13px 30px;
 }
@@ -1911,10 +1927,10 @@ article.single .detail div.summary .body {
 article.single .detail .add_reply .content textarea {
   width: 100%;
 }
-article.single .detail .add_reply .content p.button_go {
+article.single .detail .add_reply .content p.button-go {
   padding: 0;
 }
-article.single .detail .add_reply .content p.button_go a {
+article.single .detail .add_reply .content p.button-go a {
   float: right;
   font-size: 1.1em;
   padding: 10px 20px;
@@ -2354,9 +2370,6 @@ footer li a {
     border-radius: 5px;
     border-top: 1px solid #cecece;
   }
-  .controls_buttons p.button_go a {
-    padding: 15px 50px;
-  }
   article.dashboard .page_title section.actions {
     width: 14.89361702%;
   }
@@ -2386,7 +2399,7 @@ footer li a {
   section.panel nav ul.views li.more {
     display: none;
   }
-  .controls_buttons p.button_delete_subtle {
+  .controls-buttons p.button-delete_subtle {
     float: left;
     clear: none;
     margin-top: 0;
