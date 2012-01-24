@@ -98,6 +98,60 @@ class Model_River extends ORM {
 	}
 	
 	/**
+	 * Modifies the status of a channel associated with the river. If the 
+	 * channel is not associated with the river, it is created.
+	 *
+	 * @param string $channel Name of the channel
+	 * @param int $user_id ID of the user modifying the status of the channel
+	 * @param int $enabled Status flag of the channel
+	 * @return bool TRUE on succeed, FALSE otherwise
+	 */
+	public function modify_channel_status($channel, $user_id, $enabled)
+	{
+		// Check if the channel exists
+		$filter = ORM::factory('channel_filter')
+			->where('channel', '=', $channel)
+			->where('user_id', '=', $user_id)
+			->where('river_id', '=', $this->id)
+			->find();
+	
+		if ($filter->loaded())
+		{
+			// Modify existing channel fitler
+			$filter->filter_enabled = $enabled;
+			$filter->filter_date_modified = date('Y-m-d H:i:s');
+			$filter->save();
+		
+			return TRUE;
+		}
+		else
+		{
+			try {
+				// Create a new channel fitler
+				$filter = new Model_Channel_Filter();
+				$filter->channel = $channel;
+				$filter->river_id = $this->id;
+				$filter->user_id = $user_id;
+				$filter->filter_enabled = $enabled;
+				$filter->filter_date_add = date('Y-m-d H:i:s');
+				$filter->save();
+				
+				return TRUE;
+			}
+			catch (Kohana_Exception $e)
+			{
+				// Catch and log exception
+				Kohana::$log->add(Log::ERROR, 
+				    "An error occurred while enabling/disabling the channel: :error",
+				    array(":error" => $e->getMessage())
+				);
+			
+				return FALSE;
+			}
+		}
+	}
+	
+	/**
 	 * Adds a droplet to river
 	 *
 	 * @param int $river_id Dataabse ID of the river

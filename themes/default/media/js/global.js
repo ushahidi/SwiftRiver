@@ -60,7 +60,7 @@ $(document).ready(function() {
 		return false;
 	});
 	$('div.detail a.close').live('click', function() {
-		$(this).closest('article.item, div.edit_advanced').find('section.actions p.button_view a, div.edit_advanced p.button_view a').removeClass('detail_hide');
+		$(this).closest('article.item, div.edit_advanced').find('section.actions p.button_view a, div.edit_advanced p.button_view a').removeClass('detail-hide');
 		$(this).closest('div.edit_advanced').find('div.row > p a').fadeTo('fast', 1);
 		$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();
 	});

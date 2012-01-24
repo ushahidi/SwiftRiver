@@ -425,10 +425,10 @@ button.save {
 button:hover {
   cursor: pointer;
 }
-.edit_input label {
+.edit-input label {
   font: bold 14px/1em Helvetica Neue, Helvetica, Arial, sans-serif;
 }
-.edit_input textarea {
+.edit-input textarea {
   display: block;
   width: 100%;
 }
@@ -1064,15 +1064,16 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
   content: "Current ";
 }
 /* --------------------------- TITLE */
-.page_title {
+.page-title {
   text-align: left;
   padding: 15px 0;
 }
-.page_title hgroup {
-  text-align: center;
-  margin: 0 1.0416666667%;
+.page-title hgroup {
+    margin: 0 1.0416666667%;
+    float: left;
+    text-align: left;
 }
-.page_title hgroup img {
+.page-title hgroup img {
   float: left;
   width: 50px;
   -webkit-border-radius: 5px;
@@ -1081,13 +1082,13 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
   border: 3px solid #dadada;
   margin-right: 10px;
 }
-.page_title h1 {
+.page-title h1 {
   color: #BBBBBB;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300;
   font-size: 2em;
 }
-article .page_title hgroup.user h1 {
+article .page-title hgroup.user h1 {
   text-align: left;
   padding-top: 10px;
 }
@@ -1169,7 +1170,7 @@ section.meter div span {
   -webkit-animation-iteration-count: 1;
   -webkit-animation-timing-function: ease-in-out;
 }
-article.dashboard .page_title section.actions {
+article.dashboard .page-title section.actions {
   width: 45%;
 }
 /* --------------------------- PANEL */
@@ -1320,7 +1321,7 @@ section.panel .options p.save {
   border-radius: 5px;
   background: #fff;
 }
-article#droplet_full .canvas {
+article#droplet-full .canvas {
   -webkit-border-bottom-left-radius: 0;
   -webkit-border-bottom-right-radius: 0;
   -moz-border-radius-bottomleft: 0;
@@ -1724,7 +1725,7 @@ article.item div.detail, div.edit_advanced div.detail {
 article.item .detail .summary {
   padding: 0;
 }
-article#droplet_full section.detail {
+article#droplet-full section.detail {
   display: block;
   background: #f8f8f8;
   background: -moz-linear-gradient(top, #f8f8f8 0%, #ffffff 30%, #ffffff 100%);
@@ -1980,7 +1981,7 @@ div#summary_full section.body {
   text-align: left;
   padding: 2.08333333% 1.0416666667%;
 }
-article#droplet_full div.bottom {
+article#droplet-full div.bottom {
   background: none;
 }
 /* --------------------------- DASHBOARD */
@@ -2205,7 +2206,7 @@ footer li a {
   .list .data article.item .content div.checkbox {
     padding-right: 10px;
   }
-  article#droplet_full section.actions p.follow_user a.subscribe strong {
+  article#droplet-full section.actions p.follow_user a.subscribe strong {
     display: block;
   }
   article.droplet section.detail article.add_reply section.content {
@@ -2334,19 +2335,15 @@ footer li a {
   .channels ul.tabs li.button-view a span.switch-off, .channels ul.tabs li.button-view a span.switch-on {
     float: right;
   }
-  .page_title {
+  .page-title {
     padding: 25px 0;
   }
-  .page_title hgroup {
-    float: left;
-    text-align: left;
-  }
-  .page_title h1 {
+  .page-title h1 {
     float: left;
     font-size: 3em;
     padding-right: 10px;
   }
-  article .page_title hgroup.user h1 {
+  article .page-title hgroup.user h1 {
     padding-top: 0;
   }
   .select .edit_advanced {
@@ -2370,14 +2367,14 @@ footer li a {
     border-radius: 5px;
     border-top: 1px solid #cecece;
   }
-  article.dashboard .page_title section.actions {
+  article.dashboard .page-title section.actions {
     width: 14.89361702%;
   }
-  article#droplet_full .page_title section.actions p a span {
+  article#droplet-full .page-title section.actions p a span {
     float: none;
     margin: 0 auto;
   }
-  article#droplet_full .page_title section.actions p a strong {
+  article#droplet-full .page-title section.actions p a strong {
     display: block;
     text-align: center;
   }
@@ -2391,7 +2388,7 @@ footer li a {
     float: left;
     width: 22.91666667%;
   }
-  article.droplet .page_title section.actions {
+  article.droplet .page-title section.actions {
     float: right;
     clear: none;
     margin: 0;
@@ -2598,7 +2595,7 @@ footer li a {
     font-size: 1.45em;
   }
 
-  article#droplet_full section.actions p.bucket a.bucket_added {
+  article#droplet-full section.actions p.bucket a.bucket_added {
     border-left: 1px solid #fff;
   }
   
@@ -2713,13 +2710,14 @@ footer li a {
   article.dashboard aside.dashboard .item img {
     width: 100%;
   }
+  article.droplet div.summary, article.droplet div.canyon {
+      padding: 0 1.0416666667%;
+  }
   article.droplet section.detail {
-    border-right: 1px solid #f2f2f2;
-    background: none repeat scroll 0 0 #F8F8F8;
+    background: #F8F8F8;
     margin-top: 15px;
     text-align: left;
     text-shadow: 1px 1px 1px #FFFFFF;
-    width: auto;
   }
   article.droplet section.detail h2{
       color: #045376;

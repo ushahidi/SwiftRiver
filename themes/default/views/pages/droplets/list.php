@@ -30,7 +30,7 @@
 			<div class="clear"></div>
 		</section>
 		
-		<section class="detail cf" style="display:none" id="detail-section-<%= id %>">
+		<section class="detail cf" style="display:none;" id="detail-section-<%= id %>">
 			<div class="arrow top"><span></span></div>
 			<div class="canyon cf">
 				<aside>

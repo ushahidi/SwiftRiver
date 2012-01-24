@@ -92,6 +92,7 @@
 				// Display the droplet detail
 				if ($(event.currentTarget).hasClass("detail-hide")) {
 					_obj.slideDown(200);
+					_obj.css("display", "block");
 				
 					var dropletView = new DropletDetailView({model: this.model});
 					$("#droplet-view", this.el).html(dropletView.render().el);
@@ -128,7 +129,7 @@
 				
 				} else {
 					_obj.slideUp(50);
-					_obj.hide();
+					_obj.css("display", "none");
 				}
 			
 				return false;

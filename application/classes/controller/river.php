@@ -160,10 +160,12 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$settings_js = View::factory('pages/river/js/settings')
 		    ->bind('channels_url', $channels_url)
-		    ->bind('save_settings_url', $save_settings_url);
+		    ->bind('save_settings_url', $save_settings_url)
+		    ->bind('delete_river_url', $delete_river_url);
 
 		$channels_url = URL::site().$this->account->account_path.'/river/channels';
 		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings';
+		$delete_river_url = URL::site().$this->account->account_path.'/river/delete';
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
@@ -171,37 +173,6 @@ class Controller_River extends Controller_Swiftriver {
 			$this->channels[$key]['enabled'] = 0;
 		}
 
-		// Save the river
-		if ($_POST)
-		{
-			$river = ORM::factory('river');
-			$post = $river->validate($_POST);
-
-			// Swiftriver Plugin Hook -- execute before saving a river
-			// Allows plugins to perform further validation checks
-			// ** Plugins can then use 'swiftriver.river.save' after the river
-			// has been saved
-			// Swiftriver_Event::run('swiftriver.river.pre_save', $post);
-
-			if ($post->check())
-			{
-				$river->river_name = $post['river_name'];
-				$river->account_id = $this->account->id;
-				$river->save();
-
-				// Save channel filters
-				// $this->_save_filters($post, $river);
-
-				// Always redirect after a successful POST to prevent refresh warnings
-				$this->request->redirect('river/index/'.$river->id);
-			}
-			else
-			{
-				//validation failed, get errors
-				$errors = $post->errors('river');
-			}
-
-		}
 	}
 
 	/**
@@ -233,11 +204,13 @@ class Controller_River extends Controller_Swiftriver {
 		// JavaScript for settings UI
 		$settings_js = View::factory('pages/river/js/settings')
 		    ->bind('channels_url', $channels_url)
-		    ->bind('save_settings_url', $save_settings_url);
+		    ->bind('save_settings_url', $save_settings_url)
+		    ->bind("delete_river_url", $delete_river_url);
 		
 		// URL for fetching the channels for the river
 		$channels_url = URL::site().$this->account->account_path.'/river/channels/'.$this->_river->id;
 		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings/'.$this->_river->id;
+		$delete_river_url = URL::site().$this->account->account_path.'/river/delete/'.$this->_river->id;
 		echo $settings;
 	}
 	
@@ -262,47 +235,34 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$exists = $this->_river->loaded();
 		
-		// Get the list of channel filters and their options
-		$filters = ($exists) 
-		    ? $this->_river->channel_filters->find_all()
-		    : array_keys($this->channels);
+		// Get the list of channels for the current river
+		$river_channels = $this->_river->get_channel_filters();
 		
-		if (count($filters) == 0)
+		foreach (array_keys($this->channels) as $channel)
 		{
-			$exists = FALSE;
-			$filters = array_keys($this->channels);
-		}
-		
-		foreach ($filters as $filter)
-		{
-			// Get the channel name
-			$channel = ($exists) ? $filter->channel : $filter;
-			
 			$filter_options = array();
 			$switch_class = "switch-off";
 			
-			// Check if the channel's plugin is enabled in the system config
-			if ($exists)
+			// Check if the channel has been added to the current river
+			if (array_key_exists($channel, $river_channels))
 			{
-				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
+				$filter_options = Model_Channel_Filter::get_channel_filter_options($channel, 
 				    $this->_river->id);
 				
 				// on/off state for the channel on the UI
-				$switch_class = ($filter->filter_enabled == 0)
+				$switch_class = ($river_channels[$channel] == 0)
 				    ? 'switch-off' 
 				    : 'switch-on';
 			}
 			
-			if (isset($this->channels[$channel]))
-			{
-				$channels_config[] = array(
-					'channel' => $channel,
-					'channel_name' => $this->channels[$channel]['name'],
-					'switch_class' => $switch_class,
-					'channel_data' => $filter_options,
-					'config_options' => $this->channels[$channel]['options']
-				);
-			}
+			// Update the configuration for the river's channels
+			$channels_config[] = array(
+				'channel' => $channel,
+				'channel_name' => $this->channels[$channel]['name'],
+				'switch_class' => $switch_class,
+				'channel_data' => $filter_options,
+				'config_options' => $this->channels[$channel]['options']
+			);
 		}
 		
 		echo json_encode($channels_config);
@@ -362,14 +322,14 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
-		if ($river->_river->loaded())
+		if ($this->_river->loaded())
 		{
-			$river->delete();
-			echo json_encode(array("status"=>"success"));
+			$this->_river->delete();
+			echo json_encode(array("success"=>TRUE));
 		}
 		else
 		{
-			echo json_encode(array("status"=>"error"));
+			echo json_encode(array("success"=>FALSE));
 		}
 	}
 	
@@ -388,47 +348,10 @@ class Controller_River extends Controller_Swiftriver {
 			// Get enable/disable flag
 			$enabled = $_REQUEST['enabled'];
 			$channel  = $_REQUEST['channel'];
-		
-			// Check if the channel exists
-			$filter = ORM::factory('channel_filter')
-				->where('channel', '=', $channel)
-				->where('user_id', '=', $this->user->id)
-				->where('river_id', '=', $this->_river->id)
-				->find();
-		
-			if ($filter->loaded())
-			{
-				// Modify existing channel fitler
-				$filter->filter_enabled = $enabled;
-				$filter->filter_date_modified = date('Y-m-d H:i:s');
-				$filter->save();
 			
-				$succeed = TRUE;
-			}
-			else
-			{
-				try {
-					// Create a new channel fitler
-					$filter = new Model_Channel_Filter();
-					$filter->channel = $channel;
-					$filter->river_id = $this->_river->id;
-					$filter->user_id = $this->user->id;
-					$filter->filter_enabled = $enabled;
-					$filter->filter_date_add = date('Y-m-d H:i:s');
-					$filter->save();
-					$succeed = TRUE;
-				}
-				catch (Kohana_Exception $e)
-				{
-					// Catch and log exception
-					Kohana::$log->add(Log::ERROR, 
-					    "An error occurred while enabling/disabling the channel: :error",
-					    array(":error" => $e->getMessage())
-					);
-				
-					$succeed = FALSE;
-				}
-			}
+			// Modify the status of the channel
+			$succeed = $this->_river->modify_channel_status($channel, $this->user->id, $enabled);
+		
 		}
 		
 		echo json_encode(array('success' => $succeed));
@@ -442,8 +365,47 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+		
+		$status_data = array(
+			"success" => FALSE,
+			"redirect_url" => ""
+		);
+		
+		// Check for new river
+		if ($_POST)
+		{
+			$river = ORM::factory('river');
+			$post = $river->validate(Arr::extract($_POST, array('river_name')));
 
-		if ($_POST AND $this->_river->loaded())
+			// Swiftriver Plugin Hook -- execute before saving a river
+			// Allows plugins to perform further validation checks
+			// ** Plugins can then use 'swiftriver.river.save' after the river
+			// has been saved
+			// Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+
+			if ($post->check())
+			{
+				$river->river_name = $post['river_name'];
+				$river->account_id = $this->account->id;
+				$this->_river = $river->save();
+				
+				if (isset($_POST["selected_channels"]))
+				{
+					foreach ($_POST["selected_channels"] as $channel => $status)
+					{
+						$this->_river->modify_channel_status($channel, $this->user->id, $status);
+					}
+				}
+				
+				// Modify the status data
+				$status_data["success"] = TRUE;
+				$status_data["redirect_url"] = URL::site().
+				    $this->account->account_path."/river/index/".$river->id;
+			}
+		}
+
+		// Proceed to save the channels
+		if (isset($_POST["channels"]) AND $this->_river->loaded())
 		{
 			// Marshall the channel options - structure them into the standard
 			// format for representing plugin config data
@@ -458,13 +420,12 @@ class Controller_River extends Controller_Swiftriver {
 			
 			// Save channel filters
 			$this->_save_filters($filter_options, $this->_river);
+			
+			$status_data["success"] = TRUE;
 		
-			echo json_encode(array('success' => TRUE));
 		}
-		else
-		{
-			echo json_encode(array("success" => FALSE));
-		}
+		
+		echo json_encode($status_data);
 	}
 
 	/**

@@ -75,7 +75,7 @@ function createBucket(create, where, droplet_id){
 $(document).ready(function() {
 
 	// Inline Editing
-	$('.edit_trigger').live('click', function() {
+	$('.edit-trigger').live('click', function() {
 	    
 	    // Declare these vars as local to create a closure
 	    // and avoid weird problems if multiple inline edits
@@ -90,7 +90,7 @@ $(document).ready(function() {
 		
 		// When the cancel button is clicked
 		$('.edit .buttons button.cancel').click(function() {
-		    $(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
+		    $(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit-trigger" title="'+ inlineInputType +'" id="edit_'+ inlineInputId +'" onclick="">' + inlineInputValue + '</span>');
 			$(this).parent().remove();			
 		});
 		
@@ -103,7 +103,7 @@ $(document).ready(function() {
         	    (typeof (inputValue) != 'undefined' && inputValue) ) {
         		$.post('<?php echo URL::site()?>'+inlineInputType+'/ajax_title', { edit_id: inlineInputId, edit_value: inputValue },
         			function(data){
-        				save_button.closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="'+ inlineInputType +'" id="'+ inlineInputId +'" onclick="">' + inputValue + '</span>');
+        				save_button.closest('.edit').find('.edit_input').replaceWith('<span class="edit-trigger" title="'+ inlineInputType +'" id="'+ inlineInputId +'" onclick="">' + inputValue + '</span>');
         				save_button.parent().remove();
         			}, "json");
         	}		    
