@@ -49,14 +49,16 @@ class Model_User extends Model_Auth_User
 	 */
 	public function rules()
 	{
-		$parent = parent::rules();
-		$parent['username'][] = array('min_length', array(':value', 3));
-		$parent['name'] = array(
-			array('not_empty'),
-			array('min_length', array(':value', 3)),
-			array('max_length', array(':value', 150))
+		return array(
+			'username' => array(
+				array('not_empty'),
+			),
+			'email' => array(
+				array('not_empty'),
+				array('email'),
+				array(array($this, 'unique'), array('email', ':value')),
+			),
 		);
-		return $parent;
 	}
 
 	/**

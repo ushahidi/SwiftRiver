@@ -152,22 +152,73 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-
+		
 		// save settings
 		if ( ! empty($_POST) )
 		{
-			if (empty($_POST['password']) || empty($_POST['password_confirm']))
-			{
-				// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
-				unset($_POST['password'], $_POST['password_confirm']);
-			}
+		    try 
+		    {
+			    if (empty($_POST['password']) || empty($_POST['password_confirm']))
+			    {
+			    	// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
+			    	unset($_POST['password'], $_POST['password_confirm']);
+			    }
+			    
+			    $current_password = $_POST['current_password'];
+			    
+			    // Password is changing and we are using RiverID authentication
+			    if (! empty($_POST['password']) and ! empty($_POST['password_confirm']) and $this->riverid_auth)
+			    {
+			        $post = Model_Auth_User::get_password_validation($_POST);
+			        if ( ! $post->check())
+			        {
+			            throw new ORM_Validation_Exception('', $post);
+			        }
+			        
+			        
+			        $resp = RiverID_API::factory()
+			                           ->changepassword($this->user->email, $_POST['current_password'], $_POST['password']);
+			        
+			        if ( ! $resp['status']) {
+			            echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+			            return;
+			        }
+			        
+			        // For API calls below, use this new password
+			        $current_password = $_POST['password'];
+			        unset($_POST['password'], $_POST['password_confirm']);			        			        	    
+			    } 
+			    
+			    if ($_POST['email'] != $this->user->email and $this->riverid_auth)
+			    {
+			        $new_email = $_POST['email'];
+			        
+			        if ( ! Valid::email($new_email))
+			        {
+			            echo json_encode(array("status"=>"error", "errors" => array(__('Email provided is invalid'))));
+			            return;
+			        }
+			        
+			        $mail_body = View::factory('emails/changeemail')
+    	                         ->bind('secret_url', $secret_url);		            
+    	            $secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', true, true);
+    	            
+			        $resp = RiverID_API::factory()
+			                           ->changeemail($this->user->email, $new_email, $current_password, $mail_body);
+			        
+			        if ( ! $resp['status']) {
+			            echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+			            return;
+			        }
+			        
+			        
+			        unset($_POST['email']);
+			    }
+			
 
-			// Save user
-			try
-			{
 				$this->user->update_user($_POST, 
 					array(
-						'username',
+						'name',
 						'password',
 						'email'
 					));

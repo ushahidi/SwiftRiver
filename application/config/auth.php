@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * Config for Sweeper Auth
+ * Config for SwiftRiver Auth
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -15,7 +15,8 @@
  */
 
 return array(
-	'driver'       => 'ORM',
+	'driver'       => 'RiverID',
+	'api_endpoint' => 'https://crowdmapid.com/api',
 	'hash_method'  => 'sha256',
 	'hash_key'     => '#&wicm`(wT6m&0f}UT*o9*V01@:?fF#D', // replace with random string
 	'lifetime'     => 1209600,

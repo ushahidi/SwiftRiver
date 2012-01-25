@@ -90,6 +90,7 @@ Kohana::$config->attach(new Config_File);
 Kohana::modules(array(
 	'auth'         => MODPATH.'auth',       // Basic authentication
 	'orm'          => MODPATH.'orm',        // Object Relationship Mapping
+	'riverid'      => MODPATH.'riverid',
 	'cache'        => MODPATH.'cache',      // Caching with multiple backends
 	'database'     => MODPATH.'database',   // Database access
 	'image'        => MODPATH.'image',      // Image manipulation
@@ -119,6 +120,40 @@ unset($active_plugins, $theme);
 	
 
 Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
+
+
+/**
+ * Swiftriver Password Reset Route
+ */	
+Route::set('login_reset', 'login/reset/<id>/<token>')
+	->defaults(array(
+		'controller' => 'login',
+		'action'     => 'reset',
+	));
+
+/**
+ * Swiftriver Account Create Route
+ */	
+Route::set('login_create', 'login/create/<email>/<token>',
+    array(
+        'email' => '[^/]++'
+    ))
+	->defaults(array(
+		'controller' => 'login',
+		'action'     => 'reset',
+	));
+
+/**
+ * Swiftriver Change Email Route
+ */	
+Route::set('login_changeemail', 'login/changeemail/<id>/<email>/<token>',
+    array(
+        'email' => '[^/]++'
+    ))
+	->defaults(array(
+		'controller' => 'login',
+		'action'     => 'changeemail',
+	));
 
 
 /**

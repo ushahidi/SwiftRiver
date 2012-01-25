@@ -346,18 +346,17 @@ COMMENT = 'Filters generate droplets from channels' ;
 -- Table `users`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `users` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `email` VARCHAR(127) NOT NULL ,
-  `name` VARCHAR(255) NULL DEFAULT NULL ,
-  `username` VARCHAR(255) NOT NULL ,
-  `password` VARCHAR(255) NOT NULL ,
-  `logins` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
-  `last_login` INT(10) UNSIGNED NULL DEFAULT NULL ,
-  UNIQUE INDEX (`email` ASC) ,
-  UNIQUE INDEX (`username` ASC) ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `riverid` varchar(255) NOT NULL,
+  `email` varchar(127) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_login` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

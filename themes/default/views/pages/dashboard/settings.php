@@ -27,8 +27,14 @@ $(document).ready(function() {
 					<div id="settings" class="controls">
 						<div class="row cf">
 							<div class="input">
-								<h3><?php echo __('Username'); ?></h3>
-								<?php echo Form::input("username", $user->username, array('id' => 'username')); ?>
+								<h3><?php echo __('Current Password'); ?></h3>
+								<?php echo Form::password("current_password", "", array('id' => 'current_password')); ?>
+							</div>
+						</div>					    
+						<div class="row cf">
+							<div class="input">
+								<h3><?php echo __('Name'); ?></h3>
+								<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
 							</div>
 							<div class="input">
 								<h3><?php echo __('Email'); ?></h3>

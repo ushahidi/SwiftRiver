@@ -55,6 +55,11 @@ class Controller_Swiftriver extends Controller_Template {
 	protected $session;
 	
 	/**
+	 * Are we using RiverID?
+	 */
+	 public $riverid_auth = FALSE;
+	
+	/**
 	 * Called from before() when the user is not logged in but they should.
 	 *
 	 * Override this in your own Controller / Controller_App.
@@ -134,7 +139,16 @@ class Controller_Swiftriver extends Controller_Template {
 		if ($this->user->has('roles',ORM::factory('role',array('name'=>'admin'))))
 		{
 			$this->admin = TRUE;
-		}		
+		} 
+		else
+		{
+		    $this->admin = FALSE;
+		}
+		
+		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid') 
+		{
+		    $this->riverid_auth = TRUE;
+		}
 
 		// Does this user have an account space?
 		$this->account = ORM::factory('account')

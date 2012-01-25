@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>Log in - SwiftRiver</title> 
+	<title>Set Password - SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -30,7 +30,7 @@
 	<article id="login">
 		<div class="cf center page_title">
 			<hgroup>
-				<h1>Log in</h1>
+				<h1>Set password</h1>
 			</hgroup>
 		</div>
 		
@@ -64,49 +64,20 @@
 			<?php echo Form::open(); ?>
 				<div class="row cf">
 					<div class="input">
-						<h3><?php echo __('Email'); ?></h3>
-						<?php echo Form::input("username", ""); ?>
-					</div>
-				</div>
-				<div class="row cf">
-					<div class="input">
 						<h3><?php echo __('Password'); ?></h3>
 						<?php echo Form::password("password", ""); ?>
 					</div>
 				</div>
+				<div class="row cf">
+					<div class="input">
+						<h3><?php echo __('Verify Password'); ?></h3>
+						<?php echo Form::password("password_confirm", ""); ?>
+					</div>
+				</div>
 				<div class="row controls_buttons cf">
-					<p class="button_go" onclick="submitForm(this)"><a>Get started</a></p>
-					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
+					<p class="button_go" onclick="submitForm(this)"><a>Set Password</a></p>
 				</div>
-			<?php echo Form::close(); ?>
-			<div class="row cf">
-			    <?php echo Form::open(); ?>
-				<div class="input has_dropdown">
-					<a><?php echo __('Create an account'); ?></a>
-					<ul class="dropdown"  style="display: none">
-						<li><strong><?php echo __('Enter your email address below') ?></strong><?php echo Form::input("new_email", ""); ?></li>
-						<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Register');?></button></div></li>
-					</ul>
-				</div>
-				<?php echo Form::close(); ?>
-				<?php echo Form::open(); ?>
-				<div class="input has_dropdown">
-					<a><?php echo __('Forgot your password?'); ?></a>
-					<ul class="dropdown"  style="display: none">
-						<li><strong><?php echo __('Enter the e-mail address used for registration') ?></strong><?php echo Form::input("recover_email", ""); ?></li>
-						<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Reset password');?></button></div></li>
-					</ul>
-				</div>
-				<?php echo Form::close(); ?>
-			</div>							
-			
-			<section class="detail cf">
-				<div class="arrow top"><span></span></div>
-				<div class="canyon cf">
-					<h2>Why SwiftRiver kicks ass.</h2>
-				</div>
-				<div class="arrow bottom"><span></span></div>
-			</section>
+			<?php echo Form::close(); ?> 			
 		</div>
 	</article>
 	

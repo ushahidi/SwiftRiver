@@ -2,10 +2,11 @@ $(document).ready(function() {
 	// Dashboard Settings
 	$('.button_go').live('click', function() {
 		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
-			username: $('#username').val(),
+			name: $('#name').val(),
 			email: $('#email').val(),
 			password: $('#password').val(),
-			password_confirm: $('#password_confirm').val()
+			password_confirm: $('#password_confirm').val(),
+			current_password: $('#current_password').val()
 		},
 		function(data){
 			if ( typeof(data.status) != 'undefined' ) {
