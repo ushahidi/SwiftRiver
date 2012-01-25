@@ -220,42 +220,28 @@ header nav li.login ul.dropdown li div.buttons {
   text-align: right;
 }
 /* --------------------------- BUTTONS */
-.button-delete a {
-  border: 1px solid #c75c5c;
-  background: #d64646;
-  background: -moz-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #db7878), color-stop(34%, #db7878), color-stop(61%, #d64646), color-stop(100%, #d64646));
-  background: -webkit-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -o-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: -ms-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  background: linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
-}
 .button-go a, button.save, .button-delete a {
-   display: block;
-   color: #fff;
-   font-weight: bold;
-   text-align: center;
-   text-transform: uppercase;
-   text-shadow: 1px 1px 1px rgba(0,0,0,.25);
-   -webkit-border-radius: 5px;
-   -moz-border-radius: 5px;
-   border-radius: 5px;
-   border: 1px solid #0f9ebb;
-   box-shadow: 0 2px 3px rgba(0,0,0,.25),
-      0 1px 1px rgba(256,256,256,.4) inset;
-   -moz-box-shadow: 0 2px 3px rgba(0,0,0,.25),
-      0 1px 1px rgba(256,256,256,.4) inset;
-   -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.25),
-      0 1px 1px rgba(256,256,256,.4) inset;
-   background: rgb(99,196,216);
-   background: -moz-linear-gradient(top, rgba(99,196,216,1) 0%, rgba(99,196,216,1) 34%, rgba(24,169,199,1) 61%, rgba(24,169,199,1) 100%);
-   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(99,196,216,1)), color-stop(34%,rgba(99,196,216,1)), color-stop(61%,rgba(24,169,199,1)), color-stop(100%,rgba(24,169,199,1)));
-   background: -webkit-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
-   background: -o-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
-   background: -ms-linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
-   background: linear-gradient(top, rgba(99,196,216,1) 0%,rgba(99,196,216,1) 34%,rgba(24,169,199,1) 61%,rgba(24,169,199,1) 100%);
-   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#63c4d8', endColorstr='#18a9c7',GradientType=0 );
+  display: block;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
+  -moz-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
+  -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(256, 256, 256, 0.4) inset;
+  border: 1px solid #17a9c6;
+  background: #17a9c6;
+  background: -moz-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #63c4d8), color-stop(34%, #63c4d8), color-stop(61%, #17a9c6), color-stop(100%, #17a9c6));
+  background: -webkit-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
+  background: -o-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
+  background: -ms-linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
+  background: linear-gradient(top, #63c4d8 0%, #63c4d8 34%, #17a9c6 61%, #17a9c6 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='@product-primary_color_start', endColorstr='@product-primary_color', GradientType=0);
 }
 .button-go a:hover, .button-delete a:hover {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.15);
@@ -272,6 +258,17 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #17a9c6 0%, #17a9c6 34%, #63c4d8 61%, #63c4d8 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='@product-primary_color', endColorstr='@product-primary_color_start', GradientType=0);
 }
+.button-delete a {
+  border: 1px solid #c75c5c;
+  background: #d64646;
+  background: -moz-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #db7878), color-stop(34%, #db7878), color-stop(61%, #d64646), color-stop(100%, #d64646));
+  background: -webkit-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -o-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -ms-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
+}
 .button-delete a:hover {
   background: #e09696;
   background: -moz-linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
@@ -282,16 +279,15 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
 }
-
-.button-delete-subtle a{
-    box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-    -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-    -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
-    border: 1px solid #C2C2C2;
-    background: #C2C2C2;
+.button-delete-subtle a {
+  box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+  -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+  -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
+  border: 1px solid #c2c2c2;
+  background: #c2c2c2;
 }
-
-.button-delete-subtle a:hover, .actions .active a {
+.button-delete-subtle a:hover, .actions .active a, .actions .active a:hover {
+  color: #fff;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
   -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
@@ -634,10 +630,6 @@ div#channels ul.tabs li.button-view a span.switch-off, div#channels ul.tabs li.b
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45);
   background: url(/themes/default/media/img/channels_switch.png) no-repeat;
 }
-div#channels .controls ul.tabs li.button-view a span.switch-off, 
-div#channels .controls ul.tabs li.button-view a span.switch-on {
-    float: right;
-}
 div#channels ul.tabs li.button-view a span.switch-on {
   background-position: center bottom;
 }
@@ -708,12 +700,9 @@ div#channels ul.tabs li.button-view a span.switch-off:before {
   padding: 3px;
   margin-bottom: 10px;
 }
-.controls div.row, .controls div.list-stream {
-    clear: both;
-    padding: 1.0416666667%;
-}
-.controls div.row {
-    padding: 10px 1.0416666667%;
+.controls .row {
+  clear: both;
+  padding: 1.0416666667%;
 }
 section.panel .controls .row {
   border-top: 1px solid #D4D4D4;
@@ -723,24 +712,6 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
 }
 .controls .buttons {
   float: right;
-}
-.controls-buttons {
-    margin: 10px 0;
-}
-.controls-buttons p.button-delete-subtle {
-    float: left;
-    clear: none;
-    margin-top: 0;
-}
-.controls-buttons p.button-go, .controls-buttons p.other, .controls-buttons p.button-delete_subtle {
-  float: right;
-  margin: 0 1.0416666667%;
-}
-.controls-buttons p.button-delete-subtle a {
-    padding: 15px 20px;
-}
-.controls-buttons p.button-go a {
-    padding: 15px 50px;
 }
 .controls .input {
   text-align: left;
@@ -855,6 +826,9 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
 .controls .actions p a.add:before {
   content: "+ ";
 }
+.controls div.actions {
+  padding: 10px 0;
+}
 .controls .row div.detail {
   display: none;
   -webkit-border-radius: 5px;
@@ -863,21 +837,28 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   border: 1px solid #DBDBDB;
   background: #E2E2E2;
 }
-/*.canvas .controls .controls-buttons {
+.canvas .controls .controls-buttons {
   border: none;
   padding: 15px 1.0416666667%;
-}*/
+}
+.controls-buttons p.button-go, .controls-buttons p.other, .controls-buttons p.button-delete-subtle {
+  float: right;
+  margin: 0 1.0416666667%;
+}
+.controls-buttons p.button-go a {
+  padding: 10px 20px;
+}
 .controls-buttons p.other {
   padding: 15px 20px;
 }
-.controls-buttons p.button-delete_subtle {
+.controls-buttons p.button-delete-subtle {
   clear: both;
   margin-top: 25px;
 }
-.controls-buttons p.button-delete_subtle a {
+.controls-buttons p.button-delete-subtle a {
   padding: 15px 20px;
 }
-.controls-buttons p.button-delete_subtle a span.icon {
+.controls-buttons p.button-delete-subtle a span.icon {
   float: left;
   width: 14px;
   height: 14px;
@@ -1068,9 +1049,8 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
   padding: 15px 0;
 }
 .page-title hgroup {
-    margin: 0 1.0416666667%;
-    float: left;
-    text-align: left;
+  text-align: center;
+  margin: 0 1.0416666667%;
 }
 .page-title hgroup img {
   float: left;
@@ -1320,7 +1300,7 @@ section.panel .options p.save {
   border-radius: 5px;
   background: #fff;
 }
-article#droplet-full .canvas {
+article#droplet_full .canvas {
   -webkit-border-bottom-left-radius: 0;
   -webkit-border-bottom-right-radius: 0;
   -moz-border-radius-bottomleft: 0;
@@ -1593,7 +1573,7 @@ article.item .summary section.actions p.follow_user a span.icon {
   height: 27px;
   background-position: center top;
 }
-article.item .summary section.actions p.button-view a.detail-view span.icon {
+article.item .summary section.actions p.button-view a.detail_view span.icon {
   background-position: center -132px;
 }
 article.item .summary section.actions p.button-view a.detail-hide span.icon {
@@ -1724,7 +1704,7 @@ article.item div.detail, div.edit_advanced div.detail {
 article.item .detail .summary {
   padding: 0;
 }
-article#droplet-full section.detail {
+article#droplet_full section.detail {
   display: block;
   background: #f8f8f8;
   background: -moz-linear-gradient(top, #f8f8f8 0%, #ffffff 30%, #ffffff 100%);
@@ -1980,7 +1960,7 @@ div#summary_full section.body {
   text-align: left;
   padding: 2.08333333% 1.0416666667%;
 }
-article#droplet-full div.bottom {
+article#droplet_full div.bottom {
   background: none;
 }
 /* --------------------------- DASHBOARD */
@@ -2095,48 +2075,6 @@ div#channels .keywords h3 {
 div#channels .keywords input {
   width: 50%;
 }
-
-/* David K -- 11/2011 */
-div#channels .tab-content ul.channel-options{
-   clear:both;
-   margin-top:15px;
-   display:block;  
-}
-
-div#channels .tab-content ul.channel-options li{
-   float: left;
-   margin: 2px 2px 6px 2px;
-}
-
-div#channels .tab-content ul.channel-options li a {
-   float:left;
-   color: #444444;
-   font-size: 1em;
-   font-weight: bold;
-   text-transform: uppercase;
-   -webkit-border-radius: 10px;
-   -moz-border-radius: 10px;
-   border-radius: 10px;
-   background: #dadada;
-   padding: 2px 10px;
-   margin-right: 7px;   
-}
-
-div#channels .tab-content ul.channel-options li a:hover {
-   background: #bfbfbf;
-   text-decoration: none;
-}
-
-div#channels .tab-content ul.channel-options li a span {
-   float: right;
-   margin-left: 5px;
-}
-
-div#channels .tab-content ul.channel-options li a span:before {
-   content: "+";
-}
-/* David K */
-
 /* --------------------------- MAP */
 section.map {
   padding: 10px 1.0416666667%;
@@ -2205,7 +2143,7 @@ footer li a {
   .list .data article.item .content div.checkbox {
     padding-right: 10px;
   }
-  article#droplet-full section.actions p.follow_user a.subscribe strong {
+  article#droplet_full section.actions p.follow_user a.subscribe strong {
     display: block;
   }
   article.droplet section.detail article.add_reply section.content {
@@ -2337,6 +2275,10 @@ footer li a {
   .page-title {
     padding: 25px 0;
   }
+  .page-title hgroup {
+    float: left;
+    text-align: left;
+  }
   .page-title h1 {
     float: left;
     font-size: 3em;
@@ -2366,14 +2308,17 @@ footer li a {
     border-radius: 5px;
     border-top: 1px solid #cecece;
   }
+  .controls-buttons p.button-go a {
+    padding: 15px 50px;
+  }
   article.dashboard .page-title section.actions {
     width: 14.89361702%;
   }
-  article#droplet-full .page-title section.actions p a span {
+  article#droplet_full .page-title section.actions p a span {
     float: none;
     margin: 0 auto;
   }
-  article#droplet-full .page-title section.actions p a strong {
+  article#droplet_full .page-title section.actions p a strong {
     display: block;
     text-align: center;
   }
@@ -2395,7 +2340,7 @@ footer li a {
   section.panel nav ul.views li.more {
     display: none;
   }
-  .controls-buttons p.button-delete_subtle {
+  .controls-buttons p.button-delete-subtle {
     float: left;
     clear: none;
     margin-top: 0;
@@ -2411,11 +2356,9 @@ footer li a {
   .activity_feed article.droplet section.content {
     width: 74.28571429%;
   }
-
-/*  .trend-container article.droplet section.content, .list .select > article.item > .summary .content {
+  .trend-container article.droplet section.content, .list .select > article.item > .summary .content {
     width: 84.375%;
   }
-*/  
   article.item section.source .actions span.type {
     float: left;
     width: 18.75%;
@@ -2428,37 +2371,18 @@ footer li a {
     height: 15px;
     line-height: 15px;
   }
-  
-  article.droplet {
-    border-bottom: 1px solid #F2F2F2;
-    padding: 20px 0;  
-  }
-  
   article.droplet section.content .title .avatar {
     width: 7.692307692%;
   }
   article.droplet section.content .title hgroup {
     width: 89.74358974%;
   }
-  
   article.droplet section.content .title h1 {
     font-size: 1.4em;
   }
-  
   article.droplet section.content .title p.date {
-      padding-top: 5px;
-      color: #888888;
-      float: right;
-      font-style: italic;
-      padding: 3px 0 0 10px;
+    padding-top: 5px;
   }
-  
-  article.droplet section.source img {
-      display: block;
-      margin-bottom: 2px;
-      width: 100%;
-  }
-  
   /* --- LIST > SELECT > ITEM ---*/
   .list .select article.item .summary div.checkbox {
     width: 2.083333333%;
@@ -2593,118 +2517,15 @@ footer li a {
   article.item .summary .content hgroup h1 {
     font-size: 1.45em;
   }
-
-  article#droplet-full section.actions p.bucket a.bucket_added {
-    border-left: 1px solid #fff;
-  }
-  
-  article.droplet section.source, 
-  article.droplet section.content, 
-  article.droplet section.actions
-  {
-    padding: 0 1.0416666667%;
-  }
-  
-  article.droplet section.source, 
-  article.droplet section.content,
-  article.droplet section.actions, 
-  article.droplet section.detail {
-      float: left;
-  }
-  
-  article.droplet section.source {
-      width: 8.51064%;
-  }
-  
-  article.droplet section.content {
-    width: 70.2128%;
-    text-align: left;
-  }
-  
-  article.droplet section.actions {
-      width: 14.8936%;
-  }
-  
   article.droplet section.actions p.button-change a.subscribed {
     border-top: 1px solid #fff;
   }
-  article.droplet section.actions > .button-view,
-  article.droplet section.actions > .button-change,
-  article.droplet section.actions > .button {
-      float: left;
-      width: 50%;
-  }
-  
-  article.droplet section.actions p.button-view a {
-      border-bottom: 1px solid #C2C2C2;
-      border-right: medium none;
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 0px;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 0;
-  }
-  article.droplet section.actions p.active a {
-      border: 1px solid #C2C2C2;
-      background: #FFFFFF;
-  }
-  article.droplet section.actions p.button-change a {
-      border-bottom: 1px solid #C2C2C2;
-      border-bottom-left-radius: 0px;
-      border-bottom-right-radius: 6px;
-      border-top-right-radius: 6px;
-      border-top-left-radius: 0px;
-  }
-  article.droplet section.actions p a strong {
-      display: block;
-  }
-  article.droplet section.actions p.button-view a.detail-view strong:before {
-      content: "View more ";
-  }
-  article.droplet section.actions p a {
-      height: 75px;
-      font-size: 0.8em;
-      padding: 10px 5px;
-  }
-  article.droplet section.actions p a span {
-      margin-bottom: 10px;
-      background: url("/themes/default/media/img/droplet-actions_icons.png") no-repeat scroll center center transparent;
-      display: block;
-      height: 20px;
-  }
-  article.droplet section.actions p.bucket a span {
-      background-position: center;
-  }
-  article.droplet section.detail aside,
-  article.droplet section.detail .fullstory,
-  article.droplet section.detail .discussion
-  {
-      padding: 10px 1.04167%;
+  article#droplet_full section.actions p.bucket a.bucket_added {
+    border-left: 1px solid #fff;
   }
   article.droplet aside {
     float: left;
     width: 22.34042553%;
-  }
-  
-  article.droplet aside .item {
-      padding-bottom: 20px;
-  }
-  article.droplet aside .item ul.tags li a {
-      color: #666;
-      font-size: 0.9em;
-      -webkit-border-radius: 10px;
-      -moz-border-radius: 10px;
-      border-radius: 10px;
-      background: #DADADA;
-      padding: 2px 7px;
-  }
-  article.droplet aside .item p.button-change {
-      clear: both;
-      font-size: 0.8em;
-      margin-top: 5px;
-  }
-  article.droplet aside .item p.button-change a {
-      display: inline;
-      padding: 2px 10px;
   }
   article.dashboard aside.dashboard {
     width: 24.47916667%;
@@ -2718,34 +2539,19 @@ footer li a {
   article.dashboard aside.dashboard .item img {
     width: 100%;
   }
-  article.droplet div.summary, article.droplet div.canyon {
-      padding: 0 1.0416666667%;
-  }
   article.droplet section.detail {
-    background: #F8F8F8;
-    margin-top: 15px;
-    text-align: left;
-    text-shadow: 1px 1px 1px #FFFFFF;
-    width: 100%;
-  }
-  article.droplet section.detail h2{
-      color: #045376;
-      font-size: 1.2em;
+    border-right: 1px solid #f2f2f2;
   }
   article.droplet section.detail .right-column {
     float: left;
     width: 73.40425532%;
   }
-  
   article.droplet section.detail aside .item ul li {
     margin: 5px 2px 5px 2px;
-    float: left;
   }
   article.droplet section.detail article.fullstory h1 {
-      font-family: "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,sans-serif;
-      font-size: 2.3em;
-      font-weight: 300;
-      padding: 5px 0 7px 0;
+    font-size: 2.5em;
+    padding: 5px 0 7px 0;
   }
   .list .select article.item .summary div.checkbox {
     padding-right: 0;
