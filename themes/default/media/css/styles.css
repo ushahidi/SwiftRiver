@@ -272,6 +272,17 @@ header nav li.login ul.dropdown li div.buttons {
     background: linear-gradient(top, #17a9c6 0%, #17a9c6 34%, #63c4d8 61%, #63c4d8 100%);
     filter: progid:dximagetransform.microsoft.gradient(startColorstr='@product-primary_color', endColorstr='@product-primary_color_start', GradientType=0);
 }
+.button-delete a {
+  border: 1px solid #c75c5c;
+  background: #d64646;
+  background: -moz-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #db7878), color-stop(34%, #db7878), color-stop(61%, #d64646), color-stop(100%, #d64646));
+  background: -webkit-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -o-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: -ms-linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  background: linear-gradient(top, #db7878 0%, #db7878 34%, #d64646 61%, #d64646 100%);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
+}
 .button-delete a:hover {
     background: #e09696;
     background: -moz-linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
@@ -282,7 +293,6 @@ header nav li.login ul.dropdown li div.buttons {
     background: linear-gradient(top, #e09696 0%, #e09696 34%, #d64646 61%, #d64646 100%);
     filter: progid:dximagetransform.microsoft.gradient(startColorstr='#db7878', endColorstr='#d64646', GradientType=0);
 }
-
 .button-delete-subtle a {
     box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
     -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
@@ -708,12 +718,9 @@ div#channels ul.tabs li.button-view a span.switch-off:before {
     padding: 3px;
     margin-bottom: 10px;
 }
-.controls div.row, .controls div.list-stream {
-    clear: both;
-    padding: 1.0416666667%;
-}
-.controls div.row {
-    padding: 10px 1.0416666667%;
+.controls .row {
+  clear: both;
+  padding: 1.0416666667%;
 }
 section.panel .controls .row {
     border-top: 1px solid #D4D4D4;
@@ -854,6 +861,9 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
 }
 .controls .actions p a.add:before {
     content: "+ ";
+}
+.controls div.actions {
+  padding: 10px 0;
 }
 .controls .row div.detail {
     display: none;
@@ -1069,9 +1079,8 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
     padding: 15px 0;
 }
 .page-title hgroup {
-    margin: 0 1.0416666667%;
-    float: left;
-    text-align: left;
+  text-align: center;
+  margin: 0 1.0416666667%;
 }
 .page-title hgroup img {
     float: left;

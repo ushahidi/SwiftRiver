@@ -18,7 +18,7 @@
 		<div class="summary">
 			<section class="actions">
 				<div class="button">
-					<p class="button_change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay"><?php echo __('Delete River'); ?></span></a></p>
+					<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay"><?php echo __('Delete River'); ?></span></a></p>
 					<div class="clear"></div>
 					<div class="dropdown container">
 						<p><?php echo __('Are you sure you want to delete this River?'); ?></p>

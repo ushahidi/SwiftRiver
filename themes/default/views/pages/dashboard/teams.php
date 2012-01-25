@@ -17,7 +17,7 @@
 		<div class="summary">
 			<section class="actions">
 				<div class="button">
-					<p class="button_change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
+					<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
 					<div class="clear"></div>
 					<div class="dropdown container">
 						<p>Are you sure you want to leave Team 1?</p>
@@ -39,7 +39,7 @@
 		<div class="summary">
 			<section class="actions">
 				<div class="button">
-					<p class="button_change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
+					<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Leave team</span></a></p>
 					<div class="clear"></div>
 					<div class="dropdown container">
 						<p>Are you sure you want to leave Team 2?</p>
