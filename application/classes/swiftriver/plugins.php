@@ -204,12 +204,7 @@ class Swiftriver_Plugins {
 			return FALSE;
 		}
 		
-		// Validation succeeded
-		Kohana::$log->add(Log::INFO, "Validation succeeded for the :plugin plugin",
-		    array(':plugin' => $plugin_name));
-		
 		return TRUE;
-		
 	}
 
 
@@ -270,40 +265,6 @@ class Swiftriver_Plugins {
 		}
 	}
 
-	
-	/**
-	 * Helper function that generates the HTML for a channel option item
-	 *
-	 * @param array $option Channel option item
-	 * @param string $option_name Name to assign the HTML element
-	 * @param string $value Value to display in the element
-	 * @return string
-	 */
-	public static function get_channel_option_html($option, $option_name, $value = '')
-	{
-		$ui_html = "";
-		if ($option['type'] == 'text' OR $option['type'] == 'password')
-		{
-			$ui_html .= "<input class=\"filter-option\" type=\"".$option['type']."\""
-			    ."name=\"".$option_name."\" value=\"".$value."\">";
-		}
-		elseif ($option['type'] == 'select')
-		{
-			$ui_html .= "<select class=\"filter-option\" name=\"".$option_name."\">";
-			foreach ($option['values'] as $value_item)
-			{
-				$selected = ($value == $value_item) ? "selected=\"selected\"" : "";
-				
-				$ui_html .= "<option value=\"".$value_item."\" ".$selected.">".$value_item."</option>";
-			}
-			
-			$ui_html .= "</select>";
-		}
-		
-		return $ui_html;
-	}
-
-	
 	/**
 	 * Validates the option data for the specified plugin. If an item
 	 * fails the validation test, it's removed from the option data

@@ -31,38 +31,38 @@ $(document).ready(function() {
 		$('ul.views li.more').remove();
 	}
 	
-    $("section.panel nav ul li.view_panel a").toggle(
+    $("section.panel nav ul li.view-panel a").toggle(
         function(e) {
             var url = $(this).attr("href");
             $('ul.views li, ul.actions li').fadeTo('fast', 0);
             $(this).parent('li').addClass('active').fadeTo('fast', 1);
-            $('section.panel div.panel_body').slideDown(200).load(url);
+            $('section.panel div.panel-body').slideDown(200).load(url);
             e.preventDefault();
         }, 
         function(e) {
             $('ul.views li, ul.actions li').fadeTo('fast', 1);
             $(this).parent('li').removeClass('active');
-            $('section.panel div.panel_body').slideUp(200).empty();
+            $('section.panel div.panel-body').slideUp(200).empty();
             e.preventDefault();
         }
     );
 	
     // TODO: E.Kala Review this segment
-    $('section.panel nav ul.actions li.view_panel a').live('click', function() {
+    $('section.panel nav ul.actions li.view-panel a').live('click', function() {
         $.getScript('/themes/default/media/js/settings.js');
     });
     
 	$('section.panel a.close').live('click', function() {
 		$('section.panel nav, .canvas > .container').fadeIn('fast');
 		$('ul.views li, ul.actions li').fadeTo('fast', 1);
-		$('section.panel nav ul.actions li.view_panel').removeClass('active');
+		$('section.panel nav ul.actions li.view-panel').removeClass('active');
 		$('section.panel div.drawer').slideUp('fast').remove();
 		return false;
 	});
 	$('div.detail a.close').live('click', function() {
-		$(this).closest('article.item, div.edit_advanced').find('section.actions p.button_view a, div.edit_advanced p.button_view a').removeClass('detail_hide');
-		$(this).closest('div.edit_advanced').find('div.row > p a').fadeTo('fast', 1);
-		$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();
+		$(this).closest('article.item, div.edit-advanced').find('section.actions p.button_view a, div.edit-advanced p.button_view a').removeClass('detail-hide');
+		$(this).closest('div.edit-advanced').find('div.row > p a').fadeTo('fast', 1);
+		$(this).closest('article.item, div.edit-advanced').children('div.drawer').slideUp('fast').remove();
 	});
 	
 	//Show a trend
@@ -130,14 +130,14 @@ $(document).ready(function() {
 		var editMultiple = $("article.item div.checkbox input:checked").length;
 		if (editMultiple == 1) {
 			$('.edit_multiple').fadeOut('fast');
-			$('.edit_single').fadeIn('fast');
+			$('.edit-single').fadeIn('fast');
 		}
 		else if (editMultiple >= 2) {
-			$('.edit_single').fadeOut('fast');
+			$('.edit-single').fadeOut('fast');
 			$('.edit_multiple').fadeIn('fast');
 		}
 		else {
-			$('.edit_multiple,.edit_single').fadeOut('fast');
+			$('.edit_multiple,.edit-single').fadeOut('fast');
 		}
 	}
 	countChecked();
@@ -171,4 +171,3 @@ function submitAjax(button){
 	var form = $(button).parents('form:first');
 	form.submit();
 }
-

@@ -6,13 +6,13 @@
 				<h3>Add people to collaborate on this River</h3>
 				<input type="text" placeholder="+ Type name..." />
 			</div>
-			<div class="list_stream">
+			<div class="list-stream">
 				<h3>People who collaborate on this River</h3>
 				<ul class="users">
 					<li>
 						<a href="#">Caleb Bell</a>
 						<div class="actions">
-							<span class="button_delete"><a onclick="">Remove</a></span>
+							<span class="button-delete"><a onclick="">Remove</a></span>
 							<ul class="dropdown right">
 								<p>Are you sure you want to stop collaborating with this person?</p>
 								<li class="confirm"><a onclick="">Yep.</a></li>
@@ -23,7 +23,7 @@
 					<li>
 						<a href="#">David Kobia</a>
 						<div class="actions">
-							<span class="button_delete"><a onclick="">Remove</a></span>
+							<span class="button-delete"><a onclick="">Remove</a></span>
 							<ul class="dropdown right">
 								<p>Are you sure you want to stop collaborating with this person?</p>
 								<li class="confirm"><a onclick="">Yep.</a></li>
@@ -34,11 +34,11 @@
 				</ul>
 			</div>
 		</div>
-		<div class="row controls_buttons cf">
-			<p class="button_go"><a href="#">Apply changes</a></p>
+		<div class="row controls-buttons cf">
+			<p class="button-go"><a href="#">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
 			<div class="item actions">
-				<p class="button_delete button_delete_subtle"><a onclick="">Delete Bucket</a></p>
+				<p class="button-delete button-delete-subtle"><a onclick="">Delete Bucket</a></p>
 				<div class="clear"></div>
 				<ul class="dropdown">
 					<p>Are you sure you want to delete this Bucket?</p>

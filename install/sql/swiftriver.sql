@@ -608,7 +608,7 @@ CREATE TABLE IF NOT EXISTS `account_droplet_links` (
 -- -----------------------------------------------------
 -- Create syntax for TABLE 'account_droplet_places'
 -- -----------------------------------------------------
-CREATE TABLE `account_droplet_places` (
+CREATE TABLE IF NOT EXISTS `account_droplet_places` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -617,6 +617,17 @@ CREATE TABLE `account_droplet_places` (
   UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`place_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------------------
+-- TABLE 'bucket_collaborators'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
+	`id` bigint(20) NOT NULL AUTO_INCREMENT,
+	`user_id` bigint(20) unsigned NOT NULL,
+	`bucket_id` bigint(20) unsigned NOT NULL,
+	`collaboration_active` smallint(1) NOT NULL DEFAULT 0,
+	PRIMARY KEY(`id`),
+	UNIQUE KEY `UNQ_BUCKET_COLLAB` (`user_id`, `bucket_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Data for table `roles`

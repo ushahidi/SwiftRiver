@@ -19,11 +19,11 @@
 			</div>
 		</div>
 		
-		<div class="row controls_buttons cf">
-			<p class="button_go"><a href="#">Apply changes</a></p>
+		<div class="row controls-buttons cf">
+			<p class="button-go"><a href="#">Apply changes</a></p>
 			<p class="other"><a class="close" onclick="">Cancel</a></p>
 			<div class="item actions">
-				<p class="button_delete button_delete_subtle"><a onclick="">Delete selected Maps</a></p>
+				<p class="button-delete button-delete-subtle"><a onclick="">Delete selected Maps</a></p>
 				<div class="clear"></div>
 				<div class="dropdown">
 					<div class="container">

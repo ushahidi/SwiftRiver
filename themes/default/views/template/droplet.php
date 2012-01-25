@@ -29,7 +29,7 @@
 				<ul class="dropdown">
 					<li class="bucket"><a onclick=""><span class="select"></span>Bucket 1</a></li>
 					<li class="bucket"><a class="selected" onclick=""><span class="select"></span>Bucket 2</a></li>
-					<li class="create_new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
+					<li class="create-new"><a onclick=""><span class="create_trigger"><em>Create new</em></span></a></li>
 				</ul>
 			</div>
 		</section>

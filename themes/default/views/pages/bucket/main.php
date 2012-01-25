@@ -1,5 +1,5 @@
 <article>
-	<div class="cf center page_title">
+	<div class="cf center page-title">
 		<hgroup class="edit">
 			<h1><span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span></h1>
 		</hgroup>

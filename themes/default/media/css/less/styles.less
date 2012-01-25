@@ -299,9 +299,9 @@ header nav li.login ul.dropdown li div.buttons {
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='@product-primary_color', endColorstr='@product-primary_color_start',GradientType=0 );
 }
 
-.button_go a,
+.button-go a,
 button.save,
-.button_delete a {
+.button-delete a {
    display: block;
    color: #fff;
    font-weight: bold;
@@ -320,8 +320,8 @@ button.save,
    .button-go;
 }
 
-.button_go a:hover,
-.button_delete a:hover {
+.button-go a:hover,
+.button-delete a:hover {
    box-shadow: 0 2px 3px rgba(0,0,0,.15);
    -moz-box-shadow: 0 2px 3px rgba(0,0,0,.15);
    -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.15);
@@ -329,7 +329,7 @@ button.save,
    .button-goHover;
 }
 
-.button_delete a {
+.button-delete a {
    border: 1px solid #c75c5c;
    background: rgb(214,70,70);
    background: -moz-linear-gradient(top, rgba(219,120,120,1) 0%, rgba(219,120,120,1) 34%, rgba(214,70,70,1) 61%, rgba(214,70,70,1) 100%);
@@ -341,7 +341,7 @@ button.save,
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#db7878', endColorstr='#d64646',GradientType=0 );
 }
 
-.button_delete a:hover {
+.button-delete a:hover {
    background: rgb(224,150,150);
    background: -moz-linear-gradient(top, rgba(224,150,150,1) 0%, rgba(224,150,150,1) 34%, rgba(214,70,70,1) 61%, rgba(214,70,70,1) 100%);
    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(224,150,150,1)), color-stop(34%,rgba(224,150,150,1)), color-stop(61%,rgba(214,70,70,1)), color-stop(100%,rgba(214,70,70,1)));
@@ -352,7 +352,7 @@ button.save,
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#db7878', endColorstr='#d64646',GradientType=0 );
 }
 
-.button_delete_subtle a {
+.button-delete-subtle a {
    box-shadow: 0 1px 1px rgba(256,256,256,0.7);
    -moz-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
    -webkit-box-shadow: 0 1px 1px rgba(256,256,256,0.7);
@@ -360,7 +360,7 @@ button.save,
    background: #c2c2c2;
 }
 
-.button_delete_subtle a:hover,
+.button-delete-subtle a:hover,
 .actions .active a,
 .actions .active a:hover {
    color: #fff;
@@ -373,8 +373,8 @@ button.save,
    background: #A2A2A2;
 }
 
-.button_view a,
-.button_change a,
+.button-view a,
+.button-change a,
 button.cancel {
    display: block;
    color: #777777;
@@ -384,13 +384,13 @@ button.cancel {
    border: 1px solid #c2c2c2;
 }
 
-.button_go a:hover,
-.button_view a:hover,
-.button_change a:hover {
+.button-go a:hover,
+.button-view a:hover,
+.button-change a:hover {
    text-decoration: none;
 }
 
-.button_view a {
+.button-view a {
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
    border-radius: 5px;
@@ -407,11 +407,11 @@ button.cancel {
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 );
 }
 
-.button_view a:hover {
+.button-view a:hover {
    background: #eeeeee;
 }
 
-.button_change a {
+.button-change a {
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
    border-radius: 5px;
@@ -428,7 +428,7 @@ button.cancel {
    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6e6e6', endColorstr='#dedede',GradientType=0 );
 }
 
-.button_change a:hover {
+.button-change a:hover {
    background: #dedede;
 }
 
@@ -531,11 +531,11 @@ button:hover {
    cursor: pointer;
 }
 
-.edit_input label {
+.edit-input label {
    font: bold 14px/1em Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
-.edit_input textarea {
+.edit-input textarea {
    display: block;
    width: 100%;
 }
@@ -705,7 +705,7 @@ ul.tabs {
    width: 30%;
 }
 
-ul.tabs li.button_view {
+ul.tabs li.button-view {
    border-right: 1px solid #d2d2d2;
    border-bottom: 1px solid #d2d2d2;
 }
@@ -718,7 +718,7 @@ ul.tabs li:last-child {
    border-bottom: none;
 }
 
-ul.tabs li.button_view a {
+ul.tabs li.button-view a {
    display: block;
    -webkit-border-radius: 0px;
    -moz-border-radius: 0px;
@@ -746,13 +746,13 @@ ul.tabs li.more a {
    padding: 10px 5px;
 }
 
-div.tab_container {
+div.tab-container {
    float: left;
    width: 67%;
    padding: 0 1.0416666667%;
 }
 
-div.tab_controls {
+div.tab-controls {
    text-align: left;
    border: 1px solid #dadada;
    background: #f5f5f5;
@@ -761,29 +761,29 @@ div.tab_controls {
 
 /* --- TABS: CHANNELS ---*/
 
-.channels ul.tabs li.button_view {
+div#channels ul.tabs li.button-view {
    font-size: 1em;
    padding: 0 0 0 25px;
 }
 
-.channels ul.tabs li.twitter {
+div#channels ul.tabs li.twitter {
    background: #4ed3ff url(/themes/default/media/img/icon_twitter.png) 5px center no-repeat;
 }
 
-.channels ul.tabs li.facebook {
+div#channels ul.tabs li.facebook {
    background: #3b5999 url(/themes/default/media/img/icon_facebook.png) 5px center no-repeat;
 }
 
-.channels ul.tabs li.rss {
+div#channels ul.tabs li.rss {
    background: #ff7700 url(/themes/default/media/img/icon_rss.png) 5px center no-repeat;
 }
 
-.channels ul.tabs li.sms {
+div#channels ul.tabs li.sms {
    background: #48a63b url(/themes/default/media/img/icon_sms.png) 5px center no-repeat;
 }
 
-.channels ul.tabs li.button_view a span.switch_off,
-.channels ul.tabs li.button_view a span.switch_on {
+div#channels ul.tabs li.button-view a span.switch-off,
+div#channels ul.tabs li.button-view a span.switch-on {
    display: block;
    width: 50px;
    height: 18px;
@@ -794,26 +794,26 @@ div.tab_controls {
    background: url(/themes/default/media/img/channels_switch.png) no-repeat;
 }
 
-.channels ul.tabs li.button_view a span.switch_on {
+div#channels ul.tabs li.button-view a span.switch-on {
    background-position: center bottom;
 }
 
-.channels ul.tabs li.button_view a span.switch_on:before {
+div#channels ul.tabs li.button-view a span.switch-on:before {
    content: "on";
    padding-left: 8px;
 }
 
-.channels ul.tabs li.button_view a span.switch_off:before {
+div#channels ul.tabs li.button-view a span.switch-off:before {
    content: "off";
    padding-left: 20px;
 }
 
 /* David K */
-.list_stream ul li span.description {
+.list-stream ul li span.description {
    font-size: 0.6em;
    color:#999;
 }
-.list_stream ul li.alt_row {
+.list-stream ul li.alt_row {
    background-color:#eee;
 }
 
@@ -891,7 +891,7 @@ section.panel .controls .row {
 
 section.panel .controls .row:first-child,
 section.panel .controls .row:only-child,
-section.panel .controls .controls_buttons {
+section.panel .controls .controls-buttons {
    border-top: none;
 }
 
@@ -928,11 +928,11 @@ section.panel .controls .controls_buttons {
    width: 100%;
 }
 
-.controls div.input p.button_change {
+.controls div.input p.button-change {
    margin: 10px 0;
 }
 
-.controls div.input p.button_change a {
+.controls div.input p.button-change a {
    display: inline;
    padding: 5px 15px;
 }
@@ -1023,13 +1023,13 @@ section.panel .controls .controls_buttons {
    border-bottom-left-radius: 5px;
 }
 
-.controls .actions p.button_go a {
+.controls .actions p.button-go a {
    float: left;
    font-size: 0.9em;
    padding: 5px 10px;
 }
 
-.controls .actions p.button_view a {
+.controls .actions p.button-view a {
    float: left;
    padding: 7px 10px;
 }
@@ -1051,36 +1051,36 @@ section.panel .controls .controls_buttons {
    background: #E2E2E2;
 }
 
-.canvas .controls .controls_buttons {
+.canvas .controls .controls-buttons {
    border: none;
    padding: 15px 1.0416666667%;
 }
 
-.controls_buttons p.button_go,
-.controls_buttons p.other,
-.controls_buttons p.button_delete_subtle {
+.controls-buttons p.button-go,
+.controls-buttons p.other,
+.controls-buttons p.button-delete-subtle {
    float: right;
    margin: 0 1.0416666667%;
 }
 
-.controls_buttons p.button_go a {
+.controls-buttons p.button-go a {
    padding: 10px 20px;
 }
 
-.controls_buttons p.other {
+.controls-buttons p.other {
    padding: 15px 20px;
 }
 
-.controls_buttons p.button_delete_subtle {
+.controls-buttons p.button-delete-subtle {
    clear: both;
    margin-top: 25px;
 }
 
-.controls_buttons p.button_delete_subtle a {
+.controls-buttons p.button-delete-subtle a {
    padding: 15px 20px;
 }
 
-.controls_buttons p.button_delete_subtle a span.icon {
+.controls-buttons p.button-delete-subtle a span.icon {
    float: left;
    width: 14px;
    height: 14px;
@@ -1276,14 +1276,14 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
    padding: 3px 0;
 }
 
-.controls .themes article p.button_change a {
+.controls .themes article p.button-change a {
    font-size: 1.1em;
    text-align: center;
    padding: 10px 0;
    margin-top: 5px;
 }
 
-.controls .themes article p.button_change a.selected {
+.controls .themes article p.button-change a.selected {
    color: #fff;
    text-shadow: 1px 1px 1px rgba(0,0,0,.25);
    border: 1px solid #4bd77b;
@@ -1298,27 +1298,27 @@ filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr=
 
 }
 
-.controls .themes article p.button_change a:before {
+.controls .themes article p.button-change a:before {
    content: "Apply ";
 }
 
-.controls .themes article p.button_change a.selected:before {
+.controls .themes article p.button-change a.selected:before {
    content: "Current ";
 }
 
 /* --------------------------- TITLE */
 
-.page_title {
+.page-title {
    text-align: left;
    padding: 15px 0;
 }
 
-.page_title hgroup {
+.page-title hgroup {
    text-align: center;
    margin: 0 1.0416666667%;
 }
 
-.page_title hgroup img {
+.page-title hgroup img {
    float: left;
    width: 50px;
    -webkit-border-radius: 5px;
@@ -1328,14 +1328,14 @@ filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr=
    margin-right: 10px;
 }
 
-.page_title h1 {
+.page-title h1 {
    color: #BBBBBB;
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
    font-weight: 300;
    font-size: 2em;
 }
 
-article .page_title hgroup.user h1 {
+article .page-title hgroup.user h1 {
    text-align: left;
    padding-top: 10px;
 }
@@ -1427,7 +1427,7 @@ section.meter div span {
    -webkit-animation-timing-function: ease-in-out;
 }
 
-article.dashboard .page_title section.actions {
+article.dashboard .page-title section.actions {
    width: 45%;
 }
 
@@ -1498,7 +1498,7 @@ section.panel nav ul.views li.active a span.badge {
    background: @product-primary_color;
 }
 
-section.panel nav ul.views li.view_panel.open a {
+section.panel nav ul.views li.view-panel.open a {
    color: #999999;
    font-weight: bold;
    -moz-box-shadow: none;
@@ -1507,7 +1507,7 @@ section.panel nav ul.views li.view_panel.open a {
    background: none;
 }
 
-section.panel nav ul.views li.view_panel.open a span.icon {
+section.panel nav ul.views li.view-panel.open a span.icon {
    display: none;
 }
 
@@ -1590,7 +1590,7 @@ section.panel .row {
    background-image: url(/themes/default/media/img/icon_gallery.png);
 }
 
-section.panel .options p.button_go a {
+section.panel .options p.button-go a {
    float: right;
    width: 20%;
    font-size: 1.1em;
@@ -1631,9 +1631,9 @@ article#droplet_full .canvas {
    padding-top: 4.166666667%;
 }
 
-.edit_advanced > .row p.button_go a,
-.edit_advanced > .row p.button_view a,
-.edit_advanced > .row p.button_change a {
+.edit_advanced > .row p.button-go a,
+.edit_advanced > .row p.button-view a,
+.edit_advanced > .row p.button-change a {
    float: left;
    font-size: 0.9em;
    padding: 5px 10px;
@@ -1653,13 +1653,13 @@ article#droplet_full .canvas {
    clear: both;
 }
 
-.edit_advanced .actions p.button_view a,
-.edit_advanced .actions p.button_change a {
+.edit_advanced .actions p.button-view a,
+.edit_advanced .actions p.button-change a {
    float: left;
    margin: 0;
 }
 
-.edit_advanced .actions p.button_change a {
+.edit_advanced .actions p.button-change a {
    -webkit-border-top-left-radius: 0px;
    -webkit-border-bottom-left-radius: 0px;
    -moz-border-radius-topleft: 0px;
@@ -1668,7 +1668,7 @@ article#droplet_full .canvas {
    border-bottom-left-radius: 0px;
 }
 
-.edit_advanced .actions p.button_view a {
+.edit_advanced .actions p.button-view a {
    -webkit-border-top-right-radius: 0px;
    -webkit-border-bottom-right-radius: 0px;
    -moz-border-radius-topright: 0px;
@@ -1680,18 +1680,18 @@ article#droplet_full .canvas {
 
 div.arrow {
    height: 21px;
-   background: url(/themes/default/media/img/droplet-detail_shadow.gif) top repeat-x;
+   background: url(/themes/default/media/img/detail_shadow.gif) top repeat-x;
 }
 
 div.bottom {
    text-align: center;
-   background: url(/themes/default/media/img/droplet-detail_shadow.gif) bottom repeat-x;
+   background: url(/themes/default/media/img/detail_shadow.gif) bottom repeat-x;
 }
 
 div.top span {
    display: block;
    height: 21px;
-   background: url(/themes/default/media/img/droplet-detail_arrow.gif) center top no-repeat;
+   background: url(/themes/default/media/img/detail_arrow.gif) center top no-repeat;
 }
 
 div.bottom a.close {
@@ -1858,11 +1858,11 @@ article.item .summary .content .body p {
    padding: 5px 0;
 }
 
-article.item .summary .content .body p.button_go {
+article.item .summary .content .body p.button-go {
    padding: 0;
 }
 
-article.item .summary .content .body p.button_go a {
+article.item .summary .content .body p.button-go a {
    float: left;
    font-size: 0.8em;
    padding: 3px 5px;
@@ -1870,8 +1870,8 @@ article.item .summary .content .body p.button_go a {
 
 /* --- ITEM: ACTIONS ---*/
 
-article.item .summary section.actions p.button_view a,
-article.item .summary section.actions p.button_change a {
+article.item .summary section.actions p.button-view a,
+article.item .summary section.actions p.button-change a {
    font-size: 0.8em;
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
@@ -1880,7 +1880,7 @@ article.item .summary section.actions p.button_change a {
    padding: 10px 5px;
 }
 
-article.item .summary section.two_buttons p.button_view a {
+article.item .summary section.two_buttons p.button-view a {
    -webkit-border-bottom-left-radius: 0;
    -webkit-border-bottom-right-radius: 0;
    -moz-border-radius-bottomleft: 0;
@@ -1889,7 +1889,7 @@ article.item .summary section.two_buttons p.button_view a {
    border-bottom-right-radius: 0;
 }
 
-article.item .summary section.two_buttons p.button_change a {
+article.item .summary section.two_buttons p.button-change a {
    -webkit-border-top-left-radius: 0;
    -webkit-border-top-right-radius: 0;
    -moz-border-radius-topleft: 0;
@@ -1899,8 +1899,8 @@ article.item .summary section.two_buttons p.button_change a {
    border-top: none;
 }
 
-.actions p.button_view a.detail_hide,
-div.edit_advanced p.button_view a.detail_hide {
+.actions p.button-view a.detail-hide,
+div.edit_advanced p.button-view a.detail-hide {
    color: #fff;
    text-shadow: 1px 1px 1px rgba(0,0,0,.25);
    box-shadow: 0 2px 4px rgba(0,0,0,.25) inset;
@@ -1909,15 +1909,15 @@ div.edit_advanced p.button_view a.detail_hide {
    background: #c2c2c2;
 }
 
-article.item .summary section.actions p.button_change a.selected,
-article.item .summary section.actions p.button_change a.subscribed {
+article.item .summary section.actions p.button-change a.selected,
+article.item .summary section.actions p.button-change a.subscribed {
    color: #acacac;
    border: 1px solid transparent;
    border-top: none;
    background: none;
 }
 
-article.item .summary section.actions p.button_change a.subscribed {
+article.item .summary section.actions p.button-change a.subscribed {
    border-top: 1px solid #ffffff;
 }
 
@@ -1935,16 +1935,16 @@ article.item .summary section.actions p a > span.icon {
    height: 22px;
 }
 
-article.item .summary section.actions p.button_change a span.icon {
+article.item .summary section.actions p.button-change a span.icon {
    height: 18px;
    background-position: center -68px;
 }
 
-article.item .summary section.actions p.button_change a.selected span.icon {
+article.item .summary section.actions p.button-change a.selected span.icon {
    background-position: center -112px;
 }
 
-article.item .summary section.actions p.button_change a.delete span.icon {
+article.item .summary section.actions p.button-change a.delete span.icon {
    width: 14px;
    height: 20px;
    background-position: center -374px;
@@ -1960,11 +1960,11 @@ article.item .summary section.actions p.follow_user a span.icon {
    background-position: center top;
 }
 
-article.item .summary section.actions p.button_view a.detail_view span.icon {
+article.item .summary section.actions p.button-view a.detail_view span.icon {
    background-position: center -132px;
 }
 
-article.item .summary section.actions p.button_view a.detail_hide span.icon {
+article.item .summary section.actions p.button-view a.detail-hide span.icon {
    background-position: center -154px;
 }
 
@@ -2184,29 +2184,29 @@ article.item .detail section.meta .item p {
    padding: 5px 10px;
 }
 
-article.item .detail section.meta .item p.button_change {
+article.item .detail section.meta .item p.button-change {
    clear: both;
    font-size: 0.8em;
    margin-top: 5px;
 }
 
-article.item .detail section.meta .item p.button_change a {
+article.item .detail section.meta .item p.button-change a {
    display: inline;
    padding: 2px 10px;
 }
 
-article.item .detail section.meta .item p.button_delete {
+article.item .detail section.meta .item p.button-delete {
    padding: 0;
    margin: 5px 0 10px;
 }
 
-article.item .detail section.meta .item p.button_delete a {
+article.item .detail section.meta .item p.button-delete a {
    display: inline;
    font-size: 0.9em;
    padding: 5px 10px;
 }
 
-article.item .detail section.meta .item p.button_change a:before {
+article.item .detail section.meta .item p.button-change a:before {
    content: "+ ";
 }
 
@@ -2266,7 +2266,7 @@ article.droplet section.detail article.droplet section.content .body p {
    font-size: 1em;
 }
 
-article.droplet section.detail article.droplet section.content .body p.button_go a {
+article.droplet section.detail article.droplet section.content .body p.button-go a {
    display: inline;
    font-size: 0.8em;
    padding: 3px 10px;
@@ -2277,14 +2277,14 @@ article.droplet section.detail article.droplet section.actions div.button {
    height: auto;
 }
 
-article.droplet section.detail article.droplet section.actions p.button_change a {
+article.droplet section.detail article.droplet section.actions p.button-change a {
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
    border-radius: 5px;
    border-top: 1px solid #c2c2c2;
 }
 
-article.droplet section.detail article.droplet section.actions p.button_change a.bucket_added {
+article.droplet section.detail article.droplet section.actions p.button-change a.bucket_added {
    border-top: 1px solid transparent;
 }
 
@@ -2296,12 +2296,12 @@ article.droplet section.detail article.add_reply section.content textarea {
    width: 100%;
 }
 
-article.droplet section.detail article.add_reply section.content p.button_go {
+article.droplet section.detail article.add_reply section.content p.button-go {
    float: right;
    margin-top: 10px;
 }
 
-article.droplet section.detail article.add_reply section.content p.button_go a {
+article.droplet section.detail article.add_reply section.content p.button-go a {
    font-size: 1.1em;
    padding: 13px 30px;
 }
@@ -2370,7 +2370,7 @@ article.single div.summary section.actions {
    width: 10.41666667%;
 }
 
-article.single div.summary section.actions p.button_change a {
+article.single div.summary section.actions p.button-change a {
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
    border-radius: 5px;
@@ -2397,11 +2397,11 @@ article.single .detail .add_reply .content textarea {
    width: 100%;
 }
 
-article.single .detail .add_reply .content p.button_go {
+article.single .detail .add_reply .content p.button-go {
    padding: 0;
 }
 
-article.single .detail .add_reply .content p.button_go a {
+article.single .detail .add_reply .content p.button-go a {
    float: right;
    font-size: 1.1em;
    padding: 10px 20px;
@@ -2447,7 +2447,7 @@ div#summary_full section.actions {
    padding: 0 1.0416666667%;
 }
 
-div#summary_full section.actions p.button_change a {
+div#summary_full section.actions p.button-change a {
    -webkit-border-radius: 5px;
    -moz-border-radius: 5px;
    border-radius: 5px;
@@ -2531,12 +2531,12 @@ article.dashboard aside ul.relationships li img {
    color: #555555;
 }
 
-.insights .row h2.button_change:hover,
+.insights .row h2.button-change:hover,
 .insights .row p.checkbox_options:hover {
    cursor: pointer;
 }
 
-.insights .row h2.button_change:hover span.change,
+.insights .row h2.button-change:hover span.change,
 .insights .row p.checkbox_options:hover span.change {
    font-weight: 600;
 }
@@ -2567,20 +2567,20 @@ article.dashboard aside ul.relationships li img {
    margin: 10px 0;
 }
 
-.insights .tab_controls {
+.insights .tab-controls {
    margin: 10px 2.08333333%;
 }
 
-.insights .tab_container article ul {
+.insights .tab-container article ul {
    padding: 10px 1.0416666667%;
 }
 
-.insights .tab_container article ul li {
+.insights .tab-container article ul li {
    color: #666666;
    padding: 5px 0;
 }
 
-.insights .tab_container article ul li span.totals {
+.insights .tab-container article ul li span.totals {
    color: #444444;
    font-weight: bold;
    padding: 0 10px;
@@ -2689,7 +2689,7 @@ footer li a {
 
 @media screen and (max-width: 480px) {
 
-ul.tabs li.button_view {
+ul.tabs li.button-view {
    font-size: 0.75em;
 }
 
@@ -2856,31 +2856,31 @@ ul.tabs {
    width: 22.82608696%;
 }
 
-div.tab_container {
+div.tab-container {
    width: 75%;
 }
 
-.channels ul.tabs li.button_view a span.switch_off,
-.channels ul.tabs li.button_view a span.switch_on {
+.channels ul.tabs li.button-view a span.switch-off,
+.channels ul.tabs li.button-view a span.switch-on {
    float: right;
 }
 
-.page_title {
+.page-title {
    padding: 25px 0;
 }
 
-.page_title hgroup {
+.page-title hgroup {
    float: left;
    text-align: left;
 }
 
-.page_title h1 {
+.page-title h1 {
    float: left;
    font-size: 3em;
    padding-right: 10px;
 }
 
-article .page_title hgroup.user h1 {
+article .page-title hgroup.user h1 {
    padding-top: 0;
 }
 
@@ -2911,20 +2911,20 @@ article .page_title hgroup.user h1 {
    border-top: 1px solid #cecece;
 }
 
-.controls_buttons p.button_go a {
+.controls-buttons p.button-go a {
    padding: 15px 50px;
 }
 
-article.dashboard .page_title section.actions {
+article.dashboard .page-title section.actions {
    width: 14.89361702%;
 }
 
-article#droplet_full .page_title section.actions p a span {
+article#droplet_full .page-title section.actions p a span {
    float: none;
    margin: 0 auto;
 }
 
-article#droplet_full .page_title section.actions p a strong {
+article#droplet_full .page-title section.actions p a strong {
    display: block;
    text-align: center;
 }
@@ -2941,7 +2941,7 @@ section.meter {
    width: 22.91666667%;
 }
 
-article.droplet .page_title section.actions {
+article.droplet .page-title section.actions {
    float: right;
    clear: none;
    margin: 0;
@@ -2951,7 +2951,7 @@ section.panel nav ul.views li.more {
    display: none;
 }
 
-.controls_buttons p.button_delete_subtle {
+.controls-buttons p.button-delete-subtle {
    float: left;
    clear: none;
    margin-top: 0;
@@ -2959,7 +2959,7 @@ section.panel nav ul.views li.more {
 
 /* --- ITEM SUMMARY ---*/
 
-.trend_container article.droplet div.select {
+.trend-container article.droplet div.select {
    display: block;
    float: left;
    width: 3.125%;
@@ -2971,7 +2971,7 @@ section.panel nav ul.views li.more {
    width: 74.28571429%;
 }
 
-.trend_container article.droplet section.content,
+.trend-container article.droplet section.content,
 .list .select > article.item > .summary .content {
    width: 84.375%;
 }
@@ -3198,7 +3198,7 @@ article.item .summary .content hgroup h1 {
    font-size: 1.45em;
 }
 
-article.droplet section.actions p.button_change a.subscribed {
+article.droplet section.actions p.button-change a.subscribed {
    border-top: 1px solid #fff;
 }
 
@@ -3231,7 +3231,7 @@ article.droplet section.detail {
    border-right: 1px solid #f2f2f2;
 }
 
-article.droplet section.detail .right_column {
+article.droplet section.detail .right-column {
    float: left;
    width: 73.40425532%;
 }

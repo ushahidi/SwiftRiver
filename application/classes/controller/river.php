@@ -104,10 +104,6 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_list = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js);
 
-		// $buckets = ORM::factory('bucket')
-		// 	->where('account_id', '=', $this->account->id)
-		// 	->find_all();
-
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
 		if ($total > 0)
@@ -159,9 +155,13 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('settings_js', $settings_js);
 		
 		$settings_js = View::factory('pages/river/js/settings')
-		    ->bind('channels_url', $channels_url);
+		    ->bind('channels_url', $channels_url)
+		    ->bind('save_settings_url', $save_settings_url)
+		    ->bind('delete_river_url', $delete_river_url);
 
 		$channels_url = URL::site().$this->account->account_path.'/river/channels';
+		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings';
+		$delete_river_url = URL::site().$this->account->account_path.'/river/delete';
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
@@ -169,37 +169,6 @@ class Controller_River extends Controller_Swiftriver {
 			$this->channels[$key]['enabled'] = 0;
 		}
 
-		// Save the river
-		if ($_POST)
-		{
-			$river = ORM::factory('river');
-			$post = $river->validate($_POST);
-
-			// Swiftriver Plugin Hook -- execute before saving a river
-			// Allows plugins to perform further validation checks
-			// ** Plugins can then use 'swiftriver.river.save' after the river
-			// has been saved
-			// Swiftriver_Event::run('swiftriver.river.pre_save', $post);
-
-			if ($post->check())
-			{
-				$river->river_name = $post['river_name'];
-				$river->account_id = $this->account->id;
-				$river->save();
-
-				// Save channel filters
-				// $this->_save_filters($post, $river);
-
-				// Always redirect after a successful POST to prevent refresh warnings
-				$this->request->redirect('river/index/'.$river->id);
-			}
-			else
-			{
-				//validation failed, get errors
-				$errors = $post->errors('river');
-			}
-
-		}
 	}
 
 	/**
@@ -230,11 +199,14 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// JavaScript for settings UI
 		$settings_js = View::factory('pages/river/js/settings')
-		    ->bind('channels_url', $channels_url);
+		    ->bind('channels_url', $channels_url)
+		    ->bind('save_settings_url', $save_settings_url)
+		    ->bind("delete_river_url", $delete_river_url);
 		
 		// URL for fetching the channels for the river
 		$channels_url = URL::site().$this->account->account_path.'/river/channels/'.$this->_river->id;
-
+		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings/'.$this->_river->id;
+		$delete_river_url = URL::site().$this->account->account_path.'/river/delete/'.$this->_river->id;
 		echo $settings;
 	}
 	
@@ -243,6 +215,14 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_channels()
 	{
+		// Check for HTTP POST data
+		// Dirty!
+		if (isset($_POST['command']) AND $_POST['command'] == 'update_status')
+		{
+			$this->action_update_channel_status();
+			return;
+		}
+		
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
@@ -251,47 +231,34 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$exists = $this->_river->loaded();
 		
-		// Get the list of channel filters and their options
-		$filters = ($exists) 
-		    ? $this->_river->channel_filters->find_all()
-		    : array_keys($this->channels);
+		// Get the list of channels for the current river
+		$river_channels = $this->_river->get_channel_filters();
 		
-		if (count($filters) == 0)
+		foreach (array_keys($this->channels) as $channel)
 		{
-			$exists = FALSE;
-			$filters = array_keys($this->channels);
-		}
-		
-		foreach ($filters as $filter)
-		{
-			// Get the channel name
-			$channel = ($exists) ? $filter->channel : $filter;
-			
 			$filter_options = array();
 			$switch_class = "switch-off";
 			
-			// Check if the channel's plugin is enabled in the system config
-			if ($exists)
+			// Check if the channel has been added to the current river
+			if (array_key_exists($channel, $river_channels))
 			{
-				$filter_options = Model_Channel_Filter::get_channel_filter_options($filter->channel, 
+				$filter_options = Model_Channel_Filter::get_channel_filter_options($channel, 
 				    $this->_river->id);
 				
 				// on/off state for the channel on the UI
-				$switch_class = ($filter->filter_enabled == 0)
+				$switch_class = ($river_channels[$channel] == 0)
 				    ? 'switch-off' 
 				    : 'switch-on';
 			}
 			
-			if (isset($this->channels[$channel]))
-			{
-				$channels_config[] = array(
-					'channel' => $channel,
-					'channel_name' => $this->channels[$channel]['name'],
-					'switch_class' => $switch_class,
-					'channel_data' => $filter_options,
-					'config_options' => $this->channels[$channel]['options']
-				);
-			}
+			// Update the configuration for the river's channels
+			$channels_config[] = array(
+				'channel' => $channel,
+				'channel_name' => $this->channels[$channel]['name'],
+				'switch_class' => $switch_class,
+				'channel_data' => $filter_options,
+				'config_options' => $this->channels[$channel]['options']
+			);
 		}
 		
 		echo json_encode($channels_config);
@@ -346,128 +313,120 @@ class Controller_River extends Controller_Swiftriver {
 	 * 
 	 * @return string - json
 	 */
-	public function action_ajax_delete()
+	public function action_delete()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		if ( $_REQUEST AND isset($_REQUEST['id']) AND
-			! empty($_REQUEST['id']) )
-		{
-			$river = ORM::factory('river')
-				->where('id', '=', $_REQUEST['id'])
-				->where('account_id', '=', $this->account->id)
-				->find();
 
-			if ($river->loaded())
-			{
-				$river->delete();
-				echo json_encode(array("status"=>"success"));
-			}
-			else
-			{
-				echo json_encode(array("status"=>"error"));
-			}
+		if ($this->_river->loaded())
+		{
+			$this->_river->delete();
+			echo json_encode(array("success"=>TRUE));
 		}
 		else
 		{
-			echo json_encode(array("status"=>"error"));
+			echo json_encode(array("success"=>FALSE));
 		}
 	}
 	
 	/**
 	 * Enables/disables channel filters for a river
 	 */
-	public function action_ajax_channels()
+	public function action_update_channel_status()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
 		$succeed = FALSE;
 		
-		if (isset($_REQUEST['river_id']))
+		if ($this->_river->loaded())
 		{
-			// TODO - Validation checks for the river id
-			
 			// Get enable/disable flag
 			$enabled = $_REQUEST['enabled'];
 			$channel  = $_REQUEST['channel'];
 			
-			// Check if the channel exists
-			$filter = ORM::factory('channel_filter')
-				->where('channel', '=', $channel)
-				->where('user_id', '=', $this->user->id)
-				->where('river_id', '=', $_REQUEST['river_id'])
-				->find();
-			
-			if ($filter->loaded())
-			{
-				// Modify existing channel fitler
-				$filter->filter_enabled = $enabled;
-				$filter->filter_date_modified = date('Y-m-d H:i:s');
-				$filter->save();
-				
-				$succeed = TRUE;
-			}
-			else
-			{
-				// Create a new channel fitler
-				$filter = new Model_Channel_Filter();
-				$filter->channel = $channel;
-				$filter->river_id = $_REQUEST['river_id'];
-				$filter->user_id = $this->user->id;
-				$filter->filter_enabled = $enabled;
-				$filter->filter_date_add = date('Y-m-d H:i:s');
-				$filter->save();
-				$succeed = TRUE;
-			}
+			// Modify the status of the channel
+			$succeed = $this->_river->modify_channel_status($channel, $this->user->id, $enabled);
+		
 		}
 		
 		echo json_encode(array('success' => $succeed));
 	}
 	
 	/**
-	 * Adds/Removes channel filter settings via ajax
+	 * Saves the settings for the river. The data to be saved must be
+	 * submitted via HTTP POST. The UI invokes this URL via an XHR
 	 */
-	public function action_ajax_channel_filters()
+	public function action_save_settings()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+		
+		$status_data = array(
+			"success" => FALSE,
+			"redirect_url" => ""
+		);
+		
+		// Check for new river
+		if ($_POST)
+		{
+			$river = ORM::factory('river');
+			$post = $river->validate(Arr::extract($_POST, array('river_name')));
 
-		if ($_POST AND isset($_REQUEST['river_id']))
-		{
-			// Verify that the river identified by 'id' exists for this account
-			$river = ORM::factory('river')
-				->where('id', '=', $_REQUEST['river_id'])
-				->where('account_id', '=', $this->account->id)
-				->find();
-			
-			if ($river->loaded())
+			// Swiftriver Plugin Hook -- execute before saving a river
+			// Allows plugins to perform further validation checks
+			// ** Plugins can then use 'swiftriver.river.save' after the river
+			// has been saved
+			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+
+			if ($post->check())
 			{
-				// Marshall the channel options - structure them into the standard
-				// format for representing plugin config data
-				$filter_options = $this->_marshall_channel_options($_POST['options']);
+				$river->river_name = $post['river_name'];
+				$river->account_id = $this->account->id;
+				$this->_river = $river->save();
 				
-				/**
-				 * Execute the 'pre_save' event -- execute before saving a river
-				 * This event allows plugins to validate the channel options before
-				 * they are saved
-				 */
-				Swiftriver_Event::run('swiftriver.river.pre_save', $filter_options);
+				if (isset($_POST["selected_channels"]))
+				{
+					foreach ($_POST["selected_channels"] as $channel => $status)
+					{
+						$this->_river->modify_channel_status($channel, $this->user->id, $status);
+					}
+				}
 				
-				// Save channel filters
-				$this->_save_filters($filter_options, $river);
-			
-				echo json_encode(array('success' => TRUE));
-			}		
+				// Modify the status data
+				$status_data["success"] = TRUE;
+				$status_data["redirect_url"] = URL::site().
+				    $this->account->account_path."/river/index/".$river->id;
+			}
 		}
-		else
+		
+		// Proceed to save the channels
+		if (isset($_POST["channels"]) AND $this->_river->loaded())
 		{
-			echo json_encode(array("success" => FALSE));
+			// Marshall the channel options - structure them into the standard
+			// format for representing plugin config data
+			$filter_options = $this->_marshall_channel_options($_POST['channels']);
+			
+			/**
+			 * Execute the 'pre_save' event -- execute before saving a river
+			 * This event allows plugins to validate the channel options before
+			 * they are saved
+			 */
+			Swiftriver_Event::run('swiftriver.channel.pre_save', $filter_options);
+			
+			// Save channel filters
+			$this->_save_filters($filter_options, $this->_river);
+			
+			$status_data["success"] = TRUE;
+		
 		}
+		
+		echo json_encode($status_data);
 	}
 
 	/**
-	 * Generates the data for channel filter options
+	 * Packs the channel configuration params into an array that can ba be 
+	 * passed on to _save_filters for subsequent saving to the database
 	 *
 	 * @param array $options The list of submitted channel options
 	 * @return array An array of channel options per channel, FALSE otherwise
@@ -475,68 +434,24 @@ class Controller_River extends Controller_Swiftriver {
 	private function _marshall_channel_options($options)
 	{
 		$channel_options = array();
-		$group_count = 0;
-		
-		// Start with the singles
-		foreach ($options['singles'] as $option)
+		foreach ($options as $channel => $channel_data)
 		{
-			$name = explode("_", $option['name']);
-			$value = $option['value'];
-			
-			// Get the channel config - always the first element in the array
-			$config = $this->channels[$name[0]];
-			if ( ! isset($channel_options[$name[0]]))
+			$channel_options[$channel] = array();
+			foreach ($channel_data as $k => $v)
 			{
-				$options[$name[0]] = array();
-			}
-			
-			// Single option item
-			$channel_options[$name[0]][] = array(
-				$name[1] => array(
-					'label' => $config['options'][$name[1]]['label'],
-					'type' => $name[2],
-					'value' => $value
-				)
-			);
-		}
-		
-		// Tackle the groups
-		if (isset($options['groups']))
-		{
-			foreach ($options['groups'] as $k => $group)
-			{
-				$group_items = array();
-				$group_name = '';
-				$channel = '';
-				$config = NULL;
-			
-				// Process channel options for each group
-				foreach ($group as $option)
-				{
-					$names = explode("_", $option['name']);
-					$value = $option['value'];
-				
-					// Get the config for the plugin - only when the
-					if ($channel != $names[0])
-					{
-						$channel = $names[0];
-						$group_name = $names[1];
-						$config = $this->channels[$channel];
-					}
-				
-					// Store the items of the group
-					$group_items[$names[2]] = array(
-						'label' => $config['options'][$names[2]]['label'],
-						'type' => $names[3],
-						'value' => $value
-					);
-				}
-			
-				// Save the group items
-				$channel_options[$channel][$k][$group_name] = $group_items;
+				// Store each individual config params in a key->value format
+				// where key is the name of the config param and value is an
+				// array of the param's label, form field type 
+				// and field value
+				$channel_options[$channel][] = array(
+					$v["key"] => array(
+						"label" => $v["label"],
+						"type" => $v["type"],
+						"value" => $v["value"]
+					)
+				);
 			}
 		}
-		
 		return $channel_options;
 	}
 	
@@ -598,82 +513,6 @@ class Controller_River extends Controller_Swiftriver {
 				}
 			} // endforeach
 		} // endif;
-	}
-	
-	
-	/**
-	 * Renders the UI for a channel option
-	 * @return void
-	 */
-	public function action_ajax_channel_option_ui()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		
-		// HTML for the UI
-		$ui_html = '';
-		
-		// Get the channel config
-		$channel = $_REQUEST['channel'];
-		$config = $this->channels[$channel];
-		
-		// Get the item no. and lookup option
-		$item_no = intval($_REQUEST['item_no']);
-		$lookup_option = $_REQUEST['option'];
-		
-		// Check if the channel options are grouped
-		if (isset($config['group']))
-		{
-			if ($config['group']['key'] == $lookup_option)
-			{
-				// Generate the CSS ID
-				$css_id = $lookup_option."-".$item_no;
-				
-				$ui_html = "<div id=\"".$css_id."\" class=\"group-item\">"
-				    ."<h2>"
-				    .$config['group']['label']
-					."<span>[<a href=\"javascript:channelOptionR('".$css_id."');\">&mdash;</a>]</span>"
-				    ."</h2>";
-				
-				$i = 1;
-				foreach ($config['options'] as $key => $option)
-				{
-					// Build the name of the option
-					$option_name = sprintf("%s_%s_%s_%s_%d_%d", $channel, $lookup_option, $key, 
-					    $option['type'], $item_no, $i);
-					
-					$ui_html .= "<div class=\"input\">"
-					    ."<h3>".$option['label']."</h3>"
-					    .Swiftriver_Plugins::get_channel_option_html($option, $option_name)
-					    ."</div>";
-					$i++;
-				}
-			
-				$ui_html .= "</div>";
-			}
-		}
-		else
-		{
-			// Get the configured option
-			$option = $config['options'][$lookup_option];
-			
-			// CSS id for the parent <div>
-			$css_id = "channel-option-".$item_no;
-			
-			// Build the option name
-			$option_name = sprintf("%s_%s_%s_%d", $channel, $lookup_option, $option['type'], $item_no);
-			
-			$ui_html .= "<div class=\"input single\" id=\"".$css_id."\">"
-			    ."<h3>"
-			    .$option['label']
-			    ."<span>[<a href=\"javascript:javascriptOptionR('".$css_id."')\">&mdash;</a>]</span>"
-			    ."</h3>"
-			    .Swiftriver_Plugins::get_channel_option_html($option, $option_name)
-			    ."</div>";
-		}
-		
-		// Render the UI
-		echo json_encode(array("success" => TRUE, "html" => $ui_html));
 	}
 
 }

@@ -25,7 +25,7 @@ class Controller_Droplet extends Controller_Swiftriver {
 		$droplet_id = intval($this->request->param('id'));
 		
 		$semantics = $_GET['semantics'];
-		Kohana::$log->add(Log::INFO, $semantics);
+		
 		if ( ! empty($semantics))
 		{
 			$droplet = ORM::factory('droplet', $droplet_id);

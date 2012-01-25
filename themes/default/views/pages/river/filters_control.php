@@ -23,8 +23,8 @@
 			</ul>
 		</div>
 	</div>
-	<div class="row controls_buttons cf">
-		<p class="button_go"><a href="#">Apply filters</a></p>
+	<div class="row controls-buttons cf">
+		<p class="button-go"><a href="#">Apply filters</a></p>
 		<p class="other"><a>Save and create a new filter</a></p>
 	</div>
 </div>

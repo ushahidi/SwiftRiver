@@ -137,7 +137,7 @@
 							</div>
 						</div>
 						<div class="row cf hide">
-							<p class="button_go"><a href="#">Apply changes</a></p>
+							<p class="button-go"><a href="#">Apply changes</a></p>
 						</div>
 					</div>
 				
@@ -165,7 +165,7 @@
 				</div>
 				<div class="help-text highlight-box ht-ready cf" style="display:none;">
 					<h3>Your River of Information is now ready!</h3>
-					<p class="button_go"><a href="#">View Your River &raquo;</a></p>
+					<p class="button-go"><a href="#">View Your River &raquo;</a></p>
 				</div>
 				
 				<h3 class="push-up"><span>In the mean time...</h3>
@@ -181,7 +181,7 @@
 							<strong>Password</strong>
 							<input type="password" />
 						</p>
-						<p class="button_go cf"><a href="#">Create My Account!</a></p>
+						<p class="button-go cf"><a href="#">Create My Account!</a></p>
 						
 						<div style="clear:both"></div>
 						<div class="help-text highlight-box">

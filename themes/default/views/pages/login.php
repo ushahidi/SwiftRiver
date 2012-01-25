@@ -28,7 +28,7 @@
 	</header>
 	
 	<article id="login">
-		<div class="cf center page_title">
+		<div class="cf center page-title">
 			<hgroup>
 				<h1>Log in</h1>
 			</hgroup>

@@ -10,14 +10,22 @@
 		window.Droplet = Backbone.Model.extend({
 			initialize: function() {
 				var dropletId = this.toJSON().id;
+				
+				// List of places/loations "mentioned" in the droplet
 				this.places = new DropletPlaceCollection;
-				this.places.url = '/droplet/index/'+dropletId+'?semantics=places';
-			
+				this.places.url = "/droplet/index/"+dropletId+"?semantics=places";
+
+				// List of general tags for the droplet
 				this.tags = new DropletTagCollection;
-				this.tags.url = '/droplet/index/'+dropletId+'?semantics=tags';
+				this.tags.url = "/droplet/index/"+dropletId+"?semantics=tags";
 			
+				// Links for the droplet
 				this.links = new DropletLinkCollection;
-				this.links.url = '/droplet/index/'+dropletId+'?semantics=link';
+				this.links.url = "/droplet/index/"+dropletId+"?semantics=link";
+				
+				// List of buckets the droplet belongs to
+				this.buckets = new DropletBucketsCollection;
+				this.buckets.url = "/droplet/buckets/"+dropletId;
 			}
 		});
 	
@@ -25,6 +33,7 @@
 		window.DropletPlace = Backbone.Model.extend();
 		window.DropletTag = Backbone.Model.extend();
 		window.DropletLink = Backbone.Model.extend();
+		window.Bucket = Backbone.Model.extend();
 
 		// Droplet collection
 		window.DropletCollection = Backbone.Collection.extend({
@@ -43,6 +52,17 @@
 	
 		window.DropletLinkCollection = Backbone.Collection.extend({
 			model: DropletTag
+		});
+		
+		// Collection for the buckets a droplet a droplet belongs to
+		window.DropletBucketsCollection = Backbone.Collection.extend({
+			model: Bucket
+		});
+		
+		// Collection for all the buckets accessible to the current user
+		window.BucketsCollection = Backbone.Collection.extend({
+			model: Bucket
+			
 		});
 	
 
@@ -74,7 +94,11 @@
 			template: _.template($("#droplet-list-item").html()),
 		
 			events: {
-				"click a.detail-view": "showDetail"
+				// Show the droplet detail
+				"click .button-view a.detail-view": "showDetail",
+				
+				// Show the list of buckets available to the current user
+				"click p.bucket a.detail-view": "showBuckets"
 			},
 		
 			render: function(eventName) {
@@ -82,6 +106,7 @@
 				return this;
 			},
 		
+			// Event callback for the "view more detail" action
 			showDetail: function(event) {
 				// Toggle the state of the "view more" button
 				$(event.currentTarget).toggleClass("detail-hide");
@@ -94,7 +119,7 @@
 					_obj.slideDown(200);
 				
 					var dropletView = new DropletDetailView({model: this.model});
-					$("#droplet-view", this.el).html(dropletView.render().el);
+					$(".right-column", this.el).html(dropletView.render().el);
 				
 					// Fetch and render the places
 					this.model.places.fetch();
@@ -128,11 +153,18 @@
 				
 				} else {
 					_obj.slideUp(50);
-					_obj.hide();
 				}
 			
 				return false;
+			},
+			
+			// Event callback for the "Add to Bucket" action
+			showBuckets: function(event) {
+				$(event.currentTarget).parent(".bucket").toggleClass("active");
+				return false;
 			}
+			
+			
 		});
 
 

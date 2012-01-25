@@ -13,10 +13,7 @@ class Twitter_Init {
 	public function __construct()
 	{
 		// Validate Channel Filter Settings Input
-		Swiftriver_Event::add('swiftriver.river.pre_save', array($this, 'channel_validate'));
-
-		// Save Channel Settings
-		//Swiftriver_Event::add('swiftriver.river.save', array($this, 'channel_save'));
+		Swiftriver_Event::add('swiftriver.channel.pre_save', array($this, 'channel_validate'));
 	}
 
 	/**

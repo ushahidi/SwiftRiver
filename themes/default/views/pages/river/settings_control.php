@@ -2,13 +2,39 @@
     <div id="messages"></div>
     <div class="controls">
         <div class="row cf">
-            <h2><?php echo __('Channels'); ?></h2>
+            <h2><?php echo __("Channels"); ?></h2>
             <div class="tab-controls cf">
                 <ul class="tabs"></ul>
                 
                 <div class="tab-container">
                 </div>
             </div>
+        </div>
+        <div class="row controls cf">
+            <!-- collaborators -->
+            <h2><?php echo __("Collaborators"); ?></h2>
+            <div class="input">
+                <h3><?php echo __("Add people to collaborate on this river"); ?></h3>
+                <input type="text" placeholder="<?php echo __("+ Type name..."); ?>">
+            </div>
+            <div class="list-stream"></div>
+            <!-- /collaborators -->
+
+            <!-- buttons -->
+            <div class="row controls-buttons cf">
+                <p class="button-go"><a href="#"><?php echo __("Apply changes"); ?></a></p>
+                <p class="other"><a class="close"><?php echo __("Cancel"); ?></a></p>
+                <div class="item actions">
+                    <p class="button-delete button-delete-subtle"><a><?php echo __("Delete River"); ?></a></p>
+                    <div class="clear"></div>
+                    <ul class="dropdown">
+                        <p><?php echo __("Are you sure you want to delete this River?"); ?></p>
+                        <li class="confirm"><a><?php echo __("Yep"); ?></a></li>
+                        <li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /buttons -->
         </div>
     </div>
 </div>
