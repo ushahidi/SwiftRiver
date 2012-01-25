@@ -1,5 +1,5 @@
 <div class="container select">
-	<div class="controls edit_advanced">
+	<div class="controls edit-advanced">
 		<div class="detail">
 			<div class="arrow top"><span></span></div>
 			<div class="canyon cf">
@@ -16,8 +16,8 @@
 						</div>
 					</div>
 					
-					<div class="controls_buttons cf">
-						<p class="button_go"><a href="#">Apply changes</a></p>
+					<div class="controls-buttons cf">
+						<p class="button-go"><a href="#">Apply changes</a></p>
 						<p class="other"><a class="close" onclick="">Cancel</a></p>
 					</div>
 				</div>

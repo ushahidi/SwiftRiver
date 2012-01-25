@@ -28,7 +28,7 @@ class Controller_Settings_Users extends Controller_Settings_Main {
 		// Execute parent::before first
 		parent::before();
 
-		$this->template->header->page_title = __('Users');
+		$this->template->header->page-title = __('Users');
 		$this->template->header->tab_menu = View::factory('pages/users/menu');
 		$this->template->header->tab_menu->active = "";
 	}
@@ -75,7 +75,7 @@ class Controller_Settings_Users extends Controller_Settings_Main {
 	public function action_edit()
 	{
 		$id = $this->request->param('id');
-		$this->template->header->page_title = __('Create a new User');
+		$this->template->header->page-title = __('Create a new User');
 		$this->template->content = View::factory('pages/users/edit')
 			->bind('post', $post)
 			->bind('errors', $errors)
@@ -185,7 +185,7 @@ class Controller_Settings_Users extends Controller_Settings_Main {
 
 				$post = $user->as_array();
 				$post['role'] = $role;
-				$this->template->header->page_title = __('Edit').' '.$post['name'];
+				$this->template->header->page-title = __('Edit').' '.$post['name'];
 			}
 		}			
 

@@ -204,12 +204,7 @@ class Swiftriver_Plugins {
 			return FALSE;
 		}
 		
-		// Validation succeeded
-		Kohana::$log->add(Log::INFO, "Validation succeeded for the :plugin plugin",
-		    array(':plugin' => $plugin_name));
-		
 		return TRUE;
-		
 	}
 
 

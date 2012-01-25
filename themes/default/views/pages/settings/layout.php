@@ -1,5 +1,5 @@
-<article id="droplet_full" class="droplet dashboard cf">
-	<div class="cf center page_title">
+<article id="droplet-full" class="droplet dashboard cf">
+	<div class="cf center page-title">
 		<h1><span><?php echo __('Settings') ?></span></h1>
 	</div>
 	

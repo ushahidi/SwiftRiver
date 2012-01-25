@@ -23,7 +23,7 @@ class Controller_Settings_Profile extends Controller_Settings_Main {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->template->header->page_title = __('My Profile').
+		$this->template->header->page-title = __('My Profile').
 			" : ".$this->user->name.
 			" (".$this->user->email.")";
 		$this->template->header->tab_menu = View::factory('pages/profile/menu');

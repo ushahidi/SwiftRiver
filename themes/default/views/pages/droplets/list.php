@@ -30,6 +30,7 @@
 				</p>
 			</div>
 			<div class="clear"></div>
+			<ul class="dropdown" style="display: none"></ul>
 		</section>
 	</div>
 	<section class="detail cf" style="display:none;" id="detail-section-<%= id %>">

@@ -521,7 +521,7 @@ button:hover {
    color: #17a9c6;
 }
 
-.actions ul.dropdown li.create_new {
+.actions ul.dropdown li.create-new {
    font-weight: normal;
    text-align: left;
 }

@@ -38,7 +38,7 @@
 						<ul class="dropdown">
 							<li><a href="/bucket/">Bucket 1</a></li>
 							<li><a href="/bucket/">Bucket 2</a></li>
-							<li class="create_new"><a><em>Create new</em></a></li>
+							<li class="create-new"><a><em>Create new</em></a></li>
 						</ul>
 					</li>
 					<div class="account">
@@ -60,7 +60,7 @@
 	</header>
 	
 	<article id="login">
-		<div class="cf center page_title">
+		<div class="cf center page-title">
 			<hgroup>
 				<h1>Create an account</h1>
 			</hgroup>
@@ -97,8 +97,8 @@
 						<input type="text" />
 					</div>
 				</div>				
-				<div class="row controls_buttons cf">
-					<p class="button_go" onclick="submitForm(this)"><a>Get started</a></p>
+				<div class="row controls-buttons cf">
+					<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
 					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
 				</div>
 			<?php echo Form::close(); ?>

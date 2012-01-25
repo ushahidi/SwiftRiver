@@ -1,11 +1,11 @@
 <div class="container list select data">
 	<?php if (count($rivers)) : ?>
-	<div class="controls edit_advanced">
+	<div class="controls edit-advanced">
 		<div class="row cf">
-			<p class="button_go edit_single"><a href="#">Edit map</a></p>
+			<p class="button-go edit-single"><a href="#">Edit map</a></p>
 			<p class="button_view edit_multiple"><a href="<?php echo URL::site()?>dashboard/edit_multiple">Edit multiple</a></p>
 			<p class="button_view"><a href="<?php echo URL::site()?>dashboard/filter_rivers">Filter</a></p>
-			<p class="button_go create_new"><a href="<?php echo URL::site().'river/new'; ?>"><?php echo __('Create new');?></a></p>
+			<p class="button-go create-new"><a href="<?php echo URL::site().'river/new'; ?>"><?php echo __('Create new');?></a></p>
 		</div>
 	</div>
 	<?php foreach ($rivers as $river) {	

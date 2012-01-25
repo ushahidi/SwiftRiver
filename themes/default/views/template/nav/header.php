@@ -15,7 +15,7 @@
 				<?php foreach ($buckets as $bucket): ?>
 					<li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li>
 				<?php endforeach; ?>
-				<li class="create_new"><a onclick="createBucket(this, 'river', 0)"><em><?php echo __('Create new');?></em></a></li>
+				<li class="create-new"><a onclick="createBucket(this, 'river', 0)"><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
 		<div class="account">

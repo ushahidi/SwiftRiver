@@ -1,10 +1,10 @@
 <div class="container select data">
-	<div class="controls edit_advanced">
+	<div class="controls edit-advanced">
 		<div class="row cf">
-			<p class="button_go edit_single"><a href="#">Edit team</a></p>
+			<p class="button-go edit-single"><a href="#">Edit team</a></p>
 			<p class="button_view edit_multiple"><a href="<?php echo URL::site()?>dashboard/edit_multiple_teams">Edit multiple</a></p>
 			<p class="button_view"><a href="<?php echo URL::site()?>dashboard/filter_rivers">Filter</a></p>
-			<p class="button_go create_new"><a href="#">Create new</a></p>
+			<p class="button-go create-new"><a href="#">Create new</a></p>
 		</div>
 		<div class="detail cf"></div>
 	</div>

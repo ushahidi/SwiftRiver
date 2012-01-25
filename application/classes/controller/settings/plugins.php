@@ -28,7 +28,7 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->template->header->page_title = __('Plugins');
+		$this->template->header->page-title = __('Plugins');
 		$this->template->header->tab_menu = View::factory('pages/plugins/menu');
 	}
 	

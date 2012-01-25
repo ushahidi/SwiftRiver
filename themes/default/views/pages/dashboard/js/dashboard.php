@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	// Dashboard Settings
-	$('.button_go').live('click', function() {
+	$('.button-go').live('click', function() {
 		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
 			username: $('#username').val(),
 			email: $('#email').val(),
