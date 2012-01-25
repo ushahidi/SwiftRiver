@@ -23,42 +23,43 @@
 		</section>
 		
 		<section class="actions">
-			<p class="button-view"><a href="#" class="detail-view"><span></span><strong>detail</strong></a></p>
+			<p class="button-view"><a class="detail-view"><span></span><strong>detail</strong></a></p>
 			<div class="button">
-				<p class="button-change bucket"><a href="#" class="detail-view"><span></span><strong><?php echo __('Add to Bucket'); ?></strong></a></p>
+				<p class="button-change bucket">
+					<a class="detail-view"><span></span><strong><?php echo __('Add to Bucket'); ?></strong></a>
+				</p>
 			</div>
 			<div class="clear"></div>
 		</section>
-		
-		<section class="detail cf" style="display:none;" id="detail-section-<%= id %>">
-			<div class="arrow top"><span></span></div>
-			<div class="canyon cf">
-				<aside>
-					<div class="item cf">
-						<h2><?php echo __('Tags'); ?></h2>
-						<ul class="tags cf" id="droplet-tags-<%= id %>"></ul>
-					</div>
-
-					<div class="item cf">
-						<h2><?php echo __('Locations'); ?></h2>
-						<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
-					</div>
-					<div class="item cf">
-						<h2><?php echo __('Links'); ?></h2>
-						<p class="edit" id="droplet-links-<%= id %>"></p>
-					</div>
-					<div class="item cf">
-						<p class="button-change">
-							<a><?php echo __('+ Add Attachment'); ?></a>
-						</p>
-					</div>
-				</aside>
-
-				<div id="droplet-view" class="right-column"></div>
-			</div>
-			<div class="arrow bottom"><a class="close" onclick=""><?php echo __('Hide Detail'); ?></a></div>
-		</section>
 	</div>
+	<section class="detail cf" style="display:none;" id="detail-section-<%= id %>">
+		<div class="arrow top"><span></span></div>
+		<div class="canyon cf">
+			<aside>
+				<div class="item cf">
+					<h2><?php echo __('Tags'); ?></h2>
+					<ul class="tags cf" id="droplet-tags-<%= id %>"></ul>
+				</div>
+
+				<div class="item cf">
+					<h2><?php echo __('Locations'); ?></h2>
+					<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
+				</div>
+				<div class="item cf">
+					<h2><?php echo __('Links'); ?></h2>
+					<p class="edit" id="droplet-links-<%= id %>"></p>
+				</div>
+				<div class="item cf">
+					<p class="button-change">
+						<a><?php echo __('+ Add Attachment'); ?></a>
+					</p>
+				</div>
+			</aside>
+
+			<div class="right-column"></div>
+		</div>
+		<div class="arrow bottom"><a class="close" onclick=""><?php echo __('Hide Detail'); ?></a></div>
+	</section>
 </script>
 
 

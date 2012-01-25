@@ -291,8 +291,7 @@ header nav li.login ul.dropdown li div.buttons {
     background: #C2C2C2;
 }
 
-.button-delete-subtle a:hover, .actions .active a, .actions .active a:hover {
-  color: #fff;
+.button-delete-subtle a:hover, .actions .active a {
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
   -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
@@ -2599,13 +2598,18 @@ footer li a {
     border-left: 1px solid #fff;
   }
   
-  article.droplet section.source,
-  article.droplet section.content,
-  article.droplet section.actions,
-  article.droplet section.detail
+  article.droplet section.source, 
+  article.droplet section.content, 
+  article.droplet section.actions
   {
-    float: left; 
-    padding: 0 1.04617%;
+    padding: 0 1.0416666667%;
+  }
+  
+  article.droplet section.source, 
+  article.droplet section.content,
+  article.droplet section.actions, 
+  article.droplet section.detail {
+      float: left;
   }
   
   article.droplet section.source {
@@ -2613,7 +2617,7 @@ footer li a {
   }
   
   article.droplet section.content {
-    width: 70.2128%;  
+    width: 70.2128%;
     text-align: left;
   }
   
@@ -2638,6 +2642,10 @@ footer li a {
       border-bottom-right-radius: 0px;
       border-top-left-radius: 6px;
       border-top-right-radius: 0;
+  }
+  article.droplet section.actions p.active a {
+      border: 1px solid #C2C2C2;
+      background: #FFFFFF;
   }
   article.droplet section.actions p.button-change a {
       border-bottom: 1px solid #C2C2C2;
@@ -2718,6 +2726,7 @@ footer li a {
     margin-top: 15px;
     text-align: left;
     text-shadow: 1px 1px 1px #FFFFFF;
+    width: 100%;
   }
   article.droplet section.detail h2{
       color: #045376;

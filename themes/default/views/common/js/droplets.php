@@ -74,7 +74,11 @@
 			template: _.template($("#droplet-list-item").html()),
 		
 			events: {
-				"click a.detail-view": "showDetail"
+				// Show the droplet detail
+				"click .button-view a.detail-view": "showDetail",
+				
+				// Show the list of buckets available to the current user
+				"click p.bucket a.detail-view": "showBuckets"
 			},
 		
 			render: function(eventName) {
@@ -82,6 +86,7 @@
 				return this;
 			},
 		
+			// Event callback for the "view more detail" action
 			showDetail: function(event) {
 				// Toggle the state of the "view more" button
 				$(event.currentTarget).toggleClass("detail-hide");
@@ -95,7 +100,7 @@
 					_obj.css("display", "block");
 				
 					var dropletView = new DropletDetailView({model: this.model});
-					$("#droplet-view", this.el).html(dropletView.render().el);
+					$(".right-column", this.el).html(dropletView.render().el);
 				
 					// Fetch and render the places
 					this.model.places.fetch();
@@ -133,7 +138,15 @@
 				}
 			
 				return false;
+			},
+			
+			// Event callback for the "Add to Bucket" action
+			showBuckets: function(event) {
+				$(event.currentTarget).parent(".bucket").toggleClass("active");
+				return false;
 			}
+			
+			
 		});
 
 

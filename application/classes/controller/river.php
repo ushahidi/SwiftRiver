@@ -381,7 +381,7 @@ class Controller_River extends Controller_Swiftriver {
 			// Allows plugins to perform further validation checks
 			// ** Plugins can then use 'swiftriver.river.save' after the river
 			// has been saved
-			// Swiftriver_Event::run('swiftriver.river.pre_save', $post);
+			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
 
 			if ($post->check())
 			{
@@ -403,7 +403,7 @@ class Controller_River extends Controller_Swiftriver {
 				    $this->account->account_path."/river/index/".$river->id;
 			}
 		}
-
+		
 		// Proceed to save the channels
 		if (isset($_POST["channels"]) AND $this->_river->loaded())
 		{
@@ -416,7 +416,7 @@ class Controller_River extends Controller_Swiftriver {
 			 * This event allows plugins to validate the channel options before
 			 * they are saved
 			 */
-			Swiftriver_Event::run('swiftriver.river.pre_save', $filter_options);
+			Swiftriver_Event::run('swiftriver.channel.pre_save', $filter_options);
 			
 			// Save channel filters
 			$this->_save_filters($filter_options, $this->_river);
