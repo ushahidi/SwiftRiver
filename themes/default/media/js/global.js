@@ -13,7 +13,7 @@ $(document).ready(function() {
 		$(this).closest('.dropdown').fadeOut('fast');
 		$(this).closest('.dropdown').siblings('p').removeClass('active');
 	});
-	$('.has_dropdown > a, .actions .button_delete, .actions .button_change').live('click', function(e) {
+	$('.has_dropdown > a, .actions .button-delete, .actions .button-change').live('click', function(e) {
 		$(this).toggleClass('active');
 		$(this).siblings('.dropdown').fadeToggle('fast')
 		e.stopPropagation();
@@ -30,22 +30,32 @@ $(document).ready(function() {
 	else {
 		$('ul.views li.more').remove();
 	}
-	
-    $("section.panel nav ul li.view-panel a").toggle(
-        function(e) {
-            var url = $(this).attr("href");
-            $('ul.views li, ul.actions li').fadeTo('fast', 0);
-            $(this).parent('li').addClass('active').fadeTo('fast', 1);
-            $('section.panel div.panel-body').slideDown(200).load(url);
-            e.preventDefault();
-        }, 
-        function(e) {
-            $('ul.views li, ul.actions li').fadeTo('fast', 1);
-            $(this).parent('li').removeClass('active');
-            $('section.panel div.panel-body').slideUp(200).empty();
-            e.preventDefault();
-        }
-    );
+	$('section.panel nav ul li.view-panel a, section.actions p.button-view a, div.edit_advanced p.button-view a').toggle(function(e) {
+			var url = $(this).attr('href');
+			if ( url == '/map/reports/filters.php' ) {
+				$.getScript('/js/filters.js');
+			}
+			$(this).addClass('detail-hide').closest('section.panel, article.item, div.edit_advanced').append('<div class="drawer"></div>');
+			if ( $(this).is('section.panel nav ul li.view-panel a') ) {
+				$('ul.views li, ul.actions li').fadeTo('fast', 0); // for panel
+				$(this).parent('li').addClass('open').fadeTo('fast', 1); // for panel
+				$(this).closest('section.panel').children('div.drawer').slideDown('slow').load(url + ' section.panel .panel-body');
+			}
+			else {
+				$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideDown('slow').load(url + ' div.detail', function() {
+					convertForm();
+					$('section.discussion').remove();
+				});
+				$(this).closest('.row').find('p a').not('p a.detail_hide').fadeTo('fast', 0); // for drawer
+			}		
+			e.preventDefault();				
+		}, function(e) {
+			$('ul.views li, ul.actions li').fadeTo('fast', 1);
+			$(this).parent('li').removeClass('open');
+			$(this).removeClass('detail_hide').closest('section.panel, article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();				
+			$(this).closest('.row').find('p a').not('p a.detail_hide').fadeTo('fast', 1); // for drawer
+			e.preventDefault();
+	});
 	
     // TODO: E.Kala Review this segment
     $('section.panel nav ul.actions li.view-panel a').live('click', function() {
@@ -55,14 +65,14 @@ $(document).ready(function() {
 	$('section.panel a.close').live('click', function() {
 		$('section.panel nav, .canvas > .container').fadeIn('fast');
 		$('ul.views li, ul.actions li').fadeTo('fast', 1);
-		$('section.panel nav ul.actions li.view-panel').removeClass('active');
+		$('section.panel nav ul.actions li.view_panel').removeClass('active');
 		$('section.panel div.drawer').slideUp('fast').remove();
 		return false;
 	});
 	$('div.detail a.close').live('click', function() {
-		$(this).closest('article.item, div.edit-advanced').find('section.actions p.button_view a, div.edit-advanced p.button_view a').removeClass('detail-hide');
-		$(this).closest('div.edit-advanced').find('div.row > p a').fadeTo('fast', 1);
-		$(this).closest('article.item, div.edit-advanced').children('div.drawer').slideUp('fast').remove();
+		$(this).closest('article.item, div.edit_advanced').find('section.actions p.button_view a, div.edit_advanced p.button_view a').removeClass('detail_hide');
+		$(this).closest('div.edit_advanced').find('div.row > p a').fadeTo('fast', 1);
+		$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();
 	});
 	
 	//Show a trend
