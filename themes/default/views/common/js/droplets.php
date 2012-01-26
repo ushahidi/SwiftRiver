@@ -61,10 +61,15 @@
 		
 		// Collection for all the buckets accessible to the current user
 		window.BucketsCollection = Backbone.Collection.extend({
-			model: Bucket
-			
+			model: Bucket,
+			url: "/bucket/list_buckets"
 		});
-	
+		
+		
+		// Get the buckets for the user - to avoid fetching them every time a
+		// droplet is rendered
+		var userBuckets = new BucketsCollection;
+		userBuckets.fetch();
 
 		// Rendering for a list of droplets
 		window.DropletListView = Backbone.View.extend({
@@ -82,8 +87,10 @@
 				return this;
 			}
 		});
-
-
+		
+		// Tracks the currently selected droplet list item
+		var currentListItem = null;
+		
 		// Rendering for a single droplet in the list view
 		window.DropletListItem = Backbone.View.extend({
 		
@@ -92,17 +99,24 @@
 			className: "droplet cf",
 		
 			template: _.template($("#droplet-list-item").html()),
-		
+			
 			events: {
 				// Show the droplet detail
 				"click .button-view a.detail-view": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click p.bucket a.detail-view": "showBuckets"
+				"click p.bucket a.detail-view": "showBuckets",
+				
+				"click .actions ul.dropdown li.create-new > a": "createBucket"
 			},
 		
 			render: function(eventName) {
 				$(this.el).html(this.template(this.model.toJSON()));
+				
+				this.bucketMenu = this.$("section.actions ul.dropdown");
+				_.each(userBuckets.models, function(bucket) {
+					this.bucketMenu.prepend(new BucketListItemView({model: bucket}).render().el);
+				}, this);
 				return this;
 			},
 		
@@ -160,10 +174,63 @@
 			
 			// Event callback for the "Add to Bucket" action
 			showBuckets: function(event) {
-				$(event.currentTarget).parent(".bucket").toggleClass("active");
+				var parentEl = $(event.currentTarget).parent(".bucket")
+				parentEl.toggleClass("active");
+				
+				if (parentEl.hasClass("active")) {
+					this.$("section.actions ul.dropdown").show();
+				} else {
+					this.$("section.actions ul.dropdown").hide();
+				}
+				return false;
+			},
+			
+			// Event callback for the "create & add to a new bucket" action
+			createBucket: function(event) {
+				var _container  = $(event.currentTarget).parent("li.create-new");
+				var _html = _container.html();
+				var t = _.template($("#create-inline-bucket").html());
+				
+				currentSelection = this;
+				
+				// Render the input field
+				_container.html(t());
+				
+				// Cancel button clicked
+				$("button.cancel", _container).click(function(e) {
+					_container.html(_html);
+					e.stopPropagation();
+				});
+				
+				// Save button clicked
+				$("button.save", _container).click(function(e) {
+					var _post = { bucket_name: $(":text", _container).val() };
+					
+					// Submit for saving
+					$.post("/bucket/ajax_new", _post, function(response) {
+						if (response.success) {
+							
+							// Create model for the newly created bucket
+							var _bucket = new Bucket({
+								id: response.bucket.id, 
+								bucket_name: response.bucket.bucket_name 
+							});
+							
+							// Render the bucket
+							currentSelection.bucketMenu.prepend(
+								new BucketListItemView({model: _bucket}).render().el);
+							
+							// Restore "create bucket" link
+							_container.html(_html);
+						}
+					}, "json");
+					
+					// Halt further event processing
+					e.stopPropagation();
+				});
+				
 				return false;
 			}
-			
 			
 		});
 
@@ -204,7 +271,8 @@
 				return this;
 			}
 		});
-	
+		
+		// View for a single semantic item/tag
 		window.SemanticItemView = Backbone.View.extend({
 		
 			render: function(eventName) {
@@ -213,6 +281,21 @@
 				return this;
 			}
 		});
+		
+		// View for individual bucket item
+		window.BucketListItemView = Backbone.View.extend({
+			
+			tagName: "li",
+			
+			className: "bucket",
+			
+			template: _.template($("#buckets-list-item").html()),
+			
+			render: function() {
+				$(this.el).html(this.template(this.model.toJSON()));
+				return this;
+			}
+		})
 		
 		// ------------------------------------------------------------------------
 	

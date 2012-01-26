@@ -67,7 +67,7 @@ class Model_User extends Model_Auth_User
 	 *
 	 * @param string $base
 	 */
-	function generate_username($base = '') 
+	public function generate_username($base = '') 
 	{
 		$base = $this->transcribe($base);
 		$username = $base;
@@ -79,5 +79,44 @@ class Model_User extends Model_Auth_User
 			$i++;
 		}
 		return $username;
+	}
+	
+	/**
+	 * Gets all the buckets accessible to the user - the ones
+	 * they've created and the ones they're collaborating on
+	 *
+	 * @return array
+	 */
+	public function get_buckets()
+	{
+		$buckets = array();
+		
+		// Directly owned buckets
+		foreach ($this->buckets->find_all() as $bucket)
+		{
+			$buckets[] = array(
+				"id" => $bucket->id, 
+				"bucket_name" => $bucket->bucket_name
+			);
+		}
+		
+		// Buckets the user is collaborating in
+		$collaborating = ORM::factory('bucket_collaborator')
+		    ->where('user_id', '=', $this->id)
+		    ->find_all();
+		
+		foreach ($collaborating as $item)
+		{
+			$bucket = ORM::factory('bucket', $item->bucket_id);
+			$buckets[] = array(
+				"id" => $item->bucket_id,
+				"bucket_name" => $bucket->bucket_name
+			);
+		}
+		
+		// Free memory
+		unset ($collaborating);
+		
+		return $buckets;
 	}
 }

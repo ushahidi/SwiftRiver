@@ -134,19 +134,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$bucket->user_id = $this->user->id;
 				$bucket->account_id = $this->account->id;
 				$bucket->save();
-
+				
 				echo json_encode(array(
-					"status"=>"success",
+					"success" => TRUE,
 					"bucket" => array(
 						'id' => $bucket->id,
-						'name' => $bucket->bucket_name
+						'bucket_name' => $bucket->bucket_name
 						)));
 			}
 			else
 			{
 				//validation failed, get errors
 				$errors = $post->errors('bucket');
-				echo json_encode(array("status"=>"error", "errors" => $errors));
+				echo json_encode(array("success" => FALSE, "errors" => $errors));
 			}
 		}
 	}
@@ -308,5 +308,17 @@ class Controller_Bucket extends Controller_Swiftriver {
 		{
 			echo json_encode(array("status"=>"error"));
 		}
-	}	
+	}
+	
+	/**
+	 * Returns a JSON response of the list of buckets accessible to the 
+	 * currently logged in user
+	 */
+	public function action_list_buckets()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		echo json_encode($this->user->get_buckets());
+	}
 }

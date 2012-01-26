@@ -25,14 +25,14 @@ $(document).ready(function() {
 	// Create new bucket
 	$('li.create-new').live('click', function(e) {
 		$(this).empty();
-		$(this).parents('ul.dropdown').append('<li class="create_name"><input type="text" value="" placeholder="Name your new bucket"><div class="buttons"><button class="save">Save</button><button class="cancel">Cancel</button></div></li>');
+		$(this).parents('ul.dropdown').append('<li class="create-name"><input type="text" value="" placeholder="Name your new bucket"><div class="buttons"><button class="save">Save</button><button class="cancel">Cancel</button></div></li>');
 		e.stopPropagation();
-		$('li.create_name').click(function(e) {
+		$('li.create-name').click(function(e) {
 			e.stopPropagation();	
 		});
 		$('button.cancel').click(function(e) {
 			$(this).closest('ul.dropdown').children('li.create-new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
-			$(this).closest('li.create_name').remove();
+			$(this).closest('li.create-name').remove();
 			e.stopPropagation();
 		});
 	});

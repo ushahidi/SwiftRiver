@@ -77,7 +77,7 @@ class Controller_River extends Controller_Swiftriver {
 				
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($river_id, $page);
-
+		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
 		

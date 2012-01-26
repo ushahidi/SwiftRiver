@@ -178,7 +178,7 @@ header nav li ul.dropdown li a {
 header nav li ul.dropdown li a em {
     font-weight: normal;
 }
-header nav li ul.dropdown li.create_name {
+header nav li ul.dropdown li.create-name {
     padding: 5px 20px;
 }
 header nav .account {
@@ -442,21 +442,19 @@ button:hover {
     width: 100%;
 }
 /* --------------------------- DROPDOWNS */
-.actions .dropdown {
+.actions ul.dropdown {
     display: none;
     position: absolute;
     z-index: 1;
-    right: 0;
-    width: auto;
-    min-width: 150px;
-    max-width: 200px;
+    right: auto;
     -moz-box-shadow: 0 1px 15px rgba(0, 0, 0, 0.25);
     -webkit-box-shadow: 0 1px 15px rgba(0, 0, 0, 0.25);
     box-shadow: 0 1px 15px rgba(0, 0, 0, 0.25);
     border: 1px solid #c2c2c2;
     text-align: left;
     background: #fff;
-    margin-top: 3px;
+    padding: 10px;
+    margin-top: -5px;
 }
 .actions .dropdown:before {
     content: ' ';
@@ -475,11 +473,29 @@ button:hover {
     right: auto;
     left: 15%;
 }
-.actions ul.dropdown {
-    padding: 10px;
-}
 .actions ul.dropdown li {
-    margin: 0 10px;
+    font-size: 12px;
+    padding: 3px 0;
+}
+.actions ul.dropdown li.bucket a {
+    display: block;
+    color: #ACACAC;
+    font-weight: bold;
+    font-size: 13px;
+    text-align: left;
+    text-transform: none;
+    padding: 5px 0;
+}
+.actions ul.dropdown li.bucket a:hover {
+    color: #999;
+    text-decoration: none;
+}
+.actions ul.dropdown li span.select {
+    float: left;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #C2C2C2;
+    margin: 2px 5px 0 0;
 }
 .actions .dropdown h3 {
     font-size: 1em;
@@ -496,10 +512,10 @@ button:hover {
 .actions div.dropdown .container:last-child {
     border-top: 1px solid #eeeeee;
 }
-article .actions .dropdown li {
+/*article .actions .dropdown li {
     font-size: 13px;
     padding: 5px 0;
-}
+}*/
 .actions .dropdown li.confirm, .actions .dropdown li.cancel, .actions .dropdown li.not_useful {
     text-align: center;
 }
@@ -549,21 +565,21 @@ article .actions .dropdown li {
     text-align: left;
     padding: 5px 0;
 }
-.actions .dropdown span.create_name div.buttons {
+.actions .dropdown span.create-name div.buttons {
     text-align: right;
 }
-.actions .dropdown span.create_name input {
+.actions .dropdown span.create-name input {
     width: 95%;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     border: 1px solid #c2c2c2;
     background: #FFFAD8;
     padding: 3px;
 }
-.actions .dropdown span.create_name button {
+.actions .dropdown span.create-name button {
     font-size: 0.8em;
     padding: 3px;
 }
-.actions .dropdown span.create_name {
+.actions .dropdown span.create-name {
     display: block;
     padding-top: 5px;
 }

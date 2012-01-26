@@ -198,7 +198,7 @@ header nav li ul.dropdown li a em {
    font-weight: normal;
 }
 
-header nav li ul.dropdown li.create_name {
+header nav li ul.dropdown li.create-name {
    padding: 5px 20px;
 }
 
@@ -534,7 +534,7 @@ button:hover {
    margin: 2px 5px 0 0;
 }
 
-.actions ul.dropdown li.create_name div.buttons {
+.actions ul.dropdown li.create-name div.buttons {
    text-align: right;
 }
 
@@ -542,7 +542,7 @@ button:hover {
    background: #17a9c6;
 }
 
-.actions ul.dropdown li.create_name input {
+.actions ul.dropdown li.create-name input {
    width: 95%;
    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
    border: 1px solid #c2c2c2;
@@ -550,7 +550,7 @@ button:hover {
    padding: 3px;
 }
 
-.actions ul.dropdown li.create_name button {
+.actions ul.dropdown li.create-name button {
    font-size: 0.8em;
    padding: 3px;
 }

@@ -21,25 +21,28 @@ class Model_Bucket extends ORM {
 	const DROPLETS_PER_PAGE = 20;
 	
 	/**
-	 * A bucket has and belongs to many droplets
+	 * One-to-many relationship definitions
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
+		// A bucket has many droplets
 		'droplets' => array(
 			'model' => 'droplet',
 			'through' => 'buckets_droplets'
-			)			
-		);
+			),
+			
+		// A bucket has many collaborators
+		'bucket_collaborators' => array()
+	);
 
 	/**
 	 * A bucket belongs to an account and a user
-	 *
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array(
 		'account' => array(),
 		'user' => array()
-		);
+	);
 
 	/**
 	 * Validation for buckets
