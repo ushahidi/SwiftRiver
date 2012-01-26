@@ -91,7 +91,7 @@
 </script>
 
 <script type="text/template" id="buckets-list-item">
-	<li class="bucket"><a><span class="select"></span><%= bucket_name %></a></li>
+	<a><span class="select"></span><%= bucket_name %></a>
 </script>
 
 <script type="text/template" id="create-inline-bucket">

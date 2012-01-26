@@ -557,8 +557,11 @@ button:hover {
     border: 1px solid #AB3D23;
     background-color: #AB3D23;
 }
-.actions .dropdown li a.selected, .actions .dropdown li a.selected:hover {
-    color: #AB3D23;
+.actions ul.dropdown li a.selected, .actions ul.dropdown li a.selected:hover {
+    color: #17A9C6;
+}
+.actions ul.dropdown li a.selected span.select {
+    background: #17A9C6;
 }
 .actions .dropdown p.create-new {
     font-weight: normal;
@@ -2487,7 +2490,43 @@ article.droplet section.source img {
     margin-bottom: 2px;
     width: 100%;
 }
-
+article.droplet section.source .actions p.score a.scored {
+    border: 1px solod #FFF;
+    background: #FFF;
+}
+article.droplet section.source .actions p.score a {
+    height: 15px;
+    line-height: 15px;
+    display: block;
+    font-size: 0.9em;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    padding: 2px 0;
+}
+article.droplet section.source .actions span.type {
+    display: block;
+    float: left;
+    width: 18.75%;
+    height: 15px;
+    border: none;
+    border-right: 1px solid rgba(256, 256, 256, 0.7);
+    padding: 2px;
+    border :1px solid #C2C2C2;
+    border-bottom: none;
+}
+article.droplet section.rss .actions span.type {
+    background: #F70 url("/themes/default/media/img/icon_rss.png") center no-repeat;
+}
+article.droplet section.twitter .actions span.type {
+    background: #4ED3FF url("/themes/default/media/img/icon_twitter.png") center no-repeat;
+}
+article.droplet section.facebook .actions span.type {
+    background: #3B5999 url("/themes/default/media/img/icon_facebook.png") center no-repeat;
+}
+article.droplet section.sms .actions span.type {
+    background: #48A63B url("/themes/default/media/img/icon_sms.png") center no-repeat;
+}
 /* --- LIST > SELECT > ITEM ---*/
 .list .select article.item .summary div.checkbox {
     width: 2.083333333%;

@@ -38,7 +38,7 @@ $(document).ready(function() {
 	});
 	
 	// Edit page contents
-	$('.edit_trigger').live('click', function() {
+	$('.edit-trigger').live('click', function() {
 		var inputValue = $(this).html();
 		var inputType = $(this).attr('title');
 		$(this).closest('.edit').append('<div class="buttons"><button class="save">Save</button><button class="cancel">Cancel</button></div>');
@@ -50,10 +50,10 @@ $(document).ready(function() {
 		}
 		$('button.cancel').click(function() {
 			if (inputType == 'text') {
-				$(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="text" onclick="">' + inputValue + '</span>');
+				$(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit-trigger" title="text" onclick="">' + inputValue + '</span>');
 			}
 			else if (inputType == 'textarea') {
-				$(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit_trigger" title="textarea" onclick="">' + inputValue + '</span>');
+				$(this).closest('.edit').find('.edit_input').replaceWith('<span class="edit-trigger" title="textarea" onclick="">' + inputValue + '</span>');
 			}
 			$(this).parent().remove();
 		});

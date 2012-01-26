@@ -194,16 +194,16 @@ class Controller_Bucket extends Controller_Swiftriver {
 						break;
 				}
 
-				echo json_encode(array("status"=>"success"));
+				echo json_encode(array("success" => TRUE));
 			}
 			else
 			{
-				echo json_encode(array("status"=>"error"));
+				echo json_encode(array("success"=> FALSE));
 			}
 		}
 		else
 		{
-			echo json_encode(array("status"=>"error"));
+			echo json_encode(array("success" => FALSE));
 		}
 	}	
 

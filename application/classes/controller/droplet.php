@@ -80,7 +80,7 @@ class Controller_Droplet extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		$droplet_id = $this->request->param('id', 0);
-		$droplet = ORM::factory('droplet', $bucket_id);
+		$droplet = ORM::factory('droplet', $droplet_id);
 		if ($droplet->loaded())
 		{
 			$buckets = array();
