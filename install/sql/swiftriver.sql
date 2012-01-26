@@ -11,7 +11,7 @@ ALTER DATABASE DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 -- -----------------------------------------------------
 -- Table `user_subscriptions`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `user_subscriptions` (
+CREATE TABLE IF NOT EXISTS `user_subscriptions` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `river_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -29,7 +29,7 @@ COMMENT = 'Track subscriptions to rivers and/or buckets' ;
 -- -----------------------------------------------------
 -- Table `user_followers`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `user_followers` (
+CREATE TABLE IF NOT EXISTS `user_followers` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `follower_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -45,25 +45,27 @@ COMMENT = 'Track followers' ;
 -- -----------------------------------------------------
 -- Table `tags`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tags` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `tag` varchar(255) NOT NULL,
-  `tag_type` varchar(255) DEFAULT NULL,
-  `tag_source` varchar(100) DEFAULT NULL,
-  `tag_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `tag_un_tag_tag_type` (`tag`,`tag_type`),
-  KEY `tag_idx` (`tag`),
-  KEY `tag_type_idx` (`tag_type`),
-  KEY `tag_source_idx` (`tag_source`),
-  KEY `tag_date_add_idx` (`tag_date_add`)
-) ENGINE=InnoDB AUTO_INCREMENT=366 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `tags` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `tag` VARCHAR(255) NOT NULL ,
+  `tag_type` VARCHAR(255) NULL DEFAULT NULL ,
+  `tag_source` VARCHAR(100) NULL DEFAULT NULL ,
+  `tag_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
+  UNIQUE INDEX (`tag` ASC) ,
+  UNIQUE INDEX (`tag_type`,`tag`),
+  PRIMARY KEY (`id`) ,
+  INDEX `tag_idx` (`tag` ASC) ,
+  INDEX `tag_type_idx` (`tag_type` ASC) ,
+  INDEX `tag_source_idx` (`tag_source` ASC) ,
+  INDEX `tag_date_add_idx` (`tag_date_add` ASC) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `snapshots`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `snapshots` (
+CREATE TABLE IF NOT EXISTS `snapshots` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `snapshot_name` VARCHAR(255) NOT NULL ,
@@ -75,7 +77,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `droplets_links`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `droplets_links` (
+CREATE TABLE IF NOT EXISTS `droplets_links` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -90,7 +92,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `rivers`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `rivers` (
+CREATE TABLE IF NOT EXISTS `rivers` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `river_name` VARCHAR(255) NOT NULL ,
@@ -107,7 +109,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `media`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `media` (
+CREATE TABLE IF NOT EXISTS `media` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `media_name` VARCHAR(255) NULL DEFAULT NULL ,
   `media_file` VARCHAR(255) NULL DEFAULT NULL ,
@@ -125,7 +127,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `droplets_places`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `droplets_places` (
+CREATE TABLE IF NOT EXISTS `droplets_places` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -140,7 +142,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `accounts_droplets_media`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts_droplets_media` (
+CREATE TABLE IF NOT EXISTS `accounts_droplets_media` (
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplets_media_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   INDEX `account_id_idx` (`account_id` ASC) ,
@@ -152,7 +154,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `rivers_droplets`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `rivers_droplets` (
+CREATE TABLE IF NOT EXISTS `rivers_droplets` (
   `river_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplet_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 ,
   INDEX `river_id_idx` (`river_id` ASC) ,
@@ -164,7 +166,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `discussions`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `discussions` (
+CREATE TABLE IF NOT EXISTS `discussions` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -185,7 +187,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `places`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `places` (
+CREATE TABLE IF NOT EXISTS `places` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `place_name` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Full place name' ,
   `place_point` POINT NULL DEFAULT NULL COMMENT 'POINT geometry for this place' ,
@@ -200,9 +202,23 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `account_droplet_links`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_droplet_links` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  `link_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX (`account_id`,`droplet_id`,`link_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `user_identities`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `user_identities` (
+CREATE TABLE IF NOT EXISTS `user_identities` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `provider` VARCHAR(255) NOT NULL ,
@@ -217,7 +233,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `buckets`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `buckets` (
+CREATE TABLE IF NOT EXISTS `buckets` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `user_id` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Creator of this bucket' ,
@@ -234,7 +250,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `roles`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `roles` (
+CREATE TABLE IF NOT EXISTS `roles` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(32) NOT NULL ,
   `description` VARCHAR(255) NULL DEFAULT NULL ,
@@ -249,7 +265,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `identities`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `identities` (
+CREATE TABLE IF NOT EXISTS `identities` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `channel` VARCHAR(100) NOT NULL ,
   `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
@@ -270,7 +286,7 @@ COMMENT = 'Sources are individual People, Organizations or Websites tha' ;
 -- -----------------------------------------------------
 -- Table `snapshot_options`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `snapshot_options` (
+CREATE TABLE IF NOT EXISTS `snapshot_options` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `snapshot_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `key` VARCHAR(255) NOT NULL ,
@@ -282,11 +298,24 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `account_droplet_places`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_droplet_places` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  `place_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX (`account_id`,`droplet_id`,`place_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 
 -- -----------------------------------------------------
 -- Table `links`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `links` (
+CREATE TABLE IF NOT EXISTS `links` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `link` VARCHAR(255) NULL DEFAULT NULL ,
   `link_full` VARCHAR(255) NULL DEFAULT NULL ,
@@ -304,7 +333,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `plugins`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `plugins` (
+CREATE TABLE IF NOT EXISTS `plugins` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `plugin_path` VARCHAR(100) NOT NULL ,
   `plugin_name` VARCHAR(255) NULL DEFAULT NULL ,
@@ -317,11 +346,24 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `account_droplet_tags`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_droplet_tags` (
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  `tag_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  PRIMARY KEY (`id`) ,
+  UNIQUE INDEX (`account_id`,`droplet_id`,`tag_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 
 -- -----------------------------------------------------
 -- Table `channel_filters`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `channel_filters` (
+CREATE TABLE IF NOT EXISTS `channel_filters` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `channel` VARCHAR(100) NOT NULL ,
   `river_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -345,24 +387,26 @@ COMMENT = 'Filters generate droplets from channels' ;
 -- -----------------------------------------------------
 -- Table `users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `riverid` varchar(255) NOT NULL,
-  `email` varchar(127) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `logins` int(10) unsigned NOT NULL DEFAULT '0',
-  `last_login` int(10) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  `email` VARCHAR(127) NOT NULL ,
+  `name` VARCHAR(255) NULL DEFAULT NULL ,
+  `username` VARCHAR(255) NOT NULL ,
+  `password` VARCHAR(255) NOT NULL ,
+  `logins` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
+  `last_login` INT(10) UNSIGNED NULL DEFAULT NULL ,
+  UNIQUE INDEX (`email` ASC) ,
+  UNIQUE INDEX (`username` ASC) ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
 -- Table `user_tokens`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `user_tokens` (
+CREATE TABLE IF NOT EXISTS `user_tokens` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL ,
   `user_agent` VARCHAR(40) NOT NULL ,
@@ -384,7 +428,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `roles_users`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `roles_users` (
+CREATE TABLE IF NOT EXISTS `roles_users` (
   `user_id` INT(11) UNSIGNED NOT NULL ,
   `role_id` INT(11) UNSIGNED NOT NULL ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -407,7 +451,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `accounts_plugins`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts_plugins` (
+CREATE TABLE IF NOT EXISTS `accounts_plugins` (
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `plugin_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   INDEX `account_id_idx` (`account_id` ASC) ,
@@ -419,7 +463,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `buckets_droplets`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `buckets_droplets` (
+CREATE TABLE IF NOT EXISTS `buckets_droplets` (
   `bucket_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   INDEX `bucket_id_idx` (`bucket_id` ASC) ,
@@ -431,11 +475,12 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `droplets`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `droplets` (
+CREATE TABLE IF NOT EXISTS `droplets` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
   `identity_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)' ,
   `channel` VARCHAR(100) NOT NULL ,
+  `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)' ,
   `droplet_hash` VARCHAR(64) NOT NULL ,
   `droplet_orig_id` VARCHAR(255) NOT NULL ,
   `droplet_type` VARCHAR(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision' ,
@@ -460,7 +505,7 @@ COMMENT = 'Items are generated from feeds and are attached to a specifi' ;
 -- -----------------------------------------------------
 -- Table `settings`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `settings` (
+CREATE TABLE IF NOT EXISTS `settings` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `key` VARCHAR(100) NOT NULL ,
   `value` VARCHAR(255) NULL DEFAULT NULL ,
@@ -473,7 +518,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `sources`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `sources` (
+CREATE TABLE IF NOT EXISTS `sources` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `source_name` VARCHAR(255) NULL DEFAULT NULL ,
@@ -488,7 +533,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `accounts`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `accounts` (
+CREATE TABLE IF NOT EXISTS `accounts` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this account. Transferable.' ,
   `account_path` VARCHAR(100) NULL DEFAULT NULL ,
@@ -506,7 +551,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `sources_identities`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `sources_identities` (
+CREATE TABLE IF NOT EXISTS `sources_identities` (
   `source_id` BIGINT(20) UNSIGNED NOT NULL ,
   `identity_id` BIGINT(20) UNSIGNED NOT NULL ,
   INDEX `source_id_idx` (`source_id` ASC) ,
@@ -518,7 +563,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `droplets_media`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `droplets_media` (
+CREATE TABLE IF NOT EXISTS `droplets_media` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -533,7 +578,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `channel_filter_options`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `channel_filter_options` (
+CREATE TABLE IF NOT EXISTS `channel_filter_options` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `key` VARCHAR(255) NOT NULL ,
@@ -550,7 +595,7 @@ COMMENT = 'Channel filter options' ;
 -- -----------------------------------------------------
 -- Table `droplets_tags`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `droplets_tags` (
+CREATE TABLE IF NOT EXISTS `droplets_tags` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
@@ -565,7 +610,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `user_actions`
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `user_actions` (
+CREATE TABLE IF NOT EXISTS `user_actions` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `action` VARCHAR(255) NOT NULL ,
@@ -581,53 +626,19 @@ DEFAULT CHARACTER SET = utf8,
 COMMENT = 'Tracks user actions across the system' ;
 
 
--- -----------------------------------------------------
--- Create syntax for TABLE 'account_droplet_tags'
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_tags` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `tag_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UN_ACCOUNT_DROPLET_TAG` (`account_id`,`droplet_id`,`tag_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Create syntax for TABLE 'account_droplet_links'
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_links` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `link_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UN_ACCOUNT_DROPLET_LINK` (`account_id`,`droplet_id`,`link_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Create syntax for TABLE 'account_droplet_places'
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_places` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `place_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`place_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- ----------------------------------------
 -- TABLE 'bucket_collaborators'
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
-	`id` bigint(20) NOT NULL AUTO_INCREMENT,
-	`user_id` bigint(20) unsigned NOT NULL,
-	`bucket_id` bigint(20) unsigned NOT NULL,
-	`collaboration_active` smallint(1) NOT NULL DEFAULT 0,
-	PRIMARY KEY(`id`),
-	UNIQUE KEY `UNQ_BUCKET_COLLAB` (`user_id`, `bucket_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
+  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `bucket_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
+  `collaborator_active` TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY(`id`),
+  UNIQUE INDEX(`user_id`, `bucket_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 
 -- -----------------------------------------------------
 -- Data for table `roles`
