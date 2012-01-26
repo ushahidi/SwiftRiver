@@ -9,7 +9,7 @@
 		// Droplet model
 		window.Droplet = Backbone.Model.extend({
 			initialize: function() {
-				var dropletId = this.toJSON().id;
+				var dropletId = this.get("id");
 				
 				// List of places/loations "mentioned" in the droplet
 				this.places = new DropletPlaceCollection;
@@ -61,10 +61,15 @@
 		
 		// Collection for all the buckets accessible to the current user
 		window.BucketsCollection = Backbone.Collection.extend({
-			model: Bucket
-			
+			model: Bucket,
+			url: "/bucket/list_buckets"
 		});
-	
+		
+		
+		// Get the buckets for the user - to avoid fetching them every time a
+		// droplet is rendered
+		var userBuckets = new BucketsCollection;
+		userBuckets.fetch();
 
 		// Rendering for a list of droplets
 		window.DropletListView = Backbone.View.extend({
@@ -82,8 +87,10 @@
 				return this;
 			}
 		});
-
-
+		
+		// Tracks the currently selected droplet list item
+		var currentListItem = null;
+		
 		// Rendering for a single droplet in the list view
 		window.DropletListItem = Backbone.View.extend({
 		
@@ -92,18 +99,36 @@
 			className: "droplet cf",
 		
 			template: _.template($("#droplet-list-item").html()),
-		
+			
 			events: {
 				// Show the droplet detail
 				"click .button-view a.detail-view": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click p.bucket a.detail-view": "showBuckets"
+				"click p.bucket a.detail-view": "showBuckets",
+				
+				"click .actions ul.dropdown li.create-new > a": "createBucket"
 			},
-		
+			
 			render: function(eventName) {
 				$(this.el).html(this.template(this.model.toJSON()));
+				
+				this.bucketMenu = this.$("section.actions ul.dropdown");
+				this.createBucketMenu();
 				return this;
+			},
+			
+			// Creates the buckets dropdown menu
+			createBucketMenu: function() {
+				_.each(userBuckets.models, function(bucket) {
+					
+					bucket.set({
+						droplet_id: this.model.get("id"),
+						selected_status: ""
+					});
+					
+					this.bucketMenu.prepend(new BucketListItemView({model: bucket}).render().el);
+				}, this);
 			},
 		
 			// Event callback for the "view more detail" action
@@ -160,10 +185,94 @@
 			
 			// Event callback for the "Add to Bucket" action
 			showBuckets: function(event) {
-				$(event.currentTarget).parent(".bucket").toggleClass("active");
+				var parentEl = $(event.currentTarget).parent(".bucket")
+				parentEl.toggleClass("active");
+				
+				var dropdown = this.$("section.actions ul.dropdown");
+				
+				if (parentEl.hasClass("active")) {
+					
+					// Check if the bucket menu has content
+					if (this.bucketMenu.children().length == 1 && _.size(userBuckets) > 0) {
+						this.createBucketMenu();
+					}
+					
+					// Get the buckets that this droplet belongs to
+					this.model.buckets.fetch();
+					var belongsTo = this.model.buckets;
+					
+					// Give the bucket fetch time to complete
+					setTimeout(
+						function() {
+							$("li.bucket", dropdown).each(function() {
+								bucketItem = this;
+								var bucketId = $(bucketItem).data("bucket-id")
+								var tempBucket = belongsTo.get(bucketId);
+								
+								if (typeof(tempBucket) == 'object' && tempBucket.get("id") == bucketId) {
+									$("a", bucketItem).addClass("selected");
+								}
+								
+							});
+					}, 300);
+					
+					dropdown.show();
+				} else {
+					dropdown.hide();
+				}
+				return false;
+			},
+			
+			// Event callback for the "create & add to a new bucket" action
+			createBucket: function(event) {
+				var _container  = $(event.currentTarget).parent("li.create-new");
+				var _html = _container.html();
+				var t = _.template($("#create-inline-bucket").html());
+				
+				currentSelection = this;
+				
+				// Render the input field
+				_container.html(t());
+				
+				// Cancel button clicked
+				$("button.cancel", _container).click(function(e) {
+					_container.html(_html);
+					e.stopPropagation();
+				});
+				
+				// For use when saving the bucket
+				var droplet_id = this.model.get("id");
+				
+				// Save button clicked
+				$("button.save", _container).click(function(e) {
+					var _post = { bucket_name: $(":text", _container).val() };
+					
+					// Submit for saving
+					$.post("/bucket/ajax_new", _post, function(response) {
+						if (response.success) {
+							
+							// Create model for the newly created bucket
+							var _bucket = new Bucket({
+								id: response.bucket.id, 
+								bucket_name: response.bucket.bucket_name,
+								droplet_id: droplet_id
+							});
+							
+							// Render the bucket
+							currentSelection.bucketMenu.prepend(
+								new BucketListItemView({model: _bucket}).render().el);
+							
+							// Restore "create bucket" link
+							_container.html(_html);
+						}
+					}, "json");
+					
+					// Halt further event processing
+					e.stopPropagation();
+				});
+				
 				return false;
 			}
-			
 			
 		});
 
@@ -204,7 +313,8 @@
 				return this;
 			}
 		});
-	
+		
+		// View for a single semantic item/tag
 		window.SemanticItemView = Backbone.View.extend({
 		
 			render: function(eventName) {
@@ -213,6 +323,67 @@
 				return this;
 			}
 		});
+		
+		// View for individual bucket item
+		window.BucketListItemView = Backbone.View.extend({
+			
+			tagName: "li",
+			
+			className: "bucket",
+			
+			template: _.template($("#buckets-list-item").html()),
+			
+			events: {
+				"click a": "toggleDropletMembership"
+			},
+			
+			render: function() {
+				$(this.el).attr("data-bucket-id", this.model.get("id"));
+				$(this.el).html(this.template(this.model.toJSON()));
+				return this;
+			},
+			
+			// Toggles the bucket membership of a droplet
+			toggleDropletMembership: function(e) {
+				var _bucket = $(e.currentTarget);
+				_bucket.toggleClass("selected");
+				
+				// Data to be posted
+				var _data = {
+					bucket_id: this.model.get("id"),
+					droplet_id: this.model.get("droplet_id")
+				};
+				
+				if (_bucket.hasClass("selected")) {
+					
+					// Set the action to be performed on the server
+					_data["action"] = "add";
+					
+					// Add the droplet to the bucket
+					$.post("/bucket/ajax_droplet", _data, function(response) {
+						if (!response.success) {
+							// Failed to add to bucket
+							_bucket.removeClass("selected");
+						}
+					}, "json");
+					
+				} else {
+					_data["action"] = "remove";
+					
+					// Remove the droplet from the bucket
+					$.post("/bucket/ajax_droplet", _data, function(response) {
+						if (!response.success) {
+							// Failed to remove from bucket
+							_bucket.addClass("selected");
+						}
+					}, "json");
+				}
+				
+				// Halt further event processing
+				e.stopPropagation();
+				return false;
+			}
+		})
 		
 		// ------------------------------------------------------------------------
 	

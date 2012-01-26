@@ -28,7 +28,7 @@ class Model_Droplet extends ORM
 			),
 		'buckets' => array(
 			'model' => 'bucket',
-			'through' => 'attachments_buckets'
+			'through' => 'buckets_droplets'
 			),			
 		'places' => array(
 			'model' => 'place',

@@ -70,7 +70,35 @@ class Controller_Droplet extends Controller_Swiftriver {
 			}
 		}
 	}
-
+	
+	/**
+	 * Gets the list of buckets
+	 */
+	public function action_buckets()
+	{
+		$this->tempalte = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = $this->request->param('id', 0);
+		$droplet = ORM::factory('droplet', $droplet_id);
+		if ($droplet->loaded())
+		{
+			$buckets = array();
+			foreach ($droplet->buckets->find_all() as $bucket)
+			{
+				$buckets[] = array(
+					'id' => $bucket->id,
+					'bucket_name' => $bucket->bucket_name
+				);
+			}
+			
+			echo json_encode($buckets);
+		}
+		else
+		{
+			echo json_encode(array());
+		}
+	}
 	
 	/**
 	 * Delete the specified droplet from the account. 

@@ -37,9 +37,9 @@ function createBucket(create, where, droplet_id) {
 	console.log(where);
 	droplet_id = parseInt(droplet_id);
 	$(create).empty();
-	$(create).parents('ul.dropdown').append('<li class="create_name"><input type="text" id="bucket_name" name="bucket_name" value="" placeholder="<?php echo __('Name your new bucket '); ?>"><div class="buttons"><button class="save"><?php echo __('Save '); ?></button><button class="cancel"><?php echo __('Cancel '); ?></button></div></li>');
+	$(create).parents('ul.dropdown').append('<li class="create-name"><input type="text" id="bucket_name" name="bucket_name" value="" placeholder="<?php echo __('Name your new bucket '); ?>"><div class="buttons"><button class="save"><?php echo __('Save '); ?></button><button class="cancel"><?php echo __('Cancel '); ?></button></div></li>');
 	event.stopPropagation();
-	$('li.create_name').click(function(e) {
+	$('li.create-name').click(function(e) {
 		e.stopPropagation();
 	});
 	$('button.save').click(function(e) {
@@ -55,7 +55,7 @@ function createBucket(create, where, droplet_id) {
 						$('<li><a href="<?php echo $base_url; ?>bucket/index/' + data.bucket.id + '">' + data.bucket.name + '</a></li>').insertBefore('li.create-new');
 					}
 					$('button.cancel').closest('ul.dropdown').children('li.create-new').append('<a onclick=""><span class="create_trigger"><em>Create new</em></span></a>');
-					$('button.cancel').closest('li.create_name').remove();
+					$('button.cancel').closest('li.create-name').remove();
 					e.stopPropagation();
 				} else if (data.status == 'error') {
 					var errors = data.errors;
@@ -71,7 +71,7 @@ function createBucket(create, where, droplet_id) {
 	});
 	$('button.cancel').click(function(e) {
 		$(create).html('<?php echo __('Create new '); ?>');
-		$(create).parents('ul.dropdown').children('li.create_name').remove();
+		$(create).parents('ul.dropdown').children('li.create-name').remove();
 		e.stopPropagation();
 	});
 }
