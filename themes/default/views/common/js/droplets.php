@@ -136,7 +136,7 @@
 				// Toggle the state of the "view more" button
 				$(event.currentTarget).toggleClass("detail-hide");
 			
-				var dropletId = this.model.toJSON().id;
+				var dropletId = this.model.get("id");
 				var _obj = $("#detail-section-"+dropletId);
 			
 				// Display the droplet detail

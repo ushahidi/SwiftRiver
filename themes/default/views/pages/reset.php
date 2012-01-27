@@ -18,7 +18,7 @@
  
 <body> 
 	<header>
-		<div class="left_bar"></div>
+		<div class="left-bar"></div>
 		<div class="center cf">
 			<hgroup>
 				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver</span></a></h1>
@@ -74,8 +74,8 @@
 						<?php echo Form::password("password_confirm", ""); ?>
 					</div>
 				</div>
-				<div class="row controls_buttons cf">
-					<p class="button_go" onclick="submitForm(this)"><a>Set Password</a></p>
+				<div class="row controls-buttons cf">
+					<p class="button-go" onclick="submitForm(this)"><a>Set Password</a></p>
 				</div>
 			<?php echo Form::close(); ?> 			
 		</div>

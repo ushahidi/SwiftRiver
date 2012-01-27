@@ -302,7 +302,6 @@ header nav li.login ul.dropdown li div.buttons {
 }
 
 .button-delete-subtle a:hover, .actions .active a {
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
     box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
     -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
     -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.7);
@@ -2739,8 +2738,14 @@ footer {
         display: block;
         height: 20px;
     }
+    article.droplet  section.actions p.button-view a.detail-view span {
+        background-position: center -40px;
+    }
+    article.droplet  section.actions p.button-view a.detail-hide span {
+        background-position: center -60px;
+    }
     article.droplet section.actions p.bucket a span {
-        background-position: center;
+        background-position: center top;
     }
     article.droplet section.detail aside,
     article.droplet section.detail .fullstory,

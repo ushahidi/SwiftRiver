@@ -1,4 +1,4 @@
-<article>
+<article class="list">
 	<div class="cf center page-title">
 		<hgroup class="edit">
 			<h1><span class="edit-trigger" title="river" id="edit_<?php echo $river->id; ?>" onclick=""><?php echo $river->river_name; ?></span></h1>
@@ -24,13 +24,13 @@
 				</ul>
 				<ul class="actions">
 					<li class="view-panel">
-						<a href="<?php echo $filters_url; ?>" class="channels">
+						<a href="<?php echo $filters_url; ?>" class="filter">
 							<span class="icon"></span>
 							<span class="label"><?php echo __("Edit Filter"); ?></span>
 						</a>
 					</li>
 					<li class="view-panel">
-						<a href="<?php echo $settings_url; ?>" class="filter">
+						<a href="<?php echo $settings_url; ?>" class="settings">
 							<span class="icon"></span>
 							<span class="label"><?php echo __("River Settings"); ?></span>
 						</a>
@@ -40,7 +40,7 @@
 			<div class="panel-body"></div>
 		</section>
 
-		<div class="container stream insights">
+		<div class="container stream">
 		    <?php echo $droplets_list; ?>
 		</div>
 

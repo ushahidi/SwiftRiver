@@ -34,7 +34,7 @@ body {
   left:170px;
   top:10px;
 }
-header .left_bar, header .right_bar, header hgroup, header .logo { background:none; }
+header .left-bar, header .right_bar, header hgroup, header .logo { background:none; }
 
 
 .splash .account { text-align:left; }

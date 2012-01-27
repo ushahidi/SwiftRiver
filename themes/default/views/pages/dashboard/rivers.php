@@ -1,5 +1,5 @@
 <div class="container list select data">
-	<?php if (count($rivers)) : ?>
+<?php if (count($rivers)) : ?>
 	<div class="controls edit-advanced">
 		<div class="row cf">
 			<p class="button-go edit-single"><a href="#">Edit map</a></p>
@@ -8,8 +8,7 @@
 			<p class="button-go create-new"><a href="<?php echo URL::site().'river/new'; ?>"><?php echo __('Create new');?></a></p>
 		</div>
 	</div>
-	<?php foreach ($rivers as $river) {	
-	?>
+	<?php foreach ($rivers as $river): ?>
 	<article class="item cf" id="item_<?php echo $river->id; ?>">
 		<div class="content">
 			<div class="checkbox"><input type="checkbox" /></div>
@@ -35,8 +34,8 @@
 		</div>
 	</article>
 
-	<?php } 
-	else:?>
+	<?php endforeach; ?> 
+<?php else: ?>
 	<h2 class="null"><?php echo __('No Rivers to display yet.'); ?> <em><a href="<?php echo URL::site().'river/new'; ?>"><?php echo __('Create one.');?></a></em></h2>
-	<?php endif; ?>
+<?php endif; ?>
 </div>

@@ -66,7 +66,7 @@ header {
    background: url(/images/header_bg.gif) center -246px repeat-x;
 }
 
-header .left_bar,
+header .left-bar,
 header .right_bar {
    float: left;
    height: 39px;
@@ -1861,7 +1861,7 @@ header .center {
    width: 96%;
 }
 
-header .left_bar,
+header .left-bar,
 header .right_bar {
    width: 2%;
    height: 59px;
@@ -2172,7 +2172,7 @@ header .center {
    width: 84%;
 }
 
-header .left_bar,
+header .left-bar,
 header .right_bar {
    width: 8%;
 }

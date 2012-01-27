@@ -18,7 +18,7 @@
  
 <body> 
 	<header>
-		<div class="left_bar"></div>
+		<div class="left-bar"></div>
 		<div class="center cf">
 			<hgroup>
 				<h1 class="logo"><a href="/"><span class="nodisplay">SwiftRiver</span></a></h1>
