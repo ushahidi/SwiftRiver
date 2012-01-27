@@ -96,7 +96,7 @@
 		
 			tagName: "article",
 		
-			className: "droplet cf",
+			className: "item",
 		
 			template: _.template($("#droplet-list-item").html()),
 			
@@ -105,7 +105,7 @@
 				"click .button-view a.detail-view": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click p.bucket a.detail-view": "showBuckets",
+				"click .bucket a.detail-view": "showBuckets",
 				
 				"click .actions ul.dropdown li.create-new > a": "createBucket"
 			},
@@ -144,7 +144,7 @@
 					_obj.slideDown(200);
 				
 					var dropletView = new DropletDetailView({model: this.model});
-					$(".right-column", this.el).html(dropletView.render().el);
+					$(".content", _obj).html(dropletView.render().el);
 				
 					// Fetch and render the places
 					this.model.places.fetch();
@@ -184,13 +184,14 @@
 			},
 			
 			// Event callback for the "Add to Bucket" action
-			showBuckets: function(event) {
-				var parentEl = $(event.currentTarget).parent(".bucket")
+			showBuckets: function(e) {
+				
+				var parentEl = $(e.currentTarget).parent("div.bucket");
 				parentEl.toggleClass("active");
 				
-				var dropdown = this.$("section.actions ul.dropdown");
+				var dropdown = $(parentEl, "ul.dropdown");
 				
-				if (parentEl.hasClass("active")) {
+				if ($(e.currentTarget).parent("p").hasClass("active")) {
 					
 					// Check if the bucket menu has content
 					if (this.bucketMenu.children().length == 1 && _.size(userBuckets) > 0) {

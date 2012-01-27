@@ -24,7 +24,7 @@
 	window.ChannelListView = Backbone.View.extend({
 
 		// Parent container for the channel listing
-		el: $("#channels ul.tabs"),
+		el: $("#settings ul.tabs"),
 
 		// Template for the panel for displaying the channel options
 		panelTemplate: _.template($("#channel-panel-view").html()),
@@ -37,15 +37,11 @@
 			// Clear out any content
 			$(this.el).empty();
 
-			_.each(this.model.models,
-			function(channel) {
-				$(this.el).append(new ChannelView({
-					model: channel
-				}).render().el);
-
-				$("#channels .tab-container").append(this.panelTemplate(channel.toJSON()));
-			},
-			this);
+			_.each(this.model.models, function(channel) {
+				$(this.el).append(new ChannelView({model: channel}).render().el);
+				
+				$("#settings .tab-container").append(this.panelTemplate(channel.toJSON()));
+			}, this);
 
 			// Select the first channel and display its config options
 			this.$("li:first").trigger("click");
@@ -266,6 +262,7 @@
 	var channelListView = new ChannelListView({
 		model: channels
 	});
+	
 	channelListView.render();
 
 
