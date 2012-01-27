@@ -40,8 +40,8 @@
 				<div class="row cf">
 					<?php echo Form::open(); ?>
 					<div class="page-title row">
+						<h2><?php echo __("Create a new river"); ?></h2>
 						<hgroup class="edit new-river">
-							<h3><?php echo __("Create a new river"); ?></h3>
 							<h1>
 								<span class="edit-input">
 									<?php echo Form::input('river_name', $post['river_name'], array('placeholder' => __('Name your River'))); ?>
