@@ -96,7 +96,7 @@
 		
 			tagName: "article",
 		
-			className: "item",
+			className: "droplet cf",
 		
 			template: _.template($("#droplet-list-item").html()),
 			
