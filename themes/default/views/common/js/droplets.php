@@ -105,9 +105,9 @@
 				"click .button-view a.detail-view": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click .bucket a.detail-view": "showBuckets",
+				"click .bucket a.bucket-view": "showBuckets",
 				
-				"click .actions ul.dropdown li.create-new > a": "createBucket"
+				"click .bucket .dropdown li.create-new a": "createBucket"
 			},
 			
 			render: function(eventName) {
@@ -185,13 +185,12 @@
 			
 			// Event callback for the "Add to Bucket" action
 			showBuckets: function(e) {
-				
-				var parentEl = $(e.currentTarget).parent("div.bucket");
+				var parentEl = $(e.currentTarget).parent("p");
 				parentEl.toggleClass("active");
 				
-				var dropdown = $(parentEl, "ul.dropdown");
+				var dropdown = $("ul.dropdown", parentEl.parent("div"));
 				
-				if ($(e.currentTarget).parent("p").hasClass("active")) {
+				if (parentEl.hasClass("active")) {
 					
 					// Check if the bucket menu has content
 					if (this.bucketMenu.children().length == 1 && _.size(userBuckets) > 0) {

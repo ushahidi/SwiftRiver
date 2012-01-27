@@ -82,7 +82,7 @@ $(document).ready(function() {
 	});
 	
 	// Toggle following or subscribing
-	$('.button_change a.subscribe').click(function() {
+	$('.button-change a.subscribe').click(function() {
 		$(this).parent().toggleClass('active');
 		$(this).toggleClass('subscribed');
 	});
@@ -102,7 +102,7 @@ $(document).ready(function() {
 	});
 
 	// Add or remove a droplet from buckets
-	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button_change').children('a').addClass('bucket_added');
+	$('section.actions ul.dropdown li.bucket a.selected').closest('ul.dropdown').siblings('p.button-change').children('a').addClass('bucket_added');
 	jQuery.fn.checkBuckets = function() {
 		if ($('section.actions ul.dropdown li.bucket a').is('.selected')) {
 			$(this).closest('ul.dropdown').siblings('p.bucket').children('a').addClass('bucket_added');
