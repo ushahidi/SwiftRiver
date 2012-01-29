@@ -14,6 +14,10 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 	{
 	    $riverid_api = RiverID_API::factory();
 	    
+	    // Fallback to local auth if user is in the exemption list
+	    if (in_array($email, Kohana::$config->load('auth.exempt')))
+	        return parent::_login($email, $password, $remember);
+	    
 	    if ($riverid_api->is_registered($email))
 	    {
 	        $login_response = $riverid_api->signin($email, $password);

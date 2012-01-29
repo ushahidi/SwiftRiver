@@ -145,7 +145,8 @@ class Controller_Swiftriver extends Controller_Template {
 		    $this->admin = FALSE;
 		}
 		
-		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid') 
+		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' and
+                      ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
 		{
 		    $this->riverid_auth = TRUE;
 		}

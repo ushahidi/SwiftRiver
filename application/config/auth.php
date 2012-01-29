@@ -16,10 +16,11 @@
 
 return array(
 	'driver'       => 'RiverID',
-	'api_endpoint' => 'https://crowdmapid.com/api',
+	'api_endpoint' => 'https://crowdmapid.com/api', // RiverID api endpoint
 	'hash_method'  => 'sha256',
 	'hash_key'     => '#&wicm`(wT6m&0f}UT*o9*V01@:?fF#D', // replace with random string
 	'lifetime'     => 1209600,
 	'session_key'  => 'auth_user',
-	'users' => array(),
+	'users'        => array(),
+	'exempt'       => array('admin'), // Perform local auth instead of RiverID auth for these users.
 );
