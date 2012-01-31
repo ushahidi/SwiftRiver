@@ -37,17 +37,12 @@
 
 		<div class="container">
 			<div class="controls">
+				<?php echo Form::open(); ?>
+
 				<div class="row cf">
-					<?php echo Form::open(); ?>
-					<div class="page-title row">
-						<h2><?php echo __("Create a new river"); ?></h2>
-						<hgroup class="edit new-river">
-							<h1>
-								<span class="edit-input">
-									<?php echo Form::input('river_name', $post['river_name'], array('placeholder' => __('Name your River'))); ?>
-								</span>
-							</h1>
-						</hgroup>
+					<h2><?php echo __("Create a new River"); ?></h2>
+					<div class="input new-river">
+						<?php echo Form::input('river_name', $post['river_name'], array('placeholder' => __('Name your River'))); ?>
 					</div>
 				</div>
 		

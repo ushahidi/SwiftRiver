@@ -60,9 +60,9 @@ $(document).ready(function() {
 		return false;
 	});
 	$('div.detail a.close').live('click', function() {
-		$(this).closest('article.item, div.edit_advanced').find('section.actions p.button_view a, div.edit_advanced p.button_view a').removeClass('detail_hide');
-		$(this).closest('div.edit_advanced').find('div.row > p a').fadeTo('fast', 1);
-		$(this).closest('article.item, div.edit_advanced').children('div.drawer').slideUp('fast').remove();
+		$(this).closest('article.item, div.edit-advanced').find('section.actions p.button_view a, div.edit-advanced p.button_view a').removeClass('detail_hide');
+		$(this).closest('div.edit-advanced').find('div.row > p a').fadeTo('fast', 1);
+		$(this).closest('article.item, div.edit-advanced').children('div.drawer').slideUp('fast').remove();
 	});
 	
 	//Show a trend
@@ -129,15 +129,15 @@ $(document).ready(function() {
 	function countChecked() {
 		var editMultiple = $("article.item div.checkbox input:checked").length;
 		if (editMultiple == 1) {
-			$('.edit_multiple').fadeOut('fast');
+			$('.edit-multiple').fadeOut('fast');
 			$('.edit-single').fadeIn('fast');
 		}
 		else if (editMultiple >= 2) {
 			$('.edit-single').fadeOut('fast');
-			$('.edit_multiple').fadeIn('fast');
+			$('.edit-multiple').fadeIn('fast');
 		}
 		else {
-			$('.edit_multiple,.edit-single').fadeOut('fast');
+			$('.edit-multiple,.edit-single').fadeOut('fast');
 		}
 	}
 	countChecked();

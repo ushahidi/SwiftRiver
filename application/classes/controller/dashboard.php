@@ -137,9 +137,12 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	 */
 	public function action_settings()
 	{
-		$this->template->content = View::factory('pages/dashboard/settings')
-			->bind('user', $this->user);
-	}
+		$this->template = '';
+		$this->auto_render = FALSE;
+		$settings = View::factory('pages/dashboard/settings');
+		$settings->user = $this->user;
+		echo $settings;
+	}		
 
 	/**
 	 * Ajax Settings Editing Inline
