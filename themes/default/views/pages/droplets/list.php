@@ -26,11 +26,15 @@
 			<div class="button bucket">
 				<p class="button-change checkbox-options"><a class="bucket-view"><span class="icon"></span></a></p>
 				<div class="clear"></div>
-				<ul class="dropdown">
-					<li class="create-new">
-						<a class="plus" onclick=""><span class="icon"></span><?php echo __("Create new bucket"); ?></a>
-					</li>
-				</ul>
+				<div class="dropdown">
+					<div class="container buckets-list">
+						<h3>Add to Bucket</h3>
+						<ul></ul>
+					</div>
+					<div class="container">
+						<p class="create-new"><a class="plus" onclick=""><?php echo __("Create new bucket"); ?></a></p>
+					</div>
+				</div>
 			</div>
 		</section>
 	</div>
@@ -55,7 +59,7 @@
 					</div>
 					<div class="item cf">
 						<p class="button-change">
-							<a><?php echo __("+ Add Attachment"); ?></a>
+							<a><?php echo __("Add Attachment"); ?></a>
 						</p>
 					</div>
 				</section>
@@ -91,7 +95,7 @@
 </script>
 
 <script type="text/template" id="buckets-list-item">
-	<a><span class="select"></span><%= bucket_name %></a>
+	<a><span class="input"></span><%= bucket_name %></a>
 </script>
 
 <script type="text/template" id="create-inline-bucket">

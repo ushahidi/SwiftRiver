@@ -1,38 +1,53 @@
-<div id="channels">
 	<div class="controls">
-		<div class="row controls cf">
+		<div class="row cf">
 			<h2>Collaborators</h2>
-			<div class="input">
-				<h3>Add people to collaborate on this River</h3>
-				<input type="text" placeholder="+ Type name..." />
+			<div class="data">
+
+				<article class="item cf">
+					<div class="content">
+						<h1><a href="#" class="go">Caleb Bell</a></h1>
+					</div>
+					<div class="summary">
+						<section class="actions">
+							<div class="button">
+								<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Remove</span></a></p>
+								<div class="clear"></div>
+								<div class="dropdown container">
+									<p>Are you sure you want to stop collaborating with this person?</p>
+									<ul>
+										<li class="confirm"><a onclick="">Yep.</a></li>
+										<li class="cancel"><a onclick="">No, nevermind.</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</div>
+				</article>
+				
+				<article class="item cf">
+					<div class="content">
+						<h1><a href="#" class="go">David Kobia</a></h1>
+					</div>
+					<div class="summary">
+						<section class="actions">
+							<div class="button">
+								<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay">Remove</span></a></p>
+								<div class="clear"></div>
+								<div class="dropdown container">
+									<p>Are you sure you want to stop collaborating with this person?</p>
+									<ul>
+										<li class="confirm"><a onclick="">Yep.</a></li>
+										<li class="cancel"><a onclick="">No, nevermind.</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</div>
+				</article>
 			</div>
-			<div class="list-stream">
-				<h3>People who collaborate on this River</h3>
-				<ul class="users">
-					<li>
-						<a href="#">Caleb Bell</a>
-						<div class="actions">
-							<span class="button-delete"><a onclick="">Remove</a></span>
-							<ul class="dropdown right">
-								<p>Are you sure you want to stop collaborating with this person?</p>
-								<li class="confirm"><a onclick="">Yep.</a></li>
-								<li class="cancel"><a onclick="">No, nevermind.</a></li>
-							</ul>
-						</div>
-					</li>
-					<li>
-						<a href="#">David Kobia</a>
-						<div class="actions">
-							<span class="button-delete"><a onclick="">Remove</a></span>
-							<ul class="dropdown right">
-								<p>Are you sure you want to stop collaborating with this person?</p>
-								<li class="confirm"><a onclick="">Yep.</a></li>
-								<li class="cancel"><a onclick="">No, nevermind.</a></li>
-							</ul>
-						</div>
-					</li>
-				</ul>
-			</div>
+
+
+
 		</div>
 		<div class="row controls-buttons cf">
 			<p class="button-go"><a href="#">Apply changes</a></p>

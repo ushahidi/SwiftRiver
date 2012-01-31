@@ -211,9 +211,9 @@ header nav li ul.dropdown li a {
    height: auto;
    color: #fff;
    font-size: 1em;
-   line-height: 2em;
+   line-height: 1em;
    background: none;
-   padding: 5px 20px;
+   padding: 13px 20px;
 }
 
 header nav li ul.dropdown li a em {
@@ -465,7 +465,7 @@ a.delete span.icon {
 }
 
 a.filter span.icon {
-   background-position: center top;
+   background-position: center -267px;
 }
 
 a.plus:before {
@@ -661,26 +661,26 @@ article .actions .dropdown li {
 }
 
 .actions .dropdown li a.selected span.input {
-   border: 1px solid #AB3D23;
-   background-color: #AB3D23;
+   border: 1px solid @product-primary_color;
+   background-color: @product-primary_color;
 }
 
 .actions .dropdown li a.selected,
 .actions .dropdown li a.selected:hover {
-   color: #AB3D23;
+   color: @product-primary_color;
 }
 
-.actions .dropdown p.create_new {
+.actions .dropdown p.create-new {
    font-weight: normal;
    text-align: left;
    padding: 5px 0;
 }
 
-.actions .dropdown span.create_name div.buttons {
+.actions .dropdown span.create-name div.buttons {
    text-align: right;
 }
 
-.actions .dropdown span.create_name input {
+.actions .dropdown span.create-name input {
    width: 95%;
    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
    border: 1px solid #c2c2c2;
@@ -688,14 +688,42 @@ article .actions .dropdown li {
    padding: 3px;
 }
 
-.actions .dropdown span.create_name button {
+.actions .dropdown span.create-name button {
    font-size: 0.8em;
    padding: 3px;
 }
 
-.actions .dropdown span.create_name {
+.actions .dropdown span.create-name {
    display: block;
    padding-top: 5px;
+}
+
+/* E.Kala Additions for the bucket-listing dropdown */
+.actions ul.dropdown li.bucket a {
+    display: block;
+    color: #ACACAC;
+    font-weight: bold;
+    font-size: 13px;
+    text-align: left;
+    text-transform: none;
+    padding: 5px 0;
+}
+.actions ul.dropdown li.bucket a:hover {
+    color: #999;
+    text-decoration: none;
+}
+.actions ul.dropdown li a.selected, .actions ul.dropdown li a.selected:hover {
+    color: #17A9C6;
+}
+.actions ul.dropdown li a.selected span.select {
+    background: #17A9C6;
+}
+.actions ul.dropdown li span.select {
+    float: left;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #C2C2C2;
+    margin: 2px 5px 0 0;
 }
 
 /* --------------------------- TABS */
@@ -759,32 +787,33 @@ div.tab-controls {
    margin: 15px 1.0416666667%;
 }
 
-/* --- TABS: CHANNELS ---*/
+/* --- TABS: SETTINGS ---*/
 
-div#channels ul.tabs li.button-view {
+div#settings ul.tabs li.button-view {
    font-size: 1em;
    padding: 0 0 0 25px;
 }
 
-div#channels ul.tabs li.twitter {
+div#settings ul.tabs li.twitter {
    background: #4ed3ff url(/themes/default/media/img/icon_twitter.png) 5px center no-repeat;
 }
 
-div#channels ul.tabs li.facebook {
+div#settings ul.tabs li.facebook {
    background: #3b5999 url(/themes/default/media/img/icon_facebook.png) 5px center no-repeat;
 }
 
-div#channels ul.tabs li.rss {
+div#settings ul.tabs li.rss {
    background: #ff7700 url(/themes/default/media/img/icon_rss.png) 5px center no-repeat;
 }
 
-div#channels ul.tabs li.sms {
+div#settings ul.tabs li.sms {
    background: #48a63b url(/themes/default/media/img/icon_sms.png) 5px center no-repeat;
 }
 
-div#channels ul.tabs li.button-view a span.switch-off,
-div#channels ul.tabs li.button-view a span.switch-on {
+div#settings ul.tabs li.button-view a span.switch-off,
+div#settings ul.tabs li.button-view a span.switch-on {
    display: block;
+   float: right;
    width: 50px;
    height: 18px;
    color: #fff;
@@ -794,16 +823,16 @@ div#channels ul.tabs li.button-view a span.switch-on {
    background: url(/themes/default/media/img/channels_switch.png) no-repeat;
 }
 
-div#channels ul.tabs li.button-view a span.switch-on {
+div#settings ul.tabs li.button-view a span.switch-on {
    background-position: center bottom;
 }
 
-div#channels ul.tabs li.button-view a span.switch-on:before {
+div#settings ul.tabs li.button-view a span.switch-on:before {
    content: "on";
    padding-left: 8px;
 }
 
-div#channels ul.tabs li.button-view a span.switch-off:before {
+div#settings ul.tabs li.button-view a span.switch-off:before {
    content: "off";
    padding-left: 20px;
 }
@@ -1602,10 +1631,6 @@ section.panel .options p.save {
    padding: 15px 20px;
 }
 
-section.panel .options p.save span {
-
-}
-
 /* --------------------------- CANVAS */
 
 .canvas {
@@ -1618,48 +1643,39 @@ section.panel .options p.save span {
    background: #fff;
 }
 
-article#droplet_full .canvas {
-   -webkit-border-bottom-left-radius: 0;
-   -webkit-border-bottom-right-radius: 0;
-   -moz-border-radius-bottomleft: 0;
-   -moz-border-radius-bottomright: 0;
-   border-bottom-left-radius: 0;
-   border-bottom-right-radius: 0;
-}
-
-.select .edit_advanced {
+.select .edit-advanced {
    padding-top: 4.166666667%;
 }
 
-.edit_advanced > .row p.button-go a,
-.edit_advanced > .row p.button-view a,
-.edit_advanced > .row p.button-change a {
+.edit-advanced > .row p.button-go a,
+.edit-advanced > .row p.button-view a,
+.edit-advanced > .row p.button-change a {
    float: left;
    font-size: 0.9em;
    padding: 5px 10px;
    margin-right: 1.04666667%;
 }
 
-.edit_advanced > .row p.create_new a {
+.edit-advanced > .row p.create-new a {
    float: right;
 }
 
-.edit_single,
-.edit_multiple {
+.edit-single,
+.edit-multiple {
    display: none;
 }
 
-.edit_advanced div.detail {
+.edit-advanced div.detail {
    clear: both;
 }
 
-.edit_advanced .actions p.button-view a,
-.edit_advanced .actions p.button-change a {
+.edit-advanced .actions p.button-view a,
+.edit-advanced .actions p.button-change a {
    float: left;
    margin: 0;
 }
 
-.edit_advanced .actions p.button-change a {
+.edit-advanced .actions p.button-change a {
    -webkit-border-top-left-radius: 0px;
    -webkit-border-bottom-left-radius: 0px;
    -moz-border-radius-topleft: 0px;
@@ -1668,7 +1684,7 @@ article#droplet_full .canvas {
    border-bottom-left-radius: 0px;
 }
 
-.edit_advanced .actions p.button-view a {
+.edit-advanced .actions p.button-view a {
    -webkit-border-top-right-radius: 0px;
    -webkit-border-bottom-right-radius: 0px;
    -moz-border-radius-topright: 0px;
@@ -1769,27 +1785,27 @@ article.item section.source .actions span.type {
    padding: 4px 0;
 }
 
-article.item section.twitter .actions span {
+article.item section.twitter .actions span.type {
    background: #4ed3ff url(/themes/default/media/img/icon_twitter.png) center no-repeat;
 }
 
-article.item section.facebook .actions span {
+article.item section.facebook .actions span.type {
    background: #3b5999 url(/themes/default/media/img/icon_facebook.png) center no-repeat;
 }
 
-article.item section.sms .actions span {
+article.item section.sms .actions span.type {
    background: #48a63b url(/themes/default/media/img/icon_sms.png) center no-repeat;
 }
 
-article.item section.swiftriver .actions span {
+article.item section.swiftriver .actions span.type {
    background: #f5f5f5 url(/themes/default/media/img/icon_swiftriver.png) center no-repeat;
 }
 
-article.item section.rss .actions span {
+article.item section.rss .actions span.type {
    background: #ff7700 url(/themes/default/media/img/icon_rss.png) center no-repeat;
 }
 
-article.item section.source .actions p.score a {
+article.item section.source .actions p.button-change a {
    display: block;
    height: 21px;
    font-size: 0.9em;
@@ -1800,18 +1816,30 @@ article.item section.source .actions p.score a {
    padding: 1px 0;
 }
 
-article.item section.source .actions p.active a {
-   background: #C9C9C9;
+article.item section.source .actions p.button-change.active a {
+   color: #888888;
+   text-shadow: 1px 1px 1px #fff;
+   border: 1px solid #cecece;
+   background: #fff;
 }
 
-article.item section.source .actions p.score a span {
-   background: url(/themes/default/media/img/icon_score.png) left center no-repeat;
-   padding-left: 18px;
+article.item section.source .actions p.button-change a.score span.icon {
+   float: left;
+   width: 14px;
+   height: 15px;
+   background-position: center -90px;
+   padding: 2px 3px 2px 10px;
+   margin-right: 2px;
 }
 
-article.item section.source .actions p.score a.scored {
+article.item section.source .actions p.button-change a.scored {
+   color: #17a9c6;
    border: 1px solid #fff;
    background: #fff;
+}
+
+article.item section.source .actions p.button-change a.scored span.icon {
+   background-position: center -112px;
 }
 
 /* --- ITEM: CONTENT ---*/
@@ -1858,14 +1886,37 @@ article.item .summary .content .body p {
    padding: 5px 0;
 }
 
-article.item .summary .content .body p.button-go {
-   padding: 0;
+article.item .summary .content .body p.button-view {
+    padding: 0;
 }
 
-article.item .summary .content .body p.button-go a {
-   float: left;
-   font-size: 0.8em;
-   padding: 3px 5px;
+article.item .summary .content .body p.button-view a {
+    float: left;
+    font-size: 0.8em;
+    padding: 3px 5px;
+}
+
+/* NO-JAVASCRIPT ACTIONS */
+article.item .summary .content .button p.button-change, article.item .summary .content .button h3 {
+    display: none;
+}
+
+article.item .summary .content .button li a {
+    float: left;
+    color: #666666;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #dedede;
+    padding: 3px 10px;
+    margin: 5px 10px 0 0;
+}
+
+article.item .summary .content .button li a:hover {
+    text-decoration: none;
+    background: #cecece;
 }
 
 /* --- ITEM: ACTIONS ---*/
@@ -1900,7 +1951,7 @@ article.item .summary section.two_buttons p.button-change a {
 }
 
 .actions p.button-view a.detail-hide,
-div.edit_advanced p.button-view a.detail-hide {
+div.edit-advanced p.button-view a.detail-hide {
    color: #fff;
    text-shadow: 1px 1px 1px rgba(0,0,0,.25);
    box-shadow: 0 2px 4px rgba(0,0,0,.25) inset;
@@ -1960,7 +2011,7 @@ article.item .summary section.actions p.follow_user a span.icon {
    background-position: center top;
 }
 
-article.item .summary section.actions p.button-view a.detail_view span.icon {
+article.item .summary section.actions p.button-view a.detail-view span.icon {
    background-position: center -132px;
 }
 
@@ -2122,8 +2173,17 @@ article.item .summary section.actions p.follow_user a.subscribed span.icon {
 
 /* --------------------------- ITEM DETAIL */
 
+article.item div.drawer {
+    display: none;
+    margin-top: 15px;
+}
+
+article.item > div.drawer {
+    background: #f8f8f8;
+}
+
 article.item div.detail,
-div.edit_advanced div.detail {
+div.edit-advanced div.detail {
    text-align: left;
    text-shadow: 1px 1px 1px #fff;
    background: #f8f8f8;
@@ -2134,23 +2194,10 @@ article.item .detail .summary {
    padding: 0;
 }
 
-article#droplet_full section.detail {
-   display: block;
-   background: rgb(248,248,248);
-   background: -moz-linear-gradient(top, rgba(248,248,248,1) 0%, rgba(255,255,255,1) 30%, rgba(255,255,255,1) 100%);
-   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(248,248,248,1)), color-stop(30%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1)));
-   background: -webkit-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(255,255,255,1) 30%,rgba(255,255,255,1) 100%);
-   background: -o-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(255,255,255,1) 30%,rgba(255,255,255,1) 100%);
-   background: -ms-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(255,255,255,1) 30%,rgba(255,255,255,1) 100%);
-   background: linear-gradient(top, rgba(248,248,248,1) 0%,rgba(255,255,255,1) 30%,rgba(255,255,255,1) 100%);
-   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#ffffff',GradientType=0 );
-   margin-top: 0;
-}
-
 article.item .detail .canyon,
 article.item .detail .meta,
 article.item .detail .content {
-   padding: 0 1.0416666667%;
+   margin: 0 1.0416666667%;
 }
 
 article.item .detail .canyon {
@@ -2586,7 +2633,7 @@ article.dashboard aside ul.relationships li img {
    padding: 0 10px;
 }
 
-.insights .edit_advanced > .actions {
+.insights .edit-advanced > .actions {
    padding: 0 1.0416666667%;
 }
 
@@ -2688,6 +2735,15 @@ footer li a {
 /* --- ####### SMALL VIEWPORT ###### --- */
 
 @media screen and (max-width: 480px) {
+
+div.detail div.canyon {
+   display: table;
+   caption-side: top;
+    width: 97.91666667%;
+}
+div.detail div.canyon div.content {
+   display: table-caption;
+}
 
 ul.tabs li.button-view {
    font-size: 0.75em;
@@ -2884,7 +2940,7 @@ article .page-title hgroup.user h1 {
    padding-top: 0;
 }
 
-.select .edit_advanced {
+.select .edit-advanced {
    padding-top: 1.041666667%;
 }
 
@@ -2959,19 +3015,6 @@ section.panel nav ul.views li.more {
 
 /* --- ITEM SUMMARY ---*/
 
-.trend-container article.droplet div.select {
-   display: block;
-   float: left;
-   width: 3.125%;
-   text-align: left;
-   padding: 10px 1.041666667% 0 0;
-}
-
-.activity_feed article.droplet section.content {
-   width: 74.28571429%;
-}
-
-.trend-container article.droplet section.content,
 .list .select > article.item > .summary .content {
    width: 84.375%;
 }
@@ -2990,20 +3033,16 @@ article.item section.source .actions p.score a {
    line-height: 15px;
 }
 
-article.droplet section.content .title .avatar {
-   width: 7.692307692%;
+article.item .detail .content article.fullstory h1 {
+   font-size: 2.3em;
 }
 
-article.droplet section.content .title hgroup {
-   width: 89.74358974%;
+article.single div.summary .headline hgroup h1 {
+   font-size: 1.7em;
 }
 
-article.droplet section.content .title h1 {
-   font-size: 1.4em;
-}
-
-article.droplet section.content .title p.date {
-   padding-top: 5px;
+article.single div.summary .headline hgroup h2 {
+   font-size: 1.1em;
 }
 
 /* --- LIST > SELECT > ITEM ---*/
@@ -3072,26 +3111,10 @@ article.item .detail .content,
    width: 72.91666667%;
 }
 
-article.droplet section.detail article.fullstory h1 {
-   padding: 0 0 5px 0;
-}
-
 /* --- SINGLE VIEW: DETAIL ---*/
 
-article.single div.summary .body {
+article.single > div.canvas > div.summary > div.content {
    font-size: 1.2em;
-}
-
-div#summary_full section.content .title .avatar {
-   width: 12.82051282%;
-}
-
-div#summary_full section.content .title hgroup {
-   width: 84.61538462%;
-}
-
-div#summary_full section.content .title h1 {
-   font-size: 1.7em;
 }
 
 /* --- DASHBOARD ---*/
@@ -3198,25 +3221,8 @@ article.item .summary .content hgroup h1 {
    font-size: 1.45em;
 }
 
-article.droplet section.actions p.button-change a.subscribed {
-   border-top: 1px solid #fff;
-}
-
-article#droplet_full section.actions p.bucket a.bucket_added {
-   border-left: 1px solid #fff;
-}
-
-article.droplet aside {
-   float: left;
-   width: 22.34042553%;
-}
-
 article.dashboard aside.dashboard {
    width: 24.47916667%;
-}
-
-article.droplet aside.dashboard .item {
-   padding: 20px 4.1666666667%; 
 }
 
 article.dashboard aside.dashboard .item {
@@ -3227,47 +3233,12 @@ article.dashboard aside.dashboard .item img {
    width: 100%;
 }
 
-article.droplet section.detail {
-   border-right: 1px solid #f2f2f2;
-}
-
-article.droplet section.detail .right-column {
-   float: left;
-   width: 73.40425532%;
-}
-
-article.droplet section.detail aside .item ul li {
-   margin: 5px 2px 5px 2px;
-}
-
-article.droplet section.detail article.fullstory h1 {
-   font-size: 2.5em;
-   padding: 5px 0 7px 0;
-}
-
 .list .select article.item .summary div.checkbox {
    padding-right: 0;
 }
 
 .list .select > article.item > .summary .content {
    width: 85.41666667%;
-}
-
-div#summary_full section.content {
-   width: 81.25%;
-}
-
-div#summary_full section.actions {
-   width: 14.58333333%;
-}
-
-div#summary_full section.content .title h1 {
-   font-size: 2em;
-}
-
-article.dashboard div.activity_feed {
-   float: left;
-   width: 73.40425532%;
 }
 
 /* --- ITEM DETAIL ---*/

@@ -3,20 +3,19 @@
 		<div class="row cf">
 			<h2><?php echo __("Channels"); ?></h2>
 			<div class="tab-controls cf">
-				<ul class="tabs"></ul>
-				
+				<ul class="tabs"></ul>				
 				<div class="tab-container"></div>
 			</div>
 		</div>
 		
-		<div class="row controls cf">
+		<div class="row cf">
 			<!-- collaborators -->
 			<h2><?php echo __("Collaborators"); ?></h2>
+			<div class="data"></div>
 			<div class="input">
 				<h3><?php echo __("Add people to collaborate on this river"); ?></h3>
 				<input type="text" placeholder="<?php echo __("+ Type name..."); ?>">
 			</div>
-			<div class="list-stream"></div>
 			<!-- /collaborators -->
 
 			<!-- buttons -->
@@ -49,8 +48,8 @@
 
 <!-- template for rendering the options for each channel -->
 <script type="text/template" id="channel-panel-view">
-    <article id="<%= channel %>" class="tab-content" style="display:none">
-        <ul class="channel-options cf"></ul>
+    <article id="<%= channel %>" class="tab-content filters" style="display:none">
+        <ul class="channel-options input add_filter cf"></ul>
     </article>
 </script>
 
