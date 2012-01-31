@@ -2,7 +2,7 @@
 </div>
 
 <script type="text/template" id="droplet-list-item">
-	<div class="summary">
+	<div class="summary cf">
 		<section class="source <%= channel %>">
 			<a><img src="<%= identity_avatar %>"/></a>
 			<div class="actions">
@@ -11,60 +11,64 @@
 				<div class="clear"></div>
 			</div>
 		</section>
-		
-		<section class="content">
-			<div class="title">
+		<div class="content">
+			<hgroup>
 				<p class="date"><%= droplet_date_pub %></p>
 				<h1><%= identity_name %></h1>
-			</div>
+			</hgroup>
 			<div class="body">
 				<p><%= droplet_title %></p>
 			</div>
-		</section>
+		</div>
 		
-		<section class="actions">
-			<p class="button-view"><a class="detail-view"><span></span><strong>detail</strong></a></p>
-			<div class="button">
-				<p class="button-change bucket">
-					<a class="detail-view"><span></span><strong><?php echo __("Add to Bucket"); ?></strong></a>
-				</p>
+		<section class="actions two_buttons">
+			<p class="button-view"><a class="detail-view"><span class="icon"></span></a></p>
+			<div class="button bucket">
+				<p class="button-change checkbox-options"><a class="bucket-view"><span class="icon"></span></a></p>
 				<div class="clear"></div>
-				<ul class="dropdown" style="display: none">
-					<li class="create-new">
-						<a><span><b><?php echo __("Create new bucket"); ?></b></span></a>
-					</li>
-				</ul>
+				<div class="dropdown">
+					<div class="container buckets-list">
+						<h3>Add to Bucket</h3>
+						<ul></ul>
+					</div>
+					<div class="container">
+						<p class="create-new"><a class="plus" onclick=""><?php echo __("Create new bucket"); ?></a></p>
+					</div>
+				</div>
 			</div>
 		</section>
 	</div>
-	<section class="detail cf" style="display:none;" id="detail-section-<%= id %>">
-		<div class="arrow top"><span></span></div>
-		<div class="canyon cf">
-			<aside>
-				<div class="item cf">
-					<h2><?php echo __("Tags"); ?></h2>
-					<ul class="tags cf" id="droplet-tags-<%= id %>"></ul>
-				</div>
 
-				<div class="item cf">
-					<h2><?php echo __("Locations"); ?></h2>
-					<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
-				</div>
-				<div class="item cf">
-					<h2><?php echo __("Links"); ?></h2>
-					<p class="edit" id="droplet-links-<%= id %>"></p>
-				</div>
-				<div class="item cf">
-					<p class="button-change">
-						<a><?php echo __("+ Add Attachment"); ?></a>
-					</p>
-				</div>
-			</aside>
-
-			<div class="right-column"></div>
+	<div class="drawer" id="detail-section-<%= id %>">
+		<div class="detail">
+			<div class="arrow top"><span></span></div>
+			<div class="canyon cf">
+				<section class="meta">
+					<div class="item cf">
+						<h2><?php echo __("Tags"); ?></h2>
+						<ul class="tags cf" id="droplet-tags-<%= id %>"></ul>
+					</div>
+	
+					<div class="item cf">
+						<h2><?php echo __("Locations"); ?></h2>
+						<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
+					</div>
+					<div class="item cf">
+						<h2><?php echo __("Links"); ?></h2>
+						<p class="edit" id="droplet-links-<%= id %>"></p>
+					</div>
+					<div class="item cf">
+						<p class="button-change">
+							<a><?php echo __("Add Attachment"); ?></a>
+						</p>
+					</div>
+				</section>
+	
+				<div class="content"></div>
+			</div>
+			<div class="arrow bottom"><a class="close" onclick=""><?php echo __("Hide Detail"); ?></a></div>
 		</div>
-		<div class="arrow bottom"><a class="close" onclick=""><?php echo __("Hide Detail"); ?></a></div>
-	</section>
+	</div>
 </script>
 
 
@@ -91,7 +95,7 @@
 </script>
 
 <script type="text/template" id="buckets-list-item">
-	<a><span class="select"></span><%= bucket_name %></a>
+	<a><span class="input"></span><%= bucket_name %></a>
 </script>
 
 <script type="text/template" id="create-inline-bucket">

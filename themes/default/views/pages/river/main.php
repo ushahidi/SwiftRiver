@@ -15,7 +15,7 @@
 		<section class="panel">		
 			<nav class="cf">
 				<ul class="views">
-					<li class="droplets active"><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo __('Droplets');?></a></li>
+					<li class="droplets active"><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo __('Drops');?></a></li>
 					<?php
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $river);
@@ -37,7 +37,7 @@
 					</li>
 				</ul>
 			</nav>
-			<div class="panel-body"></div>
+			<div class="drawer"></div>
 		</section>
 
 		<div class="container stream">
@@ -45,4 +45,4 @@
 		</div>
 
 	</div>
-</article>	
+</article>

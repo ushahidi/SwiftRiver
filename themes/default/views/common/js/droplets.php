@@ -96,7 +96,7 @@
 		
 			tagName: "article",
 		
-			className: "droplet cf",
+			className: "item",
 		
 			template: _.template($("#droplet-list-item").html()),
 			
@@ -105,15 +105,15 @@
 				"click .button-view a.detail-view": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click p.bucket a.detail-view": "showBuckets",
+				"click .bucket a.bucket-view": "showBuckets",
 				
-				"click .actions ul.dropdown li.create-new > a": "createBucket"
+				"click .bucket .dropdown p.create-new a": "createBucket"
 			},
 			
 			render: function(eventName) {
 				$(this.el).html(this.template(this.model.toJSON()));
 				
-				this.bucketMenu = this.$("section.actions ul.dropdown");
+				this.bucketMenu = this.$("section.actions div.buckets-list ul");
 				this.createBucketMenu();
 				return this;
 			},
@@ -144,7 +144,7 @@
 					_obj.slideDown(200);
 				
 					var dropletView = new DropletDetailView({model: this.model});
-					$(".right-column", this.el).html(dropletView.render().el);
+					$(".content", _obj).html(dropletView.render().el);
 				
 					// Fetch and render the places
 					this.model.places.fetch();
@@ -184,16 +184,16 @@
 			},
 			
 			// Event callback for the "Add to Bucket" action
-			showBuckets: function(event) {
-				var parentEl = $(event.currentTarget).parent(".bucket")
+			showBuckets: function(e) {
+				var parentEl = $(e.currentTarget).parent("p");
 				parentEl.toggleClass("active");
 				
-				var dropdown = this.$("section.actions ul.dropdown");
+				var dropdown = $("div.dropdown", parentEl.parent("div"));
 				
 				if (parentEl.hasClass("active")) {
 					
 					// Check if the bucket menu has content
-					if (this.bucketMenu.children().length == 1 && _.size(userBuckets) > 0) {
+					if (this.bucketMenu.children().length == 0 && _.size(userBuckets) > 0) {
 						this.createBucketMenu();
 					}
 					
@@ -204,7 +204,7 @@
 					// Give the bucket fetch time to complete
 					setTimeout(
 						function() {
-							$("li.bucket", dropdown).each(function() {
+							$("li.checkbox", dropdown).each(function() {
 								bucketItem = this;
 								var bucketId = $(bucketItem).data("bucket-id")
 								var tempBucket = belongsTo.get(bucketId);
@@ -225,7 +225,7 @@
 			
 			// Event callback for the "create & add to a new bucket" action
 			createBucket: function(event) {
-				var _container  = $(event.currentTarget).parent("li.create-new");
+				var _container  = $(event.currentTarget).parent("p.create-new");
 				var _html = _container.html();
 				var t = _.template($("#create-inline-bucket").html());
 				
@@ -329,7 +329,7 @@
 			
 			tagName: "li",
 			
-			className: "bucket",
+			className: "checkbox",
 			
 			template: _.template($("#buckets-list-item").html()),
 			

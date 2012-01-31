@@ -26,18 +26,19 @@
 					<li <?php if ($active == 'teams') echo 'class="active"'; ?>>
 						<a href="<?php echo URL::site().'dashboard/teams';?>"><?php echo __('Teams'); ?></a>
 					</li>
-					<li class="view_panel more <?php if ($active == 'views') echo 'active'; ?>">
+					<li class="view-panel more <?php if ($active == 'views') echo 'active'; ?>">
 						<a href="<?php echo URL::site().'dashboard/views';?>" class="arrow">More<span class="icon"></span></a>
 					</li>
 				</ul>
 				<ul class="actions">
-					<li class="view_panel">
+					<li class="view-panel">
 						<a href="<?php echo URL::site().'dashboard/settings';?>" class="settings">
 							<span class="icon"></span><span class="label"><?php echo __('Account settings'); ?></span>
 						</a>
 					</li>
 				</ul>
 			</nav>
+			<div class="drawer"></div>
 		</section>
 		
 		<?php echo $sub_content; ?>

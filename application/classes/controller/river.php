@@ -255,12 +255,21 @@ class Controller_River extends Controller_Swiftriver {
 			$channels_config[] = array(
 				'channel' => $channel,
 				'channel_name' => $this->channels[$channel]['name'],
+				'grouped' => isset($this->channels[$channel]['group']),
+				
+				'group_key' => isset($this->channels[$channel]['group']) 
+				    ? $this->channels[$channel]['group']['key'] 
+				    : "",
+				
+				'group_label' => isset($this->channels[$channel]['group']) 
+				    ? $this->channels[$channel]['group']['label'] 
+				    : "",
+				
 				'switch_class' => $switch_class,
 				'channel_data' => $filter_options,
 				'config_options' => $this->channels[$channel]['options']
 			);
 		}
-		
 		echo json_encode($channels_config);
 	}
 
@@ -415,7 +424,7 @@ class Controller_River extends Controller_Swiftriver {
 			Swiftriver_Event::run('swiftriver.channel.pre_save', $filter_options);
 			
 			// Save channel filters
-			$this->_save_filters($filter_options, $this->_river);
+ 			$this->_save_filters($filter_options, $this->_river);
 			
 			$status_data["success"] = TRUE;
 		
@@ -434,24 +443,48 @@ class Controller_River extends Controller_Swiftriver {
 	private function _marshall_channel_options($options)
 	{
 		$channel_options = array();
+		
 		foreach ($options as $channel => $channel_data)
 		{
 			$channel_options[$channel] = array();
+			
 			foreach ($channel_data as $k => $v)
 			{
+				// Check for grouped options
+				$has_group  = isset($v['group']) AND $v['group'] == TRUE;
+				
 				// Store each individual config params in a key->value format
 				// where key is the name of the config param and value is an
 				// array of the param's label, form field type 
 				// and field value
-				$channel_options[$channel][] = array(
-					$v["key"] => array(
-						"label" => $v["label"],
-						"type" => $v["type"],
-						"value" => $v["value"]
-					)
-				);
+				if ($has_group)
+				{
+					$grouped_options = array();
+					foreach ($v['data'] as $group_key => $group_item)
+					{
+						$grouped_options[$group_item["key"]] = array(
+							"label" => $group_item["label"],
+							"type" => $group_item["type"],
+							"value" => $group_item["value"]
+						);
+					}
+					
+					$channel_options[$channel][$k][$v['groupKey']] = $grouped_options;
+					
+				}
+				else
+				{
+					$channel_options[$channel][] = array(
+						$v["key"] => array(
+							"label" => $v["label"],
+							"type" => $v["type"],
+							"value" => $v["value"]
+						)
+					);
+				}
 			}
 		}
+		
 		return $channel_options;
 	}
 	

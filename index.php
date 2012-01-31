@@ -67,6 +67,14 @@ if ( ! is_dir($modules) AND is_dir(DOCROOT.$modules))
 if ( ! is_dir($system) AND is_dir(DOCROOT.$system))
 	$system = DOCROOT.$system;
 
+// Make the themes relative to the docroot, for symlink'd index.php
+if ( ! is_dir($themes) AND is_dir(DOCROOT.$themes))
+	$themes = DOCROOT.$themes;
+
+// Make the plugins relative to the docroot, for symlink'd index.php
+if ( ! is_dir($plugins) AND is_dir(DOCROOT.$plugins))
+	$plugins = DOCROOT.$plugins;	
+
 // Define the absolute paths for configured directories
 define('APPPATH', realpath($application).DIRECTORY_SEPARATOR);
 define('MODPATH', realpath($modules).DIRECTORY_SEPARATOR);
@@ -75,7 +83,7 @@ define('THEMEPATH', realpath($themes).DIRECTORY_SEPARATOR);
 define('PLUGINPATH', realpath($plugins).DIRECTORY_SEPARATOR);
 
 // Clean up the configuration vars
-unset($application, $modules, $system);
+unset($application, $modules, $system, $themes, $plugins);
 
 if (file_exists('install'.EXT))
 {
