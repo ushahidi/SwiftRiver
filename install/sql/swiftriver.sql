@@ -582,8 +582,7 @@ CREATE TABLE IF NOT EXISTS `channel_filter_options` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `key` VARCHAR(255) NOT NULL ,
-  `value` VARCHAR(255) NOT NULL ,
-  `type` VARCHAR(100) NULL DEFAULT 'text' COMMENT 'Field type. Text, Password, Radio, Checkbox' ,
+  `value` TEXT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `channel_filter_id_idx` (`channel_filter_id` ASC) ,
   INDEX `key_idx` (`key` ASC) )

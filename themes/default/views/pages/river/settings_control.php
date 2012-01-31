@@ -54,13 +54,26 @@
     </article>
 </script>
 
+<script type="text/template" id="channel-option-item-header">
+    <h3>
+		<%= label %><span>[<a href="#">&mdash;</a>]</span>
+	</h3>
+</script>
+
+<script type="text/template" id="channel-option-item-label">
+	<h3><%= label %></h3>
+</script>
 
 <script type="text/template" id="channel-option-item">
-    <h3>
-        <%= label %>
-        <span>[<a href="#">&mdash;</a>]</span>
-	</h3>
-    <input type="text" value="<%= value %>" />
+	<input type="<%= type %>" value="<%= value %>">
+</script>
+
+<script type="text/template" id="channel-option-dropdown">
+	<select class="select-list"></select>
+</script>
+
+<script type="text/template" id="channel-option-dropdown-item">
+	<option <%= selected %>><%= value %></option>
 </script>
 
 <script type="text/template" id="channel-option-listing">
