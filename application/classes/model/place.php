@@ -53,15 +53,19 @@ class Model_Place extends ORM
 	 * @param bool $save Optionally saves the place record if no match is found
 	 * @return mixed Model_Place if a record is found, FALSE otherwise
 	 */
-	public static function get_place_by_lat_lon($coords, $save = FALSE)
+	public static function get_place_by_lat_lon($data, $save = FALSE)
 	{
-		if (! is_array($coords))
+		if (! is_array($data) OR empty($data))
+			return FALSE;
+		
+		// Latitude and longitude must be specified
+		if (empty($data['latitude']) OR empty($data['longitude']))
 			return FALSE;
 			
 		// Retrieve record using lon, lat
 		$orm_place = ORM::factory('place')
-				->where(DB::expr('X(place_point)'), '=', $coords['longitude'])
-				->where(DB::expr('Y(place_point)'), '=', $coords['latitude'])
+				->where(DB::expr('X(place_point)'), '=', $data['longitude'])
+				->where(DB::expr('Y(place_point)'), '=', $data['latitude'])
 				->find();
 		
 		if ($orm_place->loaded())
@@ -70,14 +74,14 @@ class Model_Place extends ORM
 		}
 		
 		// Check if $place_data has the place_name and place_source array keys
-		if (array_key_exists('name', $coords) AND array_key_exists('source', $coords))
+		if (array_key_exists('place_name', $data) AND array_key_exists('source', $data))
 		{
 			if ( ! $orm_place->loaded() AND $save)
 			{
 				// Create the place record
-				$orm_place->place_name = $coords['name'];
-				$orm_place->place_point = DB::expr("GeomFromText('POINT(".$coords['longitude']." ".$coords['latitude'].")')");
-				$orm_place->place_source = $coords['source'];
+				$orm_place->place_name = $data['place_name'];
+				$orm_place->place_point = DB::expr("GeomFromText('POINT(".$data['longitude']." ".$data['latitude'].")')");
+				$orm_place->place_source = $data['source'];
 			
 				return $orm_place->save();
 			}
@@ -114,5 +118,7 @@ class Model_Place extends ORM
 			$orm_place->place_name = $place_name;		
 			return $orm_place->save();
 		}
+		
+		return FALSE;
 	}	
 }

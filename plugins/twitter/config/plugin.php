@@ -21,6 +21,7 @@ return array(
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',
+		'channel'       => TRUE,
 		'channel_options' => array(
 			'keyword' => array(
 				'label' => __('Keyword'),

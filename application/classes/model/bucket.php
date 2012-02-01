@@ -102,6 +102,7 @@ class Model_Bucket extends ORM {
 				->join('identities')
 			    ->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
+				->where('droplets.droplet_processed', '=', 1)
 				->order_by('droplets.id', 'DESC');
 				
 			// Order & Pagination offset

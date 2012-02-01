@@ -22,6 +22,9 @@ return array(
 		'email'         => 'david@ushahidi.com',
 		'version'       => '0.1.0',
 		
+		// Designate as a channel
+		'channel'       => TRUE,
+		
 		// Fields
 		'channel_options' => array(
 			'url' => array(

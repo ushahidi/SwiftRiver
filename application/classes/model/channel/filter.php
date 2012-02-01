@@ -72,6 +72,7 @@ class Model_Channel_Filter extends ORM {
 		$channel_filter = ORM::factory('channel_filter')
 			->where('channel', '=', $channel)
 			->where('river_id', '=', $river_id)
+			->where('filter_enabled', '=', 1)
 			->find();
 			
 		return $channel_filter;
@@ -87,6 +88,10 @@ class Model_Channel_Filter extends ORM {
 	{
 		$channel_filter_options = array();
 		$channel_filter = self::get_channel_filters($channel, $river_id);
+		
+		// Verify that the channel filter for the river is enabled
+		if ( ! $channel_filter->loaded())
+			return array();
 		
 		$options = $channel_filter->channel_filter_options->find_all();
 		

@@ -218,7 +218,8 @@ class Model_River extends ORM {
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities')
 			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->where('rivers_droplets.river_id', '=', $river_id);
+			    ->where('rivers_droplets.river_id', '=', $river_id)
+			    ->where('droplets.droplet_processed', '=', 1);
 			
 			// Clone query before any filters have been applied
 			$pre_filter = clone $query;

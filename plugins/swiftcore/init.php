@@ -72,24 +72,18 @@ class Swiftcore_Init {
 			$semantics = get_object_vars(json_decode($response));
 			
 			// Add Geo-political entries
-			$place_items = array();
 			$place_items =  (array_key_exists('gpe', $semantics))
 			    ? array_merge($semantics['gpe'])
 			    : array();
 			
-			// Add location entries
-			$place_items = (array_key_exists('location', $semantics))
-			    ? array_merge($place_items, $semantics['location'])
-			    : $place_items;
-
 			$places = array();
 			foreach ($place_items as $place)
 			{
 				$places[] = array(
-					'name' => $place,
-					'latitude' => '',
-					'longitude' => '',
-					'source' => NULL
+					'place_name' => $place->place_name,
+					'latitude' => $place->coordinates->latitude,
+					'longitude' => $place->coordinates->longitude,
+					'source' => 'gisgraphy'
 				);
 			}
 			
@@ -113,10 +107,10 @@ class Swiftcore_Init {
 		else
 		{
 			// Log the cURL error
-			Kohana::$log->add(Log::ERROR, "Semantic extraction failed. HTTP Code: :code. Error: :error", 
+			Kohana::$log->add(Log::ERROR, "HTTP Code: :code. Semantic extraction failed for droplet :droplet_id ", 
 				array(
-					":code" => $status, 
-					":error" => curl_error($ch)
+					":code" => $status,
+					":droplet_id" => $droplet['id']
 			));
 		}
 		
