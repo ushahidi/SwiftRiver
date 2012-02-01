@@ -74,8 +74,8 @@
 						<?php echo Form::password("password", ""); ?>
 					</div>
 				</div>
-				<div class="row controls_buttons cf">
-					<p class="button_go" onclick="submitForm(this)"><a>Get started</a></p>
+				<div class="row controls-buttons cf">
+					<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
 					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
 				</div>
 			<?php echo Form::close(); ?>
