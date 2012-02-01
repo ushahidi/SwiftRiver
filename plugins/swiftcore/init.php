@@ -68,39 +68,48 @@ class Swiftcore_Init {
 			
 		if ($response AND intval($status) == 200)
 		{
-			// Convert the response to JSON
-			$semantics = get_object_vars(json_decode($response));
+			// Convert the JSON response to an array
+			$semantics = json_decode($response, TRUE);
+			
+			if ($semantics['status'] != 'OK')
+			{
+				curl_close($ch);
+				return;
+			}
+			
+			$semantics = $semantics['results'];
 			
 			// Add Geo-political entries
 			$place_items =  (array_key_exists('gpe', $semantics))
-			    ? array_merge($semantics['gpe'])
+			    ? $semantics['gpe']
 			    : array();
 			
 			$places = array();
 			foreach ($place_items as $place)
 			{
 				$places[] = array(
-					'place_name' => $place->place_name,
-					'latitude' => $place->coordinates->latitude,
-					'longitude' => $place->coordinates->longitude,
+					'place_name' => $place['place_name'],
+					'latitude' => $place['coordinates']['latitude'],
+					'longitude' => $place['coordinates']['longitude'],
 					'source' => 'gisgraphy'
 				);
 			}
 			
 			$droplet['places'] = $places;
 			
+			// Remove the 'gpe' items
+			unset ($semantics['gpe']);
+			
 			// Get the other semantics and generalize them as "tags"
 			$tags = array();
 			foreach ($semantics as $key => $entities)
 			{
-				if ($key != 'gpe' AND $key != 'location')
+				foreach ($entities as $entity)
 				{
-					foreach ($entities as $entity)
-					{
-						$tags[] = array('tag_name' => $entity, 'tag_type' => $key);
-					}
+					$tags[] = array('tag_name' => $entity, 'tag_type' => $key);
 				}
 			}
+			
 			// Set the tags
 			$droplet['tags'] = $tags;
 		}
