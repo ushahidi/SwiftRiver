@@ -13,32 +13,36 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
+class Swiftriver_Crawler_Rss  {
 
 	/**
-	 * @see Swiftriver_Channel_Worker->channel_worker
+	 * Fetch feeds attached to a river id
+	 *
+	 * @param   int      river_id	 
+	 * @return  boolean
 	 */
-	public function channel_worker($job)
+	public function crawl($river_id)
 	{
-		// Get the workload from the GearmanJob
-		$river_id = $job->workload();
-		
 		// If the river ID is NULL or non-existent, exit
-		if (empty($river_id) OR ! ORM::factory('river', $river_id)->loaded())
+		if (empty($river_id) or ! ORM::factory('river', $river_id)->loaded())
 		{
 			Kohana::$log->add(Log::ERROR, 'Invalid database river id: :river_id', 
 			    array(':river_id' => $river_id));
 			
-			return;
+			return false;
 		}
 		
 		// Get the links to crawl from the DB
 		$filter_options = Model_Channel_Filter::get_channel_filter_options('rss', $river_id);
 		foreach ($filter_options as $option)
 		{
-			$url = $option['url']['value'];
-			$this->_parse_url(array('url' => $url), $river_id);
+			if($option['key'] == 'url') {
+			    $url = $option['data']['value'];
+    			$this->_parse_url(array('url' => $url), $river_id);
+			}
 		}
+		
+		return true;
 		
 	}
 
@@ -56,6 +60,8 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 
 		if (isset($options['url']) AND $this->_is_url($options['url']))
 		{
+		    Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $options['url']));
+		    
 			$feed = new SimplePie();
 			
 			// Set which feed to process.
@@ -102,10 +108,10 @@ class Swiftriver_Channel_Worker_Rss extends Swiftriver_Channel_Worker {
 					$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($feed_item->get_date()));
 					
 					// Add droplet to the queue
-					Swiftriver_Dropletqueue::add($droplet, FALSE);
+					Swiftriver_Dropletqueue::add($droplet);
 				}		
 			}
-		}
+		}		
 	}
 
 	private function _is_url($url = NULL)

@@ -364,24 +364,21 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `channel_filters`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `channel_filters` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `channel` VARCHAR(100) NOT NULL ,
-  `river_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `filter_name` VARCHAR(255) NULL DEFAULT NULL ,
-  `filter_description` VARCHAR(255) NULL DEFAULT NULL ,
-  `filter_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  `filter_date_modified` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  `filter_lastrun` INT(11) NOT NULL DEFAULT 0 ,
-  `filter_nextrun` INT(11) NOT NULL DEFAULT 0 ,
-  `filter_runs` INT(11) NOT NULL DEFAULT 0 ,
-  `filter_schedule` VARCHAR(30) NULL DEFAULT '*:-1:*:*:*' ,
-  `filter_enabled` TINYINT(4) NOT NULL DEFAULT 1 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `filter_date_add_idx` (`filter_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8, 
-COMMENT = 'Filters generate droplets from channels' ;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `channel` varchar(100) NOT NULL,
+  `river_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `filter_name` varchar(255) DEFAULT NULL,
+  `filter_description` varchar(255) DEFAULT NULL,
+  `filter_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  `filter_date_modified` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  `filter_last_run` datetime NOT NULL,
+  `filter_last_successful_run` datetime NOT NULL,
+  `filter_runs` int(11) NOT NULL DEFAULT '0',
+  `filter_enabled` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `filter_date_add_idx` (`filter_date_add`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='Filters generate droplets from channels';
 
 
 -- -----------------------------------------------------
@@ -637,6 +634,19 @@ CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   UNIQUE INDEX(`user_id`, `bucket_id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
+
+
+-- ----------------------------------------
+-- TABLE 'twitter_crawls'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `twitter_crawls` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `river_id` bigint(11) DEFAULT NULL,
+  `request_hash` text,
+  `refresh_url` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `twitter_crawls_un_riverid` (`river_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

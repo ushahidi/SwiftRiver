@@ -166,9 +166,20 @@ Route::set('login', 'login(/<action>(/<id>))')
 	));
 
 /**
+ * Swiftriver Droplet Processing Route
+ */	
+Route::set('process', 'process')
+	->defaults(array(
+		'controller' => 'main',
+		'action'     => 'process',
+		'directory'  => 'crawler'
+	));	
+
+
+/**
  * Swiftriver Crawl Route
  */	
-Route::set('crawler', 'crawler(/<controller>(/<action>(/<id>)))')
+Route::set('crawler', 'crawler(/<id>/<channel>)')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',

@@ -14,6 +14,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Model_Channel_Filter extends ORM {
+    
+    const RUN_INTERVAL = 15; // Default minimum duration between crawls
+    
 	/**
 	 * A channel_filter has many droplets and channel_filter_options
 	 * @var array Relationhips
@@ -58,7 +61,7 @@ class Model_Channel_Filter extends ORM {
 	}
 
 	/**
-	 * Get channel filters by channel
+	 * Get channel filter by channel and river id
 	 *
 	 * @param string $channel Name of the channel
 	 * @param int $river_id Database ID of the river associated with the channel
@@ -66,12 +69,12 @@ class Model_Channel_Filter extends ORM {
 	 */
 	public static function get_channel_filters($channel, $river_id)
 	{
-		$channel_filters = ORM::factory('channel_filter')
+		$channel_filter = ORM::factory('channel_filter')
 			->where('channel', '=', $channel)
 			->where('river_id', '=', $river_id)
-			->find_all();
+			->find();
 			
-		return $channel_filters;
+		return $channel_filter;
 	}
 
 	/**
@@ -83,21 +86,73 @@ class Model_Channel_Filter extends ORM {
 	public static function get_channel_filter_options($channel, $river_id)
 	{
 		$channel_filter_options = array();
-		$channel_filters = self::get_channel_filters($channel, $river_id);
+		$channel_filter = self::get_channel_filters($channel, $river_id);
 		
-		foreach ($channel_filters as $channel_filter)
+		$options = $channel_filter->channel_filter_options->find_all();
+		
+		foreach ($options as $option)
 		{
-			$options = $channel_filter->channel_filter_options->find_all();
-			
-			foreach($options as $option)
-			{
-				$channel_filter_options[] = array(
-					"key" => $option->key,
-					"data" => json_decode($option->value, TRUE)
-				);
-			}
+			$channel_filter_options[] = array(
+				"key" => $option->key,
+				"data" => json_decode($option->value, TRUE)
+			);
 		}
 		
 		return $channel_filter_options;
+	}
+
+
+	/**
+	 * Get all channels prioritizing new rivers and 
+	 * those that had failure in their last run followed
+	 * by all other rivers in order of when they last ran.	    
+	 *
+	 * @return array
+	 */
+	
+	public static function get_channel_filters_by_run_date($since_date = NULL)
+	{
+	    if ( ! $since_date) 
+	    {
+	        $since_date = DB::expr('now() - interval '.self::RUN_INTERVAL.' minute');
+	    }
+	    $query = DB::select('river_id', 'channel')
+	                 ->from('channel_filters')
+	                 ->where('filter_enabled', '=', 1)
+	                 ->where('filter_last_run', '<', $since_date)
+	                 ->order_by('filter_last_successful_run', 'ASC')
+	                 ->order_by('filter_last_run', 'ASC');
+
+	   return $query->execute()->as_array();
+	}
+	
+	/**
+	 * Update channel filter run statistics
+	 *
+	 * @param integer $river_id
+	 * @param string  $channel
+	 * @param boolean $success
+	 * @param string  $run_date
+	 * @return void
+	 */	
+	public static function update_runs($river_id, $channel, $success, $run_date = NULL)
+	{	    
+	    if ( ! $run_date)
+	    {
+	        $run_date =  DB::expr('Now()');
+	    }
+	    
+	    $channel_filter = Model_Channel_Filter::get_channel_filters($channel, $river_id);
+
+        if ($channel_filter and $channel_filter->loaded())
+        {
+    	    $channel_filter->filter_last_run = $run_date;
+    	    if ( $success) 
+    	    {
+    	        $channel_filter->filter_last_successful_run = $run_date;
+    	    }
+    	    $channel_filter->filter_runs = new Database_Expression('filter_runs + 1');
+    	    $channel_filter->update();            
+        }
 	}
 }

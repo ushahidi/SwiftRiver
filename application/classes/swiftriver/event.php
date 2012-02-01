@@ -241,3 +241,5 @@ class Swiftriver_Event {
 	}
 
 } // End Event
+
+?>

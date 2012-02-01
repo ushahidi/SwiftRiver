@@ -15,32 +15,16 @@
  */
 
 return array(
-	// Unique identifier of the plugin
-	// ** same name as the plugin folder
 	'twitter' => array(
-		// Name of the plugin
 		'name'			=> 'Twitter',
-		// Description of the plugin
 		'description'	=> 'Adds a Twitter channel to SwiftRiver.',
-		// Author of the plugin
 		'author'		=> 'David Kobia',
-		// Email of the author the plugin
 		'email'			=> 'david@ushahidi.com',
-		// Version the plugin
 		'version'		=> '0.1.0',
-		// Is plugin a channel?
-		'channel'		=> TRUE,
-		// Does plugin have a crawler?
-		'crawler'		=> TRUE,
-		// Array of available channel options
 		'channel_options' => array(
-			// Channel option with type
 			'keyword' => array(
-				// Label of the option (*tip use i18n __('xxx'))
 				'label' => __('Keyword'),
-				// Option type (text, textarea, password, radio)
 				'type' => 'text',
-				// Available values for this option
 				'values' => array()
 			),
 			'person' => array(

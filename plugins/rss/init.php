@@ -12,6 +12,9 @@ class Rss_Init {
 
 	public function __construct() 
 	{
+	    // Register as a crawler
+	    Swiftriver_Crawlers::register('rss', array(new Swiftriver_Crawler_Rss(), 'crawl'));
+	    
 		// Validate Channel Filter Settings Input
 		Swiftriver_Event::add('swiftriver.channel.pre_save', array($this, 'channel_validate'));
 	}

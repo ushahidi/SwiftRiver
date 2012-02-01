@@ -12,7 +12,6 @@ or development environment:
  * PHP 5.2.3 or greater
  * Apache HTTP Server 2.x
  * MySQL Database Server 5.1 or greater
- * Gearman Server (http://gearman.org) - For managing background execution of tasks
 
 Required Extensions
 ===================
@@ -25,7 +24,6 @@ enabled in your PHP configuration file:
   * MySQL (http://php.net/mysql) for database access
   * mcrypt (http://php.net/mcrypt) for cryptography services
   * PCNTL (http://php.net/pcntl) for process control
-  * Gearman (http://php.net/gearman) - For communicating with the Gearman server
 
 
 Installation of Required Extensions
@@ -40,12 +38,11 @@ Run the following commands from the terminal:
         $ sudo port install php5-mcrypt
         $ sudo port install php5-mysql
         $ sudo port install php5-pcntl
-        $ sudo port install php5-gearman
         $ sudo port install php5-openssl
     
 Alternatively, you can specify all the extensions to be installed on one line as follows:
     
-        $ sudo port install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
+        $ sudo port install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl
         
 Restart Apache:
     
@@ -54,7 +51,7 @@ Restart Apache:
 Debian/Ubuntu/Linux Mint Installation
 -------------------------------------
 
-        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
+        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl
 
 Restart Apache:
 
@@ -63,9 +60,25 @@ Restart Apache:
 Fedora/CentOS Installation
 --------------------------
 
-        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-gearman php5-openssl
+        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl
 
 Restart Apache:
 
         $ sudo service httpd restart
+        
+        
+Configuring the crawler
+=======================
+
+Add the following entries to your crontab to schedule crawling every 30 
+minutes and post processing every 15 minutes respectively:
+
+        0,30 * * * * cd <app home>; php index.php --uri=crawler
+        0,15,30,45 * * * * cd <app home>; php index.php --uri=process
+         
+Alternatively, subscribe to the following URL in your feed reader to trigger
+a crawl every time your reader checks the feed for update:
+
+        http://[SITE_URL]/crawler?rss=1
+
         

@@ -188,44 +188,89 @@ class TwitterSearch {
     }
     
     /**
-    * Build and perform the query, return the results.
+    * Perform the query, return the results.
+    * @param $request     string  optional.    
     * @param $reset_query boolean optional.
     * @return object
     */
-    function results($reset_query=true) {
+    function results($request = NULL, $reset_query=true) {
+        
+        if ( ! $request) {
+            $request = $this->_build_query();
+        }
+
+        if($reset_query) {
+            $this->query = '';
+        }            
+        
+        $ret = array();
+        
+        do
+        {
+            Kohana::$log->add(Log::DEBUG, 'REQUEST: '.$request);
+            Kohana::$log->write();
+            $response = $this->objectify($this->process($request));
+            Kohana::$log->add(Log::DEBUG, var_export($response, true));
+
+
+            $ret = array_merge($ret, $response->results);
+            
+            
+            if (property_exists($response, 'next_page')) 
+            {
+                $request  = 'http://search.twitter.com/search.'.$this->type;
+                $request .= $response->next_page;
+            }
+        }
+        while (property_exists($response, 'next_page'));  
+        
+        $refresh_url = NULL;
+        if (property_exists($response, 'refresh_url'))
+        {
+            $refresh_url = 'http://search.twitter.com/search.'.$this->type;
+            $refresh_url .= $response->refresh_url;   
+        }
+                
+        return array('tweets' => $ret, 'refresh_url' => $refresh_url);
+    }
+    
+    /**
+    * Perform the query, return the results.
+    * @param $request     string  optional.    
+    * @param $reset_query boolean optional.
+    * @return string
+    */
+    private function _build_query() 
+    {
         $request  = 'http://search.twitter.com/search.'.$this->type;
         $request .= '?q='.urlencode($this->query);
-        
+
         if(isset($this->rpp)) {
             $request .= '&rpp='.$this->rpp;
         }
-        
+
         if(isset($this->page)) {
             $request .= '&page='.$this->page;
         }
-        
+
         if(isset($this->lang)) {
             $request .= '&lang='.$this->lang;
         }
-        
+
         if(isset($this->since)) {
             $request .= '&since_id='.$this->since;
         }
-        
+
         if($this->show_user) {
             $request .= '&show_user=true';
         }
-        
+
         if(isset($this->geocode)) {
             $request .= '&geocode='.$this->geocode;
         }
         
-        if($reset_query) {
-            $this->query = '';
-        }
-        
-        return $this->objectify($this->process($request))->results;
-    }
+        return $request;        
+    }    
     
     /**
     * Returns the top ten queries that are currently trending on Twitter.

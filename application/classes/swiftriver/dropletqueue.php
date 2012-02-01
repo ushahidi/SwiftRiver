@@ -24,6 +24,11 @@ class Swiftriver_Dropletqueue {
 	 */
 	private static $_processed = array();
 	
+	public static function isempty()
+	{
+	    return empty(self::$_queue);
+	}
+	
 	/**
 	 * Processes the droplet queue.
 	 * The queue processing involves extracting metadata from the droplets
@@ -45,9 +50,6 @@ class Swiftriver_Dropletqueue {
 		{
 			// Pop that droplet!
 			$droplet = array_pop(self::$_queue);
-			
-			// Link the droplet to the channel filter
-			// Swiftriver_Event::run('swiftriver.droplet.link_droplet', $droplet);
 			
 			// Submit the droplet to an extraction plugin
 			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
