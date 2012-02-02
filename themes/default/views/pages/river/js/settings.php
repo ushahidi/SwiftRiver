@@ -520,8 +520,8 @@
 				if (_isNew && response.redirect_url != "") {
 					window.location.href = response.redirect_url;
 				} else {
-					// Reload the channels list
- 					// channelListView.model.trigger("reset");
+					// Reload the page
+					window.location.reload();
 				}
 			}
 		}, "json");

@@ -54,8 +54,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 
 		$droplet_js = View::factory('common/js/droplets')
-				->bind('fetch_url', $fetch_url);
+				->bind('fetch_url', $fetch_url)
+				->bind('polling_enabled', $polling_enabled);
 		
+		// Turn off ajax polling
+		$polling_enabled = "false";
+		
+		// URL for fetching droplets
 		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$id;
 				
 		// Generate the List HTML

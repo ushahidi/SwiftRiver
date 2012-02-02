@@ -5,7 +5,8 @@
 	(function() {
 		// Tracks the current page number and is used for the infinite scroll
 		var pageNo = 1;
-	
+		var pollingEnabled = <?php echo $polling_enabled; ?>;
+		
 		// Droplet model
 		window.Droplet = Backbone.Model.extend({
 			initialize: function() {
@@ -82,7 +83,18 @@
 		
 			render: function(eventName) {
 				_.each(this.model.models, function(droplet) {
-					$(this.el).append(new DropletListItem({model: droplet}).render().el);
+					var listItem = new DropletListItem({model: droplet}).render().el;
+					
+					if (typeof(this.options.position) != 'undefined' && this.options.position == 'top') {
+						// Add droplet to the top
+						$(listItem).fadeOut(10);
+						$(this.el).prepend(listItem);
+						$(listItem).fadeIn(600);
+					} else {
+						// Add droplet to the bottom
+						$(this.el).append(listItem);
+					}
+					
 				}, this);
 				return this;
 			}
@@ -111,6 +123,7 @@
 			},
 			
 			render: function(eventName) {
+				$(this.el).attr("data-droplet-id", this.model.get("id"));
 				$(this.el).html(this.template(this.model.toJSON()));
 				
 				this.bucketMenu = this.$("section.actions div.buckets-list ul");
@@ -402,16 +415,38 @@
 
 		appRouter = new AppRouter();
 		Backbone.history.start();
+		
+		if (pollingEnabled) {
+			// Updates the droplet view with new content
+			var updateDropletView = function() {
+				var sinceId = $("#droplet-list article.item:first").data("droplet-id");
+				var droplets = new DropletCollection();
+				droplets.url = droplets.url + "?since_id=" + sinceId;
+			
+				listView = new DropletListView({model: droplets, position: 'top'});
+				droplets.fetch();
+				listView.render();
+			}
+		
+			// Update the droplet view every 30 seconds
+			setInterval(updateDropletView, 30000);
+		}
+		
 	
 		// Load content while scrolling
 		$(window).scroll(function() {
 			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
-				// Increase the page count
-				pageNo += 1;
 			
-				// Update the droplet collection url with the new page no
 				var droplets = new DropletCollection();
-				droplets.url = droplets.url + "?page="+pageNo;
+				
+				if (pollingEnabled) {
+					var maxId = $("#droplet-list article.item:last").data("droplet-id");
+					droplets.url = droplets.url + "?max_id=" + maxId;
+				} else {
+					// Update the droplet collection url with the new page no
+					pageNo += 1;
+					droplets.url = droplets.url + "?page=" + pageNo;
+				}
 			
 				// Fetch content and update the view
 				listView = new DropletListView({model: droplets});

@@ -234,27 +234,6 @@ class Model_River extends ORM {
 			//++ Allows for adding for more filters via Plugin
 			Swiftriver_Event::run('swiftriver.river.filter', $query);
 
-			// Check if we have max droplet id stored from a previous request
-			$session = Session::instance();
-			$max_droplet_id = $session->get('river_pagination_max_droplet');
-			
-			// Get the max droplet id from the returned data
-			$current_max_id = count($pre_filter_data) > 0 
-			    ? $pre_filter_data[0]['id'] 
-			    : 0;
-			
-			if ($max_droplet_id > $current_max_id)
-			{
-			   $query->where('droplets.id', '<', $max_droplet_id);	   
-			}
-			else
-			{
-				$query->where('droplets.id', '<', $current_max_id);
-				
-				// Set the new max droplet id
-				$session->set('river_pagination_max_droplet', $current_max_id);
-			}
-
 			// Order & Pagination offset
 			$query->order_by('droplets.id', $sort);
 			if ($page > 0)
@@ -269,4 +248,58 @@ class Model_River extends ORM {
 
 		return $droplets;
 	}
+	
+	/**
+	 * Gets droplets whose database id is above the specified minimum
+	 *
+	 * @param int $river_id Database ID of the river
+	 * @param int $since_id Lower limit of the droplet id
+	 * @return array
+	 */
+	public static function get_droplets_since_id($river_id, $since_id)
+	{
+		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
+		    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+		    ->from('droplets')
+		    ->join('rivers_droplets', 'INNER')
+		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+		    ->join('identities', 'INNER')
+		    ->on('droplets.identity_id', '=', 'identities.id')
+		    ->where('droplets.droplet_processed', '=', 1)
+		    ->where('rivers_droplets.river_id', '=', $river_id)
+		    ->where('droplets.id', '>', $since_id)
+		    ->order_by('droplets.id', 'ASC')
+		    ->limit(self::DROPLETS_PER_PAGE)
+		    ->offset(0);
+		
+		return $query->execute()->as_array();
+	}
+	
+	/**
+	 * Gets droplets whose database id is below the specified maximum
+	 *
+	 * @param int $river_id Database ID of the river
+	 * @param int $max_id Upper limit of the droplet id
+	 * @return array
+	 */
+	public static function get_droplets_before_id($river_id, $max_id)
+	{
+		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
+		    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+		    ->from('droplets')
+		    ->join('rivers_droplets', 'INNER')
+		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+		    ->join('identities', 'INNER')
+		    ->on('droplets.identity_id', '=', 'identities.id')
+		    ->where('droplets.droplet_processed', '=', 1)
+		    ->where('rivers_droplets.river_id', '=', $river_id)
+		    ->where('droplets.id', '<', $max_id)
+		    ->order_by('droplets.id', 'DESC')
+		    ->limit(self::DROPLETS_PER_PAGE)
+		    ->offset(0);
+		
+		return $query->execute()->as_array();
+	}
 }
+
+?>

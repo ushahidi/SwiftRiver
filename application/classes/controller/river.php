@@ -97,8 +97,11 @@ class Controller_River extends Controller_Swiftriver {
 		}
 		
 		$droplet_js = View::factory('common/js/droplets')
-		    ->bind('fetch_url', $fetch_url);
+		    ->bind('fetch_url', $fetch_url)
+			->bind('polling_enabled', $polling_enabled);
 		
+		// Turn on Ajax polling
+		$polling_enabled = "true";
 		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$river_id;
 		
 		$droplets_list = View::factory('pages/droplets/list')
@@ -119,16 +122,36 @@ class Controller_River extends Controller_Swiftriver {
 		
 	}
 	
+	/**
+	 * XHR endpoint for fetching droplets
+	 */
 	public function action_droplets()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+		$droplets = array();
+		$river_id = $this->_river->id;
 		
-		$droplets = Model_River::get_droplets($this->_river->id, $page);
+		if (isset($_GET['since_id']))
+		{
+			// Get new droplets since the specified droplet id
+			$since_id = $_GET['since_id'];
+			$droplets = Model_River::get_droplets_since_id($river_id, $since_id);
+		}
+		elseif (isset($_GET['max_id']))
+		{
+			// Get droplets encounterd before the specified droplet id
+			$max_id = $_GET['max_id'];
+			$droplets = Model_River::get_droplets_before_id($river_id, $max_id);
+		}
+		else
+		{
+			$droplets = Model_River::get_droplets($river_id);
+			$droplets = $droplets['droplets'];
+		}
 		
-		echo json_encode($droplets['droplets']);
+		echo json_encode($droplets);
 	}
 
 	/**
