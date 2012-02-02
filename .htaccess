@@ -1,9 +1,6 @@
 # Turn on URL rewriting
 RewriteEngine On
 
-# Installation directory
-RewriteBase /
-
 # Protect hidden files from being viewed
 <Files .*>
 	Order Deny,Allow
