@@ -11,11 +11,11 @@
 		<div class="row cf">
 			<!-- collaborators -->
 			<h2><?php echo __("Collaborators"); ?></h2>
-			<div class="data"></div>
 			<div class="input">
 				<h3><?php echo __("Add people to collaborate on this river"); ?></h3>
 				<input type="text" placeholder="<?php echo __("+ Type name..."); ?>">
 			</div>
+			<div class="data"></div>
 			<!-- /collaborators -->
 
 			<!-- buttons -->

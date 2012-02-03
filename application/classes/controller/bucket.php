@@ -14,11 +14,20 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_Bucket extends Controller_Swiftriver {
+
 	/**
-	 * This Bucket
+	 * Bucket currently being viewed
+	 * @var Model_Bucket
 	 */
 	protected $bucket;
-
+	
+	/**
+	 * Base URL for XHR endpoints
+	 * @var string
+	 */
+	private $base_url;
+	
+	
 	/**
 	 * @return	void
 	 */
@@ -26,26 +35,31 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
-	}
-
-	public function action_index()
-	{
-		// First we need to make sure this bucket exists
-		$id = (int) $this->request->param('id', 0);
 		
-		$bucket = ORM::factory('bucket')
-			->where('id', '=', $id)
+		$this->base_url = URL::site().$this->account->account_path.'/bucket/';
+		
+		// First we need to make sure this bucket exists
+		$bucket_id = intval($this->request->param('id', 0));
+		
+		$this->bucket = ORM::factory('bucket')
+			->where('id', '=', $bucket_id)
 			->where('account_id', '=', $this->account->id)
 			->find();
 		
-		if ( ! $bucket->loaded())
+		if ($bucket_id != 0 AND ! $this->bucket->loaded())
 		{
 			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
 		}
+	}
+
+	public function action_index()
+	{
+		
+		$bucket_id = $this->bucket->id;
 		
 		$this->template->content = View::factory('pages/bucket/main')
-			->bind('bucket', $bucket)
+			->bind('bucket', $this->bucket)
 			->bind('droplets_list', $droplets_list)
 			->bind('settings', $settings)
 			->bind('more', $more);
@@ -61,14 +75,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$polling_enabled = "false";
 		
 		// URL for fetching droplets
-		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$id;
+		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$bucket_id;
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplet_js', $droplet_js);
 		
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($bucket->id, $page);
+		$droplets_array = Model_Bucket::get_droplets($bucket_id, $page);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -90,9 +104,55 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->find_all();
 
 		// Links to ajax rendered menus
-		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
+		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$bucket_id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
-		$view_more_url = url::site().$this->account->account_path.'/bucket/index/'.$id.'?page='.($page+1);
+		$view_more_url = url::site().$this->account->account_path.'/bucket/index/'.$bucket_id.'?page='.($page+1);
+	}
+	
+	/**
+	 * Create new bucket page
+	 */
+	public function action_new()
+	{
+		$this->template->content = View::factory('pages/bucket/new')
+		    ->bind('template_type', $this->template_type)
+		    ->bind('user', $this->user)
+		    ->bind('active', $this->active)
+		    ->bind('post', $post)
+		    ->bind('errors', $errors)
+		    ->bind('settings_control', $settings_control);
+		
+		$this->template_type = 'dashboard';
+		$this->active = 'buckets';
+		
+		$settings_control = View::factory('pages/bucket/settings_control')
+		    ->bind('bucket', $this->bucket)
+		    ->bind('settings_js', $settings_js);
+		
+		// Javascript view
+		$settings_js  = $this->_get_settings_js_view();	
+	}
+	
+	/**
+	 * Generates the view for the settings JS
+	 *
+	 * @return View
+	 */
+	private function _get_settings_js_view()
+	{
+		// Javascript view
+		$settings_js  = View::factory('pages/bucket/js/settings')
+		    ->bind('collaborator_fetch_url', $collaborator_fetch_url)
+		    ->bind('delete_bucket_url', $delete_bucket_url)
+		    ->bind('save_settings_url', $save_settings_url);
+		
+		
+		// URLs endpoints for XHR actions
+		$collaborator_fetch_url = $this->base_url.'collaborators/'.$this->bucket->id;
+		$save_settings_url = $this->base_url.'save_settings/'.$this->bucket->id;
+		$delete_bucket_url = $this->base_url.'ajax_delete/'.$this->bucket->id;
+		
+		return $settings_js;
 	}
 	
 	/**
@@ -105,15 +165,20 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		$bucket_id = intval($this->request->param('id'));
+		if ( ! empty($this->bucket))
+		{
+			// Get the page number
+			$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 		
-		// Get the page number
-		$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+			$droplets = Model_Bucket::get_droplets($this->bucket->id, $page);
 		
-		$droplets = Model_Bucket::get_droplets($bucket_id, $page);
-		
-		// Return the droplets
-		echo json_encode($droplets['droplets']);
+			// Return the droplets
+			echo json_encode($droplets['droplets']);
+		}
+		else
+		{
+			echo json_encode(array());
+		}
 	}
 	
 	/**
@@ -222,33 +287,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
-		// First we need to make sure this bucket exists
-		$id = (int) $this->request->param('id', 0);
-		$bucket = ORM::factory('bucket')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->account->id)
-			->find();
-
-		// Return this control only if bucket is loaded
-		if ($bucket->loaded())
-		{
-			$settings = View::factory('pages/bucket/settings_control');
-			$settings->bucket = $bucket;
-			echo $settings;	
-		}
+		$settings_control = View::factory('pages/bucket/settings_control')
+		    ->bind('bucket', $this->bucket)
+		    ->bind('settings_js', $settings_js);
+		
+		// Javascript view
+		$settings_js  = $this->_get_settings_js_view();
+		
+		echo $settings_control;	
 	}	
-
-	/**
-	 * Ajax rendered more control box
-	 * 
-	 * @return	void
-	 */
-	public function action_more()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		echo View::factory('pages/bucket/more_control');
-	}
 
 	/**
 	 * Ajax Title Editing Inline
@@ -291,28 +338,18 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		if ( $_REQUEST AND isset($_REQUEST['id']) AND
-			! empty($_REQUEST['id']) )
+		
+		$response = array("success" => FALSE);
+		
+		// Check if the bucket exists
+		if ($this->bucket->loaded())
 		{
-			$bucket = ORM::factory('bucket')
-				->where('id', '=', $_REQUEST['id'])
-				->where('account_id', '=', $this->account->id)
-				->find();
+			$this->bucket->delete();
+			$response["success"] = TRUE;
+		}
+		
+		echo json_encode($response);
 
-			if ($bucket->loaded())
-			{
-				$bucket->delete();
-				echo json_encode(array("status"=>"success"));
-			}
-			else
-			{
-				echo json_encode(array("status"=>"error"));
-			}
-		}
-		else
-		{
-			echo json_encode(array("status"=>"error"));
-		}
 	}
 	
 	/**
@@ -325,5 +362,60 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		echo json_encode($this->user->get_buckets());
+	}
+	
+	/**
+	 * Returns a JSON response with the list of users collaborating on
+	 * the current bucket
+	 */
+	public function action_collaborators()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$collaborators = Model_Bucket::get_collaborators($this->bucket->id);
+		
+		echo json_encode($collaborators);
+	}
+	
+	/**
+	 * XHR endpoint for saving the bucket settings
+	 */
+	public function action_save_settings()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		// Default response
+		$response = array("success" => FALSE, "redirect_url" => "");
+		
+		// Only HTTP POST requests are serviced 
+		if ($_POST)
+		{
+			// New bucket
+			if ( ! $this->bucket->loaded())
+			{
+				$bucket = ORM::factory('bucket');
+				$post = $bucket->validate(Arr::extract($_POST, array('bucket_name', 'bucket_description')));
+				
+				if ($post->check())
+				{
+					$bucket->bucket_name = $post['bucket_name'];
+					$bucket->bucket_description = $post['bucket_description'];
+					$bucket->account_id = $this->account->id;
+					$bucket->user_id = $this->user->id;
+					
+					// Save the bucket
+					$this->bucket = $bucket->save();
+					
+					// Set the values for the JSON response
+					$response["success"] = TRUE;
+					$response["redirect_url"] = $this->base_url.'index/'.$bucket->id;
+				}
+			}
+			
+		}
+		
+		echo json_encode($response);
 	}
 }

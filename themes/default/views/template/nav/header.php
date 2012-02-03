@@ -15,13 +15,16 @@
 				<?php foreach ($buckets as $bucket): ?>
 					<li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li>
 				<?php endforeach; ?>
-				<li class="create-new"><a onclick="createBucket(this, 'river', 0)" class="plus"><em><?php echo __('Create new');?></em></a></li>
+				<li class="create-new"><a href="<?php echo URL::site().'bucket/new'?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
 		<div class="account">
 			<?php if ($user): ?>
 				<li class="user has_dropdown">
-					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /><span class="icon"></span><span class="label"><?php echo $user->name; ?></span></a>
+					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow">
+						<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" />
+						<span class="icon"></span><span class="label"><?php echo $user->name; ?></span>
+					</a>
 					<ul class="dropdown">
 						<li><a href="<?php echo URL::site().'dashboard'; ?>"><?php echo __('Your account');?></a></li>
 						<?php if ($admin): ?>

@@ -121,4 +121,25 @@ class Model_Bucket extends ORM {
 		return $droplets;
 	}
 	
+	/**
+	 * Gets the list of users collaborating on a bucket
+	 *
+	 * @param int $bucket_id Database ID of the bucket
+	 * @return array
+	 */
+	public static function get_collaborators($bucket_id)
+	{
+		$results = DB::select(array('bucket_collaborators.id', 'id'), 
+		    array('users.name', 'collaborator_name'))
+		    ->from('bucket_collaborators')
+		    ->join('buckets', 'INNER')
+		    ->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
+		    ->join('users', 'INNER')
+		    ->on('bucket_collaborators.user_id', '=', 'users.id')
+		    ->where('buckets.id', '=', $bucket_id)
+		    ->execute();
+		
+		return $results->as_array();
+	}
+	
 }

@@ -421,7 +421,9 @@
 			var updateDropletView = function() {
 				var sinceId = $("#droplet-list article.item:first").data("droplet-id");
 				var droplets = new DropletCollection();
-				droplets.url = droplets.url + "?since_id=" + sinceId;
+				if (sinceId != null && sinceId != 'undefined') {
+					droplets.url = droplets.url + "?since_id=" + sinceId;
+				}
 			
 				listView = new DropletListView({model: droplets, position: 'top'});
 				droplets.fetch();
