@@ -104,7 +104,7 @@ class Model_Bucket extends ORM {
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '<', $max_id)
-				->order_by('droplets.id', 'DESC');
+				->order_by('buckets_droplets.droplet_date_added', 'DESC');
 				
 			// Order & Pagination offset
 			$query->order_by('droplets.id', 'DESC');
