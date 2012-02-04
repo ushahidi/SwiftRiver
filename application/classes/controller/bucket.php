@@ -56,7 +56,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 	public function action_index()
 	{
 		
-		$bucket_id = $this->bucket->id;
+		// First we need to make sure this bucket exists
+		$id = (int) $this->request->param('id', 0);
+		
+		$bucket = ORM::factory('bucket')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+		
+		if ( ! $bucket->loaded())
+		{
+			// It doesn't -- redirect back to dashboard
+			$this->request->redirect('dashboard');
+		}
 		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
@@ -94,7 +106,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->find_all();
 
 		// Links to ajax rendered menus
-		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$bucket_id;
+		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
 	}
 	
