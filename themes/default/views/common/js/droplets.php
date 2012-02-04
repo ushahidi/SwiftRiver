@@ -36,7 +36,9 @@
 	
 		// Droplet model
 		window.Droplet = Backbone.Model.extend({
-
+			
+			urlRoot: "<?php echo $fetch_url ?>/",
+			
 			setBucket: function(changeBucket) {
 				// Is this droplet already in the bucket?
 				change_buckets = this.get("buckets");
@@ -60,7 +62,7 @@
 		
 		window.Droplets = new DropletList;
 		window.bucketList = new BucketList();
-				
+		
 		// Rendering for a single droplet in the list view
 		window.DropletView = Backbone.View.extend({
 		
@@ -79,7 +81,8 @@
 				"click .bucket a.bucket-view": "showBuckets",				
 				"click .bucket .dropdown p.create-new a": "showCreateBucket",
 				"click div.create-name button.cancel": "cancelCreateBucket",
-				"click div.create-name button.save": "saveBucket"
+				"click div.create-name button.save": "saveBucket",
+				"click ul.delete-droplet li.confirm a": "deleteDroplet"
 			},
 						
 			initialize: function() {
@@ -213,6 +216,27 @@
 				this.$("div.dropdown div.create-name").fadeOut();
 				this.$("div.dropdown p.create-new a.plus").fadeIn();
 				e.stopPropagation();
+			},
+			
+			// When delete droplet button is clicked in the droplet detail view
+			deleteDroplet: function(e) {
+				// Remove the model from the collection
+				Droplets.remove(this.model);
+				
+				var viewItem = this;
+				
+				// Delete on the server
+				this.model.destroy({
+					wait: true,
+					success: function(model, response) {
+						if (response.success) {
+							// Remove from UI
+							$(viewItem.el).remove();
+						}
+					}
+				});
+				
+				return false;
 			}
 			
 		});
@@ -315,13 +339,26 @@
 		// Load content while scrolling - Infinite Scrolling
 		var pageNo = 1;
 		var maxId = 0;
+		var renderComplete = true;
+		
 		$(window).scroll(function() {
-			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
+			if (renderComplete && ($(window).scrollTop() == ($(document).height() - $(window).height()))) {
+				
+				// Get the maxId
+				var lastEl = $("#droplet-list > article.item:last");
+				
+				if (typeof(lastEl) != 'undefined') {
+					maxId = $(lastEl).data("droplet-id");
+				}
+				
+				renderComplete = false;
+				
 				// Next page
 				pageNo += 1;
 							
 				// Fetch content and update the view
 				Droplets.fetch({data: {page: pageNo, max_id: maxId}, add: true});
+				setTimeout(function(){ renderComplete = true; }, 1500);
 			}
 		});
 		
@@ -344,15 +381,14 @@
 		Droplets.reset(<?php echo $droplet_list ?>);		
 		bucketList.reset(<?php echo $bucket_list ?>);
 		
-		// Pagination reference point
-		// set the max id we have the first time only
-		if ( ! maxId) {
-			Droplets.each(function(droplet) { 
-				if (parseInt(droplet.get("id")) > maxId) { 
-					maxId = parseInt(droplet.get("id"))
+		// Get the maxId after inital rendering of droplet list
+		if (!maxId) {
+			Droplets.each(function(droplet) {
+				if (parseInt(droplet.get("id")) > maxId) {
+					maxId = parseInt(droplet.get("id"));
 				}
 			});
 		}
-				
+		
 	});
 </script>

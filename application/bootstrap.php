@@ -258,7 +258,8 @@ Route::set('bucket', 'bucket(/<action>(/<id>))', array('id' => '\d+'))
 		'controller' => 'bucket',
 		'action'     => 'index',
 	));
-Route::set('bucket_droplet', 'bucket/droplets/<id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
+	
+Route::set('bucket_droplet', 'bucket/droplets/<bucket_id>/<droplet_id>', array('bucket_id' => '\d+', 'droplet_id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',
 		'action'     => 'api',
@@ -272,7 +273,8 @@ Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
 		'controller' => 'river',
 		'action'     => 'index',
 	));
-Route::set('river_droplet', 'river/droplets/<id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
+	
+Route::set('river_droplet', 'river/droplets/<river_id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',
 		'action'     => 'api',
@@ -308,7 +310,7 @@ Route::set('bucket_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id
 		'controller' => 'bucket',
 		'action'     => 'index',
 	));	
-Route::set('bucket_droplet_ext', '<account>/bucket/droplets/<id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
+Route::set('bucket_droplet_ext', '<account>/bucket/droplets/<bucket_id>/<droplet_id>', array('bucket_id' => '\d+', 'droplet_id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',
 		'action'     => 'api',
@@ -322,7 +324,8 @@ Route::set('river_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id'
 		'controller' => 'river',
 		'action'     => 'index',
 	));
-Route::set('river_droplet_ext', '<account>/river/droplets/<id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
+	
+Route::set('river_droplet_ext', '<account>/river/droplets/<river_id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',
 		'action'     => 'api',

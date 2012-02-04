@@ -370,7 +370,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_tags(& $droplets)
 	{
-		foreach($droplets as & $droplet) {
+		foreach($droplets as & $droplet)
+		{
 		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
 		    
 		    $droplet['tags'] = $droplet_orm->get_tags();
@@ -384,7 +385,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_links(& $droplets)
 	{
-		foreach($droplets as & $droplet) {
+		foreach ($droplets as & $droplet)
+		{
 		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
 		    
 		    $droplet['links'] = $droplet_orm->get_links();
@@ -398,7 +400,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_places(& $droplets)
 	{
-		foreach($droplets as & $droplet) {
+		foreach ($droplets as & $droplet)
+		{
 		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
 		    
 		    $droplet['places'] = $droplet_orm->get_places();
@@ -454,19 +457,14 @@ class Model_Droplet extends ORM
 	    {
 	        $bucket_orm = ORM::factory('bucket', $delete_bucket_id);
 	        
-	        if($this->has('buckets', $bucket_orm))
+	        if ($this->has('buckets', $bucket_orm))
 	        {
 	            $this->remove('buckets', $bucket_orm);	            
 	        }	        
 	    }
 
-	    print_r($current_buckets);
-	    print_r($change_buckets);	    	    
-	    
-	    print_r($new_buckets);
-	    print_r($delete_buckets);	    	    
-	    
 	}
     
 }
+
 ?>

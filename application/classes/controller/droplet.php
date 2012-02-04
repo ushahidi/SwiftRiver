@@ -109,6 +109,8 @@ class Controller_Droplet extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 	 
 		$droplet_id = intval($this->request->param('droplet_id', 0));
+		$bucket_id = intval($this->request->param('bucket_id', 0));
+		$river_id = intval($this->request->param('river_id', 0));
 		$response = array("success" => FALSE);
 		
 		switch ($this->request->method())
@@ -122,12 +124,27 @@ class Controller_Droplet extends Controller_Swiftriver {
 			break;
 
 			case "DELETE":
-				echo "delete";
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				
+				if ($river_id > 0)
+				{
+					ORM::factory('river', $river_id)
+					    ->remove('droplets', $droplet_orm);
+					
+					$response["success"]  = TRUE;
+				}
+				elseif ($bucket_id > 0)
+				{
+					ORM::factory('bucket', $bucket_id)
+					    ->remove('droplets', $droplet_orm);
+					
+					$response["success"]  = TRUE;
+				}
+				
 			break;
 		}
 		
 		echo json_encode($response);
-		
 	 }
 	
 	/**

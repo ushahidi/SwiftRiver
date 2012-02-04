@@ -58,7 +58,7 @@
     	<section class="meta">
     		<div class="item actions cf">
     			<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
-    			<ul class="dropdown left">
+    			<ul class="dropdown left delete-droplet">
     				<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
 
     				<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
