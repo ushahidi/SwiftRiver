@@ -64,40 +64,30 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('settings', $settings)
 			->bind('more', $more);
 			
-		//Use page paramter or default to page 1
-		$page = $this->request->query('page') ? $this->request->query('page') : 1;
-
-		$droplet_js = View::factory('common/js/droplets')
-				->bind('fetch_url', $fetch_url)
-				->bind('polling_enabled', $polling_enabled);
-		
-		// Turn off ajax polling
-		$polling_enabled = "false";
-		
-		// URL for fetching droplets
-		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$bucket_id;
-				
-		// Generate the List HTML
-		$droplets_list = View::factory('pages/droplets/list')
-			->bind('droplet_js', $droplet_js);
 		
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($bucket_id, $page);
+		$droplets_array = Model_Bucket::get_droplets($bucket->id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
 		
 		// The Droplets
 		$droplets = $droplets_array['droplets'];
+				
+		// Bootstrap the droplet list
+		$droplet_list = json_encode($droplets);
+		$bucket_list = json_encode($this->user->get_buckets());
+		$droplet_js = View::factory('common/js/droplets')
+				->bind('fetch_url', $fetch_url)
+				->bind('droplet_list', $droplet_list)
+    		    ->bind('bucket_list', $bucket_list);
 		
-		//Throw a 404 if a non existent page is requested
-		if ($page > 1 AND empty($droplets))
-		{
-		    throw new HTTP_Exception_404(
-		        'The requested page :page was not found on this server.',
-		        array(':page' => $page)
-		        );
-		}
+		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$id;
+				
+		// Generate the List HTML
+		$droplets_list = View::factory('pages/droplets/list')
+			->bind('droplet_js', $droplet_js);
+		
 
 		$buckets = ORM::factory('bucket')
 			->where('account_id', '=', $this->account->id)
@@ -106,7 +96,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Links to ajax rendered menus
 		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$bucket_id;
 		$more = url::site().$this->account->account_path.'/bucket/more/';
-		$view_more_url = url::site().$this->account->account_path.'/bucket/index/'.$bucket_id.'?page='.($page+1);
 	}
 	
 	/**
@@ -165,20 +154,47 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		if ( ! empty($this->bucket))
+		// First we need to make sure this bucket exists
+		$id = (int) $this->request->param('id', 0);
+		
+		$bucket = ORM::factory('bucket')
+			->where('id', '=', $id)
+			->where('account_id', '=', $this->account->id)
+			->find();
+		
+		if ( ! $bucket->loaded())
 		{
-			// Get the page number
-			$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+			echo json_encode(array());
+			return;
+		}
 		
-			$droplets = Model_Bucket::get_droplets($this->bucket->id, $page);
+		$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+		$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+		$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 		
-			// Return the droplets
-			echo json_encode($droplets['droplets']);
+		
+		$droplets_array = array();
+		if ( $since_id )
+		{
+		    $droplets_array = Model_Bucket::get_droplets_since_id($bucket->id, $since_id);
 		}
 		else
 		{
-			echo json_encode(array());
+		    $droplets_array = Model_Bucket::get_droplets($bucket->id, $page, $max_id);
 		}
+		
+		$droplets = $droplets_array['droplets'];
+		//Throw a 404 if a non existent page is requested
+		if ($page > 1 AND empty($droplets))
+		{
+		    throw new HTTP_Exception_404(
+		        'The requested page :page was not found on this server.',
+		        array(':page' => $page)
+		        );
+		}
+		
+		
+		echo json_encode($droplets);
 	}
 	
 	/**
@@ -360,8 +376,20 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
-		
-		echo json_encode($this->user->get_buckets());
+				
+		switch ($this->request->method())
+		{
+		    case "GET":
+		       echo json_encode($this->user->get_buckets());
+		    break;
+		    case "POST":
+		        $bucket_array = json_decode($this->request->body(), true);
+		        $bucket_array['user_id'] = $this->user->id;
+		        $bucket_array['account_id'] = $this->account->id;
+		        $bucket_orm = Model_Bucket::create_from_array($bucket_array);
+		        echo json_encode($bucket_orm->as_array());
+		    break;
+		}
 	}
 	
 	/**

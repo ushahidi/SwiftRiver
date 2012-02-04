@@ -59,11 +59,6 @@ $(document).ready(function() {
 		$('section.panel div.drawer').slideUp('fast').remove();
 		return false;
 	});
-	$('div.detail a.close').live('click', function() {
-		$(this).closest('article.item, div.edit-advanced').find('section.actions p.button_view a, div.edit-advanced p.button_view a').removeClass('detail_hide');
-		$(this).closest('div.edit-advanced').find('div.row > p a').fadeTo('fast', 1);
-		$(this).closest('article.item, div.edit-advanced').children('div.drawer').slideUp('fast').remove();
-	});
 	
 	//Show a trend
 	$('section.panel ul.views li.view_trend a').live('click', function(e) {

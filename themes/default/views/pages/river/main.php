@@ -41,7 +41,7 @@
 		</section>
 
 		<div class="container stream">
-		    <?php echo $droplets_list; ?>
+		    <?php echo $droplet_list_view; ?>
 		</div>
 
 	</div>

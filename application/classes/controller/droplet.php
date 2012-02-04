@@ -101,6 +101,29 @@ class Controller_Droplet extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * Single droplet restful api
+	 */	
+     public function action_api()
+     {
+     	$this->template = "";
+     	$this->auto_render = FALSE;
+     
+     	$droplet_id = intval($this->request->param('droplet_id', 0));
+     
+     	switch ($this->request->method())
+     	{
+     	    case "PUT":
+     	        $droplet_array = json_decode($this->request->body(), true);
+     	        $droplet_orm = ORM::factory('droplet', $droplet_id);
+     	        $droplet_orm->update_from_array($droplet_array);
+     	    break;
+     	    case "DELETE":
+     	        echo "delete";
+     	    break;
+     	}
+     }
+	
+	/**
 	 * Delete the specified droplet from the account. 
 	 * Doesn't actually delete the droplet from the db but removes the link
 	 * from the channel filter

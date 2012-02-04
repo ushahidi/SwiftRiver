@@ -200,7 +200,7 @@ class Model_River extends ORM {
 	 * @param string $sort Sorting order
 	 * @return array
 	 */
-	public static function get_droplets($river_id, $page = 1, $sort = 'DESC')
+	public static function get_droplets($river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC')
 	{
 		$droplets = array(
 			'total' => 0,
@@ -219,20 +219,8 @@ class Model_River extends ORM {
 			    ->join('identities')
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.droplet_processed', '=', 1);
-			
-			// Clone query before any filters have been applied
-			$pre_filter = clone $query;
-			
-			// Order the dataset by droplet id
-			$pre_filter->order_by('droplets.id', $sort);
-			$pre_filter_data = $pre_filter->execute()->as_array();
-			
-			$droplets['total'] = count($pre_filter_data);
-
-			// SwiftRiver Plugin Hook -- Hook into River Droplet Query
-			//++ Allows for adding for more filters via Plugin
-			Swiftriver_Event::run('swiftriver.river.filter', $query);
+			    ->where('droplets.droplet_processed', '=', 1)
+			    ->where('droplets.id', '<', $max_id);	   
 
 			// Order & Pagination offset
 			$query->order_by('droplets.id', $sort);
@@ -244,6 +232,19 @@ class Model_River extends ORM {
 	
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+			
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets']);
+			
+    		// Populate links array			
+    		Model_Droplet::populate_links($droplets['droplets']);			
+    		
+    		// Populate places array			
+    		Model_Droplet::populate_places($droplets['droplets']);    		
+			
 		}
 
 		return $droplets;
@@ -258,6 +259,12 @@ class Model_River extends ORM {
 	 */
 	public static function get_droplets_since_id($river_id, $since_id)
 	{
+		$droplets = array(
+			'total' => 0,
+			'droplets' => array()
+			);
+	    
+	    
 		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 		    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
 		    ->from('droplets')
@@ -272,34 +279,23 @@ class Model_River extends ORM {
 		    ->limit(self::DROPLETS_PER_PAGE)
 		    ->offset(0);
 		
-		return $query->execute()->as_array();
+		$droplets['droplets'] = $query->execute()->as_array();
+		
+		// Populate buckets array			
+		Model_Droplet::populate_buckets($droplets['droplets']);
+
+		// Populate tags array			
+		Model_Droplet::populate_tags($droplets['droplets']);
+		
+		// Populate links array			
+		Model_Droplet::populate_links($droplets['droplets']);
+
+		// Populate places array			
+		Model_Droplet::populate_places($droplets['droplets']);
+				
+		return $droplets;
 	}
 	
-	/**
-	 * Gets droplets whose database id is below the specified maximum
-	 *
-	 * @param int $river_id Database ID of the river
-	 * @param int $max_id Upper limit of the droplet id
-	 * @return array
-	 */
-	public static function get_droplets_before_id($river_id, $max_id)
-	{
-		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
-		    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
-		    ->from('droplets')
-		    ->join('rivers_droplets', 'INNER')
-		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-		    ->join('identities', 'INNER')
-		    ->on('droplets.identity_id', '=', 'identities.id')
-		    ->where('droplets.droplet_processed', '=', 1)
-		    ->where('rivers_droplets.river_id', '=', $river_id)
-		    ->where('droplets.id', '<', $max_id)
-		    ->order_by('droplets.id', 'DESC')
-		    ->limit(self::DROPLETS_PER_PAGE)
-		    ->offset(0);
-		
-		return $query->execute()->as_array();
-	}
 }
 
 ?>

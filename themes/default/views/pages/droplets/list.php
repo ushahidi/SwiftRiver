@@ -1,111 +1,129 @@
 <div id="droplet-list" class="trend-container cf">
 </div>
 
-<script type="text/template" id="droplet-list-item">
-	<div class="summary cf">
-		<section class="source <%= channel %>">
-			<a><img src="<%= identity_avatar %>"/></a>
-			<div class="actions">
-				<span class="type"></span>
-				<p class="button-change score"><a onclick=""><span>0</span></a></p>
-				<div class="clear"></div>
-			</div>
-		</section>
-		<div class="content">
-			<hgroup>
-				<p class="date"><%= droplet_date_pub %></p>
-				<h1><%= identity_name %></h1>
-			</hgroup>
-			<div class="body">
-				<p><%= droplet_title %></p>
-			</div>
-		</div>
-		
-		<section class="actions two_buttons">
-			<p class="button-view"><a class="detail-view"><span class="icon"></span></a></p>
-			<div class="button bucket">
-				<p class="button-change checkbox-options"><a class="bucket-view"><span class="icon"></span></a></p>
-				<div class="clear"></div>
-				<div class="dropdown">
-					<div class="container buckets-list">
-						<h3>Add to Bucket</h3>
-						<ul></ul>
-					</div>
-					<div class="container">
-						<p class="create-new"><a class="plus" onclick=""><?php echo __("Create new bucket"); ?></a></p>
-					</div>
-				</div>
-			</div>
-		</section>
-	</div>
+<script type="text/template" id="droplet-template">
+    <div class="summary cf">
+    	<section class="source twitter">
+    		<a><img src="<%= identity_avatar %>" /></a>
+    		<div class="actions">
+    			<span class="type"></span>
+    			<p class="button-change score"><a onclick=""><span>0</span></a><p>
+    			<div class="clear"></div>
+    			<ul class="dropdown left">
+    				<li class="confirm"><a onclick="">This is useful</a></li>
+    				<li class="not_useful"><a onclick="">This is not useful</a></li>
+    			</ul>
+    		</div>
+    	</section>
+    	<section class="content">
+    		<hgroup>
+    			<p class="date"><%= droplet_date_pub %></p>
+    			<h1><%= identity_name %></h1>
+    		</hgroup>
+    		<div class="body">
+    			<p><%= droplet_title %></p>
+    		</div>
+    	</section>
+    	<section class="actions two_buttons">
+    		<p class="button-view"><a class="detail-view"><span class="icon"></span></a></p>
+    		<div class="button bucket">
+    			<p class="button-change checkbox-options"><a class="bucket-view"><span class="icon"></span></a></p>
+    			<div class="clear"></div>
+    			<div class="dropdown">
+    			    <div class="container buckets-list">
+                    <h3>Add to Bucket</h3>
+                    <ul></ul>
+                    </div>
+                    <div class="container">
+                    	<p class="create-new">
+                    	    <a class="plus"><?php echo __("Create new bucket"); ?></a>
+                    	    <div class="create-name">
+                        		<input type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
+                        		<div class="buttons">
+                        			<button class="save"><?php echo __("Save"); ?></button>
+                        			<button class="cancel"><?php echo __("Cancel"); ?></button>
+                        		</div>
+                        	</div>                        	
+                    	</p>
+                    </div>
+    			</div>
+    		</div>
+    	</section>
+    </div>
+    <div class="drawer">
+        <div class="detail">
 
-	<div class="drawer" id="detail-section-<%= id %>">
-		<div class="detail">
-			<div class="arrow top"><span></span></div>
-			<div class="canyon cf">
-				<section class="meta">
-					<div class="item cf">
-						<h2><?php echo __("Tags"); ?></h2>
-						<ul class="tags cf" id="droplet-tags-<%= id %>"></ul>
-					</div>
-	
-					<div class="item cf">
-						<h2><?php echo __("Locations"); ?></h2>
-						<ul class="tags cf" id="droplet-locations-<%= id %>"></ul>
-					</div>
-					<div class="item cf">
-						<h2><?php echo __("Links"); ?></h2>
-						<p class="edit" id="droplet-links-<%= id %>"></p>
-					</div>
-					<div class="item cf">
-						<p class="button-change">
-							<a><?php echo __("Add Attachment"); ?></a>
-						</p>
-					</div>
-				</section>
-	
-				<div class="content"></div>
-			</div>
-			<div class="arrow bottom"><a class="close" onclick=""><?php echo __("Hide Detail"); ?></a></div>
-		</div>
-	</div>
+    <div class="arrow top"><span></span></div>
+    <div class="canyon cf">
+    	<section class="meta">
+    		<div class="item actions cf">
+    			<p class="button-delete cf"><a>Delete droplet</a></p>
+    			<ul class="dropdown left">
+    				<p>Are you sure you want to delete this droplet?</p>
+
+    				<li class="confirm"><a onclick="">Yep.</a></li>
+    				<li class="cancel"><a onclick="">No, nevermind.</a></li>
+    			</ul>
+    		</div>
+
+    		<div class="item cf">
+    			<h2>Tags</h2>
+    			<ul class="tags cf">
+    			</ul>
+    			<p class="button-change"><a>Add tag</a></p>
+
+    		</div>
+
+    		<div class="item cf locations">
+    			<h2>Location</h2>
+    		</div>
+
+    		<div class="item cf links">
+    			<h2>Links</h2>
+
+    		</div>
+
+    		<div class="item cf">
+    			<p class="button-change"><a>Add attachment</a></p>
+    		</div>																					
+    	</section>
+
+    	<div class="content">
+    		<article class="fullstory">
+
+    			<hgroup>
+    				<h2><?php echo __('Full story'); ?></h2>
+    				<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><%= droplet_title %></span></h1>
+    			</hgroup>
+    			<div class="edit">
+    			<span class="edit_trigger" title="textarea" onclick="">
+    			<%= droplet_content %>
+    			</span>
+    			</div>
+    		</article>
+    	</div>
+    </div>
+    <div class="arrow bottom"><a class="close"><?php echo __('Hide detail'); ?></a></div>
+
+        </div>
+    </div>
+    <div class="clear"></div>
 </script>
 
-
-<script type="text/template" id="droplet-details">
-	<hgroup>
-		<h2><?php echo __("Full Story"); ?></h2>
-		<h1 class="edit"><span class="edit-trigger"><%= droplet_title %></span></h1>
-	</hgroup>
-	<div class="edit">
-		<span class="edit-trigger"><%= droplet_content %></span>
-	</div>
+<script type="text/template" id="bucket-template">
+	<a class="<%= _.find(droplet_buckets, function(droplet_bucket) { return droplet_bucket['id'] == id }) ? 'selected' : '' %>"><span class="input"></span><%= bucket_name %></a>
 </script>
 
-<script type="text/template" id="droplet-tag-item">
-	<a href="#"><%= tag %></a>
+<script type="text/template" id="tag-template">
+	<a><%= tag %></a>
 </script>
 
-<script type="text/template" id="droplet-place-item">
-	<a href="#"><%= place_name %></a>
+<script type="text/template" id="link-template">
+	<span class="edit_trigger" title="text" onclick=""><%= link_full %></span>
 </script>
 
-<script type="text/template" id="droplet-link-item">
-	<%= link_full %>
-</script>
-
-<script type="text/template" id="buckets-list-item">
-	<a><span class="input"></span><%= bucket_name %></a>
-</script>
-
-<script type="text/template" id="create-inline-bucket">
-	<span class="create-name">
-		<input type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
-		<div class="buttons">
-			<button class="save"><?php echo __("Save"); ?></button>
-			<button class="cancel"><?php echo __("Cancel"); ?></button>
-		</div>
-	</span>
+<script type="text/template" id="place-template">
+	<span class="edit_trigger" title="text" onclick=""><%= place_name %></span>
 </script>
 
 <?php echo $droplet_js; ?>

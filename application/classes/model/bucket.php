@@ -83,7 +83,7 @@ class Model_Bucket extends ORM {
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($id = NULL, $page = NULL)
+	public static function get_droplets($id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -103,6 +103,7 @@ class Model_Bucket extends ORM {
 			    ->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->where('droplets.droplet_processed', '=', 1)
+				->where('droplets.id', '<', $max_id)
 				->order_by('droplets.id', 'DESC');
 				
 			// Order & Pagination offset
@@ -115,10 +116,91 @@ class Model_Bucket extends ORM {
 
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+			
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets']);
+			
+    		// Populate links array			
+    		Model_Droplet::populate_links($droplets['droplets']);			
+    		
+    		// Populate places array			
+    		Model_Droplet::populate_places($droplets['droplets']);    		
+			
+			
 			$droplets['total'] = count($droplets['droplets']);
 		}
 
 		return $droplets;
+	}
+
+	/**
+	 * Get the droplets newer than the specified id
+	 *
+	 * @param int $id ID of the Bucket
+	 * @return array $droplets Total and Array of Droplets
+	 */
+	public static function get_droplets_since_id($id, $since_id)
+	{
+		$droplets = array(
+			'total' => 0,
+			'droplets' => array()
+			);
+		
+		if ($id)
+		{
+			// Build Buckets Query
+			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			                    'droplet_title', 'droplet_content', 
+			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+				->from('droplets')
+				->join('buckets_droplets', 'INNER')
+				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+				->join('identities')
+			    ->on('droplets.identity_id', '=', 'identities.id')				
+				->where('buckets_droplets.bucket_id', '=', $id)
+				->where('droplets.droplet_processed', '=', 1)
+				->where('droplets.id', '>', $since_id)
+				->order_by('droplets.id', 'DESC');
+				
+			// Get our droplets as an Array		
+			$droplets['droplets'] = $query->execute()->as_array();
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+			
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets']);
+			
+    		// Populate links array			
+    		Model_Droplet::populate_links($droplets['droplets']);			
+    		
+    		// Populate places array			
+    		Model_Droplet::populate_places($droplets['droplets']);    		
+			
+			
+			$droplets['total'] = count($droplets['droplets']);
+		}
+
+		return $droplets;
+	}	
+	
+	/**
+	 * Create a bucket from an array
+	 *
+	 * @param array
+	 * @return Model_Bucket
+	 */
+	public static function create_from_array($bucket_array) 
+	{	    
+	    $bucket_orm = ORM::factory('bucket');
+	    $bucket_orm->account_id = $bucket_array['account_id'];
+	    $bucket_orm->user_id = $bucket_array['user_id'];
+	    $bucket_orm->bucket_name = $bucket_array['bucket_name'];
+	    $bucket_orm->save();
+	    return $bucket_orm;
 	}
 	
 	/**

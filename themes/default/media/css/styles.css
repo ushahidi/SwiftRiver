@@ -1639,6 +1639,9 @@ article.item .summary section.actions p.follow_user a.subscribe span.icon {
 article.item .summary section.actions p.follow_user a.subscribed span.icon {
   background-position: center bottom;
 }
+article.item .summary section.actions div.dropdown div.create-name {
+  display: none;
+}
 /* --- DASHBOARD > ITEM ---*/
 .dashboard article.item .summary section.source {
   width: 8.333333333%;

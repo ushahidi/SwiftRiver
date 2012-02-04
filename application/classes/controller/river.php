@@ -59,24 +59,22 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
+	    
 		// Get the id of the current river
 		$river_id = $this->_river->id;
 		
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $this->_river)
 			->bind('droplets', $droplets)
-			->bind('droplets_list', $droplets_list)
+			->bind('droplet_list_view', $droplet_list_view)
 			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
 			->bind('settings_url', $settings_url)
 			->bind('more_url', $more_url);
-
-		//Use page paramter or default to page 1
-		$page = $this->request->query('page') ? $this->request->query('page') : 1;
 				
 		//Get Droplets
-		$droplets_array = Model_River::get_droplets($river_id, $page);
+	    $droplets_array = Model_River::get_droplets($river_id);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -86,25 +84,20 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Total Droplets After Filtering
 		$filtered_total = count($droplets);
-		
-		//Throw a 404 if a non existent page is requested
-		if ($page > 1 AND empty($droplets))
-		{
-		    throw new HTTP_Exception_404(
-		        'The requested page :page was not found on this server.',
-		        array(':page' => $page)
-		        );
-		}
-		
+				
+		// Bootstrap the droplet list
+		$droplet_list = json_encode($droplets);
+		$bucket_list = json_encode($this->user->get_buckets());
 		$droplet_js = View::factory('common/js/droplets')
 		    ->bind('fetch_url', $fetch_url)
-			->bind('polling_enabled', $polling_enabled);
+		    ->bind('droplet_list', $droplet_list)
+		    ->bind('bucket_list', $bucket_list);
 		
 		// Turn on Ajax polling
 		$polling_enabled = "true";
 		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$river_id;
 		
-		$droplets_list = View::factory('pages/droplets/list')
+		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
@@ -118,7 +111,6 @@ class Controller_River extends Controller_Swiftriver {
 		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$river_id;
 		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$river_id;
 		$more_url = url::site().$this->account->account_path.'/river/more/'.$river_id;
-		$view_more_url = url::site().$this->account->account_path.'/river/index/'.$river_id.'?page='.($page+1);
 		
 	}
 	
@@ -130,30 +122,37 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		$droplets = array();
-		$river_id = $this->_river->id;
+
+		//Use page paramter or default to page 1
+		$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+		$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+		$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 		
-		if (isset($_GET['since_id']))
+		$droplets_array = array();
+		if ( $since_id )
 		{
-			// Get new droplets since the specified droplet id
-			$since_id = $_GET['since_id'];
-			$droplets = Model_River::get_droplets_since_id($river_id, $since_id);
-		}
-		elseif (isset($_GET['max_id']))
-		{
-			// Get droplets encounterd before the specified droplet id
-			$max_id = $_GET['max_id'];
-			$droplets = Model_River::get_droplets_before_id($river_id, $max_id);
+		    $droplets_array = Model_River::get_droplets_since_id($this->_river->id, $since_id);
 		}
 		else
 		{
-			$droplets = Model_River::get_droplets($river_id);
-			$droplets = $droplets['droplets'];
+		    $droplets_array = Model_River::get_droplets($this->_river->id, $page, $max_id);
 		}
+		
+		$droplets = $droplets_array['droplets'];
+		//Throw a 404 if a non existent page is requested
+		if ($page > 1 AND empty($droplets))
+		{
+		    throw new HTTP_Exception_404(
+		        'The requested page :page was not found on this server.',
+		        array(':page' => $page)
+		        );
+		}
+		
 		
 		echo json_encode($droplets);
 	}
-
+	
+	
 	/**
 	 * Create a New River
 	 *

@@ -2,46 +2,13 @@
 	/**
 	 * Backbone.js wiring for the droplets MVC
 	 */
-	(function() {
-		// Tracks the current page number and is used for the infinite scroll
-		var pageNo = 1;
-		var pollingEnabled = <?php echo $polling_enabled; ?>;
-		
-		// Droplet model
-		window.Droplet = Backbone.Model.extend({
-			initialize: function() {
-				var dropletId = this.get("id");
-				
-				// List of places/loations "mentioned" in the droplet
-				this.places = new DropletPlaceCollection;
-				this.places.url = "/droplet/index/"+dropletId+"?semantics=places";
-
-				// List of general tags for the droplet
-				this.tags = new DropletTagCollection;
-				this.tags.url = "/droplet/index/"+dropletId+"?semantics=tags";
-			
-				// Links for the droplet
-				this.links = new DropletLinkCollection;
-				this.links.url = "/droplet/index/"+dropletId+"?semantics=link";
-				
-				// List of buckets the droplet belongs to
-				this.buckets = new DropletBucketsCollection;
-				this.buckets.url = "/droplet/buckets/"+dropletId;
-			}
-		});
-	
+	$(function() {
 		// Models for the droplet places, tags and links 
 		window.DropletPlace = Backbone.Model.extend();
 		window.DropletTag = Backbone.Model.extend();
 		window.DropletLink = Backbone.Model.extend();
 		window.Bucket = Backbone.Model.extend();
-
-		// Droplet collection
-		window.DropletCollection = Backbone.Collection.extend({
-			model: Droplet,
-			url: "<?php echo $fetch_url; ?>"
-		});
-	
+		
 		// Collections for droplet places, tags and links
 		window.DropletPlaceCollection = Backbone.Collection.extend({
 			model: DropletPlace
@@ -52,7 +19,7 @@
 		});
 	
 		window.DropletLinkCollection = Backbone.Collection.extend({
-			model: DropletTag
+			model: DropletLink
 		});
 		
 		// Collection for the buckets a droplet a droplet belongs to
@@ -61,139 +28,151 @@
 		});
 		
 		// Collection for all the buckets accessible to the current user
-		window.BucketsCollection = Backbone.Collection.extend({
+		window.BucketList = Backbone.Collection.extend({
 			model: Bucket,
-			url: "/bucket/list_buckets"
-		});
+			url: "<?php echo url::site("/bucket/list_buckets"); ?>"
+		});		
 		
-		
-		// Get the buckets for the user - to avoid fetching them every time a
-		// droplet is rendered
-		var userBuckets = new BucketsCollection;
-		userBuckets.fetch();
+	
+		// Droplet model
+		window.Droplet = Backbone.Model.extend({
 
-		// Rendering for a list of droplets
-		window.DropletListView = Backbone.View.extend({
-		
-			el: $("#droplet-list"),
-		
-			initialize: function() {
-				this.model.bind("reset", this.render, this);
-			},
-		
-			render: function(eventName) {
-				_.each(this.model.models, function(droplet) {
-					var listItem = new DropletListItem({model: droplet}).render().el;
-					
-					if (typeof(this.options.position) != 'undefined' && this.options.position == 'top') {
-						// Add droplet to the top
-						$(listItem).fadeOut(10);
-						$(this.el).prepend(listItem);
-						$(listItem).fadeIn(600);
-					} else {
-						// Add droplet to the bottom
-						$(this.el).append(listItem);
-					}
-					
-				}, this);
-				return this;
+			setBucket: function(changeBucket) {
+			    // Is this droplet already in the bucket?
+			    change_buckets = this.get("buckets");
+			    if(_.any(change_buckets, function(bucket) { return bucket["id"] == changeBucket.get("id"); })) {
+			        // Remove the bucket from the list
+			        change_buckets = _.filter(change_buckets, function(bucket) { return bucket["id"] != changeBucket.get("id"); });
+			        this.set('buckets', change_buckets);
+			    } else {
+			        change_buckets.push({id: changeBucket.get("id"), bucket_name: changeBucket.get("bucket_name")});
+			    }
+			    this.save({buckets: change_buckets}, {wait: true});
 			}
 		});
+	
+		// Droplet & Bucket collection
+		window.DropletList = Backbone.Collection.extend({
+			model: Droplet,
+			url: "<?php echo $fetch_url; ?>"
+		});
 		
-		// Tracks the currently selected droplet list item
-		var currentListItem = null;
-		
+		window.Droplets = new DropletList;
+		window.bucketList = new BucketList()
+	
+				
 		// Rendering for a single droplet in the list view
-		window.DropletListItem = Backbone.View.extend({
+		window.DropletView = Backbone.View.extend({
 		
 			tagName: "article",
 		
 			className: "item",
 		
-			template: _.template($("#droplet-list-item").html()),
+			template: _.template($("#droplet-template").html()),
 			
 			events: {
 				// Show the droplet detail
 				"click .button-view a.detail-view": "showDetail",
+				"click div.bottom a.close": "showDetail",
 				
 				// Show the list of buckets available to the current user
-				"click .bucket a.bucket-view": "showBuckets",
+				"click .bucket a.bucket-view": "showBuckets",				
+				"click .bucket .dropdown p.create-new a": "showCreateBucket",
+				"click div.create-name button.cancel": "cancelCreateBucket",
+				"click div.create-name button.save": "saveBucket"
+			},
+						
+			initialize: function() {
+			    bucketList.on('add', this.addBucket, this); 
+			    
+				// List of general tags for the droplet
+				this.tagList = new DropletTagCollection();
+				this.tagList.on('reset', this.addTags, this);
 				
-				"click .bucket .dropdown p.create-new a": "createBucket"
+				// List of links in a droplet
+				this.linkList = new DropletLinkCollection();
+				this.linkList.on('reset', this.addLinks, this); 
+				 
+				// List of links in a droplet
+				this.placeList = new DropletPlaceCollection();
+				this.placeList.on('reset', this.addPlaces, this); 
+								
 			},
 			
 			render: function(eventName) {
 				$(this.el).attr("data-droplet-id", this.model.get("id"));
 				$(this.el).html(this.template(this.model.toJSON()));
-				
-				this.bucketMenu = this.$("section.actions div.buckets-list ul");
-				this.createBucketMenu();
+				this.tagList.reset(this.model.get('tags'));
+				this.linkList.reset(this.model.get('links'));
+				this.placeList.reset(this.model.get('places'));
 				return this;
 			},
 			
+			addTag: function(tag) {
+			    var view = new TagView({model: tag});
+			    this.$("ul.tags").append(view.render().el);
+			},
+						
+			addTags: function() {
+			    this.tagList.each(this.addTag, this);
+			},
+
+			addLink: function(link) {
+			    var view = new LinkView({model: link});
+			    this.$("div.links").append(view.render().el);
+			},
+						
+			addLinks: function() {
+			    this.linkList.each(this.addLink, this);
+			},
+
+			addPlace: function(place) {
+			    var view = new PlaceView({model: place});
+			    this.$("div.locations").append(view.render().el);
+			},
+						
+			addPlaces: function() {
+			    this.placeList.each(this.addPlace, this);
+			},
+						
+			addBucket: function() {
+			    this.createBucketMenu();			    
+			},
+			
 			// Creates the buckets dropdown menu
-			createBucketMenu: function() {
-				_.each(userBuckets.models, function(bucket) {
-					
-					bucket.set({
-						droplet_id: this.model.get("id"),
-						selected_status: ""
-					});
-					
-					this.bucketMenu.prepend(new BucketListItemView({model: bucket}).render().el);
-				}, this);
+			createBucketMenu: function() {			    
+				var dropdown = this.$(".actions .bucket div.dropdown .buckets-list ul");
+				dropdown.empty();				
+				var droplet = this.model
+				
+				// Render the buckets
+				bucketList.each(function (bucket) {
+				    // Attach the droplet's buckets' to the model
+    				// Buckets this droplet belongs to will appear selected
+                    bucket.set('droplet_buckets', droplet.get('buckets'));
+                    bucket.set('droplet_id', droplet.get('id'));
+                    
+				    var bucketView = new BucketView({model: bucket});
+				    dropdown.append(bucketView.render().el);
+				});
 			},
 		
 			// Event callback for the "view more detail" action
-			showDetail: function(event) {
-				// Toggle the state of the "view more" button
-				$(event.currentTarget).toggleClass("detail-hide");
-			
-				var dropletId = this.model.get("id");
-				var _obj = $("#detail-section-"+dropletId);
+			showDetail: function() {			    
+				var button = this.$(".button-view a.detail-view");
 			
 				// Display the droplet detail
-				if ($(event.currentTarget).hasClass("detail-hide")) {
-					_obj.slideDown(200);
-				
-					var dropletView = new DropletDetailView({model: this.model});
-					$(".content", _obj).html(dropletView.render().el);
-				
-					// Fetch and render the places
-					this.model.places.fetch();
-					var placeView = new SemanticsView({
-						el: $("#droplet-locations-"+dropletId),
-						model: this.model.places,
-						itemTagName: "li",
-						itemTemplate: "#droplet-place-item"
-					});
-					placeView.render();
-				
-					// Fetch and render the tags
-					this.model.tags.fetch();
-					var tagView = new SemanticsView({
-						el: $("#droplet-tags-"+dropletId),
-						model: this.model.tags,
-						itemTagName: "li",
-						itemTemplate: "#droplet-tag-item"
-					});
-					tagView.render();
-				
-					// Render the links
-					this.model.links.fetch();
-					var linksView = new SemanticsView({
-						el: $("#droplet-links-"+dropletId),
-						model: this.model.links,
-						itemTagName: "li",
-						itemTemplate: "#droplet-link-item"
-					});
-					linksView.render();
-				
+				if (button.hasClass("detail-hide")) {
+                    button.removeClass('detail-hide')
+                          .closest('article')
+                          .children('div.drawer')
+                          .slideUp('slow');
 				} else {
-					_obj.slideUp(50);
-				}
-			
-				return false;
+                    button.addClass('detail-hide')
+                          .closest('article')
+                          .children('div.drawer')
+                          .slideDown('slow');
+				}			
 			},
 			
 			// Event callback for the "Add to Bucket" action
@@ -203,32 +182,8 @@
 				
 				var dropdown = $("div.dropdown", parentEl.parent("div"));
 				
-				if (parentEl.hasClass("active")) {
-					
-					// Check if the bucket menu has content
-					if (this.bucketMenu.children().length == 0 && _.size(userBuckets) > 0) {
-						this.createBucketMenu();
-					}
-					
-					// Get the buckets that this droplet belongs to
-					this.model.buckets.fetch();
-					var belongsTo = this.model.buckets;
-					
-					// Give the bucket fetch time to complete
-					setTimeout(
-						function() {
-							$("li.checkbox", dropdown).each(function() {
-								bucketItem = this;
-								var bucketId = $(bucketItem).data("bucket-id")
-								var tempBucket = belongsTo.get(bucketId);
-								
-								if (typeof(tempBucket) == 'object' && tempBucket.get("id") == bucketId) {
-									$("a", bucketItem).addClass("selected");
-								}
-								
-							});
-					}, 300);
-					
+				if (parentEl.hasClass("active")) {					
+					this.createBucketMenu();
 					dropdown.show();
 				} else {
 					dropdown.hide();
@@ -237,225 +192,171 @@
 			},
 			
 			// Event callback for the "create & add to a new bucket" action
-			createBucket: function(event) {
-				var _container  = $(event.currentTarget).parent("p.create-new");
-				var _html = _container.html();
-				var t = _.template($("#create-inline-bucket").html());
-				
-				currentSelection = this;
-				
-				// Render the input field
-				_container.html(t());
-				
-				// Cancel button clicked
-				$("button.cancel", _container).click(function(e) {
-					_container.html(_html);
-					e.stopPropagation();
-				});
-				
-				// For use when saving the bucket
-				var droplet_id = this.model.get("id");
-				
-				// Save button clicked
-				$("button.save", _container).click(function(e) {
-					var _post = { bucket_name: $(":text", _container).val() };
-					
-					// Submit for saving
-					$.post("/bucket/ajax_new", _post, function(response) {
-						if (response.success) {
-							
-							// Create model for the newly created bucket
-							var _bucket = new Bucket({
-								id: response.bucket.id, 
-								bucket_name: response.bucket.bucket_name,
-								droplet_id: droplet_id
-							});
-							
-							// Render the bucket
-							currentSelection.bucketMenu.prepend(
-								new BucketListItemView({model: _bucket}).render().el);
-							
-							// Restore "create bucket" link
-							_container.html(_html);
-						}
-					}, "json");
-					
-					// Halt further event processing
-					e.stopPropagation();
-				});
-				
-				return false;
+			showCreateBucket: function(e) {
+			    this.$("div.dropdown div.create-name").fadeIn();
+			    this.$("div.dropdown p.create-new a.plus").fadeOut();
+			},
+			
+			// When cancel buttons is clicked in the add bucket drop down
+			cancelCreateBucket: function (e) {
+			    this.$("div.dropdown div.create-name").fadeOut();
+			    this.$("div.dropdown p.create-new a.plus").fadeIn();
+			    e.stopPropagation();
+			},
+			
+			// When save button is clicked in the add bucket drop down
+			saveBucket: function(e) {
+                if(this.$(":text").val()) {
+                    bucketList.create({bucket_name: this.$(":text").val()}, {wait: true});
+                    this.$(":text").val('');
+                }                    
+            	this.$("div.dropdown div.create-name").fadeOut();
+            	this.$("div.dropdown p.create-new a.plus").fadeIn();
+            	e.stopPropagation();
 			}
 			
 		});
-
-
-		// View for the droplet detail
-		window.DropletDetailView = Backbone.View.extend({
-
-			tagName: "article",
 		
-			className: "fullstory",
+		// The droplest list
+		window.DropletListView = Backbone.View.extend({
 		
-			template: _.template($("#droplet-details").html()),
-		
-			render: function(eventName) {
-				$(this.el).html(this.template(this.model.toJSON()));
-				return this;
-			}
-		});
-	
-		// 
-		// Views for the tags, places and link 
-		// 
-		window.SemanticsView = Backbone.View.extend({
-		
+			el: $("#droplet-list"),
+					
 			initialize: function() {
-				this.model.bind("reset", this.render, this);
+				Droplets.on('add',   this.addDroplet, this);
+                Droplets.on('reset', this.addDroplets, this); 
 			},
-		
-			render: function(eventName) {
-				$(this.el).html("");
-				_.each(this.model.models, function(tag) {
-					$(this.el).append(new SemanticItemView({
-						model: tag, 
-						itemTemplate: this.options.itemTemplate, 
-						tagName: this.options.itemTagName
-					}).render().el);
-				}, this);
-				return this;
-			}
+			
+			addDroplet: function(droplet) {
+			    var view = new DropletView({model: droplet});
+			    
+			    // Recent items populate at the top othewise append
+			    if(maxId && droplet.get('id') > maxId) {
+			        this.$el.prepend(view.render().el);
+			    } else {
+			        this.$el.append(view.render().el);			        
+			    }			    
+			},
+			
+			addDroplets: function() {
+			    Droplets.each(this.addDroplet, this);
+			},		
 		});
 		
-		// View for a single semantic item/tag
-		window.SemanticItemView = Backbone.View.extend({
-		
-			render: function(eventName) {
-				this.template = _.template($(this.options.itemTemplate).html());
+		// View for an individual tag
+		window.TagView = Backbone.View.extend({
+			
+			tagName: "li",
+									
+			template: _.template($("#tag-template").html()),
+			
+			render: function() {
 				$(this.el).html(this.template(this.model.toJSON()));
 				return this;
-			}
+			},
+			
 		});
+
+		// View for an individual link
+		window.LinkView = Backbone.View.extend({
+			
+			tagName: "p",
+									
+			template: _.template($("#link-template").html()),
+			
+			render: function() {
+				$(this.el).html(this.template(this.model.toJSON()));
+				return this;
+			},
+			
+		});
+
+		// View for an individual place
+		window.PlaceView = Backbone.View.extend({
+			
+			tagName: "p",
+									
+			template: _.template($("#place-template").html()),
+			
+			render: function() {
+				$(this.el).html(this.template(this.model.toJSON()));
+				return this;
+			},
+			
+		});
+			
 		
-		// View for individual bucket item
-		window.BucketListItemView = Backbone.View.extend({
+		// View for individual bucket item in a droplet list dropdown
+		window.BucketView = Backbone.View.extend({
 			
 			tagName: "li",
 			
 			className: "checkbox",
 			
-			template: _.template($("#buckets-list-item").html()),
+			template: _.template($("#bucket-template").html()),
 			
 			events: {
-				"click a": "toggleDropletMembership"
+				"click li.checkbox a": "toggleDropletMembership"
 			},
-			
+						
 			render: function() {
-				$(this.el).attr("data-bucket-id", this.model.get("id"));
 				$(this.el).html(this.template(this.model.toJSON()));
 				return this;
 			},
 			
 			// Toggles the bucket membership of a droplet
 			toggleDropletMembership: function(e) {
-				var _bucket = $(e.currentTarget);
-				_bucket.toggleClass("selected");
-				
-				// Data to be posted
-				var _data = {
-					bucket_id: this.model.get("id"),
-					droplet_id: this.model.get("droplet_id")
-				};
-				
-				if (_bucket.hasClass("selected")) {
-					
-					// Set the action to be performed on the server
-					_data["action"] = "add";
-					
-					// Add the droplet to the bucket
-					$.post("/bucket/ajax_droplet", _data, function(response) {
-						if (!response.success) {
-							// Failed to add to bucket
-							_bucket.removeClass("selected");
-						}
-					}, "json");
-					
-				} else {
-					_data["action"] = "remove";
-					
-					// Remove the droplet from the bucket
-					$.post("/bucket/ajax_droplet", _data, function(response) {
-						if (!response.success) {
-							// Failed to remove from bucket
-							_bucket.addClass("selected");
-						}
-					}, "json");
-				}
-				
-				// Halt further event processing
-				e.stopPropagation();
-				return false;
-			}
-		})
-		
-		// ------------------------------------------------------------------------
-	
-
-		var AppRouter = Backbone.Router.extend({
-			routes: {
-				"" : "list"
-			},
-	
-			list: function() {
-				this.dropletList = new DropletCollection();
-				this.dropletListView = new DropletListView({model: this.dropletList});
-				this.dropletList.fetch();
+			    droplet = Droplets.get(this.model.get('droplet_id'));
+			    droplet.setBucket(this.model);
+			    this.$("li.checkbox a").toggleClass("selected");
 			}
 		});
-
-		appRouter = new AppRouter();
-		Backbone.history.start();
 		
-		if (pollingEnabled) {
-			// Updates the droplet view with new content
-			var updateDropletView = function() {
-				var sinceId = $("#droplet-list article.item:first").data("droplet-id");
-				var droplets = new DropletCollection();
-				if (sinceId != null && sinceId != 'undefined') {
-					droplets.url = droplets.url + "?since_id=" + sinceId;
-				}
-			
-				listView = new DropletListView({model: droplets, position: 'top'});
-				droplets.fetch();
-				listView.render();
-			}
-		
-			// Update the droplet view every 30 seconds
-			setInterval(updateDropletView, 30000);
-		}
-		
-	
-		// Load content while scrolling
+		// Load content while scrolling - Infinite Scrolling
+		var pageNo = 1;
+		var maxId = 0;
 		$(window).scroll(function() {
 			if ($(window).scrollTop() == ($(document).height() - $(window).height())) {
-			
-				var droplets = new DropletCollection();
-				
-				if (pollingEnabled) {
-					var maxId = $("#droplet-list article.item:last").data("droplet-id");
-					droplets.url = droplets.url + "?max_id=" + maxId;
-				} else {
-					// Update the droplet collection url with the new page no
-					pageNo += 1;
-					droplets.url = droplets.url + "?page=" + pageNo;
-				}
-			
+				// Next page
+				pageNo += 1;
+							
 				// Fetch content and update the view
-				listView = new DropletListView({model: droplets});
-				droplets.fetch();
-				listView.render();
-			
+				Droplets.fetch({data: {page: pageNo, max_id: maxId}, add: true});
 			}
 		});
-	})();
+		
+		// Poll for new droplets
+		var sinceId = 0
+		function updateDropletView() {
+		    
+		    // Get the max id we have
+		    Droplets.each(function(droplet) { 
+		        if (parseInt(droplet.get("id")) > sinceId) { 
+		            sinceId = parseInt(droplet.get("id"));
+		        }
+		    });
+		    
+		    if(sinceId) {		        
+		        Droplets.fetch({data: {since_id: sinceId}, add: true});
+		    }
+		}
+		// Update the droplet view every 30 seconds
+        setInterval(updateDropletView, 30000);
+				
+		// Bootstrap the droplet list
+		window.dropletList = new DropletListView;
+		Droplets.reset(<?php echo $droplet_list ?>);		
+		bucketList.reset(<?php echo $bucket_list ?>);
+		
+		// Pagination reference point
+		// set the max id we have the first time only
+		if ( ! maxId) {
+		    Droplets.each(function(droplet) { 
+		        if (parseInt(droplet.get("id")) > maxId) { 
+		            maxId = parseInt(droplet.get("id"))
+		        }
+		    });
+		}
+				
+	});
 </script>

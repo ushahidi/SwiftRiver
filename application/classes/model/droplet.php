@@ -281,6 +281,192 @@ class Model_Droplet extends ORM
 		// Return items
 		return $droplets;
 	}
+	
+	/**
+	 * Gets a droplet's buckets as an array
+	 *
+	 * @return array
+	 */
+	public function get_buckets()
+	{
+	    $buckets = array();
+	    foreach ($this->buckets->find_all() as $bucket)
+	    {
+	        $buckets[] = array('id' => $bucket->id, 'bucket_name' => $bucket->bucket_name);
+	    }
+	    
+	    return $buckets;
+    }
 
+	/**
+	 * Gets a droplet's tags as an array
+	 *
+	 * @return array
+	 */
+	public function get_tags()
+	{
+	    $tags = array();
+	    	    
+	    foreach ($this->tags->find_all() as $tag)
+	    {
+	        $tags[] = array('id' => $tag->id, 'tag' => $tag->tag);
+	    }
+	    
+	    return $tags;
+    }
+
+	/**
+	 * Gets a droplet's links as an array
+	 *
+	 * @return array
+	 */
+	public function get_links()
+	{
+	    $links = array();
+	    	    
+	    foreach ($this->links->find_all() as $link)
+	    {
+	        $links[] = array('id' => $link->id, 'link_full' => $link->link_full);
+	    }
+	    
+	    return $links;
+    }
+
+	/**
+	 * Gets a droplet's places as an array
+	 *
+	 * @return array
+	 */
+	public function get_places()
+	{
+	    $places = array();
+	    	    
+	    foreach ($this->places->find_all() as $place)
+	    {
+	        $places[] = array('id' => $place->id, 'place_name' => $place->place_name);
+	    }
+	    
+	    return $places;
+    }
+
+	/**
+	 * Given an array of droplets, populates a buckets array element
+	 *
+	 * @param array $droplets
+	*/
+	public static function populate_buckets(& $droplets)
+	{
+		foreach($droplets as & $droplet) {
+		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
+		    
+		    $droplet['buckets'] = $droplet_orm->get_buckets();
+		}	    
+	}
+	
+	/**
+	 * Given an array of droplets, populates a tags array element
+	 *
+	 * @param array $droplets
+	*/
+	public static function populate_tags(& $droplets)
+	{
+		foreach($droplets as & $droplet) {
+		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
+		    
+		    $droplet['tags'] = $droplet_orm->get_tags();
+		}	    
+	}
+
+	/**
+	 * Given an array of droplets, populates a links array element
+	 *
+	 * @param array $droplets
+	*/
+	public static function populate_links(& $droplets)
+	{
+		foreach($droplets as & $droplet) {
+		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
+		    
+		    $droplet['links'] = $droplet_orm->get_links();
+		}	    
+	}
+
+	/**
+	 * Given an array of droplets, populates a places array element
+	 *
+	 * @param array $droplets
+	*/
+	public static function populate_places(& $droplets)
+	{
+		foreach($droplets as & $droplet) {
+		    $droplet_orm = ORM::factory('droplet', $droplet['id']);
+		    
+		    $droplet['places'] = $droplet_orm->get_places();
+		}	    
+	}
+    
+	/**
+	 * Updates a droplet from an array. 
+	 *
+	 * @param array
+	 * @return void
+	 */
+	public function update_from_array($droplet_array) 
+	{	    
+	    $this->__update_buckets($droplet_array);
+	}
+
+	/**
+	 * Updates a droplet from an array. 
+	 *
+	 * @param array
+	 * @return void
+	 */	
+	private function __update_buckets($droplet_array)
+	{
+	    
+	    // Function to xxtract the bucket ids from the array
+	    function id($bucket)
+	    {
+	        return $bucket['id'];
+	    }
+	    
+	    // Determine the delta
+	    $current_buckets = array_map("id", $this->get_buckets());
+	    $change_buckets = array_map("id", $droplet_array['buckets']);
+	    
+	    $new_buckets = array_diff($change_buckets, $current_buckets);
+	    $delete_buckets = array_diff($current_buckets, $change_buckets);
+	    
+	    // Add droplet to the new buckets
+	    foreach ($new_buckets as $new_bucket_id)
+	    {
+	        $bucket_orm = ORM::factory('bucket', $new_bucket_id);
+	        
+	        if ($bucket_orm->loaded())
+	        {
+	            $this->add('buckets', $bucket_orm);	            
+	        }	        
+	    }
+	    
+	    // Remove droplet for the delete buckets
+	    foreach ($delete_buckets as $delete_bucket_id)
+	    {
+	        $bucket_orm = ORM::factory('bucket', $delete_bucket_id);
+	        
+	        if($this->has('buckets', $bucket_orm))
+	        {
+	            $this->remove('buckets', $bucket_orm);	            
+	        }	        
+	    }
+
+	    print_r($current_buckets);
+	    print_r($change_buckets);	    	    
+	    
+	    print_r($new_buckets);
+	    print_r($delete_buckets);	    	    
+	    
+	}
+    
 }
 ?>
