@@ -3,15 +3,15 @@
 
 <script type="text/template" id="droplet-template">
     <div class="summary cf">
-    	<section class="source twitter">
+    	<section class="source <%= channel %>">
     		<a><img src="<%= identity_avatar %>" /></a>
     		<div class="actions">
     			<span class="type"></span>
     			<p class="button-change score"><a onclick=""><span>0</span></a><p>
     			<div class="clear"></div>
     			<ul class="dropdown left">
-    				<li class="confirm"><a onclick="">This is useful</a></li>
-    				<li class="not_useful"><a onclick="">This is not useful</a></li>
+    				<li class="confirm"><a onclick=""><?php echo  __("This is useful"); ?></a></li>
+    				<li class="not_useful"><a onclick=""><?php echo __("This is not useful"); ?></a></li>
     			</ul>
     		</div>
     	</section>
@@ -31,7 +31,7 @@
     			<div class="clear"></div>
     			<div class="dropdown">
     			    <div class="container buckets-list">
-                    <h3>Add to Bucket</h3>
+                    <h3><?php echo __("Add to Bucket"); ?></h3>
                     <ul></ul>
                     </div>
                     <div class="container">
@@ -57,34 +57,33 @@
     <div class="canyon cf">
     	<section class="meta">
     		<div class="item actions cf">
-    			<p class="button-delete cf"><a>Delete droplet</a></p>
+    			<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
     			<ul class="dropdown left">
-    				<p>Are you sure you want to delete this droplet?</p>
+    				<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
 
-    				<li class="confirm"><a onclick="">Yep.</a></li>
-    				<li class="cancel"><a onclick="">No, nevermind.</a></li>
+    				<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
+    				<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
     			</ul>
     		</div>
 
     		<div class="item cf">
     			<h2>Tags</h2>
-    			<ul class="tags cf">
-    			</ul>
-    			<p class="button-change"><a>Add tag</a></p>
+    			<ul class="tags cf"></ul>
+    			<p class="button-change"><a><?php echo __("Add tag") ?></a></p>
 
     		</div>
 
     		<div class="item cf locations">
-    			<h2>Location</h2>
+    			<h2><?php echo __("Location"); ?></h2>
     		</div>
 
     		<div class="item cf links">
-    			<h2>Links</h2>
+    			<h2><?php echo __("Links"); ?></h2>
 
     		</div>
 
     		<div class="item cf">
-    			<p class="button-change"><a>Add attachment</a></p>
+    			<p class="button-change"><a><?php echo __("Add attachment"); ?></a></p>
     		</div>																					
     	</section>
 
@@ -96,9 +95,9 @@
     				<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><%= droplet_title %></span></h1>
     			</hgroup>
     			<div class="edit">
-    			<span class="edit_trigger" title="textarea" onclick="">
-    			<%= droplet_content %>
-    			</span>
+	    			<span class="edit_trigger" title="textarea" onclick="">
+		    			<%= droplet_content %>
+	    			</span>
     			</div>
     		</article>
     	</div>
@@ -125,5 +124,28 @@
 <script type="text/template" id="place-template">
 	<span class="edit_trigger" title="text" onclick=""><%= place_name %></span>
 </script>
+
+<!-- related discussion -->
+<script type="text/template" id="discussion-template">
+	<hgroup>
+		<h2><?php echo __("Related Discussion"); ?></h2>
+	</hgroup>
+</script>
+
+<script type="text/template" id="discussion-item-template">
+	<div class="summary">
+		<section class="source <%= channel %>">
+			<a><img src="<%= identity_avatar %>"></a>
+		</section>
+		<section class="content">
+			<div class="title">
+				<p class="date"><%= droplet_date_pub %></p>
+				<h1><%= identity_name %></h1>
+			</div>
+			<div class="body"><p><%= droplet_content %></p></body>
+		</section>
+	</div>
+</script>
+<!-- /related discussion -->
 
 <?php echo $droplet_js; ?>

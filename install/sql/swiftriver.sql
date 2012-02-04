@@ -463,6 +463,7 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `buckets_droplets` (
   `bucket_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
+  `droplet_date_added` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Date when the droplet was added to the bucket',
   INDEX `bucket_id_idx` (`bucket_id` ASC) ,
   INDEX `droplet_id_idx` (`droplet_id` ASC) )
 ENGINE = InnoDB

@@ -17,7 +17,7 @@
 					<li class="view-panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
 				<ul class="actions">
-					<li class="view-panel"><a href="<?php echo $settings; ?>" class="settings"><span class="icon"></span><?php echo __('Bucket Settings'); ?></a></li>
+					<li class="view-panel"><a href="<?php echo $settings_url; ?>" class="settings"><span class="icon"></span><?php echo __('Bucket Settings'); ?></a></li>
 				</ul>
 			</nav>
 			<div class="drawer"></div>

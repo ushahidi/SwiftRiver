@@ -57,7 +57,13 @@ class Controller_Swiftriver extends Controller_Template {
 	/**
 	 * Are we using RiverID?
 	 */
-	 public $riverid_auth = FALSE;
+	public $riverid_auth = FALSE;
+	
+	/**
+	 * Base URL for constructing XHR endpoints
+	 * @var string
+	 */
+	protected $base_url;
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -100,6 +106,7 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Execute parent::before first
 		parent::before();
+		
 		// Open session
 		$this->session = Session::instance();
 		
@@ -135,6 +142,7 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// Logged In User
 		$this->user = Auth::instance()->get_user();
+		
 		// Is this user an admin?
 		if ($this->user->has('roles',ORM::factory('role',array('name'=>'admin'))))
 		{
@@ -159,10 +167,14 @@ class Controller_Swiftriver extends Controller_Template {
 		if ( ! $this->account->loaded())
 		{
 			// Redirect?
-		}	
+		}
+		
+		
+		// Build the base URL
+		$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
 		
 		// Load Header & Footer & variables
-		if($this->auto_render) 
+		if ($this->auto_render) 
 		{
 		    $this->template->header = View::factory('template/header');
 		    $this->template->header->js = ''; // Dynamic Javascript

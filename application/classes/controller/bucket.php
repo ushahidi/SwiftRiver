@@ -22,21 +22,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 	protected $bucket;
 	
 	/**
-	 * Base URL for XHR endpoints
-	 * @var string
-	 */
-	private $base_url;
-	
-	
-	/**
 	 * @return	void
 	 */
 	public function before()
 	{
 		// Execute parent::before first
 		parent::before();
-		
-		$this->base_url = URL::site().$this->account->account_path.'/bucket/';
 		
 		// First we need to make sure this bucket exists
 		$bucket_id = intval($this->request->param('id', 0));
@@ -55,30 +46,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
-		
-		// First we need to make sure this bucket exists
-		$id = (int) $this->request->param('id', 0);
-		
-		$bucket = ORM::factory('bucket')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->account->id)
-			->find();
-		
-		if ( ! $bucket->loaded())
-		{
-			// It doesn't -- redirect back to dashboard
-			$this->request->redirect('dashboard');
-		}
-		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
 			->bind('droplets_list', $droplets_list)
-			->bind('settings', $settings)
+			->bind('settings_url', $settings_url)
 			->bind('more', $more);
 			
 		
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($bucket->id);
+		$droplets_array = Model_Bucket::get_droplets($this->bucket->id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -94,7 +70,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 				->bind('droplet_list', $droplet_list)
     		    ->bind('bucket_list', $bucket_list);
 		
-		$fetch_url = url::site().$this->account->account_path.'/bucket/droplets/'.$id;
+		$fetch_url = $this->base_url.'/droplets/'.$this->bucket->id;
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
@@ -106,8 +82,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->find_all();
 
 		// Links to ajax rendered menus
-		$settings = url::site().$this->account->account_path.'/bucket/settings/'.$id;
-		$more = url::site().$this->account->account_path.'/bucket/more/';
+		$settings = $this->base_url.'/settings/'.$this->bucket->id;
+		$more = $this->base_url.'/more/';
 	}
 	
 	/**
@@ -149,9 +125,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		
 		// URLs endpoints for XHR actions
-		$collaborator_fetch_url = $this->base_url.'collaborators/'.$this->bucket->id;
-		$save_settings_url = $this->base_url.'save_settings/'.$this->bucket->id;
-		$delete_bucket_url = $this->base_url.'ajax_delete/'.$this->bucket->id;
+		$collaborator_fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
+		$save_settings_url = $this->base_url.'/save_settings/'.$this->bucket->id;
+		$delete_bucket_url = $this->base_url.'/ajax_delete/'.$this->bucket->id;
 		
 		return $settings_js;
 	}
@@ -259,50 +235,54 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
-		// check, has the form been submitted
-		if ($_REQUEST AND
-			isset($_REQUEST['bucket_id'], $_REQUEST['droplet_id'], $_REQUEST['action']) AND
-			! empty($_REQUEST['bucket_id']) AND 
-			! empty($_REQUEST['droplet_id']) AND 
-			in_array($_REQUEST['action'], array('add', 'remove')) )
+		$response = array("success" => FALSE);
+		
+		// Check for HTTP POST
+		if ($_POST)
 		{
-			// First make sure this account owns this bucket
-			$bucket = ORM::factory('bucket')
-				->where('id', '=', $_REQUEST['bucket_id'])
-				->where('account_id', '=', $this->account->id)
-				->find();
+			// 	Fetch the HTTP POST data
+			$bucket_id = isset($_POST['bucket_id']) ? $_POST['bucket_id'] : 0;
+			$droplet_id = isset($_POST['droplet_id']) ? $_POST['droplet_id'] : 0;
+			$action = isset($_POST['action'])? $_POST['action'] : "";
+			
+			// If no bucket is loaded or bucket_id is non-zero
+			if ($bucket_id != 0 OR ! $this->bucket->loaded())
+			{
+				$this->bucket = ORM::factory('bucket')
+					->where('id', '=', $bucket_id)
+					->where('account_id', '=', $this->account->id)
+					->find();
+			}
 
 			// Get Droplet
-			$droplet = ORM::factory('droplet', $_REQUEST['droplet_id']);
+			$droplet = ORM::factory('droplet', $droplet_id);
 
-			if ($bucket->loaded() AND $droplet->loaded())
+			// Verify that both the bucket and droplet exist
+			if ($this->bucket->loaded() AND $droplet->loaded())
 			{
-				switch ($_REQUEST['action'])
+				switch ($action)
 				{
 					// Add droplet to bucket
 					case 'add':
-						if ( ! $bucket->has('droplets', $droplet))
+						if ( ! $this->bucket->has('droplets', $droplet))
 						{
-							$bucket->add('droplets', $droplet);
+							$this->bucket->add('droplets', $droplet);
 						}
+						
+						$response["success"] = TRUE;
+						
 						break;
-					// Remove droplet
-					default:
-						$bucket->remove('droplets', $droplet);
+						
+					case 'remove':
+						$this->bucket->remove('droplets', $droplet);
+						$response["success"] = TRUE;
 						break;
 				}
-
-				echo json_encode(array("success" => TRUE));
-			}
-			else
-			{
-				echo json_encode(array("success"=> FALSE));
 			}
 		}
-		else
-		{
-			echo json_encode(array("success" => FALSE));
-		}
+		
+		// Output response
+		echo json_encode($response);
 	}	
 
 	/**

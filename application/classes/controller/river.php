@@ -95,7 +95,8 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Turn on Ajax polling
 		$polling_enabled = "true";
-		$fetch_url = url::site().$this->account->account_path.'/river/droplets/'.$river_id;
+		$fetch_url = $this->base_url.'/droplets/'.$river_id;
+		$droplet_action_url = $this->base_url.'/ajax_droplet/'.$river_id;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js);
@@ -108,10 +109,9 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// URL's to pages that are ajax rendered on demand
-		$filters_url = url::site().$this->account->account_path.'/river/filters/'.$river_id;
-		$settings_url = url::site().$this->account->account_path.'/river/settings/'.$river_id;
-		$more_url = url::site().$this->account->account_path.'/river/more/'.$river_id;
-		
+		$filters_url = $this->base_url.'/filters/'.$river_id;
+		$settings_url = $this->base_url.'/river/settings/'.$river_id;
+		$more_url = $this->base_url.'/more/'.$river_id;
 	}
 	
 	/**
@@ -121,7 +121,6 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
-		
 
 		//Use page paramter or default to page 1
 		$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
@@ -174,16 +173,7 @@ class Controller_River extends Controller_Swiftriver {
 
 		// Get the settings control
 		$settings_control = View::factory('pages/river/settings_control')
-		    ->bind('settings_js', $settings_js);
-		
-		$settings_js = View::factory('pages/river/js/settings')
-		    ->bind('channels_url', $channels_url)
-		    ->bind('save_settings_url', $save_settings_url)
-		    ->bind('delete_river_url', $delete_river_url);
-
-		$channels_url = URL::site().$this->account->account_path.'/river/channels';
-		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings';
-		$delete_river_url = URL::site().$this->account->account_path.'/river/delete';
+		    ->bind('settings_js', $this->_get_settings_js_view());
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
@@ -217,19 +207,29 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Load the view for the settings UI
 		$settings = View::factory('pages/river/settings_control')
-			->bind('settings_js', $settings_js);
+			->bind('settings_js', $this->_get_settings_js_view());
 		
+		echo $settings;
+	}
+	
+	/**
+	 * Generates the view for the settings JavaScript
+	 * @return View
+	 */
+	private function _get_settings_js_view()
+	{
 		// JavaScript for settings UI
 		$settings_js = View::factory('pages/river/js/settings')
 		    ->bind('channels_url', $channels_url)
 		    ->bind('save_settings_url', $save_settings_url)
-		    ->bind("delete_river_url", $delete_river_url);
+		    ->bind('delete_river_url', $delete_river_url);
+
+		// URLs for XHR endpoints
+		$channels_url = $this->base_url.'/channels';
+		$save_settings_url = $this->base_url.'/save_settings';
+		$delete_river_url = $this->base_url.'/delete';
 		
-		// URL for fetching the channels for the river
-		$channels_url = URL::site().$this->account->account_path.'/river/channels/'.$this->_river->id;
-		$save_settings_url = URL::site().$this->account->account_path.'/river/save_settings/'.$this->_river->id;
-		$delete_river_url = URL::site().$this->account->account_path.'/river/delete/'.$this->_river->id;
-		echo $settings;
+		return $settings_js;
 	}
 	
 	/**
@@ -568,6 +568,37 @@ class Controller_River extends Controller_Swiftriver {
 				}
 			} // endforeach
 		} // endif;
+	}
+	
+	public function action_ajax_droplet()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$response = array("success" => FALSE);
+		
+		if ($_POST)
+		{
+			$droplet_id = isset($_POST['droplet_id']) ? intval($_POST['droplet_id']) : 0;
+			$action = isset($_POST['action']) ? $_POST['action'] : "";
+			
+			// Load the droplet
+			$droplet = ORM::factory('droplet', $droplet_id);
+			
+			if ($this->_river->loaded() AND $droplet->loaded())
+			{
+				switch ($action)
+				{
+					// Remove droplet from the river
+					case 'remove':
+						$this->_river->remove('droplets', $droplet);
+						$response["success"] = TRUE;
+					break;
+				}
+			}
+		}
+		
+		echo json_encode($response);
 	}
 
 }

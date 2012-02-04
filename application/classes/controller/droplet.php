@@ -14,7 +14,7 @@
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_Droplet extends Controller_Swiftriver {
-    
+	
 	/**
 	 * @var boolean Whether the template file should be rendered automatically.
 	 */
@@ -100,28 +100,35 @@ class Controller_Droplet extends Controller_Swiftriver {
 		}
 	}
 	
-	/**
-	 * Single droplet restful api
-	 */	
-     public function action_api()
-     {
-     	$this->template = "";
-     	$this->auto_render = FALSE;
-     
-     	$droplet_id = intval($this->request->param('droplet_id', 0));
-     
-     	switch ($this->request->method())
-     	{
-     	    case "PUT":
-     	        $droplet_array = json_decode($this->request->body(), true);
-     	        $droplet_orm = ORM::factory('droplet', $droplet_id);
-     	        $droplet_orm->update_from_array($droplet_array);
-     	    break;
-     	    case "DELETE":
-     	        echo "delete";
-     	    break;
-     	}
-     }
+	 /**
+	  * Single droplet restful api
+	  */ 
+	 public function action_api()
+	 {
+		$this->template = "";
+		$this->auto_render = FALSE;
+	 
+		$droplet_id = intval($this->request->param('droplet_id', 0));
+		$response = array("success" => FALSE);
+		
+		switch ($this->request->method())
+		{
+			case "PUT":
+				$droplet_array = json_decode($this->request->body(), TRUE);
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				$droplet_orm->update_from_array($droplet_array);
+				
+				$response["success"] = TRUE;
+			break;
+
+			case "DELETE":
+				echo "delete";
+			break;
+		}
+		
+		echo json_encode($response);
+		
+	 }
 	
 	/**
 	 * Delete the specified droplet from the account. 
@@ -133,30 +140,30 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 */
 	public function action_delete()
 	{
-	    $droplet_id = (int) $this->request->param('id', 0);
-	    
-	    $river_id_arr = DB::Select('river_id')
-	                ->from('rivers_droplets')
-        	        ->join('rivers', 'INNER')
-        	        ->on('rivers_droplets.river_id', '=', 'rivers.id')
-        	        ->where('rivers_droplets.droplet_id', '=', $droplet_id)
-        	        ->where('rivers.account_id', '=', $this->account->id)
-        	        ->execute()
-        	        ->as_array();
-        
-	    if(empty($river_id_arr))
-	        throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
-		                    array(':droplet' => $droplet_id));
-	    
-	    $droplet = ORM::factory('droplet', $droplet_id);
-	    $river = ORM::factory('river', 
-	                                $river_id_arr[0]['river_id']);
+		$droplet_id = (int) $this->request->param('id', 0);
+		
+		$river_id_arr = DB::Select('river_id')
+					->from('rivers_droplets')
+					->join('rivers', 'INNER')
+					->on('rivers_droplets.river_id', '=', 'rivers.id')
+					->where('rivers_droplets.droplet_id', '=', $droplet_id)
+					->where('rivers.account_id', '=', $this->account->id)
+					->execute()
+					->as_array();
+		
+		if(empty($river_id_arr))
+			throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
+							array(':droplet' => $droplet_id));
+		
+		$droplet = ORM::factory('droplet', $droplet_id);
+		$river = ORM::factory('river', 
+									$river_id_arr[0]['river_id']);
 			
 		if ( ! $droplet->loaded() || ! $river->loaded())
-		    throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
-		    array(':droplet' => $droplet_id));	
-		    
-		$river->remove('droplets', $droplet);	    
+			throw new HTTP_Exception_404('The requested droplet :droplet was not found on this server.',
+			array(':droplet' => $droplet_id));	
+			
+		$river->remove('droplets', $droplet);		
 	}
 	
 	
@@ -167,38 +174,38 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 */
 	public function action_ajax_add_tag()	
 	{
-	    $this->template = '';
+		$this->template = '';
 		$this->auto_render = FALSE;
 		
 		$post = Validation::factory($this->request->post())
-		                        ->rule('edit_value', 'not_empty')
-		                        ->rule('edit_value', 'alpha_dash')
-		                        ->rule('id', 'not_empty')
-		                        ->rule('id', 'numeric');
-		                        
+								->rule('edit_value', 'not_empty')
+								->rule('edit_value', 'alpha_dash')
+								->rule('id', 'not_empty')
+								->rule('id', 'numeric');
+								
 		if ( ! $post->check())
 		{
 		   echo json_encode(array(
-		                        'status'=>'error',
-		                        'errors' => $post->errors('add_tag')		 
+								'status'=>'error',
+								'errors' => $post->errors('add_tag')		 
 		   ));
 		   return;
-		}	        
-		                        
+		}			
+								
 		
-	    $droplet_id = (int) $this->request->post('id');
-	    $tag_name = $this->request->post('edit_value');
-	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
-	    	    
-	    if ( ! $orm_droplet->loaded())
-	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
-		    array(':droplet' => $droplet_id));
+		$droplet_id = (int) $this->request->post('id');
+		$tag_name = $this->request->post('edit_value');
+		$orm_droplet = ORM::factory('droplet', $droplet_id);		
+				
+		if ( ! $orm_droplet->loaded())
+			throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+			array(':droplet' => $droplet_id));
 		
 		$account_tag = Model_Account_Droplet_Tag::get_tag($tag_name, $orm_droplet, $this->account);
-	    
+		
 		echo json_encode(array(
-		                    'status'=>'success',
-		                    'html'=>'<li><a href="#">'.$account_tag->tag->tag.'</a></li>'
+							'status'=>'success',
+							'html'=>'<li><a href="#">'.$account_tag->tag->tag.'</a></li>'
 		));
 	}	
 	
@@ -207,40 +214,40 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 * 
 	 * @return	void
 	 */
-	public function action_ajax_add_place()	
+	public function action_ajax_add_place() 
 	{
-	    $this->template = '';
+		$this->template = '';
 		$this->auto_render = FALSE;
 		
 		$post = Validation::factory($this->request->post())
-		                        ->rule('edit_value', 'not_empty')
-		                        ->rule('edit_value', 'alpha_dash')
-		                        ->rule('id', 'not_empty')
-		                        ->rule('id', 'numeric');
-		                        
+								->rule('edit_value', 'not_empty')
+								->rule('edit_value', 'alpha_dash')
+								->rule('id', 'not_empty')
+								->rule('id', 'numeric');
+								
 		if ( ! $post->check())
 		{
 		   echo json_encode(array(
-		                        'status'=>'error',
-		                        'errors' => $post->errors('add_place')		 
+								'status'=>'error',
+								'errors' => $post->errors('add_place')		 
 		   ));
 		   return;
-		}	        
+		}			
 		
 		
-	    $droplet_id = (int) $this->request->post('id');
-	    $place_name = $this->request->post('edit_value');
-	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
-	    	    
-	    if ( ! $orm_droplet->loaded())
-	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
-		    array(':droplet' => $droplet_id));
+		$droplet_id = (int) $this->request->post('id');
+		$place_name = $this->request->post('edit_value');
+		$orm_droplet = ORM::factory('droplet', $droplet_id);		
+				
+		if ( ! $orm_droplet->loaded())
+			throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+			array(':droplet' => $droplet_id));
 		
 		$account_place = Model_Account_Droplet_Place::get_place($place_name, $orm_droplet, $this->account);
-	    
-	    echo json_encode(array(
-		                    'status'=>'success',
-		                    'html'=>'<p class="edit"><span class="edit_trigger" title="place" id="edit_'.$account_place->place->id.'">'.$account_place->place->place_name.'</span></p>'
+		
+		echo json_encode(array(
+							'status'=>'success',
+							'html'=>'<p class="edit"><span class="edit_trigger" title="place" id="edit_'.$account_place->place->id.'">'.$account_place->place->place_name.'</span></p>'
 		));
 	}
 
@@ -251,38 +258,38 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 */
 	public function action_ajax_add_link()	
 	{
-	    $this->template = '';
+		$this->template = '';
 		$this->auto_render = FALSE;
 		
 		$post = Validation::factory($this->request->post())
-		                        ->rule('edit_value', 'not_empty')
-		                        ->rule('edit_value', 'url')
-		                        ->rule('id', 'not_empty')
-		                        ->rule('id', 'numeric');
-		                        
+								->rule('edit_value', 'not_empty')
+								->rule('edit_value', 'url')
+								->rule('id', 'not_empty')
+								->rule('id', 'numeric');
+								
 		if ( ! $post->check())
 		{
 		   echo json_encode(array(
-		                        'status'=>'error',
-		                        'errors' => $post->errors('add_place')		 
+								'status'=>'error',
+								'errors' => $post->errors('add_place')		 
 		   ));
 		   return;
 		}		
 		
-	    $droplet_id = (int) $this->request->post('id');
-	    $url = $this->request->post('edit_value');
-	    $orm_droplet = ORM::factory('droplet', $droplet_id);	    
-	    	    
-	    if ( ! $orm_droplet->loaded())
-	        throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
-		    array(':droplet' => $droplet_id));
+		$droplet_id = (int) $this->request->post('id');
+		$url = $this->request->post('edit_value');
+		$orm_droplet = ORM::factory('droplet', $droplet_id);		
+				
+		if ( ! $orm_droplet->loaded())
+			throw new HTTP_Exception_404(__('The requested droplet :droplet was not found on this server.'),
+			array(':droplet' => $droplet_id));
 		
 		$account_link = Model_Account_Droplet_Link::get_link($url, $orm_droplet, $this->account);
-	    
-	    echo json_encode(array(
-		                    'status'=>'success',
-		                    'html'=>'<p class="edit"><span class="edit_trigger" title="link" id="edit_'.$account_link->link->id.'">'.$account_link->link->link_full.'</span></p>'
+		
+		echo json_encode(array(
+							'status'=>'success',
+							'html'=>'<p class="edit"><span class="edit_trigger" title="link" id="edit_'.$account_link->link->id.'">'.$account_link->link->link_full.'</span></p>'
 		));
-	    
+		
 	}		
 }

@@ -100,13 +100,6 @@
 				<?php echo Form::close(); ?>
 			</div>							
 			
-			<section class="detail cf">
-				<div class="arrow top"><span></span></div>
-				<div class="canyon cf">
-					<h2>Why SwiftRiver kicks ass.</h2>
-				</div>
-				<div class="arrow bottom"><span></span></div>
-			</section>
 		</div>
 	</article>
 	
