@@ -349,7 +349,7 @@
 		    
 		    if (nearBottom() && !isPageFetching && !isAtLastPage) {
 		        // Advance page and fetch it
-		        isFetching = true;
+		        isPageFetching = true;
 				pageNo += 1;		
 				
 				// Hide the navigation selector and show a loading message
@@ -391,7 +391,13 @@
 		// Poll for new droplets every 30 seconds
 		setInterval(function() { 
 		    if (!isSyncing) {
-		        Droplets.fetch({data: {since_id: sinceId}, add: true});   
+		        isSyncing = true;
+		        Droplets.fetch({data: {since_id: sinceId}, 
+		            add: true, 
+		            complete: function () {
+		                isSyncing = false;
+		            }
+		        });   
 		    }		    
 		    }, 
 		    30000);
