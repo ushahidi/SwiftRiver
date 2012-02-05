@@ -101,8 +101,7 @@ class Swiftriver_Crawler_Rss  {
 					$droplet['droplet_orig_id'] = trim((string) $feed_item->get_link());
 					$droplet['droplet_type'] = 'original';
 					$droplet['droplet_title'] = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
-					$droplet['droplet_content'] = trim(strip_tags(str_replace('<', ' <', $feed_item->get_description())));
-					$droplet['droplet_raw'] = $feed_item->get_description();
+					$droplet['droplet_content'] = $feed_item->get_description();
 					$locales = explode('-', $feed->get_language());
 					$droplet['droplet_locale'] = $locales[0];
 					$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($feed_item->get_date()));
