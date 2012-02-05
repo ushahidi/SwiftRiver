@@ -171,9 +171,10 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template_type = 'dashboard';
 		$this->active = 'rivers';
 
-		// Get the settings control
+		// Get the settings control		
 		$settings_control = View::factory('pages/river/settings_control')
-		    ->bind('settings_js', $this->_get_settings_js_view());
+		    ->bind('settings_js', $settings_js);
+		$settings_js = $this->_get_settings_js_view();
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
