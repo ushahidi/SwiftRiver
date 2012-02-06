@@ -34,7 +34,7 @@ class Swiftcore_Init {
 		
 		// HTTP POST fields and their data
 		$post_fields = array(
-			'text' => urlencode($droplet['droplet_content'])
+			'text' => urlencode($droplet['droplet_raw'])
 		);
 		
 		// url-ify the fields

@@ -239,9 +239,6 @@
 			
 			// When delete droplet button is clicked in the droplet detail view
 			deleteDroplet: function(e) {
-				// Remove the model from the collection
-				Droplets.remove(this.model);
-				
 				var viewItem = this;
 				
 				// Delete on the server
@@ -250,7 +247,7 @@
 					success: function(model, response) {
 						if (response.success) {
 							// Remove from UI
-							$(viewItem.el).remove();
+							$(viewItem.el).hide("slow");
 						}
 					}
 				});
@@ -374,42 +371,71 @@
 		// Load content while scrolling - Infinite Scrolling
 		var pageNo = 1;
 		var maxId = 0;
-		var renderComplete = true;
+		var isPageFetching = false;
+		var isAtLastPage = false;
 		
-		$(window).scroll(function() {
-			if (renderComplete && ($(window).scrollTop() == ($(document).height() - $(window).height()))) {
-				
-				// Get the maxId
-				var lastEl = $("#droplet-list > article.item:last");
-				
-				if (typeof(lastEl) != 'undefined') {
-					maxId = $(lastEl).data("droplet-id");
-				}
-				
-				renderComplete = false;
-				
-				// Next page
-				pageNo += 1;
-							
-				// Fetch content and update the view
-				Droplets.fetch({data: {page: pageNo, max_id: maxId}, add: true});
-				setTimeout(function(){ renderComplete = true; }, 1500);
-			}
-		});
-		
-		// Poll for new droplets
-		function updateDropletView() {
-			
-			// Get the max id we have
-			var firstEl = $("#droplet-list > article.item:first");
-			if (typeof(firstEl) !== 'undefined') {
-				var sinceId = $(firstEl).data("droplet-id");
-				Droplets.fetch({data: {since_id: sinceId}, add: true});
-			}
+		function nearBottom() {
+		    var bufferPixels = 40;
+		    return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - $("#next_page_button").offset().top;
 		}
 		
-		// Update the droplet view every 30 seconds
-		setInterval(updateDropletView, 30000);
+		var loading_msg = $('<div><?php echo(Html::image("themes/default/media/img/loading.gif")) ?><div></div></div>');
+		$(window).scroll(function() {
+		    
+		    if (nearBottom() && !isPageFetching && !isAtLastPage) {
+		        // Advance page and fetch it
+		        isPageFetching = true;
+				pageNo += 1;		
+				
+				// Hide the navigation selector and show a loading message
+				$("#next_page_button a").hide();
+				loading_msg.appendTo($("#next_page_button")).show();
+						
+				Droplets.fetch({
+				    data: {
+				        page: pageNo, 
+				        max_id: maxId
+				    }, 
+				    add: true, 
+				    complete: function (model, response) {
+				        isPageFetching = false;
+				        loading_msg.fadeOut('normal');
+				    },
+				    error: function (model, response) {
+				        if (response.status == 404) {
+				            isAtLastPage = true;
+				        }
+				    }
+				});								
+		    }		    
+		});
+		
+				
+		// Poll for new droplets
+		// We will only fetch droplets with and id newer than this
+		var sinceId = 0;
+		var isSyncing = false;
+		
+		// Update our sinceId when new droplets are added
+		Droplets.on("add", function(droplet) {
+		    if (parseInt(droplet.get("id")) > sinceId) {
+		        sinceId = parseInt(droplet.get("id"));
+	        }
+		});
+				
+		// Poll for new droplets every 30 seconds
+		setInterval(function() { 
+		    if (!isSyncing) {
+		        isSyncing = true;
+		        Droplets.fetch({data: {since_id: sinceId}, 
+		            add: true, 
+		            complete: function () {
+		                isSyncing = false;
+		            }
+		        });   
+		    }		    
+		    }, 
+		    30000);
 				
 		// Bootstrap the droplet list
 		window.dropletList = new DropletListView;
@@ -420,7 +446,7 @@
 		if (!maxId) {
 			Droplets.each(function(droplet) {
 				if (parseInt(droplet.get("id")) > maxId) {
-					maxId = parseInt(droplet.get("id"));
+					maxId = sinceId = parseInt(droplet.get("id"));
 				}
 			});
 		}

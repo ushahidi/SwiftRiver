@@ -79,9 +79,8 @@ class Swiftriver_Dropletqueue {
 		// Set the SHA-256 hash value for the droplet
 		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_content']);
 		
-		// Set the raw content and strip the content of any HTML tags
-		$droplet['droplet_raw'] = $droplet['droplet_content'];
-		$droplet['droplet_content'] = strip_tags($droplet['droplet_raw']);
+		// Strip the tags from to get droplet_raw
+		$droplet['droplet_raw'] = strip_tags($droplet['droplet_content']);
 		
 		
 		// Check if the droplet has already been added to the queue
