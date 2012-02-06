@@ -73,8 +73,11 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('settings_url', $settings_url)
 			->bind('more_url', $more_url);
 				
+		// The maximum droplet id for pagination and polling
+		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
+				
 		//Get Droplets
-	    $droplets_array = Model_River::get_droplets($river_id);
+	    $droplets_array = Model_River::get_droplets($river_id, 1, $max_droplet_id);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -91,8 +94,9 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js = View::factory('common/js/droplets')
 		    ->bind('fetch_url', $fetch_url)
 		    ->bind('droplet_list', $droplet_list)
-		    ->bind('bucket_list', $bucket_list);
-		
+		    ->bind('bucket_list', $bucket_list)
+		    ->bind('max_droplet_id', $max_droplet_id);
+		    		
 		// Turn on Ajax polling
 		$polling_enabled = "true";
 		$fetch_url = $this->base_url.'/droplets/'.$river_id;

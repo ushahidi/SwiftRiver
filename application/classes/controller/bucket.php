@@ -52,9 +52,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('settings_url', $settings_url)
 			->bind('more', $more);
 			
-		
+        // The maximum droplet id for pagination and polling
+		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
+				
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->bucket->id);
+		$droplets_array = Model_Bucket::get_droplets($this->bucket->id, 1, $max_droplet_id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -68,7 +70,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplet_js = View::factory('common/js/droplets')
 				->bind('fetch_url', $fetch_url)
 				->bind('droplet_list', $droplet_list)
-    		    ->bind('bucket_list', $bucket_list);
+    		    ->bind('bucket_list', $bucket_list)
+    		    ->bind('max_droplet_id', $max_droplet_id);
 		
 		$fetch_url = $this->base_url.'/droplets/'.$this->bucket->id;
 				

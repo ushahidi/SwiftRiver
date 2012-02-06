@@ -212,7 +212,8 @@ class Model_River extends ORM {
 			// Build River Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+			                    'droplets.channel','identity_name', 'identity_avatar', 
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -220,10 +221,10 @@ class Model_River extends ORM {
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.id', '<', $max_id);	   
+			    ->where('droplets.id', '<=', $max_id);	   
 
 			// Order & Pagination offset
-			$query->order_by('droplets.id', $sort);
+			$query->order_by('droplets.droplet_date_pub', $sort);
 			if ($page > 0)
 			{
 			    $query->limit(self::DROPLETS_PER_PAGE);	
@@ -266,7 +267,8 @@ class Model_River extends ORM {
 	    
 	    
 		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
-		    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+		    'droplets.channel','identity_name', 'identity_avatar', 
+		    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
 		    ->from('droplets')
 		    ->join('rivers_droplets', 'INNER')
 		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -275,7 +277,7 @@ class Model_River extends ORM {
 		    ->where('droplets.droplet_processed', '=', 1)
 		    ->where('rivers_droplets.river_id', '=', $river_id)
 		    ->where('droplets.id', '>', $since_id)
-		    ->order_by('droplets.id', 'ASC')
+		    ->order_by('droplets.droplet_date_pub', 'DESC')
 		    ->limit(self::DROPLETS_PER_PAGE)
 		    ->offset(0);
 		
@@ -296,6 +298,26 @@ class Model_River extends ORM {
 		return $droplets;
 	}
 	
+	/**
+	 * Gets the max droplet id in a river
+	 *
+	 * @param int $river_id Database ID of the river
+	 * @return int
+	 */
+	public static function get_max_droplet_id($river_id)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr('MAX(droplets.id)'), 'id'))
+		    ->from('droplets')
+		    ->join('rivers_droplets', 'INNER')
+		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+		    ->join('identities')
+		    ->on('droplets.identity_id', '=', 'identities.id')
+		    ->where('rivers_droplets.river_id', '=', $river_id)
+		    ->where('droplets.droplet_processed', '=', 1);
+		    
+		return $query->execute()->get('id', PHP_INT_MAX);
+	}
 }
 
 ?>

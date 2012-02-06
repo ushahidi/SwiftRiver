@@ -57,7 +57,11 @@
 		// Droplet & Bucket collection
 		window.DropletList = Backbone.Collection.extend({
 			model: Droplet,
-			url: "<?php echo $fetch_url; ?>"
+			url: "<?php echo $fetch_url; ?>",
+			
+			/*comparator: function (droplet) {
+			    return Date.parse(droplet.get('droplet_date_pub'));
+			}*/
 		});
 		
 		window.Droplets = new DropletList;
@@ -352,8 +356,7 @@
 		        isPageFetching = true;
 				pageNo += 1;		
 				
-				// Hide the navigation selector and show a loading message
-				$("#next_page_button a").hide();
+				// Hide the navigation selector and show a loading message				
 				loading_msg.appendTo($("#next_page_button")).show();
 						
 				Droplets.fetch({
@@ -407,14 +410,8 @@
 		Droplets.reset(<?php echo $droplet_list ?>);		
 		bucketList.reset(<?php echo $bucket_list ?>);
 		
-		// Get the maxId after inital rendering of droplet list
-		if (!maxId) {
-			Droplets.each(function(droplet) {
-				if (parseInt(droplet.get("id")) > maxId) {
-					maxId = sinceId = parseInt(droplet.get("id"));
-				}
-			});
-		}
+		// Set the maxId after inital rendering of droplet list
+		maxId = sinceId = <?php echo $max_droplet_id ?>;
 		
 	});
 </script>

@@ -103,7 +103,7 @@ class Model_Bucket extends ORM {
 			    ->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->where('droplets.droplet_processed', '=', 1)
-				->where('droplets.id', '<', $max_id)
+				->where('droplets.id', '<=', $max_id)
 				->order_by('buckets_droplets.droplet_date_added', 'DESC');
 				
 			// Order & Pagination offset
@@ -222,6 +222,27 @@ class Model_Bucket extends ORM {
 		    ->execute();
 		
 		return $results->as_array();
+	}
+	
+	/**
+	 * Get the max droplet id in a bucket
+	 *
+	 * @param int $id ID of the Bucket
+	 * @return int
+	 */
+	public static function get_max_droplet_id($bucket_id = NULL)
+	{
+	    // Build Buckets Query
+		$query = DB::select(array(DB::expr('MAX(droplets.id)'), 'id'))
+			->from('droplets')
+			->join('buckets_droplets', 'INNER')
+			->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+			->join('identities')
+		    ->on('droplets.identity_id', '=', 'identities.id')				
+			->where('buckets_droplets.bucket_id', '=', $bucket_id)
+			->where('droplets.droplet_processed', '=', 1);
+			
+		return $query->execute()->get('id', PHP_INT_MAX);		
 	}
 	
 }
