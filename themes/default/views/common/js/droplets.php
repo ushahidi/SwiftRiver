@@ -2,7 +2,7 @@
 	/**
 	 * Backbone.js wiring for the droplets MVC
 	 */
-	(function() {
+	$(function() {
 		// Models for the droplet places, tags and links 
 		window.DropletPlace = Backbone.Model.extend();
 		window.DropletTag = Backbone.Model.extend();
@@ -448,5 +448,5 @@
 		// Set the maxId after inital rendering of droplet list
 		maxId = sinceId = <?php echo $max_droplet_id ?>;
 		
-	})();
+	});
 </script>
