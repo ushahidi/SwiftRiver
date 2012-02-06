@@ -166,7 +166,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		
 		$droplets_array = array();
-		if ( $since_id )
+		if ($since_id)
 		{
 		    $droplets_array = Model_Bucket::get_droplets_since_id($bucket->id, $since_id);
 		}

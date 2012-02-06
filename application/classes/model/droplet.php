@@ -124,48 +124,83 @@ class Model_Droplet extends ORM
 	{
 		if ( ! array_key_exists('id', $droplet))
 		{
-			// Create the droplet
-			$orm_droplet = new Model_Droplet;
-			$orm_droplet->channel = $droplet['channel'];
-			$orm_droplet->identity_id = $droplet['identity_id'];
-			$orm_droplet->droplet_hash = $droplet['droplet_hash'];
-			$orm_droplet->droplet_orig_id = $droplet['droplet_orig_id'];
-			$orm_droplet->droplet_type = $droplet['droplet_type'];
-			$orm_droplet->droplet_title = $droplet['droplet_title'];
-			$orm_droplet->droplet_content = $droplet['droplet_content'];
-			$orm_droplet->droplet_raw = $droplet['droplet_raw'];
-			$orm_droplet->droplet_locale = $droplet['droplet_locale'];
-			$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
-			$orm_droplet->droplet_processed = 0;
-			$orm_droplet->save();
-			
-			// Check if the 'river_id' key is set
-			if ($droplet['river_id'])
+			try 
 			{
-				// Add the droplet to the river
-				Model_River::add_droplet($droplet['river_id'], $orm_droplet);
-			}
+				// Create the droplet
+				$orm_droplet = new Model_Droplet;
+				$orm_droplet->channel = $droplet['channel'];
+				$orm_droplet->identity_id = $droplet['identity_id'];
+				$orm_droplet->droplet_hash = $droplet['droplet_hash'];
+				$orm_droplet->droplet_orig_id = $droplet['droplet_orig_id'];
+				$orm_droplet->droplet_type = $droplet['droplet_type'];
+				$orm_droplet->droplet_title = $droplet['droplet_title'];
+				$orm_droplet->droplet_content = $droplet['droplet_content'];
+				$orm_droplet->droplet_raw = $droplet['droplet_raw'];
+				$orm_droplet->droplet_locale = $droplet['droplet_locale'];
+				$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
+				$orm_droplet->droplet_processed = 0;
 			
-			$droplet['id'] = $orm_droplet->id;
+				// Check if the parent id has been set
+				if (isset($droplet['parent_id']))
+				{
+					$orm_droplet->parent_id = $droplet['parent_id'];
+				}
+			
+				// Save the droplet
+				$orm_droplet->save();
+			
+				// Check if the 'river_id' OR 'bucket_id' key is set
+				if (isset($droplet['river_id']))
+				{
+					// Add the droplet to the river
+					Model_River::add_droplet($droplet['river_id'], $orm_droplet);
+				}
+				elseif (isset($droplet['bucket_id']))
+				{
+					Model_Bucket::add_droplet($droplet['bucket_id'], $orm_droplet);
+				}
+				
+				// Set the 'id' key to the newly saved droplet
+				$droplet['id'] = $orm_droplet->id;
+				
+				return TRUE;
+			}
+			catch (Kohana_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				return FALSE;
+			}
 		}
 		else
 		{
-			// Get the droplet id
-			$droplet_id = $droplet['id'];
+			try
+			{
+				// Get the droplet id
+				$droplet_id = $droplet['id'];
 			
-			// Get the droplet ORM reference
-			$orm_droplet = ORM::factory('droplet', $droplet_id);
+				// Get the droplet ORM reference
+				$orm_droplet = ORM::factory('droplet', $droplet_id);
 			
-			// Save the tags, links and places
-			self::add_tags($orm_droplet, $droplet['tags']);
-			self::add_links($orm_droplet, $droplet['links']);
-			self::add_places($orm_droplet, $droplet['places']);
+				// Save the tags, links and places
+				self::add_tags($orm_droplet, $droplet['tags']);
+				self::add_links($orm_droplet, $droplet['links']);
+				self::add_places($orm_droplet, $droplet['places']);
 			
-			// Mark the droplet as processed
-			$orm_droplet->droplet_processed = 1;
-			$orm_droplet->save();
+				// Mark the droplet as processed
+				$orm_droplet->droplet_processed = 1;
+				$orm_droplet->save();
+				
+				return TRUE;
+				
+			} catch (Kohana_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				return FALSE;
+			}
 			
 		}
+		
+		return FALSE;
 	}
 	
 	/**
@@ -485,7 +520,8 @@ class Model_Droplet extends ORM
 	{
 		// Get the discussions
 		$discussions = DB::select(array('droplets.id', 'id'), 'droplet_title', 
-		    array('droplets.parent_id', 'parent_id'), 'droplet_content', 
+		    array('droplets.parent_id', 'parent_id'), 
+		    array('droplets.channel', 'channel'), 'droplet_content', 
 		    'identity_name', 'identity_avatar', 'droplet_date_pub')
 		    ->from('droplets')
 		    ->join('identities', 'INNER')

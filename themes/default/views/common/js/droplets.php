@@ -8,7 +8,10 @@
 		window.DropletTag = Backbone.Model.extend();
 		window.DropletLink = Backbone.Model.extend();
 		window.Bucket = Backbone.Model.extend();
-		
+		window.Discussion = Backbone.Model.extend({
+			urlRoot: "<?php echo $fetch_url?>/reply"
+		});
+				
 		// Collections for droplet places, tags and links
 		window.DropletPlaceCollection = Backbone.Collection.extend({
 			model: DropletPlace
@@ -26,6 +29,11 @@
 		window.DropletBucketsCollection = Backbone.Collection.extend({
 			model: Bucket
 		});
+		
+		// Collection for a droplet's discussions
+		window.DropletDiscussionsCollection = Backbone.Collection.extend({
+			model: Discussion,
+		})
 		
 		// Collection for all the buckets accessible to the current user
 		window.BucketList = Backbone.Collection.extend({
@@ -52,13 +60,9 @@
 				
 				this.save({buckets: change_buckets}, {wait: true});
 			}
+			
 		});
 		
-		// Discussions collection
-		window.DropletDiscussionsCollection = Backbone.Collection.extend({
-			model: Droplet
-		});
-	
 		// Droplet & Bucket collection
 		window.DropletList = Backbone.Collection.extend({
 			model: Droplet,
@@ -91,7 +95,8 @@
 				"click .bucket .dropdown p.create-new a": "showCreateBucket",
 				"click div.create-name button.cancel": "cancelCreateBucket",
 				"click div.create-name button.save": "saveBucket",
-				"click ul.delete-droplet li.confirm a": "deleteDroplet"
+				"click ul.delete-droplet li.confirm a": "deleteDroplet",
+				"click .discussion .add-reply .button-go > a": "addReply"
 			},
 						
 			initialize: function() {
@@ -157,8 +162,10 @@
 			},
 			
 			addDiscussion: function(discussion) {
-				var view = new DiscussionView({model: discussion});
-				this.$("section.discussion hgroup").after(view.render().el);
+				var view = new DiscussionView({model: discussion}).render().el;
+				this.$("section.discussion > hgroup").after(view);
+				$(view).hide();
+				$(view).fadeIn(1500);
 			},
 			
 			addDiscussions: function() {
@@ -257,6 +264,43 @@
 				});
 				
 				return false;
+			},
+			
+			// When add reply is clicked
+			addReply: function(e) {
+				var textarea = this.$(".discussion .add-reply :input");
+				
+				var viewObject = this;
+				
+				if ($(textarea).val() != null) {
+					var discussion = new Discussion();
+					
+					discussion.save({
+						droplet_content: $(textarea).val(),
+						parent_id: this.model.get("id"),
+						droplet_type: "reply",
+						channel: "swiftriver"
+					},
+					{
+						wait: true, 
+						success: function(model, response) {
+							if (response.success) {
+								// Clear the text area
+								$(textarea).val("");
+								
+								model.set({
+									identity_avatar: response.identity_avatar,
+									identity_name: response.identity_name,
+									droplet_date_pub: response.droplet_date_pub
+								});
+								
+								// Add the newly added item to the UI
+								viewObject.addDiscussion(model);
+							}
+						} 
+					}); // end save
+					
+				} // end if 
 			}
 			
 		});

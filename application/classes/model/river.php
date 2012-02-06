@@ -154,7 +154,7 @@ class Model_River extends ORM {
 	/**
 	 * Adds a droplet to river
 	 *
-	 * @param int $river_id Dataabse ID of the river
+	 * @param int $river_id Database ID of the river
 	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
 	 * @return bool TRUE on succeed, FALSE otherwise
 	 */

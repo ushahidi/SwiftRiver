@@ -90,7 +90,10 @@ class Swiftriver_Dropletqueue {
 			$droplet_orm = Model_Droplet::get_droplet_by_hash($droplet['droplet_hash']);
 			
 			// Add the droplet to the current river
-			Model_River::add_droplet($droplet['river_id'], $droplet_orm);
+			if (isset($droplet['river_id']))
+			{
+				Model_River::add_droplet($droplet['river_id'], $droplet_orm);
+			}
 			
 			// Delete the droplet from memory
 			unset ($droplet, $droplet_orm);

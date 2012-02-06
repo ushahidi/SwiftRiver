@@ -8,8 +8,8 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/copyleft/gpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @category Models
+ * @package    SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
@@ -94,13 +94,13 @@ class Model_Bucket extends ORM {
 		{
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
-			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+								'droplet_title', 'droplet_content', 
+								'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
-			    ->on('droplets.identity_id', '=', 'identities.id')				
+				->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '<=', $max_id)
@@ -110,10 +110,12 @@ class Model_Bucket extends ORM {
 			$query->order_by('droplets.id', 'DESC');
 			if ($page)
 			{
-			    $query->limit(self::DROPLETS_PER_PAGE);	
-		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-	        }				
-
+				$query->limit(self::DROPLETS_PER_PAGE); 
+				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+			}
+			
+			Kohana::$log->add(Log::DEBUG, $query->__toString());
+			
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
 			
@@ -123,11 +125,11 @@ class Model_Bucket extends ORM {
 			// Populate tags array			
 			Model_Droplet::populate_tags($droplets['droplets']);
 			
-    		// Populate links array			
-    		Model_Droplet::populate_links($droplets['droplets']);
-    		
-    		// Populate places array			
-    		Model_Droplet::populate_places($droplets['droplets']);
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);
+			
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);
 			
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);
@@ -155,13 +157,13 @@ class Model_Bucket extends ORM {
 		{
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
-			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+								'droplet_title', 'droplet_content', 
+								'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
-			    ->on('droplets.identity_id', '=', 'identities.id')				
+				->on('droplets.identity_id', '=', 'identities.id')				
 				->where('buckets_droplets.bucket_id', '=', $id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '>', $since_id)
@@ -176,11 +178,11 @@ class Model_Bucket extends ORM {
 			// Populate tags array			
 			Model_Droplet::populate_tags($droplets['droplets']);
 			
-    		// Populate links array			
-    		Model_Droplet::populate_links($droplets['droplets']);			
-    		
-    		// Populate places array			
-    		Model_Droplet::populate_places($droplets['droplets']);    		
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);			
+			
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);			
 			
 			
 			$droplets['total'] = count($droplets['droplets']);
@@ -196,13 +198,13 @@ class Model_Bucket extends ORM {
 	 * @return Model_Bucket
 	 */
 	public static function create_from_array($bucket_array) 
-	{	    
-	    $bucket_orm = ORM::factory('bucket');
-	    $bucket_orm->account_id = $bucket_array['account_id'];
-	    $bucket_orm->user_id = $bucket_array['user_id'];
-	    $bucket_orm->bucket_name = $bucket_array['bucket_name'];
-	    $bucket_orm->save();
-	    return $bucket_orm;
+	{		
+		$bucket_orm = ORM::factory('bucket');
+		$bucket_orm->account_id = $bucket_array['account_id'];
+		$bucket_orm->user_id = $bucket_array['user_id'];
+		$bucket_orm->bucket_name = $bucket_array['bucket_name'];
+		$bucket_orm->save();
+		return $bucket_orm;
 	}
 	
 	/**
@@ -214,14 +216,14 @@ class Model_Bucket extends ORM {
 	public static function get_collaborators($bucket_id)
 	{
 		$results = DB::select(array('bucket_collaborators.id', 'id'), 
-		    array('users.name', 'collaborator_name'))
-		    ->from('bucket_collaborators')
-		    ->join('buckets', 'INNER')
-		    ->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
-		    ->join('users', 'INNER')
-		    ->on('bucket_collaborators.user_id', '=', 'users.id')
-		    ->where('buckets.id', '=', $bucket_id)
-		    ->execute();
+			array('users.name', 'collaborator_name'))
+			->from('bucket_collaborators')
+			->join('buckets', 'INNER')
+			->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
+			->join('users', 'INNER')
+			->on('bucket_collaborators.user_id', '=', 'users.id')
+			->where('buckets.id', '=', $bucket_id)
+			->execute();
 		
 		return $results->as_array();
 	}
@@ -234,17 +236,46 @@ class Model_Bucket extends ORM {
 	 */
 	public static function get_max_droplet_id($bucket_id = NULL)
 	{
-	    // Build Buckets Query
+		// Build Buckets Query
 		$query = DB::select(array(DB::expr('MAX(droplets.id)'), 'id'))
 			->from('droplets')
 			->join('buckets_droplets', 'INNER')
 			->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 			->join('identities')
-		    ->on('droplets.identity_id', '=', 'identities.id')				
+			->on('droplets.identity_id', '=', 'identities.id')				
 			->where('buckets_droplets.bucket_id', '=', $bucket_id)
 			->where('droplets.droplet_processed', '=', 1);
 			
 		return $query->execute()->get('id', PHP_INT_MAX);		
 	}
 	
+	/*
+	 * Adds a droplet to bucket
+	 *
+	 * @param int $bucket_id Database ID of the bucket
+	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
+	 * @return bool TRUE on succeed, FALSE otherwise
+	 */
+	public static function add_droplet($bucket_id, $droplet)
+	{
+		if ( ! $droplet instanceof Model_Droplet)
+		{
+			// Log the error
+			Kohana::$log->add(Log::ERROR, "Expected Model_Droplet in parameter droplet. Found :type instead.", 
+				array(":type" => gettype($droplet)));
+			return FALSE;
+		}
+		
+		// Get ORM reference for the river
+		$bucket = ORM::factory('bucket', $bucket_id);
+		
+		// Check if the river exists and if its associated with the current droplet
+		if ($bucket->loaded() AND ! $bucket->has('droplets', $droplet))
+		{
+			$bucket->add('droplets', $droplet);
+			return TRUE;
+		}
+		
+		return FALSE;
+	}	
 }

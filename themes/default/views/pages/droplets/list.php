@@ -105,13 +105,10 @@
 					<hgroup>
 						<h2><?php echo __("Related Discussion"); ?></h2>
 					</hgroup>
-					<article class="item add-reply cf">
-						<div class="summary">
+					<article class="item add-reply">
+						<div class="summary cf">
 							<section class="source">
-								<div class="avatar">
-									<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>">
-									<div class="swiftriver"><span></span></div>
-								</div>
+								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>"></a>
 							</section>
 							<section class="content">
 								<textarea rows="10" cols="60"></textarea>
@@ -146,16 +143,16 @@
 
 <!-- related discussion -->
 <script type="text/template" id="discussion-item-template">
-	<div class="summary">
+	<div class="summary cf">
 		<section class="source <%= channel %>">
 			<a><img src="<%= identity_avatar %>"></a>
 		</section>
 		<section class="content">
-			<div class="title">
+			<hgroup>
 				<p class="date"><%= droplet_date_pub %></p>
 				<h1><%= identity_name %></h1>
-			</div>
-			<div class="body"><p><%= droplet_content %></p></body>
+			</hgroup>
+			<div class="body"><p><%= droplet_content %></p></div>
 		</section>
 	</div>
 </script>

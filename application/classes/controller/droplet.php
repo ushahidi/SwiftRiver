@@ -56,7 +56,7 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 {
 		$this->template = "";
 		$this->auto_render = FALSE;
-	 
+		
 		$droplet_id = intval($this->request->param('droplet_id', 0));
 		$bucket_id = intval($this->request->param('bucket_id', 0));
 		$river_id = intval($this->request->param('river_id', 0));
@@ -88,6 +88,42 @@ class Controller_Droplet extends Controller_Swiftriver {
 					    ->remove('droplets', $droplet_orm);
 					
 					$response["success"]  = TRUE;
+				}
+				
+			break;
+			
+			case "POST":
+				// Get the POST data
+				$droplet = json_decode($this->request->body(), TRUE);
+				
+				// Set the remaining properties
+				$droplet['droplet_title'] = $droplet['droplet_content'];
+				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', time());
+				$droplet['droplet_orig_id'] = 0;
+				$droplet['droplet_locale'] = 'en';
+				$droplet['identity_orig_id'] = $this->user->id;
+				$droplet['identity_username'] = $this->user->username;
+				$droplet['identity_name'] = $this->user->name;
+				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
+				
+				if ($river_id > 0)
+				{
+					// Set the river id
+					$droplet['river_id'] = $river_id;
+				}
+				elseif ($bucket_id > 0)
+				{
+					// Add the droplet to the bucket
+					$droplet['bucket_id'] = $bucket_id;
+				}
+				
+				// Add the droplet to the queue
+				if (Swiftriver_Dropletqueue::add($droplet))
+				{
+					$response["identity_avatar"] = $droplet["identity_avatar"];
+					$response["identity_name"] = $droplet["identity_name"];
+					$response["droplet_date_pub"] = $droplet["droplet_date_pub"];
+					$response["success"] = TRUE;
 				}
 				
 			break;

@@ -47,7 +47,7 @@ class Controller_Crawler_Main extends Controller {
 		if ( ! Swiftriver_Mutex::obtain($this->process_mutex)) 
 		{
 			Kohana::$log->add(Log::ERROR, "Processor unable to obtain lock");
-			return;
+			exit;
 		}
 		
 		Kohana::$log->add(Log::INFO, "Post processing started");
@@ -58,7 +58,7 @@ class Controller_Crawler_Main extends Controller {
 		
 		Swiftriver_Mutex::release($this->process_mutex);
 		
-		Kohana::$log->add(Log::INFO, "Post processing completed");	
+		Kohana::$log->add(Log::INFO, "Post processing completed");
 	}
 	
 	/**
@@ -95,12 +95,11 @@ class Controller_Crawler_Main extends Controller {
 						 ->bind('request_date', $request_date);
 
 			$request_date = date('jS F Y h:i:s A e', time());
-			$site_url = url::site(null, true, true);
+			$site_url = url::site(NULL, TRUE, TRUE);
 			echo $feed;
 		}
 		
 	}
-		
 	
 	/**
 	 * Run the crawlers
@@ -149,7 +148,6 @@ class Controller_Crawler_Main extends Controller {
 	
 	/**
 	 * Run the crawlers in order of their run dates
-	 *
 	 */ 
 	private function __do_schedule()
 	{		
