@@ -407,6 +407,17 @@ class Model_Droplet extends ORM
 		    $droplet['places'] = $droplet_orm->get_places();
 		}	    
 	}
+	
+	/**
+	 * Given an array of droplets, populates the discussions
+	 */
+	public static function populate_discussions(array & $droplets)
+	{
+		foreach ($droplets as & $droplet)
+		{
+			$droplet['discussions'] = self::get_discussions($droplet['id']);
+		}
+	}
     
 	/**
 	 * Updates a droplet from an array. 
@@ -463,6 +474,26 @@ class Model_Droplet extends ORM
 	        }	        
 	    }
 
+	}
+	
+	/**
+	 * Returns the list of droplets that have $droplet_id as the parent
+	 * @param int $droplet_id ID of the droplet
+	 * @return array
+	 */
+	public static function get_discussions($droplet_id)
+	{
+		// Get the discussions
+		$discussions = DB::select(array('droplets.id', 'id'), 'droplet_title', 
+		    array('droplets.parent_id', 'parent_id'), 'droplet_content', 
+		    'identity_name', 'identity_avatar', 'droplet_date_pub')
+		    ->from('droplets')
+		    ->join('identities', 'INNER')
+		    ->on('droplets.identity_id', '=', 'identities.id')
+		    ->where('droplets.parent_id', '=', $droplet_id)
+		    ->order_by('droplets.id', 'ASC');
+		
+		return $discussions->execute()->as_array();
 	}
     
 }

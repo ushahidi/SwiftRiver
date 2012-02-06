@@ -20,57 +20,6 @@ class Controller_Droplet extends Controller_Swiftriver {
 	 */
 	public $auto_render = FALSE;
 	
-	public function action_index()
-	{
-		$droplet_id = intval($this->request->param('id'));
-		
-		$semantics = $_GET['semantics'];
-		
-		if ( ! empty($semantics))
-		{
-			$droplet = ORM::factory('droplet', $droplet_id);
-			
-			switch ($semantics)
-			{
-				case 'tags':
-				$tags = array();
-				foreach ($droplet->tags->find_all() as $tag)
-				{
-					$tags[] = array(
-						'id' => $tag->id,
-						'tag' => $tag->tag
-					);
-				}
-				echo json_encode($tags);
-				break;
-				
-				case 'places':
-				$places = array();
-				foreach ($droplet->places->find_all() as $place)
-				{
-					$places[] = array(
-						'id' => $place->id,
-						'place_name' => $place->place_name
-					);
-				}
-				echo json_encode($places);
-				break;
-				
-				case 'links':
-				$links = array();
-				foreach ($droplet->links->find_all() as $link)
-				{
-					$links[] = array(
-						'id' => $link->id,
-						'link' => $link->link_full
-					);
-				}
-				echo json_encode($links);
-				break;
-			}
-		}
-	}
-	
 	/**
 	 * Gets the list of buckets
 	 */

@@ -97,6 +97,27 @@
 						</span>
 					</div>
 				</article>
+				
+				<section class="discussion">
+					<hgroup>
+						<h2><?php echo __("Related Discussion"); ?></h2>
+					</hgroup>
+					<article class="item add-reply cf">
+						<div class="summary">
+							<section class="source">
+								<div class="avatar">
+									<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>">
+									<div class="swiftriver"><span></span></div>
+								</div>
+							</section>
+							<section class="content">
+								<textarea rows="10" cols="60"></textarea>
+								<p class="button-go"><a><?php echo __("Add Reply"); ?></a></p>
+							</section>
+						</div>
+					</article>
+				</section>
+				
 			</div>
 		</div>
 		<div class="arrow bottom"><a class="close"><?php echo __('Hide detail'); ?></a></div>
@@ -121,12 +142,6 @@
 </script>
 
 <!-- related discussion -->
-<script type="text/template" id="discussion-template">
-	<hgroup>
-		<h2><?php echo __("Related Discussion"); ?></h2>
-	</hgroup>
-</script>
-
 <script type="text/template" id="discussion-item-template">
 	<div class="summary">
 		<section class="source <%= channel %>">
