@@ -124,11 +124,13 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_tags($droplets['droplets']);
 			
     		// Populate links array			
-    		Model_Droplet::populate_links($droplets['droplets']);			
+    		Model_Droplet::populate_links($droplets['droplets']);
     		
     		// Populate places array			
-    		Model_Droplet::populate_places($droplets['droplets']);    		
+    		Model_Droplet::populate_places($droplets['droplets']);
 			
+			// Populate the discussions array
+			Model_Droplet::populate_discussions($droplets['droplets']);
 			
 			$droplets['total'] = count($droplets['droplets']);
 		}

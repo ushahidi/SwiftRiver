@@ -77,7 +77,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
-			->bind('droplet_js', $droplet_js);
+			->bind('droplet_js', $droplet_js)
+			->bind('user', $this->user);
 		
 
 		$buckets = ORM::factory('bucket')

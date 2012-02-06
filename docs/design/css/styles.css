@@ -1557,20 +1557,20 @@ article.droplet section.detail article.droplet section.actions p.button_change a
    border-radius: 6px;
 }
 
-article.droplet section.detail article.add_reply {
+article.droplet section.detail article.add-reply {
    border-bottom: none;
 }
 
-article.droplet section.detail article.add_reply section.content textarea {
+article.droplet section.detail article.add-reply section.content textarea {
    width: 100%;
 }
 
-article.droplet section.detail article.add_reply section.content p.button_go {
+article.droplet section.detail article.add-reply section.content p.button_go {
    float: right;
    margin-top: 10px;
 }
 
-article.droplet section.detail article.add_reply section.content p.button_go a {
+article.droplet section.detail article.add-reply section.content p.button_go a {
    font-size: 1.1em;
    padding: 13px 30px;
 }
@@ -1836,7 +1836,7 @@ article#droplet_full section.actions p.follow_user a.subscribe strong {
    display: block;
 }
 
-article.droplet section.detail article.add_reply section.content {
+article.droplet section.detail article.add-reply section.content {
    width: 80%;
 }
 

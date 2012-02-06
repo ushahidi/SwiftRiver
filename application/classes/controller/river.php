@@ -103,7 +103,8 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_action_url = $this->base_url.'/ajax_droplet/'.$river_id;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
-		    ->bind('droplet_js', $droplet_js);
+		    ->bind('droplet_js', $droplet_js)
+		    ->bind('user', $this->user);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
@@ -114,7 +115,7 @@ class Controller_River extends Controller_Swiftriver {
 
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = $this->base_url.'/filters/'.$river_id;
-		$settings_url = $this->base_url.'/river/settings/'.$river_id;
+		$settings_url = $this->base_url.'/settings/'.$river_id;
 		$more_url = $this->base_url.'/more/'.$river_id;
 	}
 	
@@ -178,6 +179,7 @@ class Controller_River extends Controller_Swiftriver {
 		// Get the settings control		
 		$settings_control = View::factory('pages/river/settings_control')
 		    ->bind('settings_js', $settings_js);
+		
 		$settings_js = $this->_get_settings_js_view();
 		
 		// Disable available channels by default
@@ -212,7 +214,9 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Load the view for the settings UI
 		$settings = View::factory('pages/river/settings_control')
-			->bind('settings_js', $this->_get_settings_js_view());
+			->bind('settings_js', $settings_js);
+		
+		$settings_js = $this->_get_settings_js_view();
 		
 		echo $settings;
 	}
@@ -230,9 +234,9 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('delete_river_url', $delete_river_url);
 
 		// URLs for XHR endpoints
-		$channels_url = $this->base_url.'/channels';
-		$save_settings_url = $this->base_url.'/save_settings';
-		$delete_river_url = $this->base_url.'/delete';
+		$channels_url = $this->base_url.'/channels/'.$this->_river->id;
+		$save_settings_url = $this->base_url.'/save_settings/'.$this->_river->id;
+		$delete_river_url = $this->base_url.'/delete/'.$this->_river->id;
 		
 		return $settings_js;
 	}

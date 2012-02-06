@@ -2,7 +2,7 @@
 	/**
 	 * Backbone.js wiring for the droplets MVC
 	 */
-	$(function() {
+	(function() {
 		// Models for the droplet places, tags and links 
 		window.DropletPlace = Backbone.Model.extend();
 		window.DropletTag = Backbone.Model.extend();
@@ -53,6 +53,11 @@
 				this.save({buckets: change_buckets}, {wait: true});
 			}
 		});
+		
+		// Discussions collection
+		window.DropletDiscussionsCollection = Backbone.Collection.extend({
+			model: Droplet
+		});
 	
 		// Droplet & Bucket collection
 		window.DropletList = Backbone.Collection.extend({
@@ -102,7 +107,11 @@
 				 
 				// List of links in a droplet
 				this.placeList = new DropletPlaceCollection();
-				this.placeList.on('reset', this.addPlaces, this); 
+				this.placeList.on('reset', this.addPlaces, this);
+				
+				// List of discussions
+				this.discussionsList = new DropletDiscussionsCollection();
+				this.discussionsList.on('reset', this.addDiscussions, this);
 
 			},
 			
@@ -112,6 +121,7 @@
 				this.tagList.reset(this.model.get('tags'));
 				this.linkList.reset(this.model.get('links'));
 				this.placeList.reset(this.model.get('places'));
+				this.discussionsList.reset(this.model.get('discussions'));
 				return this;
 			},
 			
@@ -144,6 +154,15 @@
 						
 			addBucket: function() {
 				this.createBucketMenu();				
+			},
+			
+			addDiscussion: function(discussion) {
+				var view = new DiscussionView({model: discussion});
+				this.$("section.discussion hgroup").after(view.render().el);
+			},
+			
+			addDiscussions: function() {
+				this.discussionsList.each(this.addDiscussion, this);
 			},
 			
 			// Creates the buckets dropdown menu
@@ -256,11 +275,12 @@
 				var view = new DropletView({model: droplet});
 				
 				// Recent items populate at the top othewise append
-				if(maxId && droplet.get('id') > maxId) {
+				if (maxId && droplet.get('id') > maxId) {
 					this.$el.prepend(view.render().el);
 				} else {
 					this.$el.append(view.render().el);					
-				}				
+				}
+				
 			},
 			
 			addDroplets: function() {
@@ -335,6 +355,21 @@
 				droplet.setBucket(this.model);
 				this.$("li.checkbox a").toggleClass("selected");
 			}
+		});
+		
+		// View for individual discussion items
+		window.DiscussionView = Backbone.View.extend({
+			tagName: "article",
+			
+			className: "item",
+			
+			template: _.template($("#discussion-item-template").html()),
+			
+			render: function() {
+				$(this.el).html(this.template(this.model.toJSON()));
+				return this;
+			}
+			
 		});
 		
 		// Load content while scrolling - Infinite Scrolling
@@ -413,5 +448,5 @@
 		// Set the maxId after inital rendering of droplet list
 		maxId = sinceId = <?php echo $max_droplet_id ?>;
 		
-	});
+	})();
 </script>
