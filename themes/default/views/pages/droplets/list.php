@@ -1,7 +1,7 @@
 <div id="droplet-list" class="trend-container cf">
 </div>
 <div class="page_buttons cf" id="next_page_button">
-    <p class="button-view"><a>View more</a></p>
+    <p class="button-view"></p>
 </div>
 
 <script type="text/template" id="droplet-template">
