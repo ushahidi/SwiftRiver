@@ -86,7 +86,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->find_all();
 
 		// Links to ajax rendered menus
-		$settings = $this->base_url.'/settings/'.$this->bucket->id;
+		$settings_url = $this->base_url.'/settings/'.$this->bucket->id;
 		$more = $this->base_url.'/more/';
 	}
 	
