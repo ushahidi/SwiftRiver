@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * RSS Channel worker
+ * RSS crawler
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -18,18 +18,18 @@ class Swiftriver_Crawler_Rss  {
 	/**
 	 * Fetch feeds attached to a river id
 	 *
-	 * @param   int      river_id	 
-	 * @return  boolean
+	 * @param   int   $river_id	 
+	 * @return  bool
 	 */
 	public function crawl($river_id)
 	{
 		// If the river ID is NULL or non-existent, exit
-		if (empty($river_id) or ! ORM::factory('river', $river_id)->loaded())
+		if (empty($river_id) OR ! ORM::factory('river', $river_id)->loaded())
 		{
 			Kohana::$log->add(Log::ERROR, 'Invalid database river id: :river_id', 
 			    array(':river_id' => $river_id));
 			
-			return false;
+			return FALSE;
 		}
 		
 		// Get the links to crawl from the DB
@@ -42,7 +42,7 @@ class Swiftriver_Crawler_Rss  {
 			}
 		}
 		
-		return true;
+		return TRUE;
 		
 	}
 
