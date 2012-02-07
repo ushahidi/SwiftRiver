@@ -26,7 +26,13 @@
 					<li class="view-panel">
 						<a href="<?php echo $filters_url; ?>" class="filter">
 							<span class="icon"></span>
-							<span class="label"><?php echo __("Edit Filter"); ?></span>
+							<span class="label"><?php echo __("Filter"); ?></span>
+						</a>
+					</li>
+					<li class="view-panel">
+						<a href="<?php echo $discussion_url; ?>" class="discussion">
+							<span class="icon"></span>
+							<span class="label"><?php echo __("Discuss"); ?></span>
 						</a>
 					</li>
 					<li class="view-panel">
