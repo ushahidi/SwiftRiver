@@ -15,8 +15,8 @@
  */
 
 return array(
-	'driver'       => 'ORM',
-	'api_endpoint' => 'https://50.56.193.23/api', // RiverID api endpoint
+	'driver'       => 'RiverID',
+	'api_endpoint' => 'https://crowdmapid.com/api', // RiverID api endpoint
 	'hash_method'  => 'sha256',
 	'hash_key'     => '#&wicm`(wT6m&0f}UT*o9*V01@:?fF#D', // replace with random string
 	'lifetime'     => 1209600,
