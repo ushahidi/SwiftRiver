@@ -251,6 +251,16 @@ Route::set('trend_bucket', 'bucket/trend(/<controller>(/<id>(/<action>)))',
 	));	
 
 /**
+ * Swiftriver Tag Api Route
+ */
+Route::set('tag', 'tag/api/<droplet_id>(/<tag_id>)', array('tag_id' => '\d+', 'tag_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'tag',
+		'action'     => 'api',
+	));
+
+
+/**
  * Swiftriver Bucket Route
  */
 Route::set('bucket', 'bucket(/<action>(/<id>))', array('id' => '\d+'))

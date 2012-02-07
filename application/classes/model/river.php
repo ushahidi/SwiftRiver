@@ -207,8 +207,9 @@ class Model_River extends ORM {
 			'droplets' => array()
 			);
 
-		if ($river_id)
-		{
+		$river_orm = ORM::factory('river', $river_id);
+		if ($river_orm->loaded())
+		{						
 			// Build River Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 			                    'droplet_title', 'droplet_content', 
@@ -238,7 +239,7 @@ class Model_River extends ORM {
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
 			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets']);
+			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate links array			
 			Model_Droplet::populate_links($droplets['droplets']);
@@ -268,37 +269,41 @@ class Model_River extends ORM {
 			);
 		
 		
-		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
-		    'droplets.channel','identity_name', 'identity_avatar', 
-		    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
-		    ->from('droplets')
-		    ->join('rivers_droplets', 'INNER')
-		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-		    ->join('identities', 'INNER')
-		    ->on('droplets.identity_id', '=', 'identities.id')
-		    ->where('droplets.droplet_processed', '=', 1)
-		    ->where('rivers_droplets.river_id', '=', $river_id)
-		    ->where('droplets.id', '>', $since_id)
-		    ->order_by('droplets.droplet_date_pub', 'ASC')
-		    ->limit(self::DROPLETS_PER_PAGE)
-		    ->offset(0);
-		
-		$droplets['droplets'] = $query->execute()->as_array();
-		
-		// Populate buckets array			
-		Model_Droplet::populate_buckets($droplets['droplets']);
-
-		// Populate tags array			
-		Model_Droplet::populate_tags($droplets['droplets']);
-		
-		// Populate links array			
-		Model_Droplet::populate_links($droplets['droplets']);
-
-		// Populate places array			
-		Model_Droplet::populate_places($droplets['droplets']);
-		
-		// Populate the discussions array
-		Model_Droplet::populate_discussions($droplets['droplets']);
+		$river_orm = ORM::factory('river', $river_id);
+		if ($river_orm->loaded())
+		{
+			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
+			    'droplets.channel','identity_name', 'identity_avatar', 
+			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			    ->from('droplets')
+			    ->join('rivers_droplets', 'INNER')
+			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+			    ->join('identities', 'INNER')
+			    ->on('droplets.identity_id', '=', 'identities.id')
+			    ->where('droplets.droplet_processed', '=', 1)
+			    ->where('rivers_droplets.river_id', '=', $river_id)
+			    ->where('droplets.id', '>', $since_id)
+			    ->order_by('droplets.droplet_date_pub', 'ASC')
+			    ->limit(self::DROPLETS_PER_PAGE)
+			    ->offset(0);
+			
+			$droplets['droplets'] = $query->execute()->as_array();
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+        	
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
+			
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);
+        	
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);
+			
+			// Populate the discussions array
+			Model_Droplet::populate_discussions($droplets['droplets']);
+		}
 				
 		return $droplets;
 	}

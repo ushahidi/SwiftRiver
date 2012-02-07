@@ -41,12 +41,12 @@
 						<p class="create-new">
 							<a class="plus"><?php echo __("Create new bucket"); ?></a>
 							<div class="create-name">
-								<input type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
+								<input id="new-bucket-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
 								<div class="buttons">
 									<button class="save"><?php echo __("Save"); ?></button>
 									<button class="cancel"><?php echo __("Cancel"); ?></button>
 								</div>
-							</div>							
+							</div>
 						</p>
 					</div>
 				</div>
@@ -72,7 +72,19 @@
 					<div class="item cf">
 						<h2>Tags</h2>
 						<ul class="tags cf"></ul>
-						<p class="button-change"><a><?php echo __("Add tag") ?></a></p>
+						<div class="container" id="add-tag">
+							<p class="create-new">
+								<p class="button-change"><a><?php echo __("Add tag") ?></a></p>
+								<div class="create-name">
+									<input id="new-tag-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new tag"); ?>">
+									<div class="buttons">
+										<button class="save"><?php echo __("Save"); ?></button>
+										<button class="cancel"><?php echo __("Cancel"); ?></button>
+									</div>
+								</div>
+							</p>
+						</div>
+						
 					</div>
 
 					<div class="item cf locations">

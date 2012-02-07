@@ -25,36 +25,36 @@ class Model_Account_Droplet_Tag extends ORM {
 		'tag' => array()
 	);
 		    
-    /**
-     * Checks if a given tag already exists. 
-     *
-     * @param string $tag_name The tag string
-     * @param Model_Droplet $orm_droplet Droplet this tag belongs to
-     * @param Model_Account $orm_account Account this tag belongs to 
-     * @return Model_Account_Droplet_Tag
-     */
-    public static function get_tag($tag_name, $orm_droplet,  $orm_account)
-    {    	
-        $orm_tag = Model_Tag::get_tag_by_name(array('tag_name' => $tag_name, 
-                                                    'tag_type' => 'user_generated'), 
-                                                TRUE);
-        
-        $account_tag = ORM::factory('account_droplet_tag')
-                        ->where('droplet_id', '=', $orm_droplet->id)
-                        ->where('tag_id', '=', $orm_tag->id)
-                        ->where('account_id', '=', $orm_account->id)
-                        ->find();
-                        
-        
-        if ( ! $account_tag->loaded())
-        {
-            $account_tag->tag_id = $orm_tag->id;
-            $account_tag->droplet_id = $orm_droplet->id;
-            $account_tag->account_id = $orm_account->id;            
-            $account_tag->save();
-        }
-        
-        return $account_tag;
-    }
+	/**
+	 * Checks if a given tag already exists. 
+	 *
+	 * @param string $tag_name The tag string
+	 * @param Model_Droplet $orm_droplet Droplet this tag belongs to
+	 * @param Model_Account $orm_account Account this tag belongs to 
+	 * @return Model_Account_Droplet_Tag
+	 */
+	public static function get_tag($tag_name, $droplet_id,  $account_id)
+	{    	
+		$orm_tag = Model_Tag::get_tag_by_name(array('tag_name' => $tag_name, 
+		                                            'tag_type' => 'user_generated'), 
+		                                        TRUE);
+		
+		$account_tag = ORM::factory('account_droplet_tag')
+		                ->where('droplet_id', '=', $droplet_id)
+		                ->where('tag_id', '=', $orm_tag->id)
+		                ->where('account_id', '=', $account_id)
+		                ->find();
+		                
+		
+		if ( ! $account_tag->loaded())
+		{
+			$account_tag->tag_id = $orm_tag->id;
+			$account_tag->droplet_id = $droplet_id;
+			$account_tag->account_id = $account_id;
+			$account_tag->save();
+		}
+		
+		return $account_tag;
+	}
 }
 ?>

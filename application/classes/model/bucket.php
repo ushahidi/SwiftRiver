@@ -83,14 +83,15 @@ class Model_Bucket extends ORM {
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
+	public static function get_droplets($bucket_id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
 	{
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
 		
-		if ($id)
+		$bucket_orm = ORM::factory('bucket', $bucket_id);
+		if ($bucket_orm->loaded())
 		{
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
@@ -101,7 +102,7 @@ class Model_Bucket extends ORM {
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
 				->on('droplets.identity_id', '=', 'identities.id')				
-				->where('buckets_droplets.bucket_id', '=', $id)
+				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '<=', $max_id)
 				->order_by('buckets_droplets.droplet_date_added', 'DESC');
@@ -123,7 +124,7 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
 			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets']);
+			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate links array			
 			Model_Droplet::populate_links($droplets['droplets']);
@@ -146,15 +147,16 @@ class Model_Bucket extends ORM {
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets_since_id($id, $since_id)
+	public static function get_droplets_since_id($bucket_id, $since_id)
 	{
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
 		
-		if ($id)
-		{
+		$bucket_orm = ORM::factory('bucket', $bucket_id);
+		if ($bucket_orm->loaded())
+		{		
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 								'droplet_title', 'droplet_content', 
@@ -164,7 +166,7 @@ class Model_Bucket extends ORM {
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
 				->on('droplets.identity_id', '=', 'identities.id')				
-				->where('buckets_droplets.bucket_id', '=', $id)
+				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '>', $since_id)
 				->order_by('droplets.id', 'DESC');
@@ -176,7 +178,7 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
 			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets']);
+			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate links array			
 			Model_Droplet::populate_links($droplets['droplets']);			

@@ -18,7 +18,7 @@ $(function() {
 	})
 
 	window.DropletTagCollection = Backbone.Collection.extend({
-		model: DropletTag
+		model: DropletTag,
 	});
 
 	window.DropletLinkCollection = Backbone.Collection.extend({
@@ -47,6 +47,7 @@ $(function() {
 		
 		urlRoot: "<?php echo $fetch_url ?>/",
 		
+		// Add/Remove a droplet from a bucket
 		setBucket: function(changeBucket) {
 			// Is this droplet already in the bucket?
 			change_buckets = this.get("buckets");
@@ -60,7 +61,6 @@ $(function() {
 			
 			this.save({buckets: change_buckets}, {wait: true});
 		}
-		
 	});
 	
 	// Droplet & Bucket collection
@@ -96,7 +96,10 @@ $(function() {
 			"click div.create-name button.cancel": "cancelCreateBucket",
 			"click div.create-name button.save": "saveBucket",
 			"click ul.delete-droplet li.confirm a": "deleteDroplet",
-			"click .discussion .add-reply .button-go > a": "addReply"
+			"click .discussion .add-reply .button-go > a": "addReply",
+			"click .detail section.meta #add-tag a": "showCreateTag",
+			"click .detail section.meta #add-tag button.cancel": "cancelCreateTag",
+			"click .detail section.meta #add-tag button.save": "saveTag"
 		},
 					
 		initialize: function() {
@@ -104,7 +107,9 @@ $(function() {
 			
 			// List of general tags for the droplet
 			this.tagList = new DropletTagCollection();
+			this.tagList.url = "<?php echo url::site("/tag/api"); ?>"+"/"+this.model.get("id")
 			this.tagList.on('reset', this.addTags, this);
+			this.tagList.on('add', this.addTag, this);
 			
 			// List of links in a droplet
 			this.linkList = new DropletLinkCollection();
@@ -239,8 +244,8 @@ $(function() {
 		
 		// When save button is clicked in the add bucket drop down
 		saveBucket: function(e) {
-			if(this.$(":text").val()) {
-				bucketList.create({bucket_name: this.$(":text").val()}, {wait: true});
+			if(this.$("#new-bucket-name").val()) {
+				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {wait: true});
 				this.$(":text").val('');
 			}
 			this.$("div.dropdown div.create-name").fadeOut();
@@ -301,6 +306,28 @@ $(function() {
 				}); // end save
 				
 			} // end if 
+		},
+
+		// When add tag link is clicked
+		showCreateTag: function() {
+			this.$(".detail section.meta #add-tag .create-name").fadeIn();
+			this.$(".detail section.meta #add-tag p.button-change").fadeOut();
+		},
+		
+		// When cancel button in the add tag is clicked
+		cancelCreateTag: function() {
+			this.$(".detail section.meta #add-tag .create-name").fadeOut();
+			this.$(".detail section.meta #add-tag p.button-change").fadeIn();
+		},
+		
+		
+		// When save button in the add tag is clicked
+		saveTag: function() {
+			if(this.$("#new-tag-name").val()) {
+				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true});
+			}
+			this.$(".detail section.meta #add-tag .create-name").fadeOut();
+			this.$(".detail section.meta #add-tag p.button-change").fadeIn();
 		}
 		
 	});
@@ -339,10 +366,28 @@ $(function() {
 		
 		template: _.template($("#tag-template").html()),
 		
+		events: {
+			"dblclick": "deleteTag"
+		},
+		
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
 		},
+		
+		deleteTag: function() {
+			var viewItem = this.$el;
+			// Delete on the server
+			this.model.destroy({
+				wait: true,
+				success: function(model, response) {
+					if (response.success) {
+						// Remove from UI
+						viewItem.fadeOut("slow");
+					}
+				}
+			});
+		}
 		
 	});
 
