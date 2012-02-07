@@ -20,9 +20,10 @@
 		</li>
 		<div class="account">
 			<?php if ($user): ?>
+				<li class="notifications has_dropdown"><a href="/dashboard?filter=notifications"><span class="badge">3</span></a></li>
 				<li class="user has_dropdown">
 					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow">
-						<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" />
+						<span class="badge"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></span>
 						<span class="icon"></span><span class="label"><?php echo $user->name; ?></span>
 					</a>
 					<ul class="dropdown">

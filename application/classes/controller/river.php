@@ -70,6 +70,7 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
+			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
 			->bind('more_url', $more_url);
 				
@@ -115,6 +116,7 @@ class Controller_River extends Controller_Swiftriver {
 
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = $this->base_url.'/filters/'.$river_id;
+		$discussion_url = $this->base_url.'/discussion/'.$river_id;
 		$settings_url = $this->base_url.'/settings/'.$river_id;
 		$more_url = $this->base_url.'/more/'.$river_id;
 	}
@@ -200,6 +202,18 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		echo View::factory('pages/river/filters_control');
+	}
+
+	/**
+	 * Ajax rendered discussion control box
+	 * 
+	 * @return	void
+	 */
+	public function action_discussion()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/river/discussion_control');
 	}
 
 	/**

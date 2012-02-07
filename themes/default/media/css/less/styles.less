@@ -232,11 +232,44 @@ header nav .account li {
    font-size: 0.8em;
 }
 
+header nav .account > li > a,
+header nav .account > li > a:link {
+   padding: 0 10px;
+}
+
+header nav .account li.notifications a {
+  width: 26px;
+  background: url(../img/notifications_bg.png) center no-repeat;
+}
+
+header nav .account li.notifications a span.badge  {
+   -webkit-border-radius: 10px;
+   -moz-border-radius: 10px;
+   border-radius: 10px;
+   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+background-color: #c1585b;
+background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(193, 88, 91)), to(rgb(155, 0, 8)));
+background-image: -webkit-linear-gradient(top, rgb(193, 88, 91), rgb(155, 0, 8));
+background-image: -moz-linear-gradient(top, rgb(193, 88, 91), rgb(155, 0, 8));
+background-image: -o-linear-gradient(top, rgb(193, 88, 91), rgb(155, 0, 8));
+background-image: -ms-linear-gradient(top, rgb(193, 88, 91), rgb(155, 0, 8));
+background-image: linear-gradient(top, rgb(193, 88, 91), rgb(155, 0, 8));
+filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#c1585b', EndColorStr='#9b0008');
+   padding: 2px 6px;
+}
+
 header nav .account li.user img {
-   float: left;
-   width: 25px;
-   border: 1px solid #0f9ebb;
-   margin: 6px 0;
+  float: left;
+  width: 26px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  margin: 6px 0;
 }
 
 header nav .account li.user ul.dropdown:before,
@@ -466,6 +499,10 @@ a.delete span.icon {
 
 a.filter span.icon {
    background-position: center -267px;
+}
+
+a.discussion span.icon {
+   background-position: center -422px;
 }
 
 a.plus:before {
@@ -2287,72 +2324,20 @@ article.item .detail .content article.fullstory h1 {
    padding: 7px 0;
 }
 
-article.droplet section.detail article.fullstory img {
-   float: right;
-   margin: 0 0 10px 10px;
-}
-
-article.droplet section.detail article.fullstory p {
-   padding: 5px 0;
-}
-
-article.droplet section.detail article.droplet div.summary {
-   padding: 0;
-}
-
-article.droplet section.detail article.droplet section.source,
-article.droplet section.detail article.droplet section.actions {
-   text-align: center;
-}
-
-article.droplet section.detail article.droplet section.source {
-   padding-left: 0;
-}
-
-article.droplet section.detail article.droplet section.content .title h1 {
-   font-size: 1.2em;
-}
-
-article.droplet section.detail article.droplet section.content .body p {
-   font-size: 1em;
-}
-
-article.droplet section.detail article.droplet section.content .body p.button-go a {
-   display: inline;
-   font-size: 0.8em;
-   padding: 3px 10px;
-}
-
-article.droplet section.detail article.droplet section.actions div.button {
-   width: auto;
-   height: auto;
-}
-
-article.droplet section.detail article.droplet section.actions p.button-change a {
-   -webkit-border-radius: 5px;
-   -moz-border-radius: 5px;
-   border-radius: 5px;
-   border-top: 1px solid #c2c2c2;
-}
-
-article.droplet section.detail article.droplet section.actions p.button-change a.bucket_added {
-   border-top: 1px solid transparent;
-}
-
-article.item .detail article.add-reply {
+article.add-reply {
    border-bottom: none;
 }
 
-article.item .detail article.add-reply section.content textarea {
+article.add-reply section.content textarea {
    width: 100%;
 }
 
-article.item .detail article.add-reply section.content p.button-go {
+article.add-reply section.content p.button-go {
    float: right;
    margin-top: 10px;
 }
 
-article.item .detail article.add-reply section.content p.button-go a {
+article.add-reply section.content p.button-go a {
    font-size: 1.1em;
    padding: 13px 30px;
 }
