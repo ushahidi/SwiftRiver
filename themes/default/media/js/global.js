@@ -31,26 +31,26 @@ $(document).ready(function() {
 		$('ul.views li.more').remove();
 	}
 	
-    $("section.panel nav ul li.view-panel a").toggle(
-        function(e) {
-            var url = $(this).attr("href");
-            $('ul.views li, ul.actions li').fadeTo('fast', 0);
-            $(this).parent('li').addClass('open').fadeTo('fast', 1);
-            $('section.panel div.drawer').slideDown(200).load(url);
-            e.preventDefault();
-        }, 
-        function(e) {
-            $('ul.views li, ul.actions li').fadeTo('fast', 1);
-            $(this).parent('li').removeClass('open');
-            $('section.panel div.drawer').slideUp(200).empty();
-            e.preventDefault();
-        }
-    );
+	$("section.panel nav ul li.view-panel a").toggle(
+		function(e) {
+			var url = $(this).attr("href");
+			$('ul.views li, ul.actions li').fadeTo('fast', 0);
+			$(this).parent('li').addClass('open').fadeTo('fast', 1);
+			$('section.panel div.drawer').slideDown(200).load(url);
+			e.preventDefault();
+		}, 
+		function(e) {
+			$('ul.views li, ul.actions li').fadeTo('fast', 1);
+			$(this).parent('li').removeClass('open');
+			$('section.panel div.drawer').slideUp(200).empty();
+			e.preventDefault();
+		}
+	);
 	
-    // TODO: E.Kala Review this segment
-    $('section.panel nav ul.actions li.view-panel a').live('click', function() {
-        $.getScript('/themes/default/media/js/settings.js');
-    });
+	// TODO: E.Kala Review this segment
+	$('section.panel nav ul.actions li.view-panel a').live('click', function() {
+		$.getScript('/themes/default/media/js/settings.js');
+	});
     
 	$('section.panel a.close').live('click', function() {
 		$('section.panel nav, .canvas > .container').fadeIn('fast');
@@ -62,15 +62,15 @@ $(document).ready(function() {
 	
 	//Show a trend
 	$('section.panel ul.views li.view_trend a').live('click', function(e) {
-	    //Make the clicked tab the only one active
-	    $('section.panel ul.views li').each(function(){
-	        $(this).removeClass('active');
-	    });
-	    $(this).parent('li').addClass('active');
-	    
-	    //Load the referenced URL into the viewport
-	    var url = $(this).attr('href');	    
-	    $('article .trend_container').load(url);
+		//Make the clicked tab the only one active
+		$('section.panel ul.views li').each(function(){
+			$(this).removeClass('active');
+		});
+		$(this).parent('li').addClass('active');
+		
+		//Load the referenced URL into the viewport
+		var url = $(this).attr('href');	    
+		$('article .trend_container').load(url);
 		e.preventDefault();
 	});	
 	
@@ -138,9 +138,9 @@ $(document).ready(function() {
 
 // Hide mobile address bar
 window.addEventListener("load",function() {
-  setTimeout(function(){
-    window.scrollTo(0, 1);
-  }, 0);
+	setTimeout(function(){
+		window.scrollTo(0, 1);
+	}, 0);
 });
 
 function submitForm(button){

@@ -227,9 +227,9 @@ class Model_River extends ORM {
 			$query->order_by('droplets.droplet_date_pub', $sort);
 			if ($page > 0)
 			{
-			    $query->limit(self::DROPLETS_PER_PAGE);	
-		        $query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-	        }
+				$query->limit(self::DROPLETS_PER_PAGE);	
+				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+			}
 	
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
@@ -240,11 +240,11 @@ class Model_River extends ORM {
 			// Populate tags array			
 			Model_Droplet::populate_tags($droplets['droplets']);
 			
-    		// Populate links array			
-    		Model_Droplet::populate_links($droplets['droplets']);
-    		
-    		// Populate places array			
-    		Model_Droplet::populate_places($droplets['droplets']);
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);
+			
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);
 			
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);
@@ -266,8 +266,8 @@ class Model_River extends ORM {
 			'total' => 0,
 			'droplets' => array()
 			);
-	    
-	    
+		
+		
 		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 		    'droplets.channel','identity_name', 'identity_avatar', 
 		    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))

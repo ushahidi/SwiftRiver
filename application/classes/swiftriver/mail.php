@@ -24,10 +24,10 @@ class Swiftriver_Mail {
 	 */	   
 	public static function send($email, $subject, $mail_body)
 	{
-	    $site_email = Kohana::$config->load('useradmin.email_address');
-	    $headers = 'From: "SwiftRiver" <'.$site_email.'>'."\r\n".
-                   'Reply-To: '.$site_email."\r\n".
-                   'X-Mailer: PHP/'.phpversion();
+		$site_email = Kohana::$config->load('useradmin.email_address');
+		$headers = 'From: "SwiftRiver" <'.$site_email.'>'."\r\n".
+		           'Reply-To: '.$site_email."\r\n".
+		           'X-Mailer: PHP/'.phpversion();
 		mail($email, $subject, $mail_body, $headers);
 	}
 

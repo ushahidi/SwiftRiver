@@ -161,117 +161,117 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		{
 		    try 
 		    {
-			    if (empty($_POST['password']) || empty($_POST['password_confirm']))
-			    {
-			    	// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
-			    	unset($_POST['password'], $_POST['password_confirm']);
-			    }
-			    
-			    $current_password = $_POST['current_password'];
-			    
-			    // Authenticate changes for non river id auth by checking if old password matches
-			    if (! $this->riverid_auth AND
-			        Auth::instance()->hash($current_password) != $this->user->password)
-			    {
-			        echo json_encode(array("status"=>"error", "errors" => array('Current password is incorrect')));
-			        return;
-			    }
-			    
-			    
-			    // Password is changing and we are using RiverID authentication
-			    if (! empty($_POST['password']) and ! empty($_POST['password_confirm']))
-			    {
-			        $post = Model_Auth_User::get_password_validation($_POST);
-			        if ( ! $post->check())
-			        {
-			            throw new ORM_Validation_Exception('', $post);
-			        }
-			        
-			        if ($this->riverid_auth)
-			        {
-			            $resp = RiverID_API::factory()
-    			                           ->changepassword($this->user->email, $_POST['current_password'], $_POST['password']);
+				if (empty($_POST['password']) || empty($_POST['password_confirm']))
+				{
+					// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
+					unset($_POST['password'], $_POST['password_confirm']);
+				}
+				
+				$current_password = $_POST['current_password'];
+				
+				// Authenticate changes for non river id auth by checking if old password matches
+				if (! $this->riverid_auth AND
+				    Auth::instance()->hash($current_password) != $this->user->password)
+				{
+					echo json_encode(array("status"=>"error", "errors" => array('Current password is incorrect')));
+					return;
+				}
+				
+				
+				// Password is changing and we are using RiverID authentication
+				if (! empty($_POST['password']) and ! empty($_POST['password_confirm']))
+				{
+					$post = Model_Auth_User::get_password_validation($_POST);
+					if ( ! $post->check())
+					{
+						throw new ORM_Validation_Exception('', $post);
+					}
+					
+					if ($this->riverid_auth)
+					{
+						$resp = RiverID_API::factory()
+						           ->changepassword($this->user->email, $_POST['current_password'], $_POST['password']);
 
-    			        if ( ! $resp['status']) {
-    			            echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
-    			            return;
-    			        }
+					if ( ! $resp['status']) {
+						echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+						return;
+					}
 
-    			        // For API calls below, use this new password
-    			        $current_password = $_POST['password'];
-    			        unset($_POST['password'], $_POST['password_confirm']);
-			        }			        
-			    } 
-			    
-			    // Email address is changing
-			    if ($_POST['email'] != $this->user->email)
-			    {
-			        $new_email = $_POST['email'];
-			        
-			        if ( ! Valid::email($new_email))
-			        {
-			            echo json_encode(array("status"=>"error", "errors" => array(__('Email provided is invalid'))));
-			            return;
-			        }
-			        
-			        if ($this->riverid_auth)
-			        {
-			            // RiverID email change process
-			            $mail_body = View::factory('emails/changeemail')
-        	                         ->bind('secret_url', $secret_url);		            
-        	            $secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', true, true);
+					// For API calls below, use this new password
+					$current_password = $_POST['password'];
+					unset($_POST['password'], $_POST['password_confirm']);
+				}			        
+			} 
 
-    			        $resp = RiverID_API::factory()
-    			                           ->changeemail($this->user->email, $new_email, $current_password, $mail_body);
+			// Email address is changing
+			if ($_POST['email'] != $this->user->email)
+			{
+				$new_email = $_POST['email'];
+				
+				if ( ! Valid::email($new_email))
+				{
+					echo json_encode(array("status"=>"error", "errors" => array(__('Email provided is invalid'))));
+					return;
+				}
+				
+				if ($this->riverid_auth)
+				{
+					// RiverID email change process
+					$mail_body = View::factory('emails/changeemail')
+					             ->bind('secret_url', $secret_url);		            
+					$secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', true, true);
+					
+					$resp = RiverID_API::factory()
+					                   ->changeemail($this->user->email, $new_email, $current_password, $mail_body);
+					
+					if ( ! $resp['status']) {
+					    echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+					    return;
+					}    
+				}
+				else
+				{
+					// Make sure the new email address is not yet registered
+					$user = ORM::factory('user',array('email'=>$new_email));
+					if ($user->loaded())
+					{
+						echo json_encode(array("status"=>"error", "errors" => array(__('New email is already registered'))));
+						return;
+					}
+					
+					$auth_token = Model_Auth_Token::create_token($new_email, 'change_email');
+					if ($auth_token->loaded())
+					{
+						//Send an email with a secret token URL
+						$mail_body = View::factory('emails/changeemail')
+							               ->bind('secret_url', $secret_url);		            
+						$secret_url = url::site('login/changeemail/'
+							                    .$this->user->id
+							                    .'/'
+							                    .urlencode($new_email)
+							                    .'/'
+							                    .$auth_token->token, true, true);
+						Swiftriver_Mail::send($new_email, __('Email Change'), $mail_body);
+					}
+					else
+					{
+						echo json_encode(array("status"=>"error", "errors" => array(__('Error'))));
+						return;
+					}
+				}
+				
+				
+				// Don't change email address immediately.
+				// Only do so after the tokens sent above are validated
+				unset($_POST['email']);
+			}
 
-    			        if ( ! $resp['status']) {
-    			            echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
-    			            return;
-    			        }    
-			        }
-			        else
-			        {
-			            // Make sure the new email address is not yet registered
-			            $user = ORM::factory('user',array('email'=>$new_email));
-			            if ($user->loaded())
-                        {
-                            echo json_encode(array("status"=>"error", "errors" => array(__('New email is already registered'))));
-                            return;
-                        }
-			            
-			            $auth_token = Model_Auth_Token::create_token($new_email, 'change_email');
-			            if ($auth_token->loaded())
-			            {
-			                //Send an email with a secret token URL
-                            $mail_body = View::factory('emails/changeemail')
-                                         ->bind('secret_url', $secret_url);		            
-                            $secret_url = url::site('login/changeemail/'
-                                                    .$this->user->id
-                                                    .'/'
-                                                    .urlencode($new_email)
-                                                    .'/'
-                                                    .$auth_token->token, true, true);
-                            Swiftriver_Mail::send($new_email, __('Email Change'), $mail_body);
-			            }
-			            else
-			            {
-			                echo json_encode(array("status"=>"error", "errors" => array(__('Error'))));
-    			            return;
-			            }
-			        }
-			        
-			        
-			        // Don't change email address immediately.
-			        // Only do so after the tokens sent above are validated
-			        unset($_POST['email']);
-			    }
-			    			
 
 				$this->user->update_user($_POST, 
-					array(
-						'name',
-						'password',
-						'email'
+				    array(
+					      'name',
+					      'password',
+					      'email'
 					));
 
 				echo json_encode(array("status"=>"success"));
