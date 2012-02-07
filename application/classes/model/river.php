@@ -279,7 +279,7 @@ class Model_River extends ORM {
 		    ->where('droplets.droplet_processed', '=', 1)
 		    ->where('rivers_droplets.river_id', '=', $river_id)
 		    ->where('droplets.id', '>', $since_id)
-		    ->order_by('droplets.droplet_date_pub', 'DESC')
+		    ->order_by('droplets.droplet_date_pub', 'ASC')
 		    ->limit(self::DROPLETS_PER_PAGE)
 		    ->offset(0);
 		

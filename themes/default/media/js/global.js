@@ -19,7 +19,7 @@ $(document).ready(function() {
 		e.stopPropagation();
 		return false;
 	});
-	$('.actions .dropdown').live('click', function(e) {
+	$('.dropdown').live('click', function(e) {
 		e.stopPropagation();
 	});
 	
@@ -81,20 +81,6 @@ $(document).ready(function() {
 		$(this).toggleClass('subscribed');
 	});
 	
-	//Delete a droplet
-	$('section.detail .actions #delete_droplet .confirm a').live('click', function(e) {
-	   var article = $(this).closest('article.droplet');
-	   var url = $(this).attr('href');
-	   $.get(url, function() {
-           article.hide('slow');
-         })
-         .success(function() {  })
-         .error(function() { 
-             //TODO: flash message that something went wrong?
-              })
-         .complete(function() { });
-	   e.preventDefault();
-	});
 	
 	// Item checkboxes
 	$('.actions .dropdown li.checkbox a.selected').closest('.button').find('p.button_change a').addClass('selected');
