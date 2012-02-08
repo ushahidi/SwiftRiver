@@ -171,7 +171,9 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		
 		// Build the base URL
-		$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
+		$this->base_url = ($this->account->loaded())
+		    ? URL::site().$this->account->account_path.'/'.$this->request->controller()
+		    : URL::site().$this->request->controller();
 		
 		// Load Header & Footer & variables
 		if ($this->auto_render) 
