@@ -42,7 +42,7 @@ class Controller_Login extends Controller_Template {
 	{
 		// Execute parent::before first
 		parent::before();
-	    
+		
 		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid') 
 		{
 			$this->riverid_auth = TRUE;
@@ -68,8 +68,8 @@ class Controller_Login extends Controller_Template {
 		if($messages) {
 			$this->template->set('messages', $messages);        
 		}
-        
-        
+		
+		
 		// New user registration
 		if ($this->request->post('new_email'))
 		{
@@ -89,13 +89,13 @@ class Controller_Login extends Controller_Template {
 				}
 			}
 		}
-        
+		
 		
 		// Password reset request
 		if ($this->request->post('recover_email'))
 		{
 			$email = $this->request->post('recover_email');
-		    
+			
 			if ( ! Valid::email($email))
 			{
 				$this->template->set('errors', array(__('Recovery email address provided is invalid')));		        
@@ -112,7 +112,7 @@ class Controller_Login extends Controller_Template {
 				} 
 				else
 				{
- 					// Do the password reset depending on the auth driver we are using.
+					// Do the password reset depending on the auth driver we are using.
 					if ($this->riverid_auth) 
 					{
 						$this->__password_reset_riverid($email, $user);
@@ -160,7 +160,7 @@ class Controller_Login extends Controller_Template {
 	*/
 	private function __new_user_riverid($email) 
 	{	        
-		$riverid_api = RiverID_API::factory();
+		$riverid_api = RiverID_API::instance();
 		
 		if ( $riverid_api->is_registered($email)) 
 		{
@@ -169,9 +169,9 @@ class Controller_Login extends Controller_Template {
 		else
 		{
 			$mail_body = View::factory('emails/createuser')
-			             ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/create/'.urlencode($email).'/%token%', true, true);
-			$response = $riverid_api->requestpassword($email, $mail_body);
+						 ->bind('secret_url', $secret_url);
+			$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
+			$response = $riverid_api->request_password($email, $mail_body);
 			
 			if ($response['status']) 
 			{
@@ -182,7 +182,7 @@ class Controller_Login extends Controller_Template {
 				$this->template->set('error', array($response['error']));
 			}
 
- 		}        
+		}        
 	}
 
 	/**
@@ -200,13 +200,13 @@ class Controller_Login extends Controller_Template {
 			return;
 		}
 
- 		$auth_token = Model_Auth_Token::create_token($email, 'new_registration');        
+		$auth_token = Model_Auth_Token::create_token($email, 'new_registration');        
 		if ($auth_token->loaded())
 		{
 			//Send an email with a secret token URL
 			$mail_body = View::factory('emails/createuser')
-			             ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, true, true);
+						 ->bind('secret_url', $secret_url);		            
+			$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
 			Swiftriver_Mail::send($email, __('Please confirm your email address'), $mail_body);
 			
 			
@@ -214,7 +214,7 @@ class Controller_Login extends Controller_Template {
 		}
 		else
 		{
- 			$this->template->set('messages', array(__('error')));
+			$this->template->set('messages', array(__('error')));
 		}
 	}	
 
@@ -224,15 +224,15 @@ class Controller_Login extends Controller_Template {
 	*/	
 	private function __password_reset_riverid($email, $user)
 	{
-		$riverid_api = RiverID_API::factory();		            
+		$riverid_api = RiverID_API::instance();		            
 		$mail_body = View::factory('emails/resetpassword')
-		             ->bind('secret_url', $secret_url);		            
-		$secret_url = url::site('login/reset/'.$user->id.'/%token%', true, true);
-		$response = $riverid_api->requestpassword($email, $mail_body);
+					 ->bind('secret_url', $secret_url);		            
+		$secret_url = url::site('login/reset/'.$user->id.'/%token%', TRUE, TRUE);
+		$response = $riverid_api->request_password($email, $mail_body);
 		
 		if ($response['status']) 
 		{
- 			$this->template->set('messages', array(__('e-mail sent')));
+			$this->template->set('messages', array(__('e-mail sent')));
 		} 
 		else 
 		{
@@ -251,8 +251,8 @@ class Controller_Login extends Controller_Template {
 		{
 			//Send an email with a secret token URL
 			$mail_body = View::factory('emails/resetpassword')
-			             ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/reset/'.$user->id.'/'.$auth_token->token, true, true);
+						 ->bind('secret_url', $secret_url);		            
+			$secret_url = url::site('login/reset/'.$user->id.'/'.$auth_token->token, TRUE, TRUE);
 			Swiftriver_Mail::send($email, __('Password Reset'), $mail_body);
 			
 			
@@ -260,7 +260,7 @@ class Controller_Login extends Controller_Template {
 		}
 		else
 		{
- 			$this->template->set('messages', array(__('error')));
+			$this->template->set('messages', array(__('error')));
 		}
 	}
 
@@ -273,7 +273,7 @@ class Controller_Login extends Controller_Template {
 	{
 		$this->auto_render = FALSE;	    
 		$template = View::factory('pages/reset')
-		                  ->bind('errors', $errors);
+						  ->bind('errors', $errors);
 
 		$user_id = intval($this->request->param('id', 0));
 		$email = $this->request->param('email');
@@ -285,8 +285,8 @@ class Controller_Login extends Controller_Template {
 			// If we have userid only, get email from the user object
 			$email = $user->email;
 		}	        
-	    
-	    
+		
+		
 		// If the form has been filled in and submitted
 		if ($email AND $this->request->post('password_confirm') AND $this->request->post('password'))
 		{
@@ -301,9 +301,9 @@ class Controller_Login extends Controller_Template {
 				// Do a RiverID password reset
 				if ($this->riverid_auth)
 				{
-					$riverid_api = RiverID_API::factory();
-					$resp = $riverid_api->setpassword($email, $token, $this->request->post('password'));
-				     
+					$riverid_api = RiverID_API::instance();
+					$resp = $riverid_api->set_password($email, $token, $this->request->post('password'));
+					 
 					if ( ! $resp['status']) 
 					{
 						$errors = array($resp['error']);
@@ -320,7 +320,7 @@ class Controller_Login extends Controller_Template {
 				{
 					// Do an ORM password reset
 					if (Model_Auth_Token::is_valid_token($email, $token, 'password_reset') OR
-    					Model_Auth_Token::is_valid_token($email, $token, 'new_registration'))
+						Model_Auth_Token::is_valid_token($email, $token, 'new_registration'))
 					{
 						if ( ! $user->loaded() ) {
 							// New user registration
@@ -358,7 +358,7 @@ class Controller_Login extends Controller_Template {
 	{
 		$this->auto_render = FALSE;	    
 		$template = View::factory('pages/changeemail')
-			              ->bind('errors', $errors);
+						  ->bind('errors', $errors);
 
 		$user_id = intval($this->request->param('id', 0));
 		$user = ORM::factory('user', $user_id);
@@ -369,8 +369,8 @@ class Controller_Login extends Controller_Template {
 		{
 			if ($this->riverid_auth)
 			{
-				$riverid_api = RiverID_API::factory();
-				$resp = $riverid_api->confirmemail($new_email, $token);	        
+				$riverid_api = RiverID_API::instance();
+				$resp = $riverid_api->confirm_email($new_email, $token);	        
 
 				if ( ! $resp['status']) 
 				{
@@ -396,6 +396,7 @@ class Controller_Login extends Controller_Template {
 				$session->set('system_messages', array(__('Email changed successfully. Proceed to Log in')));
 				Auth::instance()->logout();
 				$this->request->redirect('login');
+
 				return;
 			}
 		}           

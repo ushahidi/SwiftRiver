@@ -165,7 +165,7 @@ class Model_Droplet extends ORM
 				
 				return TRUE;
 			}
-			catch (Kohana_Exception $e)
+			catch (Database_Exception $e)
 			{
 				Kohana::$log->add(Log::ERROR, $e->getMessage());
 				return FALSE;
@@ -192,7 +192,7 @@ class Model_Droplet extends ORM
 				
 				return TRUE;
 				
-			} catch (Kohana_Exception $e)
+			} catch (Database_Exception $e)
 			{
 				Kohana::$log->add(Log::ERROR, $e->getMessage());
 				return FALSE;

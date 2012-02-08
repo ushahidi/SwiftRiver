@@ -1,11 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access');
 
 /**
- * DropletQueue
+ * Droplet procesing library. Handles queueing of droplets for processing,
+ * initiating processing (semantic tagging of droplets) and monitoring status
+ * of the queue on a per channel basis.
  *
- * @author      Ushahidi Team
+ * @author     Ushahidi Team <team@ushahidi.com>
  * @package     Swiftriver http://github.com/ushahidi/Swiftriver_v2
- * @category    Helpers
+ * @subpackage  Libraries
  * @copyright   (c) 2008-2011 Ushahidi Inc <http://www.ushahidi.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
@@ -79,8 +81,12 @@ class Swiftriver_Dropletqueue {
 		// Set the SHA-256 hash value for the droplet
 		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_content']);
 		
-		// Strip the tags from to get droplet_raw
-		$droplet['droplet_raw'] = strip_tags($droplet['droplet_content']);
+		// Set the raw content - as fetched from the channel
+		$droplet['droplet_raw'] = $droplet['droplet_content'];
+		
+		// Strip the HTML tags to get the content
+		// TODO: Clean out the raw content a la Readability/Instapaper
+		$droplet['droplet_content'] = strip_tags($droplet['droplet_raw']);
 		
 		
 		// Check if the droplet has already been added to the queue
