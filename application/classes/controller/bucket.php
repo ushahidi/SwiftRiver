@@ -21,6 +21,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	protected $bucket;
 	
+	/*
+	* Boolean indicating whether the logged in user owns the bucket
+	* or is a collaborator
+	*/
+	private $owner = FALSE; 
+	
+	
 	/**
 	 * @return	void
 	 */
@@ -34,12 +41,23 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		$this->bucket = ORM::factory('bucket')
 			->where('id', '=', $bucket_id)
-			->where('account_id', '=', $this->account->id)
 			->find();
 		
-		if ($bucket_id != 0 AND ! $this->bucket->loaded())
+		if (! $this->bucket->loaded())
 		{
 			// It doesn't -- redirect back to dashboard
+			$this->request->redirect('dashboard');
+		}
+		
+		// Is the logged in user owner / collaborator?
+		if ($this->bucket->is_owner($this->user->id))
+		{
+			$this->owner = TRUE;
+		}
+		
+		// Bucket isn't published and logged in user isn't owner
+		if ( ! $this->bucket->bucket_publish AND ! $this->owner)
+		{
 			$this->request->redirect('dashboard');
 		}
 	}
@@ -49,8 +67,10 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
 			->bind('droplets_list', $droplets_list)
+			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
-			->bind('more', $more);
+			->bind('more', $more)
+			->bind('owner', $this->owner);
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
@@ -68,17 +88,20 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplet_list = json_encode($droplets);
 		$bucket_list = json_encode($this->user->get_buckets());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
-				->bind('fetch_url', $fetch_url)
-				->bind('droplet_list', $droplet_list)
-    		    ->bind('bucket_list', $bucket_list)
-    		    ->bind('max_droplet_id', $max_droplet_id);
+		        ->bind('fetch_url', $fetch_url)
+		        ->bind('tag_base_url', $tag_base_url)
+		        ->bind('droplet_list', $droplet_list)
+		        ->bind('bucket_list', $bucket_list)
+		        ->bind('max_droplet_id', $max_droplet_id);
 		
 		$fetch_url = $this->base_url.'/droplets/'.$this->bucket->id;
+		$tag_base_url = $this->base_url.'/droplets/'.$this->bucket->id;
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplet_js', $droplet_js)
-			->bind('user', $this->user);
+			->bind('user', $this->user)
+			->bind('owner', $this->owner);
 		
 
 		$buckets = ORM::factory('bucket')
@@ -87,6 +110,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 		// Links to ajax rendered menus
 		$settings_url = $this->base_url.'/settings/'.$this->bucket->id;
+		$discussion_url = $this->base_url.'/discussion/'.$this->bucket->id;
 		$more = $this->base_url.'/more/';
 	}
 	
@@ -150,9 +174,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$id = (int) $this->request->param('id', 0);
 		
 		$bucket = ORM::factory('bucket')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->account->id)
-			->find();
+			          ->where('id', '=', $id)
+			          ->find();
 		
 		if ( ! $bucket->loaded())
 		{
@@ -174,7 +197,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		{
 		    $droplets_array = Model_Bucket::get_droplets($bucket->id, $page, $max_id);
 		}
-		
+
 		$droplets = $droplets_array['droplets'];
 		//Throw a 404 if a non existent page is requested
 		if ($page > 1 AND empty($droplets))
@@ -287,7 +310,20 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		// Output response
 		echo json_encode($response);
-	}	
+	}
+	
+	/**
+	 * Ajax rendered discussion control box
+	 * 
+	 * @return	void
+	 */
+	public function action_discussion()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/bucket/discussion_control');
+	}
+	
 
 	/**
 	 * Ajax rendered settings control box

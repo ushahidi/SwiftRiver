@@ -107,7 +107,7 @@ $(function() {
 			
 			// List of general tags for the droplet
 			this.tagList = new DropletTagCollection();
-			this.tagList.url = "<?php echo url::site("/tag/api"); ?>"+"/"+this.model.get("id")
+			this.tagList.url = "<?php echo $tag_base_url; ?>"+"/"+this.model.get("id")+"/tags";
 			this.tagList.on('reset', this.addTags, this);
 			this.tagList.on('add', this.addTag, this);
 			
@@ -246,7 +246,7 @@ $(function() {
 		saveBucket: function(e) {
 			if(this.$("#new-bucket-name").val()) {
 				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {wait: true});
-				this.$(":text").val('');
+				this.$("#new-bucket-name").val('');
 			}
 			this.$("div.dropdown div.create-name").fadeOut();
 			this.$("div.dropdown p.create-new a.plus").fadeIn();
@@ -325,6 +325,7 @@ $(function() {
 		saveTag: function() {
 			if(this.$("#new-tag-name").val()) {
 				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true});
+				this.$("#new-tag-name").val('');
 			}
 			this.$(".detail section.meta #add-tag .create-name").fadeOut();
 			this.$(".detail section.meta #add-tag p.button-change").fadeIn();

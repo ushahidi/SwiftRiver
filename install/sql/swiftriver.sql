@@ -623,18 +623,43 @@ DEFAULT CHARACTER SET = utf8,
 COMMENT = 'Tracks user actions across the system' ;
 
 
+
+-- ----------------------------------------
+-- TABLE 'account_collaborators'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `account_collaborators` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) DEFAULT NULL,
+  `collaborator_id` bigint(20) DEFAULT NULL COMMENT 'The user_id of the collaborator',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`collaborator_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+
+-- ----------------------------------------
+-- TABLE 'river_collaborators'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `river_collaborators` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `river_id` bigint(20) DEFAULT NULL,
+  `collaborator_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `river_id` (`river_id`,`collaborator_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+
 -- ----------------------------------------
 -- TABLE 'bucket_collaborators'
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `bucket_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `collaborator_active` TINYINT(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY(`id`),
-  UNIQUE INDEX(`user_id`, `bucket_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `collaborator_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `bucket_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `collaborator_active` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`collaborator_id`,`bucket_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------------------

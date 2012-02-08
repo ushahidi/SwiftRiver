@@ -57,7 +57,11 @@ class Model_Account extends ORM
 			),						
 		'account_droplet_places' => array(
  			'model' => 'account_droplet_place'
-			),			
+			),
+		'collaborators' => array(
+			'model' => 'user',
+			'through' => 'account_collaborators'
+			)		
 		);		
 	
 	/**

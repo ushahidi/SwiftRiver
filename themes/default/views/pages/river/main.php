@@ -29,18 +29,14 @@
 							<span class="label"><?php echo __("Filter"); ?></span>
 						</a>
 					</li>
-					<li class="view-panel">
-						<a href="<?php echo $discussion_url; ?>" class="discussion">
-							<span class="icon"></span>
-							<span class="label"><?php echo __("Discuss"); ?></span>
-						</a>
-					</li>
+					<?php if ($owner): ?>
 					<li class="view-panel">
 						<a href="<?php echo $settings_url; ?>" class="settings">
 							<span class="icon"></span>
 							<span class="label"><?php echo __("River Settings"); ?></span>
 						</a>
 					</li>
+					<?php endif; ?>
 				</ul>
 			</nav>
 			<div class="drawer"></div>

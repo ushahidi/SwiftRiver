@@ -31,7 +31,11 @@ class Model_River extends ORM {
 		'droplets' => array(
 			'model' => 'droplet',
 			'through' => 'rivers_droplets'
-			)					
+			),
+		'collaborators' => array(
+			'model' => 'user',
+			'through' => 'river_collaborators'
+			)		
 		);
 	
 	/**
@@ -326,8 +330,44 @@ class Model_River extends ORM {
 		    ->where('rivers_droplets.river_id', '=', $river_id)
 		    ->where('droplets.droplet_processed', '=', 1);
 		    
-		return $query->execute()->get('id', PHP_INT_MAX);
+		return $query->execute()->get('id', 0);
 	}
+	
+	/**
+	 * Checks if the given user owns the river, is an account collaborator
+	 * or a river collaborator.
+	 *
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_owner($user_id)
+	{
+		// Does the user exist?
+		$user_orm = ORM::factory('user', $user_id);
+		if ( ! $user_orm->loaded())
+		{
+			return FALSE;
+		}
+		
+		// Does the user own the river?
+		if ($this->account->user_id == $user_id)
+		{
+			return TRUE;
+		}
+		
+		// Is the user id an account collaborator?
+		if ($this->account->has('collaborators', $user_orm))
+		{
+			return TRUE;
+		}
+		
+		// Us the user id a river collaborator?
+		if ($this->has('collaborators', $user_orm))
+		{
+			return TRUE;
+		}
+	}
+	
 }
 
 ?>

@@ -59,31 +59,35 @@
 			<div class="arrow top"><span></span></div>
 			<div class="canyon cf">
 				<section class="meta">
-					<div class="item actions cf">
-						<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
-						<ul class="dropdown left delete-droplet">
-							<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
-
-							<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
-							<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
-						</ul>
-					</div>
+					<?php if ($owner): ?>
+						<div class="item actions cf">
+							<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
+							<ul class="dropdown left delete-droplet">
+								<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
+                    	
+								<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
+								<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
+							</ul>
+						</div>
+					<?php endif; ?>
 
 					<div class="item cf">
 						<h2>Tags</h2>
 						<ul class="tags cf"></ul>
-						<div class="container" id="add-tag">
-							<p class="create-new">
-								<p class="button-change"><a><?php echo __("Add tag") ?></a></p>
-								<div class="create-name">
-									<input id="new-tag-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new tag"); ?>">
-									<div class="buttons">
-										<button class="save"><?php echo __("Save"); ?></button>
-										<button class="cancel"><?php echo __("Cancel"); ?></button>
+						<?php if ($owner): ?>
+							<div class="container" id="add-tag">
+								<p class="create-new">
+									<p class="button-change"><a><?php echo __("Add tag") ?></a></p>
+									<div class="create-name">
+										<input id="new-tag-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new tag"); ?>">
+										<div class="buttons">
+											<button class="save"><?php echo __("Save"); ?></button>
+											<button class="cancel"><?php echo __("Cancel"); ?></button>
+										</div>
 									</div>
-								</div>
-							</p>
-						</div>
+								</p>
+							</div>
+						<?php endif; ?>
 						
 					</div>
 
@@ -95,9 +99,11 @@
 						<h2><?php echo __("Links"); ?></h2>
 					</div>
 
-					<div class="item cf">
-						<p class="button-change"><a><?php echo __("Add attachment"); ?></a></p>
-					</div>																					
+					<?php if ($owner): ?>
+						<div class="item cf">
+							<p class="button-change"><a><?php echo __("Add attachment"); ?></a></p>
+						</div>
+					<?php endif; ?>
 				</section>
 
 			<div class="content">

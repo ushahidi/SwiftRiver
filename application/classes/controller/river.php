@@ -25,6 +25,11 @@ class Controller_River extends Controller_Swiftriver {
 	 * @var Model_River
 	 */
 	private $_river;
+	
+	/*
+	* Boolean indicating whether the logged in user owns the river
+	*/
+	private $owner = FALSE; 
 
 	/**
 	 * @return	void
@@ -41,13 +46,28 @@ class Controller_River extends Controller_Swiftriver {
 		// and the database id of the rive is non-zero
 		$this->_river = ORM::factory('river')
 			->where('id', '=', $river_id)
-			->where('account_id', '=', $this->account->id)
 			->find();
 		
-		if ($river_id != 0 AND ! $this->_river->loaded())
+		// Action involves a specific river, check permissions
+		if ($river_id)
 		{
-			// Redirect to the dashboard
-			$this->request->redirect('dashboard');
+			if (! $this->_river->loaded())
+			{
+				// Redirect to the dashboard
+				$this->request->redirect('dashboard');
+			}
+					
+			// Is the logged in user an owner
+			if ( $this->_river->is_owner($this->user->id)) 
+			{
+				$this->owner = TRUE;
+			}
+			
+			// If this river is not public and no ownership...
+			if( ! $this->_river->river_public AND ! $this->owner)
+			{
+				$this->request->redirect('dashboard');			
+			}
 		}
 
 		// Get all available channels from plugins
@@ -70,9 +90,9 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
-			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
-			->bind('more_url', $more_url);
+			->bind('more_url', $more_url)
+			->bind('owner', $this->owner);
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
@@ -94,6 +114,7 @@ class Controller_River extends Controller_Swiftriver {
 		$bucket_list = json_encode($this->user->get_buckets());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		    ->bind('fetch_url', $fetch_url)
+		    ->bind('tag_base_url', $tag_base_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('bucket_list', $bucket_list)
 		    ->bind('max_droplet_id', $max_droplet_id);
@@ -101,11 +122,13 @@ class Controller_River extends Controller_Swiftriver {
 		// Turn on Ajax polling
 		$polling_enabled = "true";
 		$fetch_url = $this->base_url.'/droplets/'.$river_id;
+		$tag_base_url = $this->base_url.'/droplets/'.$river_id;
 		$droplet_action_url = $this->base_url.'/ajax_droplet/'.$river_id;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js)
-		    ->bind('user', $this->user);
+		    ->bind('user', $this->user)
+		    ->bind('owner', $this->owner);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
@@ -115,8 +138,7 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// URL's to pages that are ajax rendered on demand
-		$filters_url = $this->base_url.'/filters/'.$river_id;
-		$discussion_url = $this->base_url.'/discussion/'.$river_id;
+		$filters_url = $this->base_url.'/filters/'.$river_id;		
 		$settings_url = $this->base_url.'/settings/'.$river_id;
 		$more_url = $this->base_url.'/more/'.$river_id;
 	}
@@ -202,18 +224,6 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		echo View::factory('pages/river/filters_control');
-	}
-
-	/**
-	 * Ajax rendered discussion control box
-	 * 
-	 * @return	void
-	 */
-	public function action_discussion()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		echo View::factory('pages/river/discussion_control');
 	}
 
 	/**

@@ -30,9 +30,10 @@ class Model_Bucket extends ORM {
 			'model' => 'droplet',
 			'through' => 'buckets_droplets'
 			),
-			
-		// A bucket has many collaborators
-		'bucket_collaborators' => array()
+		'collaborators' => array(
+			'model' => 'user',
+			'through' => 'bucket_collaborators'
+			)					
 	);
 
 	/**
@@ -223,7 +224,7 @@ class Model_Bucket extends ORM {
 			->join('buckets', 'INNER')
 			->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
 			->join('users', 'INNER')
-			->on('bucket_collaborators.user_id', '=', 'users.id')
+			->on('bucket_collaborators.collaborator_id', '=', 'users.id')
 			->where('buckets.id', '=', $bucket_id)
 			->execute();
 		
@@ -248,7 +249,7 @@ class Model_Bucket extends ORM {
 			->where('buckets_droplets.bucket_id', '=', $bucket_id)
 			->where('droplets.droplet_processed', '=', 1);
 			
-		return $query->execute()->get('id', PHP_INT_MAX);		
+		return $query->execute()->get('id', 0);		
 	}
 	
 	/*
@@ -279,5 +280,31 @@ class Model_Bucket extends ORM {
 		}
 		
 		return FALSE;
-	}	
+	}
+	
+	/**
+	 * Checks if the given user owns the river, is an account collaborator
+	 * or a river collaborator.
+	 *
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_owner($user_id)
+	{
+		// Does the user exist?
+		$user_orm = ORM::factory('user', $user_id);
+		if ( ! $user_orm->loaded())
+		{
+			return FALSE;
+		}
+		
+		// Is the user_id the owner?
+		if ($this->account->user->id == $user_id)
+		{
+			return TRUE;
+		}
+				
+		// Otherwise, is the user_id a collaborator
+		return $this->has('collaborators', $user_orm);
+	}
 }

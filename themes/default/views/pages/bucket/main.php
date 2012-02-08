@@ -16,9 +16,17 @@
 					?>
 					<li class="view-panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
+				<?php if ($owner): ?>
 				<ul class="actions">
+					<li class="view-panel">
+						<a href="<?php echo $discussion_url; ?>" class="discussion">
+							<span class="icon"></span>
+							<span class="label"><?php echo __("Discuss"); ?></span>
+						</a>
+					</li>
 					<li class="view-panel"><a href="<?php echo $settings_url; ?>" class="settings"><span class="icon"></span><?php echo __('Bucket Settings'); ?></a></li>
 				</ul>
+				<?php endif; ?>
 			</nav>
 			<div class="drawer"></div>
 		</section>

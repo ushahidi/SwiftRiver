@@ -37,6 +37,10 @@ class Model_User extends Model_Auth_User
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
 		);
+		
+	protected $_has_one = array(
+		'account' => array()
+	);
 	
 	/**
 	 * Rules for the user model. Because the password is _always_ a hash
@@ -102,7 +106,7 @@ class Model_User extends Model_Auth_User
 		
 		// Buckets the user is collaborating in
 		$collaborating = ORM::factory('bucket_collaborator')
-		    ->where('user_id', '=', $this->id)
+		    ->where('collaborator_id', '=', $this->id)
 		    ->find_all();
 		
 		foreach ($collaborating as $item)
@@ -119,4 +123,62 @@ class Model_User extends Model_Auth_User
 		
 		return $buckets;
 	}
+	
+	/**
+	 * Get a list of rivers this user has access to from the given other_user_id
+	 *
+	 * @param int $other_user_id Database ID of the other user
+	 * @return array
+	 */
+	public function get_other_user_visible_rivers($other_user_id)
+	{
+		$other_user_orm = ORM::factory('user', $other_user_id);
+		
+		if (!$other_user_orm->loaded())
+		{
+			return array();
+		}
+		
+		$rivers = array();
+		
+		// First the public rivers.		
+		foreach ($other_user_orm->account->rivers->find_all() as $river)
+		{
+			if($river->river_public OR $river->is_owner($this->id)) {
+				$rivers[] = $river;
+			}
+		}
+		
+		return $rivers;
+	}
+
+
+	/**
+	 * Get a list of buckets this user has access to from the given other_user_id
+	 *
+	 * @param int $other_user_id Database ID of the other user
+	 * @return array
+	 */
+	public function get_other_user_visible_buckets($other_user_id)
+	{
+		$other_user_orm = ORM::factory('user', $other_user_id);
+		
+		if (!$other_user_orm->loaded())
+		{
+			return array();
+		}
+		
+		$buckets = array();
+		
+		// First the public rivers.		
+		foreach ($other_user_orm->account->buckets->find_all() as $bucket)
+		{
+			if($bucket->bucket_publish OR $bucket->is_owner($this->id)) {
+				$buckets[] = $bucket;
+			}
+		}
+		
+		return $buckets;
+	}
+	
 }
