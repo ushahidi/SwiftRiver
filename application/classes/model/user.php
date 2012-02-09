@@ -181,4 +181,30 @@ class Model_User extends Model_Auth_User
 		return $buckets;
 	}
 	
+	/**
+	 * Get a list of users whose name/email begins with the provided string
+	 *
+	 * @param $search_string
+	 * @return array
+	 */
+	public static function get_like($search_string)
+	{
+		$users = array();
+		$search_string = strtolower(trim($search_string));
+		$users_orm = ORM::factory('user')
+		                ->where(DB::expr('lower(email)'),'like', "$search_string%")
+		                ->or_where(DB::expr('lower(name)'),'like', "$search_string%")
+		                ->find_all();
+		
+		foreach ($users_orm as $user)
+		{
+			$users[] = array('id' => $user->id, 
+			                         'name' => $user->name,
+			                         'account_path' => $user->account->account_path
+			);
+		}
+		
+		return $users;
+	}
+	
 }

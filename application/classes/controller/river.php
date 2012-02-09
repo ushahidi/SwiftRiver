@@ -238,12 +238,59 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Load the view for the settings UI
 		$settings = View::factory('pages/river/settings_control')
-			->bind('settings_js', $settings_js);
-		
+		                 ->bind('collaborators_control', $collaborators_control)
+		                 ->bind('settings_js', $settings_js);		
 		$settings_js = $this->_get_settings_js_view();
+		
+		$collaborators_control = View::factory('template/collaborators')
+		                             ->bind('collaborator_list', $collaborator_list)
+		                             ->bind('fetch_url', $fetch_url);
+		$collaborator_list = json_encode($this->_river->get_collaborators());
+		$fetch_url = $this->base_url.'/'.$this->_river->id.'/collaborators';
 		
 		echo $settings;
 	}
+	
+	/**
+	 * River collaborators restful api
+	 * 
+	 * @return	void
+	 */
+	public function action_collaborators()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
+		
+		if ($query) {
+			echo json_encode(Model_User::get_like($query));
+			return;
+		}
+		
+		switch ($this->request->method())
+		{
+			case "DELETE":
+				$collaborator_id = intval($this->request->param('user_id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				
+				if ( ! $collaborator_orm->loaded()) 
+					return;
+					
+				if ($this->_river->has('collaborators', $collaborator_orm))
+				{
+					$this->_river->remove('collaborators', $collaborator_orm);
+				}
+			break;
+			
+			case "PUT":
+				$collaborator_id = intval($this->request->param('user_id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				$this->_river->add('collaborators', $collaborator_orm);
+			break;
+		}
+	}	
+	
 	
 	/**
 	 * Generates the view for the settings JavaScript

@@ -343,6 +343,13 @@ Route::set('bucket_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id
 		'controller' => 'bucket',
 		'action'     => 'index',
 	));	
+Route::set('bucket_collaborators_ext', '<account>/bucket/<id>/collaborators(/<user_id>)', array('id' => '\d+', 'user_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'bucket',
+		'action'     => 'collaborators',
+	));
+	
+	
 Route::set('bucket_droplet_ext', '<account>/bucket/droplets/<bucket_id>/<droplet_id>', array('bucket_id' => '\d+', 'droplet_id' => '\d+'))
 	->defaults(array(
 		'controller' => 'droplet',
@@ -368,6 +375,12 @@ Route::set('river_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id'
 	->defaults(array(
 		'controller' => 'river',
 		'action'     => 'index',
+	));
+
+Route::set('river_collaborators_ext', '<account>/river/<id>/collaborators(/<user_id>)', array('id' => '\d+', 'user_id' => '\d+'))
+	->defaults(array(
+		'controller' => 'river',
+		'action'     => 'collaborators',
 	));
 	
 Route::set('river_droplet_ext', '<account>/river/droplets/<river_id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))

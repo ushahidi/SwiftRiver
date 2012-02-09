@@ -211,24 +211,23 @@ class Model_Bucket extends ORM {
 	}
 	
 	/**
-	 * Gets the list of users collaborating on a bucket
+	 * Gets a buckets's collaborators as an array
 	 *
-	 * @param int $bucket_id Database ID of the bucket
 	 * @return array
-	 */
-	public static function get_collaborators($bucket_id)
+	 */	
+	public function get_collaborators()
 	{
-		$results = DB::select(array('bucket_collaborators.id', 'id'), 
-			array('users.name', 'collaborator_name'))
-			->from('bucket_collaborators')
-			->join('buckets', 'INNER')
-			->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
-			->join('users', 'INNER')
-			->on('bucket_collaborators.collaborator_id', '=', 'users.id')
-			->where('buckets.id', '=', $bucket_id)
-			->execute();
+		$collaborators = array();
 		
-		return $results->as_array();
+		foreach ($this->collaborators->find_all() as $collaborator)
+		{
+			$collaborators[] = array('id' => $collaborator->id, 
+			                         'name' => $collaborator->name,
+			                         'account_path' => $collaborator->account->account_path
+			);
+		}
+		
+		return $collaborators;
 	}
 	
 	/**
@@ -307,4 +306,5 @@ class Model_Bucket extends ORM {
 		// Otherwise, is the user_id a collaborator
 		return $this->has('collaborators', $user_orm);
 	}
+	
 }

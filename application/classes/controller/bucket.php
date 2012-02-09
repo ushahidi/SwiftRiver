@@ -336,14 +336,61 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 
 		$settings_control = View::factory('pages/bucket/settings_control')
-		    ->bind('bucket', $this->bucket)
-		    ->bind('settings_js', $settings_js);
+		                        ->bind('collaborators_control', $collaborators_control)
+		                        ->bind('bucket', $this->bucket)
+		                        ->bind('settings_js', $settings_js);
 		
 		// Javascript view
 		$settings_js  = $this->_get_settings_js_view();
 		
+		$collaborators_control = View::factory('template/collaborators')
+		                             ->bind('collaborator_list', $collaborator_list)
+		                             ->bind('fetch_url', $fetch_url);
+		$collaborator_list = json_encode($this->bucket->get_collaborators());
+		$fetch_url = $this->base_url.'/'.$this->bucket->id.'/collaborators';
+		
 		echo $settings_control;	
-	}	
+	}
+	
+	/**
+	 * Bucket collaborators restful api
+	 * 
+	 * @return	void
+	 */
+	public function action_collaborators()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
+		
+		if ($query) {
+			echo json_encode(Model_User::get_like($query));
+			return;
+		}
+		
+		switch ($this->request->method())
+		{
+			case "DELETE":
+				$collaborator_id = intval($this->request->param('user_id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				
+				if ( ! $collaborator_orm->loaded()) 
+					return;
+					
+				if ($this->bucket->has('collaborators', $collaborator_orm))
+				{
+					$this->bucket->remove('collaborators', $collaborator_orm);
+				}
+			break;
+			
+			case "PUT":
+				$collaborator_id = intval($this->request->param('user_id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				$this->bucket->add('collaborators', $collaborator_orm);
+			break;
+		}
+	}
 
 	/**
 	 * Ajax Title Editing Inline
@@ -422,20 +469,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 		        echo json_encode($bucket_orm->as_array());
 		    break;
 		}
-	}
-	
-	/**
-	 * Returns a JSON response with the list of users collaborating on
-	 * the current bucket
-	 */
-	public function action_collaborators()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-		
-		$collaborators = Model_Bucket::get_collaborators($this->bucket->id);
-		
-		echo json_encode($collaborators);
 	}
 	
 	/**

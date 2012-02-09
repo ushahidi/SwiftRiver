@@ -368,6 +368,26 @@ class Model_River extends ORM {
 		}
 	}
 	
+	/**
+	 * Gets a river's collaborators as an array
+	 *
+	 * @return array
+	 */	
+	public function get_collaborators()
+	{
+		$collaborators = array();
+		
+		foreach ($this->collaborators->find_all() as $collaborator)
+		{
+			$collaborators[] = array('id' => $collaborator->id, 
+			                         'name' => $collaborator->name,
+			                         'account_path' => $collaborator->account->account_path
+			);
+		}
+		
+		return $collaborators;
+	}
+	
 }
 
 ?>

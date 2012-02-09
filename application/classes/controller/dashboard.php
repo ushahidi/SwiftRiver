@@ -139,10 +139,58 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		$settings = View::factory('pages/dashboard/settings');
+		$settings = View::factory('pages/dashboard/settings')
+		                ->bind('collaborators_control', $collaborators_control);
 		$settings->user = $this->user;
+		
+		$collaborators_control = View::factory('template/collaborators')
+		                             ->bind('collaborator_list', $collaborator_list)
+		                             ->bind('fetch_url', $fetch_url);
+		$collaborator_list = json_encode($this->account->get_collaborators());
+		$fetch_url = url::site('dashboard/collaborators');
+		
 		echo $settings;
-	}		
+	}
+	
+	/**
+	 * Account collaborators restful api
+	 * 
+	 * @return	void
+	 */
+	public function action_collaborators()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
+		
+		if ($query) {
+			echo json_encode(Model_User::get_like($query));
+			return;
+		}
+		
+		switch ($this->request->method())
+		{
+			case "DELETE":
+				$collaborator_id = intval($this->request->param('id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				
+				if ( ! $collaborator_orm->loaded()) 
+					return;
+					
+				if ($this->account->has('collaborators', $collaborator_orm))
+				{
+					$this->account->remove('collaborators', $collaborator_orm);
+				}
+			break;
+			
+			case "PUT":
+				$collaborator_id = intval($this->request->param('id', 0));
+				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				$this->account->add('collaborators', $collaborator_orm);
+			break;
+		}
+	}	
 
 	/**
 	 * Ajax Settings Editing Inline
