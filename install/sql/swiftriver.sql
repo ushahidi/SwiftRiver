@@ -608,26 +608,26 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `user_actions`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_actions` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `action` VARCHAR(255) NOT NULL ,
-  `action_on` VARCHAR(100) NOT NULL COMMENT 'river, bucket, droplet, filter, snapshot, source, identity' ,
-  `action_on_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `action_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user_id_idx` (`user_id` ASC) ,
-  INDEX `action_on_idx` (`action_on` ASC) ,
-  INDEX `action_on_id_idx` (`action_on_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8, 
-COMMENT = 'Tracks user actions across the system' ;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `action` varchar(255) NOT NULL,
+  `action_on` varchar(100) NOT NULL DEFAULT '',
+  `action_on_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'river, bucket, droplet, filter, snapshot, source, identity',
+  `action_to_id` bigint(20) DEFAULT NULL,
+  `action_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  `confirmed` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user_id_idx` (`user_id`),
+  KEY `action_on_idx` (`action_to_id`),
+  KEY `action_on_id_idx` (`action_on_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='Tracks user actions across the system';
 
 
 
 -- ----------------------------------------
 -- TABLE 'account_collaborators'
 -- ----------------------------------------
-CREATE TABLE IF NOT EXISTS  `account_collaborators` (
+CREATE TABLE IF NOT EXISTS `account_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL COMMENT 'The user_id of the collaborator',
@@ -641,7 +641,7 @@ CREATE TABLE IF NOT EXISTS  `account_collaborators` (
 -- ----------------------------------------
 -- TABLE 'river_collaborators'
 -- ----------------------------------------
-CREATE TABLE `river_collaborators` (
+CREATE TABLE IF NOT EXISTS `river_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `river_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
@@ -654,7 +654,7 @@ CREATE TABLE `river_collaborators` (
 -- ----------------------------------------
 -- TABLE 'bucket_collaborators'
 -- ----------------------------------------
-CREATE TABLE `bucket_collaborators` (
+CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
