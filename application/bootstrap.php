@@ -19,7 +19,7 @@ else
 /**
  * Set the default time zone.
  */
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('Africa/Nairobi');
 
 /**
  * Set the default locale.
@@ -285,7 +285,13 @@ Route::set('bucket_droplet_tag', 'bucket/droplets/<bucket_id>/<droplet_id>/tags(
 		'controller' => 'tag',
 		'action'     => 'api',
 	));
-	
+
+// Bucket collaborators
+Route::set('bucket_collaborator', 'bucket/collaborators/<id>/<collaborator_id>', array('id' => '\d+', 'collaborator_id' => '\d+'))
+    ->defaults(array(
+	    'controller' => 'bucket',
+	    'action' => 'api'
+	 ));
 
 /**
  * Swiftriver River Route
@@ -359,6 +365,13 @@ Route::set('bucket_droplet_tag_ext', '<account>/bucket/droplets/<bucket_id>/<dro
 		'controller' => 'tag',
 		'action'     => 'api',
 	));
+
+// Bucket collaborators
+Route::set('bucket_collaborator_ext', '<account>/bucket/collaborators/<id>/<collaborator_id>', array('id' => '\d+', 'collaborator_id' => '\d+'))
+    ->defaults(array(
+    	'controller' => 'bucket',
+    	'action' => 'api'
+	    ));
 
 
 /**

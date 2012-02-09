@@ -181,4 +181,22 @@ class Model_User extends Model_Auth_User
 		return $buckets;
 	}
 	
+
+	/**
+	 * Finds a user using the specified search term
+	 *
+	 * @param string $search_term Value to be search
+	 * @return array
+	 */
+	public static function search_user($search_term)
+	{
+		$result = DB::select('id', array('username', 'collaborator_name'))
+		    ->from('users')
+		    ->where('name', 'LIKE', '%'.$search_term.'%');
+		
+		// Return
+		return $result->execute()->as_array();
+
+	}
+
 }

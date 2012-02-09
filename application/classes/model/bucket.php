@@ -116,8 +116,6 @@ class Model_Bucket extends ORM {
 				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
 			}
 			
-			Kohana::$log->add(Log::DEBUG, $query->__toString());
-			
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
 			
@@ -218,7 +216,7 @@ class Model_Bucket extends ORM {
 	 */
 	public static function get_collaborators($bucket_id)
 	{
-		$results = DB::select(array('bucket_collaborators.id', 'id'), 
+		$results = DB::select(array('bucket_collaborators.collaborator_id', 'id'), 
 			array('users.name', 'collaborator_name'))
 			->from('bucket_collaborators')
 			->join('buckets', 'INNER')
@@ -306,5 +304,52 @@ class Model_Bucket extends ORM {
 				
 		// Otherwise, is the user_id a collaborator
 		return $this->has('collaborators', $user_orm);
+	}
+
+	/**
+	 * Adds a collaborator to a bucket
+	 *
+	 * @param int $user_id Database ID of the user
+	 * @return bool
+	 */
+	public function add_collaborator($user_id)
+	{
+		$user_orm = ORM::factory('user', $user_id);
+
+		// Check if the user exists
+		if ($user_orm->loaded())
+		{
+			// Check if the user is already collaborating on the bucket
+			if ( ! $this->has('collaborators', $user_orm))
+			{
+				// Add user as collaborator
+				$this->add('collaborators', $user_orm);
+
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Removes a collaborator from the bucket
+	 * @param int $collaborator_id User ID of the collaborator
+	 * @return bool
+	 */
+	public function remove_collaborator($collaborator_id)
+	{
+		// Load the collaboration entry
+		$user_orm = ORM::factory('user', $collaborator_id);
+
+		// Check if the collaboration entry exists
+		if ($user_orm->loaded())
+		{
+			$this->remove('collaborators', $user_orm);
+
+			return TRUE;
+		}
+
+		return FALSE;
 	}
 }
