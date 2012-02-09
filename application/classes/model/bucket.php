@@ -212,8 +212,7 @@ class Model_Bucket extends ORM {
 	 */	
 	public function get_collaborators()
 	{
-		$collaborators = array();
-		
+		$collaborators = array();		
 		foreach ($this->bucket_collaborators->find_all() as $collaborator)
 		{
 			$collaborators[] = array('id' => $collaborator->user->id, 
