@@ -627,39 +627,41 @@ COMMENT = 'Tracks user actions across the system' ;
 -- ----------------------------------------
 -- TABLE 'account_collaborators'
 -- ----------------------------------------
-CREATE TABLE IF NOT EXISTS `account_collaborators` (
+CREATE TABLE IF NOT EXISTS  `account_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` bigint(20) DEFAULT NULL,
-  `collaborator_id` bigint(20) DEFAULT NULL COMMENT 'The user_id of the collaborator',
+  `user_id` bigint(20) DEFAULT NULL COMMENT 'The user_id of the collaborator',
+  `collaborator_active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `account_id` (`account_id`,`collaborator_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `account_id` (`account_id`,`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
 
 
 
 -- ----------------------------------------
 -- TABLE 'river_collaborators'
 -- ----------------------------------------
-CREATE TABLE IF NOT EXISTS `river_collaborators` (
+CREATE TABLE `river_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `river_id` bigint(20) DEFAULT NULL,
-  `collaborator_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `collaborator_active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `river_id` (`river_id`,`collaborator_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `river_id` (`river_id`,`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------------------
 -- TABLE 'bucket_collaborators'
 -- ----------------------------------------
-CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
+CREATE TABLE `bucket_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `collaborator_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `bucket_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
+  `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `collaborator_active` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_id` (`collaborator_id`,`bucket_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `user_id` (`user_id`,`bucket_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------------------
@@ -688,6 +690,30 @@ CREATE TABLE IF NOT EXISTS `auth_tokens` (
   PRIMARY KEY (`id`),
   KEY `login_tokens_un_token` (`token`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
+-- VIEW 'activity_stream'
+-- ----------------------------------------
+create or replace view activity_stream as
+select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, ac.account_path action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+from user_actions ua left join users u1 on (ua.user_id = u1.id)
+join accounts ac on (ua.action_on_id = ac.id)
+left outer join users u2 on (ua.action_to_id = u2.id)
+where action_on = 'account'
+union all
+select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, r.river_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+from user_actions ua left join users u1 on (ua.user_id = u1.id)
+join rivers r on (ua.action_on_id = r.id)
+left outer join users u2 on (ua.action_to_id = u2.id)
+where action_on = 'river'
+union all
+select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, b.bucket_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+from user_actions ua left join users u1 on (ua.user_id = u1.id)
+join buckets b on (ua.action_on_id = b.id)
+left outer join users u2 on (ua.action_to_id = u2.id)
+where action_on = 'bucket';
+
 
 
 -- -----------------------------------------------------

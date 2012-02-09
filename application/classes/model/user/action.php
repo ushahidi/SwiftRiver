@@ -36,4 +36,77 @@ class Model_User_Action extends ORM
 
 		return parent::save();
 	}
+	
+	/**
+	 * Gets actions and notification for the user's follows
+	 */
+	public static function get_activity_stream($user_id)
+	{
+		
+		// Notifications
+		$query = DB::select('id', array(DB::expr('DATE_FORMAT(action_date_add, "%H:%i %b %e, %Y")'),'action_date'), 'user_id', 'user_name', 
+		                    'user_email', 'action', 'action_on', 'action_on_id', 'action_on_name',
+		                    'action_to_name', 'action_to_id', 'confirmed',
+		                    array(DB::expr("if(action_to_id=$user_id, 1, 0)"), 'action_to_self'))
+		             ->from('activity_stream')
+		             ->where('user_id', 'in', DB::expr("(select user_id from user_followers where follower_id = $user_id)"))
+		             ->or_where('action_to_id','=',$user_id)
+		             ->order_by('action_date_add', 'DESC');
+		
+		$results = $query->execute()->as_array();
+		
+		foreach ($results as & $result) {
+			
+			$result["user_avatar"] = Swiftriver_Users::gravatar($result["user_email"]);
+			
+			// Set action url
+			$result["action_on_url"] = "";
+			if ($result["action_on"] == "account") {
+				$result["action_on_url"] = URL::site().'user/'.$result["action_on_name"]; 
+			}
+			if ($result["action_on"] == "river") {
+				$result["action_on_url"] = URL::site().'river/index/'.$result["action_on_id"]; 
+			}
+			if ($result["action_on"] == "bucket") {
+				$result["action_on_url"] = URL::site().'bucket/index/'.$result["action_on_id"]; 
+			}			
+		}
+		
+		return $results;
+	}
+	
+	/**
+	 * Create a collaboration invite
+	 *
+	 * @param int $user_id User id of the user doing the inviting
+	 * @param string $action_on account/river/bucket
+	 * @param int $action_on_id id of the account/river/bucket being invited to
+	 * @param int $action_to_id id of the user being invited
+	 */
+	public static function create_invite($user_id, $action_on, $action_on_id, $action_to_id)
+	{
+		$user_action_orm = Model::factory('user_action');
+		$user_action_orm->user_id = $user_id;
+		$user_action_orm->action = 'invite';
+		$user_action_orm->action_on = $action_on;
+		$user_action_orm->action_on_id = $action_on_id;
+		$user_action_orm->action_to_id = $action_to_id;
+		$user_action_orm->action_date_add = date("Y-m-d H:i:s", time());
+		$user_action_orm->save();
+	}
+	
+	/**
+	 * Gets the number of notifications a user has
+	 *
+	 * @return int
+	 */
+	public static function count_notifications($user_id)
+	{
+		$query = DB::select(array(DB::expr('COUNT(*)'),'num_notification'))
+		             ->from('activity_stream')
+		             ->where('action_to_id', '=', $user_id)
+		             ->where('confirmed', '!=', 1);
+		
+		return $query->execute()->get('num_notification', 0);
+	}
 }

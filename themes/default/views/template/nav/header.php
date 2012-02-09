@@ -20,7 +20,13 @@
 		</li>
 		<div class="account">
 			<?php if ($user): ?>
-				<li class="notifications has_dropdown"><a href="/dashboard?filter=notifications"><span class="badge">3</span></a></li>
+				<?php if ($num_notifications): ?>
+					<li class="notifications has_dropdown">
+						<a href="/dashboard?filter=notifications">
+							<span class="badge"><?php echo $num_notifications; ?></span>
+						</a>
+					</li>
+				<?php endif ?>
 				<li class="user has_dropdown">
 					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow">
 						<span class="badge"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></span>

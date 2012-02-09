@@ -46,32 +46,79 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/dashboard/main')
 			->bind('actions', $actions)
 			->bind('following', $following)
-			->bind('followers', $followers);
+			->bind('followers', $followers)
+			->bind('activity_stream', $activity_stream);
 		$this->active = 'main';
 		$this->template_type = 'dashboard';
-
-		// Get Following (as_array)
-		// ++ We can cache this array in future
-		$following = ORM::factory('user_follower')
-			->select('users.*')
-			->where('user_follower.follower_id', '=', $this->user->id)
-			->join('users', 'INNER')
-				->on('users.id', '=', 'user_follower.follower_id')
-			->order_by('user_follower.follower_date_add', 'DESC')
-			->find_all()
-			->as_array();
-
-		// Get Followers (as_array)
-		// ++ We can cache this array in future
-		$followers = $this->user->user_followers
-			->select('users.*')
-			->join('users', 'INNER')
-				->on('users.id', '=', 'user_follower.user_id')		
-			->order_by('user_follower.follower_date_add', 'DESC')
-			->find_all()
-			->as_array();
+		
+		$following = array();
+		$followers = array();
+		
+			
+		// Activity stream
+		$activity_stream = View::factory('template/activities')
+		                       ->bind('activities', $activities)
+		                       ->bind('fetch_url', $fetch_url);
+		$fetch_url = url::site('dashboard/actions');
+		$activities = json_encode(Model_User_Action::get_activity_stream($this->user->id));
 
 		$actions = 0;
+	}
+	
+	/**
+	 * Actions restful api
+	 *
+	 * @return	void
+	 */
+	public function action_actions()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{			
+			case "PUT":
+				$action_id = intval($this->request->param('id', 0));
+				$action_orm = ORM::factory('user_action', $action_id);
+				$action_array = json_decode($this->request->body(), TRUE);
+				
+				// Are we confirming?
+				if ($action_array['confirmed'])
+				{
+					$action_orm->confirmed = $action_array['confirmed'];
+					// Get the collaboration being saved
+					$collaborator_orm = NULL;
+					switch ($action_orm->action_on)
+					{
+						case "account":
+							$collaborator_orm = ORM::factory('account_collaborator')
+							                       ->where('account_id', '=', $action_orm->action_on_id)
+							                       ->where('user_id', '=', $action_orm->action_to_id)
+							                       ->find();
+						break;
+						case "river":
+							$collaborator_orm = ORM::factory('river_collaborator')
+							                       ->where('river_id', '=', $action_orm->action_on_id)
+							                       ->where('user_id', '=', $action_orm->action_to_id)
+							                       ->find();
+						break;
+						case "bucket":
+							$collaborator_orm = ORM::factory('bucket_collaborator')
+							                       ->where('bucket_id', '=', $action_orm->action_on_id)
+							                       ->where('user_id', '=', $action_orm->action_to_id)
+							                       ->find();
+						break;
+					}
+					if ($collaborator_orm and $collaborator_orm->loaded())
+					{
+						$collaborator_orm->collaborator_active = $action_array['confirmed'];
+						$collaborator_orm->save();
+						$action_orm->save();
+					}						
+				}				
+			break;
+		}
+			
 	}
 
 	/**
@@ -172,22 +219,35 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
-				$collaborator_id = intval($this->request->param('id', 0));
-				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				$user_id = intval($this->request->param('id', 0));
+				$user_orm = ORM::factory('user', $user_id);
 				
-				if ( ! $collaborator_orm->loaded()) 
+				if ( ! $user_orm->loaded()) 
 					return;
-					
-				if ($this->account->has('collaborators', $collaborator_orm))
+				
+				$collaborator_orm = $this->account->account_collaborators->where('user_id', '=', $user_orm->id)->find();
+				if ($collaborator_orm->loaded())
 				{
-					$this->account->remove('collaborators', $collaborator_orm);
+					$collaborator_orm->delete();
 				}
 			break;
 			
 			case "PUT":
-				$collaborator_id = intval($this->request->param('id', 0));
-				$collaborator_orm = ORM::factory('user', $collaborator_id);
-				$this->account->add('collaborators', $collaborator_orm);
+				$user_id = intval($this->request->param('id', 0));
+				$user_orm = ORM::factory('user', $user_id);
+				
+				$collaborator_orm = ORM::factory("account_collaborator")
+									->where('account_id', '=', $this->account->id)
+									->where('user_id', '=', $user_orm->id)
+									->find();
+				
+				if ( ! $collaborator_orm->loaded())
+				{
+					$collaborator_orm->account = $this->account;
+					$collaborator_orm->user = $user_orm;
+					$collaborator_orm->save();
+					Model_User_Action::create_invite($this->user->id, 'account', $this->account->id, $user_orm->id);
+				}				
 			break;
 		}
 	}	

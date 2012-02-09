@@ -28,13 +28,10 @@ class Model_River extends ORM {
 	 */
 	protected $_has_many = array(
 		'channel_filters' => array(),
+		'river_collaborators' => array(),
 		'droplets' => array(
 			'model' => 'droplet',
 			'through' => 'rivers_droplets'
-			),
-		'collaborators' => array(
-			'model' => 'user',
-			'through' => 'river_collaborators'
 			)		
 		);
 	
@@ -354,15 +351,16 @@ class Model_River extends ORM {
 		{
 			return TRUE;
 		}
+
 		
 		// Is the user id an account collaborator?
-		if ($this->account->has('collaborators', $user_orm))
+		if ($this->account->account_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
 		{
 			return TRUE;
 		}
-		
-		// Us the user id a river collaborator?
-		if ($this->has('collaborators', $user_orm))
+				
+		// Is the user id a river collaborator?
+		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
 		{
 			return TRUE;
 		}
@@ -377,11 +375,11 @@ class Model_River extends ORM {
 	{
 		$collaborators = array();
 		
-		foreach ($this->collaborators->find_all() as $collaborator)
+		foreach ($this->river_collaborators->find_all() as $collaborator)
 		{
-			$collaborators[] = array('id' => $collaborator->id, 
-			                         'name' => $collaborator->name,
-			                         'account_path' => $collaborator->account->account_path
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
+			                         'account_path' => $collaborator->user->account->account_path
 			);
 		}
 		

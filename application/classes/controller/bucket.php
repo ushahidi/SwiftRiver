@@ -372,22 +372,35 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
-				$collaborator_id = intval($this->request->param('user_id', 0));
-				$collaborator_orm = ORM::factory('user', $collaborator_id);
+				$user_id = intval($this->request->param('user_id', 0));
+				$user_orm = ORM::factory('user', $user_id);
 				
-				if ( ! $collaborator_orm->loaded()) 
+				if ( ! $user_orm->loaded()) 
 					return;
 					
-				if ($this->bucket->has('collaborators', $collaborator_orm))
+				$collaborator_orm = $this->bucket->bucket_collaborators->where('user_id', '=', $user_orm->id)->find();
+				if ($collaborator_orm->loaded())
 				{
-					$this->bucket->remove('collaborators', $collaborator_orm);
+					$collaborator_orm->delete();
 				}
 			break;
 			
 			case "PUT":
-				$collaborator_id = intval($this->request->param('user_id', 0));
-				$collaborator_orm = ORM::factory('user', $collaborator_id);
-				$this->bucket->add('collaborators', $collaborator_orm);
+				$user_id = intval($this->request->param('user_id', 0));
+				$user_orm = ORM::factory('user', $user_id);
+				
+				$collaborator_orm = ORM::factory("bucket_collaborator")
+									->where('bucket_id', '=', $this->bucket->id)
+									->where('user_id', '=', $user_orm->id)
+									->find();
+				
+				if ( ! $collaborator_orm->loaded())
+				{
+					$collaborator_orm->bucket = $this->bucket;
+					$collaborator_orm->user = $user_orm;
+					$collaborator_orm->save();
+					Model_User_Action::create_invite($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
+				}
 			break;
 		}
 	}

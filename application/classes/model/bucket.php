@@ -30,10 +30,7 @@ class Model_Bucket extends ORM {
 			'model' => 'droplet',
 			'through' => 'buckets_droplets'
 			),
-		'collaborators' => array(
-			'model' => 'user',
-			'through' => 'bucket_collaborators'
-			)					
+		'bucket_collaborators' => array()
 	);
 
 	/**
@@ -219,11 +216,11 @@ class Model_Bucket extends ORM {
 	{
 		$collaborators = array();
 		
-		foreach ($this->collaborators->find_all() as $collaborator)
+		foreach ($this->bucket_collaborators->find_all() as $collaborator)
 		{
-			$collaborators[] = array('id' => $collaborator->id, 
-			                         'name' => $collaborator->name,
-			                         'account_path' => $collaborator->account->account_path
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
+			                         'account_path' => $collaborator->user->account->account_path
 			);
 		}
 		
@@ -302,9 +299,21 @@ class Model_Bucket extends ORM {
 		{
 			return TRUE;
 		}
+		
+		// Is the user id an account collaborator?
+		if ($this->account->account_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
+		
 				
-		// Otherwise, is the user_id a collaborator
-		return $this->has('collaborators', $user_orm);
+		// Is the user_id a collaborator
+		if ($this->bucket_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
+		
+		return false;
 	}
 	
 }

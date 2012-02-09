@@ -1,42 +1,4 @@
-<div class="feed">
-	<?php
-	if ($actions):
-		foreach ($actions as $action)
-		{?>
-			<article class="item">
-				<div class="summary cf">
-					<section class="source twitter">
-						<a href="/user"><img src="http://www.gravatar.com/avatar/cf5c8c89d5bb777f732144990fff0abe?s=80&d=mm&r=g" /></a>
-					</section>
-					<div class="content">
-						<hgroup>
-							<p class="date">2:35 p.m., July 4</p>
-							<h1>Adam Tinworth <span><a href="/river">invited you to collaborate on a River</a></span></h1>
-						</hgroup>
-						<div class="body">
-							<p>By accepting this invitation, you'll be able to view and edit the settings for the <a href="#">Popular news</a> river, along with <a href="#">Adam Tinworth</a>.</p>
-						</div>
-					</div>
-					<section class="actions">
-						<div class="button">
-							<p class="button-change checkbox-options" onclick=""><a><span class="icon"></span></a></p>
-							<div class="clear"></div>
-							<ul class="dropdown">
-								<li class="checkbox"><a onclick=""><span class="input"></span>Accept</a></li>
-								<li class="checkbox"><a onclick=""><span class="input"></span>Ignore</a></li>
-							</ul>
-						</div>
-					</section>
-				</div>
-			</article>
-		<?php } ?>
-		<div class="page_buttons">
-			<p class="button-view"><a href="/droplet"><?php echo __('View more'); ?></a></p>
-		</div>
-	<?php else:?>
-		<h2 class="null"><?php echo __('Nothing to display yet.'); ?></h2>
-	<?php endif ?>
-</div>
+<?php echo $activity_stream ?>
 
 <aside>
 	<div class="item">

@@ -36,6 +36,8 @@ class Model_User extends Model_Auth_User
 		'discussions' => array(),
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
+		'account_collaborators' => array(),
+		'river_collaborators' => array(),
 		);
 		
 	protected $_has_one = array(
@@ -106,7 +108,8 @@ class Model_User extends Model_Auth_User
 		
 		// Buckets the user is collaborating in
 		$collaborating = ORM::factory('bucket_collaborator')
-		    ->where('collaborator_id', '=', $this->id)
+		    ->where('user_id', '=', $this->id)
+		    ->where('collaborator_active', '=', 1)
 		    ->find_all();
 		
 		foreach ($collaborating as $item)

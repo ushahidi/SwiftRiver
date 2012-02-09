@@ -156,7 +156,7 @@ class Controller_Swiftriver extends Controller_Template {
 		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' and
                       ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
 		{
-		    $this->riverid_auth = TRUE;
+			$this->riverid_auth = TRUE;
 		}
 
 		// Does this user have an account space?
@@ -184,19 +184,20 @@ class Controller_Swiftriver extends Controller_Template {
 		// Load Header & Footer & variables
 		if ($this->auto_render) 
 		{
-		    $this->template->header = View::factory('template/header');
-		    $this->template->header->js = ''; // Dynamic Javascript
-            
-		    // Header Nav
-		    $this->template->header->nav_header = View::factory('template/nav/header');
-		    $this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
-		    $this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
-		    $this->template->header->nav_header->user = $this->user;
-		    $this->template->header->nav_header->admin = $this->admin;
-		    $this->template->header->nav_header->account = $this->account;
-            
-		    $this->template->content = '';
-		    $this->template->footer = View::factory('template/footer');
+			$this->template->header = View::factory('template/header');
+			$this->template->header->js = ''; // Dynamic Javascript
+			
+			// Header Nav
+			$this->template->header->nav_header = View::factory('template/nav/header');
+			$this->template->header->nav_header->rivers = $this->account->rivers->order_by('river_name', 'ASC')->find_all();
+			$this->template->header->nav_header->buckets = $this->account->buckets->order_by('bucket_name', 'ASC')->find_all();
+			$this->template->header->nav_header->user = $this->user;
+			$this->template->header->nav_header->admin = $this->admin;
+			$this->template->header->nav_header->account = $this->account;
+			$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
+			
+			$this->template->content = '';
+			$this->template->footer = View::factory('template/footer');
 		}
 	}
 	

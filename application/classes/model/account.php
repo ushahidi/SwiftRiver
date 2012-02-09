@@ -29,6 +29,7 @@ class Model_Account extends ORM
 		'buckets' => array(),
 		'snapshots' => array(),
 		'sources' => array(),
+		'account_collaborators' => array(),
 		'droplets_attachments' => array(
 			'model' => 'droplets_attachment',
 			'through' => 'accounts_droplets_attachments'
@@ -57,10 +58,6 @@ class Model_Account extends ORM
 			),						
 		'account_droplet_places' => array(
  			'model' => 'account_droplet_place'
-			),
-		'collaborators' => array(
-			'model' => 'user',
-			'through' => 'account_collaborators'
 			)		
 		);		
 	
@@ -108,10 +105,10 @@ class Model_Account extends ORM
 	{
 		$collaborators = array();
 		
-		foreach ($this->collaborators->find_all() as $collaborator)
+		foreach ($this->account_collaborators->find_all() as $collaborator)
 		{
-			$collaborators[] = array('id' => $collaborator->id, 
-			                         'name' => $collaborator->name,
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
 			                         'account_path' => $collaborator->account->account_path
 			);
 		}
