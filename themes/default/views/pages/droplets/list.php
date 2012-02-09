@@ -1,4 +1,5 @@
 <div id="droplet-list" class="trend-container cf">
+	<h2 class="null no-content"><?php echo __('Nothing to display yet.'); ?></h2>
 </div>
 <div class="page_buttons cf" id="next_page_button">
     <p class="button-view"></p>

@@ -357,6 +357,9 @@ $(function() {
 		
 		addDroplets: function() {
 			Droplets.each(this.addDroplet, this);
+			if (Droplets.length) {
+				this.$("h2.no-content").hide();
+			}
 		},
 	});
 	
