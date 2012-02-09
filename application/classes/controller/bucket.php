@@ -151,18 +151,16 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		// Javascript view
 		$settings_js  = View::factory('pages/bucket/js/settings')
-		    ->bind('fetch_url', $fetch_url)
-		    ->bind('bucket_url_root', $bucket_url_root)
-		    ->bind('collaborators_list', $collaborators_list);
-		
-		
-		// Bindings for the view
-		$bucket_url_root = $this->base_url.'/api';
-		$fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
-		
-		$collaborators = Model_Bucket::get_collaborators($this->bucket->id);
-		$collaborators_list = json_encode($collaborators);
-		
+		    ->bind('collaborator_fetch_url', $collaborator_fetch_url)
+		    ->bind('delete_bucket_url', $delete_bucket_url)
+		    ->bind('save_settings_url', $save_settings_url);
+
+
+		// URLs endpoints for XHR actions
+		$collaborator_fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
+		$save_settings_url = $this->base_url.'/save_settings/'.$this->bucket->id;
+		$delete_bucket_url = $this->base_url.'/ajax_delete/'.$this->bucket->id;
+
 		return $settings_js;
 	}
 	
@@ -592,27 +590,4 @@ class Controller_Bucket extends Controller_Swiftriver {
 		}
 	}
 	
-	/**
-	 * Returns a JSON response with the list of users collaborating on
-	 * the current bucket
-	 */
-	public function action_collaborators()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-		
-		// To store the response data
-		$response = array();
-
-		if (isset($_GET['search']))
-		{
-			$response = Model_User::search_user($_GET['search']);
-		}
-		else
-		{
-			$response = Model_Bucket::get_collaborators($this->bucket->id);
-		}
-
-		echo json_encode($response);
-	}
 }
