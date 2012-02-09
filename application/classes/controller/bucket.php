@@ -21,10 +21,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	protected $bucket;
 	
-	/*
-	* Boolean indicating whether the logged in user owns the bucket
-	* or is a collaborator
-	*/
+	/**
+	 * Boolean indicating whether the logged in user owns the bucket
+	 * or is a collaborator
+	 * @var bool
+	 */
 	private $owner = FALSE; 
 	
 	
@@ -38,27 +39,30 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		// First we need to make sure this bucket exists
 		$bucket_id = intval($this->request->param('id', 0));
-		
+
 		$this->bucket = ORM::factory('bucket')
 			->where('id', '=', $bucket_id)
 			->find();
 		
-		if (! $this->bucket->loaded())
+		if ($bucket_id != 0 AND ! $this->bucket->loaded())
 		{
 			// It doesn't -- redirect back to dashboard
 			$this->request->redirect('dashboard');
 		}
 		
-		// Is the logged in user owner / collaborator?
-		if ($this->bucket->is_owner($this->user->id))
+		if ($this->bucket->loaded())
 		{
-			$this->owner = TRUE;
-		}
-		
-		// Bucket isn't published and logged in user isn't owner
-		if ( ! $this->bucket->bucket_publish AND ! $this->owner)
-		{
-			$this->request->redirect('dashboard');
+			// Is the logged in user owner / collaborator?
+			if ($this->bucket->is_owner($this->user->id))
+			{
+				$this->owner = TRUE;
+			}
+			
+			// Bucket isn't published and logged in user isn't owner
+			if ( ! $this->bucket->bucket_publish AND ! $this->owner)
+			{
+				$this->request->redirect('dashboard');
+			}
 		}
 	}
 
@@ -147,15 +151,17 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		// Javascript view
 		$settings_js  = View::factory('pages/bucket/js/settings')
-		    ->bind('collaborator_fetch_url', $collaborator_fetch_url)
-		    ->bind('delete_bucket_url', $delete_bucket_url)
-		    ->bind('save_settings_url', $save_settings_url);
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('bucket_url_root', $bucket_url_root)
+		    ->bind('collaborators_list', $collaborators_list);
 		
 		
-		// URLs endpoints for XHR actions
-		$collaborator_fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
-		$save_settings_url = $this->base_url.'/save_settings/'.$this->bucket->id;
-		$delete_bucket_url = $this->base_url.'/ajax_delete/'.$this->bucket->id;
+		// Bindings for the view
+		$bucket_url_root = $this->base_url.'/api';
+		$fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
+		
+		$collaborators = Model_Bucket::get_collaborators($this->bucket->id);
+		$collaborators_list = json_encode($collaborators);
 		
 		return $settings_js;
 	}
@@ -438,22 +444,124 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}	
 
 	/**
-	 * Ajax Delete Bucket
+	 * XHR endpoint for bucket operations. Returns a JSON object containing 
+	 * the status of the operation and any redirect URLs, to the client
 	 * 
-	 * @return string - json
+	 * @return void
 	 */
-	public function action_ajax_delete()
+	public function action_api()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
 		$response = array("success" => FALSE);
-		
-		// Check if the bucket exists
-		if ($this->bucket->loaded())
+
+
+		switch ($this->request->method())
 		{
-			$this->bucket->delete();
-			$response["success"] = TRUE;
+			// Update an existing bucket
+			case "PUT":
+			break;
+
+			// Add a new collaborator to the bucket
+			case "POST":
+				// Get the POST data
+				$post = json_decode($this->request->body(), TRUE);
+
+				if ($this->bucket->loaded())
+				{
+					// Add user to the list of collaborators
+					if ($this->bucket->add_collaborator($post['collaborator']['id']))
+					{
+						$response["success"] = TRUE;
+					}
+				}
+				else
+				{
+					// 
+					// Step 1 - Creating a new bucket
+					// 
+					if (array_key_exists('bucket_name', $post))
+					{
+						// Model_Bucket instance to be used for save
+						$bucket = ORM::factory('bucket');
+
+						// Set up validation
+						$validate = $bucket->validate(Arr::extract($post, 
+							array('bucket_name', 'bucket_description')));
+						
+						// Validate!
+						if ($validate->check())
+						{
+							$bucket->bucket_name = $post['bucket_name'];
+
+							$bucket->bucket_description = isset($post['bucket_description']) 
+							    ? $post['bucket_description'] 
+							    : '';
+							
+							$bucket->account_id = $this->account->id;
+							$bucket->user_id = $this->user->id;
+							
+							// Save the bucket
+							$this->bucket = $bucket->save();
+							
+							// Set the values for the JSON response
+							$response["success"] = TRUE;
+							$response["redirect_url"] = $this->base_url.'/index/'.$bucket->id;
+						}
+					}
+
+					// 
+					// Step 2 - Check for collaborators
+					// 
+					if ($this->bucket->loaded() AND array_key_exists('collaboratrs', $post))
+					{
+						// Add each of the specified collaborators and trap for
+						// exception
+						try 
+						{
+							foreach ($post['collaborators'] as $collaborator)
+							{
+								$this->bucket->add_collaborator($collaborator['id']);
+							}
+						}
+						catch (Database_Exception $e)
+						{
+							// Fail!
+							$response["success"] = FALSE;
+
+							// Log the error
+							Kohana::$log->add(Log::ERROR, $e->getMessage());
+						}
+					}
+
+				}
+				
+			break;
+
+
+			// Remove a bucket or collaborator from bucket
+			case "DELETE":
+				
+				if (array_key_exists('collaborator_id', $this->request->param()))
+				{
+					// Get the collaboration id
+					$collaborator_id = intval($this->request->param('collaborator_id', 0));
+
+					// Remove the collaboration
+					if ($this->bucket->remove_collaborator($collaborator_id))
+					{
+						$response["success"] = TRUE;
+					}
+				}
+				else
+				{
+					$this->bucket->delete();
+					$response["success"] = TRUE;
+					$response["redirect_url"] = url::site('dashboard/buckets');
+				}
+
+			break;
 		}
 		
 		echo json_encode($response);
@@ -485,43 +593,26 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * XHR endpoint for saving the bucket settings
+	 * Returns a JSON response with the list of users collaborating on
+	 * the current bucket
 	 */
-	public function action_save_settings()
+	public function action_collaborators()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		// Default response
-		$response = array("success" => FALSE, "redirect_url" => "");
-		
-		// Only HTTP POST requests are serviced 
-		if ($_POST)
+		// To store the response data
+		$response = array();
+
+		if (isset($_GET['search']))
 		{
-			// New bucket
-			if ( ! $this->bucket->loaded())
-			{
-				$bucket = ORM::factory('bucket');
-				$post = $bucket->validate(Arr::extract($_POST, array('bucket_name', 'bucket_description')));
-				
-				if ($post->check())
-				{
-					$bucket->bucket_name = $post['bucket_name'];
-					$bucket->bucket_description = $post['bucket_description'];
-					$bucket->account_id = $this->account->id;
-					$bucket->user_id = $this->user->id;
-					
-					// Save the bucket
-					$this->bucket = $bucket->save();
-					
-					// Set the values for the JSON response
-					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->base_url.'index/'.$bucket->id;
-				}
-			}
-			
+			$response = Model_User::search_user($_GET['search']);
 		}
-		
+		else
+		{
+			$response = Model_Bucket::get_collaborators($this->bucket->id);
+		}
+
 		echo json_encode($response);
 	}
 }

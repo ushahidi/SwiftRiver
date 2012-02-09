@@ -306,7 +306,7 @@ class Model_Droplet extends ORM
 		{
 			$droplets[] = array(
 				'id' => $droplet->id,
-				'droplet_content' => $droplet->droplet_content,
+				'droplet_raw' => $droplet->droplet_raw,
 				'channel' => $droplet->channel,
 				'tags' => array(),
 				'links' => array(),

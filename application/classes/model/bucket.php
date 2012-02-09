@@ -113,8 +113,6 @@ class Model_Bucket extends ORM {
 				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
 			}
 			
-			Kohana::$log->add(Log::DEBUG, $query->__toString());
-			
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
 			
@@ -315,5 +313,5 @@ class Model_Bucket extends ORM {
 		
 		return false;
 	}
-	
+
 }
