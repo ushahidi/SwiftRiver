@@ -324,7 +324,7 @@ class Controller_Login extends Controller_Template {
 					{
 						if ( ! $user->loaded() ) {
 							// New user registration
-							$user->name = $user->username = $user->email = $email;
+							$user->username = $user->email = $email;
 							$user->save();
 							
 							// Allow the user be able to login immediately

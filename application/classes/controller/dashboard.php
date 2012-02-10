@@ -66,6 +66,53 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * Initial registration page
+	 *
+	 * @return	void
+	 */
+	public function action_register()
+	{
+		$this->template->content = View::factory('pages/dashboard/register')
+		                               ->bind('user', $this->user);
+		
+		if ($this->request->method() == "POST")
+		{
+			$post = Validation::factory($this->request->post())
+				              ->rule('name', 'not_empty')
+				              ->rule('nickname', 'not_empty')
+				              ->rule('nickname', 'alpha_dash');
+				
+			if ( $post->check())
+			{
+				$nickname = $this->request->post('nickname');
+				
+				// Check if the nickname is already taken
+				// Make sure the account path is not already taken
+				$account = ORM::factory('account',array('account_path'=>strtolower($nickname)));
+				if ($account->loaded())
+				{
+					$this->template->content->errors = array(__('Nickname is already taken'));
+				}
+				else
+				{
+					// The data check out, create the account and proceed to Swift!
+					$this->user->account->account_path = $nickname;
+					$this->user->account->save();
+					$this->user->name = $this->request->post('name');
+					$this->user->save();
+					Request::current()->redirect('dashboard');
+					return;	
+				}
+			}
+			else
+			{
+				// Display the errors
+				$this->template->content->errors = $post->errors("validation");
+			}
+		}
+	}
+	
+	/**
 	 * Actions restful api
 	 *
 	 * @return	void
@@ -382,6 +429,23 @@ class Controller_Dashboard extends Controller_Swiftriver {
 					unset($_POST['email']);
 
 				} // end if - email address change
+				
+				// Nickname is changing
+				if ($_POST['nickname'] != $this->user->account->account_path)
+				{
+					$nickname = $_POST['nickname'];
+					// Make sure the account path is not already taken
+					$account = ORM::factory('account',array('account_path'=>$nickname));
+					if ($account->loaded())
+					{
+						echo json_encode(array("status"=>"error", "errors" => array(__('Nickname is already taken'))));
+						return;
+					}
+					
+					// Update
+					$this->user->account->account_path = $nickname;
+					$this->user->account->save();
+				}
 
 				$this->user->update_user($_POST, array('name', 'password', 'email'));
 

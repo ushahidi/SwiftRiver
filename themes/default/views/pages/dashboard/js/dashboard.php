@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$('.button-go').live('click', function() {
 		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
 			name: $('#name').val(),
+			nickname: $('#nickname').val(),
 			email: $('#email').val(),
 			password: $('#password').val(),
 			password_confirm: $('#password_confirm').val(),

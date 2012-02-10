@@ -164,9 +164,10 @@ class Controller_Swiftriver extends Controller_Template {
 			->where('user_id', '=', $this->user->id)
 			->find();
 			
-		if ( ! $this->account->loaded())
+		if ( ! $this->account->loaded() && $this->request->uri() != 'dashboard/register')
 		{
-			// Redirect?
+			// Make the user create an account
+			Request::current()->redirect('dashboard/register');
 		}
 		
 		

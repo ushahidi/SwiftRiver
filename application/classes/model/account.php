@@ -67,6 +67,38 @@ class Model_Account extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array('user' => array());
+	
+	/**
+	 * Rules for the account model
+	 *
+	 * @return array Rules
+	 */
+	public function rules()
+	{
+		return array(
+			'account_path' => array(
+				array('not_empty'),
+				array('alpha_dash')
+			)
+		);
+	}
+	
+	/**
+	 * Filters to run when data is set in this model. account_path is always set to lowercase
+	 *
+	 * @return array Filters
+	 */
+	public function filters()
+	{
+		return array(
+			'account_path' => array(
+				array('strtolower')
+			),
+			'account_path' => array(
+				array('trim')
+			)
+		);
+	}
 
 	/**
 	 * Overload saving to perform additional functions on the account
