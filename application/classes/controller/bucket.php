@@ -135,9 +135,10 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->active = 'buckets';
 		
 		$settings_control = View::factory('pages/bucket/settings_control')
-		    ->bind('bucket', $this->bucket)
-		    ->bind('settings_js', $settings_js);
-		
+		                        ->bind('collaborators_control', $collaborators_control)
+		                        ->bind('bucket', $this->bucket)
+		                        ->bind('settings_js', $settings_js);
+							
 		// Javascript view
 		$settings_js  = $this->_get_settings_js_view();	
 	}

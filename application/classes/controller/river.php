@@ -202,9 +202,11 @@ class Controller_River extends Controller_Swiftriver {
 
 		// Get the settings control		
 		$settings_control = View::factory('pages/river/settings_control')
-		    ->bind('settings_js', $settings_js);
+		                          ->bind('collaborators_control', $collaborators_control)
+		                          ->bind('settings_js', $settings_js);
 		
 		$settings_js = $this->_get_settings_js_view();
+		$collaborators_control = NULL;
 		
 		// Disable available channels by default
 		foreach ($this->channels as $key => $channel)
