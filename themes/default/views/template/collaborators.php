@@ -3,7 +3,7 @@
 	<div class="data">
 	</div>
 	<div class="input">
-		<h3><?php echo __('Add people to share this account'); ?></h3>
+		<h3><?php echo __('Add people to share with below'); ?></h3>
 		<input type="text" placeholder="+ Type name..." id="add-collaborator-input" />
 		<div id="livesearch">
 			<ul>
@@ -17,6 +17,7 @@
 	<div class="content">
 		<h1><a href="<?php echo url::site('user').'/<%= account_path %>' ?>" class="go"><%= name %></a></h1>
 	</div>
+	<% if (id != <?php echo $logged_in_user_id ?>) { %>
 	<div class="summary">
 		<section class="actions">
 			<div class="button">
@@ -35,6 +36,7 @@
 			<p>Editor</p>
 		</section>
 	</div>
+	<% } %>
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
@@ -167,20 +169,21 @@ $(function() {
 		// 500ms
 		liveSearch: function() {
 			var view = this;
+			var collaboratorsList = Collaborators; // Pass this on to the call back
 			if(view.timer)
 				clearTimeout(view.timer);
 			var doLiveSearch = this.doLiveSearch;
 			view.timer = setTimeout(function() {
 			        view.searchResults.reset();
 			        if(view.$("#add-collaborator-input").val()) {
-			            doLiveSearch(view);
+			            doLiveSearch(view, collaboratorsList);
 			        }
 			        view.timer = null;
 			    }, 500);
 		},
 		
 		// Do the actual search and display of results
-		doLiveSearch: function(view) {
+		doLiveSearch: function(view, collaboratorsList) {
 			$.ajax({
 			  url: fetch_url,
 			  dataType: "json",
@@ -189,9 +192,20 @@ $(function() {
 			  },
 			  success: function(response){
 				if (response.length) {
-				    _.each(response, function(searchResult) {
-				        view.searchResults.add(searchResult, view);
-				    });
+					// Remove already existing collaborators					
+					var results = _.filter(response, function(searchResult) {						
+						return ! _.find(collaboratorsList.toArray(), function(collaborator) { return collaborator.get('id') == searchResult["id"]});
+					});
+					
+					// Feedback if no results
+					if (!results.length) {
+						view.$("#livesearch ul").html("<strong>no results<strong>");
+					} else {
+						// Add the search results if any to the live search view					
+				    	_.each(results, function(searchResult) {
+				    	    view.searchResults.add(searchResult, view);
+				    	});
+					}										
 				} else {
 					view.$("#livesearch ul").html("<strong>no results<strong>");
 				}

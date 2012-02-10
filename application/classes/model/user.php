@@ -190,14 +190,22 @@ class Model_User extends Model_Auth_User
 	 * @param $search_string
 	 * @return array
 	 */
-	public static function get_like($search_string)
+	public static function get_like($search_string, $exclude_ids = array())
 	{
 		$users = array();
 		$search_string = strtolower(trim($search_string));
-		$users_orm = ORM::factory('user')
+		$users_query = ORM::factory('user')
+		                ->or_where_open()
 		                ->where(DB::expr('lower(email)'),'like', "$search_string%")
 		                ->or_where(DB::expr('lower(name)'),'like', "$search_string%")
-		                ->find_all();
+		                ->or_where_close();;
+		
+		if (! empty($exclude_ids)) {
+			$users_query->and_where('id', 'not in', $exclude_ids);
+		}
+	
+		
+		$users_orm = $users_query->find_all();
 		
 		foreach ($users_orm as $user)
 		{

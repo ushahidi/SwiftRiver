@@ -244,9 +244,11 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$collaborators_control = View::factory('template/collaborators')
 		                             ->bind('collaborator_list', $collaborator_list)
-		                             ->bind('fetch_url', $fetch_url);
+		                             ->bind('fetch_url', $fetch_url)
+		                             ->bind('logged_in_user_id', $logged_in_user_id);
 		$collaborator_list = json_encode($this->_river->get_collaborators());
 		$fetch_url = $this->base_url.'/'.$this->_river->id.'/collaborators';
+		$logged_in_user_id = $this->user->id;
 		
 		echo $settings;
 	}
@@ -264,7 +266,7 @@ class Controller_River extends Controller_Swiftriver {
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
 		if ($query) {
-			echo json_encode(Model_User::get_like($query));
+			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->_river->account->user->id)));
 			return;
 		}
 		
@@ -281,6 +283,7 @@ class Controller_River extends Controller_Swiftriver {
 				if ($collaborator_orm->loaded())
 				{
 					$collaborator_orm->delete();
+					Model_User_Action::delete_invite($this->user->id, 'river', $this->_river->id, $user_orm->id);
 				}
 			break;
 			
@@ -298,7 +301,7 @@ class Controller_River extends Controller_Swiftriver {
 					$collaborator_orm->river = $this->_river;
 					$collaborator_orm->user = $user_orm;
 					$collaborator_orm->save();
-					Model_User_Action::create_invite($this->user->id, 'river', $this->_river->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'river', $this->_river->id, $user_orm->id);
 				}				
 			break;
 		}

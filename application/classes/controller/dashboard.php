@@ -192,9 +192,11 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		
 		$collaborators_control = View::factory('template/collaborators')
 		                             ->bind('collaborator_list', $collaborator_list)
-		                             ->bind('fetch_url', $fetch_url);
+		                             ->bind('fetch_url', $fetch_url)
+		                             ->bind('logged_in_user_id', $logged_in_user_id);
 		$collaborator_list = json_encode($this->account->get_collaborators());
 		$fetch_url = url::site('dashboard/collaborators');
+		$logged_in_user_id = $this->user->id;
 		
 		echo $settings;
 	}
@@ -212,7 +214,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
 		if ($query) {
-			echo json_encode(Model_User::get_like($query));
+			echo json_encode(Model_User::get_like($query, array($this->account->user->id, $this->user->id)));
 			return;
 		}
 		
@@ -229,6 +231,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 				if ($collaborator_orm->loaded())
 				{
 					$collaborator_orm->delete();
+					Model_User_Action::delete_invite($this->user->id, 'account', $this->account->id, $user_orm->id);
 				}
 			break;
 			
@@ -246,7 +249,7 @@ class Controller_Dashboard extends Controller_Swiftriver {
 					$collaborator_orm->account = $this->account;
 					$collaborator_orm->user = $user_orm;
 					$collaborator_orm->save();
-					Model_User_Action::create_invite($this->user->id, 'account', $this->account->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'account', $this->account->id, $user_orm->id);
 				}				
 			break;
 		}

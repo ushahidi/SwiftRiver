@@ -76,23 +76,44 @@ class Model_User_Action extends ORM
 	}
 	
 	/**
-	 * Create a collaboration invite
+	 * Create a user action
 	 *
-	 * @param int $user_id User id of the user doing the inviting
+	 * @param int $user_id User id of the user doing the action
 	 * @param string $action_on account/river/bucket
-	 * @param int $action_on_id id of the account/river/bucket being invited to
-	 * @param int $action_to_id id of the user being invited
+	 * @param int $action_on_id id of the account/river/bucket being acted on
+	 * @param int $action_to_id optional id of the user being invited
 	 */
-	public static function create_invite($user_id, $action_on, $action_on_id, $action_to_id)
+	public static function create_action($user_id, $action_on, $action_on_id, $action_to_id = NULL)
 	{
 		$user_action_orm = Model::factory('user_action');
 		$user_action_orm->user_id = $user_id;
 		$user_action_orm->action = 'invite';
 		$user_action_orm->action_on = $action_on;
-		$user_action_orm->action_on_id = $action_on_id;
+		$user_action_orm->action_on_id = $action_on_id;		
 		$user_action_orm->action_to_id = $action_to_id;
 		$user_action_orm->action_date_add = date("Y-m-d H:i:s", time());
 		$user_action_orm->save();
+	}
+	
+	/**
+	 * Delete a pending invite
+	 *
+	 */
+	public static function delete_invite($user_id, $action_on, $action_on_id, $action_to_id)
+	{
+		$user_action_orm = Model::factory('user_action')
+		                        ->where('action', '=', 'invite')
+		                        ->where('user_id', '=', $user_id)
+		                        ->where('action_on', '=', $action_on)
+		                        ->where('action_on_id', '=', $action_on_id)
+		                        ->where('action_to_id', '=', $action_to_id)						
+		                        ->where('confirmed', '=', 0)
+		                        ->find();
+		
+		if ($user_action_orm->loaded())
+		{
+			$user_action_orm->delete();
+		}
 	}
 	
 	/**
