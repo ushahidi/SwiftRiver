@@ -153,11 +153,12 @@
 </script>
 
 <script type="text/template" id="link-template">
-	<span class="edit_trigger" title="text"><a href="<%= link_full %>"><%= link_short %></a></span>
+	<% var link_short = link_full.substr(0, 27) + "..."; %>
+	<span class="edit_trigger" title="<%= link_full %>"><a href="<%= link_full %>"><%= link_short %></a></span>
 </script>
 
 <script type="text/template" id="place-template">
-	<span class="edit_trigger" title="text" onclick=""><%= place_name %></span>
+	<span class="edit_trigger" title="<%= place_name %>" onclick=""><%= place_name %></span>
 </script>
 
 <!-- related discussion -->

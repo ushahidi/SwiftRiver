@@ -295,8 +295,10 @@ class Model_Droplet extends ORM
 			: array('channel', '=', $channel);
 		
 		// Get the droplets ordered by pub_date in DESC order
+		// Limit to only parent items - not comments
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
+					->where('parent_id', '=', 0)
 					->where($predicates[0], $predicates[1], $predicates[2])
 					->order_by('id', 'DESC')
 					->limit($limit)

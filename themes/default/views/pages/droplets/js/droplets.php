@@ -201,15 +201,11 @@ $(function() {
 		
 			// Display the droplet detail
 			if (button.hasClass("detail-hide")) {
-				button.removeClass('detail-hide')
-				      .closest('article')
-				      .children('div.drawer')
-				      .slideUp('slow');
+				button.removeClass('detail-hide');
+				this.$('div.drawer').slideUp('slow');
 			} else {
-				button.addClass('detail-hide')
-				      .closest('article')
-				      .children('div.drawer')
-				      .slideDown('slow');
+				button.addClass('detail-hide');
+				this.$('div.drawer').slideDown('slow');
 			}
 		},
 		
@@ -404,8 +400,6 @@ $(function() {
 		template: _.template($("#link-template").html()),
 		
 		render: function() {
-			var fullLink = this.model.get("link_full");
-			this.model.set({link_short: fullLink.substr(0, 27) + "..." });
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
 		},
