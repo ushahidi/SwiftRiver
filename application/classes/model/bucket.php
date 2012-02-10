@@ -212,7 +212,6 @@ class Model_Bucket extends ORM {
 	 */	
 	public function get_collaborators()
 	{
-<<<<<<< HEAD
 		$collaborators = array();		
 		foreach ($this->bucket_collaborators->find_all() as $collaborator)
 		{
@@ -221,17 +220,6 @@ class Model_Bucket extends ORM {
 			                         'account_path' => $collaborator->user->account->account_path
 			);
 		}
-=======
-		$results = DB::select(array('bucket_collaborators.collaborator_id', 'id'), 
-			array('users.name', 'collaborator_name'))
-			->from('bucket_collaborators')
-			->join('buckets', 'INNER')
-			->on('bucket_collaborators.bucket_id', '=', 'buckets.id')
-			->join('users', 'INNER')
-			->on('bucket_collaborators.collaborator_id', '=', 'users.id')
-			->where('buckets.id', '=', $bucket_id)
-			->execute();
->>>>>>> dd5c69cf69f23cee9b53233da5f9afba392bcb53
 		
 		return $collaborators;
 	}
@@ -325,53 +313,4 @@ class Model_Bucket extends ORM {
 		return false;
 	}
 
-<<<<<<< HEAD
-=======
-	/**
-	 * Adds a collaborator to a bucket
-	 *
-	 * @param int $user_id Database ID of the user
-	 * @return bool
-	 */
-	public function add_collaborator($user_id)
-	{
-		$user_orm = ORM::factory('user', $user_id);
-
-		// Check if the user exists
-		if ($user_orm->loaded())
-		{
-			// Check if the user is already collaborating on the bucket
-			if ( ! $this->has('collaborators', $user_orm))
-			{
-				// Add user as collaborator
-				$this->add('collaborators', $user_orm);
-
-				return TRUE;
-			}
-		}
-
-		return FALSE;
-	}
-
-	/**
-	 * Removes a collaborator from the bucket
-	 * @param int $collaborator_id User ID of the collaborator
-	 * @return bool
-	 */
-	public function remove_collaborator($collaborator_id)
-	{
-		// Load the collaboration entry
-		$user_orm = ORM::factory('user', $collaborator_id);
-
-		// Check if the collaboration entry exists
-		if ($user_orm->loaded())
-		{
-			$this->remove('collaborators', $user_orm);
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
->>>>>>> dd5c69cf69f23cee9b53233da5f9afba392bcb53
 }

@@ -184,7 +184,6 @@ class Model_User extends Model_Auth_User
 		return $buckets;
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Get a list of users whose name/email begins with the provided string
 	 *
@@ -211,24 +210,4 @@ class Model_User extends Model_Auth_User
 		return $users;
 	}
 	
-=======
-
-	/**
-	 * Finds a user using the specified search term
-	 *
-	 * @param string $search_term Value to be search
-	 * @return array
-	 */
-	public static function search_user($search_term)
-	{
-		$result = DB::select('id', array('username', 'collaborator_name'))
-		    ->from('users')
-		    ->where('name', 'LIKE', '%'.$search_term.'%');
-		
-		// Return
-		return $result->execute()->as_array();
-
-	}
-
->>>>>>> dd5c69cf69f23cee9b53233da5f9afba392bcb53
 }
