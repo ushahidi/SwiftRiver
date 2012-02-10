@@ -6,7 +6,13 @@
 				<h3><?php echo __('Current Password'); ?></h3>
 				<?php echo Form::password("current_password", "", array('id' => 'current_password')); ?>
 			</div>
-		</div>					    
+		</div>
+		<div class="row cf">
+			<div class="input">
+				<h3><?php echo __('Nickname'); ?></h3>
+				<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
+			</div>
+		</div>						    
 		<div class="row cf">
 			<div class="input">
 				<h3><?php echo __('Name'); ?></h3>
