@@ -22,6 +22,11 @@ class LinkExtractor_Init {
 		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'filter'));
 	}
 
+	/**
+	 * Event callback for the swiftriver.droplet.extract_metadata event
+	 *
+	 * @return void
+	 */
 	public function filter()
 	{
 		try
@@ -31,9 +36,10 @@ class LinkExtractor_Init {
 			
 			$droplet = ORM::factory('droplet', $droplet_arr['id']);
 			
-			//FIXME: This significantly slows down post processing
-			//TODO: Create a dedicated stream for droplets with links...
-			$links = Swiftriver_Links::extract($droplet->droplet_content);
+			// Get all the links in the droplet
+			// NOTE: Some of the links will not be relevant - e.g. URLs of
+			// feed generators
+			$links = Swiftriver_Links::extract_links($droplet->droplet_content);
 			
 			Model_Droplet::add_links($droplet, $links);
 		}
@@ -43,6 +49,7 @@ class LinkExtractor_Init {
 			Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
 		}
 	}
+
 }
 
 new LinkExtractor_Init;

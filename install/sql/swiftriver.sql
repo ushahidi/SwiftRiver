@@ -682,24 +682,30 @@ CREATE TABLE IF NOT EXISTS `auth_tokens` (
 -- ----------------------------------------
 -- VIEW 'activity_stream'
 -- ----------------------------------------
-create or replace view activity_stream as
-select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, ac.account_path action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-from user_actions ua left join users u1 on (ua.user_id = u1.id)
-join accounts ac on (ua.action_on_id = ac.id)
-left outer join users u2 on (ua.action_to_id = u2.id)
-where action_on = 'account'
-union all
-select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, r.river_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-from user_actions ua left join users u1 on (ua.user_id = u1.id)
-join rivers r on (ua.action_on_id = r.id)
-left outer join users u2 on (ua.action_to_id = u2.id)
-where action_on = 'river'
-union all
-select ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, action_on_id, b.bucket_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-from user_actions ua left join users u1 on (ua.user_id = u1.id)
-join buckets b on (ua.action_on_id = b.id)
-left outer join users u2 on (ua.action_to_id = u2.id)
-where action_on = 'bucket';
+CREATE OR REPLACE VIEW `activity_stream` AS
+SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
+  action_on_id, ac.account_path action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+FROM user_actions ua 
+LEFT JOIN users u1 ON (ua.user_id = u1.id)
+JOIN accounts ac ON (ua.action_on_id = ac.id)
+LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
+WHERE action_on = 'account'
+UNION ALL
+SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
+  action_on_id, r.river_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+FROM user_actions ua
+LEFT JOIN users u1 ON (ua.user_id = u1.id)
+JOIN rivers r ON (ua.action_on_id = r.id)
+LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
+WHERE action_on = 'river'
+UNION ALL
+SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
+  action_on_id, b.bucket_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
+FROM user_actions ua 
+LEFT JOIN users u1 ON (ua.user_id = u1.id)
+JOIN buckets b ON (ua.action_on_id = b.id)
+LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
+WHERE action_on = 'bucket';
 
 
 

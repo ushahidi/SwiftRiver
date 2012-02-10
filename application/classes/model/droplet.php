@@ -269,7 +269,7 @@ class Model_Droplet extends ORM
 		{
 			// Get the place record
 			$orm_place = Model_Place::get_place_by_lat_lon($place, TRUE);
-			if ($orm_place AND !$orm_droplet->has('places', $orm_place))
+			if ($orm_place AND ! $orm_droplet->has('places', $orm_place))
 			{
 				$orm_droplet->add('places', $orm_place);
 			}
@@ -355,7 +355,6 @@ class Model_Droplet extends ORM
 				$tags[] = array('id' => $account_tag->tag->id, 'tag' => $account_tag->tag->tag);
 			}
 		}
-
 		
 		return $tags;
     }

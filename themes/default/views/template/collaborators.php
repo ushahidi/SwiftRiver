@@ -6,8 +6,7 @@
 		<h3><?php echo __('Add people to share with below'); ?></h3>
 		<input type="text" placeholder="+ Type name..." id="add-collaborator-input" />
 		<div id="livesearch">
-			<ul>
-			</ul>
+			<ul></ul>
 		</div>
 	</div>
 </div>
@@ -21,7 +20,12 @@
 	<div class="summary">
 		<section class="actions">
 			<div class="button">
-				<p class="button-change"><a class="delete" onclick=""><span class="icon"></span><span class="nodisplay"><?php echo __('Remove'); ?></span></a></p>
+				<p class="button-change">
+					<a class="delete">
+						<span class="icon"></span>
+						<span class="nodisplay"><?php echo __('Remove'); ?></span>
+					</a>
+				</p>
 				<div class="clear"></div>
 				<div class="dropdown container">
 					<p><?php echo __('Are you sure you want to stop sharing with this person?'); ?></p>
@@ -42,6 +46,7 @@
 <script type="text/template" id="collaborator-search-result-template">
 	<a><%= name %></a>
 </script>
+
 
 <script type="text/javascript">
 
@@ -123,7 +128,7 @@ $(function() {
 		el: "#collaborator-control",
 		
 		events: {
-			"click" : "resetSearch",
+			"click": "resetSearch",
 			"keyup #add-collaborator-input": "liveSearch"
 		},
 		
@@ -167,15 +172,21 @@ $(function() {
 		
 		// Handle keyup event and only do an ajax request if there has been none in the last
 		// 500ms
-		liveSearch: function() {
+		liveSearch: function(e) {
+			// Prevent initiating empty searches
+			if (!((e.keyCode >= 16 && e.keyCode <= 90) || e.keyCode == 8))
+				return;
+			
 			var view = this;
 			var collaboratorsList = Collaborators; // Pass this on to the call back
 			if(view.timer)
 				clearTimeout(view.timer);
+			}
+			
 			var doLiveSearch = this.doLiveSearch;
 			view.timer = setTimeout(function() {
 			        view.searchResults.reset();
-			        if(view.$("#add-collaborator-input").val()) {
+			        if ($.trim(view.$("#add-collaborator-input").val())) {
 			            doLiveSearch(view, collaboratorsList);
 			        }
 			        view.timer = null;

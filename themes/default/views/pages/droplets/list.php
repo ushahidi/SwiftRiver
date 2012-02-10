@@ -153,7 +153,7 @@
 </script>
 
 <script type="text/template" id="link-template">
-	<span class="edit_trigger" title="text" onclick=""><%= link_full %></span>
+	<span class="edit_trigger" title="text"><a href="<%= link_full %>"><%= link_short %></a></span>
 </script>
 
 <script type="text/template" id="place-template">

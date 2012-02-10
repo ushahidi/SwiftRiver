@@ -219,7 +219,7 @@ class Model_River extends ORM {
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-			    ->join('identities')
+			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1)
@@ -232,7 +232,7 @@ class Model_River extends ORM {
 				$query->limit(self::DROPLETS_PER_PAGE);	
 				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
 			}
-	
+
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
 			

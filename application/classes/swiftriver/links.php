@@ -16,29 +16,39 @@ class Swiftriver_Links {
 
 	/**
 	 * Extract URL's from text
+	 *
 	 * @param   string $text
 	 * @return	array $urls
 	 */
-	public static function extract($text = NULL)
+	public static function extract_links($text)
 	{
-		if ($text)
+		$urls = array();
+
+		// Regex for matching URLs
+		// Credits to John Gruber - http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+		$pattern = "(?i)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]"
+		    . "{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(("
+		    . "[^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+
+		// Begin matching
+		if (preg_match_all("/".$pattern."/is", $text, $matches))
 		{
-			$regex = '(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?';
-			if ( preg_match_all("/".$regex."/is", $text, $match) )
+			foreach ($matches[0] as $key => $url)
 			{
-				if ( isset($match[0]) AND count($match[0]) )
+				if ( ! in_array($url, $urls))
 				{
-					return $match[0];
+					$urls[] = $url;
 				}
-			}			
+			}
 		}
 
-		return array();
+		return $urls;
 	}
 
+
 	/**
-	 * Take short url's and determine full urls
-	 * using cURL
+	 * Take short url's and determine full urls using cURL
+	 *
 	 * @param   string $url Short URL
 	 * @return  string $url Full/Expanded URL
 	 */
@@ -63,7 +73,7 @@ class Swiftriver_Links {
 				return $url;
 			}
 
-			if ( ! isset($headers['Location']) )
+			if ( ! isset($headers['Location']))
 			{
 				return $url;
 			}

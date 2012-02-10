@@ -344,8 +344,9 @@ $(function() {
 		},
 		
 		addDroplet: function(droplet) {
+
 			var view = new DropletView({model: droplet});
-			
+
 			// Recent items populate at the top othewise append
 			if (maxId && droplet.get('id') > maxId) {
 				this.$el.prepend(view.render().el);
@@ -403,6 +404,8 @@ $(function() {
 		template: _.template($("#link-template").html()),
 		
 		render: function() {
+			var fullLink = this.model.get("link_full");
+			this.model.set({link_short: fullLink.substr(0, 27) + "..." });
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
 		},
@@ -518,7 +521,7 @@ $(function() {
 			sinceId = parseInt(droplet.get("id"));
 		}
 	});
-			
+	
 	// Poll for new droplets every 30 seconds
 	setInterval(function() { 
 		if (!isSyncing) {
@@ -535,8 +538,8 @@ $(function() {
 			
 	// Bootstrap the droplet list
 	window.dropletList = new DropletListView;
-	Droplets.reset(<?php echo $droplet_list ?>);		
-	bucketList.reset(<?php echo $bucket_list ?>);
+	Droplets.reset(<?php echo $droplet_list; ?>);		
+	bucketList.reset(<?php echo $bucket_list; ?>);
 	
 	// Set the maxId after inital rendering of droplet list
 	maxId = sinceId = <?php echo $max_droplet_id ?>;
