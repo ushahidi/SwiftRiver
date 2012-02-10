@@ -9,10 +9,6 @@
 		</div>
 		
 		<div class="row cf">
-			<!-- collaborators -->
-			<?php echo $collaborators_control; ?>
-			<!-- /collaborators -->
-
 			<!-- buttons -->
 			<div class="row controls-buttons cf">
 				<p class="button-go"><a href="#"><?php echo __("Apply changes"); ?></a></p>
