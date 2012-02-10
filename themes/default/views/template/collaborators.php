@@ -1,7 +1,5 @@
 <div class="row controls list cf" id="collaborator-control">
 	<h2><?php echo __('Collaborators'); ?></h2>
-	<div class="data">
-	</div>
 	<div class="input">
 		<h3><?php echo __('Add people to share with below'); ?></h3>
 		<input type="text" placeholder="+ Type name..." id="add-collaborator-input" />
@@ -9,6 +7,7 @@
 			<ul></ul>
 		</div>
 	</div>
+	<div class="data"></div>
 </div>
 
 
@@ -179,7 +178,7 @@ $(function() {
 			
 			var view = this;
 			var collaboratorsList = Collaborators; // Pass this on to the call back
-			if(view.timer)
+			if (view.timer) {
 				clearTimeout(view.timer);
 			}
 			
@@ -205,7 +204,9 @@ $(function() {
 				if (response.length) {
 					// Remove already existing collaborators					
 					var results = _.filter(response, function(searchResult) {						
-						return ! _.find(collaboratorsList.toArray(), function(collaborator) { return collaborator.get('id') == searchResult["id"]});
+						return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
+							return collaborator.get('id') == searchResult["id"]
+						});
 					});
 					
 					// Feedback if no results
