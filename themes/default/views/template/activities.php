@@ -12,10 +12,10 @@
 			<hgroup>
 				<p class="date"><%= action_date %></p>
 				<% if (action == "invite" && parseInt(action_to_self)) { %>
-					<h1><h1><%= user_name %> <span><a href="<%= action_on_url %>">invited you to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
+					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited you to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
 				<% } %>
 				<% if (action == "invite" && !parseInt(action_to_self)) { %>
-					<h1><h1><%= user_name %> <span><a href="<%= action_on_url %>">invited <%= action_to_name %> to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
+					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited <%= action_to_name %> to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
 				<% } %>
 				<% if (action == "create") { %>
 					<h1><%= user_name %> <span><a href="<%= action_on_url %>">created the <%= action_on %> "<%= action_on_name %>"</a></span></h1>

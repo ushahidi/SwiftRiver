@@ -42,7 +42,7 @@
 				</div>
 			</section>
 			<section class="meta">
-				<p><a href="#"><strong>4</strong> <?php echo __('subscribers'); ?></a></p>
+				<p><a href="#"><strong>4</strong> <?php echo __('followers'); ?></a></p>
 			</section>
 		</div>
 	</article>

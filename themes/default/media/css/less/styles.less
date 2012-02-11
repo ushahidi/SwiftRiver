@@ -501,6 +501,10 @@ a.filter span.icon {
    background-position: center -267px;
 }
 
+a.subscribe span.icon {
+  background-position: center -288px;
+}
+
 a.discussion span.icon {
    background-position: center -422px;
 }
@@ -1497,6 +1501,11 @@ article.dashboard .page-title section.actions {
    width: 45%;
 }
 
+article.list .page-title section.actions {
+   clear: both;
+   margin: 10px 10px 0px;
+}
+
 /* --------------------------- PANEL */
 
 section.panel {
@@ -2030,6 +2039,19 @@ article.item .summary section.actions p.button-change a span.icon {
 
 article.item .summary section.actions p.button-change a.selected span.icon {
    background-position: center -112px;
+}
+
+article.list .page-title section.actions p.button-change a.subscribe {
+   font-size: 0.8em;
+   padding: 5px;
+}
+
+article.item .summary section.actions p.button-change a.subscribe span.icon, 
+article.list .page-title section.actions p.button-change a.subscribe span.icon {
+   width: 14px;
+   height: 20px;
+   background-position: center -288px;
+   margin: 0 auto;
 }
 
 article.item .summary section.actions p.button-change a.delete span.icon {
@@ -2933,6 +2955,12 @@ article .page-title hgroup.user h1 {
    padding-top: 0;
 }
 
+article.list .page-title section.actions {
+   float: right;
+   clear: none;
+   margin: 0 20px 0;
+}
+
 .select .edit-advanced {
    padding-top: 1.041666667%;
 }
@@ -2968,32 +2996,11 @@ article.dashboard .page-title section.actions {
    width: 14.89361702%;
 }
 
-article#droplet_full .page-title section.actions p a span {
-   float: none;
-   margin: 0 auto;
-}
-
-article#droplet_full .page-title section.actions p a strong {
-   display: block;
-   text-align: center;
-}
-
 section.meter {
    clear: none;
    float: right;
    width: 39.58333333%;
    margin-top: 3px;
-}
-
-#trends ul li {
-   float: left;
-   width: 22.91666667%;
-}
-
-article.droplet .page-title section.actions {
-   float: right;
-   clear: none;
-   margin: 0;
 }
 
 section.panel nav ul.views li.more {

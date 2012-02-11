@@ -5,7 +5,6 @@
 		<h2><?php echo __('This week'); ?></h2>
 		<ul class="stats">
 			<li>0 <?php echo __('new followers'); ?></li>
-			<li>0 <?php echo __('new subscribers'); ?></li>
 		</ul>
 	</div>
 	
