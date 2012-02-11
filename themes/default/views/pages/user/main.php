@@ -81,7 +81,7 @@ $(function() {
 		template: _.template($("#profile-row-item-template").html()),
 		
 		events: {
-			"click section.actions .button_change a.subscribe": "toggleSubscription"
+			"click section.actions .button-change a.subscribe": "toggleSubscription"
 		},
 		
 		render: function() {
