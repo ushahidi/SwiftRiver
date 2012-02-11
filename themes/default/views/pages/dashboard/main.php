@@ -9,13 +9,13 @@
 		</ul>
 	</div>
 	
-	<div class="item">
+	<div class="item cf">
 		<h2><?php echo __('Following'); ?> <span><?php echo count($following); ?></span></h2>
 		<ul class="relationships">
 			<?php
 			foreach ($following as $follow)
 			{
-				?><li><a href="#"><img src="<?php echo Swiftriver_Users::gravatar($follow['email']); ?>" /></a></li><?php
+				?><li><a href="<?php echo URL::site().'user/'.$follow->account->account_path ?>"><img src="<?php echo Swiftriver_Users::gravatar($follow->email); ?>" /></a></li><?php
 			}
 			?>
 		</ul>
@@ -27,7 +27,7 @@
 			<?php
 			foreach ($followers as $follow)
 			{
-				?><li><a href="#"><img src="<?php echo Swiftriver_Users::gravatar($follow['email']); ?>" /></a></li><?php
+				?><li><a href="<?php echo URL::site().'user/'.$follow->account->account_path ?>"><img src="<?php echo Swiftriver_Users::gravatar($follow->email); ?>" /></a></li><?php
 			}
 			?>
 		</ul>

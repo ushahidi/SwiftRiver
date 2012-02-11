@@ -222,7 +222,7 @@ Route::set('dashboard', 'dashboard(/<action>(/<id>))')
 /**
  * Swiftriver Dashboard Route
  */	
-Route::set('user', 'user/<account>(/<action>)')
+Route::set('user', 'user/<account>(/<action>(/<id>))')
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'index',

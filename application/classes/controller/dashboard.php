@@ -51,8 +51,8 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		$this->active = 'main';
 		$this->template_type = 'dashboard';
 		
-		$following = array();
-		$followers = array();
+		$following = $this->user->following->find_all();
+		$followers =  $this->user->followers->find_all();;
 		
 			
 		// Activity stream

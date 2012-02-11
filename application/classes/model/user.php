@@ -37,7 +37,28 @@ class Model_User extends Model_Auth_User
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
 		'account_collaborators' => array(),
-		'bucket_collaborators' => array(),
+		'bucket_collaborators' => array(),		
+		'river_subscriptions' => array(
+			'model' => 'river',
+			'through' => 'river_subscriptions',
+			'far_key' => 'river_id'
+			),
+		'bucket_subscriptions' => array(
+			'model' => 'bucket',
+			'through' => 'bucket_subscriptions',
+			'far_key' => 'bucket_id'
+			),
+		'following' => array(
+			'model' => 'user',
+			'through' => 'user_followers',
+			'far_key' => 'user_id',
+			'foreign_key' => 'follower_id'
+			),		
+		'followers' => array(
+			'model' => 'user',
+			'through' => 'user_followers',
+			'far_key' => 'follower_id'
+			)
 		);
 		
 	protected $_has_one = array(
@@ -225,7 +246,10 @@ class Model_User extends Model_Auth_User
 			$ret = array_merge($ret, $collabo->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
 		}
 		
-		return $ret;		
+		// Finally, the rivers the user has subscribed to
+		$ret = array_merge($ret, $this->river_subscriptions->order_by('river_name', 'ASC')->find_all()->as_array());
+		
+		return array_unique($ret);
 	}
 	
 	/**
@@ -259,6 +283,10 @@ class Model_User extends Model_Auth_User
 			$ret[] = $collabo->bucket;
 		}
 		
-		return $ret;
+		// Add the buckets this user has subscribed to
+		$ret = array_merge($ret, $this->bucket_subscriptions->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		
+		
+		return array_unique($ret);
 	}
 }

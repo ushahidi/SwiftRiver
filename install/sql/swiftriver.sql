@@ -30,16 +30,11 @@ COMMENT = 'Track subscriptions to rivers and/or buckets' ;
 -- Table `user_followers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_followers` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `follower_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `follower_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user_id_idx` (`user_id` ASC) ,
-  INDEX `follower_id_idx` (`follower_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8, 
-COMMENT = 'Track followers' ;
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `follower_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `follower_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  UNIQUE KEY `user_id` (`user_id`,`follower_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Track followers';
 
 
 -- -----------------------------------------------------
@@ -707,6 +702,25 @@ JOIN buckets b ON (ua.action_on_id = b.id)
 LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
 WHERE action_on = 'bucket';
 
+
+-- ----------------------------------------
+-- TABLE 'bucket_subscriptions'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `bucket_subscriptions` (
+  `bucket_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  UNIQUE KEY `bucket_id` (`bucket_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
+-- TABLE 'river_subscriptions'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `river_subscriptions` (
+  `river_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  UNIQUE KEY `river_id` (`river_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
