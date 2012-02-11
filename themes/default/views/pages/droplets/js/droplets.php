@@ -7,7 +7,13 @@ $(function() {
 	window.DropletPlace = Backbone.Model.extend();
 	window.DropletTag = Backbone.Model.extend();
 	window.DropletLink = Backbone.Model.extend();
-	window.Bucket = Backbone.Model.extend();
+	window.Bucket = Backbone.Model.extend({
+		initialize: function() {
+			if (parseInt(this.get("account_id")) != <?php echo $user->account->id ?>) {
+				this.set('bucket_name', this.get("account_path") + "/" + this.get("bucket_name"));
+			}
+		}
+	});
 	window.Discussion = Backbone.Model.extend({
 		urlRoot: "<?php echo $fetch_url?>/reply"
 	});

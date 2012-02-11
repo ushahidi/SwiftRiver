@@ -179,15 +179,11 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('rivers', $rivers);
 		$this->active = 'rivers';
 		$this->template_type = 'list';
+		$this->sub_content->logged_in_user_id = $this->user->id;
 		
 		// Get Rivers (as_array)
 		// ++ We can cache this array in future
-		$rivers = ORM::factory('river')
-			->join('accounts', 'INNER')
-				->on('river.account_id', '=', 'accounts.id')
-			->where('accounts.user_id', '=', $this->user->id)
-			->find_all()
-			->as_array();
+		$rivers = $this->user->get_rivers();
 	}
 
 	/**
@@ -201,15 +197,11 @@ class Controller_Dashboard extends Controller_Swiftriver {
 			->bind('buckets', $buckets);
 		$this->active = 'buckets';
 		$this->template_type = 'list';
+		$this->sub_content->logged_in_user_id = $this->user->id;
 		
 		// Get Rivers (as_array)
 		// ++ We can cache this array in future
-		$buckets = ORM::factory('bucket')
-			->join('accounts', 'INNER')
-				->on('bucket.account_id', '=', 'accounts.id')
-			->where('accounts.user_id', '=', $this->user->id)
-			->find_all()
-			->as_array();
+		$buckets = $this->user->get_buckets();
 	}
 
 	/**

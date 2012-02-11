@@ -4,7 +4,14 @@
 			<a href="<?php echo URL::site().'dashboard/rivers' ?>" class="arrow"><span class="icon"></span><?php echo __('Rivers');?></a>
 			<ul class="dropdown">
 				<?php foreach ($rivers as $river): ?>
-					<li><a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a></li>
+					<li>
+						<?php if ($river->account->user->id != $user->id): ?>
+							<a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->account->account_path ?>/<?php echo $river->river_name; ?></a>
+						<?php else: ?>
+							<a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a>
+						<?php endif; ?>
+						
+					</li>
 				<?php endforeach; ?>
 				<li><a href="<?php echo URL::site().'river/new'; ?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 			</ul>
@@ -13,7 +20,13 @@
 			<a href="<?php echo URL::site().'dashboard/buckets' ?>" class="arrow"><span class="icon"></span><?php echo __('Buckets');?></a>
 			<ul class="dropdown" id="dropdown_buckets">
 				<?php foreach ($buckets as $bucket): ?>
-					<li><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a></li>
+					<li>
+						<?php if ($bucket->account->user->id != $user->id): ?>
+							<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->account->account_path ?>/<?php echo $bucket->bucket_name; ?></a>
+						<?php else: ?>
+							<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a>
+						<?php endif; ?>
+					</li>
 				<?php endforeach; ?>
 				<li class="create-new"><a href="<?php echo URL::site().'bucket/new'?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 			</ul>

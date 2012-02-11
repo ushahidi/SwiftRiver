@@ -37,7 +37,7 @@ class Model_User extends Model_Auth_User
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
 		'account_collaborators' => array(),
-		'river_collaborators' => array(),
+		'bucket_collaborators' => array(),
 		);
 		
 	protected $_has_one = array(
@@ -93,38 +93,23 @@ class Model_User extends Model_Auth_User
 	 *
 	 * @return array
 	 */
-	public function get_buckets()
+	public function get_buckets_array()
 	{
-		$buckets = array();
+		$ret = array();
 		
-		// Directly owned buckets
-		foreach ($this->buckets->find_all() as $bucket)
+		$buckets = $this->get_buckets();
+		
+		foreach ($buckets as $bucket)
 		{
-			$buckets[] = array(
+			$ret[] = array(
 				"id" => $bucket->id, 
-				"bucket_name" => $bucket->bucket_name
+				"bucket_name" => $bucket->bucket_name,
+				"account_id" => $bucket->account->id,
+				"account_path" => $bucket->account->account_path
 			);
 		}
 		
-		// Buckets the user is collaborating in
-		$collaborating = ORM::factory('bucket_collaborator')
-		    ->where('user_id', '=', $this->id)
-		    ->where('collaborator_active', '=', 1)
-		    ->find_all();
-		
-		foreach ($collaborating as $item)
-		{
-			$bucket = ORM::factory('bucket', $item->bucket_id);
-			$buckets[] = array(
-				"id" => $item->bucket_id,
-				"bucket_name" => $bucket->bucket_name
-			);
-		}
-		
-		// Free memory
-		unset ($collaborating);
-		
-		return $buckets;
+		return $ret;
 	}
 	
 	/**
@@ -218,4 +203,62 @@ class Model_User extends Model_Auth_User
 		return $users;
 	}
 	
+	/**
+	 * Gets all the rivers accessible to the user - the ones
+	 * they've created and the ones they're collaborating on
+	 *
+	 * @return array
+	 */
+	public function get_rivers()
+	{
+		$ret = array();
+		
+		// First rivers belonging to this user's account
+		$ret = array_merge($ret, $this->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
+		
+		// Next the rivers belonging to an account this user is collaborating on
+		$account_collaborations = $this->account_collaborators
+		                               ->where("collaborator_active", "=", 1)
+		                               ->find_all();
+		foreach ($account_collaborations as $collabo)
+		{
+			$ret = array_merge($ret, $collabo->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
+		}
+		
+		return $ret;		
+	}
+	
+	/**
+	 * Gets all the buckets accessible to the user - the ones
+	 * they've created and the ones they're collaborating on
+	 *
+	 * @return array
+	 */
+	public function get_buckets()
+	{
+		$ret = array();
+		
+		// Buckets belonging to this user's account
+		$ret = array_merge($ret, $this->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		
+		// Add buckets belonging to an account this user is collaborating on
+		$account_collaborations = $this->account_collaborators
+		                               ->where("collaborator_active", "=", 1)		                               
+		                               ->find_all();
+		foreach ($account_collaborations as $collabo)
+		{
+			$ret = array_merge($ret, $collabo->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		}
+		
+		// Add individual buckets this user is collaborating on
+		$bucket_collaborations = $this->bucket_collaborators
+		                               ->where("collaborator_active", "=", 1)
+		                               ->find_all();
+		foreach ($bucket_collaborations as $collabo)
+		{
+			$ret[] = $collabo->bucket;
+		}
+		
+		return $ret;
+	}
 }

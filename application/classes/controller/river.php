@@ -111,13 +111,14 @@ class Controller_River extends Controller_Swiftriver {
 				
 		// Bootstrap the droplet list
 		$droplet_list = json_encode($droplets);
-		$bucket_list = json_encode($this->user->get_buckets());
+		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		    ->bind('fetch_url', $fetch_url)
 		    ->bind('tag_base_url', $tag_base_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('bucket_list', $bucket_list)
-		    ->bind('max_droplet_id', $max_droplet_id);
+		    ->bind('max_droplet_id', $max_droplet_id)
+		    ->bind('user', $this->user);
 		    		
 		// Turn on Ajax polling
 		$polling_enabled = "true";

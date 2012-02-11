@@ -90,13 +90,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		// Bootstrap the droplet list
 		$droplet_list = json_encode($droplets);
-		$bucket_list = json_encode($this->user->get_buckets());
+		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		        ->bind('fetch_url', $fetch_url)
 		        ->bind('tag_base_url', $tag_base_url)
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('bucket_list', $bucket_list)
-		        ->bind('max_droplet_id', $max_droplet_id);
+		        ->bind('max_droplet_id', $max_droplet_id)
+		        ->bind('user', $this->user);
 		
 		$fetch_url = $this->base_url.'/droplets/'.$this->bucket->id;
 		$tag_base_url = $this->base_url.'/droplets/'.$this->bucket->id;
@@ -583,7 +584,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 		    case "GET":
-		       echo json_encode($this->user->get_buckets());
+		       echo json_encode($this->user->get_buckets_array());
 		    break;
 		    case "POST":
 		        $bucket_array = json_decode($this->request->body(), true);

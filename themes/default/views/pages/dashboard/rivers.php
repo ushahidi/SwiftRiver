@@ -12,7 +12,17 @@
 	<article class="item cf" id="item_<?php echo $river->id; ?>">
 		<div class="content">
 			<div class="checkbox"><input type="checkbox" /></div>
-			<h1><a href="<?php echo URL::site().'river/index/'.$river->id; ?>" class="title"><?php echo $river->river_name; ?></a></h1>
+			<h1>
+			<!--  Namespace the river name if logged in user is not the owner -->
+			<?php if ($river->account->user->id != $logged_in_user_id): ?>
+			<a href="<?php echo URL::site('user').'/'.$river->account->account_path; ?>">
+				<?php echo $river->account->account_path ?>/
+			</a>
+			<?php endif; ?>
+			<a href="<?php echo URL::site().'river/index/'.$river->id; ?>" class="title">
+				<?php echo $river->river_name; ?>
+			</a>
+			</h1>
 		</div>
 		<div class="summary">
 			<section class="actions">

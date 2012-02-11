@@ -15,7 +15,17 @@
 	<article class="item cf" id="item_<?php echo $bucket->id; ?>">
 		<div class="content">
 			<div class="checkbox"><input type="checkbox" /></div>
-			<h1><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>" class="title"><?php echo $bucket->bucket_name; ?></a></h1>
+				<h1>
+					<!--  Namespace the river name if logged in user is not the owner -->
+					<?php if ($bucket->account->user->id != $logged_in_user_id): ?>
+					<a href="<?php echo URL::site('user').'/'.$bucket->account->account_path; ?>">
+						<?php echo $bucket->account->account_path ?>/
+					</a>
+					<?php endif; ?>
+					<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>" class="title">
+						<?php echo $bucket->bucket_name; ?>
+					</a>
+				</h1>
 		</div>
 		<div class="summary">
 			<section class="actions">
