@@ -1,5 +1,5 @@
 <div class="panel-body">
-	<div id="settings" class="controls">
+	<div id="settings" class="controls" data-settings-bucket-id="<?php echo $bucket->id; ?>">
 		<div class="row cf">
 			<!-- collaborators -->
 			<?php echo $collaborators_control; ?>
@@ -22,3 +22,4 @@
 	</div>
 </div>
 
+<?php echo $settings_js; ?>

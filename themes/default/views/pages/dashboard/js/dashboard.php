@@ -27,14 +27,3 @@ $(document).ready(function() {
 		}, 'json');
 	});
 });
-
-function deleteItem(id, item){
-	$.post('<?php echo URL::site()?>'+item+'/ajax_delete', { id: id},
-		function(data){
-			if ( typeof(data.status) != 'undefined' ) {
-				if (data.status == 'success') {
-					$('#item_'+id).remove();
-				};
-			}			
-		}, 'json');
-}

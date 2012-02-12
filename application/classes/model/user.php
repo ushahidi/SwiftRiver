@@ -126,7 +126,9 @@ class Model_User extends Model_Auth_User
 				"id" => $bucket->id, 
 				"bucket_name" => $bucket->bucket_name,
 				"account_id" => $bucket->account->id,
-				"account_path" => $bucket->account->account_path
+				"user_id" => $bucket->account->user->id,
+				"account_path" => $bucket->account->account_path,
+				"subscriber_count" => $bucket->get_subscriber_count()
 			);
 		}
 		
@@ -215,9 +217,10 @@ class Model_User extends Model_Auth_User
 		
 		foreach ($users_orm as $user)
 		{
-			$users[] = array('id' => $user->id, 
-			                         'name' => $user->name,
-			                         'account_path' => $user->account->account_path
+			$users[] = array(
+				'id' => $user->id, 
+				'name' => $user->name,
+				'account_path' => $user->account->account_path
 			);
 		}
 		
@@ -260,33 +263,38 @@ class Model_User extends Model_Auth_User
 	 */
 	public function get_buckets()
 	{
-		$ret = array();
+		$buckets = array();
 		
 		// Buckets belonging to this user's account
-		$ret = array_merge($ret, $this->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		$buckets = array_merge($buckets, 
+			$this->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
 		
 		// Add buckets belonging to an account this user is collaborating on
 		$account_collaborations = $this->account_collaborators
-		                               ->where("collaborator_active", "=", 1)		                               
-		                               ->find_all();
+		    ->where("collaborator_active", "=", 1)		                               
+		    ->find_all();
+
 		foreach ($account_collaborations as $collabo)
 		{
-			$ret = array_merge($ret, $collabo->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+			$buckets = array_merge($buckets, 
+				$collabo->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
 		}
 		
 		// Add individual buckets this user is collaborating on
 		$bucket_collaborations = $this->bucket_collaborators
 		                               ->where("collaborator_active", "=", 1)
 		                               ->find_all();
+		
 		foreach ($bucket_collaborations as $collabo)
 		{
-			$ret[] = $collabo->bucket;
+			$buckets[] = $collabo->bucket;
 		}
 		
 		// Add the buckets this user has subscribed to
-		$ret = array_merge($ret, $this->bucket_subscriptions->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		$buckets = array_merge($buckets, 
+			$this->bucket_subscriptions->order_by('bucket_name', 'ASC')->find_all()->as_array());
 		
 		
-		return array_unique($ret);
+		return array_unique($buckets);
 	}
 }

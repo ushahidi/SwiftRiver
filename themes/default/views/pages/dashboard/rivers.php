@@ -4,14 +4,12 @@
 		<div class="row cf">
 			<p class="button-go edit-single"><a href="#">Edit River</a></p>
 			<p class="button-view edit-multiple"><a href="<?php echo URL::site()?>dashboard/edit_multiple">Edit multiple</a></p>
-			<p class="button-view"><a href="<?php echo URL::site()?>dashboard/filter_rivers">Filter</a></p>
 			<p class="button-go create-new"><a href="<?php echo URL::site().'river/new'; ?>"><?php echo __('Create new');?></a></p>
 		</div>
 	</div>
 	<?php foreach ($rivers as $river): ?>
 	<article class="item cf" id="item_<?php echo $river->id; ?>">
 		<div class="content">
-			<div class="checkbox"><input type="checkbox" /></div>
 			<h1>
 			<!--  Namespace the river name if logged in user is not the owner -->
 			<?php if ($river->account->user->id != $logged_in_user_id): ?>
@@ -39,7 +37,7 @@
 				</div>
 			</section>
 			<section class="meta">
-				<p><a href="#"><strong>4</strong> <?php echo __('followers'); ?></a></p>
+				<p><a href="#"><strong><?php echo $river->get_subscriber_count(); ?></strong> <?php echo __('Subscribers'); ?></a></p>
 			</section>
 		</div>
 	</article>

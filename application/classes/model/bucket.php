@@ -30,7 +30,16 @@ class Model_Bucket extends ORM {
 			'model' => 'droplet',
 			'through' => 'buckets_droplets'
 			),
-		'bucket_collaborators' => array()
+		
+		// A bucket has many collaborators
+		'bucket_collaborators' => array(),
+
+		// A bucket has many subscribers
+		'subscriptions' => array(
+			'model' => 'user',
+			'through' => 'bucket_subscriptions',
+			'far_key' => 'user_id'
+			)
 	);
 
 	/**
@@ -195,7 +204,7 @@ class Model_Bucket extends ORM {
 	 * @param array
 	 * @return Model_Bucket
 	 */
-	public static function create_from_array($bucket_array) 
+	public static function create_from_array($bucket_array)
 	{		
 		$bucket_orm = ORM::factory('bucket');
 		$bucket_orm->account_id = $bucket_array['account_id'];
@@ -276,8 +285,8 @@ class Model_Bucket extends ORM {
 	}
 	
 	/**
-	 * Checks if the given user owns the river, is an account collaborator
-	 * or a river collaborator.
+	 * Checks if the given user owns the bucket, is an account collaborator
+	 * or a bucket collaborator.
 	 *
 	 * @param int $user_id Database ID of the user	
 	 * @return int
@@ -310,7 +319,17 @@ class Model_Bucket extends ORM {
 			return TRUE;
 		}
 		
-		return false;
+		return FALSE;
+	}
+
+	/**
+	 * Gets the no. of users subscribed to the current bucket
+	 *
+	 * @return int
+	 */
+	public function get_subscriber_count()
+	{
+		return $this->subscriptions->count_all();
 	}
 
 }

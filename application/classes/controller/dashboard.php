@@ -194,14 +194,37 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	public function action_buckets()
 	{
 		$this->sub_content = View::factory('pages/dashboard/buckets')
-			->bind('buckets', $buckets);
+			->bind('has_buckets', $has_buckets)
+			->bind('buckets_js', $buckets_js);
+
 		$this->active = 'buckets';
 		$this->template_type = 'list';
-		$this->sub_content->logged_in_user_id = $this->user->id;
+
+		// Load up the javascript
+		$buckets_js = View::factory('pages/bucket/js/settings')
+		    ->bind('buckets_list', $buckets_list)
+		    ->bind('listing_mode', $listing_mode)
+		    ->bind('bucket_url_root', $bucket_url_root);
 		
-		// Get Rivers (as_array)
-		// ++ We can cache this array in future
-		$buckets = $this->user->get_buckets();
+		$bucket_url_root = URL::site('bucket').'/api';
+
+		// Enable listing mode
+		$listing_mode = TRUE;
+
+		// Get the buckets 
+		$buckets = $this->user->get_buckets_array();
+		foreach ($buckets as $k => $bucket)
+		{
+			$bucket["is_owner"] = ($bucket['user_id'] == $this->user->id);
+			$bucket["bucket_owner_url"] = URL::site('bucket').'/user/'.$bucket['account_path'];
+			$bucket["bucket_url"] = URL::site('bucket').'/index/'.$bucket['id'];
+
+			$buckets[$k] = $bucket;
+		}
+		
+		$has_buckets = (bool) count($buckets);
+
+		$buckets_list = json_encode($buckets);
 	}
 
 	/**

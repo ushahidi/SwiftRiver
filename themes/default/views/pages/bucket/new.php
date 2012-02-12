@@ -44,6 +44,19 @@
 					<div class="input new-bucket">
 						<?php echo Form::input('bucket_name', $post['bucket_name'], array('placeholder' => __('Name your Bucket'))); ?>
 					</div>
+					<div class="clear"></div>
+					<div class="input">
+						<?php echo Form::input('bucket_description', $post['bucket_name'], array('placeholder' => __('Bucket description (optional)'))); ?>
+					</div>
+				</div>
+				<div class="input">
+					<div class="controls edit-advanced">
+						<div class="row controls-buttons cf">
+							<p class="button-go create-new" onclick="submitForm(this)">
+								<a><?php echo __("Create Bucket"); ?></a>
+							</p>
+						</div>
+					</div>
 				</div>
 		
 			<?php
@@ -59,7 +72,6 @@
 				}
 			}
 			?>
-			<?php echo $settings_control; ?>	
 			<?php echo Form::close(); ?>
 			</div>
 		</div>

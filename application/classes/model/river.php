@@ -29,9 +29,18 @@ class Model_River extends ORM {
 	protected $_has_many = array(
 		'channel_filters' => array(),
 		'river_collaborators' => array(),
+
+		// A river has many droplets
 		'droplets' => array(
 			'model' => 'droplet',
 			'through' => 'rivers_droplets'
+			),
+
+		// A river has many subscribers
+		'subscriptions' => array(
+			'model' => 'user',
+			'through' => 'river_subscriptions',
+			'far_key' => 'user_id'
 			)		
 		);
 	
@@ -359,6 +368,16 @@ class Model_River extends ORM {
 			return TRUE;
 		}
 				
+	}
+
+	/**
+	 * Gets the no. of users subscribed to the current river
+	 *
+ 	 * @return int
+ 	 */
+	public function get_subscriber_count()
+	{
+		return $this->subscriptions->count_all();
 	}
 		
 }

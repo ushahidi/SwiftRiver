@@ -65,7 +65,7 @@ $(function() {
 		
 		tagName: "article",
 		
-		className: 	"item cf",
+		className: "item cf",
 		
 		template: _.template($("#collaborator-template").html()),
 		

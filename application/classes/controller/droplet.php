@@ -64,6 +64,7 @@ class Controller_Droplet extends Controller_Swiftriver {
 		
 		switch ($this->request->method())
 		{
+			// Add droplet to a bucket
 			case "PUT":
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
@@ -72,6 +73,7 @@ class Controller_Droplet extends Controller_Swiftriver {
 				$response["success"] = TRUE;
 			break;
 
+			// Delete droplet from bucket/river
 			case "DELETE":
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
 				

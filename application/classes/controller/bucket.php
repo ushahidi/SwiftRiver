@@ -129,19 +129,40 @@ class Controller_Bucket extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('active', $this->active)
 		    ->bind('post', $post)
-		    ->bind('errors', $errors)
-		    ->bind('settings_control', $settings_control);
+		    ->bind('errors', $errors);
 		
 		$this->template_type = 'dashboard';
 		$this->active = 'buckets';
+
+		// Check for form submission
+		if ($_POST)
+		{
+			// Extract the posted data
+			$data = Arr::extract($_POST, array('bucket_name', 'bucket_description'));
+
+			$bucket = ORM::factory('bucket');
+			$post = $bucket->validate($data);
+
+			if ($post->check())
+			{
+				// Save the bucket
+				$bucket->bucket_name = $post['bucket_name'];
+				$bucket->bucket_description = $post['bucket_description'];
+				$bucket->account_id = $this->account->id;
+				$bucket->user_id = $this->user->id;
+
+				$bucket->save();
+
+				// Redirect
+				Request::current()->redirect('bucket/index/'.$bucket->id);
+			}
+			else
+			{
+				// TODO: Create i18n files for error messages
+				$errors = $post->errors();
+			}
+		}
 		
-		$settings_control = View::factory('pages/bucket/settings_control')
-		                        ->bind('collaborators_control', $collaborators_control)
-		                        ->bind('bucket', $this->bucket)
-		                        ->bind('settings_js', $settings_js);
-							
-		// Javascript view
-		$settings_js  = $this->_get_settings_js_view();	
 	}
 	
 	/**
@@ -153,15 +174,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		// Javascript view
 		$settings_js  = View::factory('pages/bucket/js/settings')
-		    ->bind('collaborator_fetch_url', $collaborator_fetch_url)
-		    ->bind('delete_bucket_url', $delete_bucket_url)
-		    ->bind('save_settings_url', $save_settings_url);
+		   ->bind('bucket_url_root', $bucket_url_root)
+		   ->bind('listing_mode', $listing_mode);
 
-
-		// URLs endpoints for XHR actions
-		$collaborator_fetch_url = $this->base_url.'/collaborators/'.$this->bucket->id;
-		$save_settings_url = $this->base_url.'/save_settings/'.$this->bucket->id;
-		$delete_bucket_url = $this->base_url.'/ajax_delete/'.$this->bucket->id;
+		$bucket_url_root = $this->base_url.'/api';
+		$listing_mode = FALSE;
 
 		return $settings_js;
 	}
@@ -219,106 +236,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Ajax Create New Bucket
-	 * 
-	 * @return string - json
-	 */
-	public function action_ajax_new()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		// check, has the form been submitted, if so, setup validation
-		// save the bucket
-		if ($_POST)
-		{
-			$bucket = ORM::factory('bucket');
-			$post = $bucket->validate($_POST);
-
-			if ($post->check())
-			{
-				$bucket->bucket_name = $post['bucket_name'];
-				$bucket->user_id = $this->user->id;
-				$bucket->account_id = $this->account->id;
-				$bucket->save();
-				
-				echo json_encode(array(
-					"success" => TRUE,
-					"bucket" => array(
-						'id' => $bucket->id,
-						'bucket_name' => $bucket->bucket_name
-						)));
-			}
-			else
-			{
-				//validation failed, get errors
-				$errors = $post->errors('bucket');
-				echo json_encode(array("success" => FALSE, "errors" => $errors));
-			}
-		}
-	}
-
-	/**
-	 * Ajax Add Droplet to Bucket
-	 * 
-	 * @return string - json
-	 */
-	public function action_ajax_droplet()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		$response = array("success" => FALSE);
-		
-		// Check for HTTP POST
-		if ($_POST)
-		{
-			// 	Fetch the HTTP POST data
-			$bucket_id = isset($_POST['bucket_id']) ? $_POST['bucket_id'] : 0;
-			$droplet_id = isset($_POST['droplet_id']) ? $_POST['droplet_id'] : 0;
-			$action = isset($_POST['action'])? $_POST['action'] : "";
-			
-			// If no bucket is loaded or bucket_id is non-zero
-			if ($bucket_id != 0 OR ! $this->bucket->loaded())
-			{
-				$this->bucket = ORM::factory('bucket')
-					->where('id', '=', $bucket_id)
-					->where('account_id', '=', $this->account->id)
-					->find();
-			}
-
-			// Get Droplet
-			$droplet = ORM::factory('droplet', $droplet_id);
-
-			// Verify that both the bucket and droplet exist
-			if ($this->bucket->loaded() AND $droplet->loaded())
-			{
-				switch ($action)
-				{
-					// Add droplet to bucket
-					case 'add':
-						if ( ! $this->bucket->has('droplets', $droplet))
-						{
-							$this->bucket->add('droplets', $droplet);
-						}
-						
-						$response["success"] = TRUE;
-						
-						break;
-						
-					case 'remove':
-						$this->bucket->remove('droplets', $droplet);
-						$response["success"] = TRUE;
-						break;
-				}
-			}
-		}
-		
-		// Output response
-		echo json_encode($response);
-	}
-	
-	/**
 	 * Ajax rendered discussion control box
 	 * 
 	 * @return	void
@@ -353,6 +270,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		                             ->bind('collaborator_list', $collaborator_list)
 		                             ->bind('fetch_url', $fetch_url)
 		                             ->bind('logged_in_user_id', $logged_in_user_id);
+
 		$collaborator_list = json_encode($this->bucket->get_collaborators());
 		$fetch_url = $this->base_url.'/'.$this->bucket->id.'/collaborators';
 		$logged_in_user_id = $this->user->id;
@@ -373,7 +291,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 		
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
-		if ($query) {
+		if ($query)
+		{
 			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->bucket->account->user->id)));
 			return;
 		}
@@ -428,10 +347,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 
 		// check, has the form been submitted, if so, setup validation
-		if ($_REQUEST AND
+		if (
+			$_REQUEST AND
 			isset($_REQUEST['edit_id'], $_REQUEST['edit_value']) AND
-			! empty($_REQUEST['edit_id']) AND 
-			! empty($_REQUEST['edit_value']) )
+			! empty($_REQUEST['edit_id']) AND ! empty($_REQUEST['edit_value'])
+			)
 		{
 
 			$bucket = ORM::factory('bucket')
@@ -467,104 +387,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 			case "PUT":
 			break;
 
-			// Add a new collaborator to the bucket
-			case "POST":
-				// Get the POST data
-				$post = json_decode($this->request->body(), TRUE);
-
-				if ($this->bucket->loaded())
-				{
-					// Add user to the list of collaborators
-					if ($this->bucket->add_collaborator($post['collaborator']['id']))
-					{
-						$response["success"] = TRUE;
-					}
-				}
-				else
-				{
-					// 
-					// Step 1 - Creating a new bucket
-					// 
-					if (array_key_exists('bucket_name', $post))
-					{
-						// Model_Bucket instance to be used for save
-						$bucket = ORM::factory('bucket');
-
-						// Set up validation
-						$validate = $bucket->validate(Arr::extract($post, 
-							array('bucket_name', 'bucket_description')));
-						
-						// Validate!
-						if ($validate->check())
-						{
-							$bucket->bucket_name = $post['bucket_name'];
-
-							$bucket->bucket_description = isset($post['bucket_description']) 
-							    ? $post['bucket_description'] 
-							    : '';
-							
-							$bucket->account_id = $this->account->id;
-							$bucket->user_id = $this->user->id;
-							
-							// Save the bucket
-							$this->bucket = $bucket->save();
-							
-							// Set the values for the JSON response
-							$response["success"] = TRUE;
-							$response["redirect_url"] = $this->base_url.'/index/'.$bucket->id;
-						}
-					}
-
-					// 
-					// Step 2 - Check for collaborators
-					// 
-					if ($this->bucket->loaded() AND array_key_exists('collaboratrs', $post))
-					{
-						// Add each of the specified collaborators and trap for
-						// exception
-						try 
-						{
-							foreach ($post['collaborators'] as $collaborator)
-							{
-								$this->bucket->add_collaborator($collaborator['id']);
-							}
-						}
-						catch (Database_Exception $e)
-						{
-							// Fail!
-							$response["success"] = FALSE;
-
-							// Log the error
-							Kohana::$log->add(Log::ERROR, $e->getMessage());
-						}
-					}
-
-				}
-				
-			break;
-
-
-			// Remove a bucket or collaborator from bucket
+			// Delets a bucket from the database
 			case "DELETE":
-				
-				if (array_key_exists('collaborator_id', $this->request->param()))
-				{
-					// Get the collaboration id
-					$collaborator_id = intval($this->request->param('collaborator_id', 0));
-
-					// Remove the collaboration
-					if ($this->bucket->remove_collaborator($collaborator_id))
-					{
-						$response["success"] = TRUE;
-					}
-				}
-				else
+				if ($this->bucket->loaded())
 				{
 					$this->bucket->delete();
 					$response["success"] = TRUE;
 					$response["redirect_url"] = url::site('dashboard/buckets');
 				}
-
 			break;
 		}
 		
@@ -586,11 +416,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 		    case "GET":
 		       echo json_encode($this->user->get_buckets_array());
 		    break;
+
 		    case "POST":
-		        $bucket_array = json_decode($this->request->body(), true);
+		        $bucket_array = json_decode($this->request->body(), TRUE);
 		        $bucket_array['user_id'] = $this->user->id;
 		        $bucket_array['account_id'] = $this->account->id;
 		        $bucket_orm = Model_Bucket::create_from_array($bucket_array);
+
 		        echo json_encode($bucket_orm->as_array());
 		    break;
 		}
