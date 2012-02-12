@@ -9,12 +9,15 @@
 			</h1>
 		</hgroup>
 		<section class="actions">
-			<p class="button_change follow_user"><a class="subscribe"><span></span><strong>follow</strong></a></p>
+			<div class="button">
+				<p class="button-change follow-user"><a class="subscribe"><span class="icon"></span><span class="label">Follow <?php echo $user->name ?></span></a></p>
+				<div class="clear"></div>
+			</div>
 		</section>
 	</div>
 	
 	<div class="center canvas cf">
-		<section class="panel">		
+		<section class="panel">
 			<nav class="cf">
 				<ul class="views">
 					<li <?php if ($active == 'rivers') echo 'class="active"'; ?>>
@@ -45,7 +48,7 @@
 		    <% class_name = ""; %>
 			<%if (subscribed) class_name = "active"; %>
 		    <div class="button">
-		    	<p class="button-change <%= class_name %>"><a class="subscribe" onclick=""><span class="icon"></span><span class="nodisplay"><?php echo __('Subscribe'); ?></span></a></p>
+		    	<p class="button-change <%= class_name %>"><a class="subscribe" onclick=""><span class="icon"></span><span class="label"><?php echo __('Subscribe'); ?></span></a></p>
 		    	<div class="clear"></div>
 		    </div>
 		<% } %>
@@ -100,7 +103,7 @@ $(function() {
 		el: "#droplet_full",
 		
 		events: {
-			"click section.actions .follow_user a.subscribe": "toggleFollow"
+			"click section.actions .follow-user a.subscribe": "toggleFollow"
 		},
 		
 		initialize: function() {

@@ -9,8 +9,12 @@ $(function() {
 	window.DropletLink = Backbone.Model.extend();
 	window.Bucket = Backbone.Model.extend({
 		defaults: {
-			account_id: <?php echo $user->account->id; ?>,
-			user_id: <?php echo $user->id; ?>
+			account_id: <?php echo $user->account->id ?>
+		},
+		initialize: function() {
+			if (parseInt(this.get("account_id")) != <?php echo $user->account->id ?>) {
+				this.set('bucket_name', this.get("account_path") + "/" + this.get("bucket_name"));
+			}
 		}
 	});
 	window.Discussion = Backbone.Model.extend({
