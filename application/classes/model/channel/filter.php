@@ -15,7 +15,7 @@
  */
 class Model_Channel_Filter extends ORM {
     
-    const RUN_INTERVAL = 15; // Default minimum duration between crawls
+    const RUN_INTERVAL = 5; // Default minimum duration between crawls
     
 	/**
 	 * A channel_filter has many droplets and channel_filter_options

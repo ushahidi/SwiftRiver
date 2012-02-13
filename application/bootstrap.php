@@ -179,7 +179,7 @@ Route::set('process', 'process')
 /**
  * Swiftriver Crawl Route
  */	
-Route::set('crawler', 'crawler(/<id>/<channel>)')
+Route::set('crawler', 'crawler(/<id>(/<channel>))')
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
