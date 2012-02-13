@@ -7,6 +7,19 @@
 				<div class="tab-container"></div>
 			</div>
 		</div>
+
+		<!-- NEW: Privacy control -->
+		<div class="row cf">
+			<h2><?php echo __("Access"); ?></h2>
+			<div class="input">
+				<h3>Do you want this river to be viewable to the public?</h3>
+				<select>
+					<option value="">Yes</option>
+					<option value="">No</option>
+				</select>
+			</div>
+		</div>
+		<!-- /NEW: Privacy control -->
 		
 		<div class="row cf">
 			<!-- buttons -->
