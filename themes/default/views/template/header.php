@@ -32,7 +32,7 @@
 	
 	<?php
 	    // SwiftRiver Plugin Hook
-	    Swiftriver_Event::run('swiftriver.template.header');
+	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
 </head> 
  

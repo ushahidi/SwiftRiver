@@ -340,7 +340,9 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		echo View::factory('pages/river/more_control');
+		$river_id = $this->request->param('id', 0);
+		echo View::factory('pages/river/more_control')
+			->bind('river_id', $river_id);
 	}	
 
 	/**

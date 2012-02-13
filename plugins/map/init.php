@@ -18,11 +18,11 @@ class Map_Init {
 	public function __construct()
 	{
 		// Create Menu Item
-		Swiftriver_Event::add('swiftriver.river.nav', array($this, 'river_nav'));
-		Swiftriver_Event::add('swiftriver.bucket.nav', array($this, 'bucket_nav'));
+		Swiftriver_Event::add('swiftriver.river.nav.more', array($this, 'river_nav'));
+		Swiftriver_Event::add('swiftriver.bucket.nav.more', array($this, 'bucket_nav'));
 		
 		// For adding our js/css to the header
-		Swiftriver_Event::add('swiftriver.template.header', array($this, 'template_header'));
+		Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
 	}
 	
 	
@@ -47,12 +47,8 @@ class Map_Init {
 	 */
 	public function river_nav()
 	{
-		$river = Swiftriver_Event::$data;
-
-		// If menu is active
-		$active_menu = Controller_Trend_Main::$active;
-		echo ($active_menu == 'map') ? '<li class="active">' : '<li>';
-		echo '<a href="'.URL::site().'river/trend/map/'.$river->id.'">'.__('Map').'</a></li>';
+		$river_id = Swiftriver_Event::$data;
+		echo '<li class="button-view"><a href="'.URL::site().'river/trend/map/'.$river_id.'">Map</a></li>';
 	}
 	
 	/**
