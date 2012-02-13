@@ -401,8 +401,8 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `user_tokens` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `user_id` INT(11) UNSIGNED NOT NULL ,
-  `user_agent` VARCHAR(40) NOT NULL ,
-  `token` VARCHAR(32) NOT NULL ,
+  `user_agent` VARCHAR(64) NOT NULL ,
+  `token` VARCHAR(64) NOT NULL ,
   `created` INT(10) UNSIGNED NOT NULL ,
   `expires` INT(10) UNSIGNED NOT NULL ,
   UNIQUE INDEX (`token` ASC) ,
