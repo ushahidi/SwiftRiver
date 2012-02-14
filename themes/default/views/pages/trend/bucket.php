@@ -9,15 +9,15 @@
 		<section class="panel">		
 			<nav class="cf">
 				<ul class="views">
-					<li class="droplets <?php ($active == 'droplets') ? 'active' : ''; ?>"><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo __('Droplets');?></a></li>
+					<li class="droplets <?php ($active == 'droplets') ? 'active' : ''; ?>"><a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo __('Drops');?></a></li>
 					<?php
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $bucket);
 					?>
-					<li class="view_panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
 				</ul>
 			</nav>
-			<div class="panel_body"></div>
+			<div class="drawer"></div>
 		</section>
 
 		<div class="trend_container cf">
