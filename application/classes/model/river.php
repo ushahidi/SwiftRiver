@@ -379,6 +379,24 @@ class Model_River extends ORM {
 	{
 		return $this->subscriptions->count_all();
 	}
+	
+	/**
+	 * Get a list of channel names in this river
+	 *
+	 * @param integer $river_id
+	 * @return array
+	 */
+	public function get_channels()
+	{
+		$ret = array();
+		
+		foreach ($this->channel_filters->find_all() as $channel_filter)
+		{
+			$ret[] = $channel_filter->channel;
+		}
+		
+		return $ret;
+	}
 		
 }
 

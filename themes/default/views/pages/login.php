@@ -9,6 +9,82 @@
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
 	<link rel="icon" href="/images/favicon.png" type="image/png">
 	<?php echo(Html::style("themes/default/media/css/styles.css")); ?>
+	<style>
+.col_6 {
+   padding: 0 1.041666667%;
+}
+
+article#login .body {
+   padding: 2.083333333% 1.041666667%;
+}
+
+article#login .canvas {
+   -moz-box-shadow: 0 2px 3px rgba(0,0,0,.07);
+   -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.07);
+   box-shadow: 0 2px 3px rgba(0,0,0,.07);
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   margin: 20px auto;
+}
+
+article#login hgroup.page-title {
+   border-bottom: 1px solid #f0f0f0;
+   background: #f9f9f9;
+   padding: 15px 2.083333333%;
+}
+
+article#login hgroup.page-title h1 {
+   color: #555555;
+   font: bold 2.4em/1em Helvetica Neue, Helvetica, Arial, sans-serif;
+   text-shadow: 0 1px 1px #fff;
+}
+
+article#login .form .field {
+   color: #666666;
+   padding: 2.083333333% 0;
+}
+
+article#login .form .field label {
+   display: inline-block;
+   width: 30.43478261%;
+   font-weight: bold;
+}
+
+article#login .form .field input {
+   box-shadow: 0 1px 1px rgba(0,0,0,.4) inset;
+   -moz-box-shadow: 0 1px 1px rgba(0,0,0,.15) inset;
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.4) inset;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   border: 1px solid #e0e0e0;
+}
+
+article#login .form .field .dropdown .buttons {
+   float: none;
+}
+
+/* --- ####### MEDIUM VIEWPORT ###### --- */
+@media screen and (min-width: 615px) {
+.vr {
+   box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
+   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
+   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
+}
+
+.col_6 {
+   float: left;
+   width: 47.91666667%;
+   padding: 0 1.041666667%;
+}
+
+article#login hgroup.page-title {
+   padding: 2.083333333%;
+}
+
+}
+	</style>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
 	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
@@ -28,13 +104,11 @@
 	</header>
 	
 	<article id="login">
-		<div class="cf center page-title">
-			<hgroup>
+		<div class="center canvas controls">
+			<hgroup class="page-title cf">
 				<h1>Log in</h1>
 			</hgroup>
-		</div>
-		
-		<div class="center canvas controls">
+			<div class="body cf">
 			<?php
 			if (isset($errors))
 			{
@@ -62,44 +136,50 @@
 			}
 			?>					
 			<?php echo Form::open(); ?>
-				<div class="row cf">
-					<div class="input">
-						<h3><?php echo __('Email'); ?></h3>
+				<div class="form vr col_6">
+					<div class="field cf">
+						<label><?php echo __('Email'); ?></label>
 						<?php echo Form::input("username", ""); ?>
 					</div>
-				</div>
-				<div class="row cf">
-					<div class="input">
-						<h3><?php echo __('Password'); ?></h3>
+					<div class="field cf">
+						<label><?php echo __('Password'); ?></label>
 						<?php echo Form::password("password", ""); ?>
 					</div>
-				</div>
-				<div class="row controls-buttons cf">
-					<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
-					<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
+					<div class="field cf">
+						<?php echo Form::checkbox('remember', 1); ?>
+						<strong><?php echo __('Remember me'); ?></strong>
+					</div>				
+					<div class="submit controls-buttons cf">
+						<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
+						<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
+					</div>
 				</div>
 			<?php echo Form::close(); ?>
-			<div class="row cf">
+
+				<div class="form col_6">
 			    <?php echo Form::open(); ?>
-				<div class="input has_dropdown">
-					<a><?php echo __('Create an account'); ?></a>
-					<ul class="dropdown"  style="display: none">
-						<li><strong><?php echo __('Enter your email address below') ?></strong><?php echo Form::input("new_email", ""); ?></li>
-						<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Register');?></button></div></li>
-					</ul>
-				</div>
+					<div class="field has_dropdown cf">
+						<a><?php echo __('Create an account'); ?></a>
+						<div class="dropdown" style="display:none;">
+							<label><?php echo __('Your email address') ?></label>
+							<?php echo Form::input("new_email", ""); ?>
+							<div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Register');?></button></div>
+						</div>
+					</div>
 				<?php echo Form::close(); ?>
+
 				<?php echo Form::open(); ?>
-				<div class="input has_dropdown">
-					<a><?php echo __('Forgot your password?'); ?></a>
-					<ul class="dropdown"  style="display: none">
-						<li><strong><?php echo __('Enter the e-mail address used for registration') ?></strong><?php echo Form::input("recover_email", ""); ?></li>
-						<li><div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Reset password');?></button></div></li>
-					</ul>
-				</div>
+					<div class="field has_dropdown cf">
+						<a><?php echo __('Forgot your password?'); ?></a>
+						<div class="dropdown" style="display:none;">
+							<label><?php echo __('Your email address') ?></label>
+							<?php echo Form::input("recover_email", ""); ?>
+							<div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Reset password');?></button></div>
+						</div>
+					</div>
 				<?php echo Form::close(); ?>
-			</div>							
-			
+				</div>
+			</div>
 		</div>
 	</article>
 	

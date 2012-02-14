@@ -1,7 +1,7 @@
 <article class="list">
 	<div class="cf center page-title">
 		<hgroup class="edit">
-			<h1><span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span></h1>
+			<h1 class="private"><span class="icon"></span><span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span></h1>
 		</hgroup>
 	</div>
 	

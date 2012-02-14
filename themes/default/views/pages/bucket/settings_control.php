@@ -5,6 +5,19 @@
 			<?php echo $collaborators_control; ?>
 			<!-- /collaborators -->
 		</div>
+
+		<!-- NEW: Publish status control -->
+		<div class="row cf">
+			<h2><?php echo __("Access"); ?></h2>
+			<div class="input">
+				<h3>Do you want this bucket to be viewable to the public?</h3>
+				<select>
+					<option value="">Yes</option>
+					<option value="">No</option>
+				</select>
+			</div>
+		</div>
+		<!-- /NEW: Publish status control -->
 		
 		<div class="row controls-buttons cf">
 			<p class="button-go"><a href="#">Apply changes</a></p>

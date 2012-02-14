@@ -1,7 +1,7 @@
 <article class="list">
 	<div class="cf center page-title">
 		<hgroup class="edit">
-			<h1><span class="edit-trigger" title="river" id="edit_<?php echo $river->id; ?>" onclick=""><?php echo $river->river_name; ?></span></h1>
+			<h1 class="private"><span class="icon"></span><span class="edit-trigger" title="river" id="edit_<?php echo $river->id; ?>" onclick=""><?php echo $river->river_name; ?></span></h1>
 		</hgroup>
 		<?php if (count($droplets)): ?>
 			<section class="meter">

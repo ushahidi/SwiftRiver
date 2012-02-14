@@ -3,7 +3,6 @@
 </div>
 
 <script type="text/template" id="activity_template">
-<article class="item">
 	<div class="summary cf">
 		<section class="source twitter">
 			<a href="/user"><img src="<%= user_avatar %>" /></a>
@@ -45,7 +44,6 @@
 			</section>
 		<% } %>
 	</div>
-</article>
 </script>
 
 

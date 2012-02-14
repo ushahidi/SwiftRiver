@@ -56,12 +56,22 @@ class Controller_Login extends Controller_Template {
 	 */	
 	public function action_index()
 	{	
+		
+		// Auto login is available
+		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
+		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');
+		if( ! Auth::instance()->logged_in() AND $supports_auto_login)
+		{
+			Auth::instance()->auto_login();
+		}
+		
+		
 		// If user already signed-in
 		if (Auth::instance()->logged_in() != 0)
 		{
 			$this->request->redirect('dashboard');
 		}
-		
+				
 		//Check for system messages
 		$session = Session::instance();
 		$messages = $session->get_once('system_messages');
@@ -131,9 +141,9 @@ class Controller_Login extends Controller_Template {
 		{
 			$username = $this->request->post('username');
 			$password = $this->request->post('password');
-
+			
 			// Check Auth if the post data validates using the rules setup in the user model
-			if (Auth::instance()->login($username, $password))
+			if (Auth::instance()->login($username, $password, $this->request->post('remember') == 1))
 			{
 				// Always redirect after a successful POST to prevent refresh warnings
 				$this->request->redirect('dashboard');

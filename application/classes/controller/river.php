@@ -465,7 +465,7 @@ class Controller_River extends Controller_Swiftriver {
 				// Modify the status data
 				$status_data["success"] = TRUE;
 				$status_data["redirect_url"] = URL::site().
-				    $this->account->account_path."/river/index/".$river->id;
+				    $this->account->account_path."/river/index/".$river->id;				
 			}
 		}
 		
@@ -487,7 +487,9 @@ class Controller_River extends Controller_Swiftriver {
  			$this->_save_filters($filter_options, $this->_river);
 			
 			$status_data["success"] = TRUE;
-		
+
+			// Trigger a crawl
+			SwiftRiver_Crawlers::do_crawl_river($river->id);					
 		}
 		
 		echo json_encode($status_data);

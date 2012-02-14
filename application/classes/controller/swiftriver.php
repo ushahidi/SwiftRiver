@@ -72,7 +72,7 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function login_required()
 	{
-		Request::current()->redirect('welcome');
+		Request::current()->redirect('login');
 	}
 
 	/**
