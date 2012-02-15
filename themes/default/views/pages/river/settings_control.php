@@ -85,7 +85,7 @@
 </script>
 
 <script type="text/template" id="channel-option-control-button-template">
-	<button type="submit" class="channel-button" disabled="disabled">
+	<button type="button" class="channel-button" disabled="disabled">
 		<span><?php echo __("Add"); ?></span>
 	</button>
 </script>

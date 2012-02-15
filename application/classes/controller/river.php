@@ -26,11 +26,16 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	private $river;
 	
-	/*
-	* Boolean indicating whether the logged in user owns the river
-	*/
+	/**
+	 * Boolean indicating whether the logged in user owns the river
+	 * @var bool
+	 */
 	private $owner = FALSE; 
 
+	/**
+	 * Whether the river is newly created
+	 * @var bool
+	 */
 	private $is_newly_created = FALSE;
 
 	/**

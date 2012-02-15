@@ -51,13 +51,23 @@
 					<div class="input">
 						<p class="checkbox">
 							<label>
-								<input type="radio" name="river_public" value="1" checked="checked">
+								<?php 
+									$public = (! isset($post) OR (isset($post) AND $post["river_public"] == 1))
+									   ? "checked=\"checked\""
+									   : ""
+								?>
+								<input type="radio" name="river_public" value="1" <?php echo $public; ?>>
 								<?php echo __("Public (Anyone)"); ?>
 							</label>
 						</p>
 						<p class="checkbox">
 							<label>
-								<input type="radio" name="river_public" value="0">
+								<?php 
+									$private = (isset($post) AND $post['river_public'] == 0)
+										? "checked=\"checked\"" 
+										: "" ;
+								?>
+								<input type="radio" name="river_public" value="0" <?php echo $private; ?>>
 								<?php echo __("Private (Only People I specifiy)"); ?>
 							</label>
 						</p>

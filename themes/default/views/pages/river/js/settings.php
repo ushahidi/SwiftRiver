@@ -177,7 +177,7 @@
 			// Check if the channel filter option is newly added via the UI
 			if (typeof isNew != 'undefined' && isNew == true) {
 				// Check if the channel is enabled
-				if (this.model.get("id") == "undefined") {
+				if (typeof (this.model.get("id")) == "undefined") {
 					var channelView = this;
 
 					// Enable the channel for the current river
@@ -186,7 +186,7 @@
 						success: function(model, response) {
 							// If sucessful, proceed
 							if (response.success) {
-								this.$("a span.switch").toggleClass("switch-on").toggleClass("switch-off");
+								channelView.$("a span.switch").toggleClass("switch-on").toggleClass("switch-off");
 
 								// Save the channel option
 								option.set({channel_filter_id: response.id});
