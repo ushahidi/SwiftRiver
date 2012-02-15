@@ -24,12 +24,14 @@ class Controller_River extends Controller_Swiftriver {
 	 * ORM reference for the currently selected river
 	 * @var Model_River
 	 */
-	private $_river;
+	private $river;
 	
 	/*
 	* Boolean indicating whether the logged in user owns the river
 	*/
 	private $owner = FALSE; 
+
+	private $is_newly_created = FALSE;
 
 	/**
 	 * @return	void
@@ -44,27 +46,27 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// This check should be made when this controller is accessed
 		// and the database id of the rive is non-zero
-		$this->_river = ORM::factory('river')
+		$this->river = ORM::factory('river')
 			->where('id', '=', $river_id)
 			->find();
 		
 		// Action involves a specific river, check permissions
 		if ($river_id)
 		{
-			if (! $this->_river->loaded())
+			if (! $this->river->loaded())
 			{
 				// Redirect to the dashboard
 				$this->request->redirect('dashboard');
 			}
 					
 			// Is the logged in user an owner
-			if ( $this->_river->is_owner($this->user->id)) 
+			if ( $this->river->is_owner($this->user->id)) 
 			{
 				$this->owner = TRUE;
 			}
 			
 			// If this river is not public and no ownership...
-			if( ! $this->_river->river_public AND ! $this->owner)
+			if( ! $this->river->river_public AND ! $this->owner)
 			{
 				$this->request->redirect('dashboard');			
 			}
@@ -81,10 +83,10 @@ class Controller_River extends Controller_Swiftriver {
 	{
 	    
 		// Get the id of the current river
-		$river_id = $this->_river->id;
+		$river_id = $this->river->id;
 		
 		$this->template->content = View::factory('pages/river/main')
-			->bind('river', $this->_river)
+			->bind('river', $this->river)
 			->bind('droplets', $droplets)
 			->bind('droplet_list_view', $droplet_list_view)
 			->bind('filtered_total', $filtered_total)
@@ -160,11 +162,11 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_array = array();
 		if ( $since_id )
 		{
-		    $droplets_array = Model_River::get_droplets_since_id($this->_river->id, $since_id);
+		    $droplets_array = Model_River::get_droplets_since_id($this->river->id, $since_id);
 		}
 		else
 		{
-		    $droplets_array = Model_River::get_droplets($this->_river->id, $page, $max_id);
+		    $droplets_array = Model_River::get_droplets($this->river->id, $page, $max_id);
 		}
 		
 		$droplets = $droplets_array['droplets'];
@@ -196,25 +198,38 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('user', $this->user)
 			->bind('active', $this->active)
 			->bind('settings_control', $settings_control)
-			->bind('errors', $errors);
+			->bind('errors', $errors)
+			->bind('is_new_river', $is_new_river);
+		
+		// Check for form submission
+		if ($_POST)
+		{
+			$river = ORM::factory('river');
+			$post  = $river->validate(Arr::extract($_POST, array('river_name', 'river_public')));
 
+			if ($post->check())
+			{
+				$river->river_name = $post['river_name'];
+				$river->river_public = $post['river_public'];
+				$river->account_id = $this->user->account->id;
+
+				$this->river = $river->save();
+
+				// Mark the river as newly created
+				$this->is_newly_created = TRUE;
+			}
+			else
+			{
+				$errors = $post->errors();
+			}
+		}
+		
+		$is_new_river = ($this->river->loaded() == FALSE);
 		$this->template_type = 'dashboard';
 		$this->active = 'rivers';
 
 		// Get the settings control		
-		$settings_control = View::factory('pages/river/settings_control')
-		                          ->bind('collaborators_control', $collaborators_control)
-		                          ->bind('settings_js', $settings_js);
-		
-		$settings_js = $this->_get_settings_js_view();
-		$collaborators_control = NULL;
-		
-		// Disable available channels by default
-		foreach ($this->channels as $key => $channel)
-		{
-			$this->channels[$key]['enabled'] = 0;
-		}
-
+		$settings_control = $this->_get_settings_view();
 	}
 
 	/**
@@ -238,13 +253,8 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
-		
-		// Load the view for the settings UI
-		$settings = View::factory('pages/river/settings_control')
-		                 ->bind('settings_js', $settings_js);		
-		$settings_js = $this->_get_settings_js_view();
-				
-		echo $settings;
+
+		echo $this->_get_settings_view();
 	}	
 	
 	
@@ -252,83 +262,143 @@ class Controller_River extends Controller_Swiftriver {
 	 * Generates the view for the settings JavaScript
 	 * @return View
 	 */
-	private function _get_settings_js_view()
+	private function _get_settings_view()
 	{
+		// Load the view for the settings UI
+		$settings = View::factory('pages/river/settings_control')
+		    ->bind('settings_js', $settings_js)
+		    ->bind('is_newly_created', $this->is_newly_created)
+		    ->bind('collaborators_contorl', $collaborators_control);
+		
+		$collaborators_control = NULL;
+		    
 		// JavaScript for settings UI
 		$settings_js = View::factory('pages/river/js/settings')
 		    ->bind('channels_url', $channels_url)
-		    ->bind('save_settings_url', $save_settings_url)
-		    ->bind('delete_river_url', $delete_river_url);
-
-		// URLs for XHR endpoints
-		$channels_url = $this->base_url.'/channels/'.$this->_river->id;
-		$save_settings_url = $this->base_url.'/save_settings/'.$this->_river->id;
-		$delete_river_url = $this->base_url.'/delete/'.$this->_river->id;
+		    ->bind('channel_options_url', $channel_options_url)
+		    ->bind('channels_list', $channels_list)
+		    ->bind('river_url_root', $river_url_root)
+		    ->bind('river_id', $river_id);
 		
-		return $settings_js;
+		// URLs for XHR endpoints
+		$river_id = $this->river->id;
+		$river_url_root = $this->base_url.'/save_settings';
+		$channels_url = $this->base_url.'/channels/'.$this->river->id;
+		$channel_options_url = $this->base_url.'/channel_options/'.$this->river->id;
+
+		$channels_list = json_encode($this->river->get_channel_filter_data());
+		
+		return $settings;
 	}
 	
 	/**
-	 * Gets the list of available channels for the specified river
+	 * XHR endpoint for adding/updating channel filters
+	 *
 	 */
-	public function action_channels()
+	 public function action_channels()
+	 {
+	 	$this->template = "";
+	 	$this->auto_render = FALSE;
+
+	 	$response = array("success" => FALSE);
+
+	 	if ($this->river->loaded())
+	 	{
+	 		switch ($this->request->method())
+	 		{
+	 			// Create a new channel filter for the river
+	 			case "POST":
+		 			$post = json_decode($this->request->body(), TRUE);
+
+		 			// ORM instance for the filter
+		 			$channel_filter_orm = ORM::factory('channel_filter');
+
+		 			// Set properties
+		 			$channel_filter_orm->channel = $post['channel'];
+		 			$channel_filter_orm->river_id = $this->river->id;
+		 			$channel_filter_orm->user_id = $this->user->id;
+		 			$channel_filter_orm->filter_enabled = $post['enabled'];
+
+		 			// Save
+		 			$channel_filter_orm->save();
+
+		 			$response["success"] = TRUE;
+		 			$response["id"] = $channel_filter_orm->id;
+	 			break;
+
+	 			case "PUT":
+	 			$channel_filter_id = $this->request->param('channel_filter_id', 0);
+	 			$channel_filter_orm = ORM::factory('channel_filter', $channel_filter_id);
+
+	 			if ($channel_filter_orm->loaded())
+	 			{
+	 				$post = json_decode($this->request->body(), TRUE);
+
+	 				$channel_filter_orm->filter_enabled = $post['enabled'];
+	 				$channel_filter_orm->save();
+
+	 				$response["success"] = TRUE;
+
+	 			}
+	 			break;
+	 		}
+	 	}
+
+	 	echo json_encode($response);
+	 }
+
+
+	/**
+	 * XHR endpoint for adding/remove channel filter option
+	 */
+	public function action_channel_options()
 	{
-		// Check for HTTP POST data
-		// Dirty!
-		if (isset($_POST['command']) AND $_POST['command'] == 'update_status')
-		{
-			$this->action_update_channel_status();
-			return;
-		}
-		
 		$this->template = "";
 		$this->auto_render = FALSE;
-		
-		// Store for the channel config data
-		$channels_config = array();
-		
-		$exists = $this->_river->loaded();
-		
-		// Get the list of channels for the current river
-		$river_channels = $this->_river->get_channel_filters();
-		
-		foreach (array_keys($this->channels) as $channel)
+
+		$response = array("success" => FALSE);
+
+		if ($this->river->loaded())
 		{
-			$filter_options = array();
-			$switch_class = "switch-off";
-			
-			// Check if the channel has been added to the current river
-			if (array_key_exists($channel, $river_channels))
+			switch ($this->request->method())
 			{
-				$filter_options = Model_Channel_Filter::get_channel_filter_options($channel, 
-				    $this->_river->id);
-				
-				// on/off state for the channel on the UI
-				$switch_class = ($river_channels[$channel] == 0)
-				    ? 'switch-off' 
-				    : 'switch-on';
+				// Delete a channel filter option
+				case "DELETE":
+					$channel_option_id = $this->request->param('channel_option_id', 0);
+					$option_orm = ORM::factory('channel_filter_option', $channel_option_id);
+
+					// Verify that the option exists
+					if ($option_orm->loaded())
+					{
+						$option_orm->delete();
+						$response["success"] = TRUE;
+					}
+
+				break;
+
+				// Create a new channel option
+				case "POST":
+					$post = json_decode($this->request->body(), TRUE);
+
+					$channel_filter_option = ORM::factory('channel_filter_option');
+					$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
+					$channel_filter_option->key = $post['key'];
+					$channel_filter_option->value = json_encode($post['data']);
+
+					$channel_filter_option->save();
+
+					// Add the ID of the newly created option
+					$post["id"] = $channel_filter_option->id;
+
+					$response["success"] = TRUE;
+					$response["data"] = $post;
+
+				break;
 			}
-			
-			// Update the configuration for the river's channels
-			$channels_config[] = array(
-				'channel' => $channel,
-				'channel_name' => $this->channels[$channel]['name'],
-				'grouped' => isset($this->channels[$channel]['group']),
-				
-				'group_key' => isset($this->channels[$channel]['group']) 
-				    ? $this->channels[$channel]['group']['key'] 
-				    : "",
-				
-				'group_label' => isset($this->channels[$channel]['group']) 
-				    ? $this->channels[$channel]['group']['label'] 
-				    : "",
-				
-				'switch_class' => $switch_class,
-				'channel_data' => $filter_options,
-				'config_options' => $this->channels[$channel]['options']
-			);
 		}
-		echo json_encode($channels_config);
+		
+		echo json_encode($response);
+		
 	}
 
 	/**
@@ -387,39 +457,15 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 
-		if ($this->_river->loaded())
+		if ($this->river->loaded())
 		{
-			$this->_river->delete();
+			$this->river->delete();
 			echo json_encode(array("success"=>TRUE));
 		}
 		else
 		{
 			echo json_encode(array("success"=>FALSE));
 		}
-	}
-	
-	/**
-	 * Enables/disables channel filters for a river
-	 */
-	public function action_update_channel_status()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		
-		$succeed = FALSE;
-		
-		if ($this->_river->loaded())
-		{
-			// Get enable/disable flag
-			$enabled = $_REQUEST['enabled'];
-			$channel  = $_REQUEST['channel'];
-			
-			// Modify the status of the channel
-			$succeed = $this->_river->modify_channel_status($channel, $this->user->id, $enabled);
-		
-		}
-		
-		echo json_encode(array('success' => $succeed));
 	}
 	
 	/**
@@ -431,184 +477,29 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
-		$status_data = array(
+		$response = array(
 			"success" => FALSE,
 			"redirect_url" => ""
 		);
 		
-		// Check for new river
-		if ($_POST)
+		// Check for the submitted method
+		switch ($this->request->method())
 		{
-			$river = ORM::factory('river');
-			$post = $river->validate(Arr::extract($_POST, array('river_name')));
-
-			// Swiftriver Plugin Hook -- execute before saving a river
-			// Allows plugins to perform further validation checks
-			// ** Plugins can then use 'swiftriver.river.save' after the river
-			// has been saved
-			Swiftriver_Event::run('swiftriver.river.pre_save', $post);
-
-			if ($post->check())
-			{
-				$river->river_name = $post['river_name'];
-				$river->account_id = $this->account->id;
-				$this->_river = $river->save();
-				
-				if (isset($_POST["selected_channels"]))
+			// Delete river
+			case "DELETE":
+				if ($this->river->loaded())
 				{
-					foreach ($_POST["selected_channels"] as $channel => $status)
-					{
-						$this->_river->modify_channel_status($channel, $this->user->id, $status);
-					}
-				}
-				
-				// Modify the status data
-				$status_data["success"] = TRUE;
-				$status_data["redirect_url"] = URL::site().
-				    $this->account->account_path."/river/index/".$river->id;				
-			}
-		}
-		
-		// Proceed to save the channels
-		if (isset($_POST["channels"]) AND $this->_river->loaded())
-		{
-			// Marshall the channel options - structure them into the standard
-			// format for representing plugin config data
-			$filter_options = $this->_marshall_channel_options($_POST['channels']);
-			
-			/**
-			 * Execute the 'pre_save' event -- execute before saving a river
-			 * This event allows plugins to validate the channel options before
-			 * they are saved
-			 */
-			Swiftriver_Event::run('swiftriver.channel.pre_save', $filter_options);
-			
-			// Save channel filters
- 			$this->_save_filters($filter_options, $this->_river);
-			
-			$status_data["success"] = TRUE;
+					$this->river->delete();
 
-			// Trigger a crawl
-			SwiftRiver_Crawlers::do_crawl_river($river->id);					
+					$response["success"] = TRUE;
+					$response["redirect_url"] = URL::site("/dashboard");
+				}
+			break;
 		}
-		
-		echo json_encode($status_data);
+
+		echo json_encode($response);
 	}
 
-	/**
-	 * Packs the channel configuration params into an array that can ba be 
-	 * passed on to _save_filters for subsequent saving to the database
-	 *
-	 * @param array $options The list of submitted channel options
-	 * @return array An array of channel options per channel, FALSE otherwise
-	 */
-	private function _marshall_channel_options($options)
-	{
-		$channel_options = array();
-		
-		foreach ($options as $channel => $channel_data)
-		{
-			$channel_options[$channel] = array();
-			
-			foreach ($channel_data as $k => $v)
-			{
-				// Check for grouped options
-				$has_group  = isset($v['group']) AND $v['group'] == TRUE;
-				
-				// Store each individual config params in a key->value format
-				// where key is the name of the config param and value is an
-				// array of the param's label, form field type 
-				// and field value
-				if ($has_group)
-				{
-					$grouped_options = array();
-					foreach ($v['data'] as $group_key => $group_item)
-					{
-						$grouped_options[$group_item["key"]] = array(
-							"label" => $group_item["label"],
-							"type" => $group_item["type"],
-							"value" => $group_item["value"]
-						);
-					}
-					
-					$channel_options[$channel][$k][$v['groupKey']] = $grouped_options;
-					
-				}
-				else
-				{
-					$channel_options[$channel][] = array(
-						$v["key"] => array(
-							"label" => $v["label"],
-							"type" => $v["type"],
-							"value" => $v["value"]
-						)
-					);
-				}
-			}
-		}
-		
-		return $channel_options;
-	}
-	
-	/**
-	 * Save the rivers channel filters
-	 *
-	 * @param	array $filter_options List of validated channel options
-	 * @param	Model_River $river ORM instance of a river
-	 * @return	void
-	 */
-	private function _save_filters($filter_options, $river)
-	{
-		if ($filter_options AND $river)
-		{
-			$channel_name = '';
-			$channel_filter = NULL;
-			
-			foreach ($filter_options as $channel => $data)
-			{
-				// Check if the channel name has been set
-				if ($channel_name != $channel)
-				{
-					$channel_name = $channel;
-					
-					// Find the channel filter
-					$channel_filter = ORM::factory('channel_filter')
-					    ->where('river_id', '=', $river->id)
-					    ->where('channel', '=', $channel)
-						->find();
-						
-					// 2. Save Channel Filter Options
-					// Better to reset all the filter options before a new save
-					
-					DB::delete('channel_filter_options')
-						->where('channel_filter_id', '=', $channel_filter->id)
-						->execute();
-				}
-				
-				// 	Save the channel filter
-				if ( ! $channel_filter->loaded())
-				{
-					$channel_filter->channel = $channel;
-					$channel_filter->river_id = $river->id;
-					$channel_filter->user_id = $this->user->id;
-					$channel_filter->save();
-				}
-				
-				// Save the channel options
-				foreach ($data as $k => $item)
-				{
-					foreach ($item as $option => $values)
-					{
-						$channel_filter_option = new Model_Channel_Filter_Option();
-						$channel_filter_option->channel_filter_id = $channel_filter->id;
-						$channel_filter_option->key = $option;
-						$channel_filter_option->value = json_encode($values);
-						$channel_filter_option->save();
-					}
-				}
-			} // endforeach
-		} // endif;
-	}
 	
 	public function action_ajax_droplet()
 	{
@@ -625,13 +516,13 @@ class Controller_River extends Controller_Swiftriver {
 			// Load the droplet
 			$droplet = ORM::factory('droplet', $droplet_id);
 			
-			if ($this->_river->loaded() AND $droplet->loaded())
+			if ($this->river->loaded() AND $droplet->loaded())
 			{
 				switch ($action)
 				{
 					// Remove droplet from the river
 					case 'remove':
-						$this->_river->remove('droplets', $droplet);
+						$this->river->remove('droplets', $droplet);
 						$response["success"] = TRUE;
 					break;
 				}

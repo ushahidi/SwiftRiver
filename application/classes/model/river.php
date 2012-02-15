@@ -94,17 +94,80 @@ class Model_River extends ORM {
 	{
 		// Get the channel filters
 		$results = ORM::factory('channel_filter')
-			->select('channel', 'filter_enabled')
+			->select('id', 'channel', 'filter_enabled')
 			->where('river_id', '=', $this->id)
 			->find_all();
 		
 		$filters = array();
 		foreach ($results as $result)
 		{
-			$filters[$result->channel] = $result->filter_enabled;
+			$filters[$result->channel] = array(
+				'id' => $result->id,
+				'enabled' => $result->filter_enabled
+				);
 		}
 		
 		return $filters;
+	}
+
+	/**
+	 * Gets a list of the available channels, their data and configuration options
+	 *
+	 * @return array
+	 */
+	public function get_channel_filter_data()
+	{
+		$filter_data = array();
+
+		// Get the channels for this river
+		$river_channels = $this->get_channel_filters();
+
+		// Get the the list channels that are plugins
+		$channel_plugins = Swiftriver_Plugins::channels();
+
+		foreach (array_keys($channel_plugins) as $channel)
+		{
+			$filter_data_entry = array();
+			$option_data = array();
+
+			if (array_key_exists($channel, $river_channels))
+			{
+				$filter_data_entry['id'] = $river_channels[$channel]['id'];
+				$filter_data_entry['enabled'] = $river_channels[$channel]['enabled'];
+				
+				// Get the filter options for the current channel
+				$option_data = Model_Channel_Filter::get_channel_filter_options($channel, $this->id);
+			}
+			else
+			{
+				$filter_data_entry['enabled'] = 0;
+			}
+
+			$filter_data_entry = array_merge($filter_data_entry, array(
+				'channel' => $channel,
+
+				'channel_name' => $channel_plugins[$channel]['name'],
+
+				'grouped' => isset($channel_plugins[$channel]['group']),
+				
+				'group_key' => isset($channel_plugins[$channel]['group']) 
+				    ? $channel_plugins[$channel]['group']['key'] 
+				    : "",
+				
+				'group_label' => isset($channel_plugins[$channel]['group']) 
+				    ? $channel_plugins[$channel]['group']['label'] 
+				    : "",
+
+				'options' => array($channel_plugins[$channel]['options']),
+
+				'data' => $option_data
+			));
+			
+
+			$filter_data[] = $filter_data_entry;
+		}
+
+		return $filter_data;
 	}
 	
 	/**

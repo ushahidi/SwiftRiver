@@ -1,5 +1,28 @@
 <div class="panel-body">
 	<div id="settings" class="controls">
+		
+		<!-- NEW: Privacy control -->
+		<?php if ( ! $is_newly_created): ?>
+		<div class="row cf">
+			<h2><?php echo __("Access to the River"); ?></h2>
+			<div class="input">
+				<p class="checkbox">
+					<label>
+						<input type="radio" name="river_public" value="1" checked="checked">
+						<?php echo __("Public (Anyone)"); ?>
+					</label>
+				</p>
+				<p class="checkbox">
+					<label>
+						<input type="radio" name="river_public" value="0">
+						<?php echo __("Private (Only People I specifiy)"); ?>
+					</label>
+				</p>
+			</div>
+		</div>
+		<?php endif; ?>
+		<!-- /NEW: Privacy control -->
+
 		<div class="row cf">
 			<h2><?php echo __("Channels"); ?></h2>
 			<div class="tab-controls cf">
@@ -7,19 +30,6 @@
 				<div class="tab-container"></div>
 			</div>
 		</div>
-
-		<!-- NEW: Privacy control -->
-		<div class="row cf">
-			<h2><?php echo __("Access"); ?></h2>
-			<div class="input">
-				<h3>Do you want this river to be viewable to the public?</h3>
-				<select>
-					<option value="">Yes</option>
-					<option value="">No</option>
-				</select>
-			</div>
-		</div>
-		<!-- /NEW: Privacy control -->
 		
 		<div class="row cf">
 			<!-- buttons -->
@@ -43,45 +53,55 @@
 
 
 <!-- template for the channel listing -->
-<script type="text/template" id="channel-list-item">
+<script type="text/template" id="channel-template">
     <a href="#<%= channel %>">
-        <span class="switch <%= switch_class %>" id="channel-<%= channel %>"></span>
+    	<% var switchClass = (enabled == 1) ? "switch-on" : "switch-off"; %>
+        <span class="switch <%= switchClass %>" id="channel-<%= channel %>"></span>
         <span class="label"><%= channel_name %></span>
     </a>
 </script>
 
 <!-- template for rendering the options for each channel -->
-<script type="text/template" id="channel-panel-view">
-    <article id="<%= channel %>" class="tab-content filters" style="display:none">
-        <ul class="channel-options input add_filter cf"></ul>
-    </article>
+<script type="text/template" id="channel-option-panel-template">
+    <ul class="channel-options input cf"></ul>
 </script>
 
-<script type="text/template" id="channel-option-item-header">
+<script type="text/template" id="option-item-header-template">
     <h3>
 		<%= label %><span>[<a href="#">&mdash;</a>]</span>
 	</h3>
 </script>
 
-<script type="text/template" id="channel-option-item-label">
+<script type="text/template" id="option-item-label-template">
 	<h3><%= label %></h3>
 </script>
 
-<script type="text/template" id="channel-option-item">
-	<input type="<%= type %>" value="<%= value %>">
+<script type="text/template" id="channel-option-template">
+	<span><%= data.value %></span>
 </script>
 
-<script type="text/template" id="channel-option-dropdown">
+<script type="text/template" id="channel-option-control-template">
+    <label><%= label %></label>
+</script>
+
+<script type="text/template" id="channel-option-control-button-template">
+	<button type="submit" class="channel-button" disabled="disabled">
+		<span><?php echo __("Add"); ?></span>
+	</button>
+</script>
+
+<script type="text/template" id="channel-option-dropdown-template">
 	<select class="select-list"></select>
 </script>
 
-<script type="text/template" id="channel-option-dropdown-item">
+<script type="text/template" id="channel-option-input-template">
+	<div class="channel-option-input">
+		<input type="<%= type %>" name="<%= key %>">
+	</div>
+</script>
+
+<script type="text/template" id="channel-option-dropdown-item-template">
 	<option <%= selected %>><%= value %></option>
 </script>
 
-<script type="text/template" id="channel-option-listing">
-    <a href="#"><span></span><%= label %></a>
-</script>
-
-<!--Backbone JS for the UI -->
 <?php echo $settings_js; ?>

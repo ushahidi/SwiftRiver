@@ -45,6 +45,32 @@
 						<?php echo Form::input('river_name', $post['river_name'], array('placeholder' => __('Name your River'))); ?>
 					</div>
 				</div>
+
+				<div class="row cf">
+					<h2><?php echo __("Access to the River"); ?></h2>
+					<div class="input">
+						<p class="checkbox">
+							<label>
+								<input type="radio" name="river_public" value="1" checked="checked">
+								<?php echo __("Public (Anyone)"); ?>
+							</label>
+						</p>
+						<p class="checkbox">
+							<label>
+								<input type="radio" name="river_public" value="0">
+								<?php echo __("Private (Only People I specifiy)"); ?>
+							</label>
+						</p>
+					</div>
+				</div>
+
+				<?php if ($is_new_river): ?>
+				<div class="form-buttons">
+					<p class="button-go create-new" onclick="submitForm(this)">
+						<a><?php echo __("Create River"); ?></a>
+					</p>
+				</div>
+				<?php endif; ?>
 		
 			<?php
 			if (isset($errors))
@@ -59,7 +85,7 @@
 				}
 			}
 			?>
-			<?php echo $settings_control; ?>
+			<?php if ( ! $is_new_river) echo $settings_control; ?>
 
 			<?php echo Form::close(); ?>
 			</div>
