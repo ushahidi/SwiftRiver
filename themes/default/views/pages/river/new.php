@@ -37,6 +37,16 @@
 
 		<div class="container">
 			<div class="controls">
+				<?php if (isset($errors)): ?>
+				<?php foreach ($errors as $message): ?>
+
+						<div class="system_message system_error">
+							<p><strong><?php echo __('Uh oh.'); ?></strong> <?php echo $message; ?></p>
+						</div>
+				
+				<?php endforeach; ?>
+				<?php endif; ?>
+
 				<?php echo Form::open(); ?>
 
 				<div class="row cf">
@@ -82,20 +92,7 @@
 				</div>
 				<?php endif; ?>
 		
-			<?php
-			if (isset($errors))
-			{
-				foreach ($errors as $message)
-				{
-					?>
-					<div class="system_message system_error">
-						<p><strong><?php echo __('Uh oh.'); ?></strong> <?php echo $message; ?></p>
-					</div>
-					<?php
-				}
-			}
-			?>
-			<?php if ( ! $is_new_river) echo $settings_control; ?>
+				<?php if ( ! $is_new_river) echo $settings_control; ?>
 
 			<?php echo Form::close(); ?>
 			</div>

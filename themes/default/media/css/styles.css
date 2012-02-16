@@ -24,6 +24,9 @@ a, a:link, a:visited {
 a img {
   border: none;
 }
+button {
+  border: none;
+}
 .center {
   width: 100%;
   margin: 0 auto;

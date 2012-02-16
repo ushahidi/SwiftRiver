@@ -144,8 +144,18 @@ window.addEventListener("load",function() {
 });
 
 function submitForm(button){
+	
+	// Remove any onclick handler attached to the button
+	$(button).removeAttr("onclick");
+
+	// Get the form
 	var form = $(button).parents('form:first');
-	form.submit();
+
+	// Disable all input submit buttons
+	$("input:submit", form).attr('disabled', 'disabled');
+
+	// Delay form submission by 500ms
+	setTimeout(function() { form.submit(); }, 500);
 }
 
 function submitAjax(button){

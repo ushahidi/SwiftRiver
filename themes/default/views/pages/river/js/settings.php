@@ -47,7 +47,16 @@
 		el: $("div#settings"),
 
 		initialize: function() {
-			this.model = new River({id: "<?php echo $river_id; ?>"});
+			this.model = new River(<?php echo $river_data; ?>);
+			var river = this.model;
+
+			this.$("input[name='river_public']").each(function(){
+				if ($(this).val() == river.get("river_public")) {
+					$(this).attr("checked", "checked");
+				} else {
+					$(this).removeAttr("checked");
+				}
+			});
 		},
 
 		events: {
@@ -57,7 +66,6 @@
 
 		// When the river is deleted
 		deleteRiver: function(e) {
-			console.log("delete");
 			this.model.destroy({wait: true, success: function(model, response) {
 				if (response.success) {
 					window.location.href = response.redirect_url
