@@ -22,10 +22,10 @@
 			</hgroup>
 			<div class="body">
 				<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-					<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="#"><%= user_name %></a>.</p>
+					<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
 				<% } %>
 				<% if (action == "invite" && parseInt(action_to_self) && parseInt(confirmed)) { %>
-					<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="#"><%= user_name %></a>.</p>
+					<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
 				<% } %>
 			</div>
 		</div>

@@ -59,6 +59,11 @@ class Model_User_Action extends ORM
 			
 			$result["user_avatar"] = Swiftriver_Users::gravatar($result["user_email"]);
 			
+			// Set the user's url
+			$user_orm = ORM::factory('user', $result["user_id"]);
+			$result["user_url"] = URL::site().'user/'.$user_orm->account->account_path; 
+			
+			
 			// Set action url
 			$result["action_on_url"] = "";
 			if ($result["action_on"] == "account") {
