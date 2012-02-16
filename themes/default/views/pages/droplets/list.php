@@ -22,10 +22,10 @@
 		<section class="content">
 			<hgroup>
 				<p class="date"><%= droplet_date_pub %></p>
-				<h1><%= identity_name %></h1>
+				<h1><%= droplet_title %></h1>
 			</hgroup>
 			<div class="body">
-				<p><%= droplet_title %></p>
+				<p><%= identity_name %></p>
 			</div>
 		</section>
 		<section class="actions two_buttons">
