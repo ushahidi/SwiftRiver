@@ -340,6 +340,11 @@ CREATE TABLE IF NOT EXISTS `plugins` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+INSERT INTO `plugins` (`id`, `plugin_path`, `plugin_name`, `plugin_description`, `plugin_enabled`, `plugin_weight`)
+VALUES
+	(1, 'rss', 'rss', 'RSS Crawler', 1, 1),
+	(3, 'twitter', 'twitter', 'Twitter Search', 1, 2);
+
 
 -- -----------------------------------------------------
 -- Table `account_droplet_tags`
