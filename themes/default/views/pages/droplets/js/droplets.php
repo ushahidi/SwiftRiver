@@ -342,6 +342,8 @@ $(function() {
 	window.DropletListView = Backbone.View.extend({
 	
 		el: $("#droplet-list"),
+		
+		noContentElHidden: false,
 				
 		initialize: function() {
 			Droplets.on('add',	 this.addDroplet, this);
@@ -359,14 +361,23 @@ $(function() {
 				this.$el.append(view.render().el);
 			}
 			
+			if (!this.noContentElHidden) {
+				this.hideNoContentEl();
+			}
+			
 		},
 		
 		addDroplets: function() {
 			Droplets.each(this.addDroplet, this);
 			if (Droplets.length) {
-				this.$("h2.no-content").hide();
+				this.hideNoContentEl();
 			}
 		},
+		
+		hideNoContentEl: function() {
+			this.$("h2.no-content").hide();
+			this.noContentElHidden = true;
+		}
 	});
 	
 	// View for an individual tag
