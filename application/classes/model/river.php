@@ -431,6 +431,11 @@ class Model_River extends ORM {
 			return TRUE;
 		}
 				
+		// Is the user id a river collaborator?
+		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
 	}
 
 	/**
@@ -460,7 +465,27 @@ class Model_River extends ORM {
 		
 		return $ret;
 	}
+	
+	/**
+	 * Gets a river's collaborators as an array
+	 *
+	 * @return array
+	 */	
+	public function get_collaborators()
+	{
+		$collaborators = array();
 		
+		foreach ($this->river_collaborators->find_all() as $collaborator)
+		{
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
+			                         'account_path' => $collaborator->user->account->account_path
+			);
+		}
+		
+		return $collaborators;
+	}
+	
 }
 
 ?>
