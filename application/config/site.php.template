@@ -1,0 +1,6 @@
+<?php defined('SYSPATH') or die('No direct script access.');
+
+return array(
+	/* Override Kohana's default session adapter */
+    'default_session_adapter' => 'cookie',
+);
