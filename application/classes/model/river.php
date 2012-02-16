@@ -287,7 +287,7 @@ class Model_River extends ORM {
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -347,7 +347,7 @@ class Model_River extends ORM {
 		{
 			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 			    'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')

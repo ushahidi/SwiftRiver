@@ -44,7 +44,7 @@ class Model_User_Action extends ORM
 	{
 		
 		// Notifications
-		$query = DB::select('id', array(DB::expr('DATE_FORMAT(action_date_add, "%H:%i %b %e, %Y")'),'action_date'), 'user_id', 'user_name', 
+		$query = DB::select('id', array(DB::expr('DATE_FORMAT(action_date_add, "%H:%i %b %e, %Y UTC")'),'action_date'), 'user_id', 'user_name', 
 		                    'user_email', 'action', 'action_on', 'action_on_id', 'action_on_name',
 		                    'action_to_name', 'action_to_id', 'confirmed',
 		                    array(DB::expr("if(action_to_id=$user_id, 1, 0)"), 'action_to_self'))
@@ -96,7 +96,7 @@ class Model_User_Action extends ORM
 		$user_action_orm->action_on = $action_on;
 		$user_action_orm->action_on_id = $action_on_id;		
 		$user_action_orm->action_to_id = $action_to_id;
-		$user_action_orm->action_date_add = date("Y-m-d H:i:s", time());
+		$user_action_orm->action_date_add = gmdate("Y-m-d H:i:s", time());
 		$user_action_orm->save();
 	}
 	

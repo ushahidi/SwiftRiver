@@ -9,7 +9,7 @@
 		</section>
 		<div class="content">
 			<hgroup>
-				<p class="date"><%= action_date %></p>
+				<p class="date"><%= new Date(action_date).toLocaleString() %></p>
 				<% if (action == "invite" && parseInt(action_to_self)) { %>
 					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited you to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
 				<% } %>
