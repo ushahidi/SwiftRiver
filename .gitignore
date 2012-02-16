@@ -4,5 +4,6 @@
 application/logs/*
 application/cache/*
 application/config/database.php
-application/config/gearman.php
 application/tests/phpunit.xml
+application/config/session.php
+application/config/encrypt.php
