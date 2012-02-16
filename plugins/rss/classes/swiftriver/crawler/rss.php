@@ -55,12 +55,13 @@ class Swiftriver_Crawler_Rss  {
 	 */
 	private function _parse_url($options = array(), $river_id)
 	{
-		include_once Kohana::find_file('vendor', 'simplepie/SimplePieAutoloader');
+		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
 
 		if (isset($options['url']) AND $this->_is_url($options['url']))
 		{
-		    Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $options['url']));
+			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $options['url']));
+			Kohana::$log->write();
 		    
 			$feed = new SimplePie();
 			
@@ -88,9 +89,9 @@ class Swiftriver_Crawler_Rss  {
 					$locale = $locale_array[0];
 				}
 				
-				// Create and queue a droplet for each item in the feed
+				// Create and queue a droplet for each item in the feed				
 				foreach($feed->get_items() as $feed_item)
-				{
+				{					
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
 					$droplet['river_id'] = $river_id;
@@ -101,10 +102,12 @@ class Swiftriver_Crawler_Rss  {
 					$droplet['droplet_orig_id'] = trim((string) $feed_item->get_link());
 					$droplet['droplet_type'] = 'original';
 					$droplet['droplet_title'] = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
-					$droplet['droplet_content'] = $feed_item->get_description();
+					$droplet['droplet_content'] = $feed_item->get_content();
 					$locales = explode('-', $feed->get_language());
 					$droplet['droplet_locale'] = $locales[0];
 					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($feed_item->get_date()));
+					
+					//Kohana::$log->add(Log::DEBUG, var_export($droplet, true));
 					
 					// Add droplet to the queue
 					Swiftriver_Dropletqueue::add($droplet);
