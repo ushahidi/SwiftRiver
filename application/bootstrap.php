@@ -19,7 +19,7 @@ else
 /**
  * Set the default time zone.
  */
-date_default_timezone_set('Africa/Nairobi');
+date_default_timezone_set('UTC');
 
 /**
  * Set the default locale.

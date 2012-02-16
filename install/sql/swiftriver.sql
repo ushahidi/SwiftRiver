@@ -634,6 +634,19 @@ CREATE TABLE IF NOT EXISTS `account_collaborators` (
 
 
 -- ----------------------------------------
+-- TABLE 'river_collaborators'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `river_collaborators` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `river_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `collaborator_active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `river_id` (`river_id`,`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
 -- TABLE 'bucket_collaborators'
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `bucket_collaborators` (

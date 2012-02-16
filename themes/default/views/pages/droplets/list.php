@@ -21,11 +21,11 @@
 		</section>
 		<section class="content">
 			<hgroup>
-				<p class="date"><%= droplet_date_pub %></p>
-				<h1><%= identity_name %></h1>
+				<p class="date"><%= new Date(droplet_date_pub).toLocaleString() %></p>
+				<strong><%= droplet_title %></strong>
 			</hgroup>
 			<div class="body">
-				<p><%= droplet_title %></p>
+				<p><%= identity_name %></p>
 			</div>
 		</section>
 		<section class="actions two_buttons">

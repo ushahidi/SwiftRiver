@@ -77,8 +77,8 @@ class Model_Droplet extends ORM
 		// Do this for first time droplets only
 		if ($this->loaded() === FALSE)
 		{
-			// Save the date the droplet was first added
-			$this->droplet_date_add = date("Y-m-d H:i:s", time());
+			// Save the date the droplet was first added in UTC
+			$this->droplet_date_add = gmdate("Y-m-d H:i:s", time());
 		}
 
 		return parent::save($validation);

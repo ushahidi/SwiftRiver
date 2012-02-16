@@ -9,7 +9,7 @@
 		</section>
 		<div class="content">
 			<hgroup>
-				<p class="date"><%= action_date %></p>
+				<p class="date"><%= new Date(action_date).toLocaleString() %></p>
 				<% if (action == "invite" && parseInt(action_to_self)) { %>
 					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited you to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
 				<% } %>
@@ -22,10 +22,10 @@
 			</hgroup>
 			<div class="body">
 				<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-					<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="#"><%= user_name %></a>.</p>
+					<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
 				<% } %>
 				<% if (action == "invite" && parseInt(action_to_self) && parseInt(confirmed)) { %>
-					<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="#"><%= user_name %></a>.</p>
+					<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
 				<% } %>
 			</div>
 		</div>

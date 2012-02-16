@@ -287,7 +287,7 @@ class Model_River extends ORM {
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -347,7 +347,7 @@ class Model_River extends ORM {
 		{
 			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 			    'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -431,6 +431,11 @@ class Model_River extends ORM {
 			return TRUE;
 		}
 				
+		// Is the user id a river collaborator?
+		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
 	}
 
 	/**
@@ -460,7 +465,27 @@ class Model_River extends ORM {
 		
 		return $ret;
 	}
+	
+	/**
+	 * Gets a river's collaborators as an array
+	 *
+	 * @return array
+	 */	
+	public function get_collaborators()
+	{
+		$collaborators = array();
 		
+		foreach ($this->river_collaborators->find_all() as $collaborator)
+		{
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
+			                         'account_path' => $collaborator->user->account->account_path
+			);
+		}
+		
+		return $collaborators;
+	}
+	
 }
 
 ?>

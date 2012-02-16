@@ -57,6 +57,9 @@ class Controller_Login extends Controller_Template {
 	public function action_index()
 	{	
 		
+		// For template to show RiverID branding if in use
+		$this->template->riverid_auth = $this->riverid_auth;
+		
 		// Auto login is available
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
 		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');

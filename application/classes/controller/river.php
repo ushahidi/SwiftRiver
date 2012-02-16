@@ -260,6 +260,60 @@ class Controller_River extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 
 		echo $this->_get_settings_view();
+	}
+	
+	/**
+	 * River collaborators restful api
+	 * 
+	 * @return	void
+	 */
+	public function action_collaborators()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		
+		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
+		
+		if ($query) {
+			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->river->account->user->id)));
+			return;
+		}
+		
+		switch ($this->request->method())
+		{
+			case "DELETE":
+				$user_id = intval($this->request->param('user_id', 0));
+				$user_orm = ORM::factory('user', $user_id);
+				
+				if ( ! $user_orm->loaded()) 
+					return;
+					
+				$collaborator_orm = $this->river->river_collaborators->where('user_id', '=', $user_orm->id)->find();
+				if ($collaborator_orm->loaded())
+				{
+					$collaborator_orm->delete();
+					Model_User_Action::delete_invite($this->user->id, 'river', $this->river->id, $user_orm->id);
+				}
+			break;
+			
+			case "PUT":
+				$user_id = intval($this->request->param('user_id', 0));
+				$user_orm = ORM::factory('user', $user_id);
+				
+				$collaborator_orm = ORM::factory("river_collaborator")
+									->where('river_id', '=', $this->river->id)
+									->where('user_id', '=', $user_orm->id)
+									->find();
+				
+				if ( ! $collaborator_orm->loaded())
+				{
+					$collaborator_orm->river = $this->river;
+					$collaborator_orm->user = $user_orm;
+					$collaborator_orm->save();
+					Model_User_Action::create_action($this->user->id, 'river', $this->river->id, $user_orm->id);
+				}				
+			break;
+		}
 	}	
 	
 	
@@ -267,15 +321,26 @@ class Controller_River extends Controller_Swiftriver {
 	 * Generates the view for the settings JavaScript
 	 * @return View
 	 */
-	private function _get_settings_view()
+	private function _get_settings_view($new = TRUE)
 	{
 		// Load the view for the settings UI
 		$settings = View::factory('pages/river/settings_control')
 		    ->bind('settings_js', $settings_js)
 		    ->bind('is_newly_created', $this->is_newly_created)
-		    ->bind('collaborators_contorl', $collaborators_control);
+		    ->bind('collaborators_control', $collaborators_control);
 		
 		$collaborators_control = NULL;
+		
+		if ( ! $this->is_newly_created)
+		{
+			$collaborators_control = View::factory('template/collaborators')
+					                             ->bind('collaborator_list', $collaborator_list)
+					                             ->bind('fetch_url', $fetch_url)
+					                             ->bind('logged_in_user_id', $logged_in_user_id);
+			$collaborator_list = json_encode($this->river->get_collaborators());
+			$fetch_url = $this->base_url.'/'.$this->river->id.'/collaborators';
+			$logged_in_user_id = $this->user->id;			
+		}
 		    
 		// JavaScript for settings UI
 		$settings_js = View::factory('pages/river/js/settings')
