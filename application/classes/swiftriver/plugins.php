@@ -126,7 +126,7 @@ class Swiftriver_Plugins {
 					
 						// Set the plugin name
 						$channel_config['name'] = $plugin['name'];
-					
+
 						$channels[$key] = $channel_config;
 					}
 				}
@@ -194,6 +194,18 @@ class Swiftriver_Plugins {
 		if (isset($plugin['channel_options']) AND is_array($plugin['channel_options']))
 		{
 			$channel_config['options'] = $plugin['channel_options'];
+
+			// Escape placeholder values
+			foreach ($plugin['channel_options'] as $option => $data)
+			{
+				foreach ($data as $key => $value)
+				{
+					if ($key == 'placeholder')
+					{
+						$channel_config['options'][$option][$key] = htmlentities($value);
+					}
+				}
+			}
 		}
 		else
 		{

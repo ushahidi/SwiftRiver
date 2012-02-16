@@ -180,10 +180,11 @@
 		},
 
 		// Adds a single channel filter option on the UI
-		addChannelOption: function(option, isNew) {
+		addChannelOption: function(option) {
 
 			// Check if the channel filter option is newly added via the UI
-			if (typeof isNew != 'undefined' && isNew == true) {
+			if (typeof option.get("id") == "undefined") {
+				
 				// Check if the channel is enabled
 				if (typeof (this.model.get("id")) == "undefined") {
 					var channelView = this;
@@ -202,8 +203,7 @@
 							}
 						}
 					});
-				}
-				else {
+				} else {
 					// Channel already exists for the river, set the id and save
 					option.set({channel_filter_id: this.model.get("id")});
 					this.createAndSaveChannelOption(option);
@@ -387,7 +387,7 @@
 
 				// Check if the channel is enabled and trigger a status update
 				var channelView = this.options.channelView;
-				channelView.addChannelOption(channelOption, true);
+				channelView.addChannelOption(channelOption);
 
 				$(field).val("");
 			}

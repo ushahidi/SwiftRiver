@@ -30,6 +30,7 @@ return array(
 			'url' => array(
 				'label' => __('Rss/Atom URL'),
 				'type' => 'text',
+				'placeholder' => 'E.g. ihub.co.ke/blog/feed'
 			),
 		),
 		

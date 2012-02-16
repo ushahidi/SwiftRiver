@@ -96,7 +96,8 @@
 
 <script type="text/template" id="channel-option-input-template">
 	<div class="channel-option-input">
-		<input type="<%= type %>" name="<%= key %>">
+		<% var placeHolderText = (typeof placeholder != 'undefined') ? placeholder : ''; %>
+		<input type="<%= type %>" name="<%= key %>" placeholder="<%= placeHolderText %>">
 	</div>
 </script>
 

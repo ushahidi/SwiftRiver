@@ -175,15 +175,40 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	 */
 	public function action_rivers()
 	{
-		$this->sub_content = View::factory('pages/dashboard/rivers')
-			->bind('rivers', $rivers);
+		$this->sub_content = View::factory('pages/dashboard/rivers_buckets')
+			->bind('has_items', $has_items)
+			->bind('new_item_url', $new_item_url)
+			->bind('action_object', $action_object)
+			->bind('rivers_buckets_js', $rivers_buckets_js);
+
+		$new_item_url = URL::site('river/new');
+		$action_object = 'river';
+
 		$this->active = 'rivers';
 		$this->template_type = 'list';
-		$this->sub_content->logged_in_user_id = $this->user->id;
+
+		// Load up the javascript
+		$rivers_buckets_js = View::factory('pages/dashboard/js/rivers_buckets')
+		    ->bind('list_items', $list_items)
+		    ->bind('list_item_url_root', $list_item_url_root);
 		
-		// Get Rivers (as_array)
-		// ++ We can cache this array in future
-		$rivers = $this->user->get_rivers();
+		// Enpoint for processing changes to the river
+		$list_item_url_root = URL::site('river/save_settings');
+
+		// Get the rivers 
+		$rivers = $this->user->get_rivers_array();
+		foreach ($rivers as $k => $river)
+		{
+			$river['item_name'] = $river['river_name'];
+			$river["is_owner"] = ($river['user_id'] == $this->user->id);
+			$river["item_owner_url"] = URL::site('river').'/user/'.$river['account_path'];
+			$river["item_url"] = URL::site('river').'/index/'.$river['id'];
+
+			$rivers[$k] = $river;
+		}
+		
+		$has_items = (bool) count($rivers);
+		$list_items = json_encode($rivers);
 	}
 
 	/**
@@ -193,38 +218,40 @@ class Controller_Dashboard extends Controller_Swiftriver {
 	 */
 	public function action_buckets()
 	{
-		$this->sub_content = View::factory('pages/dashboard/buckets')
-			->bind('has_buckets', $has_buckets)
-			->bind('buckets_js', $buckets_js);
+		$this->sub_content = View::factory('pages/dashboard/rivers_buckets')
+			->bind('has_items', $has_items)
+			->bind('new_item_url', $new_item_url)
+			->bind('action_object', $action_object)
+			->bind('rivers_buckets_js', $rivers_buckets_js);
+
+		$new_item_url = URL::site('bucket/new');
+		$action_object = 'bucket';
 
 		$this->active = 'buckets';
 		$this->template_type = 'list';
 
 		// Load up the javascript
-		$buckets_js = View::factory('pages/bucket/js/settings')
-		    ->bind('buckets_list', $buckets_list)
-		    ->bind('listing_mode', $listing_mode)
-		    ->bind('bucket_url_root', $bucket_url_root);
+		$rivers_buckets_js = View::factory('pages/dashboard/js/rivers_buckets')
+		    ->bind('list_items', $list_items)
+		    ->bind('list_item_url_root', $list_item_url_root);
 		
-		$bucket_url_root = URL::site('bucket').'/api';
-
-		// Enable listing mode
-		$listing_mode = TRUE;
+		// Endpoint for processing changes to the bucket
+		$list_item_url_root = URL::site('bucket/api');
 
 		// Get the buckets 
 		$buckets = $this->user->get_buckets_array();
 		foreach ($buckets as $k => $bucket)
 		{
+			$bucket['item_name'] = $bucket['bucket_name'];
 			$bucket["is_owner"] = ($bucket['user_id'] == $this->user->id);
-			$bucket["bucket_owner_url"] = URL::site('bucket').'/user/'.$bucket['account_path'];
-			$bucket["bucket_url"] = URL::site('bucket').'/index/'.$bucket['id'];
+			$bucket["item_owner_url"] = URL::site('bucket').'/user/'.$bucket['account_path'];
+			$bucket["item_url"] = URL::site('bucket').'/index/'.$bucket['id'];
 
 			$buckets[$k] = $bucket;
 		}
 		
-		$has_buckets = (bool) count($buckets);
-
-		$buckets_list = json_encode($buckets);
+		$has_items = (bool) count($buckets);
+		$list_items = json_encode($buckets);
 	}
 
 	/**

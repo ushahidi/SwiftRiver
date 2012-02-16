@@ -339,7 +339,7 @@ header nav li.login ul.dropdown li div.buttons {
 .button-go a:hover, .button-view a:hover, .button-change a:hover {
   text-decoration: none;
 }
-.button-view a {
+.button-view a, .channel-button {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -355,7 +355,7 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #ffffff 0%, #ededed 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed', GradientType=0);
 }
-.button-view a:hover {
+.button-view a:hover, .channel-button:hover {
   background: #eeeeee;
 }
 .button-change a {
@@ -1096,15 +1096,10 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
   color: #666;
   font-weight: bold;
   text-transform: uppercase;
-  background: #DADADA;
   border: 1px solid #C2C2C2;
   border-radius: 3px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-}
-.channel-button:hover {
-  background: #666;
-  color: #FFF;
 }
 ul.channel-options {
   border: 1px solid #C2C2C2;
