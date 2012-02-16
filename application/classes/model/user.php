@@ -37,7 +37,8 @@ class Model_User extends Model_Auth_User
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
 		'account_collaborators' => array(),
-		'bucket_collaborators' => array(),		
+		'river_collaborators' => array(),
+		'bucket_collaborators' => array(),
 		'river_subscriptions' => array(
 			'model' => 'river',
 			'through' => 'river_subscriptions',
@@ -247,6 +248,16 @@ class Model_User extends Model_Auth_User
 		foreach ($account_collaborations as $collabo)
 		{
 			$ret = array_merge($ret, $collabo->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
+		}
+		
+		// Add individual rivers this user is collaborating on
+		$river_collaborations = $this->river_collaborators
+		                               ->where("collaborator_active", "=", 1)
+		                               ->find_all();
+		
+		foreach ($river_collaborations as $collabo)
+		{
+			$ret[] = $collabo->river;
 		}
 		
 		// Finally, the rivers the user has subscribed to

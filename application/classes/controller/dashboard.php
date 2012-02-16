@@ -252,13 +252,15 @@ class Controller_Dashboard extends Controller_Swiftriver {
 		                ->bind('collaborators_control', $collaborators_control);
 		$settings->user = $this->user;
 		
-		$collaborators_control = View::factory('template/collaborators')
+		// Disable account collaboration for now
+		/*$collaborators_control = View::factory('template/collaborators')
 		                             ->bind('collaborator_list', $collaborator_list)
 		                             ->bind('fetch_url', $fetch_url)
 		                             ->bind('logged_in_user_id', $logged_in_user_id);
 		$collaborator_list = json_encode($this->account->get_collaborators());
 		$fetch_url = url::site('dashboard/collaborators');
-		$logged_in_user_id = $this->user->id;
+		$logged_in_user_id = $this->user->id;*/
+		$collaborators_control = NULL;
 		
 		echo $settings;
 	}
