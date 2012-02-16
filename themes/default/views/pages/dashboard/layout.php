@@ -23,9 +23,6 @@
 					<li <?php if ($active == 'buckets') echo 'class="active"'; ?>>
 						<a href="<?php echo URL::site().'dashboard/buckets';?>"><?php echo __('Buckets'); ?></a>
 					</li>
-					<li <?php if ($active == 'teams') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'dashboard/teams';?>"><?php echo __('Teams'); ?></a>
-					</li>
 					<li class="view-panel more <?php if ($active == 'views') echo 'active'; ?>">
 						<a href="<?php echo URL::site().'dashboard/views';?>" class="arrow">More<span class="icon"></span></a>
 					</li>
