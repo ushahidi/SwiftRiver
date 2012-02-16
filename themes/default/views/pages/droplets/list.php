@@ -22,7 +22,7 @@
 		<section class="content">
 			<hgroup>
 				<p class="date"><%= new Date(droplet_date_pub).toLocaleString() %></p>
-				<h1><%= droplet_title %></h1>
+				<strong><%= droplet_title %></strong>
 			</hgroup>
 			<div class="body">
 				<p><%= identity_name %></p>
