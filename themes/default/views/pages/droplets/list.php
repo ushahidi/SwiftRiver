@@ -131,7 +131,7 @@
 							</section>
 							<section class="content">
 								<textarea rows="10" cols="60"></textarea>
-								<p class="button-go"><a><?php echo __("Add Reply"); ?></a></p>
+								<p class="button-go"><a><?php echo __("Add Comment"); ?></a></p>
 							</section>
 						</div>
 					</article>

@@ -348,10 +348,16 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('channel_options_url', $channel_options_url)
 		    ->bind('channels_list', $channels_list)
 		    ->bind('river_url_root', $river_url_root)
-		    ->bind('river_id', $river_id);
+		    ->bind('river_data', $river_data);
 		
+		// River data
+		$river_data = json_encode(array(
+			'id' => $this->river->id, 
+			'river_name' => $this->river->river_name, 
+			'river_public' => $this->river->river_public
+		));
+
 		// URLs for XHR endpoints
-		$river_id = $this->river->id;
 		$river_url_root = $this->base_url.'/save_settings';
 		$channels_url = $this->base_url.'/channels/'.$this->river->id;
 		$channel_options_url = $this->base_url.'/channel_options/'.$this->river->id;
