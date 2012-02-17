@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `link_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplets_links_id` (`droplet_id`,`link_id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`link_id`),
   KEY `droplet_id_idx` (`droplet_id`),
   KEY `link_id_idx` (`link_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `droplets_places` (
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `place_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplets_places_id` (`droplet_id`,`place_id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`place_id`),
   KEY `droplet_id_idx` (`droplet_id`),
   KEY `place_id_idx` (`place_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -593,7 +593,7 @@ CREATE TABLE IF NOT EXISTS `droplets_tags` (
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `tag_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplets_tags_id` (`droplet_id`,`tag_id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`tag_id`),
   KEY `droplet_id_idx` (`droplet_id`),
   KEY `tag_id_idx` (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
