@@ -326,6 +326,7 @@ class Controller_River extends Controller_Swiftriver {
 		$settings = View::factory('pages/river/settings_control')
 		    ->bind('settings_js', $settings_js)
 		    ->bind('is_newly_created', $this->is_newly_created)
+		    ->bind('river', $this->river)
 		    ->bind('collaborators_control', $collaborators_control);
 		
 		$collaborators_control = NULL;
@@ -455,19 +456,25 @@ class Controller_River extends Controller_Swiftriver {
 				case "POST":
 					$post = json_decode($this->request->body(), TRUE);
 
-					$channel_filter_option = ORM::factory('channel_filter_option');
-					$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
-					$channel_filter_option->key = $post['key'];
-					$channel_filter_option->value = json_encode($post['data']);
+					// Run pre_save events
+					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
 
-					$channel_filter_option->save();
+					if ( ! empty($post))
+					{
 
-					// Add the ID of the newly created option
-					$post["id"] = $channel_filter_option->id;
+						$channel_filter_option = ORM::factory('channel_filter_option');
+						$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
+						$channel_filter_option->key = $post['key'];
+						$channel_filter_option->value = json_encode($post['data']);
 
-					$response["success"] = TRUE;
-					$response["data"] = $post;
+						$channel_filter_option->save();
 
+						// Add the ID of the newly created option
+						$post["id"] = $channel_filter_option->id;
+
+						$response["success"] = TRUE;
+						$response["data"] = $post;
+					}
 				break;
 			}
 		}
@@ -568,6 +575,36 @@ class Controller_River extends Controller_Swiftriver {
 
 					$response["success"] = TRUE;
 					$response["redirect_url"] = URL::site("/dashboard");
+				}
+			break;
+
+			// Update the river data
+			case "PUT":
+
+				if ($this->river->loaded())
+				{
+					$data = json_decode($this->request->body(), TRUE);
+					$post = $this->river->validate($data);
+
+					// Validate
+					if ($post->check())
+					{
+						// Update the river
+						if (isset($post['name_only']) AND $post['name_only'])
+						{
+							$this->river->river_name = $post['river_name'];
+							$this->river->save();
+						}
+						elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+						{
+							$this->river->river_public = $post['river_public'];
+							$this->river->save();
+						}
+
+						$response["success"] = TRUE;
+						$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
+
+					}
 				}
 			break;
 		}

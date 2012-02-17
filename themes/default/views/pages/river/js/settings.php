@@ -60,8 +60,58 @@
 		},
 
 		events: {
+			// When the river is renamed
+			"click button#rename_river": "renameRiver",
+
+			// When the privacy settings are changed
+			"click input[name='river_public']": "toggleRiverPrivacy",
+
 			// When delete river is confirmed
 			"click div.actions .dropdown li.confirm a": "deleteRiver",
+		},
+
+		renameRiver: function(e) {
+			// Get the name the river
+			var riverName = $("input#river_name").val();
+			if ($.trim(riverName).length > 0 && this.model.get("river_name") != riverName) {
+				// Save the new river name
+				this.model.save({name_only: true, river_name: riverName}, {
+					wait: true,
+					success: function(model, response) {
+						if (response.success) {
+							window.location.href = response.redirect_url;
+						}
+					}
+				});
+			}
+		},
+
+		toggleRiverPrivacy: function(e) {
+			var radio = $(e.currentTarget);
+			if ($(radio).val() != this.model.get("river_public")) {
+
+				// String for the new status of the river
+				var newStatus = ($(radio).val() == 1) ? 
+				    "<?php echo __('public') ?>" 
+				    : "<?php echo __('private'); ?>";
+
+				// Show confirmation dialog before updating
+				if (confirm("<?php echo __('Are you sure you want to make this river '); ?>" + newStatus + '?')) {
+
+					// Update the privacy settings of the river
+					this.model.save({privacy_only: true, river_public: $(radio).val()}, {
+						wait: true, 
+						success: function(model, response) {
+							if (response.success) {
+								window.location.href = response.redirect_url;
+							}
+						}
+					});
+				} else {
+					// Prevent the switch
+					e.preventDefault();
+				}
+			}
 		},
 
 		// When the river is deleted
@@ -166,14 +216,33 @@
 		// Helper function that creates and saves a channel filter option
 		createAndSaveChannelOption: function(option) {
 			var channelView = this;
+			var controlView = option.get("srcControlView");
+
+			// Remove the control view from the option
+			option.unset("srcControlView");
+
 			option.save(null, {
 				wait: true, 
 				success: function(model, response) {
 					if (response.success) {
-						option = new ChannelOption(response.data);
+						var createdOption = new ChannelOption(response.data);
+						createdOption.set({new: true});
+
 						// Add the option to the UI
-						channelView.optionsPanelView.addChannelOption(option);
+						channelView.optionsPanelView.addChannelOption(createdOption);
+
+						// Clear the text field and remove any error CSS classes
+						$(":text", controlView).val("");
+						$(":text", controlView).removeClass("error");
+
+					} else {
+						// Add error class
+						$(":text", controlView).addClass("error");
 					}
+
+					// Get the control view from the option and re-enable the text fields
+					$("input", controlView).removeAttr("disabled");
+
 				}
 			});
 			
@@ -185,6 +254,8 @@
 			// Check if the channel filter option is newly added via the UI
 			if (typeof option.get("id") == "undefined") {
 				
+				option.set({channel: this.model.get("channel")});
+
 				// Check if the channel is enabled
 				if (typeof (this.model.get("id")) == "undefined") {
 					var channelView = this;
@@ -285,7 +356,13 @@
 		// Adds a channel option the panel
 		addChannelOption: function(channelOption) {
 			var optionView = new ChannelOptionItemView({model: channelOption});
-			this.$el.append(optionView.render().el);
+
+			if (typeof channelOption.get("new") == "undefined") {
+				this.$el.append(optionView.render().el);
+			} else {
+				// Newly added item - via the UI
+				this.$("ul.channel-options").after(optionView.render().el);
+			}
 		},
 
 		render: function(eventName) {
@@ -385,11 +462,19 @@
 					}
 				});
 
+				// Disable the input field until a response is returned
+				$(field).attr("disabled", "disabled");
+
+				// Disable the button
+				$(e.currentTarget).attr("disabled", "disabled");
+
+				// Bind this view to the channel option
+				channelOption.set({srcControlView: this.el});
+
 				// Check if the channel is enabled and trigger a status update
 				var channelView = this.options.channelView;
 				channelView.addChannelOption(channelOption);
-
-				$(field).val("");
+				
 			}
 		},
 
@@ -406,6 +491,10 @@
 			this.$el.append(this.template({label: this.model.get("label")}));
 			this.$el.append(this.controlTemplate(this.model.toJSON()));
 			this.$el.append(this.controlButton());
+
+			// Disable any button
+			this.$("button").attr("disabled", "disabled");
+
 			return this;
 		}
 	});

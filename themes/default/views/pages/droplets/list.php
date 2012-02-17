@@ -129,10 +129,10 @@
 					<article class="item add-reply">
 						<div class="summary cf">
 							<section class="source">
-								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>"></a>
+								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 45); ?>"></a>
 							</section>
 							<section class="content">
-								<textarea rows="10" cols="60"></textarea>
+								<textarea rows="8" cols="60"></textarea>
 								<p class="button-go"><a><?php echo __("Add Comment"); ?></a></p>
 							</section>
 						</div>

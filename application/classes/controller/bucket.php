@@ -169,10 +169,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Javascript view
 		$settings_js  = View::factory('pages/bucket/js/settings')
 		   ->bind('bucket_url_root', $bucket_url_root)
-		   ->bind('listing_mode', $listing_mode);
+		   ->bind('bucket_data', $bucket_data);
 
 		$bucket_url_root = $this->base_url.'/api';
-		$listing_mode = FALSE;
+
+		$bucket_data = json_encode(array(
+			'id' => $this->bucket->id,
+			'bucket_name' => $this->bucket->bucket_name,
+			'bucket_publish' => $this->bucket->bucket_publish
+		));
 
 		return $settings_js;
 	}
@@ -379,6 +384,29 @@ class Controller_Bucket extends Controller_Swiftriver {
 		{
 			// Update an existing bucket
 			case "PUT":
+				if ($this->bucket->loaded())
+				{
+					$data = json_decode($this->request->body(), TRUE);
+					$post = $this->bucket->validate($data);
+
+					// Validate the submitted data
+					if ($post->check())
+					{
+						if (isset($post['name_only']) AND $post['name_only'])
+						{
+							$this->bucket->bucket_name = $post['bucket_name'];
+							$this->bucket->save();
+						}
+						elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+						{
+							$this->bucket->bucket_publish = $post['bucket_publish'];
+							$this->bucket->save();
+						}
+
+						$response["success"] = TRUE;
+						$response["redirect_url"] = $this->base_url.'/index/'.$this->bucket->id;
+					}
+				}
 			break;
 
 			// Delets a bucket from the database
