@@ -234,15 +234,14 @@
 						// Clear the text field and remove any error CSS classes
 						$(":text", controlView).val("");
 						$(":text", controlView).removeClass("error");
-						
+
 					} else {
-
-						// Get the control view from the option and re-enable the text fields
-						$("input", controlView).removeAttr("disabled");
-
 						// Add error class
 						$(":text", controlView).addClass("error");
 					}
+
+					// Get the control view from the option and re-enable the text fields
+					$("input", controlView).removeAttr("disabled");
 
 				}
 			});
