@@ -1,36 +1,51 @@
 <div class="panel-body">
-	<div id="settings" class="controls" data-settings-bucket-id="<?php echo $bucket->id; ?>">
+	<div id="settings" class="controls">
+
+		<div class="row cf">
+			<h2><?php echo __("Bucket Name"); ?></h2>
+			<div class="input">
+				<?php echo Form::input('bucket_name', $bucket->bucket_name, 
+				    array('id' => 'bucket_name', 'class' => "medium")); ?>
+				<button type="button" class="channel-button" id="rename_bucket">
+					<span><?php echo __("Rename the bucket"); ?></span>
+				</button>
+			</div>
+		</div>
+
+		<div class="row cf">
+			<h2><?php echo __("Access to the Bucket"); ?></h2>
+			<div class="input">
+				<p class="checkbox">
+					<label>
+						<input type="radio" name="bucket_publish" value="1" checked="checked">
+						<?php echo __("Public (Anyone)"); ?>
+					</label>
+				</p>
+				<p class="checkbox">
+					<label>
+						<input type="radio" name="bucket_publish" value="0">
+						<?php echo __("Private (Only People I specifiy)"); ?>
+					</label>
+				</p>
+			</div>
+		</div>
+
 		<div class="row cf">
 			<!-- collaborators -->
 			<?php echo $collaborators_control; ?>
 			<!-- /collaborators -->
 		</div>
 
-		<!-- NEW: Publish status control -->
-		<div class="row cf">
-			<h2><?php echo __("Access"); ?></h2>
-			<div class="input">
-				<h3>Do you want this bucket to be viewable to the public?</h3>
-				<select>
-					<option value="">Yes</option>
-					<option value="">No</option>
-				</select>
-			</div>
-		</div>
-		<!-- /NEW: Publish status control -->
-		
 		<div class="row controls-buttons cf">
-			<p class="button-go"><a href="#">Apply changes</a></p>
-			<p class="other"><a class="close" onclick="">Cancel</a></p>
-			<div class="item actions">
-				<p class="button-delete button-delete-subtle"><a onclick="">Delete Bucket</a></p>
+			<section class="actions item">
+				<p class="button-delete"><a><?php echo __('Delete Bucket'); ?></a></p>
 				<div class="clear"></div>
 				<ul class="dropdown">
 					<p>Are you sure you want to delete this Bucket?</p>
 					<li class="confirm"><a onclick="">Yep.</a></li>
 					<li class="cancel"><a onclick="">No, nevermind.</a></li>
 				</ul>
-			</div>
+			</section>
 		</div>
 	</div>
 </div>

@@ -60,8 +60,58 @@
 		},
 
 		events: {
+			// When the river is renamed
+			"click button#rename_river": "renameRiver",
+
+			// When the privacy settings are changed
+			"click input[name='river_public']": "toggleRiverPrivacy",
+
 			// When delete river is confirmed
 			"click div.actions .dropdown li.confirm a": "deleteRiver",
+		},
+
+		renameRiver: function(e) {
+			// Get the name the river
+			var riverName = $("input#river_name").val();
+			if ($.trim(riverName).length > 0 && this.model.get("river_name") != riverName) {
+				// Save the new river name
+				this.model.save({name_only: true, river_name: riverName}, {
+					wait: true,
+					success: function(model, response) {
+						if (response.success) {
+							window.location.href = response.redirect_url;
+						}
+					}
+				});
+			}
+		},
+
+		toggleRiverPrivacy: function(e) {
+			var radio = $(e.currentTarget);
+			if ($(radio).val() != this.model.get("river_public")) {
+
+				// String for the new status of the river
+				var newStatus = ($(radio).val() == 1) ? 
+				    "<?php echo __('public') ?>" 
+				    : "<?php echo __('private'); ?>";
+
+				// Show confirmation dialog before updating
+				if (confirm("<?php echo __('Are you sure you want to make this river '); ?>" + newStatus + '?')) {
+
+					// Update the privacy settings of the river
+					this.model.save({privacy_only: true, river_public: $(radio).val()}, {
+						wait: true, 
+						success: function(model, response) {
+							if (response.success) {
+								window.location.href = response.redirect_url;
+							}
+						}
+					});
+				} else {
+					// Prevent the switch
+					e.preventDefault();
+				}
+			}
 		},
 
 		// When the river is deleted

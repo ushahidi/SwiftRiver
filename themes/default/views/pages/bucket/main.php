@@ -1,7 +1,10 @@
 <article class="list">
 	<div class="cf center page-title">
 		<hgroup class="edit">
-			<h1 class="private"><span class="icon"></span><span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span></h1>
+			<h1 class="<?php echo ($bucket->bucket_publish == 0) ? "private" : "public"; ?>">
+				<span class="icon"></span>
+				<span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span>
+			</h1>
 		</hgroup>
 	</div>
 	
@@ -24,7 +27,11 @@
 							<span class="label"><?php echo __("Discuss"); ?></span>
 						</a>
 					</li>
-					<li class="view-panel"><a href="<?php echo $settings_url; ?>" class="settings"><span class="icon"></span><?php echo __('Bucket Settings'); ?></a></li>
+					<li class="view-panel">
+						<a href="<?php echo $settings_url; ?>" class="settings">
+							<span class="icon"></span><?php echo __('Bucket Settings'); ?>
+						</a>
+					</li>
 				</ul>
 				<?php endif; ?>
 			</nav>

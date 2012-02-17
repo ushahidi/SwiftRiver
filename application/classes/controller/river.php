@@ -327,6 +327,7 @@ class Controller_River extends Controller_Swiftriver {
 		$settings = View::factory('pages/river/settings_control')
 		    ->bind('settings_js', $settings_js)
 		    ->bind('is_newly_created', $this->is_newly_created)
+		    ->bind('river', $this->river)
 		    ->bind('collaborators_control', $collaborators_control);
 		
 		$collaborators_control = NULL;
@@ -569,6 +570,36 @@ class Controller_River extends Controller_Swiftriver {
 
 					$response["success"] = TRUE;
 					$response["redirect_url"] = URL::site("/dashboard");
+				}
+			break;
+
+			// Update the river data
+			case "PUT":
+
+				if ($this->river->loaded())
+				{
+					$data = json_decode($this->request->body(), TRUE);
+					$post = $this->river->validate($data);
+
+					// Validate
+					if ($post->check())
+					{
+						// Update the river
+						if (isset($post['name_only']) AND $post['name_only'])
+						{
+							$this->river->river_name = $post['river_name'];
+							$this->river->save();
+						}
+						elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+						{
+							$this->river->river_public = $post['river_public'];
+							$this->river->save();
+						}
+
+						$response["success"] = TRUE;
+						$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
+
+					}
 				}
 			break;
 		}
