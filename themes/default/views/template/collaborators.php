@@ -37,7 +37,14 @@
 			</div>
 		</section>
 		<section class="meta">
-			<p>Editor</p>
+			<p>
+				<span>Editor</span>
+				<% if (collaborator_active == 1) { %>
+					<span>(<?php echo __('active'); ?>)</span>
+				<% } else { %>
+					<span>(<?php echo __('waiting for invitation acceptance'); ?>)</span>
+				<% } %> 
+			</p>
 		</section>
 	</div>
 	<% } %>
@@ -55,7 +62,11 @@ $(function() {
 	var fetch_url = "<?php echo $fetch_url ?>";
 	
 	// Collaborator model, collection and view
-	var Collaborator = Backbone.Model.extend();
+	var Collaborator = Backbone.Model.extend({
+		defaults: {
+			collaborator_active: 0
+		},
+	});
 	
 	var CollaboratorList = Backbone.Collection.extend({		
 		model: Collaborator,		
