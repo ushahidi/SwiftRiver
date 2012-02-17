@@ -41,8 +41,10 @@
 					<div class="container">
 						<p class="create-new">
 							<a class="plus"><?php echo __("Create new bucket"); ?></a>
+							<div class="loading"></div>
+							<div class="system_error" style="display:none"></div>
 							<div class="create-name">
-								<input id="new-bucket-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
+								<input id="new-bucket-name" maxlength="25" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
 								<div class="buttons">
 									<button class="save"><?php echo __("Save"); ?></button>
 									<button class="cancel"><?php echo __("Cancel"); ?></button>

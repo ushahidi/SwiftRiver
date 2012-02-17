@@ -209,24 +209,23 @@ class Controller_River extends Controller_Swiftriver {
 		// Check for form submission
 		if ($_POST)
 		{
-			$river = ORM::factory('river');
-			$post  = $river->validate(Arr::extract($_POST, array('river_name', 'river_public')));
-
-			if ($post->check())
+			try
 			{
-				$river->river_name = $post['river_name'];
-				$river->river_public = $post['river_public'];
-				$river->account_id = $this->user->account->id;
-
+				$river = ORM::factory('river');
+				$data = Arr::extract($_POST, array('river_name', 'river_public'));
+				$river->river_name = $data['river_name'];
+				$river->river_public = $data['river_public'];
+				$river->account_id = $this->user->account->id;            	
 				$this->river = $river->save();
-
+            	
 				// Mark the river as newly created
 				$this->is_newly_created = TRUE;
 			}
-			else
+			catch (ORM_Validation_Exception $e)
 			{
-				$errors = $post->errors();
+				$errors = $e->errors('validation');
 			}
+		
 		}
 		
 		$is_new_river = ($this->river->loaded() == FALSE);

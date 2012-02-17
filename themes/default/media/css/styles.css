@@ -381,6 +381,10 @@ header nav li.login ul.dropdown li div.buttons {
   width: 40%;
   margin: 20px auto;
 }
+.loading {
+  width: 10%; 
+  margin: 20px auto;
+}
 .page_buttons a {
   padding: 15px 0;
 }

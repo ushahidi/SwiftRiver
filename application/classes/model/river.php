@@ -51,17 +51,21 @@ class Model_River extends ORM {
 	 */
 	protected $_belongs_to = array('account' => array());
 	
+	
 	/**
-	 * Validation for rivers
-	 * @param array $arr
-	 * @return array
+	 * Rules for the bucket model. 
+	 *
+	 * @return array Rules
 	 */
-	public function validate($arr)
+	public function rules()
 	{
-		return Validation::factory($arr)
-			->rule('river_name', 'not_empty')
-			->rule('river_name', 'min_length', array(':value', 3))
-			->rule('river_name', 'max_length', array(':value', 255));
+		return array(
+			'river_name' => array(
+				array('not_empty'),
+				array('alpha_dash'),
+				array('max_length', array(':value', 25)),
+			),
+		);
 	}
 
 	/**

@@ -238,6 +238,7 @@ $(function() {
 		showCreateBucket: function(e) {
 			this.$("div.dropdown div.create-name").fadeIn();
 			this.$("div.dropdown p.create-new a.plus").fadeOut();
+			this.$("div.dropdown div.create-name input").focus();
 		},
 		
 		// When cancel buttons is clicked in the add bucket drop down
@@ -249,12 +250,35 @@ $(function() {
 		
 		// When save button is clicked in the add bucket drop down
 		saveBucket: function(e) {
+			this.$("div.dropdown div.create-name").fadeOut();			
 			if(this.$("#new-bucket-name").val()) {
-				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {wait: true});
+				var loading_msg = window.loading_message.clone();
+				loading_msg.appendTo($(".bucket .dropdown div.loading")).show();
+				
+				var create_new_el = this.$("div.dropdown p.create-new a.plus");
+				var error_el = $(".bucket .dropdown div.system_error");
+				
+				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {
+					wait: true,
+					complete: function() {
+						create_new_el.fadeIn();
+						loading_msg.fadeOut();
+					},
+					error: function(model, response) {
+						var message = "<ul>";
+						if (response.status == 400) {
+							errors = JSON.parse(response.responseText)["errors"];
+							_.each(errors, function(error) { message += "<li>" + error + "</li>"; });
+						} else {
+							message += "<?php echo __('An error occurred while saving the bucket.'); ?>";
+						}
+						message += "</ul>";
+						// Show error message and fade it out slooooowwwwwwlllllyyyy
+						error_el.html(message).fadeIn("fast").delay(500).fadeOut(3000).html();
+					}
+				});
 				this.$("#new-bucket-name").val('');
 			}
-			this.$("div.dropdown div.create-name").fadeOut();
-			this.$("div.dropdown p.create-new a.plus").fadeIn();
 			e.stopPropagation();
 		},
 		
@@ -493,7 +517,7 @@ $(function() {
 		return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - $("#next_page_button").offset().top;
 	}
 	
-	var loading_msg = $('<div><?php echo(Html::image("themes/default/media/img/loading.gif")) ?><div></div></div>');
+	var loading_msg = window.loading_message.clone();
 	$(window).scroll(function() {
 	    
 		if (nearBottom() && !isPageFetching && !isAtLastPage) {

@@ -36,6 +36,19 @@
 		</section>
 
 		<div class="container">
+			<?php
+			if (isset($errors))
+			{
+				foreach ($errors as $message)
+				{
+					?>
+					<div class="system_message system_error">
+						<p><strong><?php echo __('Uh oh.'); ?></strong> <?php echo $message; ?></p>
+					</div>
+					<?php
+				}
+			}
+			?>
 			<div class="controls">
 				<?php echo Form::open(); ?>
 
@@ -57,21 +70,7 @@
 							</p>
 						</div>
 					</div>
-				</div>
-		
-			<?php
-			if (isset($errors))
-			{
-				foreach ($errors as $message)
-				{
-					?>
-					<div class="system_message system_error">
-						<p><strong><?php echo __('Uh oh.'); ?></strong> <?php echo $message; ?></p>
-					</div>
-					<?php
-				}
-			}
-			?>
+				</div>					
 			<?php echo Form::close(); ?>
 			</div>
 		</div>

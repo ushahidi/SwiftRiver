@@ -87,17 +87,17 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
 -- Table `rivers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `rivers` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `river_name` VARCHAR(255) NOT NULL ,
-  `river_active` TINYINT(4) NOT NULL DEFAULT 1 ,
-  `river_public` TINYINT(4) NOT NULL DEFAULT 0 ,
-  `river_current` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'Identifies if this is the last River that  was worked on' ,
-  `river_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `account_id_idx` (`account_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `river_name` varchar(25) NOT NULL,
+  `river_active` tinyint(4) NOT NULL DEFAULT '1',
+  `river_public` tinyint(4) NOT NULL DEFAULT '0',
+  `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
+  `river_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`river_name`),
+  KEY `account_id_idx` (`account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -227,17 +227,17 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `buckets`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `buckets` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `user_id` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Creator of this bucket' ,
-  `bucket_name` VARCHAR(255) NULL DEFAULT NULL ,
-  `bucket_description` TEXT NULL DEFAULT NULL ,
-  `bucket_publish` TINYINT(4) NOT NULL DEFAULT 0 ,
-  `bucket_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `bucket_date_add_idx` (`bucket_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Creator of this bucket',
+  `bucket_name` varchar(25) DEFAULT NULL,
+  `bucket_description` text,
+  `bucket_publish` tinyint(4) NOT NULL DEFAULT '0',
+  `bucket_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`bucket_name`),
+  KEY `bucket_date_add_idx` (`bucket_date_add`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

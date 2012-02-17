@@ -4,6 +4,7 @@
 		<h3><?php echo __('Add people to share with below'); ?></h3>
 		<input type="text" placeholder="+ Type name..." id="add-collaborator-input" />
 		<div id="livesearch">
+			<div class="searching"></div>
 			<ul></ul>
 		</div>
 	</div>
@@ -172,7 +173,7 @@ $(function() {
 		// Handle keyup event and only do an ajax request if there has been none in the last
 		// 500ms
 		liveSearch: function(e) {
-			// Prevent initiating empty searches
+			// Search only when non control key is released
 			if (!((e.keyCode >= 16 && e.keyCode <= 90) || e.keyCode == 8))
 				return;
 			
@@ -194,34 +195,46 @@ $(function() {
 		
 		// Do the actual search and display of results
 		doLiveSearch: function(view, collaboratorsList) {
+			if (! view.loading_msg) {
+				// If there isn't already another search in progress
+				view.loading_msg = window.loading_message.clone();
+				view.loading_msg.appendTo($("#livesearch div.searching")).append("Searching...");
+			}
 			$.ajax({
-			  url: fetch_url,
-			  dataType: "json",
-			  data: {
-				q: 	view.$("#add-collaborator-input").val()
-			  },
-			  success: function(response){
-				if (response.length) {
-					// Remove already existing collaborators					
-					var results = _.filter(response, function(searchResult) {						
-						return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
-							return collaborator.get('id') == searchResult["id"]
+				url: fetch_url,
+				dataType: "json",
+				data: {
+					q: 	view.$("#add-collaborator-input").val()
+				},
+				
+				complete: function () {
+					// Hide the loading message
+					view.loading_msg.fadeOut();
+					view.loading_msg = null;
+				},
+			
+				success: function(response){
+					if (response.length) {
+						// Remove already existing collaborators					
+						var results = _.filter(response, function(searchResult) {						
+							return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
+								return collaborator.get('id') == searchResult["id"]
+							});
 						});
-					});
 					
-					// Feedback if no results
-					if (!results.length) {
-						view.$("#livesearch ul").html("<strong>no results<strong>");
+						// Feedback if no results
+						if (!results.length) {
+							view.$("#livesearch ul").html("<strong>no results<strong>");
+						} else {
+							// Add the search results if any to the live search view					
+							_.each(results, function(searchResult) {
+								view.searchResults.add(searchResult, view);
+							});
+						}
 					} else {
-						// Add the search results if any to the live search view					
-				    	_.each(results, function(searchResult) {
-				    	    view.searchResults.add(searchResult, view);
-				    	});
-					}										
-				} else {
-					view.$("#livesearch ul").html("<strong>no results<strong>");
+						view.$("#livesearch ul").html("<strong>no results<strong>");
+					}
 				}
-			  }
 			});
 		}
 	});

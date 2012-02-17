@@ -51,19 +51,24 @@ class Model_Bucket extends ORM {
 		'user' => array()
 	);
 
+
 	/**
-	 * Validation for buckets
-	 * @param array $arr
-	 * @return array
+	 * Rules for the bucket model. 
+	 *
+	 * @return array Rules
 	 */
-	public function validate($arr)
+	public function rules()
 	{
-		return Validation::factory($arr)
-			->rule('bucket_name', 'not_empty')
-			->rule('bucket_name', 'min_length', array(':value', 3))
-			->rule('bucket_name', 'max_length', array(':value', 255));
-	}		
-		
+		return array(
+			'bucket_name' => array(
+				array('not_empty'),
+				array('alpha_dash'),
+				array('max_length', array(':value', 25)),
+			),
+		);
+	}
+	
+	
 	/**
 	 * Overload saving to perform additional functions on the bucket
 	 */
