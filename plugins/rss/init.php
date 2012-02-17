@@ -15,20 +15,59 @@ class Rss_Init {
 	    // Register as a crawler
 	    Swiftriver_Crawlers::register('rss', array(new Swiftriver_Crawler_Rss(), 'crawl'));
 	    
-		// Validate Channel Filter Settings Input
-		Swiftriver_Event::add('swiftriver.channel.pre_save', array($this, 'channel_validate'));
+		// Validate the channel option data before it's saved to the DB
+		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
 	}
 
 
 	/**
-	 * Call back method for swiftriver.river.pre_save to validate channel settings
+	 * Call back method for swiftriver.channel.option.pre_save to validate channel settings
 	 */
-	public function channel_validate()
+	public function validate()
 	{
 		// Get the event data
-		$filter_options = & Swiftriver_Event::$data;
+		$option_data = & Swiftriver_Event::$data;
 		
-		Swiftriver_Plugins::validate_channel_options($filter_options, 'rss');
+		// Proceed only if the channel is RSS
+		if ($option_data['channel'] == 'rss')
+		{
+			// Include the SimplePie libraries
+			include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
+			include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
+
+			// Validate the url value using SimplePie
+			$url = $option_data['data']['value'];
+
+			$feed = new SimplePie();
+			$feed->set_feed_url($url);
+
+			// Disable caching
+			$feed->enable_cache(FALSE);
+
+			// Attempt to initialize the feed, parsing it etc
+			if ($feed->init())
+			{
+				// Success!
+
+				// Ensure that SimplePie is being served with the correct mime-type
+				$feed->handle_content_type();
+					
+				// Grabe the subscribe URL from SimplePie
+				$option_data['data']['value'] = $feed->subscribe_url();
+				$option_data['data']['title'] = $feed->get_title();
+
+				// Garbage collection
+				unset ($feed);
+			}
+			else
+			{
+				// Validation failed - Empty the option data
+				Kohana::$log->add(Log::ERROR, "Invalid RSS URL - :url", array(':url' => $url));
+
+				$option_data = NULL;
+			}
+		}
+
 	}
 }
 

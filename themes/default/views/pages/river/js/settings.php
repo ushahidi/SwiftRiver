@@ -216,14 +216,34 @@
 		// Helper function that creates and saves a channel filter option
 		createAndSaveChannelOption: function(option) {
 			var channelView = this;
+			var controlView = option.get("srcControlView");
+
+			// Remove the control view from the option
+			option.unset("srcControlView");
+
 			option.save(null, {
 				wait: true, 
 				success: function(model, response) {
 					if (response.success) {
-						option = new ChannelOption(response.data);
+						var createdOption = new ChannelOption(response.data);
+						createdOption.set({new: true});
+
 						// Add the option to the UI
-						channelView.optionsPanelView.addChannelOption(option);
+						channelView.optionsPanelView.addChannelOption(createdOption);
+
+						// Clear the text field and remove any error CSS classes
+						$(":text", controlView).val("");
+						$(":text", controlView).removeClass("error");
+						
+					} else {
+
+						// Get the control view from the option and re-enable the text fields
+						$("input", controlView).removeAttr("disabled");
+
+						// Add error class
+						$(":text", controlView).addClass("error");
 					}
+
 				}
 			});
 			
@@ -235,6 +255,8 @@
 			// Check if the channel filter option is newly added via the UI
 			if (typeof option.get("id") == "undefined") {
 				
+				option.set({channel: this.model.get("channel")});
+
 				// Check if the channel is enabled
 				if (typeof (this.model.get("id")) == "undefined") {
 					var channelView = this;
@@ -335,7 +357,13 @@
 		// Adds a channel option the panel
 		addChannelOption: function(channelOption) {
 			var optionView = new ChannelOptionItemView({model: channelOption});
-			this.$el.append(optionView.render().el);
+
+			if (typeof channelOption.get("new") == "undefined") {
+				this.$el.append(optionView.render().el);
+			} else {
+				// Newly added item - via the UI
+				this.$("ul.channel-options").after(optionView.render().el);
+			}
 		},
 
 		render: function(eventName) {
@@ -435,11 +463,19 @@
 					}
 				});
 
+				// Disable the input field until a response is returned
+				$(field).attr("disabled", "disabled");
+
+				// Disable the button
+				$(e.currentTarget).attr("disabled", "disabled");
+
+				// Bind this view to the channel option
+				channelOption.set({srcControlView: this.el});
+
 				// Check if the channel is enabled and trigger a status update
 				var channelView = this.options.channelView;
 				channelView.addChannelOption(channelOption);
-
-				$(field).val("");
+				
 			}
 		},
 
@@ -456,6 +492,10 @@
 			this.$el.append(this.template({label: this.model.get("label")}));
 			this.$el.append(this.controlTemplate(this.model.toJSON()));
 			this.$el.append(this.controlButton());
+
+			// Disable any button
+			this.$("button").attr("disabled", "disabled");
+
 			return this;
 		}
 	});

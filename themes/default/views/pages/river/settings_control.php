@@ -79,7 +79,8 @@
 
 <script type="text/template" id="option-item-header-template">
     <h3>
-		<%= label %><span>[<a href="#">&mdash;</a>]</span>
+    	<% var headerTitle = (typeof(title) == "undefined") ? label : title; %>
+		<%= headerTitle %><span> [<a href="#">&mdash;</a>]</span>
 	</h3>
 </script>
 

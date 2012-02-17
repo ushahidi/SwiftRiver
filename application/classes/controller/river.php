@@ -457,19 +457,25 @@ class Controller_River extends Controller_Swiftriver {
 				case "POST":
 					$post = json_decode($this->request->body(), TRUE);
 
-					$channel_filter_option = ORM::factory('channel_filter_option');
-					$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
-					$channel_filter_option->key = $post['key'];
-					$channel_filter_option->value = json_encode($post['data']);
+					// Run pre_save events
+					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
 
-					$channel_filter_option->save();
+					if ( ! empty($post))
+					{
 
-					// Add the ID of the newly created option
-					$post["id"] = $channel_filter_option->id;
+						$channel_filter_option = ORM::factory('channel_filter_option');
+						$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
+						$channel_filter_option->key = $post['key'];
+						$channel_filter_option->value = json_encode($post['data']);
 
-					$response["success"] = TRUE;
-					$response["data"] = $post;
+						$channel_filter_option->save();
 
+						// Add the ID of the newly created option
+						$post["id"] = $channel_filter_option->id;
+
+						$response["success"] = TRUE;
+						$response["data"] = $post;
+					}
 				break;
 			}
 		}
