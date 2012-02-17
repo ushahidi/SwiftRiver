@@ -5,7 +5,7 @@
 <script type="text/template" id="activity_template">
 	<div class="summary cf">
 		<section class="source twitter">
-			<a href="/user"><img src="<%= user_avatar %>" /></a>
+			<a href="<%= user_url %>"><img src="<%= user_avatar %>" /></a>
 		</section>
 		<div class="content">
 			<hgroup>
