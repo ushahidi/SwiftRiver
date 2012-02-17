@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   `link_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `droplets_links_idx` (`droplet_id`, `link_id`),
   INDEX `droplet_id_idx` (`droplet_id` ASC) ,
   INDEX `link_id_idx` (`link_id` ASC) )
 ENGINE = InnoDB
@@ -128,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `droplets_places` (
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   `place_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `droplets_places_idx` (`droplet_id`, `place_id`),
   INDEX `droplet_id_idx` (`droplet_id` ASC) ,
   INDEX `place_id_idx` (`place_id` ASC) )
 ENGINE = InnoDB
@@ -598,6 +600,7 @@ CREATE TABLE IF NOT EXISTS `droplets_tags` (
   `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   `tag_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
+  UNIQUE INDEX `droplets_tags_idx` (`droplet_id`, `tag_id`),
   INDEX `droplet_id_idx` (`droplet_id` ASC) ,
   INDEX `tag_id_idx` (`tag_id` ASC) )
 ENGINE = InnoDB
