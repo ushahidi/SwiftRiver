@@ -472,31 +472,29 @@ CREATE TABLE IF NOT EXISTS `buckets_droplets` (
 -- Table `droplets`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `droplets` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `parent_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'ID of the parent for revision tracking' ,
-  `identity_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)' ,
-  `channel` VARCHAR(100) NOT NULL ,
-  `channel_filter_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)' ,
-  `droplet_hash` VARCHAR(64) NOT NULL ,
-  `droplet_orig_id` VARCHAR(255) NOT NULL ,
-  `droplet_type` VARCHAR(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision' ,
-  `droplet_title` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Title of the feed item if available' ,
-  `droplet_content` TEXT NULL DEFAULT NULL COMMENT 'The content of the feed item (if available)' ,
-  `droplet_raw` TEXT NULL DEFAULT NULL ,
-  `droplet_locale` VARCHAR(30) NULL DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))' ,
-  `droplet_date_pub` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Original publish date of the feed item' ,
-  `droplet_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Date the feed item was added to this database' ,
-  `droplet_processed` TINYINT(1) NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `droplet_hash_idx` (`droplet_hash` ASC) ,
-  INDEX `droplet_type_idx` (`droplet_type` ASC) ,
-  INDEX `droplet_date_pub_idx` (`droplet_date_pub` ASC) ,
-  INDEX `droplet_date_add_idx` (`droplet_date_add` ASC) ,
-  INDEX `droplet_processed_idx` (`droplet_processed` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8, 
-COMMENT = 'Items are generated from feeds and are attached to a specifi' ;
-
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the parent for revision tracking',
+  `identity_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'The source to which this item is connected (e.g. @ushahidi, +254123456)',
+  `channel` varchar(100) NOT NULL,
+  `channel_filter_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT 'The feed that generated this item (e.g. BBCNews RSS feed, #Haiti)',
+  `droplet_hash` varchar(64) NOT NULL,
+  `droplet_orig_id` varchar(255) NOT NULL,
+  `droplet_type` varchar(100) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision',
+  `droplet_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
+  `droplet_content` text COMMENT 'The content of the feed item (if available)',
+  `droplet_raw` text,
+  `droplet_locale` varchar(30) DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))',
+  `droplet_date_pub` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Original publish date of the feed item',
+  `droplet_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Date the feed item was added to this database',
+  `droplet_processed` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `droplet_hash_idx` (`droplet_hash`),
+  KEY `droplet_type_idx` (`droplet_type`),
+  KEY `droplet_date_pub_idx` (`droplet_date_pub`),
+  KEY `droplet_date_add_idx` (`droplet_date_add`),
+  KEY `droplet_processed_idx` (`droplet_processed`),
+  KEY `parent_id` (`parent_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1587 DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
 
 -- -----------------------------------------------------
 -- Table `settings`
