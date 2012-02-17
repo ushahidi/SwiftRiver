@@ -22,10 +22,6 @@ class Model_Channel_Filter extends ORM {
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'droplets' => array(
-			'model' => 'droplet',
-			'through' => 'channel_filter_droplets'
-		),
 		'channel_filter_options' => array()
 		);
 
@@ -72,7 +68,6 @@ class Model_Channel_Filter extends ORM {
 		$channel_filter = ORM::factory('channel_filter')
 			->where('channel', '=', $channel)
 			->where('river_id', '=', $river_id)
-			->where('filter_enabled', '=', 1)
 			->find();
 			
 		return $channel_filter;
@@ -98,6 +93,7 @@ class Model_Channel_Filter extends ORM {
 		foreach ($options as $option)
 		{
 			$channel_filter_options[] = array(
+				"id" => $option->id,
 				"key" => $option->key,
 				"data" => json_decode($option->value, TRUE)
 			);

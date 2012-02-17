@@ -24,6 +24,9 @@ a, a:link, a:visited {
 a img {
   border: none;
 }
+button {
+  border: none;
+}
 .center {
   width: 100%;
   margin: 0 auto;
@@ -336,7 +339,7 @@ header nav li.login ul.dropdown li div.buttons {
 .button-go a:hover, .button-view a:hover, .button-change a:hover {
   text-decoration: none;
 }
-.button-view a {
+.button-view a, .channel-button {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -352,7 +355,7 @@ header nav li.login ul.dropdown li div.buttons {
   background: linear-gradient(top, #ffffff 0%, #ededed 100%);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed', GradientType=0);
 }
-.button-view a:hover {
+.button-view a:hover, .channel-button:hover {
   background: #eeeeee;
 }
 .button-change a {
@@ -808,6 +811,12 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   display: inline;
   padding: 5px 15px;
 }
+.controls div.input .checkbox {
+  padding: 5px 0;
+  margin: 3px 0;
+  font-weight: bold;
+  font-size: 13px;
+}
 .controls .data {
   clear: both;
   padding: 1.0416666667% 0;
@@ -929,6 +938,22 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   width: 14px;
   height: 14px;
   margin-right: 7px;
+}
+.form-buttons {
+  width: 47.5507%;
+  padding: 10px 5px;
+  text-align: right;
+}
+
+.form-buttons p.button-go {
+  float: right;
+  margin-bottom: 15px;
+}
+.form-buttons .button-go a {
+  padding: 8px 15px;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
 }
 /* --- CONTROLS: NAVIGATION ---*/
 #settings {
@@ -1062,6 +1087,38 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
 }
 .filters .input .remove:before {
   content: "-";
+}
+.channel-button {
+  display: inline-block;
+  position: relative;
+  padding: 2px 10px;
+  height: 25px;
+  color: #666;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 1px solid #C2C2C2;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+ul.channel-options {
+  border: 1px solid #C2C2C2;
+  background: #F4F4F4;
+  padding: 3px 2px;
+  margin: 8px 0;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+}
+.channel-options li label{
+  font-weight: bold;
+  float: left;
+  width: 15%;
+  padding: 5px 0 0 0;
+}
+.channel-options .channel-option-input {
+  float: left;
+  width: 350px;
 }
 /* --- CONTROLS: THEMES ---*/
 .controls .themes article {

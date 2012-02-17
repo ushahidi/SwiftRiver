@@ -340,6 +340,11 @@ CREATE TABLE IF NOT EXISTS `plugins` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+INSERT INTO `plugins` (`id`, `plugin_path`, `plugin_name`, `plugin_description`, `plugin_enabled`, `plugin_weight`)
+VALUES
+	(1, 'rss', 'rss', 'RSS Crawler', 1, 1),
+	(3, 'twitter', 'twitter', 'Twitter Search', 1, 2);
+
 
 -- -----------------------------------------------------
 -- Table `account_droplet_tags`
@@ -631,6 +636,19 @@ CREATE TABLE IF NOT EXISTS `account_collaborators` (
   UNIQUE KEY `account_id` (`account_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
 
+
+
+-- ----------------------------------------
+-- TABLE 'river_collaborators'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `river_collaborators` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `river_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  `collaborator_active` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `river_id` (`river_id`,`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------------------

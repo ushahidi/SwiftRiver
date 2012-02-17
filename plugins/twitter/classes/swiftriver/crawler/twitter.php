@@ -107,7 +107,7 @@ class Swiftriver_Crawler_Twitter  {
 				$droplet['droplet_title'] = $tweet->text;
 				$droplet['droplet_content'] = $tweet->text;
 				$droplet['droplet_locale'] = $tweet->iso_language_code;
-				$droplet['droplet_date_pub'] = date("Y-m-d H:i:s", strtotime($tweet->created_at));
+				$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($tweet->created_at));
 
 				Swiftriver_Dropletqueue::add($droplet);
 			}

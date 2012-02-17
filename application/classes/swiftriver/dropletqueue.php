@@ -82,7 +82,7 @@ class Swiftriver_Dropletqueue {
 		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_content']);
 		
 		// Strip the tags from to get droplet_raw
-		$droplet['droplet_raw'] = strip_tags($droplet['droplet_content']);
+		$droplet['droplet_raw'] = $droplet['droplet_content'];
 		
 		
 		// Check if the droplet has already been added to the queue
@@ -135,6 +135,10 @@ class Swiftriver_Dropletqueue {
 		}
 		else
 		{
+			foreach ($validation->errors("validation") as $error)
+			{
+				Kohana::$log->add(Log::DEBUG, $error);
+			}
 			return FALSE;
 		}
 	}

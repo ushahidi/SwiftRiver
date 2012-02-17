@@ -51,7 +51,7 @@ class Controller_Crawler_Main extends Controller {
 	{
 		// Only one instance of the crawler is allowed
 		// to run at any time system wide
-		if ( ! Swiftriver_Mutex::obtain($this->process_mutex)) 
+		if ( ! Swiftriver_Mutex::obtain(self::$process_mutex)) 
 		{
 			Kohana::$log->add(Log::ERROR, "Processor unable to obtain lock");
 			exit;
@@ -63,7 +63,7 @@ class Controller_Crawler_Main extends Controller {
 		// process, the below call will query the DB
 		Swiftriver_Dropletqueue::process();
 		
-		Swiftriver_Mutex::release($this->process_mutex);
+		Swiftriver_Mutex::release(self::$process_mutex);
 		
 		Kohana::$log->add(Log::INFO, "Post processing completed");
 	}

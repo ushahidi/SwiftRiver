@@ -94,17 +94,80 @@ class Model_River extends ORM {
 	{
 		// Get the channel filters
 		$results = ORM::factory('channel_filter')
-			->select('channel', 'filter_enabled')
+			->select('id', 'channel', 'filter_enabled')
 			->where('river_id', '=', $this->id)
 			->find_all();
 		
 		$filters = array();
 		foreach ($results as $result)
 		{
-			$filters[$result->channel] = $result->filter_enabled;
+			$filters[$result->channel] = array(
+				'id' => $result->id,
+				'enabled' => $result->filter_enabled
+				);
 		}
 		
 		return $filters;
+	}
+
+	/**
+	 * Gets a list of the available channels, their data and configuration options
+	 *
+	 * @return array
+	 */
+	public function get_channel_filter_data()
+	{
+		$filter_data = array();
+
+		// Get the channels for this river
+		$river_channels = $this->get_channel_filters();
+
+		// Get the the list channels that are plugins
+		$channel_plugins = Swiftriver_Plugins::channels();
+
+		foreach (array_keys($channel_plugins) as $channel)
+		{
+			$filter_data_entry = array();
+			$option_data = array();
+
+			if (array_key_exists($channel, $river_channels))
+			{
+				$filter_data_entry['id'] = $river_channels[$channel]['id'];
+				$filter_data_entry['enabled'] = $river_channels[$channel]['enabled'];
+				
+				// Get the filter options for the current channel
+				$option_data = Model_Channel_Filter::get_channel_filter_options($channel, $this->id);
+			}
+			else
+			{
+				$filter_data_entry['enabled'] = 0;
+			}
+
+			$filter_data_entry = array_merge($filter_data_entry, array(
+				'channel' => $channel,
+
+				'channel_name' => $channel_plugins[$channel]['name'],
+
+				'grouped' => isset($channel_plugins[$channel]['group']),
+				
+				'group_key' => isset($channel_plugins[$channel]['group']) 
+				    ? $channel_plugins[$channel]['group']['key'] 
+				    : "",
+				
+				'group_label' => isset($channel_plugins[$channel]['group']) 
+				    ? $channel_plugins[$channel]['group']['label'] 
+				    : "",
+
+				'options' => array($channel_plugins[$channel]['options']),
+
+				'data' => $option_data
+			));
+			
+
+			$filter_data[] = $filter_data_entry;
+		}
+
+		return $filter_data;
 	}
 	
 	/**
@@ -224,7 +287,7 @@ class Model_River extends ORM {
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -284,7 +347,7 @@ class Model_River extends ORM {
 		{
 			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 			    'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y")'),'droplet_date_pub'))
+			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -368,6 +431,11 @@ class Model_River extends ORM {
 			return TRUE;
 		}
 				
+		// Is the user id a river collaborator?
+		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
 	}
 
 	/**
@@ -397,7 +465,27 @@ class Model_River extends ORM {
 		
 		return $ret;
 	}
+	
+	/**
+	 * Gets a river's collaborators as an array
+	 *
+	 * @return array
+	 */	
+	public function get_collaborators()
+	{
+		$collaborators = array();
 		
+		foreach ($this->river_collaborators->find_all() as $collaborator)
+		{
+			$collaborators[] = array('id' => $collaborator->user->id, 
+			                         'name' => $collaborator->user->name,
+			                         'account_path' => $collaborator->user->account->account_path
+			);
+		}
+		
+		return $collaborators;
+	}
+	
 }
 
 ?>

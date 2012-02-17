@@ -37,7 +37,8 @@ class Model_User extends Model_Auth_User
 		// for RiverID and other OpenID identities
 		'user_identities' => array(),
 		'account_collaborators' => array(),
-		'bucket_collaborators' => array(),		
+		'river_collaborators' => array(),
+		'bucket_collaborators' => array(),
 		'river_subscriptions' => array(
 			'model' => 'river',
 			'through' => 'river_subscriptions',
@@ -108,32 +109,6 @@ class Model_User extends Model_Auth_User
 		return $username;
 	}
 	
-	/**
-	 * Gets all the buckets accessible to the user - the ones
-	 * they've created and the ones they're collaborating on
-	 *
-	 * @return array
-	 */
-	public function get_buckets_array()
-	{
-		$ret = array();
-		
-		$buckets = $this->get_buckets();
-		
-		foreach ($buckets as $bucket)
-		{
-			$ret[] = array(
-				"id" => $bucket->id, 
-				"bucket_name" => $bucket->bucket_name,
-				"account_id" => $bucket->account->id,
-				"user_id" => $bucket->account->user->id,
-				"account_path" => $bucket->account->account_path,
-				"subscriber_count" => $bucket->get_subscriber_count()
-			);
-		}
-		
-		return $ret;
-	}
 	
 	/**
 	 * Get a list of rivers this user has access to from the given other_user_id
@@ -249,10 +224,45 @@ class Model_User extends Model_Auth_User
 			$ret = array_merge($ret, $collabo->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
 		}
 		
+		// Add individual rivers this user is collaborating on
+		$river_collaborations = $this->river_collaborators
+		                               ->where("collaborator_active", "=", 1)
+		                               ->find_all();
+		
+		foreach ($river_collaborations as $collabo)
+		{
+			$ret[] = $collabo->river;
+		}
+		
 		// Finally, the rivers the user has subscribed to
 		$ret = array_merge($ret, $this->river_subscriptions->order_by('river_name', 'ASC')->find_all()->as_array());
 		
 		return array_unique($ret);
+	}
+
+	/**
+	 * Gets all the buckets accessible to the user
+	 * @return array
+	 */
+	public function get_rivers_array()
+	{
+		$ret = array();
+		
+		$rivers = $this->get_rivers();
+		
+		foreach ($rivers as $river)
+		{
+			$ret[] = array(
+				"id" => $river->id, 
+				"river_name" => $river->river_name,
+				"account_id" => $river->account->id,
+				"user_id" => $river->account->user->id,
+				"account_path" => $river->account->account_path,
+				"subscriber_count" => $river->get_subscriber_count()
+			);
+		}
+		
+		return $ret;
 	}
 	
 	/**
@@ -296,5 +306,33 @@ class Model_User extends Model_Auth_User
 		
 		
 		return array_unique($buckets);
+	}
+
+
+	/**
+	 * Gets all the buckets accessible to the user - the ones
+	 * they've created and the ones they're collaborating on
+	 *
+	 * @return array
+	 */
+	public function get_buckets_array()
+	{
+		$ret = array();
+		
+		$buckets = $this->get_buckets();
+		
+		foreach ($buckets as $bucket)
+		{
+			$ret[] = array(
+				"id" => $bucket->id, 
+				"bucket_name" => $bucket->bucket_name,
+				"account_id" => $bucket->account->id,
+				"user_id" => $bucket->account->user->id,
+				"account_path" => $bucket->account->account_path,
+				"subscriber_count" => $bucket->get_subscriber_count()
+			);
+		}
+		
+		return $ret;
 	}
 }

@@ -3,6 +3,5 @@
 *.DS_Store
 application/logs/*
 application/cache/*
-application/config/database.php
-application/config/gearman.php
+application/config/*.php
 application/tests/phpunit.xml

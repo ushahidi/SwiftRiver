@@ -212,9 +212,10 @@ class TwitterSearch {
             $response = $this->objectify($this->process($request));
             Kohana::$log->add(Log::DEBUG, var_export($response, true));
 
-
-            $ret = array_merge($ret, $response->results);
-            
+            if (property_exists($response, 'results'))
+            {
+                $ret = array_merge($ret, $response->results);
+            }
             
             if (property_exists($response, 'next_page')) 
             {
