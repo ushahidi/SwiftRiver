@@ -345,7 +345,7 @@ class Model_River extends ORM {
 		$river_orm = ORM::factory('river', $river_id);
 		if ($river_orm->loaded())
 		{
-			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
+			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 'droplet_title', 'droplet_content', 
 			    'droplets.channel','identity_name', 'identity_avatar', 
 			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
 			    ->from('droplets')

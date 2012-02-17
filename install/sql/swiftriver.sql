@@ -73,15 +73,14 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `droplets_links`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `droplets_links` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `link_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `droplet_id_idx` (`droplet_id` ASC) ,
-  INDEX `link_id_idx` (`link_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `link_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`link_id`),
+  KEY `droplet_id_idx` (`droplet_id`),
+  KEY `link_id_idx` (`link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -123,15 +122,14 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `droplets_places`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `droplets_places` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `place_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `droplet_id_idx` (`droplet_id` ASC) ,
-  INDEX `place_id_idx` (`place_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `place_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`place_id`),
+  KEY `droplet_id_idx` (`droplet_id`),
+  KEY `place_id_idx` (`place_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -461,13 +459,13 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `buckets_droplets`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `buckets_droplets` (
-  `bucket_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_date_added` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date when the droplet was added to the bucket',
-  INDEX `bucket_id_idx` (`bucket_id` ASC) ,
-  INDEX `droplet_id_idx` (`droplet_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `bucket_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `droplet_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date when the droplet was added to the bucket',
+  UNIQUE KEY `bucket_id` (`bucket_id`,`droplet_id`),
+  KEY `bucket_id_idx` (`bucket_id`),
+  KEY `droplet_id_idx` (`droplet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -593,15 +591,14 @@ COMMENT = 'Channel filter options' ;
 -- Table `droplets_tags`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `droplets_tags` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Owner of this relationship - \'0\' for System (global)' ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `tag_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `droplet_id_idx` (`droplet_id` ASC) ,
-  INDEX `tag_id_idx` (`tag_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `tag_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`tag_id`),
+  KEY `droplet_id_idx` (`droplet_id`),
+  KEY `tag_id_idx` (`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
