@@ -103,7 +103,8 @@ class Model_Bucket extends ORM {
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 								'droplet_title', 'droplet_content', 
-								'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+								'droplets.channel','identity_name', 'identity_avatar', 
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
@@ -165,7 +166,8 @@ class Model_Bucket extends ORM {
 			// Build Buckets Query
 			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
 								'droplet_title', 'droplet_content', 
-								'droplets.channel','identity_name', 'identity_avatar', 'droplet_date_pub')
+								'droplets.channel','identity_name', 'identity_avatar', 
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
