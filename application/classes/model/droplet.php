@@ -34,10 +34,6 @@ class Model_Droplet extends ORM
 			'model' => 'place',
 			'through' => 'droplets_places'
 			),
-		'stories' => array(
-			'model' => 'story',
-			'through' => 'droplets_stories'
-			),
 		'tags' => array(
 			'model' => 'tag',
 			'through' => 'droplets_tags'
@@ -402,7 +398,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_buckets(& $droplets)
 	{
-		foreach($droplets as & $droplet) {
+		foreach($droplets as & $droplet)
+		{
 			$droplet_orm = ORM::factory('droplet', $droplet['id']);
 			
 			$droplet['buckets'] = $droplet_orm->get_buckets();
