@@ -149,7 +149,16 @@
 </script>
 
 <script type="text/template" id="tag-template">
-	<a><%= tag %></a>
+	<span class="actions">
+		<a href="#" class="button-delete cross"></a>
+		<ul class="dropdown left">
+			<p><?php echo __("Are you sure you want to remove this tag?"); ?></p>
+	
+			<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
+			<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
+		</ul>
+	</span>
+	<a class="tag-name"><%= tag %></a>
 </script>
 
 <script type="text/template" id="link-template">
