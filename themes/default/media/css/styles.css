@@ -420,6 +420,9 @@ a.discussion span.icon {
 a.plus:before {
   content: "+ ";
 }
+a.cross:before {
+  content: "X ";
+}
 a.score span.icon {
   background-position: center -88px;
 }
@@ -1950,18 +1953,45 @@ article.item .detail section.meta #add-tag .create-name {
 article.item .detail section.meta .item ul.tags {
   padding: 5px 10px;
 }
-article.item .detail section.meta .item ul.tags li {
+article.item .detail section.meta .item ul.tags li.tag {
   float: left;
-  margin: 2px 2px 6px 2px;
-}
-article.item .detail section.meta .item ul.tags li a {
-  color: #666666;
-  font-size: 0.9em;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
   background: #dadada;
   padding: 2px 7px;
+  margin: 2px 2px 6px 2px;
+}
+article.item .detail section.meta .item ul.tags li.tag:hover {
+  background: #D1D1D1;
+}
+article.item .detail section.meta .item ul.tags li a.tag-name {
+  color: #666666;
+  font-size: 0.9em;
+}
+article.item .detail section.meta .item ul.tags li:hover a.tag-name {
+  text-decoration: none;
+}
+article.item .detail section.meta .item ul.tags li a.cross {
+  display: block;
+  float: left;
+  color: #F1F1F1;
+  font-size: 0.7em;
+  text-shadow: none;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  background: #BDBDBD;
+  padding: 0 5px;
+  margin: 3px 5px 0 0;
+}
+article.item .detail section.meta .item ul.tags li a.cross:hover {
+  color: #fff;
+  background: #9C9C9C;
+  text-decoration: none;
+}
+article.item .detail section.meta .item ul.tags ul.dropdown {
+  margin-top: 20px;
 }
 article.item .detail .content article.fullstory h1 {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;

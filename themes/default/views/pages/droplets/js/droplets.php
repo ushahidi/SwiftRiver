@@ -408,6 +408,8 @@ $(function() {
 	window.TagView = Backbone.View.extend({
 		
 		tagName: "li",
+
+		className: "tag",
 		
 		template: _.template($("#tag-template").html()),
 		
