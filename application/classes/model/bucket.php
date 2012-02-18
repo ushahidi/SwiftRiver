@@ -138,9 +138,9 @@ class Model_Bucket extends ORM {
 			if ($droplets['total'] > 0)
 			{
 				// Get the metadata
-				$tags = self::get_droplets_tags($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$places = self::get_droplets_places($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$links = self::get_droplets_links($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
+				$tags = self::get_droplets_tags($bucket_id, $bucket_orm->account->id, 'DESC', 0, $max_id, $page);
+				$places = self::get_droplets_places($bucket_id, $bucket_orm->account->id, 'DESC', 0, $max_id, $page);
+				$links = self::get_droplets_links($bucket_id, $bucket_orm->account->id, 'DESC', 0, $max_id, $page);
 
 				// Add the links, tags and places to each of the droplets
 				foreach ($droplets['droplets'] as & $droplet)
@@ -194,7 +194,7 @@ class Model_Bucket extends ORM {
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '>', $since_id)
-				->order_by('droplets.id', 'DESC');
+				->order_by('buckets_droplets.droplet_date_added', 'ASC');
 				
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
@@ -204,9 +204,9 @@ class Model_Bucket extends ORM {
 			if ($droplets['total'] > 0)
 			{
 				// Get the metadata
-				$tags = self::get_droplets_tags($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$places = self::get_droplets_places($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$links = self::get_droplets_links($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
+				$tags = self::get_droplets_tags($bucket_id, $bucket_orm->account->id, 'ASC', $since_id);
+				$places = self::get_droplets_places($bucket_id, $bucket_orm->account->id, 'ASC', $since_id);
+				$links = self::get_droplets_links($bucket_id, $bucket_orm->account->id, 'ASC', $since_id);
 
 				// Add the links, tags and places to each of the droplets
 				foreach ($droplets['droplets'] as & $droplet)
@@ -397,7 +397,7 @@ class Model_Bucket extends ORM {
 		    : "";
 
 		// Add te order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
+		$sql .= "ORDER BY bd.droplet_date_added ".$sort;
 		$sql .= $limit_clause;
 
 		$query = DB::query(Database::SELECT, $sql);
@@ -456,7 +456,7 @@ class Model_Bucket extends ORM {
 		    : "";
 
 		// Add te order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
+		$sql .= "ORDER BY bd.droplet_date_added ".$sort;
 		$sql .= $limit_clause;
 
 		$query = DB::query(Database::SELECT, $sql);
@@ -495,9 +495,9 @@ class Model_Bucket extends ORM {
 		    . "INNER JOIN droplets_links dl ON (dl.droplet_id = d.id) "
 		    . "INNER JOIN links l ON (dl.link_id = l.id) "
 		    . "INNER JOIN buckets_droplets bd ON (bd.droplet_id = d.id) AND (d.droplet_processed = 1) "
-		    . "LEFT JOIN account_droplet_links adl ON (adl.droplet_id = rd.droplet_id) "
+		    . "LEFT JOIN account_droplet_links adl ON (adl.droplet_id = bd.droplet_id) "
 		    . "AND (adl.link_id = l.id) AND (adl.account_id = ".$account_id.") "
-		    . "WHERE bd.river_id = ".$bucket_id." ";
+		    . "WHERE bd.bucket_id = ".$bucket_id." ";
 		
 		// Check for since id
 		$sql .= ($since_id > 0) ? "AND d.id > ".$since_id." " : "";
@@ -512,7 +512,7 @@ class Model_Bucket extends ORM {
 		    : "";
 
 		// Add the order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
+		$sql .= "ORDER BY bd.droplet_date_added ".$sort;
 		$sql .= $limit_clause;
 
 		$query = DB::query(Database::SELECT, $sql);
