@@ -386,26 +386,21 @@ class Controller_Bucket extends Controller_Swiftriver {
 			case "PUT":
 				if ($this->bucket->loaded())
 				{
-					$data = json_decode($this->request->body(), TRUE);
-					$post = $this->bucket->validate($data);
+					$post = json_decode($this->request->body(), TRUE);
 
-					// Validate the submitted data
-					if ($post->check())
+					if (isset($post['name_only']) AND $post['name_only'])
 					{
-						if (isset($post['name_only']) AND $post['name_only'])
-						{
-							$this->bucket->bucket_name = $post['bucket_name'];
-							$this->bucket->save();
-						}
-						elseif (isset($post['privacy_only']) AND $post['privacy_only'])
-						{
-							$this->bucket->bucket_publish = $post['bucket_publish'];
-							$this->bucket->save();
-						}
-
-						$response["success"] = TRUE;
-						$response["redirect_url"] = $this->base_url.'/index/'.$this->bucket->id;
+						$this->bucket->bucket_name = $post['bucket_name'];
+						$this->bucket->save();
 					}
+					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+					{
+						$this->bucket->bucket_publish = $post['bucket_publish'];
+						$this->bucket->save();
+					}
+
+					$response["success"] = TRUE;
+					$response["redirect_url"] = $this->base_url.'/index/'.$this->bucket->id;
 				}
 			break;
 

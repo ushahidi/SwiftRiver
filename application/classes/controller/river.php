@@ -127,11 +127,8 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('max_droplet_id', $max_droplet_id)
 		    ->bind('user', $this->user);
 		    		
-		// Turn on Ajax polling
-		$polling_enabled = "true";
 		$fetch_url = $this->base_url.'/droplets/'.$river_id;
 		$tag_base_url = $this->base_url.'/droplets/'.$river_id;
-		$droplet_action_url = $this->base_url.'/ajax_droplet/'.$river_id;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js)
@@ -483,19 +480,6 @@ class Controller_River extends Controller_Swiftriver {
 		
 	}
 
-	/**
-	 * Ajax rendered more control box
-	 * 
-	 * @return	void
-	 */
-	public function action_more()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$river_id = $this->request->param('id', 0);
-		echo View::factory('pages/river/more_control')
-			->bind('river_id', $river_id);
-	}	
 
 	/**
 	 * Ajax Title Editing Inline
@@ -526,27 +510,6 @@ class Controller_River extends Controller_Swiftriver {
 				$river->river_name = $_REQUEST['edit_value'];
 				$river->save();
 			}
-		}
-	}
-
-	/**
-	 * Ajax Delete River
-	 * 
-	 * @return string - json
-	 */
-	public function action_delete()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		if ($this->river->loaded())
-		{
-			$this->river->delete();
-			echo json_encode(array("success"=>TRUE));
-		}
-		else
-		{
-			echo json_encode(array("success"=>FALSE));
 		}
 	}
 	
@@ -583,64 +546,26 @@ class Controller_River extends Controller_Swiftriver {
 
 				if ($this->river->loaded())
 				{
-					$data = json_decode($this->request->body(), TRUE);
-					$post = $this->river->validate($data);
+					$post = json_decode($this->request->body(), TRUE);
 
-					// Validate
-					if ($post->check())
+					// Update the river
+					if (isset($post['name_only']) AND $post['name_only'])
 					{
-						// Update the river
-						if (isset($post['name_only']) AND $post['name_only'])
-						{
-							$this->river->river_name = $post['river_name'];
-							$this->river->save();
-						}
-						elseif (isset($post['privacy_only']) AND $post['privacy_only'])
-						{
-							$this->river->river_public = $post['river_public'];
-							$this->river->save();
-						}
-
-						$response["success"] = TRUE;
-						$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
-
+						$this->river->river_name = $post['river_name'];
+						$this->river->save();
 					}
+					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+					{
+						$this->river->river_public = $post['river_public'];
+						$this->river->save();
+					}
+
+					$response["success"] = TRUE;
+					$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
 				}
 			break;
 		}
 
-		echo json_encode($response);
-	}
-
-	
-	public function action_ajax_droplet()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-		
-		$response = array("success" => FALSE);
-		
-		if ($_POST)
-		{
-			$droplet_id = isset($_POST['droplet_id']) ? intval($_POST['droplet_id']) : 0;
-			$action = isset($_POST['action']) ? $_POST['action'] : "";
-			
-			// Load the droplet
-			$droplet = ORM::factory('droplet', $droplet_id);
-			
-			if ($this->river->loaded() AND $droplet->loaded())
-			{
-				switch ($action)
-				{
-					// Remove droplet from the river
-					case 'remove':
-						$this->river->remove('droplets', $droplet);
-						$response["success"] = TRUE;
-					break;
-				}
-			}
-		}
-		
 		echo json_encode($response);
 	}
 
