@@ -340,12 +340,12 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_buckets(& $droplets)
 	{		
-		if(empty($droplets))
+		if (empty($droplets))
 			return;
 		
 		// Collect droplet IDs into a single array
 		$droplet_ids = array();
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet['buckets'] = array();
 			$droplet_ids[] = $droplet['id'];
@@ -360,9 +360,11 @@ class Model_Droplet extends ORM
 				
 		// Group the buckets per droplet
 		$droplet_buckets = array();
-		foreach ($query_buckets->execute()->as_array() as $bucket) {
+		foreach ($query_buckets->execute()->as_array() as $bucket)
+		{
 			$droplet_id = $bucket['droplet_id'];
-			if ( ! isset($droplet_buckets[$droplet_id])) {
+			if ( ! isset($droplet_buckets[$droplet_id]))
+			{
 				$droplet_buckets[$droplet_id] = array();
 			}
 			unset($bucket['droplet_id']);
@@ -370,10 +372,11 @@ class Model_Droplet extends ORM
 		}
 		
 		// Assign the buckets to the droplets
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet_id = $droplet['id'];
-			if (isset($droplet_buckets[$droplet_id])) {
+			if (isset($droplet_buckets[$droplet_id]))
+			{
 				$droplet['buckets'] = $droplet_buckets[$droplet_id];
 			}
 		}	    
@@ -386,12 +389,12 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_tags(& $droplets, $account_id)
 	{		
-		if(empty($droplets))
+		if (empty($droplets))
 			return;
 		
 		// Collect droplet IDs into a single array
 		$droplet_ids = array();
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet['tags'] = array();
 			$droplet_ids[] = $droplet['id'];
@@ -415,9 +418,11 @@ class Model_Droplet extends ORM
 				
 		// Group the tags per droplet
 		$droplet_tags = array();
-		foreach ($query_tags->execute()->as_array() as $tag) {
+		foreach ($query_tags->execute()->as_array() as $tag)
+		{
 			$droplet_id = $tag['droplet_id'];
-			if ( ! isset($droplet_tags[$droplet_id])) {
+			if ( ! isset($droplet_tags[$droplet_id]))
+			{
 				$droplet_tags[$droplet_id] = array();
 			}
 			unset($tag['droplet_id']);
@@ -425,10 +430,11 @@ class Model_Droplet extends ORM
 		}
 		
 		// Assign the tags to the droplets
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet_id = $droplet['id'];
-			if (isset($droplet_tags[$droplet_id])) {
+			if (isset($droplet_tags[$droplet_id]))
+			{
 				$droplet['tags'] = $droplet_tags[$droplet_id];
 			}
 		}
@@ -441,12 +447,12 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_links(& $droplets)
 	{		
-		if(empty($droplets))
+		if (empty($droplets))
 			return;
 		
 		// Collect droplet IDs into a single array
 		$droplet_ids = array();
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet['links'] = array();
 			$droplet_ids[] = $droplet['id'];
@@ -461,9 +467,11 @@ class Model_Droplet extends ORM
 				
 		// Group the links per droplet
 		$droplet_links = array();
-		foreach ($query_links->execute()->as_array() as $link) {
+		foreach ($query_links->execute()->as_array() as $link)
+		{
 			$droplet_id = $link['droplet_id'];
-			if ( ! isset($droplet_links[$droplet_id])) {
+			if ( ! isset($droplet_links[$droplet_id]))
+			{
 				$droplet_links[$droplet_id] = array();
 			}
 			unset($link['droplet_id']);
@@ -471,10 +479,11 @@ class Model_Droplet extends ORM
 		}
 		
 		// Assign the links to the droplets
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet_id = $droplet['id'];
-			if (isset($droplet_links[$droplet_id])) {
+			if (isset($droplet_links[$droplet_id]))
+			{
 				$droplet['links'] = $droplet_links[$droplet_id];
 			}
 		}    
@@ -487,7 +496,7 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_places(& $droplets)
 	{		
-		if(empty($droplets))
+		if (empty($droplets))
 			return;
 		
 		// Collect droplet IDs into a single array
@@ -507,9 +516,11 @@ class Model_Droplet extends ORM
 				
 		// Group the places per droplet
 		$droplet_places = array();
-		foreach ($query_places->execute()->as_array() as $place) {
+		foreach ($query_places->execute()->as_array() as $place)
+		{
 			$droplet_id = $place['droplet_id'];
-			if ( ! isset($droplet_places[$droplet_id])) {
+			if ( ! isset($droplet_places[$droplet_id]))
+			{
 				$droplet_places[$droplet_id] = array();
 			}
 			unset($place['droplet_id']);
@@ -517,10 +528,11 @@ class Model_Droplet extends ORM
 		}
 		
 		// Assign the places to the droplets
-		foreach($droplets as & $droplet)
+		foreach ($droplets as & $droplet)
 		{
 			$droplet_id = $droplet['id'];
-			if (isset($droplet_places[$droplet_id])) {
+			if (isset($droplet_places[$droplet_id]))
+			{
 				$droplet['places'] = $droplet_places[$droplet_id];
 			}
 		}    
@@ -528,13 +540,57 @@ class Model_Droplet extends ORM
 	
 	/**
 	 * Given an array of droplets, populates the discussions
+	 *
+	 * @param array $droplets Droplets to be populated with comments/discussions
 	 */
 	public static function populate_discussions(array & $droplets)
 	{
+		if (empty($droplets))
+			return;
+		
+		$droplet_ids = array();
 		foreach ($droplets as & $droplet)
 		{
-			$droplet['discussions'] = self::get_discussions($droplet['id']);
+			$droplet['discussions'] = array();
+			$droplet_ids[] = $droplet['id'];
 		}
+
+		// Query to fetch the comments
+		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 
+		        array('droplets.parent_id', 'parent_id'), 
+		        array('droplets.channel', 'channel'), 'droplet_content', 
+		        'identity_name', 'identity_avatar', 'droplet_date_pub'
+		    )
+		    ->from('droplets')
+		    ->join('identities', 'INNER')
+		    ->on('droplets.identity_id', '=', 'identities.id')
+		    ->where('droplets.parent_id', 'IN', $droplet_ids)
+		    ->order_by('droplets.id', 'ASC');
+		 
+
+		 // Group the comments per droplet
+		 $comments = array();
+		 foreach ($query->execute()->as_array() as $comment)
+		 {
+		 	$parent_id = $comment['parent_id'];
+		 	if ( ! isset($discussions[$parrent_id]))
+		 	{
+		 		$discussions[$parent_id] = array();
+		 	}
+
+		 	$comments[$parent_id][] = $comment;
+		 }
+
+		 // Assign the comments to the droplets
+		 foreach ($droplets as & $droplet)
+		 {
+		 	$droplet_id = $droplet['id'];
+		 	if (isset($comments[$droplet_id]))
+		 	{
+		 		$droplet['discussions'] = $comments[$droplet_id];
+		 	}
+		 }
+
 	}
     
 	/**
@@ -618,27 +674,6 @@ class Model_Droplet extends ORM
 			}
 		}
 
-	}
-	
-	/**
-	 * Returns the list of droplets that have $droplet_id as the parent
-	 * @param int $droplet_id ID of the droplet
-	 * @return array
-	 */
-	public static function get_discussions($droplet_id)
-	{
-		// Get the discussions
-		$discussions = DB::select(array('droplets.id', 'id'), 'droplet_title', 
-		    array('droplets.parent_id', 'parent_id'), 
-		    array('droplets.channel', 'channel'), 'droplet_content', 
-		    'identity_name', 'identity_avatar', 'droplet_date_pub')
-		    ->from('droplets')
-		    ->join('identities', 'INNER')
-		    ->on('droplets.identity_id', '=', 'identities.id')
-		    ->where('droplets.parent_id', '=', $droplet_id)
-		    ->order_by('droplets.id', 'ASC');
-		
-		return $discussions->execute()->as_array();
 	}
 	
 	/**
