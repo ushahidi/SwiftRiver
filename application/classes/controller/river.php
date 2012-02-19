@@ -105,7 +105,7 @@ class Controller_River extends Controller_Swiftriver {
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 				
 		//Get Droplets
-	    $droplets_array = Model_River::get_droplets($river_id, 1, $max_droplet_id);
+	    $droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, $max_droplet_id);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -127,11 +127,8 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('max_droplet_id', $max_droplet_id)
 		    ->bind('user', $this->user);
 		    		
-		// Turn on Ajax polling
-		$polling_enabled = "true";
 		$fetch_url = $this->base_url.'/droplets/'.$river_id;
 		$tag_base_url = $this->base_url.'/droplets/'.$river_id;
-		$droplet_action_url = $this->base_url.'/ajax_droplet/'.$river_id;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js)
@@ -167,11 +164,11 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_array = array();
 		if ( $since_id )
 		{
-		    $droplets_array = Model_River::get_droplets_since_id($this->river->id, $since_id);
+		    $droplets_array = Model_River::get_droplets_since_id($this->user->id, $this->river->id, $since_id);
 		}
 		else
 		{
-		    $droplets_array = Model_River::get_droplets($this->river->id, $page, $max_id);
+		    $droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $page, $max_id);
 		}
 		
 		$droplets = $droplets_array['droplets'];
@@ -209,24 +206,23 @@ class Controller_River extends Controller_Swiftriver {
 		// Check for form submission
 		if ($_POST)
 		{
-			$river = ORM::factory('river');
-			$post  = $river->validate(Arr::extract($_POST, array('river_name', 'river_public')));
-
-			if ($post->check())
+			try
 			{
-				$river->river_name = $post['river_name'];
-				$river->river_public = $post['river_public'];
-				$river->account_id = $this->user->account->id;
-
+				$river = ORM::factory('river');
+				$data = Arr::extract($_POST, array('river_name', 'river_public'));
+				$river->river_name = $data['river_name'];
+				$river->river_public = $data['river_public'];
+				$river->account_id = $this->user->account->id;            	
 				$this->river = $river->save();
-
+            	
 				// Mark the river as newly created
 				$this->is_newly_created = TRUE;
 			}
-			else
+			catch (ORM_Validation_Exception $e)
 			{
-				$errors = $post->errors();
+				$errors = $e->errors('validation');
 			}
+		
 		}
 		
 		$is_new_river = ($this->river->loaded() == FALSE);
@@ -327,6 +323,7 @@ class Controller_River extends Controller_Swiftriver {
 		$settings = View::factory('pages/river/settings_control')
 		    ->bind('settings_js', $settings_js)
 		    ->bind('is_newly_created', $this->is_newly_created)
+		    ->bind('river', $this->river)
 		    ->bind('collaborators_control', $collaborators_control);
 		
 		$collaborators_control = NULL;
@@ -456,19 +453,25 @@ class Controller_River extends Controller_Swiftriver {
 				case "POST":
 					$post = json_decode($this->request->body(), TRUE);
 
-					$channel_filter_option = ORM::factory('channel_filter_option');
-					$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
-					$channel_filter_option->key = $post['key'];
-					$channel_filter_option->value = json_encode($post['data']);
+					// Run pre_save events
+					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
 
-					$channel_filter_option->save();
+					if ( ! empty($post))
+					{
 
-					// Add the ID of the newly created option
-					$post["id"] = $channel_filter_option->id;
+						$channel_filter_option = ORM::factory('channel_filter_option');
+						$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
+						$channel_filter_option->key = $post['key'];
+						$channel_filter_option->value = json_encode($post['data']);
 
-					$response["success"] = TRUE;
-					$response["data"] = $post;
+						$channel_filter_option->save();
 
+						// Add the ID of the newly created option
+						$post["id"] = $channel_filter_option->id;
+
+						$response["success"] = TRUE;
+						$response["data"] = $post;
+					}
 				break;
 			}
 		}
@@ -477,19 +480,6 @@ class Controller_River extends Controller_Swiftriver {
 		
 	}
 
-	/**
-	 * Ajax rendered more control box
-	 * 
-	 * @return	void
-	 */
-	public function action_more()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$river_id = $this->request->param('id', 0);
-		echo View::factory('pages/river/more_control')
-			->bind('river_id', $river_id);
-	}	
 
 	/**
 	 * Ajax Title Editing Inline
@@ -522,27 +512,6 @@ class Controller_River extends Controller_Swiftriver {
 			}
 		}
 	}
-
-	/**
-	 * Ajax Delete River
-	 * 
-	 * @return string - json
-	 */
-	public function action_delete()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		if ($this->river->loaded())
-		{
-			$this->river->delete();
-			echo json_encode(array("success"=>TRUE));
-		}
-		else
-		{
-			echo json_encode(array("success"=>FALSE));
-		}
-	}
 	
 	/**
 	 * Saves the settings for the river. The data to be saved must be
@@ -571,40 +540,32 @@ class Controller_River extends Controller_Swiftriver {
 					$response["redirect_url"] = URL::site("/dashboard");
 				}
 			break;
-		}
 
-		echo json_encode($response);
-	}
+			// Update the river data
+			case "PUT":
 
-	
-	public function action_ajax_droplet()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-		
-		$response = array("success" => FALSE);
-		
-		if ($_POST)
-		{
-			$droplet_id = isset($_POST['droplet_id']) ? intval($_POST['droplet_id']) : 0;
-			$action = isset($_POST['action']) ? $_POST['action'] : "";
-			
-			// Load the droplet
-			$droplet = ORM::factory('droplet', $droplet_id);
-			
-			if ($this->river->loaded() AND $droplet->loaded())
-			{
-				switch ($action)
+				if ($this->river->loaded())
 				{
-					// Remove droplet from the river
-					case 'remove':
-						$this->river->remove('droplets', $droplet);
-						$response["success"] = TRUE;
-					break;
+					$post = json_decode($this->request->body(), TRUE);
+
+					// Update the river
+					if (isset($post['name_only']) AND $post['name_only'])
+					{
+						$this->river->river_name = $post['river_name'];
+						$this->river->save();
+					}
+					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+					{
+						$this->river->river_public = $post['river_public'];
+						$this->river->save();
+					}
+
+					$response["success"] = TRUE;
+					$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
 				}
-			}
+			break;
 		}
-		
+
 		echo json_encode($response);
 	}
 

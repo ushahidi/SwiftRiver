@@ -20,6 +20,7 @@ $(function() {
 	window.Discussion = Backbone.Model.extend({
 		urlRoot: "<?php echo $fetch_url?>/reply"
 	});
+	window.DropletScore = Backbone.Model.extend();
 			
 	// Collections for droplet places, tags and links
 	window.DropletPlaceCollection = Backbone.Collection.extend({
@@ -69,6 +70,23 @@ $(function() {
 			}
 			
 			this.save({buckets: change_buckets}, {wait: true});
+		},
+		
+		// Score the droplet
+		score: function(val) {
+			var change = val > 0 ? 1 : -1
+			var dropletScore = new DropletScore({
+				droplet_id: this.get("id"),
+				user_id: <?php echo $user->id ?>,
+				score: change
+			});
+			var newScore = parseInt(this.get("scores") ? this.get("scores") : 0) + change;
+			var currentUserScore = parseInt(this.get("user_score") ? this.get("user_score") : 0);
+			
+			if (currentUserScore != change) {
+				// Only update 'scores' when user_score is different
+				this.save({droplet_score: dropletScore, scores: newScore, user_score: change});
+			}
 		}
 	});
 	
@@ -98,17 +116,28 @@ $(function() {
 			// Show the droplet detail
 			"click .button-view a.detail-view": "showDetail",
 			"click div.bottom a.close": "showDetail",
+			"click div.summary section.content hgroup a": "showDetail",
 			
 			// Show the list of buckets available to the current user
 			"click .bucket a.bucket-view": "showBuckets",				
 			"click .bucket .dropdown p.create-new a": "showCreateBucket",
 			"click div.create-name button.cancel": "cancelCreateBucket",
 			"click div.create-name button.save": "saveBucket",
+			
+			// Droplet deletion
 			"click ul.delete-droplet li.confirm a": "deleteDroplet",
+			
+			// Droplet comments
 			"click .discussion .add-reply .button-go > a": "addReply",
+			
+			// Handle tag creation
 			"click .detail section.meta #add-tag a": "showCreateTag",
 			"click .detail section.meta #add-tag button.cancel": "cancelCreateTag",
-			"click .detail section.meta #add-tag button.save": "saveTag"
+			"click .detail section.meta #add-tag button.save": "saveTag",
+			
+			//Droplet scoring
+			"click div.summary section.source div.actions .dropdown .confirm": "saveUseful",
+			"click div.summary section.source div.actions .dropdown .not_useful": "saveNotUseful"
 		},
 					
 		initialize: function() {
@@ -131,6 +160,9 @@ $(function() {
 			// List of discussions
 			this.discussionsList = new DropletDiscussionsCollection();
 			this.discussionsList.on('reset', this.addDiscussions, this);
+			
+			// Listen for score total update
+			this.model.on("change:scores", this.updateScoreCount, this)
 
 		},
 		
@@ -250,11 +282,41 @@ $(function() {
 		// When save button is clicked in the add bucket drop down
 		saveBucket: function(e) {
 			if(this.$("#new-bucket-name").val()) {
-				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {wait: true});
-				this.$("#new-bucket-name").val('');
+				var create_el = this.$("div.dropdown div.create-name");
+				create_el.fadeOut();
+				
+				var loading_msg = window.loading_message.clone();
+				loading_msg.appendTo($(".bucket .dropdown div.loading")).show();
+				
+				var button = this.$("div.dropdown p.create-new a.plus");
+				var error_el = $(".bucket .dropdown div.system_error");
+				
+				var input_el = this.$("#new-bucket-name");
+				
+				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {
+					wait: true,
+					complete: function() {						
+						loading_msg.fadeOut();
+					},
+					success: function() {
+						button.fadeIn();
+						input_el.val('');
+					},
+					error: function(model, response) {
+						var message = "<ul>";
+						if (response.status == 400) {
+							errors = JSON.parse(response.responseText)["errors"];
+							_.each(errors, function(error) { message += "<li>" + error + "</li>"; });
+						} else {
+							message += "<?php echo __('An error occurred while saving the bucket.'); ?>";
+						}
+						message += "</ul>";
+						// Show error message and fade it out slooooowwwwwwlllllyyyy
+						error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+						create_el.fadeIn();
+					}
+				});				
 			}
-			this.$("div.dropdown div.create-name").fadeOut();
-			this.$("div.dropdown p.create-new a.plus").fadeIn();
 			e.stopPropagation();
 		},
 		
@@ -329,13 +391,53 @@ $(function() {
 		// When save button in the add tag is clicked
 		saveTag: function() {
 			if(this.$("#new-tag-name").val()) {
-				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true});
-				this.$("#new-tag-name").val('');
+				var create_el = this.$(".detail section.meta #add-tag .create-name");
+				create_el.fadeOut();
+				
+				var button = this.$(".detail section.meta #add-tag p.button-change");
+				var input_el = this.$("#new-tag-name");
+				
+				var loading_msg = window.loading_message.clone();
+				loading_msg.appendTo($(".detail section.meta div.item ul.tags").next("div.loading")).show();
+				
+				var error_el = $(".detail section.meta div.item ul.tags").siblings("div.system_error");
+				
+				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true,
+					complete: function() {
+						loading_msg.fadeOut();
+					},
+					success: function() {						
+						button.fadeIn();
+						input_el.val('');
+					},
+					error: function() {
+						var message = "<?php echo __('An error occurred while adding the tag.'); ?>";
+						error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+						create_el.fadeIn();
+					}
+				});				
 			}
-			this.$(".detail section.meta #add-tag .create-name").fadeOut();
-			this.$(".detail section.meta #add-tag p.button-change").fadeIn();
-		}
+		},
 		
+		// When "this is useful" link is clicked
+		saveUseful: function () {
+			this.model.score(1);
+			this.$('div.summary section.source .dropdown li.confirm').hide();
+			this.$('div.summary section.source .dropdown li.not_useful').show();
+		},
+
+		// When "this is not useful" link is clicked
+		saveNotUseful: function () {
+			this.model.score(-1);
+			this.$('div.summary section.source .dropdown li.confirm').show();
+			this.$('div.summary section.source .dropdown li.not_useful').hide();
+		},
+		
+		updateScoreCount: function(val) {
+			this.$('div.summary section.source p.score a').addClass('scored');
+			this.$('div.summary section.source .dropdown').fadeOut('fast').children("p").show();
+			this.$("div.summary section.source p.score span").html(this.model.get("scores"));
+		}
 	});
 	
 	// The droplest list
@@ -384,11 +486,13 @@ $(function() {
 	window.TagView = Backbone.View.extend({
 		
 		tagName: "li",
+
+		className: "tag",
 		
 		template: _.template($("#tag-template").html()),
 		
 		events: {
-			"dblclick": "deleteTag"
+			"click span.actions .dropdown .confirm": "deleteTag"
 		},
 		
 		render: function() {
@@ -493,7 +597,7 @@ $(function() {
 		return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - $("#next_page_button").offset().top;
 	}
 	
-	var loading_msg = $('<div><?php echo(Html::image("themes/default/media/img/loading.gif")) ?><div></div></div>');
+	var loading_msg = window.loading_message.clone();
 	$(window).scroll(function() {
 	    
 		if (nearBottom() && !isPageFetching && !isAtLastPage) {

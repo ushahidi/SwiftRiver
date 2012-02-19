@@ -80,7 +80,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->bucket->id, 1, $max_droplet_id);
+		$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 1, $max_droplet_id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -139,27 +139,21 @@ class Controller_Bucket extends Controller_Swiftriver {
 		{
 			// Extract the posted data
 			$data = Arr::extract($_POST, array('bucket_name', 'bucket_description'));
-
-			$bucket = ORM::factory('bucket');
-			$post = $bucket->validate($data);
-
-			if ($post->check())
+			
+			try
 			{
 				// Save the bucket
-				$bucket->bucket_name = $post['bucket_name'];
-				$bucket->bucket_description = $post['bucket_description'];
+				$bucket = ORM::factory('bucket');
+				$bucket->bucket_name = $data['bucket_name'];
+				$bucket->bucket_description = $data['bucket_description'];
 				$bucket->account_id = $this->account->id;
-				$bucket->user_id = $this->user->id;
-
+				$bucket->user_id = $this->user->id;            
 				$bucket->save();
-
-				// Redirect
 				Request::current()->redirect('bucket/index/'.$bucket->id);
 			}
-			else
+			catch (ORM_Validation_Exception $e)
 			{
-				// TODO: Create i18n files for error messages
-				$errors = $post->errors();
+				$errors = $e->errors('validation');
 			}
 		}
 		
@@ -175,10 +169,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Javascript view
 		$settings_js  = View::factory('pages/bucket/js/settings')
 		   ->bind('bucket_url_root', $bucket_url_root)
-		   ->bind('listing_mode', $listing_mode);
+		   ->bind('bucket_data', $bucket_data);
 
 		$bucket_url_root = $this->base_url.'/api';
-		$listing_mode = FALSE;
+
+		$bucket_data = json_encode(array(
+			'id' => $this->bucket->id,
+			'bucket_name' => $this->bucket->bucket_name,
+			'bucket_publish' => $this->bucket->bucket_publish
+		));
 
 		return $settings_js;
 	}
@@ -214,11 +213,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets_array = array();
 		if ($since_id)
 		{
-		    $droplets_array = Model_Bucket::get_droplets_since_id($bucket->id, $since_id);
+		    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $bucket->id, $since_id);
 		}
 		else
 		{
-		    $droplets_array = Model_Bucket::get_droplets($bucket->id, $page, $max_id);
+		    $droplets_array = Model_Bucket::get_droplets($this->user->id, $bucket->id, $page, $max_id);
 		}
 
 		$droplets = $droplets_array['droplets'];
@@ -385,6 +384,24 @@ class Controller_Bucket extends Controller_Swiftriver {
 		{
 			// Update an existing bucket
 			case "PUT":
+				if ($this->bucket->loaded())
+				{
+					$post = json_decode($this->request->body(), TRUE);
+
+					if (isset($post['name_only']) AND $post['name_only'])
+					{
+						$this->bucket->bucket_name = $post['bucket_name'];
+						$this->bucket->save();
+					}
+					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
+					{
+						$this->bucket->bucket_publish = $post['bucket_publish'];
+						$this->bucket->save();
+					}
+
+					$response["success"] = TRUE;
+					$response["redirect_url"] = $this->base_url.'/index/'.$this->bucket->id;
+				}
 			break;
 
 			// Delets a bucket from the database
@@ -413,18 +430,39 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		switch ($this->request->method())
 		{
-		    case "GET":
-		       echo json_encode($this->user->get_buckets_array());
-		    break;
+			case "GET":
+				echo json_encode($this->user->get_buckets_array());
+			break;
 
-		    case "POST":
-		        $bucket_array = json_decode($this->request->body(), TRUE);
-		        $bucket_array['user_id'] = $this->user->id;
-		        $bucket_array['account_id'] = $this->account->id;
-		        $bucket_orm = Model_Bucket::create_from_array($bucket_array);
-
-		        echo json_encode($bucket_orm->as_array());
-		    break;
+			case "POST":
+				$bucket_array = json_decode($this->request->body(), TRUE);
+				try
+				{
+					$bucket_array['user_id'] = $this->user->id;
+					$bucket_array['account_id'] = $this->account->id;
+					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
+					echo json_encode($bucket_orm->as_array());
+				}
+				catch (ORM_Validation_Exception $e)
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array();
+					foreach ($e->errors('validation') as $message) {
+						$errors[] = $message;
+					}
+					echo json_encode(array('errors' => $errors));
+				}
+				catch (Database_Exception $e)
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("A bucket with the name ':name' already exists", 
+					                                array(':name' => $bucket_array['bucket_name']
+					)));
+					echo json_encode(array('errors' => $errors));
+				}
+			break;
 		}
 	}
 	

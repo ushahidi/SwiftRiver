@@ -23,7 +23,7 @@
 	echo(Html::script("themes/default/media/js/global.js"));
 
 	// Dynamic JS Files
-	// echo(Html::script('media/js'));
+	echo(Html::script('media/js'));
 	?>
 	<script type="text/javascript"><?php
 		// Dynamic inline JS

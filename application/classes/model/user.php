@@ -59,7 +59,8 @@ class Model_User extends Model_Auth_User
 			'model' => 'user',
 			'through' => 'user_followers',
 			'far_key' => 'follower_id'
-			)
+			),
+		'droplet_scores' => array()
 		);
 		
 	protected $_has_one = array(

@@ -1,5 +1,6 @@
 <div class="panel-body">
 	<div id="messages"></div>
+	<div class="loading"></div>
 	<div id="settings" class="controls">
 		<div class="row cf">
 			<div class="input">

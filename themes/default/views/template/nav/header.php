@@ -34,8 +34,8 @@
 		<div class="account">
 			<?php if ($user): ?>
 				<?php if ($num_notifications): ?>
-					<li class="notifications has_dropdown">
-						<a href="/dashboard?filter=notifications">
+					<li class="notifications">
+						<a href="<?php echo URL::site().'dashboard'; ?>">
 							<span class="badge"><?php echo $num_notifications; ?></span>
 						</a>
 					</li>

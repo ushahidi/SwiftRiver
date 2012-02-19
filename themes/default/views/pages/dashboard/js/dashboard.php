@@ -1,6 +1,10 @@
 $(document).ready(function() {
 	// Dashboard Settings
 	$('.button-go').live('click', function() {
+		$("div.panel-body #messages").html("");
+		var loading_msg = window.loading_message.clone();
+		loading_msg.appendTo($("div.panel-body .loading")).append("<?php echo __('Saving...') ?>");
+		
 		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
 			name: $('#name').val(),
 			nickname: $('#nickname').val(),
@@ -10,6 +14,7 @@ $(document).ready(function() {
 			current_password: $('#current_password').val()
 		},
 		function(data){
+			loading_msg.fadeOut();
 			if ( typeof(data.status) != 'undefined' ) {
 				if (data.status == 'success') {
 					$('#messages').html('<div class="system_message system_success"><p><strong><?php echo __('Success!'); ?></strong> <?php echo __('Your settings have been saved'); ?>.</p></div>');

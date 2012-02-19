@@ -1,8 +1,18 @@
 <div class="panel-body">
 	<div id="settings" class="controls">
 		
-		<!-- NEW: Privacy control -->
 		<?php if ( ! $is_newly_created): ?>
+		<div class="row cf">
+			<h2><?php echo __("River Name"); ?></h2>
+			<div class="input">
+				<?php echo Form::input('river_name', $river->river_name, 
+				    array('id' => 'river_name', 'class' => "medium")); ?>
+				<button type="button" class="channel-button" id="rename_river">
+					<span><?php echo __("Rename the River"); ?></span>
+				</button>
+			</div>
+		</div>
+
 		<div class="row cf">
 			<h2><?php echo __("Access to the River"); ?></h2>
 			<div class="input">
@@ -21,7 +31,6 @@
 			</div>
 		</div>
 		<?php endif; ?>
-		<!-- /NEW: Privacy control -->
 
 		<div class="row cf">
 			<h2><?php echo __("Channels"); ?></h2>
@@ -38,17 +47,15 @@
 
 			<!-- buttons -->
 			<div class="row controls-buttons cf">
-				<p class="button-go"><a href="#"><?php echo __("Apply changes"); ?></a></p>
-				<p class="other"><a class="close"><?php echo __("Cancel"); ?></a></p>
-				<div class="item actions">
-					<p class="button-delete button-delete-subtle"><a><?php echo __("Delete River"); ?></a></p>
+				<section class="item actions">
+					<p class="button-delete"><a><?php echo __("Delete River"); ?></a></p>
 					<div class="clear"></div>
 					<ul class="dropdown">
 						<p><?php echo __("Are you sure you want to delete this River?"); ?></p>
 						<li class="confirm"><a><?php echo __("Yep"); ?></a></li>
 						<li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
 					</ul>
-				</div>
+				</section>
 			</div>
 			<!-- /buttons -->
 		</div>
@@ -72,7 +79,8 @@
 
 <script type="text/template" id="option-item-header-template">
     <h3>
-		<%= label %><span>[<a href="#">&mdash;</a>]</span>
+    	<% var headerTitle = (typeof(title) == "undefined") ? label : title; %>
+		<%= headerTitle %><span> [<a href="#">&mdash;</a>]</span>
 	</h3>
 </script>
 

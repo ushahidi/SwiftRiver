@@ -8,21 +8,23 @@
 <script type="text/template" id="droplet-template">
 	<div class="summary cf">
 		<section class="source <%= channel %>">
-			<a><img src="<%= identity_avatar %>" /></a>
-			<div class="actions">
-				<span class="type"></span>
-				<p class="button-change score"><a onclick=""><span>0</span></a><p>
-				<div class="clear"></div>
-				<ul class="dropdown left">
-					<li class="confirm"><a onclick=""><?php echo  __("This is useful"); ?></a></li>
-					<li class="not_useful"><a onclick=""><?php echo __("This is not useful"); ?></a></li>
-				</ul>
-			</div>
+			<a><img src="<%= identity_avatar %>" /></a>			
+				<div class="actions">
+					<span class="type"></span>
+					<p class="button-change score"><a class="<%=scores ? 'scored' : '' %>"><span><%= scores ? scores : 0 %></span></a><p>
+					<div class="clear"></div>					
+					 <ul class="dropdown left">
+						<!-- Show whether droplet has been scored before -->								
+						<p style="<%= user_score ? '': 'display:none;' %>"><?php echo __("You have scored this droplet before. Change your score below?"); ?></p>						
+					 	<li class="confirm" style="<%= parseInt(user_score) == 1 ? 'display:none;' : ''  %>"><a><?php echo  __("This is useful"); ?></a></li>
+					 	<li class="not_useful" style="<%= parseInt(user_score) == -1 ? 'display:none;' : ''  %>"><a><?php echo __("This is not useful"); ?></a></li>
+					 </ul>
+				</div>
 		</section>
 		<section class="content">
 			<hgroup>
 				<p class="date"><%= new Date(droplet_date_pub).toLocaleString() %></p>
-				<strong><%= droplet_title %></strong>
+				<strong><a><%= droplet_title %></a></strong>
 			</hgroup>
 			<div class="body">
 				<p><%= identity_name %></p>
@@ -41,8 +43,10 @@
 					<div class="container">
 						<p class="create-new">
 							<a class="plus"><?php echo __("Create new bucket"); ?></a>
+							<div class="loading"></div>
+							<div class="system_error" style="display:none"></div>
 							<div class="create-name">
-								<input id="new-bucket-name" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
+								<input id="new-bucket-name" maxlength="25" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
 								<div class="buttons">
 									<button class="save"><?php echo __("Save"); ?></button>
 									<button class="cancel"><?php echo __("Cancel"); ?></button>
@@ -62,7 +66,7 @@
 				<section class="meta">
 					<?php if ($owner): ?>
 						<div class="item actions cf">
-							<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
+							<p class="button-delete cf"><a><?php echo __("Delete Drop"); ?></a></p>
 							<ul class="dropdown left delete-droplet">
 								<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
                     	
@@ -73,8 +77,12 @@
 					<?php endif; ?>
 
 					<div class="item cf">
-						<h2>Tags</h2>
+						<% if(tags.length > 0) { %>
+							<h2><?php echo __("Tags") ?></h2>
+						<% } %>
 						<ul class="tags cf"></ul>
+						<div class="loading"></div>
+						<div class="system_error" style="display:none"></div>
 						<?php if ($owner): ?>
 							<div class="container" id="add-tag">
 								<p class="create-new">
@@ -93,17 +101,23 @@
 					</div>
 
 					<div class="item cf locations">
-						<h2><?php echo __("Location"); ?></h2>
+						<% if (places.length > 0) { %>
+							<h2><?php echo __("Location"); ?></h2>
+						<% } %>
 					</div>
 
 					<div class="item cf links">
-						<h2><?php echo __("Links"); ?></h2>
+						<% if (links.length > 0) { %>
+							<h2><?php echo __("Links"); ?></h2>
+						<% } %>
 					</div>
-
+                
 					<?php if ($owner): ?>
+					   <!-- Hide this till we figure it out
 						<div class="item cf">
 							<p class="button-change"><a><?php echo __("Add attachment"); ?></a></p>
 						</div>
+						-->
 					<?php endif; ?>
 				</section>
 
@@ -127,10 +141,10 @@
 					<article class="item add-reply">
 						<div class="summary cf">
 							<section class="source">
-								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>"></a>
+								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 45); ?>"></a>
 							</section>
 							<section class="content">
-								<textarea rows="10" cols="60"></textarea>
+								<textarea rows="8" cols="60"></textarea>
 								<p class="button-go"><a><?php echo __("Add Comment"); ?></a></p>
 							</section>
 						</div>
@@ -149,7 +163,16 @@
 </script>
 
 <script type="text/template" id="tag-template">
-	<a><%= tag %></a>
+	<span class="actions">
+		<a href="#" class="button-delete cross"></a>
+		<ul class="dropdown left">
+			<p><?php echo __("Are you sure you want to remove this tag?"); ?></p>
+	
+			<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
+			<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
+		</ul>
+	</span>
+	<a class="tag-name"><%= tag %></a>
 </script>
 
 <script type="text/template" id="link-template">

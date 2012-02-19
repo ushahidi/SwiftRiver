@@ -51,17 +51,23 @@ class Model_River extends ORM {
 	 */
 	protected $_belongs_to = array('account' => array());
 	
+	
 	/**
-	 * Validation for rivers
-	 * @param array $arr
-	 * @return array
+	 * Rules for the bucket model. 
+	 *
+	 * @return array Rules
 	 */
-	public function validate($arr)
+	public function rules()
 	{
-		return Validation::factory($arr)
-			->rule('river_name', 'not_empty')
-			->rule('river_name', 'min_length', array(':value', 3))
-			->rule('river_name', 'max_length', array(':value', 255));
+		return array(
+			'river_name' => array(
+				array('not_empty'),
+				array('max_length', array(':value', 25)),
+			),
+			'river_public' => array(
+				array('in_array', array(':value', array('0', '1')))
+			),
+		);
 	}
 
 	/**
@@ -268,12 +274,13 @@ class Model_River extends ORM {
 	/**
 	 * Gets the droplets for the specified river
 	 *
+	 * @param int $user_id Logged in user id
 	 * @param int $river_id Database ID of the river
 	 * @param int $page Offset to use for fetching the droplets
 	 * @param string $sort Sorting order
 	 * @return array
 	 */
-	public static function get_droplets($river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC')
+	public static function get_droplets($user_id, $river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC')
 	{
 		$droplets = array(
 			'total' => 0,
@@ -284,21 +291,27 @@ class Model_River extends ORM {
 		if ($river_orm->loaded())
 		{						
 			// Build River Query
-			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), 
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			                    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
+			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.id', '<=', $max_id);	   
+			    ->where('droplets.id', '<=', $max_id)
+			    ->order_by('droplets.droplet_date_pub', $sort)
+			    ->group_by('droplets.id');	   
 
-			// Order & Pagination offset
-			$query->order_by('droplets.droplet_date_pub', $sort);
+			// Pagination offset
 			if ($page > 0)
 			{
 				$query->limit(self::DROPLETS_PER_PAGE);	
@@ -330,11 +343,12 @@ class Model_River extends ORM {
 	/**
 	 * Gets droplets whose database id is above the specified minimum
 	 *
+	 * @param int $user_id Logged in user id	
 	 * @param int $river_id Database ID of the river
 	 * @param int $since_id Lower limit of the droplet id
 	 * @return array
 	 */
-	public static function get_droplets_since_id($river_id, $since_id)
+	public static function get_droplets_since_id($user_id, $river_id, $since_id)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -347,16 +361,22 @@ class Model_River extends ORM {
 		{
 			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
 			    'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%H:%i %b %e, %Y UTC")'),'droplet_date_pub'))
+			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
+			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('droplets.droplet_processed', '=', 1)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.id', '>', $since_id)
 			    ->order_by('droplets.droplet_date_pub', 'ASC')
+			    ->group_by('droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
 			    ->offset(0);
 			
@@ -479,7 +499,8 @@ class Model_River extends ORM {
 		{
 			$collaborators[] = array('id' => $collaborator->user->id, 
 			                         'name' => $collaborator->user->name,
-			                         'account_path' => $collaborator->user->account->account_path
+			                         'account_path' => $collaborator->user->account->account_path,
+			                         'collaborator_active' => $collaborator->collaborator_active
 			);
 		}
 		
