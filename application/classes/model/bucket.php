@@ -187,6 +187,7 @@ class Model_Bucket extends ORM {
 				
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
+			$droplets['total'] = count($droplets['droplets']);
 			
 			// Populate buckets array			
 			Model_Droplet::populate_buckets($droplets['droplets']);
@@ -198,10 +199,11 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_links($droplets['droplets']);			
 			
 			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets']);			
+			Model_Droplet::populate_places($droplets['droplets']);
+
+			// Populate the discussions array
+			Model_Droplet::populate_discussions($droplets['droplets']);
 			
-			
-			$droplets['total'] = count($droplets['droplets']);
 		}
 
 		return $droplets;
