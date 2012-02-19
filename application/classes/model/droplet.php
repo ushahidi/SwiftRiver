@@ -315,81 +315,6 @@ class Model_Droplet extends ORM
 		return $droplets;
 	}
 	
-	/**
-	 * Gets a droplet's buckets as an array
-	 *
-	 * @return array
-	 */
-	public function get_buckets()
-	{
-		$buckets = array();
-		foreach ($this->buckets->find_all() as $bucket)
-		{
-			$buckets[] = array('id' => $bucket->id, 'bucket_name' => $bucket->bucket_name);
-		}
-		
-		return $buckets;
-    }
-
-	/**
-	 * Gets a droplet's tags as an array
-	 *
-	 * @return array
-	 */
-	public function get_tags($account_id = NULL)
-	{
-		$tags = array();
-	    
-		foreach ($this->tags->find_all() as $tag)
-		{
-			$tags[] = array('id' => $tag->id, 'tag' => $tag->tag);
-		}
-		
-		// User defined tags
-		if ($account_id)
-		{
-			foreach ($this->account_droplet_tags->where('account_id', '=', $account_id)->find_all() as $account_tag)	
-			{
-				$tags[] = array('id' => $account_tag->tag->id, 'tag' => $account_tag->tag->tag);
-			}
-		}
-		
-		return $tags;
-    }
-
-	/**
-	 * Gets a droplet's links as an array
-	 *
-	 * @return array
-	 */
-	public function get_links()
-	{
-		$links = array();
-	    
-		foreach ($this->links->find_all() as $link)
-		{
-			$links[] = array('id' => $link->id, 'link_full' => $link->link_full);
-		}
-		
-		return $links;
-    }
-
-	/**
-	 * Gets a droplet's places as an array
-	 *
-	 * @return array
-	 */
-	public function get_places()
-	{
-		$places = array();
-	    
-		foreach ($this->places->find_all() as $place)
-		{
-			$places[] = array('id' => $place->id, 'place_name' => $place->place_name);
-		}
-		
-		return $places;
-    }
 
 	/**
 	 * Given an array of droplets, populates a buckets array element
@@ -398,11 +323,41 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_buckets(& $droplets)
 	{
+		if(empty($droplets))
+			return;
+		
+		// Collect droplet IDs into a single array
+		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
-			$droplet_orm = ORM::factory('droplet', $droplet['id']);
-			
-			$droplet['buckets'] = $droplet_orm->get_buckets();
+			$droplet_ids[] = $droplet['id'];
+		}
+
+		//Query all buckets belonging to the selected droplet IDs
+		$query_buckets = DB::select('droplet_id', array('bucket_id', 'id'), 'bucket_name')
+					->from('buckets_droplets')
+					->join('buckets', 'INNER')
+					->on('buckets.id', '=', 'bucket_id')
+					->where('droplet_id', 'IN', $droplet_ids);
+				
+		// Group the buckets per droplet
+		$droplet_buckets = array();
+		foreach ($query_buckets->execute()->as_array() as $bucket) {
+			$droplet_id = $bucket['droplet_id'];
+			if ( ! isset($droplet_buckets[$droplet_id])) {
+				$droplet_buckets[$droplet_id] = array();
+			}
+			unset($bucket['droplet_id']);
+			$droplet_buckets[$droplet_id][] = $bucket;
+		}
+		
+		// Assign the buckets to the droplets
+		foreach($droplets as & $droplet)
+		{
+			$droplet_id = $droplet['id'];
+			if (isset($droplet_buckets[$droplet_id])) {
+				$droplet['buckets'] = $droplet_buckets[$droplet_id];
+			}
 		}	    
 	}
 	
@@ -413,12 +368,51 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_tags(& $droplets, $account_id)
 	{
+		if(empty($droplets))
+			return;
+		
+		// Collect droplet IDs into a single array
+		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
-			$droplet_orm = ORM::factory('droplet', $droplet['id']);
-			
-			$droplet['tags'] = $droplet_orm->get_tags($account_id);
-		}	    
+			$droplet_ids[] = $droplet['id'];
+		}
+
+		//Query all tags belonging to the selected droplet IDs
+		$query_account = DB::select('droplet_id', array('tag_id', 'id'), 'tag')		            
+					->from('account_droplet_tags')
+					->join('tags', 'INNER')
+					->on('tags.id', '=', 'tag_id')
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('account_id', '=', $account_id);
+		
+		//Query all tags belonging to the selected droplet IDs
+		$query_tags = DB::select('droplet_id', array('tag_id', 'id'), 'tag')
+					->union($query_account, TRUE)
+					->from('droplets_tags')
+					->join('tags', 'INNER')
+					->on('tags.id', '=', 'tag_id')
+					->where('droplet_id', 'IN', $droplet_ids);
+				
+		// Group the tags per droplet
+		$droplet_tags = array();
+		foreach ($query_tags->execute()->as_array() as $tag) {
+			$droplet_id = $tag['droplet_id'];
+			if ( ! isset($droplet_tags[$droplet_id])) {
+				$droplet_tags[$droplet_id] = array();
+			}
+			unset($tag['droplet_id']);
+			$droplet_tags[$droplet_id][] = $tag;
+		}
+		
+		// Assign the tags to the droplets
+		foreach($droplets as & $droplet)
+		{
+			$droplet_id = $droplet['id'];
+			if (isset($droplet_tags[$droplet_id])) {
+				$droplet['tags'] = $droplet_tags[$droplet_id];
+			}
+		}
 	}
 
 	/**
@@ -428,12 +422,42 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_links(& $droplets)
 	{
-		foreach ($droplets as & $droplet)
+		if(empty($droplets))
+			return;
+		
+		// Collect droplet IDs into a single array
+		$droplet_ids = array();
+		foreach($droplets as & $droplet)
 		{
-			$droplet_orm = ORM::factory('droplet', $droplet['id']);
-			
-			$droplet['links'] = $droplet_orm->get_links();
-		}	    
+			$droplet_ids[] = $droplet['id'];
+		}
+
+		//Query all links belonging to the selected droplet IDs
+		$query_links = DB::select('droplet_id', array('link_id', 'id'), 'link_full')
+					->from('droplets_links')
+					->join('links', 'INNER')
+					->on('links.id', '=', 'link_id')
+					->where('droplet_id', 'IN', $droplet_ids);
+				
+		// Group the links per droplet
+		$droplet_links = array();
+		foreach ($query_links->execute()->as_array() as $link) {
+			$droplet_id = $link['droplet_id'];
+			if ( ! isset($droplet_links[$droplet_id])) {
+				$droplet_links[$droplet_id] = array();
+			}
+			unset($link['droplet_id']);
+			$droplet_links[$droplet_id][] = $link;
+		}
+		
+		// Assign the links to the droplets
+		foreach($droplets as & $droplet)
+		{
+			$droplet_id = $droplet['id'];
+			if (isset($droplet_links[$droplet_id])) {
+				$droplet['links'] = $droplet_links[$droplet_id];
+			}
+		}    
 	}
 
 	/**
@@ -443,12 +467,42 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_places(& $droplets)
 	{
-		foreach ($droplets as & $droplet)
+		if(empty($droplets))
+			return;
+		
+		// Collect droplet IDs into a single array
+		$droplet_ids = array();
+		foreach($droplets as & $droplet)
 		{
-			$droplet_orm = ORM::factory('droplet', $droplet['id']);
-			
-			$droplet['places'] = $droplet_orm->get_places();
-		}	    
+			$droplet_ids[] = $droplet['id'];
+		}
+
+		//Query all places belonging to the selected droplet IDs
+		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name')
+					->from('droplets_places')
+					->join('places', 'INNER')
+					->on('places.id', '=', 'place_id')
+					->where('droplet_id', 'IN', $droplet_ids);
+				
+		// Group the places per droplet
+		$droplet_places = array();
+		foreach ($query_places->execute()->as_array() as $place) {
+			$droplet_id = $place['droplet_id'];
+			if ( ! isset($droplet_places[$droplet_id])) {
+				$droplet_places[$droplet_id] = array();
+			}
+			unset($place['droplet_id']);
+			$droplet_places[$droplet_id][] = $place;
+		}
+		
+		// Assign the places to the droplets
+		foreach($droplets as & $droplet)
+		{
+			$droplet_id = $droplet['id'];
+			if (isset($droplet_places[$droplet_id])) {
+				$droplet['places'] = $droplet_places[$droplet_id];
+			}
+		}    
 	}
 	
 	/**

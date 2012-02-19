@@ -313,33 +313,21 @@ class Model_River extends ORM {
 
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
-			$droplets['total'] = count($droplets['droplets']);
-
-			// Only fetch the semantics when data has been retuned
-			if ($droplets['total'] > 0)
-			{
-				// Get the metadata
-				$tags = self::get_droplets_tags($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$places = self::get_droplets_places($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-				$links = self::get_droplets_links($river_id, $river_orm->account->id, $sort, 0, $max_id, $page);
-
-				// Add the links, tags and places to each of the droplets
-				foreach ($droplets['droplets'] as & $droplet)
-				{
-					// Get the droplet id
-					$id = $droplet['id'];
-
-					$droplet['links'] = isset($links[$id]) ? $links[$id] : array();
-					$droplet['places'] = isset($places[$id]) ? $places[$id] : array();
-					$droplet['tags'] = isset($tags[$id]) ? $tags[$id] : array();
-				}
-				
-				// Populate buckets array			
-				Model_Droplet::populate_buckets($droplets['droplets']);
-				
-				// Populate the discussions array
-				Model_Droplet::populate_discussions($droplets['droplets']);
-			}
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+			
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
+			
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);
+			
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);
+			
+			// Populate the discussions array
+			Model_Droplet::populate_discussions($droplets['droplets']);
 		}
 
 		return $droplets;
@@ -379,33 +367,21 @@ class Model_River extends ORM {
 			    ->offset(0);
 			
 			$droplets['droplets'] = $query->execute()->as_array();
-			$droplets['total'] = count($droplets['droplets']);
-
-			// Only fetch the semantics when data has been retuned
-			if ($droplets['total'] > 0)
-			{
-				// Get the metadata
-				$tags = self::get_droplets_tags($river_id, $river_orm->account->id, 'ASC', $since_id);
-				$places = self::get_droplets_places($river_id, $river_orm->account->id, 'ASC', $since_id);
-				$links = self::get_droplets_links($river_id, $river_orm->account->id, 'ASC', $since_id);
-
-				// Add the links, tags and places to each of the droplets
-				foreach ($droplets['droplets'] as & $droplet)
-				{
-					// Get the droplet id
-					$id = $droplet['id'];
-
-					$droplet['links'] = isset($links[$id]) ? $links[$id] : array();
-					$droplet['places'] = isset($places[$id]) ? $places[$id] : array();
-					$droplet['tags'] = isset($tags[$id]) ? $tags[$id] : array();
-				}
-				
-				// Populate buckets array			
-				Model_Droplet::populate_buckets($droplets['droplets']);
-				
-				// Populate the discussions array
-				Model_Droplet::populate_discussions($droplets['droplets']);
-			}
+			
+			// Populate buckets array			
+			Model_Droplet::populate_buckets($droplets['droplets']);
+        	
+			// Populate tags array			
+			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
+			
+			// Populate links array			
+			Model_Droplet::populate_links($droplets['droplets']);
+        	
+			// Populate places array			
+			Model_Droplet::populate_places($droplets['droplets']);
+			
+			// Populate the discussions array
+			Model_Droplet::populate_discussions($droplets['droplets']);
 		}
 				
 		return $droplets;
@@ -516,181 +492,7 @@ class Model_River extends ORM {
 		
 		return $collaborators;
 	}
-
-
-	/**
-	 * Gets the tags associated with the droplets in the speciffied river
-	 * for the specified account
-	 *
-	 * @param int $river_id ID of the river
-	 * @param int $account_id ID of the account
-	 * @return array
-	 */
-	public static function get_droplets_tags($river_id, $account_id, $sort = 'DESC', $since_id = 0, $max_id = 0, $page = 1)
-	{
-		// Query to fetch the data
-		$sql = "SELECT DISTINCT d.id, dt.tag_id, t.tag "
-		    . "FROM droplets d "
-		    . "INNER JOIN droplets_tags dt ON (dt.droplet_id = d.id) "
-		    . "INNER JOIN tags t ON (dt.tag_id = t.id) "
-		    . "INNER JOIN rivers_droplets rd ON (rd.`droplet_id` = d.id) AND (d.droplet_processed = 1) "
-		    . "LEFT JOIN account_droplet_tags adt ON (adt.droplet_id = rd.droplet_id) "
-		    . "AND (adt.tag_id = t.id) AND (adt.account_id = ".$account_id.") "
-		    . "WHERE rd.river_id = ".$river_id." ";
-		
-		// Check for since id
-		$sql .= ($since_id > 0) ? "AND d.id > ".$since_id." " : "";
-		$limit_clause = " LIMIT 20";
-
-		// Check for max id
-		$sql .= ($max_id > 0) ? "AND d.id < ".$max_id." " : "";
-
-		// Modify the "LIMIT" clause - only when max_id has been specified
-		$limit_clause .= ($max_id > 0 AND $page > 1) 
-		    ? ", ".self::DROPLETS_PER_PAGE * ($page - 1) 
-		    : "";
-
-		// Add te order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
-		$sql .= $limit_clause;
-
-		$query = DB::query(Database::SELECT, $sql);
-
-		$result = $query->execute()->as_array();
-
-
-		// Group the row data by droplet
-		$tags = array();
-		foreach ($result as $k => $data)
-		{
-			if ( ! isset($tags[$data['id']]))
-			{
-				$tags[$data['id']] = array();
-			}
-
-			$tags[$data['id']][] = array(
-				'id' => $data['tag_id'],
-				'tag' => $data['tag']
-			);
-		}
-
-		return $tags;
-	}
-
-	/**
-	 * Gets the places associated with the droplets in the speciffied river
-	 * for the specified account
-	 *
-	 * @param int $river_id ID of the river
-	 * @param int $account_id ID of the account
-	 * @return array
-	 */
-	public static function get_droplets_places($river_id, $account_id, $sort = 'DESC', $since_id = 0, $max_id = 0, $page = 1)
-	{
-		// Query to fetch the data
-		$sql = "SELECT DISTINCT d.id, dp.place_id, p.place_name "
-		    . "FROM droplets d "
-		    . "INNER JOIN droplets_places dp ON (dp.droplet_id = d.id) "
-		    . "INNER JOIN places p ON (dp.place_id = p.id) "
-		    . "INNER JOIN rivers_droplets rd ON (rd.`droplet_id` = d.id) AND (d.droplet_processed = 1) "
-		    . "LEFT JOIN account_droplet_places adp ON (adp.droplet_id = rd.droplet_id) "
-		    . "AND (adp.place_id = p.id) AND (adp.account_id = ".$account_id.") "
-		    . "WHERE rd.river_id = ".$river_id." ";
-		
-		// Check for since id
-		$sql .= ($since_id > 0) ? "AND d.id > ".$since_id." " : "";
-		$limit_clause = " LIMIT 20";
-
-		// Check for max id
-		$sql .= ($max_id > 0) ? "AND d.id < ".$max_id." " : "";
-
-		// Modify the "LIMIT" clause - only when max_id has been specified
-		$limit_clause .= ($max_id > 0 AND $page > 1) 
-		    ? ", ".self::DROPLETS_PER_PAGE * ($page - 1) 
-		    : "";
-
-		// Add te order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
-		$sql .= $limit_clause;
-
-		$query = DB::query(Database::SELECT, $sql);
-
-		$result =  $query->execute()->as_array();
-
-		$places = array();
-		foreach ($result as $k => $data)
-		{
-			if ( ! isset($places[$data['id']]))
-			{
-				$places[$data['id']] = array();
-			}
-
-			$places[$data['id']][] = array(
-				'id' => $data['place_id'],
-				'place_name' => $data['place_name']
-			);
-		}
-		return $places;
-	}
-
-	/**
-	 * Gets the links associated with the droplets in the speciffied river
-	 * for the specified account
-	 *
-	 * @param int $river_id ID of the river
-	 * @param int $account_id ID of the account
-	 * @return array
-	 */
-	public static function get_droplets_links($river_id, $account_id, $sort = 'DESC', $since_id = 0, $max_id = 0, $page = 1)
-	{
-		// Query to fetch the data
-		$sql = "SELECT DISTINCT d.id, dl.link_id, l.link_full "
-		    . "FROM droplets d "
-		    . "INNER JOIN droplets_links dl ON (dl.droplet_id = d.id) "
-		    . "INNER JOIN links l ON (dl.link_id = l.id) "
-		    . "INNER JOIN rivers_droplets rd ON (rd.`droplet_id` = d.id) AND (d.droplet_processed = 1) "
-		    . "LEFT JOIN account_droplet_links adl ON (adl.droplet_id = rd.droplet_id) "
-		    . "AND (adl.link_id = l.id) AND (adl.account_id = ".$account_id.") "
-		    . "WHERE rd.river_id = ".$river_id." ";
-		
-		// Check for since id
-		$sql .= ($since_id > 0) ? "AND d.id > ".$since_id." " : "";
-		$limit_clause = " LIMIT 20";
-
-		// Check for max id
-		$sql .= ($max_id > 0) ? "AND d.id < ".$max_id." " : "";
-
-		// Modify the "LIMIT" clause - only when max_id has been specified
-		$limit_clause .= ($max_id > 0 AND $page > 1) 
-		    ? ", ".self::DROPLETS_PER_PAGE * ($page - 1) 
-		    : "";
-
-		// Add the order by clause
-		$sql .= "ORDER BY d.droplet_date_pub ".$sort;
-		$sql .= $limit_clause;
-
-		$query = DB::query(Database::SELECT, $sql);
-
-		$result =  $query->execute()->as_array();
-
-		// Group the row data per droplet
-		$links = array();
-		foreach ($result as $k => $data)
-		{
-			if ( ! isset($links[$data['id']]))
-			{
-				$links[$data['id']] = array();
-			}
-
-			$links[$data['id']][] = array(
-				'id' => $data['link_id'],
-				'link_full' => $data['link_full']
-			);
-		}
-
-		return $links;
-	}
-
+	
 }
 
 ?>
