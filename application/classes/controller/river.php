@@ -105,7 +105,7 @@ class Controller_River extends Controller_Swiftriver {
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 				
 		//Get Droplets
-	    $droplets_array = Model_River::get_droplets($river_id, 1, $max_droplet_id);
+	    $droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, $max_droplet_id);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -164,11 +164,11 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_array = array();
 		if ( $since_id )
 		{
-		    $droplets_array = Model_River::get_droplets_since_id($this->river->id, $since_id);
+		    $droplets_array = Model_River::get_droplets_since_id($this->user->id, $this->river->id, $since_id);
 		}
 		else
 		{
-		    $droplets_array = Model_River::get_droplets($this->river->id, $page, $max_id);
+		    $droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $page, $max_id);
 		}
 		
 		$droplets = $droplets_array['droplets'];

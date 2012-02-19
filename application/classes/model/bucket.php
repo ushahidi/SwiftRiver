@@ -94,10 +94,11 @@ class Model_Bucket extends ORM {
 	/**
 	 * Get the droplets for the specified bucket
 	 *
+	 * @param int $user_id Logged in user id	
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($bucket_id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
+	public static function get_droplets($user_id, $bucket_id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -108,18 +109,24 @@ class Model_Bucket extends ORM {
 		if ($bucket_orm->loaded())
 		{
 			// Build Buckets Query
-			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), 
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
-								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'))
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+								array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
-				->on('droplets.identity_id', '=', 'identities.id')				
+				->on('droplets.identity_id', '=', 'identities.id')
+				->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '<=', $max_id)
+				->group_by('droplets.id')
 				->order_by('buckets_droplets.droplet_date_added', 'DESC');
 				
 			// Order & Pagination offset
@@ -157,10 +164,11 @@ class Model_Bucket extends ORM {
 	/**
 	 * Get the droplets newer than the specified id
 	 *
+	 * @param int $user_id Logged in user id	
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets_since_id($bucket_id, $since_id)
+	public static function get_droplets_since_id($user_id, $bucket_id, $since_id)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -171,18 +179,24 @@ class Model_Bucket extends ORM {
 		if ($bucket_orm->loaded())
 		{		
 			// Build Buckets Query
-			$query = DB::select(array(DB::expr('DISTINCT droplets.id'), 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), 
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
-								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'))
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			                    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
 				->join('identities')
-				->on('droplets.identity_id', '=', 'identities.id')				
+				->on('droplets.identity_id', '=', 'identities.id')
+				->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
 				->where('droplets.id', '>', $since_id)
+				->group_by('droplets.id')
 				->order_by('droplets.id', 'DESC');
 				
 			// Get our droplets as an Array		

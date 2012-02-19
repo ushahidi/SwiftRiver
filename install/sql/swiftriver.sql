@@ -730,6 +730,19 @@ CREATE TABLE IF NOT EXISTS `river_subscriptions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- ----------------------------------------
+-- TABLE 'droplet_scores'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `droplet_scores` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `droplet_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `score` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `droplet_id` (`droplet_id`,`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+
 -- -----------------------------------------------------
 -- Data for table `roles`
 -- -----------------------------------------------------

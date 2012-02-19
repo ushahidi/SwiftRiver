@@ -50,7 +50,8 @@ class Model_Droplet extends ORM
 		'links' => array(
 			'model' => 'link',
 			'through' => 'droplets_links'
-			)			
+			),
+		'droplet_scores' => array()
 		);
 		
 	/**
@@ -545,6 +546,32 @@ class Model_Droplet extends ORM
 	public function update_from_array($droplet_array) 
 	{
 		$this->__update_buckets($droplet_array);
+		$this->__update_score($droplet_array);
+	}
+	
+	/**
+	 * Updates a droplet's buckets from an array. 
+	 *
+	 * @param array
+	 * @return void
+	 */	
+	private function __update_score($droplet_array)
+	{
+		if ( ! isset($droplet_array['droplet_score']))
+			return;
+		
+		$droplet_score_arr = $droplet_array['droplet_score'];
+		
+		$droplet_score_orm = ORM::factory('droplet_score')
+							->where('droplet_id', '=', $droplet_score_arr['droplet_id'])
+							->where('user_id', '=', $droplet_score_arr['user_id'])
+							->find();
+		
+		// Set the values, if a score already exists... change it.
+		$droplet_score_orm->droplet_id = $droplet_score_arr['droplet_id'];
+		$droplet_score_orm->user_id = $droplet_score_arr['user_id'];
+		$droplet_score_orm->score = $droplet_score_arr['score'];
+		$droplet_score_orm->save();
 	}
 
 	/**

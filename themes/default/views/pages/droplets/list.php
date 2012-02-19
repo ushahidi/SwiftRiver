@@ -8,16 +8,18 @@
 <script type="text/template" id="droplet-template">
 	<div class="summary cf">
 		<section class="source <%= channel %>">
-			<a><img src="<%= identity_avatar %>" /></a>
-			<div class="actions">
-				<span class="type"></span>
-				<p class="button-change score"><a onclick=""><span>0</span></a><p>
-				<div class="clear"></div>
-				<ul class="dropdown left">
-					<li class="confirm"><a onclick=""><?php echo  __("This is useful"); ?></a></li>
-					<li class="not_useful"><a onclick=""><?php echo __("This is not useful"); ?></a></li>
-				</ul>
-			</div>
+			<a><img src="<%= identity_avatar %>" /></a>			
+				<div class="actions">
+					<span class="type"></span>
+					<p class="button-change score"><a class="<%=scores ? 'scored' : '' %>"><span><%= scores ? scores : 0 %></span></a><p>
+					<div class="clear"></div>					
+					 <ul class="dropdown left">
+						<!-- Show whether droplet has been scored before -->								
+						<p style="<%= user_score ? '': 'display:none;' %>"><?php echo __("You have scored this droplet before. Change your score below?"); ?></p>						
+					 	<li class="confirm" style="<%= parseInt(user_score) == 1 ? 'display:none;' : ''  %>"><a><?php echo  __("This is useful"); ?></a></li>
+					 	<li class="not_useful" style="<%= parseInt(user_score) == -1 ? 'display:none;' : ''  %>"><a><?php echo __("This is not useful"); ?></a></li>
+					 </ul>
+				</div>
 		</section>
 		<section class="content">
 			<hgroup>

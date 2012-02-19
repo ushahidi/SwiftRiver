@@ -80,7 +80,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->bucket->id, 1, $max_droplet_id);
+		$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 1, $max_droplet_id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -213,11 +213,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets_array = array();
 		if ($since_id)
 		{
-		    $droplets_array = Model_Bucket::get_droplets_since_id($bucket->id, $since_id);
+		    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $bucket->id, $since_id);
 		}
 		else
 		{
-		    $droplets_array = Model_Bucket::get_droplets($bucket->id, $page, $max_id);
+		    $droplets_array = Model_Bucket::get_droplets($this->user->id, $bucket->id, $page, $max_id);
 		}
 
 		$droplets = $droplets_array['droplets'];

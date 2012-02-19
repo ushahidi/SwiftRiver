@@ -103,8 +103,6 @@ $(document).ready(function() {
 		$(this).addClass('selected');
 	});
 	
-	// Score a droplet
-	$('section.source div.actions ul.dropdown li.useful a.selected').closest('ul.dropdown').siblings('p.score').children('a').addClass('scored');
 
 	// Display "Edit Multiple"
 	function countChecked() {

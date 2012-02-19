@@ -20,6 +20,7 @@ $(function() {
 	window.Discussion = Backbone.Model.extend({
 		urlRoot: "<?php echo $fetch_url?>/reply"
 	});
+	window.DropletScore = Backbone.Model.extend();
 			
 	// Collections for droplet places, tags and links
 	window.DropletPlaceCollection = Backbone.Collection.extend({
@@ -69,6 +70,23 @@ $(function() {
 			}
 			
 			this.save({buckets: change_buckets}, {wait: true});
+		},
+		
+		// Score the droplet
+		score: function(val) {
+			var change = val > 0 ? 1 : -1
+			var dropletScore = new DropletScore({
+				droplet_id: this.get("id"),
+				user_id: <?php echo $user->id ?>,
+				score: change
+			});
+			var newScore = parseInt(this.get("scores") ? this.get("scores") : 0) + change;
+			var currentUserScore = parseInt(this.get("user_score") ? this.get("user_score") : 0);
+			
+			if (currentUserScore != change) {
+				// Only update 'scores' when user_score is different
+				this.save({droplet_score: dropletScore, scores: newScore, user_score: change});
+			}
 		}
 	});
 	
@@ -105,11 +123,21 @@ $(function() {
 			"click .bucket .dropdown p.create-new a": "showCreateBucket",
 			"click div.create-name button.cancel": "cancelCreateBucket",
 			"click div.create-name button.save": "saveBucket",
+			
+			// Droplet deletion
 			"click ul.delete-droplet li.confirm a": "deleteDroplet",
+			
+			// Droplet comments
 			"click .discussion .add-reply .button-go > a": "addReply",
+			
+			// Handle tag creation
 			"click .detail section.meta #add-tag a": "showCreateTag",
 			"click .detail section.meta #add-tag button.cancel": "cancelCreateTag",
-			"click .detail section.meta #add-tag button.save": "saveTag"
+			"click .detail section.meta #add-tag button.save": "saveTag",
+			
+			//Droplet scoring
+			"click div.summary section.source div.actions .dropdown .confirm": "saveUseful",
+			"click div.summary section.source div.actions .dropdown .not_useful": "saveNotUseful"
 		},
 					
 		initialize: function() {
@@ -132,6 +160,9 @@ $(function() {
 			// List of discussions
 			this.discussionsList = new DropletDiscussionsCollection();
 			this.discussionsList.on('reset', this.addDiscussions, this);
+			
+			// Listen for score total update
+			this.model.on("change:scores", this.updateScoreCount, this)
 
 		},
 		
@@ -386,8 +417,27 @@ $(function() {
 					}
 				});				
 			}
-		}
+		},
 		
+		// When "this is useful" link is clicked
+		saveUseful: function () {
+			this.model.score(1);
+			this.$('div.summary section.source .dropdown li.confirm').hide();
+			this.$('div.summary section.source .dropdown li.not_useful').show();
+		},
+
+		// When "this is not useful" link is clicked
+		saveNotUseful: function () {
+			this.model.score(-1);
+			this.$('div.summary section.source .dropdown li.confirm').show();
+			this.$('div.summary section.source .dropdown li.not_useful').hide();
+		},
+		
+		updateScoreCount: function(val) {
+			this.$('div.summary section.source p.score a').addClass('scored');
+			this.$('div.summary section.source .dropdown').fadeOut('fast').children("p").show();
+			this.$("div.summary section.source p.score span").html(this.model.get("scores"));
+		}
 	});
 	
 	// The droplest list
