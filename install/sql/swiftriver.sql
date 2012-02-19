@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `tag_type` VARCHAR(255) NULL DEFAULT NULL ,
   `tag_source` VARCHAR(100) NULL DEFAULT NULL ,
   `tag_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  UNIQUE INDEX (`tag` ASC) ,
   UNIQUE INDEX (`tag_type`,`tag`),
   PRIMARY KEY (`id`) ,
   INDEX `tag_idx` (`tag` ASC) ,
@@ -337,11 +336,6 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-
-INSERT INTO `plugins` (`id`, `plugin_path`, `plugin_name`, `plugin_description`, `plugin_enabled`, `plugin_weight`)
-VALUES
-	(1, 'rss', 'rss', 'RSS Crawler', 1, 1),
-	(3, 'twitter', 'twitter', 'Twitter Search', 1, 2);
 
 
 -- -----------------------------------------------------
