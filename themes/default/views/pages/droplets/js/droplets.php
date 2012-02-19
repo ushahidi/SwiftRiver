@@ -98,6 +98,7 @@ $(function() {
 			// Show the droplet detail
 			"click .button-view a.detail-view": "showDetail",
 			"click div.bottom a.close": "showDetail",
+			"click div.summary section.content hgroup a": "showDetail",
 			
 			// Show the list of buckets available to the current user
 			"click .bucket a.bucket-view": "showBuckets",				
@@ -238,7 +239,6 @@ $(function() {
 		showCreateBucket: function(e) {
 			this.$("div.dropdown div.create-name").fadeIn();
 			this.$("div.dropdown p.create-new a.plus").fadeOut();
-			this.$("div.dropdown div.create-name input").focus();
 		},
 		
 		// When cancel buttons is clicked in the add bucket drop down
@@ -250,19 +250,26 @@ $(function() {
 		
 		// When save button is clicked in the add bucket drop down
 		saveBucket: function(e) {
-			this.$("div.dropdown div.create-name").fadeOut();			
 			if(this.$("#new-bucket-name").val()) {
+				var create_el = this.$("div.dropdown div.create-name");
+				create_el.fadeOut();
+				
 				var loading_msg = window.loading_message.clone();
 				loading_msg.appendTo($(".bucket .dropdown div.loading")).show();
 				
-				var create_new_el = this.$("div.dropdown p.create-new a.plus");
+				var button = this.$("div.dropdown p.create-new a.plus");
 				var error_el = $(".bucket .dropdown div.system_error");
+				
+				var input_el = this.$("#new-bucket-name");
 				
 				bucketList.create({bucket_name: this.$("#new-bucket-name").val()}, {
 					wait: true,
-					complete: function() {
-						create_new_el.fadeIn();
+					complete: function() {						
 						loading_msg.fadeOut();
+					},
+					success: function() {
+						button.fadeIn();
+						input_el.val('');
 					},
 					error: function(model, response) {
 						var message = "<ul>";
@@ -274,10 +281,10 @@ $(function() {
 						}
 						message += "</ul>";
 						// Show error message and fade it out slooooowwwwwwlllllyyyy
-						error_el.html(message).fadeIn("fast").delay(500).fadeOut(3000).html();
+						error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+						create_el.fadeIn();
 					}
-				});
-				this.$("#new-bucket-name").val('');
+				});				
 			}
 			e.stopPropagation();
 		},
@@ -353,11 +360,32 @@ $(function() {
 		// When save button in the add tag is clicked
 		saveTag: function() {
 			if(this.$("#new-tag-name").val()) {
-				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true});
-				this.$("#new-tag-name").val('');
+				var create_el = this.$(".detail section.meta #add-tag .create-name");
+				create_el.fadeOut();
+				
+				var button = this.$(".detail section.meta #add-tag p.button-change");
+				var input_el = this.$("#new-tag-name");
+				
+				var loading_msg = window.loading_message.clone();
+				loading_msg.appendTo($(".detail section.meta div.item ul.tags").next("div.loading")).show();
+				
+				var error_el = $(".detail section.meta div.item ul.tags").siblings("div.system_error");
+				
+				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true,
+					complete: function() {
+						loading_msg.fadeOut();
+					},
+					success: function() {						
+						button.fadeIn();
+						input_el.val('');
+					},
+					error: function() {
+						var message = "<?php echo __('An error occurred while adding the tag.'); ?>";
+						error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+						create_el.fadeIn();
+					}
+				});				
 			}
-			this.$(".detail section.meta #add-tag .create-name").fadeOut();
-			this.$(".detail section.meta #add-tag p.button-change").fadeIn();
 		}
 		
 	});
@@ -414,7 +442,7 @@ $(function() {
 		template: _.template($("#tag-template").html()),
 		
 		events: {
-			"dblclick": "deleteTag"
+			"click span.actions .dropdown .confirm": "deleteTag"
 		},
 		
 		render: function() {

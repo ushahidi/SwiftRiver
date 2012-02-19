@@ -22,7 +22,7 @@
 		<section class="content">
 			<hgroup>
 				<p class="date"><%= new Date(droplet_date_pub).toLocaleString() %></p>
-				<strong><%= droplet_title %></strong>
+				<strong><a><%= droplet_title %></a></strong>
 			</hgroup>
 			<div class="body">
 				<p><%= identity_name %></p>
@@ -64,7 +64,7 @@
 				<section class="meta">
 					<?php if ($owner): ?>
 						<div class="item actions cf">
-							<p class="button-delete cf"><a><?php echo __("Delete droplet"); ?></a></p>
+							<p class="button-delete cf"><a><?php echo __("Delete Drop"); ?></a></p>
 							<ul class="dropdown left delete-droplet">
 								<p><?php echo __("Are you sure you want to delete this droplet?"); ?></p>
                     	
@@ -75,8 +75,12 @@
 					<?php endif; ?>
 
 					<div class="item cf">
-						<h2>Tags</h2>
+						<% if(tags.length > 0) { %>
+							<h2><?php echo __("Tags") ?></h2>
+						<% } %>
 						<ul class="tags cf"></ul>
+						<div class="loading"></div>
+						<div class="system_error" style="display:none"></div>
 						<?php if ($owner): ?>
 							<div class="container" id="add-tag">
 								<p class="create-new">
@@ -95,17 +99,23 @@
 					</div>
 
 					<div class="item cf locations">
-						<h2><?php echo __("Location"); ?></h2>
+						<% if (places.length > 0) { %>
+							<h2><?php echo __("Location"); ?></h2>
+						<% } %>
 					</div>
 
 					<div class="item cf links">
-						<h2><?php echo __("Links"); ?></h2>
+						<% if (links.length > 0) { %>
+							<h2><?php echo __("Links"); ?></h2>
+						<% } %>
 					</div>
-
+                
 					<?php if ($owner): ?>
+					   <!-- Hide this till we figure it out
 						<div class="item cf">
 							<p class="button-change"><a><?php echo __("Add attachment"); ?></a></p>
 						</div>
+						-->
 					<?php endif; ?>
 				</section>
 

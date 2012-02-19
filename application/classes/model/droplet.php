@@ -315,6 +315,22 @@ class Model_Droplet extends ORM
 		return $droplets;
 	}
 	
+	/**
+	* Gets a droplet's buckets as an array
+	*
+	* @return array
+	*/
+	public function get_buckets()
+	{
+		$buckets = array();
+		foreach ($this->buckets->find_all() as $bucket)
+		{
+			$buckets[] = array('id' => $bucket->id, 'bucket_name' => $bucket->bucket_name);
+		}
+
+		return $buckets;
+	}
+	
 
 	/**
 	 * Given an array of droplets, populates a buckets array element
@@ -322,9 +338,7 @@ class Model_Droplet extends ORM
 	 * @param array $droplets
 	*/
 	public static function populate_buckets(& $droplets)
-	{
-		$droplet['buckets'] = array();
-				
+	{		
 		if(empty($droplets))
 			return;
 		
@@ -332,6 +346,7 @@ class Model_Droplet extends ORM
 		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
+			$droplet['buckets'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
 
@@ -369,9 +384,7 @@ class Model_Droplet extends ORM
 	 * @param array $droplets
 	*/
 	public static function populate_tags(& $droplets, $account_id)
-	{
-		$droplet['tags'] = array();
-				
+	{		
 		if(empty($droplets))
 			return;
 		
@@ -379,6 +392,7 @@ class Model_Droplet extends ORM
 		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
+			$droplet['tags'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
 
@@ -425,9 +439,7 @@ class Model_Droplet extends ORM
 	 * @param array $droplets
 	*/
 	public static function populate_links(& $droplets)
-	{
-		$droplet['links'] = array();
-				
+	{		
 		if(empty($droplets))
 			return;
 		
@@ -435,6 +447,7 @@ class Model_Droplet extends ORM
 		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
+			$droplet['links'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
 
@@ -472,9 +485,7 @@ class Model_Droplet extends ORM
 	 * @param array $droplets
 	*/
 	public static function populate_places(& $droplets)
-	{
-		$droplet['places'] = array();
-		
+	{		
 		if(empty($droplets))
 			return;
 		
@@ -482,6 +493,7 @@ class Model_Droplet extends ORM
 		$droplet_ids = array();
 		foreach($droplets as & $droplet)
 		{
+			$droplet['places'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
 
