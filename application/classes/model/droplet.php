@@ -323,6 +323,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_buckets(& $droplets)
 	{
+		$droplet['buckets'] = array();
+				
 		if(empty($droplets))
 			return;
 		
@@ -368,6 +370,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_tags(& $droplets, $account_id)
 	{
+		$droplet['tags'] = array();
+				
 		if(empty($droplets))
 			return;
 		
@@ -422,6 +426,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_links(& $droplets)
 	{
+		$droplet['links'] = array();
+				
 		if(empty($droplets))
 			return;
 		
@@ -467,6 +473,8 @@ class Model_Droplet extends ORM
 	*/
 	public static function populate_places(& $droplets)
 	{
+		$droplet['places'] = array();
+		
 		if(empty($droplets))
 			return;
 		
