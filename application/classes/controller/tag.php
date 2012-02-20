@@ -81,7 +81,8 @@ class Controller_Tag extends Controller_Swiftriver {
 			case "DELETE":				
 				$response = array("success" => FALSE);
 				
-				if (Model_Droplet::delete_tag($droplet_id, $tag_id, $visited_account->id)) {
+				if (Model_Droplet::delete_tag($droplet_id, $tag_id, $visited_account->id))
+				{
 					$response['success'] = TRUE;
 				}
 				

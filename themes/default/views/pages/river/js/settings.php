@@ -424,6 +424,8 @@
 
 		template: _.template($("#channel-option-control-template").html()),
 
+		containerDiv: "<div class=\"channel-option-input\"></div>",
+
 		// Template for the "Add button"
 		controlButton: _.template($("#channel-option-control-button-template").html()),
 
@@ -437,6 +439,10 @@
 				// Dropdown template
 				this.controlTemplate = _.template($("#channel-option-dropdown-template")).html();
 			}
+
+			this.$el.append(this.containerDiv);
+
+			this.container = this.$("div.channel-option-input");
 		},
 
 		events: {
@@ -488,9 +494,9 @@
 		},
 
 		render: function(eventName) {
-			this.$el.append(this.template({label: this.model.get("label")}));
-			this.$el.append(this.controlTemplate(this.model.toJSON()));
-			this.$el.append(this.controlButton());
+			this.container.append(this.template({label: this.model.get("label")}));
+			this.container.append(this.controlTemplate(this.model.toJSON()));
+			this.container.append(this.controlButton());
 
 			// Disable any button
 			this.$("button").attr("disabled", "disabled");

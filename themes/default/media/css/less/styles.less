@@ -1357,8 +1357,7 @@ section.panel .controls .settings-navigation li.tab.active a:hover {
   display: inline-block;
   position: relative;
   top: -1px;
-  height: 28px;
-  padding: 5px 8px;
+  padding: 7px 6px;
   color: #666;
   font-weight: bold;
   font-size: 0.9em;
@@ -1378,15 +1377,25 @@ ul.channel-options {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
 }
-.channel-options li label{
-  font-weight: bold;
-  float: left;
-  width: 15%;
-  padding: 5px 0 0 0;
+ul.channel-options li {
+  clear: both;
 }
-.channel-options .channel-option-input {
+.channel-options li div.channel-option-input {
+  padding: 0 1.0416666667%;
+}
+.channel-options li .channel-option-input label, 
+.channel-options li .channel-option-input input
+.channel-options li .channel-option-input button {
   float: left;
-  width: 350px;
+}
+.channel-options li .channel-option-input label {
+  font-weight: bold;
+  padding: 5px 0 0 0;
+  width: 12%;
+}
+.channel-options li .channel-option-input input {
+  width: 45%;
+  margin: 0 2px;
 }
 /* --- CONTROLS: THEMES ---*/
 
