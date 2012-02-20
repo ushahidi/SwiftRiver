@@ -286,10 +286,10 @@ $(function() {
 				create_el.fadeOut();
 				
 				var loading_msg = window.loading_message.clone();
-				loading_msg.appendTo($(".bucket .dropdown div.loading")).show();
+				loading_msg.appendTo(this.$(".bucket .dropdown div.loading")).show();
 				
 				var button = this.$("div.dropdown p.create-new a.plus");
-				var error_el = $(".bucket .dropdown div.system_error");
+				var error_el = this.$(".bucket .dropdown div.system_error");
 				
 				var input_el = this.$("#new-bucket-name");
 				
@@ -398,9 +398,9 @@ $(function() {
 				var input_el = this.$("#new-tag-name");
 				
 				var loading_msg = window.loading_message.clone();
-				loading_msg.appendTo($(".detail section.meta div.item ul.tags").next("div.loading")).show();
+				loading_msg.appendTo(this.$(".detail section.meta div.item ul.tags").next("div.loading")).show();
 				
-				var error_el = $(".detail section.meta div.item ul.tags").siblings("div.system_error");
+				var error_el = this.$(".detail section.meta div.item ul.tags").siblings("div.system_error");
 				
 				this.tagList.create({droplet_id: this.model.get("id") ,tag: this.$("#new-tag-name").val()}, {wait: true,
 					complete: function() {
