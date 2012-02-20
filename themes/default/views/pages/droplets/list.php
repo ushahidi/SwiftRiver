@@ -128,8 +128,7 @@
 						<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><%= droplet_title %></span></h1>
 					</hgroup>
 					<div class="edit">
-						<span class="edit_trigger">
-							<%= droplet_content %>
+						<span class="edit_trigger">							
 						</span>
 					</div>
 				</article>

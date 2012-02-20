@@ -88,7 +88,7 @@ class Controller_Login extends Controller_Template {
 		{
 			if ( ! Valid::email($this->request->post('new_email')))
 			{
-				$this->template->set('errors', array(__('Email address provided is invalid')));		        
+				$this->template->set('errors', array(__('The email address provided is invalid')));		        
 			}
 			else 
 			{    	    
@@ -111,7 +111,7 @@ class Controller_Login extends Controller_Template {
 			
 			if ( ! Valid::email($email))
 			{
-				$this->template->set('errors', array(__('Recovery email address provided is invalid')));		        
+				$this->template->set('errors', array(__('The email address provided is invalid')));		        
 			}
 			else 
 			{
@@ -121,7 +121,7 @@ class Controller_Login extends Controller_Template {
 
 				if ( ! $user->loaded())
 				{
-					$this->template->set('errors', array(__('Email not registered')));		        
+					$this->template->set('errors', array(__('The email address provided not registered')));		        
 				} 
 				else
 				{
@@ -177,7 +177,7 @@ class Controller_Login extends Controller_Template {
 		
 		if ( $riverid_api->is_registered($email)) 
 		{
-			$this->template->set('errors', array(__('Email already registered. Proceed to log in')));
+			$this->template->set('errors', array(__('The email address provided is already registered.')));
 		}
 		else
 		{
@@ -188,7 +188,7 @@ class Controller_Login extends Controller_Template {
 			
 			if ($response['status']) 
 			{
-				$this->template->set('messages', array(__('e-mail sent')));
+				$this->template->set('messages', array(__('An email has been sent with instructions to complete the registration process.')));
 			} 
 			else 
 			{
@@ -209,7 +209,7 @@ class Controller_Login extends Controller_Template {
 
 		if ($user->loaded())
 		{
-			$this->template->set('errors', array(__('Email already registered')));
+			$this->template->set('errors', array(__('The email address provided is already registered.')));
 			return;
 		}
 
@@ -223,7 +223,7 @@ class Controller_Login extends Controller_Template {
 			Swiftriver_Mail::send($email, __('Please confirm your email address'), $mail_body);
 			
 			
-			$this->template->set('messages', array(__('e-mail sent')));
+			$this->template->set('messages', array(__('An email has been sent with instructions to complete the registration process.')));
 		}
 		else
 		{
@@ -245,7 +245,7 @@ class Controller_Login extends Controller_Template {
 		
 		if ($response['status']) 
 		{
-			$this->template->set('messages', array(__('e-mail sent')));
+			$this->template->set('messages', array(__('An email has been sent with instructions to complete the password reset process.')));
 		} 
 		else 
 		{
@@ -269,7 +269,7 @@ class Controller_Login extends Controller_Template {
 			Swiftriver_Mail::send($email, __('Password Reset'), $mail_body);
 			
 			
-			$this->template->set('messages', array(__('e-mail sent')));
+			$this->template->set('messages', array(__('An email has been sent with instructions to complete the password reset process.')));
 		}
 		else
 		{

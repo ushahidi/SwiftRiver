@@ -107,10 +107,8 @@
 </script>
 
 <script type="text/template" id="channel-option-input-template">
-	<div class="channel-option-input">
 		<% var placeHolderText = (typeof placeholder != 'undefined') ? placeholder : ''; %>
 		<input type="<%= type %>" name="<%= key %>" placeholder="<%= placeHolderText %>">
-	</div>
 </script>
 
 <script type="text/template" id="channel-option-dropdown-item-template">

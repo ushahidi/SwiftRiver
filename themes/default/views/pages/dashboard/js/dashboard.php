@@ -1,7 +1,9 @@
 $(document).ready(function() {
-	// Dashboard Settings
-	$('.button-go').live('click', function() {
+	
+	// Do the save
+	function saveAccountSettings() {
 		$("div.panel-body #messages").html("");
+		$(".actions .dropdown .container").hide();
 		var loading_msg = window.loading_message.clone();
 		loading_msg.appendTo($("div.panel-body .loading")).append("<?php echo __('Saving...') ?>");
 		
@@ -30,5 +32,33 @@ $(document).ready(function() {
 				};
 			}
 		}, 'json');
+		
+	}	
+	
+	// Current password dropdown
+	$('.actions .button-go').live('click', function(e) {
+		
+		// Request current password only if password / email is changing
+		if(($('#password').val() && $('#password_confirm').val()) || ($('#email').val() != $('#orig_email').val())) {
+			$(this).toggleClass('active');
+			$(".actions .dropdown .container").show();
+			$('#messages').html("");
+			$('#current_password').val("");
+			$(this).siblings('.dropdown').fadeToggle('fast')
+			e.stopPropagation();
+		} else {
+			$(this).toggleClass('active');
+			$(".actions .dropdown .container").hide();
+			$('#messages').html("");
+			$(this).siblings('.dropdown').fadeToggle('fast')
+			e.stopPropagation();			
+			saveAccountSettings()
+		}
+		return false;
 	});
+	
+	// Dashboard Settings
+	$('.actions .confirm').live('click', function() {
+		saveAccountSettings();
+	});	
 });
