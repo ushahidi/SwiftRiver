@@ -247,6 +247,9 @@ $(function() {
 			} else {
 				button.addClass('detail-hide');
 				this.$('div.drawer').slideDown('slow');
+				
+				// Only show droplet content when drawer is open
+				this.$("article.fullstory div span").html(this.model.get("droplet_content"));
 			}
 		},
 		
