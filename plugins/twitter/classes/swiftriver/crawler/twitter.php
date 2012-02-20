@@ -44,14 +44,23 @@ class Swiftriver_Crawler_Twitter  {
 			$people = '';
 			foreach ($filter_options as $option)
 			{				
+				$value = $option['data']['value'];
+
+				// If the values are comma separated, substitute the "," with " OR "
+				// after applying a trim function to each element in the array
+				if ($values_array = array_map("trim", explode(",", $value)))
+				{
+					$value = implode(" OR ", $values_array);
+				}
+
 				switch($option['key'])
 				{
-					case 'keyword':
-						$keywords .= $option['data']['value'].' OR '; 
+					case 'keyword':						
+						$keywords .= $value.' OR '; 
 					break;
 					
 					case 'person':
-						$people .= 'from:'.$option['data']['value'].' OR '; 
+						$people .= 'from:'.$value.' OR '; 
 					break;				
 				}							
 			}

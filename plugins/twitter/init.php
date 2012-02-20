@@ -16,19 +16,22 @@ class Twitter_Init {
 	    Swiftriver_Crawlers::register('twitter', array(new Swiftriver_Crawler_Twitter(), 'crawl'));
 	    	    
 		// Validate Channel Filter Settings Input
-		Swiftriver_Event::add('swiftriver.channel.pre_save', array($this, 'channel_validate'));
+		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
 	}
 
 	/**
 	 * Call back method for swiftriver.river.pre_save to validate channel settings
 	 */
-	public function channel_validate()
+	public function validate()
 	{
 		// Get the event data
-		$filter_options =  & Swiftriver_Event::$data;
+		$option_data =  & Swiftriver_Event::$data;
 		
-		// Get the data for the twitter plugin
-		Swiftriver_Plugins::validate_channel_options($filter_options, 'twitter');
+		// Apply validation rules to the options
+		if ($option_data['channel'] == 'twitter')
+		{
+			// TODO: Sanity checks for the values
+		}
 	}
 
 }
