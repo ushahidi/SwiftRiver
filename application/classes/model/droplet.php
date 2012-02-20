@@ -573,7 +573,7 @@ class Model_Droplet extends ORM
 		 foreach ($query->execute()->as_array() as $comment)
 		 {
 		 	$parent_id = $comment['parent_id'];
-		 	if ( ! isset($discussions[$parrent_id]))
+		 	if ( ! isset($discussions[$parent_id]))
 		 	{
 		 		$discussions[$parent_id] = array();
 		 	}

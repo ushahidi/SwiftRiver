@@ -209,9 +209,9 @@ class Controller_River extends Controller_Swiftriver {
 			try
 			{
 				$river = ORM::factory('river');
-				$data = Arr::extract($_POST, array('river_name', 'river_public'));
-				$river->river_name = $data['river_name'];
-				$river->river_public = $data['river_public'];
+				$post = Arr::extract($_POST, array('river_name', 'river_public'));
+				$river->river_name = $post['river_name'];
+				$river->river_public = $post['river_public'];
 				$river->account_id = $this->user->account->id;            	
 				$this->river = $river->save();
             	
