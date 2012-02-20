@@ -1,13 +1,5 @@
 <div class="panel-body">
-	<div id="messages"></div>
-	<div class="loading"></div>
 	<div id="settings" class="controls">
-		<div class="row cf">
-			<div class="input">
-				<h3><?php echo __('Current Password'); ?></h3>
-				<?php echo Form::password("current_password", "", array('id' => 'current_password')); ?>
-			</div>
-		</div>
 		<div class="row cf">
 			<div class="input">
 				<h3><?php echo __('Nickname'); ?></h3>
@@ -22,6 +14,7 @@
 			<div class="input">
 				<h3><?php echo __('Email'); ?></h3>
 				<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
+				<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
 			</div>
 		</div>
 		<div class="row cf">
@@ -47,9 +40,21 @@
 		<?php echo $collaborators_control; ?>
 		
 	</div>
-
 	<div class="row controls-buttons cf">
-		<p class="button-go"><a href="#"><?php echo __('Apply changes'); ?></a></p>
-		<p class="other"><a class="close" onclick=""><?php echo __('Cancel'); ?></a></p>
+		<section class="item actions">
+			<p class="button-go"><a><?php echo __('Apply changes'); ?></a></p>
+			<!-- <p class="other"><a class="close" onclick=""><?php echo __('Cancel'); ?></a></p> -->
+			<div class="clear"></div>
+			<ul class="dropdown">
+				<div id="messages"></div>
+				<div class="loading"></div>
+				<div class="container">
+					<p><?php echo __("Enter your current password below to confirm these changes"); ?></p>
+					<?php echo Form::password("current_password", "", array('id' => 'current_password')); ?>
+					<li class="confirm"><a><?php echo __("Confirm"); ?></a></li>
+					<li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
+				<div>
+			</ul>			
+		</section>
 	</div>
 </div>
