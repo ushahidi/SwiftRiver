@@ -97,8 +97,9 @@
 </script>
 
 <script type="text/template" id="channel-option-control-button-template">
+	<% var buttonText = (type == "file") ? "<?php echo __('Upload File'); ?>" : "<?php echo __('Add'); ?>";  %>
 	<button type="button" class="channel-button" disabled="disabled">
-		<span><?php echo __("Add"); ?></span>
+		<span><%= buttonText %></span>
 	</button>
 </script>
 

@@ -28,36 +28,53 @@ class Rss_Init {
 		// Get the event data
 		$option_data = & Swiftriver_Event::$data;
 		
+
 		// Proceed only if the channel is RSS
-		if ($option_data['channel'] == 'rss')
+		if ( ! empty($_FILES) AND $option_data["key"] == "opml_import")
 		{
-			// Include the SimplePie libraries
-			include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
-			include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
+			$file_data = $option_data['opml_import'];
 
-			// Validate the url value using SimplePie
-			$url = $option_data['data']['value'];
-
-			$feed = new SimplePie();
-			$feed->set_feed_url($url);
-
-			// Disable caching
-			$feed->enable_cache(FALSE);
-
-			// Attempt to initialize the feed, parsing it etc
-			if ($feed->init())
+			// Validation
+			if (Upload::type($file_data, array('xml')))
 			{
-				// Success!
+				// Begin processing the feed
+				$importer = new Swiftriver_OPML_Import();
+				$importer->init($file_data['tmp_name']);
 
-				// Ensure that SimplePie is being served with the correct mime-type
-				$feed->handle_content_type();
+				// Load the channel configuration
+				$channel_config = Swiftriver_Plugins::get_channel_config('rss');
+
+				// Get the feed entries
+				$feed_entries = array();
+				foreach ($importer->get_feeds() as $feed)
+				{
+					// Extract the validation object and function
+					$entry = array(
+						"label" => $channel_config['options']['url']['label'],
+						"type" => $channel_config['options']['url']['type'],
+						"value" => $feed['url'],
+						"title" => $feed['title']
+					);
 					
-				// Grabe the subscribe URL from SimplePie
-				$option_data['data']['value'] = $feed->subscribe_url();
-				$option_data['data']['title'] = $feed->get_title();
+					$feed_entries[] = array(
+						"channel_filter_id" => $option_data["channel_filter_id"],
+						"key" => "url",
+						"data" => $entry
+					);
+				}
 
-				// Garbage collection
-				unset ($feed);
+				// Reset the option data
+				$option_data = $feed_entries;
+				$option_data['multiple'] = TRUE;
+			}
+		}
+		elseif ($option_data['channel'] == 'rss')
+		{
+			$url = $option_data['data']['value'];
+			if (($feed = $this->_validate_feed_url($url)) != FALSE)
+			{
+				$option_data['data']['value'] = $feed['value'];
+				$option_data['data']['title'] = $feed['title'];
 			}
 			else
 			{
@@ -68,6 +85,50 @@ class Rss_Init {
 			}
 		}
 
+	}
+
+	/**
+	 * Verifies whether a URL is a valid RSS feed or points to a page
+	 * that contains an RSS feed
+	 *
+	 * @param string $url URL to validate
+	 * @return mixed Array of the feed url and title on succeed, FALSE otherwise
+	 */
+	private function _validate_feed_url($url)
+	{
+		// Include the SimplePie libraries
+		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
+		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
+
+		// Validate the url value using SimplePie
+		$feed = new SimplePie();
+		$feed->set_feed_url($url);
+
+		// Disable caching
+		$feed->enable_cache(FALSE);
+
+		// Attempt to initialize the feed, parsing it etc
+		if ($feed->init())
+		{
+			// Success!
+
+			// Ensure that SimplePie is being served with the correct mime-type
+			$feed->handle_content_type();
+			
+			// Grabe the subscribe URL from SimplePie
+			$feed_data= array(
+				'value' => $feed->subscribe_url(),
+				'title' => $feed->get_title()
+			);
+
+			// Garbage collection
+			unset ($feed);
+
+			return $feed_data;
+		}
+
+		return FALSE;
+		
 	}
 }
 

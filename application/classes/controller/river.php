@@ -270,7 +270,8 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
-		if ($query) {
+		if ($query)
+		{
 			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->river->account->user->id)));
 			return;
 		}
@@ -395,8 +396,8 @@ class Controller_River extends Controller_Swiftriver {
 		 			// Save
 		 			$channel_filter_orm->save();
 
-		 			$response["success"] = TRUE;
-		 			$response["id"] = $channel_filter_orm->id;
+		 			$this->response->body(json_encode(array("id" => $channel_filter_orm->id)));
+
 	 			break;
 
 	 			case "PUT":
@@ -410,14 +411,11 @@ class Controller_River extends Controller_Swiftriver {
 	 				$channel_filter_orm->filter_enabled = $post['enabled'];
 	 				$channel_filter_orm->save();
 
-	 				$response["success"] = TRUE;
-
 	 			}
 	 			break;
 	 		}
 	 	}
 
-	 	echo json_encode($response);
 	 }
 
 
@@ -428,8 +426,6 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
-
-		$response = array("success" => FALSE);
 
 		if ($this->river->loaded())
 		{
@@ -444,39 +440,78 @@ class Controller_River extends Controller_Swiftriver {
 					if ($option_orm->loaded())
 					{
 						$option_orm->delete();
-						$response["success"] = TRUE;
 					}
 
 				break;
 
 				// Create a new channel option
 				case "POST":
-					$post = json_decode($this->request->body(), TRUE);
+
+					// Check for file upload
+					$is_file_upload = (empty($_FILES) == FALSE);
+
+					// Fetch the POST data
+					$post = ( ! empty($_FILES))
+					    ? array_merge($_FILES, $_POST) 
+					    : json_decode($this->request->body(), TRUE);
 
 					// Run pre_save events
 					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
 
 					if ( ! empty($post))
 					{
+						if (isset($post['multiple']) AND $post['multiple'])
+						{
+							// Multiple entries specified
+							unset ($post['multiple']);
 
-						$channel_filter_option = ORM::factory('channel_filter_option');
-						$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
-						$channel_filter_option->key = $post['key'];
-						$channel_filter_option->value = json_encode($post['data']);
+							$entries = array();
+							foreach ($post as $entry)
+							{
+								$filter_option = ORM::factory('channel_filter_option');
+								$filter_option->channel_filter_id = $entry['channel_filter_id'];
+								$filter_option->key = $entry['key'];
+								$filter_option->value = json_encode($entry['data']);
+								$filter_option->save();
 
-						$channel_filter_option->save();
+								$entry["id"] = $filter_option->id;
 
-						// Add the ID of the newly created option
-						$post["id"] = $channel_filter_option->id;
+								// Add the created entry
+								$entries[] = $entry;
+							}
+							
+							// Encode the entries to JSON
+							$options_list = json_encode($entries);
+							echo "<script type=\"text/javascript\">parent.window.ChannelView.addChannelOptions($options_list);</script>";
 
-						$response["success"] = TRUE;
-						$response["data"] = $post;
+							// Halt
+							return;
+						}
+						else
+						{
+							// Single entry
+							$channel_filter_option = ORM::factory('channel_filter_option');
+							$channel_filter_option->channel_filter_id = $channel_filter_id;
+							$channel_filter_option->key = $post['key'];
+							$channel_filter_option->value = json_encode($post['data']);
+
+							$channel_filter_option->save();
+
+							// Add the ID of the newly created option
+							$post["id"] = $channel_filter_option->id;
+
+							$this->response->body(json_encode($post));
+						}
 					}
+					else
+					{
+						// Bad request
+						$this->response->status(400);
+					}
+
 				break;
 			}
 		}
-		
-		echo json_encode($response);
 		
 	}
 
@@ -568,5 +603,18 @@ class Controller_River extends Controller_Swiftriver {
 
 		echo json_encode($response);
 	}
-
+	
+	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		$river_id = $this->request->param('id', 0);
+		echo View::factory('pages/river/more_control')
+			->bind('river_id', $river_id);
+	}	
 }

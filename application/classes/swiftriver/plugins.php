@@ -137,6 +137,17 @@ class Swiftriver_Plugins {
 		
 		return self::$channels;
 	}
+
+	/**
+	 * Gets the configuration data of a channel
+	 *
+	 * @param string $channel Name of the channel
+	 * @return mixed An array with the channel configuration on succeed, FALSE otherwise
+	 */
+	public static function get_channel_config($channel)
+	{
+		return isset(self::$channels[$channel]) ? self::$channels[$channel] : FALSE;
+	}
 	
 	/**
 	 * Validates the configuration of a channel plugin
