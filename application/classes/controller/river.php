@@ -603,5 +603,18 @@ class Controller_River extends Controller_Swiftriver {
 
 		echo json_encode($response);
 	}
-
+	
+	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		$river_id = $this->request->param('id', 0);
+		echo View::factory('pages/river/more_control')
+			->bind('river_id', $river_id);
+	}	
 }
