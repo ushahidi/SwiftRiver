@@ -33,7 +33,7 @@
 
 		// Enables the channel
 		setEnabled: function(enabled) {
-			this.save({enabled: enabled}, {wait: true});
+			this.save({enabled: enabled}, {wait: true, success: function(model, response) { this.id = response.id; }});
 		}
 	});
 
@@ -67,7 +67,7 @@
 			"click input[name='river_public']": "toggleRiverPrivacy",
 
 			// When delete river is confirmed
-			"click div.actions .dropdown li.confirm a": "deleteRiver",
+			"click section.actions .dropdown li.confirm a": "deleteRiver",
 		},
 
 		renameRiver: function(e) {
@@ -250,7 +250,6 @@
 
 		// Adds a single channel filter option on the UI
 		addChannelOption: function(option) {
-
 			// Check if the channel filter option is newly added via the UI
 			if (typeof option.get("id") == "undefined") {
 				
@@ -265,13 +264,11 @@
 						wait: true,
 						success: function(model, response) {
 							// If sucessful, proceed
-							if (response.success) {
-								channelView.$("a span.switch").toggleClass("switch-on").toggleClass("switch-off");
+							channelView.$("a span.switch").toggleClass("switch-on").toggleClass("switch-off");
 
-								// Save the channel option
-								option.set({channel_filter_id: response.id});
-								channelView.createAndSaveChannelOption(option);
-							}
+							// Save the channel option
+							option.set({channel_filter_id: response.id});
+							channelView.createAndSaveChannelOption(option);
 						}
 					});
 				} else {
@@ -288,8 +285,12 @@
 		},
 
 		// Adds a collection of channel filter options to the IO
-		addChannelOptions: function() {
+		addChannelOptions: function(options) {
 			this.channelOptions.each(this.addChannelOption, this);
+			if (typeof options != "undefined") {
+				var view = this;
+				_.each(options, function(option) { view.addChannelOption(new ChannelOption(option)); }, this);
+			}
 		},
 
 		// Adds the channel filter options
@@ -431,16 +432,35 @@
 
 		initialize: function() {
 
-			if (this.model.get("type") == "text") {
+			this.inputType = this.model.get("type");
+
+			if (this.inputType == "text" || this.inputType == "file" || this.inputType == "password") {
 				// Input template
 				this.controlTemplate = _.template($("#channel-option-input-template").html());
 			} else if (this.model.get("type") == "select" || this.model.get("type") == "dropdown") {
-
 				// Dropdown template
 				this.controlTemplate = _.template($("#channel-option-dropdown-template")).html();
 			}
 
-			this.$el.append(this.containerDiv);
+			if (this.inputType == "file") {
+				// Create a form to use for the file upload
+				this.form = $("<form method=\"POST\" enctype=\"multipart/form-data\" action=\"<?php echo $channel_options_url; ?>\" target=\"upload_target\"></form>");
+
+				// Create hidden input fields with the channel_filter_id and key
+				this.form.append("<input type=\"hidden\" name=\"channel_filter_id\" value=\""+this.model.get("channel_filter_id")+"\">");
+				this.form.append("<input type=\"hidden\" name=\"key\" value=\""+this.model.get("key")+"\">");
+
+				// Append the form to the DOM
+				this.form.append(this.containerDiv);
+
+				this.$el.append(this.form);
+
+				// Add the OMPL target <iframe> to the DOM
+				window.ChannelView = this.options.channelView;
+				this.$el.append($("<iframe id=\"upload_target\" name=\"upload_target\" style=\"width:0px;height:0px;border: none;\"></iframe>"));
+			} else {
+				this.$el.append(this.containerDiv);
+			}
 
 			this.container = this.$("div.channel-option-input");
 		},
@@ -450,12 +470,14 @@
 
 			"keypress .channel-option-input :text": "toggleButtonStatus",
 
-			"change .channel-option-input :text": "toggleButtonStatus"
+			"change .channel-option-input :text": "toggleButtonStatus",
+
+			"change .channel-option-input :file": "toggleButtonStatus"
 		},
 
 
 		addChannelFilterOption: function(e) {
-			if (this.model.get("type") == "text") {
+			if (this.inputType == "text") {
 				var field = this.$(".channel-option-input :text");
 				var value = $(field).val();
 				
@@ -481,12 +503,39 @@
 				var channelView = this.options.channelView;
 				channelView.addChannelOption(channelOption);
 				
+			} else if (this.inputType == "file") {
+
+				// Check if the channel is enabled
+				if (typeof this.model.get("channel_filter_id") == "undefined") {
+					var channelView = this.options.channelView;
+					var form = this.form;
+
+					// Trigger channel enable/disable
+					channelView.$("a span.switch").trigger("click");
+
+					// A dirty hack! - Check for the newly created channel ID after 500ms
+					// TODO: Review this implementation
+					setTimeout(function() {
+						// Set the channel filter id
+						$("input[name='channel_filter_id']", form).val(channelView.model.get("id"));
+
+						// Submit the form
+						form.submit();
+						$(":file", form).val("");
+					}, 500);
+
+				} else {
+					// Initiate file upload
+					this.form.submit();
+					$(":file", this.form).val("");
+				}
+
 			}
 		},
 
 		// Toggle the "disabled" status of the button
 		toggleButtonStatus: function(e) {
-			if ($.trim(e.currentTarget).length > 0) {
+			if ($.trim($(e.currentTarget).val()).length > 0) {
 				this.$("button.channel-button").removeAttr("disabled");
 			} else {
 				this.$("button.channel-button").attr("disabled", "disabled");
@@ -496,7 +545,7 @@
 		render: function(eventName) {
 			this.container.append(this.template({label: this.model.get("label")}));
 			this.container.append(this.controlTemplate(this.model.toJSON()));
-			this.container.append(this.controlButton());
+			this.container.append(this.controlButton({type: this.inputType}));
 
 			// Disable any button
 			this.$("button").attr("disabled", "disabled");

@@ -324,7 +324,7 @@ Route::set('river_droplet_tag', 'river/droplets/<river_id>/<droplet_id>/tags(/<t
 		'controller' => 'tag',
 		'action'     => 'api',
 	));
-Route::set('channel_filter_options', 'river/channels/<id>(/<channel_option_id>)', array('id' => '\d+', 'channel_option_id' => '\d+'))
+Route::set('channel_filter_options', 'river/channel_options/<id>(/<channel_option_id>)', array('id' => '\d+', 'channel_option_id' => '\d+'))
     ->defaults(array(
 	    'controller' => 'river',
 	    'action' => 'channel_options'

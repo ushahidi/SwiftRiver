@@ -28,7 +28,7 @@ class Twitter_Init {
 		$option_data =  & Swiftriver_Event::$data;
 		
 		// Apply validation rules to the options
-		if ($option_data['channel'] == 'twitter')
+		if (isset($option_data['channel']) AND $option_data['channel'] == 'twitter')
 		{
 			// TODO: Sanity checks for the values
 		}

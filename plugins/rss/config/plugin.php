@@ -32,6 +32,10 @@ return array(
 				'type' => 'text',
 				'placeholder' => 'E.g. ihub.co.ke/blog/feed'
 			),
+			'opml_import' => array(
+				'label' => 'Import OPML File',
+				'type' => 'file'
+			),
 		),
 		
 		// Plugin dependencies

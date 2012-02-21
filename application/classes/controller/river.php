@@ -451,26 +451,63 @@ class Controller_River extends Controller_Swiftriver {
 
 				// Create a new channel option
 				case "POST":
-					$post = json_decode($this->request->body(), TRUE);
+
+					// Check for file upload
+					$is_file_upload = (empty($_FILES) == FALSE);
+
+					// Fetch the POST data
+					$post = ( ! empty($_FILES))
+					    ? array_merge($_FILES, $_POST) 
+					    : json_decode($this->request->body(), TRUE);
 
 					// Run pre_save events
 					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
 
 					if ( ! empty($post))
 					{
+						if (isset($post['multiple']) AND $post['multiple'])
+						{
+							// Multiple entries specified
+							unset ($post['multiple']);
 
-						$channel_filter_option = ORM::factory('channel_filter_option');
-						$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
-						$channel_filter_option->key = $post['key'];
-						$channel_filter_option->value = json_encode($post['data']);
+							$entries = array();
+							foreach ($post as $entry)
+							{
+								$filter_option = ORM::factory('channel_filter_option');
+								$filter_option->channel_filter_id = $entry['channel_filter_id'];
+								$filter_option->key = $entry['key'];
+								$filter_option->value = json_encode($entry['data']);
+								$filter_option->save();
 
-						$channel_filter_option->save();
+								$entry["id"] = $filter_option->id;
 
-						// Add the ID of the newly created option
-						$post["id"] = $channel_filter_option->id;
+								// Add the created entry
+								$entries[] = $entry;
+							}
+							
+							// Encode the entries to JSON
+							$options_list = json_encode($entries);
+							echo "<script type=\"text/javascript\">parent.window.ChannelView.addChannelOptions($options_list);</script>";
 
-						$response["success"] = TRUE;
-						$response["data"] = $post;
+							// Halt
+							return;
+						}
+						else
+						{
+							// Single entry
+							$channel_filter_option = ORM::factory('channel_filter_option');
+							$channel_filter_option->channel_filter_id = $channel_filter_id;
+							$channel_filter_option->key = $post['key'];
+							$channel_filter_option->value = json_encode($post['data']);
+
+							$channel_filter_option->save();
+
+							// Add the ID of the newly created option
+							$post["id"] = $channel_filter_option->id;
+
+							$response["success"] = TRUE;
+							$response["data"] = $post;
+						}
 					}
 				break;
 			}
