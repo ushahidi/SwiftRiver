@@ -270,7 +270,8 @@ class Controller_River extends Controller_Swiftriver {
 		
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
-		if ($query) {
+		if ($query)
+		{
 			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->river->account->user->id)));
 			return;
 		}
@@ -395,8 +396,8 @@ class Controller_River extends Controller_Swiftriver {
 		 			// Save
 		 			$channel_filter_orm->save();
 
-		 			$response["success"] = TRUE;
-		 			$response["id"] = $channel_filter_orm->id;
+		 			$this->response->body(json_encode(array("id" => $channel_filter_orm->id)));
+
 	 			break;
 
 	 			case "PUT":
@@ -410,14 +411,11 @@ class Controller_River extends Controller_Swiftriver {
 	 				$channel_filter_orm->filter_enabled = $post['enabled'];
 	 				$channel_filter_orm->save();
 
-	 				$response["success"] = TRUE;
-
 	 			}
 	 			break;
 	 		}
 	 	}
 
-	 	echo json_encode($response);
 	 }
 
 
@@ -428,8 +426,6 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
-
-		$response = array("success" => FALSE);
 
 		if ($this->river->loaded())
 		{
@@ -444,7 +440,6 @@ class Controller_River extends Controller_Swiftriver {
 					if ($option_orm->loaded())
 					{
 						$option_orm->delete();
-						$response["success"] = TRUE;
 					}
 
 				break;
@@ -505,15 +500,18 @@ class Controller_River extends Controller_Swiftriver {
 							// Add the ID of the newly created option
 							$post["id"] = $channel_filter_option->id;
 
-							$response["success"] = TRUE;
-							$response["data"] = $post;
+							$this->response->body(json_encode($post));
 						}
 					}
+					else
+					{
+						// Bad request
+						$this->response->status(400);
+					}
+
 				break;
 			}
 		}
-		
-		echo json_encode($response);
 		
 	}
 

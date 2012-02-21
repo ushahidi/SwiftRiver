@@ -78,9 +78,7 @@
 				this.model.save({name_only: true, river_name: riverName}, {
 					wait: true,
 					success: function(model, response) {
-						if (response.success) {
-							window.location.href = response.redirect_url;
-						}
+						window.location.href = response.redirect_url;
 					}
 				});
 			}
@@ -102,9 +100,7 @@
 					this.model.save({privacy_only: true, river_public: $(radio).val()}, {
 						wait: true, 
 						success: function(model, response) {
-							if (response.success) {
-								window.location.href = response.redirect_url;
-							}
+							window.location.href = response.redirect_url;
 						}
 					});
 				} else {
@@ -117,9 +113,7 @@
 		// When the river is deleted
 		deleteRiver: function(e) {
 			this.model.destroy({wait: true, success: function(model, response) {
-				if (response.success) {
-					window.location.href = response.redirect_url
-				}
+				window.location.href = response.redirect_url
 			}});
 
 			return false;
@@ -224,25 +218,26 @@
 			option.save(null, {
 				wait: true, 
 				success: function(model, response) {
-					if (response.success) {
-						var createdOption = new ChannelOption(response.data);
-						createdOption.set({new: true});
+					var createdOption = new ChannelOption(response.data);
+					createdOption.set({new: true});
 
-						// Add the option to the UI
-						channelView.optionsPanelView.addChannelOption(createdOption);
+					// Add the option to the UI
+					channelView.optionsPanelView.addChannelOption(createdOption);
 
-						// Clear the text field and remove any error CSS classes
-						$(":text", controlView).val("");
-						$(":text", controlView).removeClass("error");
+					// Clear the text field and remove any error CSS classes
+					$(":text", controlView).val("");
+					$(":text", controlView).removeClass("error");
 
-					} else {
-						// Add error class
-						$(":text", controlView).addClass("error");
-					}
 
 					// Get the control view from the option and re-enable the text fields
 					$("input", controlView).removeAttr("disabled");
 
+				},
+				error: function(model, response) {
+					$(":text", controlView).addClass("error");
+					
+					// Get the control view from the option and re-enable the text fields
+					$("input", controlView).removeAttr("disabled");
 				}
 			});
 			
