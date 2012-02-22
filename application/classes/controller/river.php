@@ -744,7 +744,7 @@ class Controller_River extends Controller_Swiftriver {
 					// Encode the response to be returned to the client
 					$this->response->body(json_encode(
 						array(
-							"redirect_url" => URL::site("/dashboard")
+							"redirect_url" => URL::site($this->dashboard_url)
 						)
 					));
 				}
@@ -777,7 +777,7 @@ class Controller_River extends Controller_Swiftriver {
 					// Encode the response to be returned to the client
 					$this->response->body(json_encode(
 						array(
-							"redirect_url" => $this->base_url.'/index/'.$this->river->id
+							"redirect_url" => $this->base_url.'/'.$this->river->river_name_url
 						)
 					));
 				}
