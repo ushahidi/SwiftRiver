@@ -48,6 +48,12 @@ class Controller_Swiftriver extends Controller_Template {
 	 * Current Users Account
 	 */
 	public $account = NULL;
+	
+	/**
+	 * Account that owns the object being visited.
+	 * Can be different from the current user's account above
+	 */
+	public $visited_account = NULL;
 
 	/**
 	 * This Session
@@ -66,6 +72,12 @@ class Controller_Swiftriver extends Controller_Template {
 	protected $base_url;
 	
 	/**
+	 * URL of the looged in user's profile (dashboard)
+	 * @var string
+	 */
+	protected $dashboard_url;
+	
+	/**
 	 * Called from before() when the user is not logged in but they should.
 	 *
 	 * Override this in your own Controller / Controller_App.
@@ -80,9 +92,9 @@ class Controller_Swiftriver extends Controller_Template {
 	 * This is the users personal dashboard
 	 *
 	 */
-	public function access_required()
+	private function access_required()
 	{
-		Request::current()->redirect('dashboard');
+		Request::current()->redirect($this->dashboard_url);
 	}	
 	
 	/**
@@ -164,28 +176,40 @@ class Controller_Swiftriver extends Controller_Template {
 			->where('user_id', '=', $this->user->id)
 			->find();
 			
-		if ( ! $this->account->loaded() && $this->request->uri() != 'dashboard/register')
+		if ( ! $this->account->loaded() && $this->request->uri() != 'register')
 		{
 			// Make the user create an account
-			Request::current()->redirect('dashboard/register');
+			Request::current()->redirect('register');
 		}
+		
+		// Logged in user's dashboard url
+		$this->dashboard_url = URL::site().$this->user->account->account_path;
 		
 		
 		// Build the base URL
-		$visited_account = $this->request->param('account');
-		if ($visited_account and $visited_account != $this->account->account_path) 
+		$visited_account_path = $this->request->param('account');
+		if ($visited_account_path and $visited_account_path != $this->account->account_path) 
 		{
-			$this->base_url = URL::site().$visited_account.'/'.$this->request->controller();
+			$this->base_url = URL::site().$visited_account_path.'/'.$this->request->controller();
+			$this->visited_account = ORM::factory('account', array('account_path' => $visited_account_path));
+			
+			// Visited account doesn't exist?
+			if ( ! $this->visited_account->loaded())
+			{
+				$this->request->redirect($this->dashboard_url);
+			}
 		}
 		else
 		{
 			$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
+			$this->visited_account = $this->account;
 		}		
 		
 		// Load Header & Footer & variables
 		if ($this->auto_render) 
 		{
 			$this->template->header = View::factory('template/header');
+			$this->template->header->user = $this->user;
 			$this->template->header->js = ''; // Dynamic Javascript
 			
 			// Header Nav
@@ -208,6 +232,6 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function action_index()
 	{
-		$this->request->redirect('/dashboard');
+		$this->request->redirect($this->dashboard_url);
 	}	
 }

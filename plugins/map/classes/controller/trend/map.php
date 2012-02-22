@@ -14,18 +14,45 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Controller_Trend_Map extends Controller_Trend_Main {
+	
+	public function before()
+	{
+		// Execute parent::before first
+		parent::before();
+		
+		Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
+	}
+	
+	/**
+	 * Hook into the page header
+	 * 
+	 * @return	void
+	 */
+	public function template_header()
+	{
+	    echo(Html::style('media/css/map.css'));
+	    echo(Html::style('media/css/colorbox.css'));
+	    echo(Html::script('http://openlayers.org/api/OpenLayers.js'));
+	    echo(Html::script('media/js/jquery.colorbox-min.js'));
+	    echo(Html::script('media/js/map.js'));
+	}
     
     public function action_index() 
     {       
-        
         $id = $this->request->param('id');
         
         $this->template->content->active = 'map';        
         $this->template->content->trend =  View::factory('map/index')
                         ->bind("geojson_url", $geojson_url)
                         ->bind("droplet_base_url", $droplet_base_url);
-                        
-        $geojson_url = url::site().$this->context.'/trend/map/'.$id.'/geojson';
+       	if ($this->context == 'bucket')
+        {
+            $geojson_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url.'/trend/map/geojson';
+        }
+        else
+        {
+	        $geojson_url = URL::site().$this->river->account->account_path.'/river/'.$this->river->river_name_url.'/trend/map/geojson';
+        }
         $droplet_base_url = url::site().'droplet/detail/';
     }
     

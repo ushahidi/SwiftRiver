@@ -12,7 +12,7 @@
 		<section class="panel">		
 			<nav class="cf">
 				<ul class="views">
-					<li class="droplets active"><a href="#"><?php echo __('Drops');?></a></li>
+					<li class="droplets active"><a><?php echo __('Drops');?></a></li>
 					<?php
 					// SwiftRiver Plugin Hook -- Add Bucket Nav Item
 					Swiftriver_Event::run('swiftriver.bucket.nav', $bucket);

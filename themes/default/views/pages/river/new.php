@@ -11,25 +11,8 @@
 		<section class="panel">		
 			<nav class="cf">
 				<ul class="views">
-					<li <?php if ($active == 'main' OR ! $active) echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'dashboard/';?>"><?php echo __('Activity'); ?></a>
-					</li>
 					<li <?php if ($active == 'rivers') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'dashboard/rivers';?>"><?php echo __('Rivers'); ?></a>
-					</li>
-					<li <?php if ($active == 'buckets') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'dashboard/buckets';?>"><?php echo __('Buckets'); ?></a>
-					</li>
-					<li <?php if ($active == 'teams') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'dashboard/teams';?>"><?php echo __('Teams'); ?></a>
-					</li>
-				</ul>
-				<ul class="actions">
-					<li class="view-panel">
-						<a href="<?php echo URL::site().'dashboard/settings';?>" class="settings">
-							<span class="icon"></span>
-							<span class="label"><?php echo __('Account settings'); ?></span>
-						</a>
+						<a><?php echo __('Rivers'); ?></a>
 					</li>
 				</ul>
 			</nav>

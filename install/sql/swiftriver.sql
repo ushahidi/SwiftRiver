@@ -88,15 +88,17 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
 CREATE TABLE IF NOT EXISTS `rivers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
-  `river_name` varchar(25) NOT NULL,
+  `river_name` varchar(25) NOT NULL DEFAULT '',
+  `river_name_url` varchar(30) NOT NULL DEFAULT '',
   `river_active` tinyint(4) NOT NULL DEFAULT '1',
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
   `river_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `account_id` (`account_id`,`river_name`),
+  UNIQUE KEY `un_river_name` (`account_id`,`river_name`),
+  UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `account_id_idx` (`account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -229,14 +231,16 @@ CREATE TABLE IF NOT EXISTS `buckets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Creator of this bucket',
-  `bucket_name` varchar(25) DEFAULT NULL,
+  `bucket_name` varchar(25) NOT NULL DEFAULT '',
+  `bucket_name_url` varchar(30) NOT NULL DEFAULT '',
   `bucket_description` text,
   `bucket_publish` tinyint(4) NOT NULL DEFAULT '0',
   `bucket_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `account_id` (`account_id`,`bucket_name`),
+  UNIQUE KEY `un_bucket_name` (`account_id`,`bucket_name`),
+  UNIQUE KEY `un_bucket_name_url` (`account_id`,`bucket_name_url`),
   KEY `bucket_date_add_idx` (`bucket_date_add`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

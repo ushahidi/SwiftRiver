@@ -135,8 +135,10 @@
 				
 				<section class="discussion">
 					<hgroup>
-						<h2><?php echo __("Related Discussion"); ?></h2>
+						<h2><?php echo __("Comments"); ?></h2>
 					</hgroup>
+					<div class="loading"></div>
+					<div class="system_error" style="display:none"></div>
 					<article class="item add-reply">
 						<div class="summary cf">
 							<section class="source">
@@ -162,15 +164,17 @@
 </script>
 
 <script type="text/template" id="tag-template">
-	<span class="actions">
-		<a href="#" class="button-delete cross"></a>
-		<ul class="dropdown left">
-			<p><?php echo __("Are you sure you want to remove this tag?"); ?></p>
-	
-			<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
-			<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
-		</ul>
-	</span>
+	<?php if ($owner): ?>
+		<span class="actions">
+			<a href="#" class="button-delete cross"></a>
+			<ul class="dropdown left">
+				<p><?php echo __("Are you sure you want to remove this tag?"); ?></p>
+		
+				<li class="confirm"><a onclick=""><?php echo __("Yep."); ?></a></li>
+				<li class="cancel"><a onclick=""><?php echo __("No, nevermind.") ?></a></li>
+			</ul>
+		</span>
+	<?php endif; ?>
 	<a class="tag-name"><%= tag %></a>
 </script>
 
@@ -192,9 +196,9 @@
 		<section class="content">
 			<hgroup>
 				<p class="date"><%= droplet_date_pub %></p>
-				<h1><%= identity_name %></h1>
+				<string><%= droplet_content %></strong>
 			</hgroup>
-			<div class="body"><p><%= droplet_content %></p></div>
+			<div class="body"><p><%= identity_name %></p></div>
 		</section>
 	</div>
 </script>

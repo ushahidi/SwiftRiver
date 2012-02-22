@@ -1,52 +1,52 @@
 <nav>
 	<ul>
 		<li class="rivers has_dropdown">
-			<a href="<?php echo URL::site().'dashboard/rivers' ?>" class="arrow"><span class="icon"></span><?php echo __('Rivers');?></a>
+			<a href="<?php echo URL::site().$user->account->account_path.'/rivers' ?>" class="arrow"><span class="icon"></span><?php echo __('Rivers');?></a>
 			<ul class="dropdown">
 				<?php foreach ($rivers as $river): ?>
 					<li>
 						<?php if ($river->account->user->id != $user->id): ?>
-							<a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->account->account_path ?>/<?php echo $river->river_name; ?></a>
+							<a href="<?php echo URL::site().$river->account->account_path.'/river/'.$river->river_name_url; ?>"><?php echo $river->account->account_path ?>/<?php echo $river->river_name; ?></a>
 						<?php else: ?>
-							<a href="<?php echo URL::site().'river/index/'.$river->id; ?>"><?php echo $river->river_name; ?></a>
+							<a href="<?php echo URL::site().$river->account->account_path.'/river/'.$river->river_name_url; ?>"><?php echo $river->river_name; ?></a>
 						<?php endif; ?>
 						
 					</li>
 				<?php endforeach; ?>
-				<li><a href="<?php echo URL::site().'river/new'; ?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
+				<li><a href="<?php echo URL::site().$user->account->account_path.'/river/new'; ?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
 		<li class="buckets has_dropdown">
-			<a href="<?php echo URL::site().'dashboard/buckets' ?>" class="arrow"><span class="icon"></span><?php echo __('Buckets');?></a>
+			<a href="<?php echo URL::site().$user->account->account_path.'/buckets' ?>" class="arrow"><span class="icon"></span><?php echo __('Buckets');?></a>
 			<ul class="dropdown" id="dropdown_buckets">
 				<?php foreach ($buckets as $bucket): ?>
 					<li>
 						<?php if ($bucket->account->user->id != $user->id): ?>
-							<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->account->account_path ?>/<?php echo $bucket->bucket_name; ?></a>
+							<a href="<?php echo URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url; ?>"><?php echo $bucket->account->account_path ?>/<?php echo $bucket->bucket_name; ?></a>
 						<?php else: ?>
-							<a href="<?php echo URL::site().'bucket/index/'.$bucket->id; ?>"><?php echo $bucket->bucket_name; ?></a>
+							<a href="<?php echo URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url; ?>"><?php echo $bucket->bucket_name; ?></a>
 						<?php endif; ?>
 					</li>
 				<?php endforeach; ?>
-				<li class="create-new"><a href="<?php echo URL::site().'bucket/new'?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
+				<li class="create-new"><a href="<?php echo URL::site().$user->account->account_path.'/bucket/new'?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 			</ul>
 		</li>
 		<div class="account">
 			<?php if ($user): ?>
 				<?php if ($num_notifications): ?>
 					<li class="notifications">
-						<a href="<?php echo URL::site().'dashboard'; ?>">
+						<a href="<?php echo URL::site().$user->account->account_path; ?>">
 							<span class="badge"><?php echo $num_notifications; ?></span>
 						</a>
 					</li>
 				<?php endif ?>
 				<li class="user has_dropdown">
-					<a href="<?php echo URL::site().'dashboard/settings' ?>" class="arrow">
+					<a class="arrow">
 						<span class="badge"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></span>
 						<span class="icon"></span><span class="label"><?php echo $user->name; ?></span>
 					</a>
 					<ul class="dropdown">
-						<li><a href="<?php echo URL::site().'dashboard'; ?>"><?php echo __('Your account');?></a></li>
+						<li><a href="<?php echo URL::site().$user->account->account_path; ?>"><?php echo __('Your account');?></a></li>
 						<?php if ($admin): ?>
 							<li><a href="<?php echo URL::site().'settings'; ?>"><?php echo __('Site settings');?></a></li>
 						<?php endif; ?>						

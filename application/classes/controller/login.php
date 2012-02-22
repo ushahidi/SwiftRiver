@@ -72,7 +72,8 @@ class Controller_Login extends Controller_Template {
 		// If user already signed-in
 		if (Auth::instance()->logged_in() != 0)
 		{
-			$this->request->redirect('dashboard');
+			$user = Auth::instance()->get_user();
+			$this->request->redirect(URL::site().$user->account->account_path);
 		}
 				
 		//Check for system messages
@@ -149,7 +150,8 @@ class Controller_Login extends Controller_Template {
 			if (Auth::instance()->login($username, $password, $this->request->post('remember') == 1))
 			{
 				// Always redirect after a successful POST to prevent refresh warnings
-				$this->request->redirect('dashboard');
+				$user = Auth::instance()->get_user();
+				$this->request->redirect(URL::site().$user->account->account_path);
 			}
 			else
 			{

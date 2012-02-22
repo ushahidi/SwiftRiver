@@ -210,24 +210,6 @@ Route::set('media', 'media(/<file>)', array('file' => '.+'))
 ));
 
 
-/**
- * Swiftriver Dashboard Route
- */	
-Route::set('dashboard', 'dashboard(/<action>(/<id>))')
-	->defaults(array(
-		'controller' => 'dashboard',
-		'action'     => 'index',
-	));	
-
-/**
- * Swiftriver Dashboard Route
- */	
-Route::set('user', 'user/<account>(/<action>(/<id>))')
-	->defaults(array(
-		'controller' => 'user',
-		'action'     => 'index',
-	));	
-
 
 /**
  * Swiftriver Welcome Route
@@ -235,107 +217,6 @@ Route::set('user', 'user/<account>(/<action>(/<id>))')
 Route::set('welcome', 'welcome(/<action>(/<id>))')
 	->defaults(array(
 		'controller' => 'welcome',
-		'action'     => 'index',
-	));
-
-/**
- * Swiftriver Visualize Rivers Route
- */	
-Route::set('trend_river', 'river/trend(/<controller>(/<id>(/<action>)))',
-	array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'trend'
-	));
-
-/**
- * Swiftriver Visualize Buckets Route
- */	
-Route::set('trend_bucket', 'bucket/trend(/<controller>(/<id>(/<action>)))',
-	array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'trend'
-	));	
-
-/**
- * Swiftriver Bucket Route
- */
-Route::set('bucket', 'bucket(/<action>(/<id>))', array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'bucket',
-		'action'     => 'index',
-	));
-	
-Route::set('bucket_droplet', 'bucket/droplets/<bucket_id>/<droplet_id>', array('bucket_id' => '\d+', 'droplet_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-	
-Route::set('bucket_droplet_reply', 'bucket/droplets/<bucket_id>/reply', array('bucket_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-Route::set('bucket_droplet_tag', 'bucket/droplets/<bucket_id>/<droplet_id>/tags(/<tag_id>)', array('bucket_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'tag',
-		'action'     => 'api',
-	));
-
-// Bucket collaborators
-Route::set('bucket_collaborator', 'bucket/collaborators/<id>/<collaborator_id>', array('id' => '\d+', 'collaborator_id' => '\d+'))
-    ->defaults(array(
-	    'controller' => 'bucket',
-	    'action' => 'api'
-	 ));
-
-Route::set('channel_filters', 'river/channel_options/<id>(/<channel_filter_id>)', array('id' => '\d+', 'channel_filter_id' => '\d+'))
-    ->defaults(array(
-	    'controller' => 'river',
-	    'action' => 'channels'
-	 ));
-
-/**
- * Swiftriver River Route
- */
-Route::set('river', 'river(/<action>(/<id>))', array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'river',
-		'action'     => 'index',
-	));
-	
-Route::set('river_droplet', 'river/droplets/<river_id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-	
-Route::set('river_droplet_reply', 'river/droplets/<river_id>/reply', array('river_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-Route::set('river_droplet_tag', 'river/droplets/<river_id>/<droplet_id>/tags(/<tag_id>)', array('river_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'tag',
-		'action'     => 'api',
-	));
-Route::set('channel_filter_options', 'river/channel_options/<id>(/<channel_option_id>)', array('id' => '\d+', 'channel_option_id' => '\d+'))
-    ->defaults(array(
-	    'controller' => 'river',
-	    'action' => 'channel_options'
-	 ));
-	
-/**
- * Swiftriver Droplet Route
- */
-Route::set('droplet', 'droplet(/<action>(/<id>))', array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
 		'action'     => 'index',
 	));
 
@@ -348,113 +229,87 @@ Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
 		'action'     => 'index',
 		'directory'  => 'settings'
 	));
-
-
-//*********** WHEN NOT LOGGED IN USE ACCOUNT NAMESPACE ***********//
+	
 
 /**
- * Swiftriver Bucket Route
+ * Account Registration Route
  */
-Route::set('bucket_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
+Route::set('register', 'register')
 	->defaults(array(
-		'controller' => 'bucket',
-		'action'     => 'index',
-	));	
-Route::set('bucket_collaborators_ext', '<account>/bucket/<id>/collaborators(/<user_id>)', array('id' => '\d+', 'user_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'bucket',
-		'action'     => 'collaborators',
-	));
-	
-	
-Route::set('bucket_droplet_ext', '<account>/bucket/droplets/<bucket_id>/<droplet_id>', array('bucket_id' => '\d+', 'droplet_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-
-Route::set('bucket_droplet_reply_ext', '<account>/bucket/droplets/<bucket_id>/reply', array('bucket_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-Route::set('bucket_droplet_tag_ext', '<account>/bucket/droplets/<bucket_id>/<droplet_id>/tags(/<tag_id>)', array('bucket_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'tag',
-		'action'     => 'api',
-	));
-
-// Bucket collaborators
-Route::set('bucket_collaborator_ext', '<account>/bucket/collaborators/<id>/<collaborator_id>', array('id' => '\d+', 'collaborator_id' => '\d+'))
-    ->defaults(array(
-    	'controller' => 'bucket',
-    	'action' => 'api'
-	    ));
-
-
-/**
- * Swiftriver River Route
- */
-Route::set('river_ext', '<account>(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
-	->defaults(array(
-		'controller' => 'river',
-		'action'     => 'index',
-	));
-
-Route::set('river_collaborators_ext', '<account>/river/<id>/collaborators(/<user_id>)', array('id' => '\d+', 'user_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'river',
-		'action'     => 'collaborators',
-	));
-	
-Route::set('river_droplet_ext', '<account>/river/droplets/<river_id>/<droplet_id>', array('river_id' => '\d+', 'droplet_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-
-Route::set('river_droplet_reply_ext', '<account>/river/droplets/<river_id>/reply', array('river_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'droplet',
-		'action'     => 'api',
-	));
-Route::set('river_droplet_tag_ext', '<account>/river/droplets/<river_id>/<droplet_id>/tags(/<tag_id>)', array('river_id' => '\d+'))
-	->defaults(array(
-		'controller' => 'tag',
-		'action'     => 'api',
+		'controller' => 'user',
+		'action'     => 'register'
 	));	
 
-Route::set('channel_filter_options_ext', '<account>/river/channel_options/<id>(/<channel_option_id>)', array('id' => '\d+', 'channel_option_id' => '\d+'))
-    ->defaults(array(
-	    'controller' => 'river',
-	    'action' => 'channel_options'
-	 ));
+	
+/**
+ * Account Route
+ */
+Route::set('account_rivers', '<account>/rivers')
+	->defaults(array(
+		'controller' => 'user',
+		'action'     => 'rivers'
+	));	
+	
+Route::set('account_river_new', '<account>/river/new')
+	->defaults(array(
+		'controller' => 'river',
+		'action'     => 'new'
+	));
 
-Route::set('channel_filters_ext', '<account>/river/channels/<id>(/<channel_filter_id>)', array('id' => '\d+', 'channel_filter_id' => '\d+'))
-    ->defaults(array(
-	    'controller' => 'river',
-	    'action' => 'channels'
-	 ));
+Route::set('account_buckets', '<account>/buckets')
+	->defaults(array(
+		'controller' => 'user',
+		'action'     => 'buckets'
+	));	
+
+Route::set('account_bucket_new', '<account>/bucket/new')
+	->defaults(array(
+		'controller' => 'bucket',
+		'action'     => 'new'
+	));	
+
+
+Route::set('account_settings', '<account>/settings')
+	->defaults(array(
+		'controller' => 'user',
+		'action'     => 'settings'
+	));	
+
+Route::set('account_settings_ajax', '<account>/ajax_settings')
+	->defaults(array(
+		'controller' => 'user',
+		'action'     => 'ajax_settings'
+	));	
 
 /**
- * Swiftriver Trends Buckets Route
- */	
-Route::set('trend_bucket_ext', '<account>/bucket/trend(/<controller>(/<action>(/<id>)))')
+ * Trends
+ */
+Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<action>(/<id>))',
+	array(
+		'context' => '(river|bucket)'
+	))
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
 		'directory'  => 'trend'
 	));
 	
+
 /**
- * Swiftriver Visualize Rivers Route
- */	
-Route::set('trend_river_ext', '<account>/river/trend(/<controller>(/<action>(/<id>)))')
+ * Rivers and Buckets
+ */
+Route::set('account', '<account>(/<controller>/<name>(/<action>(/<id>(/<id2>))))',
+	array(
+		'controller' => '(user|river|bucket)'
+	))
 	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'trend'
-	));	
+		'controller' => 'user',
+		'action'     => 'index'
+	));
+
+
+
+
 
 /**
  * Swiftriver Default Route
