@@ -251,12 +251,21 @@ $(function() {
 			if (button.hasClass("detail-hide")) {
 				button.removeClass('detail-hide');
 				this.$('div.drawer').slideUp('slow');
+				
+				// If the drawer is closed from the bottom link and the
+				// top of the droplet is hidden, scroll to the top of the
+				// droplet to avoid losing the current position in the list
+				if (this.$el.offset().top < $(window).scrollTop()) {
+					$("html,body").animate({
+						scrollTop: this.$el.offset().top
+					}, 600);
+				}
 			} else {
 				button.addClass('detail-hide');
 				this.$('div.drawer').slideDown('slow');
 				
 				// Only show droplet content when drawer is open
-				this.$("article.fullstory div span").html(this.model.get("droplet_content"));
+				this.$("article.fullstory div span").html(this.model.get("droplet_content"));				
 			}
 		},
 		

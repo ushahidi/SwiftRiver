@@ -1,9 +1,13 @@
 <article class="list">
 	<div class="cf center page-title">
-		<hgroup class="edit">
+		<hgroup>
 			<h1 class="<?php echo ($bucket->bucket_publish == 0) ? "private" : "public"; ?>">
 				<span class="icon"></span>
-				<span class="edit_trigger" title="bucket" id="edit_<?php echo $bucket->id; ?>" onclick=""><?php echo $bucket->bucket_name; ?></span>
+				<?php if ($bucket->account->user->id == $user->id): ?>
+					<span><?php echo $bucket->bucket_name; ?></span>
+				<?php else: ?>
+					<a href="<?php echo URL::site().$bucket->account->account_path ?>"><span><?php echo $bucket->account->account_path; ?></a>/<?php echo $bucket->bucket_name; ?></span>
+				<?php endif; ?>
 			</h1>
 		</hgroup>
 	</div>

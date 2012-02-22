@@ -79,7 +79,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
 			->bind('more', $more)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+			->bind('user', $this->user);
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
