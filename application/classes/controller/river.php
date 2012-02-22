@@ -556,7 +556,7 @@ class Controller_River extends Controller_Swiftriver {
 	 			break;
 
 	 			case "PUT":
-	 			$channel_filter_id = $this->request->param('channel_filter_id', 0);
+	 			$channel_filter_id = $this->request->param('id', 0);
 	 			$channel_filter_orm = ORM::factory('channel_filter', $channel_filter_id);
 
 	 			if ($channel_filter_orm->loaded())
@@ -566,6 +566,10 @@ class Controller_River extends Controller_Swiftriver {
 	 				$channel_filter_orm->filter_enabled = $post['enabled'];
 	 				$channel_filter_orm->save();
 
+	 			}
+	 			else
+	 			{
+	 				$this->response->status(400);
 	 			}
 	 			break;
 	 		}
@@ -595,13 +599,17 @@ class Controller_River extends Controller_Swiftriver {
 						throw new HTTP_Exception_403();
 					}
 				
-					$channel_option_id = $this->request->param('channel_option_id', 0);
+					$channel_option_id = $this->request->param('id', 0);
 					$option_orm = ORM::factory('channel_filter_option', $channel_option_id);
 
 					// Verify that the option exists
 					if ($option_orm->loaded())
 					{
 						$option_orm->delete();
+					}
+					else
+					{
+						$this->response->status(400);
 					}
 
 				break;
