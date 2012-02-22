@@ -746,6 +746,18 @@ CREATE TABLE IF NOT EXISTS `droplet_scores` (
   UNIQUE KEY `droplet_id` (`droplet_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
+-- ----------------------------------------
+-- TABLE 'droplet_deleted_tags'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `droplet_deleted_tags` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(11) NOT NULL,
+  `droplet_id` bigint(11) NOT NULL,
+  `tag_id` bigint(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `del_account_droplet_tag_id` (`account_id`,`droplet_id`,`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 -- -----------------------------------------------------
 -- Data for table `roles`
