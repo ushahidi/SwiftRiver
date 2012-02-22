@@ -174,7 +174,7 @@ class Model_User extends Model_Auth_User
 	 * @param $search_string
 	 * @return array
 	 */
-	public static function get_like($search_string, $exclude_ids = array())
+	public static function get_like($search_string, $exclude_ids = array(), $limit = 10)
 	{
 		$users = array();
 		$search_string = strtolower(trim($search_string));
@@ -182,11 +182,14 @@ class Model_User extends Model_Auth_User
 		                ->or_where_open()
 		                ->where(DB::expr('lower(email)'),'like', "$search_string%")
 		                ->or_where(DB::expr('lower(name)'),'like', "$search_string%")
+		                ->or_where(DB::expr('lower(name)'),'like', "% $search_string%")
 		                ->or_where_close();;
 		
 		if (! empty($exclude_ids)) {
 			$users_query->and_where('id', 'not in', $exclude_ids);
 		}
+		
+		$users_query->limit($limit);
 	
 		
 		$users_orm = $users_query->find_all();
@@ -196,7 +199,8 @@ class Model_User extends Model_Auth_User
 			$users[] = array(
 				'id' => $user->id, 
 				'name' => $user->name,
-				'account_path' => $user->account->account_path
+				'account_path' => $user->account->account_path,
+				'avatar' => Swiftriver_Users::gravatar($user->email, 40)
 			);
 		}
 		

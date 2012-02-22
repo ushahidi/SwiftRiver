@@ -14,7 +14,7 @@
 
 <script type="text/template" id="collaborator-template">
 	<div class="content">
-		<h1><a href="<?php echo url::site('user').'/<%= account_path %>' ?>" class="go"><%= name %></a></h1>
+		<h1><span class="badge"><img src="<%= avatar %>" /></span><a href="<?php echo url::site('user').'/<%= account_path %>' ?>" class="go"><%= name %></a></h1>
 	</div>
 	<% if (id != <?php echo $logged_in_user_id ?>) { %>
 	<div class="summary">
@@ -51,7 +51,7 @@
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
-	<a><%= name %></a>
+	<span class="badge"><img src="<%= avatar %>" /></span><a><%= name %></a>
 </script>
 
 
