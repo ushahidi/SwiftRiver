@@ -192,6 +192,12 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			$this->base_url = URL::site().$visited_account_path.'/'.$this->request->controller();
 			$this->visited_account = ORM::factory('account', array('account_path' => $visited_account_path));
+			
+			// Visited account doesn't exist?
+			if ( ! $this->visited_account->loaded())
+			{
+				$this->request->redirect($this->dashboard_url);
+			}
 		}
 		else
 		{
