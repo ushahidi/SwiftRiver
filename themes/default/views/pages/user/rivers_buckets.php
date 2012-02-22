@@ -49,7 +49,8 @@
 	</section>
 	<section class="meta">
 		<p>
-			<a href="#"><strong><%= subscriber_count %></strong> <?php echo __('Subscribers'); ?></a>
+			<a><strong><%= subscriber_count %></strong> <?php echo __('Subscribers'); ?></a>
+			<a><strong><%= drop_count %></strong> <?php echo __('Drops'); ?></a>
 		</p>
 	</section>
 </div>

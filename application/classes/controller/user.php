@@ -135,9 +135,10 @@ class Controller_User extends Controller_Swiftriver {
 					"item_owner_url" => URL::site().$river->account->account_path,
 					"account_path" => $river->account->account_path,
 					"subscribed" => $this->user->has('river_subscriptions', $river),
-					"subscriber_count" => count($river->subscriptions->find_all()),					
+					"subscriber_count" => number_format($river->subscriptions->count_all()),
 					"is_owner" => $river->is_owner($this->user->account->id),
-					"is_other_account" => $river->account->id != $this->user->account->id && $this->owner
+					"is_other_account" => $river->account->id != $this->user->account->id && $this->owner,
+					"drop_count" => number_format($river->droplets->count_all())
 				);
 		}		
 		$this->sub_content->list_items = json_encode($list_items);		
@@ -173,9 +174,10 @@ class Controller_User extends Controller_Swiftriver {
 					"item_owner_url" => URL::site().$bucket->account->account_path,
 					"account_path" => $bucket->account->account_path,
 					"subscribed" => $this->user->has('bucket_subscriptions', $bucket),
-					"subscriber_count" => count($bucket->subscriptions->find_all()),
+					"subscriber_count" => number_format($bucket->subscriptions->count_all()),
 					"is_owner" => $bucket->is_owner($this->user->account->id),
-					"is_other_account" => $bucket->account->id != $this->user->account->id && $this->owner
+					"is_other_account" => $bucket->account->id != $this->user->account->id && $this->owner,
+					"drop_count" => number_format($bucket->droplets->count_all())
 				);
 		}
 		$this->sub_content->list_items = json_encode($list_items);
