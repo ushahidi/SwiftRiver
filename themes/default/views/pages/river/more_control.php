@@ -9,7 +9,7 @@
 				<li class="button-view"><a href="/river/trends/gallery.html">Gallery</a></li>
 				<?php
 				// Swiftriver Plugin Hook -- Hook into to the 'More' dropdown
-				Swiftriver_Event::run('swiftriver.river.nav.more', $river_id);
+				Swiftriver_Event::run('swiftriver.river.nav.more', $river);
 				?>
 			</ul>
 		</div>
