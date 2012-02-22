@@ -741,8 +741,12 @@ class Controller_River extends Controller_Swiftriver {
 				{
 					$this->river->delete();
 
-					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->dashboard_url;
+					// Encode the response to be returned to the client
+					$this->response->body(json_encode(
+						array(
+							"redirect_url" => URL::site("/dashboard")
+						)
+					));
 				}
 			break;
 
@@ -770,8 +774,12 @@ class Controller_River extends Controller_Swiftriver {
 						$this->river->save();
 					}
 
-					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->base_url.'/'.$this->river->river_name_url;
+					// Encode the response to be returned to the client
+					$this->response->body(json_encode(
+						array(
+							"redirect_url" => $this->base_url.'/index/'.$this->river->id
+						)
+					));
 				}
 			break;
 		}
