@@ -16,7 +16,7 @@
 	?>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
-	echo(Html::script("themes/default/media/js/jquery.min.js"));
+	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
