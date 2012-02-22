@@ -18,27 +18,14 @@ class Map_Init {
 	public function __construct()
 	{
 		// Create Menu Item
-		Swiftriver_Event::add('swiftriver.river.nav.more', array($this, 'river_nav'));
-		Swiftriver_Event::add('swiftriver.bucket.nav.more', array($this, 'bucket_nav'));
+		Swiftriver_Event::add('swiftriver.river.nav', array($this, 'river_nav'));
+		Swiftriver_Event::add('swiftriver.bucket.nav', array($this, 'bucket_nav'));
 		
 		// For adding our js/css to the header
-		Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
+		//Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
 	}
 	
 	
-	/**
-	 * Hook into the page header
-	 * 
-	 * @return	void
-	 */
-	public function template_header()
-	{
-	    echo(Html::style('media/css/map.css'));
-	    echo(Html::style('media/css/colorbox.css'));
-	    echo(Html::script('http://openlayers.org/api/OpenLayers.js'));
-	    echo(Html::script('media/js/jquery.colorbox-min.js'));
-	    echo(Html::script('media/js/map.js'));
-	}
 
     /**
 	 * Display map link in river navigation bar
@@ -47,8 +34,11 @@ class Map_Init {
 	 */
 	public function river_nav()
 	{
-		$river_id = Swiftriver_Event::$data;
-		echo '<li class="button-view"><a href="'.URL::site().'river/trend/map/'.$river_id.'">Map</a></li>';
+		$river = Swiftriver_Event::$data;		
+		$url = URL::site().$river->account->account_path.'/river/'.$river->river_name_url.'/trend/map';
+		$active_menu = Controller_Trend_Main::$active;
+		echo ($active_menu == 'map') ? '<li class="active">' : '<li>';
+		echo '<a href="'.$url.'">'.__('Map').'</a></li>';
 	}
 	
 	/**
@@ -60,10 +50,11 @@ class Map_Init {
 	{
 		$bucket = Swiftriver_Event::$data;
 
-		// If menu is active
+		// If menu is active		
+		$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/map';
 		$active_menu = Controller_Trend_Main::$active;
 		echo ($active_menu == 'map') ? '<li class="active">' : '<li>';
-		echo '<a href="'.URL::site().'bucket/trend/map/'.$bucket->id.'">'.__('Map').'</a></li>';
+		echo '<a href="'.$url.'">'.__('Map').'</a></li>';
 	}
 	
 }

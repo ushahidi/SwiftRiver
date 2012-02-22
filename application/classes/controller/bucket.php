@@ -37,17 +37,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
-		// First we need to make sure this bucket exists
-		$bucket_id = intval($this->request->param('id', 0));
-
-		$this->bucket = ORM::factory('bucket')
-			->where('id', '=', $bucket_id)
-			->find();
+		// Get the river name from the url
+		$bucket_name_url = $this->request->param('name');
+		$action = $this->request->action();
 		
-		if ($bucket_id != 0 AND ! $this->bucket->loaded())
+		$this->bucket = ORM::factory('bucket')
+			->where('bucket_name_url', '=', $bucket_name_url)
+			->where('account_id', '=', $this->visited_account->id)
+			->find();
+
+		if ($bucket_name_url AND ! $this->bucket->loaded() AND $action != 'manage')
 		{
 			// It doesn't -- redirect back to dashboard
-			$this->request->redirect('dashboard');
+			$this->request->redirect($this->dashboard_url);
 		}
 		
 		if ($this->bucket->loaded())
@@ -61,8 +63,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 			// Bucket isn't published and logged in user isn't owner
 			if ( ! $this->bucket->bucket_publish AND ! $this->owner)
 			{
-				$this->request->redirect('dashboard');
+				$this->request->redirect($this->dashboard_url);
 			}
+			
+			// Set the base url for this specific bucket
+			$this->bucket_base_url = $this->base_url.'/'.$this->bucket->bucket_name_url;
 		}
 	}
 
@@ -92,15 +97,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplet_list = json_encode($droplets);
 		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
-		        ->bind('fetch_url', $fetch_url)
-		        ->bind('tag_base_url', $tag_base_url)
+		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('bucket_list', $bucket_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 		
-		$fetch_url = $this->base_url.'/droplets/'.$this->bucket->id;
-		$tag_base_url = $this->base_url.'/droplets/'.$this->bucket->id;
+		$fetch_base_url = $this->bucket_base_url;
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')
@@ -114,9 +117,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->find_all();
 
 		// Links to ajax rendered menus
-		$settings_url = $this->base_url.'/settings/'.$this->bucket->id;
-		$discussion_url = $this->base_url.'/discussion/'.$this->bucket->id;
-		$more = $this->base_url.'/more/';
+		$settings_url = $this->bucket_base_url.'/settings';
+		$discussion_url = $this->bucket_base_url.'/discussion';
+		$more = $this->bucket_base_url.'/more';
 	}
 	
 	/**
@@ -149,11 +152,17 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$bucket->account_id = $this->account->id;
 				$bucket->user_id = $this->user->id;            
 				$bucket->save();
-				Request::current()->redirect('bucket/index/'.$bucket->id);
+				Request::current()->redirect(URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url);
 			}
 			catch (ORM_Validation_Exception $e)
 			{
 				$errors = $e->errors('validation');
+			}
+			catch (Database_Exception $e)
+			{
+				$errors = array(__("A bucket with the name ':name' already exists", 
+				                                array(':name' => $bucket->bucket_name)
+				));
 			}
 		}
 		
@@ -171,7 +180,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		   ->bind('bucket_url_root', $bucket_url_root)
 		   ->bind('bucket_data', $bucket_data);
 
-		$bucket_url_root = $this->base_url.'/api';
+		$bucket_url_root = $this->bucket_base_url.'/api';
 
 		$bucket_data = json_encode(array(
 			'id' => $this->bucket->id,
@@ -192,46 +201,154 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
-		// First we need to make sure this bucket exists
-		$id = (int) $this->request->param('id', 0);
-		
-		$bucket = ORM::factory('bucket')
-			          ->where('id', '=', $id)
-			          ->find();
-		
-		if ( ! $bucket->loaded())
+		switch ($this->request->method())
 		{
-			echo json_encode(array());
-			return;
+			case "GET":
+				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+				
+				
+				$droplets_array = array();
+				if ($since_id)
+				{
+				    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id);
+				}
+				else
+				{
+				    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, $page, $max_id);
+				}
+        		
+				$droplets = $droplets_array['droplets'];
+				//Throw a 404 if a non existent page is requested
+				if ($page > 1 AND empty($droplets))
+				{
+				    throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
+				}
+				
+				
+				echo json_encode($droplets);
+			break;
+			
+			case "PUT":
+				$droplet_array = json_decode($this->request->body(), TRUE);
+				$droplet_id = intval($this->request->param('id', 0));
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				$droplet_orm->update_from_array($droplet_array);
+			break;
+			
+			case "DELETE":
+				$droplet_id = intval($this->request->param('id', 0));
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				
+				// Does the user exist
+				if ( ! $droplet_orm->loaded())
+				{
+					throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
+				}
+				
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				ORM::factory('bucket', $this->bucket->id)->remove('droplets', $droplet_orm);
 		}
+	}
+	
+	/**
+	  * Tags restful api
+	  */ 
+	 public function action_tags()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
 		
-		$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-		$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-		$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+		$droplet_id = intval($this->request->param('id', 0));
+		$tag_id = intval($this->request->param('id2', 0));
 		
-		
-		$droplets_array = array();
-		if ($since_id)
+		switch ($this->request->method())
 		{
-		    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $bucket->id, $since_id);
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				$tag_array = json_decode($this->request->body(), true);
+				$tag_name = $tag_array['tag'];
+				$account_id = $this->visited_account->id;
+				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
+				echo json_encode(array('id' => $tag_orm->tag->id, 'tag' => $tag_orm->tag->tag));
+			break;
+			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+			break;
 		}
-		else
-		{
-		    $droplets_array = Model_Bucket::get_droplets($this->user->id, $bucket->id, $page, $max_id);
-		}
-
-		$droplets = $droplets_array['droplets'];
-		//Throw a 404 if a non existent page is requested
-		if ($page > 1 AND empty($droplets))
-		{
-		    throw new HTTP_Exception_404(
-		        'The requested page :page was not found on this server.',
-		        array(':page' => $page)
-		        );
-		}
+	}
+	
+	/**
+	  * Replies restful api
+	  */ 
+	 public function action_reply()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
 		
+		$droplet_id = intval($this->request->param('id', 0));
 		
-		echo json_encode($droplets);
+		switch ($this->request->method())
+		{
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				// Get the POST data
+				$droplet = json_decode($this->request->body(), TRUE);
+				
+				// Set the remaining properties
+				$droplet['parent_id'] = intval($this->request->param('id', 0));
+				$droplet['droplet_type'] = 'reply';
+				$droplet['channel'] = 'swiftriver';
+				$droplet['droplet_title'] = $droplet['droplet_content'];
+				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', time());
+				$droplet['droplet_orig_id'] = 0;
+				$droplet['droplet_locale'] = 'en';
+				$droplet['identity_orig_id'] = $this->user->id;
+				$droplet['identity_username'] = $this->user->username;
+				$droplet['identity_name'] = $this->user->name;
+				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
+				// Set the river id
+				$droplet['bucket_id'] = $this->bucket->id;
+				// Add the droplet to the queue
+				$droplet_orm = Swiftriver_Dropletqueue::add($droplet);
+				echo json_encode(array(
+					'id' => $droplet_orm->id,
+					'channel' => $droplet['channel'],
+					'identity_avatar' => $droplet['identity_avatar'],
+					'identity_name' => $droplet['identity_name'],
+					'droplet_date_pub' => $droplet['droplet_date_pub'],
+					'droplet_content' => $droplet['droplet_content']
+				));
+			break;
+		}
 	}
 	
 	/**
@@ -271,7 +388,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		                             ->bind('logged_in_user_id', $logged_in_user_id);
 
 		$collaborator_list = json_encode($this->bucket->get_collaborators());
-		$fetch_url = $this->base_url.'/'.$this->bucket->id.'/collaborators';
+		$fetch_url = $this->bucket_base_url.'/collaborators';
 		$logged_in_user_id = $this->user->id;
 		
 		
@@ -299,7 +416,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
-				$user_id = intval($this->request->param('user_id', 0));
+				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
 				if ( ! $user_orm->loaded()) 
@@ -314,7 +431,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
-				$user_id = intval($this->request->param('user_id', 0));
+				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
 				$collaborator_orm = ORM::factory("bucket_collaborator")
@@ -400,7 +517,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 					}
 
 					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->base_url.'/index/'.$this->bucket->id;
+					$response["redirect_url"] = $this->base_url.'/'.$this->bucket->bucket_name_url;
 				}
 			break;
 
@@ -410,7 +527,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 				{
 					$this->bucket->delete();
 					$response["success"] = TRUE;
-					$response["redirect_url"] = url::site('dashboard/buckets');
+					$response["redirect_url"] = url::site($this->bucket_base_url);
 				}
 			break;
 		}
@@ -420,10 +537,10 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Returns a JSON response of the list of buckets accessible to the 
-	 * currently logged in user
+	 * Bucket management restful API
+	 * 
 	 */
-	public function action_list_buckets()
+	public function action_manage()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;

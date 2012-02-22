@@ -149,4 +149,35 @@ class Model_Account extends ORM
 		return $collaborators;
 	}
 	
+	/**
+	 * Checks if the given user owns the account or is an account collaborator
+	 *
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_owner($user_id)
+	{
+		// Does the user exist?
+		$user_orm = ORM::factory('user', $user_id);
+		if ( ! $user_orm->loaded())
+		{
+			return FALSE;
+		}
+		
+		// Does the user own the account?
+		if ($this->user->id == $user_id)
+		{
+			return TRUE;
+		}
+
+		
+		// Is the user id an account collaborator?
+		if ($this->account_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		{
+			return TRUE;
+		}
+		
+		return FALSE;		
+	}
+	
 }

@@ -22,7 +22,7 @@
  		'email'			=> 'brian.muita@ushahidi.com',
  		'version'		=> '1.0.0',
  		'settings'		=> TRUE,
- 		'channel'		=> TRUE,
+ 		'channel'		=> FALSE,
  		
 		
  		'dependencies'	=> array(

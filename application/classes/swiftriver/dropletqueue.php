@@ -117,7 +117,7 @@ class Swiftriver_Dropletqueue {
 			Model_Identity::create_from_droplet($droplet);
 		
 			// Create droplet from the array
-			Model_Droplet::create_from_array($droplet);
+			$orm_droplet = Model_Droplet::create_from_array($droplet);
 		
 			// Check if queueing mode is enabled
 			if ($queue_droplet)
@@ -131,7 +131,7 @@ class Swiftriver_Dropletqueue {
 				self::$_queue[] = $droplet;
 			}
 			
-			return TRUE;
+			return $orm_droplet;
 		}
 		else
 		{
@@ -139,7 +139,7 @@ class Swiftriver_Dropletqueue {
 			{
 				Kohana::$log->add(Log::DEBUG, $error);
 			}
-			return FALSE;
+			return NULL;
 		}
 	}
 	

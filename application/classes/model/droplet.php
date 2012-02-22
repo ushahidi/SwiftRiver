@@ -160,12 +160,12 @@ class Model_Droplet extends ORM
 				// Set the 'id' key to the newly saved droplet
 				$droplet['id'] = $orm_droplet->id;
 				
-				return TRUE;
+				return $orm_droplet;
 			}
 			catch (Database_Exception $e)
 			{
 				Kohana::$log->add(Log::ERROR, $e->getMessage());
-				return FALSE;
+				return NULL;
 			}
 		}
 		else
@@ -565,7 +565,7 @@ class Model_Droplet extends ORM
 		    ->join('identities', 'INNER')
 		    ->on('droplets.identity_id', '=', 'identities.id')
 		    ->where('droplets.parent_id', 'IN', $droplet_ids)
-		    ->order_by('droplets.id', 'ASC');
+		    ->order_by('droplet_date_pub', 'ASC');
 		 
 
 		 // Group the comments per droplet

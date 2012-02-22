@@ -38,9 +38,13 @@ class Model_User_Action extends ORM
 	}
 	
 	/**
-	 * Gets actions and notification for the user's follows
+	 * Gets actions and notification for the user's follows or the user's activities
+	 *
+	 * @param int $user_id Visited user ID
+	 * @param boolean $self If TRUE, only get the specified user_id's actions otherwise that of his following
+	 * @return array
 	 */
-	public static function get_activity_stream($user_id)
+	public static function get_activity_stream($user_id, $self = FALSE)
 	{
 		
 		// Notifications
@@ -48,10 +52,20 @@ class Model_User_Action extends ORM
 		                    'user_email', 'action', 'action_on', 'action_on_id', 'action_on_name',
 		                    'action_to_name', 'action_to_id', 'confirmed',
 		                    array(DB::expr("if(action_to_id=$user_id, 1, 0)"), 'action_to_self'))
-		             ->from('activity_stream')
-		             ->where('user_id', 'in', DB::expr("(select user_id from user_followers where follower_id = $user_id)"))
-		             ->or_where('action_to_id','=',$user_id)
-		             ->order_by('action_date_add', 'DESC');
+		             ->from('activity_stream');
+		
+		if ($self)
+		{
+			// Get the specified user_id's actions
+			$query->where('user_id', '=', $user_id);
+		}
+		else
+		{
+			// Get the actions of the users user_id is following
+			$query->where('user_id', 'in', DB::expr("(select user_id from user_followers where follower_id = $user_id)"))
+                  ->or_where('action_to_id','=',$user_id);
+		}
+		$query->order_by('action_date_add', 'DESC');
 		
 		$results = $query->execute()->as_array();
 		
@@ -61,19 +75,22 @@ class Model_User_Action extends ORM
 			
 			// Set the user's url
 			$user_orm = ORM::factory('user', $result["user_id"]);
-			$result["user_url"] = URL::site().'user/'.$user_orm->account->account_path; 
+			$result["user_url"] = URL::site().$user_orm->account->account_path; 
 			
 			
 			// Set action url
 			$result["action_on_url"] = "";
 			if ($result["action_on"] == "account") {
-				$result["action_on_url"] = URL::site().'user/'.$result["action_on_name"]; 
+				$result["action_on_url"] = URL::site().$result["action_on_name"]; 
 			}
 			if ($result["action_on"] == "river") {
-				$result["action_on_url"] = URL::site().'river/index/'.$result["action_on_id"]; 
+				$river_orm = ORM::factory("river", $result["action_on_id"]);
+				$result["action_on_url"] = URL::site().$river_orm->account->account_path.'/river/'.$river_orm->river_name_url; 
 			}
 			if ($result["action_on"] == "bucket") {
-				$result["action_on_url"] = URL::site().'bucket/index/'.$result["action_on_id"]; 
+				$bucket_orm = ORM::factory("bucket", $result["action_on_id"]);
+				$result["action_on_url"] = URL::site().$bucket_orm->account->account_path
+												.'/bucket/'.$bucket_orm->bucket_name_url; 
 			}			
 		}
 		

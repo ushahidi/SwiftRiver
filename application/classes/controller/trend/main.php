@@ -29,6 +29,10 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 	private $trend;
 	
 	protected $context;
+	
+	protected $bucket;
+	
+	protected $river;
 
 	/**
 	 * @return	void
@@ -37,69 +41,66 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
+		
+		// Get the river/bucket name from the url
+		$name_url = $this->request->param('name', 0);
 
-		$id = (int) $this->request->param('id', 0);
-		
-		// River / Bucket context?
-		if ( strpos($this->request->uri(), 'river/') !== FALSE)
-		{
-		    $this->context = 'river';
-		}
-		else if ( strpos($this->request->uri(), 'bucket/') !== FALSE)
-		{
-		    $this->context = 'bucket';
-		}
-		
+		$this->context = $this->request->param('context');
+
 		switch ($this->context)
 		{
 		    case "river":
 			    // Make sure River exists
-			    $river = ORM::factory('river')
-			    	->where('id', '=', $id)
-			    	->where('account_id', '=', $this->account->id)
+			    $this->river = ORM::factory('river')
+			    	->where('river_name_url', '=', $name_url)
+			    	->where('account_id', '=', $this->visited_account->id)
 			    	->find();
-			    if ( ! $river->loaded())
+			    if ( ! $this->river->loaded())
 			    {
 			    	// It doesn't -- redirect back to dashboard
-			    	$this->request->redirect('dashboard');
+			    	$this->request->redirect($this->dashboard_url);
 			    }			
                 
-			    $this->droplets = Model_River::get_droplets($river->id);
+			    $this->droplets = Model_River::get_droplets($this->user->id, $this->river->id);
                 
 			    // Default template for river trends
 			    $this->template->content = View::factory('pages/trend/river')
-			    	->bind('river', $river)
+			    	->bind('river', $this->river)
 			    	->bind('droplets', $this->droplets)
 			    	->bind('more_url', $this->more_url)
+			    	->bind('drops_url', $drops_url)			
 			    	->bind('active', self::$active)
 			    	->bind('trend', $this->trend);
                 
-			    $this->more_url = url::site().$this->account->account_path.'/river/more/'.$river->id;
+                $drops_url = URL::site().$this->river->account->account_path.'/river/'.$this->river->river_name_url;
+			    $this->more_url = url::site().$this->account->account_path.'/river/more/'.$this->river->id;
 			    break;
 			    		    
 		    case "bucket":
 			    // Make sure Bucket exists
-			    $bucket = ORM::factory('bucket')
-			    	->where('id', '=', $id)
-			    	->where('account_id', '=', $this->account->id)
+			    $this->bucket = ORM::factory('bucket')
+			    	->where('bucket_name_url', '=', $name_url)
+			    	->where('account_id', '=', $this->visited_account->id)
 			    	->find();
-			    if ( ! $bucket->loaded())
+			    if ( ! $this->bucket->loaded())
 			    {
 			    	// It doesn't -- redirect back to dashboard
-			    	$this->request->redirect('dashboard');
+			    	$this->request->redirect($this->dashboard_url);
 			    }
                 
-			    $this->droplets = Model_Bucket::get_droplets($bucket->id);
+			    $this->droplets = Model_Bucket::get_droplets($this->user->id, $this->bucket->id);
 			    
 			    // Default template for bucket trends
 			    $this->template->content = View::factory('pages/trend/bucket')
-			    	->bind('bucket', $bucket)
+			    	->bind('bucket', $this->bucket)
 			    	->bind('droplets', $this->droplets)
 			    	->bind('more_url', $this->more_url)
+			        ->bind('drops_url', $drops_url)
 			    	->bind('active', self::$active)
 			    	->bind('trend', $this->trend);
                 
-			    $this->more_url = url::site().$this->account->account_path.'/bucket/more/'.$bucket->id;
+                $drops_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url;
+			    $this->more_url = url::site().$this->account->account_path.'/bucket/more/'.$this->bucket->id;
 			    break;	    
 		}
 	

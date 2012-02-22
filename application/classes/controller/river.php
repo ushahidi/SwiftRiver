@@ -37,6 +37,11 @@ class Controller_River extends Controller_Swiftriver {
 	 * @var bool
 	 */
 	private $is_newly_created = FALSE;
+	
+	/**
+	 * Base URL for this river.
+	 */
+	protected $river_base_url = NULL;
 
 	/**
 	 * @return	void
@@ -46,22 +51,23 @@ class Controller_River extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
-		// Get the id (if set)
-		$river_id = intval($this->request->param('id', 0));
+		// Get the river name from the url
+		$river_name_url = $this->request->param('name');
 		
 		// This check should be made when this controller is accessed
 		// and the database id of the rive is non-zero
 		$this->river = ORM::factory('river')
-			->where('id', '=', $river_id)
+			->where('river_name_url', '=', $river_name_url)
+			->where('account_id', '=', $this->visited_account->id)
 			->find();
 		
 		// Action involves a specific river, check permissions
-		if ($river_id)
+		if ($river_name_url)
 		{
 			if (! $this->river->loaded())
 			{
 				// Redirect to the dashboard
-				$this->request->redirect('dashboard');
+				$this->request->redirect($this->dashboard_url);
 			}
 					
 			// Is the logged in user an owner
@@ -73,8 +79,11 @@ class Controller_River extends Controller_Swiftriver {
 			// If this river is not public and no ownership...
 			if( ! $this->river->river_public AND ! $this->owner)
 			{
-				$this->request->redirect('dashboard');			
+				$this->request->redirect($this->dashboard_url);			
 			}
+			
+			// Set the base url for this specific river
+			$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
 		}
 
 		// Get all available channels from plugins
@@ -120,15 +129,13 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_list = json_encode($droplets);
 		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
-		    ->bind('fetch_url', $fetch_url)
-		    ->bind('tag_base_url', $tag_base_url)
+		    ->bind('fetch_base_url', $fetch_base_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('bucket_list', $bucket_list)
 		    ->bind('max_droplet_id', $max_droplet_id)
 		    ->bind('user', $this->user);
 		    		
-		$fetch_url = $this->base_url.'/droplets/'.$river_id;
-		$tag_base_url = $this->base_url.'/droplets/'.$river_id;
+		$fetch_base_url = $this->river_base_url;
 		
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js)
@@ -143,9 +150,9 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// URL's to pages that are ajax rendered on demand
-		$filters_url = $this->base_url.'/filters/'.$river_id;		
-		$settings_url = $this->base_url.'/settings/'.$river_id;
-		$more_url = $this->base_url.'/more/'.$river_id;
+		$filters_url = $this->river_base_url.'/filters';
+		$settings_url = $this->river_base_url.'/settings';
+		$more_url = $this->river_base_url.'/more';
 	}
 	
 	/**
@@ -156,33 +163,67 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = "";
 		$this->auto_render = FALSE;
 
-		//Use page paramter or default to page 1
-		$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-		$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-		$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-		
-		$droplets_array = array();
-		if ( $since_id )
+		switch ($this->request->method())
 		{
-		    $droplets_array = Model_River::get_droplets_since_id($this->user->id, $this->river->id, $since_id);
+			case "GET":
+				//Use page paramter or default to page 1
+				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+				
+				$droplets_array = array();
+				if ( $since_id )
+				{
+				    $droplets_array = Model_River::get_droplets_since_id($this->user->id, $this->river->id, $since_id);
+				}
+				else
+				{
+				    $droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $page, $max_id);
+				}
+				
+				$droplets = $droplets_array['droplets'];
+				//Throw a 404 if a non existent page is requested
+				if ($page > 1 AND empty($droplets))
+				{
+				    throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
+				}
+				
+				
+				echo json_encode($droplets);
+			break;
+			
+			case "PUT":
+				$droplet_array = json_decode($this->request->body(), TRUE);
+				$droplet_id = intval($this->request->param('id', 0));
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				$droplet_orm->update_from_array($droplet_array);
+			break;
+			
+			case "DELETE":
+				$droplet_id = intval($this->request->param('id', 0));
+				$droplet_orm = ORM::factory('droplet', $droplet_id);
+				
+				// Does the user exist
+				if ( ! $droplet_orm->loaded())
+				{
+					throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
+				}
+				
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				ORM::factory('river', $this->river->id)->remove('droplets', $droplet_orm);
+			break;
 		}
-		else
-		{
-		    $droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $page, $max_id);
-		}
-		
-		$droplets = $droplets_array['droplets'];
-		//Throw a 404 if a non existent page is requested
-		if ($page > 1 AND empty($droplets))
-		{
-		    throw new HTTP_Exception_404(
-		        'The requested page :page was not found on this server.',
-		        array(':page' => $page)
-		        );
-		}
-		
-		
-		echo json_encode($droplets);
 	}
 	
 	
@@ -203,6 +244,8 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('errors', $errors)
 			->bind('is_new_river', $is_new_river);
 		
+		$is_new_river = TRUE;
+		
 		// Check for form submission
 		if ($_POST)
 		{
@@ -215,18 +258,22 @@ class Controller_River extends Controller_Swiftriver {
 				$river->account_id = $this->user->account->id;            	
 				$this->river = $river->save();
             	
-				// Mark the river as newly created
-				$this->is_newly_created = TRUE;
+				// Redirect to the river view.
+				$this->request->redirect(URL::site().$river->account->account_path.'/river/'.$river->river_name_url);
 			}
 			catch (ORM_Validation_Exception $e)
 			{
 				$errors = $e->errors('validation');
 			}
+			catch (Database_Exception $e)
+			{
+				$errors = array(__("A river with the name ':name' already exists", 
+				                                array(':name' => $river->river_name)
+				));
+			}
 		
 		}
-		
-		$is_new_river = ($this->river->loaded() == FALSE);
-		$this->template_type = 'dashboard';
+				
 		$this->active = 'rivers';
 
 		// Get the settings control		
@@ -279,7 +326,13 @@ class Controller_River extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
-				$user_id = intval($this->request->param('user_id', 0));
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+							
+				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
 				if ( ! $user_orm->loaded()) 
@@ -294,7 +347,13 @@ class Controller_River extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
-				$user_id = intval($this->request->param('user_id', 0));
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+			
+				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
 				$collaborator_orm = ORM::factory("river_collaborator")
@@ -311,7 +370,103 @@ class Controller_River extends Controller_Swiftriver {
 				}				
 			break;
 		}
-	}	
+	}
+	
+	 /**
+	  * Tags restful api
+	  */ 
+	 public function action_tags()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$tag_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				$tag_array = json_decode($this->request->body(), true);
+				$tag_name = $tag_array['tag'];
+				$account_id = $this->visited_account->id;
+				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
+				echo json_encode(array('id' => $tag_orm->tag->id, 'tag' => $tag_orm->tag->tag));
+			break;
+			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	 /**
+	  * Replies restful api
+	  */ 
+	 public function action_reply()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				// Get the POST data
+				$droplet = json_decode($this->request->body(), TRUE);
+				
+				// Set the remaining properties
+				$droplet['parent_id'] = intval($this->request->param('id', 0));
+				$droplet['droplet_type'] = 'reply';
+				$droplet['channel'] = 'swiftriver';
+				$droplet['droplet_title'] = $droplet['droplet_content'];
+				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', time());
+				$droplet['droplet_orig_id'] = 0;
+				$droplet['droplet_locale'] = 'en';
+				$droplet['identity_orig_id'] = $this->user->id;
+				$droplet['identity_username'] = $this->user->username;
+				$droplet['identity_name'] = $this->user->name;
+				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
+				// Set the river id
+				$droplet['river_id'] = $this->river->id;
+				// Add the droplet to the queue
+				$droplet_orm = Swiftriver_Dropletqueue::add($droplet);
+				
+				if ($droplet_orm) 
+				{
+					echo json_encode(array(
+						'id' => $droplet_orm->id,
+						'channel' => $droplet['channel'],
+						'identity_avatar' => $droplet['identity_avatar'],
+						'identity_name' => $droplet['identity_name'],
+						'droplet_date_pub' => $droplet['droplet_date_pub'],
+						'droplet_content' => $droplet['droplet_content']
+					));
+				}
+				else
+				{
+					$this->response->status(400);
+				}
+			break;
+		}
+	}
 	
 	
 	/**
@@ -336,7 +491,7 @@ class Controller_River extends Controller_Swiftriver {
 					                             ->bind('fetch_url', $fetch_url)
 					                             ->bind('logged_in_user_id', $logged_in_user_id);
 			$collaborator_list = json_encode($this->river->get_collaborators());
-			$fetch_url = $this->base_url.'/'.$this->river->id.'/collaborators';
+			$fetch_url = $this->river_base_url.'/collaborators';
 			$logged_in_user_id = $this->user->id;			
 		}
 		    
@@ -356,9 +511,9 @@ class Controller_River extends Controller_Swiftriver {
 		));
 
 		// URLs for XHR endpoints
-		$river_url_root = $this->base_url.'/save_settings';
-		$channels_url = $this->base_url.'/channels/'.$this->river->id;
-		$channel_options_url = $this->base_url.'/channel_options/'.$this->river->id;
+		$river_url_root = $this->river_base_url.'/save_settings';
+		$channels_url = $this->river_base_url.'/channels';
+		$channel_options_url = $this->river_base_url.'/channel_options';
 
 		$channels_list = json_encode($this->river->get_channel_filter_data());
 		
@@ -433,6 +588,13 @@ class Controller_River extends Controller_Swiftriver {
 			{
 				// Delete a channel filter option
 				case "DELETE":
+				
+					// Is the logged in user an owner?
+					if ( ! $this->owner)
+					{
+						throw new HTTP_Exception_403();
+					}
+				
 					$channel_option_id = $this->request->param('channel_option_id', 0);
 					$option_orm = ORM::factory('channel_filter_option', $channel_option_id);
 
@@ -447,6 +609,12 @@ class Controller_River extends Controller_Swiftriver {
 				// Create a new channel option
 				case "POST":
 
+					// Is the logged in user an owner?
+					if ( ! $this->owner)
+					{
+						throw new HTTP_Exception_403();
+					}
+
 					// Check for file upload
 					$is_file_upload = (empty($_FILES) == FALSE);
 
@@ -454,6 +622,7 @@ class Controller_River extends Controller_Swiftriver {
 					$post = ( ! empty($_FILES))
 					    ? array_merge($_FILES, $_POST) 
 					    : json_decode($this->request->body(), TRUE);
+				
 
 					// Run pre_save events
 					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
@@ -562,6 +731,12 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			// Delete river
 			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				if ($this->river->loaded())
 				{
 					$this->river->delete();
@@ -577,6 +752,11 @@ class Controller_River extends Controller_Swiftriver {
 
 			// Update the river data
 			case "PUT":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
 
 				if ($this->river->loaded())
 				{

@@ -16,7 +16,7 @@
 	?>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
-	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
@@ -41,7 +41,7 @@
 		<div class="left_bar"></div>
 		<div class="center cf">
 			<hgroup>
-				<h1 class="logo"><a href="<?php echo URL::site().'dashboard'; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
+				<h1 class="logo"><a href="<?php echo URL::site().$user->account->account_path; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
 			</hgroup>
 			<?php echo $nav_header;?>
 		</div>

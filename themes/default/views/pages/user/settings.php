@@ -40,7 +40,7 @@
 		<?php echo $collaborators_control; ?>
 		
 	</div>
-	<div class="row controls-buttons cf">
+	<div class="row controls-buttons cf save-account-settings">
 		<section class="item actions">
 			<p class="button-go"><a><?php echo __('Apply changes'); ?></a></p>
 			<!-- <p class="other"><a class="close" onclick=""><?php echo __('Cancel'); ?></a></p> -->
