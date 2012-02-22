@@ -1,9 +1,13 @@
 <article class="list">
 	<div class="cf center page-title">
-		<hgroup class="edit">
+		<hgroup>
 			<h1 class="<?php echo ($river->river_public == 0) ? "private" : "public"; ?>">
 				<span class="icon"></span>
-				<span class="edit-trigger" title="river" id="edit_<?php echo $river->id; ?>" onclick=""><?php echo $river->river_name; ?></span>
+				<?php if ($river->account->user->id == $user->id): ?>
+					<span><?php echo $river->river_name; ?></span>
+				<?php else: ?>
+					<a href="<?php echo URL::site().$river->account->account_path ?>"><span><?php echo $river->account->account_path; ?></a>/<?php echo $river->river_name; ?></span>
+				<?php endif; ?>
 			</h1>
 		</hgroup>
 		<?php if (count($droplets)): ?>

@@ -1220,6 +1220,9 @@ ul.channel-options li {
   font-weight: 300;
   font-size: 2em;
 }
+.page-title h1 a {
+  color: #BBBBBB;
+}
 .page-title h1.private span.icon {
   float: right;
   width: 30px;

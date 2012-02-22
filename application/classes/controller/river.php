@@ -108,7 +108,8 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('filters_url', $filters_url)
 			->bind('settings_url', $settings_url)
 			->bind('more_url', $more_url)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+			->bind('user', $this->user);
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
