@@ -82,6 +82,9 @@ class Model_Bucket extends ORM {
 			// Save the date the bucket was first added
 			$this->bucket_date_add = date("Y-m-d H:i:s", time());
 		}
+		
+		// Set river_name_url as river_name sanitized
+		$this->bucket_name_url = preg_replace('/[^\w]/', '-', strtolower(trim($this->bucket_name)));
 
 		$bucket = parent::save();
 

@@ -64,11 +64,16 @@ class Model_River extends ORM {
 				array('not_empty'),
 				array('max_length', array(':value', 25)),
 			),
+			'river_name_url' => array(
+				array('not_empty'),
+				array('max_length', array(':value', 25)),
+			),
 			'river_public' => array(
 				array('in_array', array(':value', array('0', '1')))
 			),
 		);
 	}
+	
 
 	/**
 	 * Overload saving to perform additional functions on the river
@@ -81,6 +86,9 @@ class Model_River extends ORM {
 			// Save the date this river was first added
 			$this->river_date_add = date("Y-m-d H:i:s", time());
 		}
+		
+		// Set river_name_url as river_name sanitized
+		$this->river_name_url = preg_replace('/[^\w]/', '-', strtolower(trim($this->river_name)));
 
 		$river = parent::save();
 
@@ -456,6 +464,8 @@ class Model_River extends ORM {
 		{
 			return TRUE;
 		}
+		
+		return FALSE;
 	}
 
 	/**

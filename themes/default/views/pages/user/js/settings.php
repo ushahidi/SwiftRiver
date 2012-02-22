@@ -7,7 +7,7 @@ $(document).ready(function() {
 		var loading_msg = window.loading_message.clone();
 		loading_msg.appendTo($("div.panel-body .loading")).append("<?php echo __('Saving...') ?>");
 		
-		$.post('<?php echo URL::site()?>dashboard/ajax_settings', {
+		$.post("<?php echo URL::site().$account->account_path.'/ajax_settings'?>", {
 			name: $('#name').val(),
 			nickname: $('#nickname').val(),
 			email: $('#email').val(),
@@ -36,7 +36,7 @@ $(document).ready(function() {
 	}	
 	
 	// Current password dropdown
-	$('.actions .button-go').live('click', function(e) {
+	$('.save-account-settings .actions .button-go').live('click', function(e) {
 		
 		// Request current password only if password / email is changing
 		if(($('#password').val() && $('#password_confirm').val()) || ($('#email').val() != $('#orig_email').val())) {
@@ -58,7 +58,7 @@ $(document).ready(function() {
 	});
 	
 	// Dashboard Settings
-	$('.actions .confirm').live('click', function() {
+	$('.save-account-settings .actions .confirm').live('click', function() {
 		saveAccountSettings();
 	});	
 });

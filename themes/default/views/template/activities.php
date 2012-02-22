@@ -20,29 +20,33 @@
 					<h1><%= user_name %> <span><a href="<%= action_on_url %>">created the <%= action_on %> "<%= action_on_name %>"</a></span></h1>
 				<% } %>				
 			</hgroup>
-			<div class="body">
-				<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-					<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
-				<% } %>
-				<% if (action == "invite" && parseInt(action_to_self) && parseInt(confirmed)) { %>
-					<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
-				<% } %>
-			</div>
-		</div>
-		<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-			<section class="actions">
-				<div class="button">
-					<p class="button-change checkbox-options" onclick=""><a><span class="icon"></span></a></p>
-					<div class="clear"></div>
-					<div class="dropdown container">
-						<ul>
-							<li class="confirm"><a onclick=""><?php echo __('Accept'); ?></a></li>
-							<li class="cancel"><a onclick=""><?php echo __('Ignore'); ?></a></li>
-						</ul>
-					</div>
+			<?php if ($owner): ?>
+				<div class="body">
+					<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
+						<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
+					<% } %>
+					<% if (action == "invite" && parseInt(action_to_self) && parseInt(confirmed)) { %>
+						<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
+					<% } %>
 				</div>
-			</section>
-		<% } %>
+			<?php endif; ?>
+		</div>
+		<?php if ($owner): ?>
+			<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
+				<section class="actions">
+					<div class="button">
+						<p class="button-change checkbox-options" onclick=""><a><span class="icon"></span></a></p>
+						<div class="clear"></div>
+						<div class="dropdown container">
+							<ul>
+								<li class="confirm"><a onclick=""><?php echo __('Accept'); ?></a></li>
+								<li class="cancel"><a onclick=""><?php echo __('Ignore'); ?></a></li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			<% } %>
+		<?php endif; ?>
 	</div>
 </script>
 

@@ -3,6 +3,8 @@
  * Backbone.js wiring for the droplets MVC
  */
 $(function() {
+	window.base_url = "<?php echo $fetch_base_url; ?>";
+	
 	// Models for the droplet places, tags and links 
 	window.DropletPlace = Backbone.Model.extend();
 	window.DropletTag = Backbone.Model.extend();
@@ -17,9 +19,7 @@ $(function() {
 			}
 		}
 	});
-	window.Discussion = Backbone.Model.extend({
-		urlRoot: "<?php echo $fetch_url?>/reply"
-	});
+	window.Discussion = Backbone.Model.extend();
 	window.DropletScore = Backbone.Model.extend();
 			
 	// Collections for droplet places, tags and links
@@ -48,14 +48,12 @@ $(function() {
 	// Collection for all the buckets accessible to the current user
 	window.BucketList = Backbone.Collection.extend({
 		model: Bucket,
-		url: "<?php echo url::site("/bucket/list_buckets"); ?>"
+		url: "<?php echo url::site().$user->account->account_path.'/bucket/buckets/manage'; ?>"
 	});		
 	
 
 	// Droplet model
 	window.Droplet = Backbone.Model.extend({
-		
-		urlRoot: "<?php echo $fetch_url ?>/",
 		
 		// Add/Remove a droplet from a bucket
 		setBucket: function(changeBucket) {
@@ -93,7 +91,7 @@ $(function() {
 	// Droplet & Bucket collection
 	window.DropletList = Backbone.Collection.extend({
 		model: Droplet,
-		url: "<?php echo $fetch_url; ?>",
+		url: base_url+"/droplets",
 		
 		/*comparator: function (droplet) {
 			return Date.parse(droplet.get('droplet_date_pub'));
@@ -145,7 +143,7 @@ $(function() {
 			
 			// List of general tags for the droplet
 			this.tagList = new DropletTagCollection();
-			this.tagList.url = "<?php echo $tag_base_url; ?>"+"/"+this.model.get("id")+"/tags";
+			this.tagList.url = base_url+"/tags/"+this.model.get("id");
 			this.tagList.on('reset', this.addTags, this);
 			this.tagList.on('add', this.addTag, this);
 			
@@ -159,7 +157,9 @@ $(function() {
 			
 			// List of discussions
 			this.discussionsList = new DropletDiscussionsCollection();
+			this.discussionsList.url = base_url+"/reply/"+this.model.get("id");
 			this.discussionsList.on('reset', this.addDiscussions, this);
+			this.discussionsList.on('add', this.showDiscussion, this);
 			
 			// Listen for score total update
 			this.model.on("change:scores", this.updateScoreCount, this)
@@ -208,15 +208,22 @@ $(function() {
 		},
 		
 		addDiscussion: function(discussion) {
-			var view = new DiscussionView({model: discussion}).render().el;
-			this.$("section.discussion > hgroup").after(view);
-			$(view).hide();
-			$(view).fadeIn(1500);
+			var view = new DiscussionView({model: discussion});
+			this.$("section.discussion > div.loading").before(view.render().el);
 		},
 		
 		addDiscussions: function() {
 			this.discussionsList.each(this.addDiscussion, this);
 		},
+		
+		// Add and animate a discussion
+		showDiscussion: function(discussion) {
+			var view = new DiscussionView({model: discussion});
+			view.$el.hide();
+			this.$("section.discussion > div.loading").before(view.render().el);			
+			view.$el.fadeIn("slow");
+		},
+		
 		
 		// Creates the buckets dropdown menu
 		createBucketMenu: function() {				
@@ -331,10 +338,7 @@ $(function() {
 			this.model.destroy({
 				wait: true,
 				success: function(model, response) {
-					if (response.success) {
-						// Remove from UI
-						$(viewItem.el).hide("slow");
-					}
+					$(viewItem.el).hide("slow");
 				}
 			});
 			
@@ -345,34 +349,31 @@ $(function() {
 		addReply: function(e) {
 			var textarea = this.$(".discussion .add-reply :input");
 			
-			var viewObject = this;
+			var create_el = this.$("section.discussion article.add-reply");
+			create_el.fadeOut();
+			
+			var loading_msg = window.loading_message.clone();
+			loading_msg.appendTo(this.$("section.discussion div.loading")).show();
+			
+			var error_el = this.$("section.discussion div.system_error");
 			
 			if ($(textarea).val() != null) {
-				var discussion = new Discussion();
-				
-				discussion.save({
-					droplet_content: $(textarea).val(),
-					parent_id: this.model.get("id"),
-					droplet_type: "reply",
-					channel: "swiftriver"
+				this.discussionsList.create({
+					droplet_content: $(textarea).val()
 				},
 				{
-					wait: true, 
+					wait: true,
+					complete: function() {
+						loading_msg.fadeOut();
+						create_el.fadeIn();
+					},
 					success: function(model, response) {
-						if (response.success) {
-							// Clear the text area
-							$(textarea).val("");
-							
-							model.set({
-								identity_avatar: response.identity_avatar,
-								identity_name: response.identity_name,
-								droplet_date_pub: response.droplet_date_pub
-							});
-							
-							// Add the newly added item to the UI
-							viewObject.addDiscussion(model);
-						}
-					} 
+						textarea.val("");
+					},
+					error: function(model, response) {
+						var message = "<?php echo __('Uh oh. An error occurred while adding the comment.'); ?>";
+						error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+					}
 				}); // end save
 				
 			} // end if 
@@ -453,6 +454,7 @@ $(function() {
 		initialize: function() {
 			Droplets.on('add',	 this.addDroplet, this);
 			Droplets.on('reset', this.addDroplets, this); 
+			Droplets.on('destroy', this.checkEmpty, this); 
 		},
 		
 		addDroplet: function(droplet) {
@@ -482,6 +484,13 @@ $(function() {
 		hideNoContentEl: function() {
 			this.$("h2.no-content").hide();
 			this.noContentElHidden = true;
+		},
+		
+		checkEmpty: function() {
+			if (!Droplets.length) {
+				this.$("h2.no-content").show();
+				this.noContentElHidden = false;
+			}
 		}
 	});
 	
@@ -509,10 +518,8 @@ $(function() {
 			this.model.destroy({
 				wait: true,
 				success: function(model, response) {
-					if (response.success) {
-						// Remove from UI
-						viewItem.fadeOut("slow");
-					}
+					// Remove from UI
+					viewItem.fadeOut("slow");
 				}
 			});
 		}
