@@ -491,7 +491,7 @@ class Controller_River extends Controller_Swiftriver {
 						{
 							// Single entry
 							$channel_filter_option = ORM::factory('channel_filter_option');
-							$channel_filter_option->channel_filter_id = $channel_filter_id;
+							$channel_filter_option->channel_filter_id = $post['channel_filter_id'];
 							$channel_filter_option->key = $post['key'];
 							$channel_filter_option->value = json_encode($post['data']);
 
@@ -557,11 +557,6 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
-		$response = array(
-			"success" => FALSE,
-			"redirect_url" => ""
-		);
-		
 		// Check for the submitted method
 		switch ($this->request->method())
 		{
@@ -571,8 +566,12 @@ class Controller_River extends Controller_Swiftriver {
 				{
 					$this->river->delete();
 
-					$response["success"] = TRUE;
-					$response["redirect_url"] = URL::site("/dashboard");
+					// Encode the response to be returned to the client
+					$this->response->body(json_encode(
+						array(
+							"redirect_url" => URL::site("/dashboard")
+						)
+					));
 				}
 			break;
 
@@ -595,15 +594,18 @@ class Controller_River extends Controller_Swiftriver {
 						$this->river->save();
 					}
 
-					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->base_url.'/index/'.$this->river->id;
+					// Encode the response to be returned to the client
+					$this->response->body(json_encode(
+						array(
+							"redirect_url" => $this->base_url.'/index/'.$this->river->id
+						)
+					));
 				}
 			break;
 		}
 
-		echo json_encode($response);
 	}
-	
+
 	/**
 	 * Ajax rendered more control box
 	 * 

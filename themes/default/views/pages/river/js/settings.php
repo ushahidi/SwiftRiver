@@ -89,8 +89,8 @@
 			if ($(radio).val() != this.model.get("river_public")) {
 
 				// String for the new status of the river
-				var newStatus = ($(radio).val() == 1) ? 
-				    "<?php echo __('public') ?>" 
+				var newStatus = ($(radio).val() == 1)
+				    ? "<?php echo __('public') ?>" 
 				    : "<?php echo __('private'); ?>";
 
 				// Show confirmation dialog before updating
@@ -218,7 +218,7 @@
 			option.save(null, {
 				wait: true, 
 				success: function(model, response) {
-					var createdOption = new ChannelOption(response.data);
+					var createdOption = new ChannelOption(response);
 					createdOption.set({new: true});
 
 					// Add the option to the UI
@@ -231,6 +231,7 @@
 
 					// Get the control view from the option and re-enable the text fields
 					$("input", controlView).removeAttr("disabled");
+					$("button", controlView).removeAttr("disabled");
 
 				},
 				error: function(model, response) {
@@ -238,6 +239,7 @@
 					
 					// Get the control view from the option and re-enable the text fields
 					$("input", controlView).removeAttr("disabled");
+					$("button", controlView).removeAttr("disabled");
 				}
 			});
 			
