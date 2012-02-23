@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `links` (
   `link_domain` VARCHAR(255) NULL DEFAULT NULL ,
   `link_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
   PRIMARY KEY (`id`) ,
-  INDEX `link_idx` (`link` ASC) ,
+  UNIQUE INDEX `link_idx` (`link` ASC) ,
   INDEX `link_full_idx` (`link_full` ASC) ,
   INDEX `link_domain_idx` (`link_domain` ASC) ,
   INDEX `link_date_add_idx` (`link_date_add` ASC) )
