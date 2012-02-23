@@ -24,13 +24,14 @@
 			this.model = new Bucket(<?php echo $bucket_data; ?>);
 			var bucket = this.model;
 
+			var radio = null;
 			this.$("input[name='bucket_publish']").each(function(){
+				$(this).removeAttr("checked");
 				if ($(this).val() == bucket.get("bucket_publish")) {
-					$(this).attr("checked", "checked");
-				} else {
-					$(this).removeAttr("checked");
+					radio = this;
 				}
 			});
+			$(radio).attr("checked", true);
 		},
 
 		// Events
@@ -52,9 +53,23 @@
 				this.model.save({name_only: true, bucket_name: bucketName}, {
 					wait: true,
 					success: function(model, response) {
-						if (response.success) {
-							window.location.href = response.redirect_url;
+						// Change the bucket title
+						$("#display_bucket_name").html(response.bucket_name);
+
+						// HTML5 compatibility check
+						if (typeof(window.history.pushState) != "undefined") {
+							// Modify the address bar
+							window.history.pushState(model, response.bucket_name, response.bucket_base_url);
+
+							// Update the settings, filters and "more" links
+							$("li.view-panel > a.settings").attr("href", response.settings_url);
+							$("li.view-panel > a.filter").attr("href", response.filters_url);
+							$("#bucket_more_url > a").attr("href", response.more_url);
+						} else {
+							// Reload the page
+							window.location.href = response.bucket_base_url;
 						}
+
 					}
 				});
 			}			
@@ -65,8 +80,8 @@
 			if ($(radio).val() != this.model.get("bucket_publish")) {
 
 				// String for the new status of the river
-				var newStatus = ($(radio).val() == 1) ? 
-				    "<?php echo __('public') ?>" 
+				var newStatus = ($(radio).val() == 1)
+				    ? "<?php echo __('public') ?>" 
 				    : "<?php echo __('private'); ?>";
 
 				// Show confirmation dialog before updating
@@ -76,9 +91,11 @@
 					this.model.save({privacy_only: true, bucket_publish: $(radio).val()}, {
 						wait: true, 
 						success: function(model, response) {
-							if (response.success) {
-								window.location.href = response.redirect_url;
-							}
+							var targetEl = $("#display_bucket_name");
+
+							targetEl.parent("h1").toggleClass("private").toggleClass("public");
+							targetEl.css("display", "inline-block");
+							targetEl.prev("span.icon").css("display", "inline-block");
 						}
 					});
 				} else {

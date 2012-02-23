@@ -50,13 +50,16 @@
 			this.model = new River(<?php echo $river_data; ?>);
 			var river = this.model;
 
+			var radio = null;
 			this.$("input[name='river_public']").each(function(){
+				// Remove the checked property
+				$(this).removeAttr("checked");
+
 				if ($(this).val() == river.get("river_public")) {
-					$(this).attr("checked", "checked");
-				} else {
-					$(this).removeAttr("checked");
+					radio = this;
 				}
 			});
+			$(radio).attr("checked", true);
 		},
 
 		events: {
@@ -78,7 +81,23 @@
 				this.model.save({name_only: true, river_name: riverName}, {
 					wait: true,
 					success: function(model, response) {
-						window.location.href = response.redirect_url;
+						// Change the river title
+						$("#display_river_name").html(response.river_name);
+
+						// HTML5 compatibility check
+						if (typeof(window.history.pushState) != "undefined") {
+
+							// Modify the address bar
+							window.history.pushState(model, response.river_name, response.river_base_url);
+
+							// Update the settings, filters and "more" links
+							$("li.view-panel > a.settings").attr("href", response.settings_url);
+							$("li.view-panel > a.filter").attr("href", response.filters_url);
+							$("#river_more_url > a").attr("href", response.more_url);
+						} else {
+							// Reload the page
+							window.location.href = response.river_base_url;
+						}
 					}
 				});
 			}
@@ -100,7 +119,11 @@
 					this.model.save({privacy_only: true, river_public: $(radio).val()}, {
 						wait: true, 
 						success: function(model, response) {
-							window.location.href = response.redirect_url;
+							var targetEl = $("#display_river_name");
+
+							targetEl.parent("h1").toggleClass("private").toggleClass("public");
+							targetEl.css("display", "inline-block");
+							targetEl.prev("span.icon").css("display", "inline-block");
 						}
 					});
 				} else {

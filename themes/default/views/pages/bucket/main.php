@@ -4,7 +4,7 @@
 			<h1 class="<?php echo ($bucket->bucket_publish == 0) ? "private" : "public"; ?>">
 				<span class="icon"></span>
 				<?php if ($bucket->account->user->id == $user->id): ?>
-					<span><?php echo $bucket->bucket_name; ?></span>
+					<span id="display_bucket_name"><?php echo $bucket->bucket_name; ?></span>
 				<?php else: ?>
 					<a href="<?php echo URL::site().$bucket->account->account_path ?>"><span><?php echo $bucket->account->account_path; ?></a>/<?php echo $bucket->bucket_name; ?></span>
 				<?php endif; ?>
@@ -21,7 +21,9 @@
 					// SwiftRiver Plugin Hook -- Add Bucket Nav Item
 					Swiftriver_Event::run('swiftriver.bucket.nav', $bucket);
 					?>
-					<li class="view-panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel" id="bucket_more_url">
+						<a href="<?php echo $more; ?>"><span class="arrow"></span><?php echo __('More'); ?></a>
+					</li>
 				</ul>
 				<?php if ($owner): ?>
 				<ul class="actions">
