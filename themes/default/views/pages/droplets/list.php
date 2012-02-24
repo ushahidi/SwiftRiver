@@ -125,10 +125,10 @@
 				<article class="fullstory">
 					<hgroup>
 						<h2><?php echo __('Full story'); ?></h2>
-						<h1 class="edit"><span class="edit_trigger" title="text" onclick=""><%= droplet_title %></span></h1>
+						<h1><span title="text" onclick=""><%= droplet_title %></span></h1>
 					</hgroup>
-					<div class="edit">
-						<span class="edit_trigger">							
+					<div>
+						<span>
 						</span>
 					</div>
 				</article>
@@ -180,11 +180,11 @@
 
 <script type="text/template" id="link-template">
 	<% var link_short = link_full.substr(0, 27) + "..."; %>
-	<span class="edit_trigger" title="<%= link_full %>" data-droplet-link-id="<%= id %>"><a href="<%= link_full %>"><%= link_short %></a></span>
+	<span title="<%= link_full %>" data-droplet-link-id="<%= id %>"><a href="<%= link_full %>"><%= link_short %></a></span>
 </script>
 
 <script type="text/template" id="place-template">
-	<span class="edit_trigger" title="<%= place_name %>" data-droplet-place-id="<%= id %>"><%= place_name %></span>
+	<span title="<%= place_name %>" data-droplet-place-id="<%= id %>"><%= place_name %></span>
 </script>
 
 <!-- related discussion -->

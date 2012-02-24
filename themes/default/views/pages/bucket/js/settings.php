@@ -50,29 +50,18 @@
 			var bucketName = $("input#bucket_name").val();
 			if ($.trim(bucketName).length > 0 && this.model.get("bucket_name") != bucketName) {
 				// Save the new river name
-				this.model.save({name_only: true, bucket_name: bucketName}, {
-					wait: true,
-					success: function(model, response) {
-						// Change the bucket title
-						$("#display_bucket_name").html(response.bucket_name);
-
-						// HTML5 compatibility check
-						if (typeof(window.history.pushState) != "undefined") {
-							// Modify the address bar
-							window.history.pushState(model, response.bucket_name, response.bucket_base_url);
-
-							// Update the settings, filters and "more" links
-							$("li.view-panel > a.settings").attr("href", response.settings_url);
-							$("li.view-panel > a.filter").attr("href", response.filters_url);
-							$("#bucket_more_url > a").attr("href", response.more_url);
-						} else {
+				if (confirm("<?php echo __('Renaming your bucket will result in the page being reloaded. Continue?'); ?>")) {
+					this.model.save({name_only: true, bucket_name: bucketName}, {
+						wait: true,
+						success: function(model, response) {
 							// Reload the page
-							window.location.href = response.bucket_base_url;
+							window.location.href = response.redirect_url;
 						}
-
-					}
-				});
-			}			
+					});
+				} else {
+					$("input#bucket_name").val(this.model.get("bucket_name"));
+				}
+			}
 		},
 
 		toggleBucketPrivacy: function(e) {
@@ -94,8 +83,10 @@
 							var targetEl = $("#display_bucket_name");
 
 							targetEl.parent("h1").toggleClass("private").toggleClass("public");
-							targetEl.css("display", "inline-block");
-							targetEl.prev("span.icon").css("display", "inline-block");
+							targetEl.parent("h1").css("white-space", "nowrap");
+
+							targetEl.prev("span.icon").css("position", "relative");
+							targetEl.prev("span.icon").css("left", "35px");
 						}
 					});
 				} else {
@@ -107,11 +98,12 @@
 
 		deleteBucket: function(e) {
 			// Delete the bucket form the server
-			this.model.destroy({wait: true, success: function(model, response) {
-				if (response.success) {
+			this.model.destroy({
+				wait: true, 
+				success: function(model, response) {
 					window.location.href = response.redirect_url;
 				}
-			}});
+			});
 		}
 	});
 

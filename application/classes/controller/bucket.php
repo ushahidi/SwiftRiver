@@ -521,11 +521,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 						// Response to be pushed back to the client
 						$this->response->body(json_encode(
 							array(
-								'bucket_name' => $this->bucket->bucket_name,
-								'bucket_base_url' => $this->bucket_base_url,
-								'settings_url' => $this->bucket_base_url.'/settings',
-								'filters_url' => $this->bucket_base_url.'/filters',
-								'more_url' => $this->bucket_base_url.'/more'
+								'redirect_url' => $this->bucket_base_url
 							)
 						));
 					}
