@@ -239,9 +239,7 @@ class RiverID_API {
 			CURLOPT_POST => TRUE,
 			CURLOPT_POSTFIELDS => $params,
 			CURLOPT_CONNECTTIMEOUT => 60,
-			
-			// FIXME: Verification must be done in production
-			CURLOPT_SSL_VERIFYPEER => FALSE
+			CURLOPT_SSL_VERIFYPEER => TRUE
 		);
 		
 		$ch = curl_init($this->api_endpoint);
