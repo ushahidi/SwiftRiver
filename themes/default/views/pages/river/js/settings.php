@@ -37,10 +37,13 @@
 		}
 	});
 
+	// Channels collection
 	window.ChannelsCollection = Backbone.Collection.extend({
 		model: Channel
 	});
 
+	// Global reference for the channles listing
+	window.ChannelsList = new ChannelsCollection();
 
 	// View for the river view
 	window.RiverSettingsView = Backbone.View.extend({
@@ -50,13 +53,16 @@
 			this.model = new River(<?php echo $river_data; ?>);
 			var river = this.model;
 
+			var radio = null;
 			this.$("input[name='river_public']").each(function(){
+				// Remove the checked property
+				$(this).removeAttr("checked");
+
 				if ($(this).val() == river.get("river_public")) {
-					$(this).attr("checked", "checked");
-				} else {
-					$(this).removeAttr("checked");
+					radio = this;
 				}
 			});
+			$(radio).attr("checked", true);
 		},
 
 		events: {
@@ -75,12 +81,17 @@
 			var riverName = $("input#river_name").val();
 			if ($.trim(riverName).length > 0 && this.model.get("river_name") != riverName) {
 				// Save the new river name
-				this.model.save({name_only: true, river_name: riverName}, {
-					wait: true,
-					success: function(model, response) {
-						window.location.href = response.redirect_url;
-					}
-				});
+				if (confirm("<?php echo __('Renaming your river will result in the page being reloaded. Continue?'); ?>")) {
+					this.model.save({name_only: true, river_name: riverName}, {
+						success: function(model, response) {
+							// Reload the page
+							window.location.href = response.redirect_url;
+						}
+					});
+				} else {
+					// Restore the river name
+					$("#input#river_name").val(this.model.get("river_name"));
+				}
 			}
 		},
 
@@ -100,7 +111,13 @@
 					this.model.save({privacy_only: true, river_public: $(radio).val()}, {
 						wait: true, 
 						success: function(model, response) {
-							window.location.href = response.redirect_url;
+							var targetEl = $("#display_river_name");
+
+							targetEl.parent("h1").toggleClass("private").toggleClass("public");
+							targetEl.parent("h1").css("white-space", "nowrap");
+
+							targetEl.prev("span.icon").css("position", "relative");
+							targetEl.prev("span.icon").css("left", "35px");
 						}
 					});
 				} else {
@@ -119,10 +136,6 @@
 			return false;
 		}
 	});
-
-
-	// Global reference for the channles listing
-	window.ChannelsList = new ChannelsCollection();
 
 
 	// View for the channel listing

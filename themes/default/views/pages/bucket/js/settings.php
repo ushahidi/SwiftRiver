@@ -24,13 +24,14 @@
 			this.model = new Bucket(<?php echo $bucket_data; ?>);
 			var bucket = this.model;
 
+			var radio = null;
 			this.$("input[name='bucket_publish']").each(function(){
+				$(this).removeAttr("checked");
 				if ($(this).val() == bucket.get("bucket_publish")) {
-					$(this).attr("checked", "checked");
-				} else {
-					$(this).removeAttr("checked");
+					radio = this;
 				}
 			});
+			$(radio).attr("checked", true);
 		},
 
 		// Events
@@ -49,15 +50,18 @@
 			var bucketName = $("input#bucket_name").val();
 			if ($.trim(bucketName).length > 0 && this.model.get("bucket_name") != bucketName) {
 				// Save the new river name
-				this.model.save({name_only: true, bucket_name: bucketName}, {
-					wait: true,
-					success: function(model, response) {
-						if (response.success) {
+				if (confirm("<?php echo __('Renaming your bucket will result in the page being reloaded. Continue?'); ?>")) {
+					this.model.save({name_only: true, bucket_name: bucketName}, {
+						wait: true,
+						success: function(model, response) {
+							// Reload the page
 							window.location.href = response.redirect_url;
 						}
-					}
-				});
-			}			
+					});
+				} else {
+					$("input#bucket_name").val(this.model.get("bucket_name"));
+				}
+			}
 		},
 
 		toggleBucketPrivacy: function(e) {
@@ -65,8 +69,8 @@
 			if ($(radio).val() != this.model.get("bucket_publish")) {
 
 				// String for the new status of the river
-				var newStatus = ($(radio).val() == 1) ? 
-				    "<?php echo __('public') ?>" 
+				var newStatus = ($(radio).val() == 1)
+				    ? "<?php echo __('public') ?>" 
 				    : "<?php echo __('private'); ?>";
 
 				// Show confirmation dialog before updating
@@ -76,9 +80,13 @@
 					this.model.save({privacy_only: true, bucket_publish: $(radio).val()}, {
 						wait: true, 
 						success: function(model, response) {
-							if (response.success) {
-								window.location.href = response.redirect_url;
-							}
+							var targetEl = $("#display_bucket_name");
+
+							targetEl.parent("h1").toggleClass("private").toggleClass("public");
+							targetEl.parent("h1").css("white-space", "nowrap");
+
+							targetEl.prev("span.icon").css("position", "relative");
+							targetEl.prev("span.icon").css("left", "35px");
 						}
 					});
 				} else {
@@ -90,11 +98,12 @@
 
 		deleteBucket: function(e) {
 			// Delete the bucket form the server
-			this.model.destroy({wait: true, success: function(model, response) {
-				if (response.success) {
+			this.model.destroy({
+				wait: true, 
+				success: function(model, response) {
 					window.location.href = response.redirect_url;
 				}
-			}});
+			});
 		}
 	});
 

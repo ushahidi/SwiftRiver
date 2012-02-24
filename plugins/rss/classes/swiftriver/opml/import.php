@@ -57,9 +57,17 @@ class Swiftriver_OPML_Import {
 
 			return TRUE;
 		}
-		catch (Exception $e)
+		catch (Kohana_Exception $e)
 		{
-			$errors = libxml_get_errors();
+			// Get the errors
+			$errors = array();
+			foreach (libxml_get_errors() as $error)
+			{
+				$errors[] = $error->code.": ".$error->message;
+			}
+
+			// Log the error
+			Kohana::$log->add(Log::ERROR, implde("\n", $errors))
 			return FALSE;
 		}
 		

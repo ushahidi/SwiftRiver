@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `links` (
   `link_domain` VARCHAR(255) NULL DEFAULT NULL ,
   `link_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
   PRIMARY KEY (`id`) ,
-  INDEX `link_idx` (`link` ASC) ,
+  UNIQUE INDEX `link_idx` (`link` ASC) ,
   INDEX `link_full_idx` (`link_full` ASC) ,
   INDEX `link_domain_idx` (`link_domain` ASC) ,
   INDEX `link_date_add_idx` (`link_date_add` ASC) )
@@ -745,6 +745,18 @@ CREATE TABLE IF NOT EXISTS `droplet_scores` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `droplet_id` (`droplet_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+-- ----------------------------------------
+-- TABLE 'droplet_deleted_tags'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `droplet_deleted_tags` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(11) NOT NULL,
+  `droplet_id` bigint(11) NOT NULL,
+  `tag_id` bigint(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `del_account_droplet_tag_id` (`account_id`,`droplet_id`,`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

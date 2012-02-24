@@ -86,8 +86,6 @@ class Controller_River extends Controller_Swiftriver {
 			$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
 		}
 
-		// Get all available channels from plugins
-		$this->channels = Swiftriver_Plugins::channels();
 	}
 
 	/**
@@ -776,19 +774,28 @@ class Controller_River extends Controller_Swiftriver {
 					{
 						$this->river->river_name = $post['river_name'];
 						$this->river->save();
+
+						// Build out the new base URL for the river
+						$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
+
+						// Response to be pushed back to the client
+						$this->response->body(json_encode(
+							array(
+								'redirect_url' => $this->river_base_url
+							)
+						));
 					}
 					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
 					{
 						$this->river->river_public = $post['river_public'];
 						$this->river->save();
-					}
 
-					// Encode the response to be returned to the client
-					$this->response->body(json_encode(
-						array(
-							"redirect_url" => $this->base_url.'/'.$this->river->river_name_url
-						)
-					));
+					}
+					else
+					{
+						// Bad request
+						$this->response->status(400);
+					}
 				}
 			break;
 		}

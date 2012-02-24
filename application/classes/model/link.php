@@ -58,7 +58,6 @@ class Model_Link extends ORM
 	{
 		$orm_link = ORM::factory('link')
 					->where('link', '=', $url)
-					->or_where('link_full', '=', $url)
 					->find();
 		
 		if ($orm_link->loaded())
