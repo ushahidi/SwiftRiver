@@ -21,7 +21,7 @@
 					// SwiftRiver Plugin Hook -- Add Bucket Nav Item
 					Swiftriver_Event::run('swiftriver.bucket.nav', $bucket);
 					?>
-					<li class="view-panel"><a href="<?php echo $more; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel"><a href="<?php echo $more; ?>"><span class="arrow"></span><?php echo __('Trends'); ?></a></li>
 				</ul>
 				<?php if ($owner): ?>
 				<ul class="actions">

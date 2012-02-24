@@ -14,7 +14,7 @@
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $river);
 					?>
-					<li class="view-panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span><?php echo __('Trends'); ?></a></li>
 				</ul>
 			</nav>
 			<div class="drawer"></div>

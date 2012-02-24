@@ -1,8 +1,7 @@
 div.map {
-    border: 1px solid #999999;
+    border: 1px solid #999;
     height: 420px;
     position: relative;
-    width: 100%;
 }
 
 div.fullscreenmap-btn{

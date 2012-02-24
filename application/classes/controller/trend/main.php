@@ -16,7 +16,7 @@
 class Controller_Trend_Main extends Controller_Swiftriver {
 
 	// The Droplets Array
-	private $droplets = array(
+	protected $droplets = array(
 		'total' => 0,
 		'droplets' => array()
 		);
@@ -64,7 +64,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				}			
 				
 				$this->id = $this->river->id;
-				$this->droplets = Model_River::get_droplets($this->user->id, $this->river->id);
+				$this->droplets = Model_River::get_droplets($this->user->id, $this->river->id, 0);
 				
 				// Default template for river trends
 				$this->template->content = View::factory('pages/trend/river')
@@ -92,7 +92,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				}
 				
 				$this->id = $this->bucket->id;
-				$this->droplets = Model_Bucket::get_droplets($this->user->id, $this->bucket->id);
+				$this->droplets = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0);
 				
 				// Default template for bucket trends
 				$this->template->content = View::factory('pages/trend/bucket')
