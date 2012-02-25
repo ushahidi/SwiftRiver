@@ -67,7 +67,7 @@ class Swiftriver_OPML_Import {
 			}
 
 			// Log the error
-			Kohana::$log->add(Log::ERROR, implde("\n", $errors))
+			Kohana::$log->add(Log::ERROR, implde("\n", $errors));
 			return FALSE;
 		}
 		
