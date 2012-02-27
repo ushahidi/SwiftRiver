@@ -12,12 +12,6 @@
 class Swiftriver_OPML_Import {
 	
 	/**
-	 * XML representation of the OMPL
-	 * @var SimpleXMLElement
-	 */
-	private $xml;
-
-	/**
 	 * DOM representation of the OPML XML
 	 * @var DOMDocument
 	 */
@@ -48,12 +42,14 @@ class Swiftriver_OPML_Import {
 			$this->dom->load($opml_file_name);
 
 			// Get the body node
+			// All <outline> entries should be within the <body> element
 			$body = $this->dom->getElementsByTagName("body");
 
-			// Create SimpleXML object from the body node
-			$this->xml = simplexml_import_dom($body->item(0));
+			// Create SimpleXMLElement object from the body node
+			$node = simplexml_import_dom($body->item(0));
 
-			$this->_traverse_xml();
+			// Traverse the node and extrac the <outline> entries
+			$this->_traverse_node($node);
 
 			return TRUE;
 		}
@@ -74,20 +70,39 @@ class Swiftriver_OPML_Import {
 	}
 
 	/**
-	 * Traverses the XML tree and populates the feeds array
+	 * Traverses an SimpleXMLElement item including its children
+	 * and extracts RSS urls
+	 *
+	 * @param SimpleXMLElement $node
 	 */
-	private function _traverse_xml()
+	private function _traverse_node($node)
 	{
-		foreach ($this->xml->children() as $feed_entry)
+		foreach ($node->children() as $element)
 		{
-			// Get the attriutes object of the <outline> item
-			$attributes = $feed_entry->attributes();
+			// Check if the current element has child nodes
+			$has_children = (bool) count($element->children());
 
-			// Fetch the title and URL attributes
-			$this->feeds[] = array(
-				'title' => (string) $attributes->title,
-				'url' => (string) $attributes->xmlUrl
-			);
+			if ($has_children)
+			{
+				// Travese the node...
+				$this->_traverse_node($element);
+			}
+			else
+			{
+				// Get the attriutes object of the <outline> item
+				$attributes = $element->attributes();
+
+				// Get the XML URL and pass it through the URL validator
+				$rss_url = (string) $attributes->xmlUrl;
+				if (Valid::url($rss_url))
+				{
+					// Fetch the title and URL attributes
+					$this->feeds[] = array(
+						'title' => (string) $attributes->title,
+						'url' => $rss_url
+					);
+				}
+			}
 		}
 	}
 

@@ -48,7 +48,8 @@ class Rss_Init {
 				$feed_entries = array();
 				foreach ($importer->get_feeds() as $feed)
 				{
-					// Extract the validation object and function
+					// Skip valiation of the RSS URL on the premise that the 
+					// URLs were validated at source?
 					$entry = array(
 						"label" => $channel_config['options']['url']['label'],
 						"type" => $channel_config['options']['url']['type'],
