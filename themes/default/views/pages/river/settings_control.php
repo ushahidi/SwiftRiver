@@ -6,7 +6,9 @@
 			<h2><?php echo __("River Name"); ?></h2>
 			<div class="input">
 				<?php echo Form::input('river_name', $river->river_name, 
-				    array('id' => 'river_name', 'class' => "medium")); ?>
+				    array('id' => 'river_name')); ?>
+			</div>
+			<div class="input">
 				<button type="button" class="channel-button" id="rename_river">
 					<span><?php echo __("Rename the River"); ?></span>
 				</button>
@@ -97,10 +99,12 @@
 </script>
 
 <script type="text/template" id="channel-option-control-button-template">
-	<% var buttonText = (type == "file") ? "<?php echo __('Upload File'); ?>" : "<?php echo __('Add'); ?>";  %>
-	<button type="button" class="channel-button" disabled="disabled">
-		<span><%= buttonText %></span>
-	</button>
+	<section class="actions">
+		<% var buttonText = (type == "file") ? "<?php echo __('Upload File'); ?>" : "<?php echo __('Add'); ?>";  %>
+		<button type="button" class="channel-button" disabled="disabled">
+			<span><%= buttonText %></span>
+		</button>
+	</section>
 </script>
 
 <script type="text/template" id="channel-option-dropdown-template">
