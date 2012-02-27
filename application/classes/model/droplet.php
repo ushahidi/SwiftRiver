@@ -406,13 +406,15 @@ class Model_Droplet extends ORM
 					->join('tags', 'INNER')
 					->on('tags.id', '=', 'tag_id')
 					->where('droplet_id', 'IN', $droplet_ids)
-					->where('account_id', '=', $account_id);
+					->where('account_id', '=', $account_id)
+					->where('deleted', '=', 0);
 		
 		// Get all deleted droplet tags for the current account
 		$query_deleted_tags = DB::select('tag_id')
-		    ->from('droplet_deleted_tags')
+		    ->from('account_droplet_tags')
 		    ->where('account_id', '=', $account_id)
-		    ->where('droplet_id', 'IN', $droplet_ids);
+		    ->where('droplet_id', 'IN', $droplet_ids)
+		    ->where('deleted', '=', 1);
 		
 		$deleted_tag_ids = array();
 		foreach ($query_deleted_tags->execute()->as_array() as $deleted)
@@ -713,10 +715,11 @@ class Model_Droplet extends ORM
 		if ($droplet_orm->has('tags', $tag_orm)) 
 		{
 			// System-generated tag; Do not delete from the DB
-			$deleted_orm = ORM::factory('droplet_deleted_tag');
+			$deleted_orm = ORM::factory('account_droplet_tag');
 			$deleted_orm->account_id = $account_id;
 			$deleted_orm->droplet_id = $droplet_id;
 			$deleted_orm->tag_id = $tag_id;
+			$deleted_orm->deleted = 1;
 
 			$deleted_orm->save();
 		}
@@ -726,6 +729,7 @@ class Model_Droplet extends ORM
 		    ->where('account_id', '=', $account_id)
 		    ->where('droplet_id', '=', $droplet_id)
 		    ->where('tag_id', '=', $tag_id)
+		    ->where('deleted', '=', 0)
 		    ->find();
 
 		if ($user_tag_orm->loaded())
