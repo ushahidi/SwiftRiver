@@ -1,12 +1,11 @@
 div.map {
-    border: 1px solid #999999;
+    border: 1px solid #999;
     height: 420px;
     position: relative;
-    width: 100%;
 }
 
 div.fullscreenmap-btn{
-	background-image:url(../imigis/window.png);
+	background-image:url(../img/window.png);
 	background-repeat:no-repeat;
 	background-position:5px;
 	background-color:#eee;

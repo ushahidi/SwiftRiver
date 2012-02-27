@@ -181,7 +181,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		   ->bind('bucket_url_root', $bucket_url_root)
 		   ->bind('bucket_data', $bucket_data);
 
-		$bucket_url_root = $this->bucket_base_url.'/api';
+		$bucket_url_root = $this->bucket_base_url.'/save_settings';
 
 		$bucket_data = json_encode(array(
 			'id' => $this->bucket->id,
@@ -490,14 +490,18 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 * 
 	 * @return void
 	 */
-	public function action_api()
+	public function action_save_settings()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+
+		// Check for permissions
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
 		
-		$response = array("success" => FALSE);
-
-
+		// Check for the request method
 		switch ($this->request->method())
 		{
 			// Update an existing bucket
@@ -510,16 +514,34 @@ class Controller_Bucket extends Controller_Swiftriver {
 					{
 						$this->bucket->bucket_name = $post['bucket_name'];
 						$this->bucket->save();
+
+						// Modify the bucket base URL
+						$this->bucket_base_url = $this->base_url.'/'.$this->bucket->bucket_name_url;
+
+						// Response to be pushed back to the client
+						$this->response->body(json_encode(
+							array(
+								'redirect_url' => $this->bucket_base_url
+							)
+						));
 					}
 					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
 					{
 						$this->bucket->bucket_publish = $post['bucket_publish'];
 						$this->bucket->save();
 					}
-
-					$response["success"] = TRUE;
-					$response["redirect_url"] = $this->base_url.'/'.$this->bucket->bucket_name_url;
+					else
+					{
+						// Bad request
+						$this->response->status(400);
+					}
 				}
+				else
+				{
+					// Bad request
+					$this->response->status(400);
+				}
+
 			break;
 
 			// Delets a bucket from the database
@@ -527,14 +549,20 @@ class Controller_Bucket extends Controller_Swiftriver {
 				if ($this->bucket->loaded())
 				{
 					$this->bucket->delete();
-					$response["success"] = TRUE;
-					$response["redirect_url"] = url::site($this->bucket_base_url);
+					$this->response->body(json_encode(
+						array(
+							"redirect_url" => URL::site($this->bucket_base_url)
+						)
+					));
+				}
+				else
+				{
+					// Bad request
+					$this->response->status(400);
 				}
 			break;
 		}
 		
-		echo json_encode($response);
-
 	}
 	
 	/**

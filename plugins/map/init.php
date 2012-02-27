@@ -18,8 +18,8 @@ class Map_Init {
 	public function __construct()
 	{
 		// Create Menu Item
-		Swiftriver_Event::add('swiftriver.river.nav', array($this, 'river_nav'));
-		Swiftriver_Event::add('swiftriver.bucket.nav', array($this, 'bucket_nav'));
+		Swiftriver_Event::add('swiftriver.river.nav.more', array($this, 'river_nav'));
+		Swiftriver_Event::add('swiftriver.bucket.nav.more', array($this, 'bucket_nav'));
 		
 		// For adding our js/css to the header
 		//Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
@@ -34,11 +34,9 @@ class Map_Init {
 	 */
 	public function river_nav()
 	{
-		$river = Swiftriver_Event::$data;		
+		$river = Swiftriver_Event::$data;
 		$url = URL::site().$river->account->account_path.'/river/'.$river->river_name_url.'/trend/map';
-		$active_menu = Controller_Trend_Main::$active;
-		echo ($active_menu == 'map') ? '<li class="active">' : '<li>';
-		echo '<a href="'.$url.'">'.__('Map').'</a></li>';
+		echo '<li class="button-view"><a href="'.$url.'">'.__('Map').'</a></li>';
 	}
 	
 	/**
@@ -49,12 +47,8 @@ class Map_Init {
 	public function bucket_nav()
 	{
 		$bucket = Swiftriver_Event::$data;
-
-		// If menu is active		
-		$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/map';
-		$active_menu = Controller_Trend_Main::$active;
-		echo ($active_menu == 'map') ? '<li class="active">' : '<li>';
-		echo '<a href="'.$url.'">'.__('Map').'</a></li>';
+		$url = URL::site().$bucket->account->account_path.'/river/'.$bucket->bucket_name_url.'/trend/map';
+		echo '<li class="button-view"><a href="'.$url.'">'.__('Map').'</a></li>';
 	}
 	
 }

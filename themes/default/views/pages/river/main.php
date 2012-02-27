@@ -4,7 +4,7 @@
 			<h1 class="<?php echo ($river->river_public == 0) ? "private" : "public"; ?>">
 				<span class="icon"></span>
 				<?php if ($river->account->user->id == $user->id): ?>
-					<span><?php echo $river->river_name; ?></span>
+					<span id="display_river_name"><?php echo $river->river_name; ?></span>
 				<?php else: ?>
 					<a href="<?php echo URL::site().$river->account->account_path ?>"><span><?php echo $river->account->account_path; ?></a>/<?php echo $river->river_name; ?></span>
 				<?php endif; ?>
@@ -27,7 +27,9 @@
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $river);
 					?>
-					<li class="view-panel"><a href="<?php echo $more_url; ?>"><span class="arrow"></span>More</a></li>
+					<li class="view-panel" id="river_more_url">
+						<a href="<?php echo $more_url; ?>"><span class="arrow"></span><?php echo __('Trends'); ?></a>
+					</li>
 				</ul>
 				<ul class="actions">
 					<li class="view-panel">
