@@ -604,6 +604,7 @@ class Controller_River extends Controller_Swiftriver {
 					// Verify that the option exists
 					if ($option_orm->loaded())
 					{
+						Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $option_orm);
 						$option_orm->delete();
 					}
 					else
@@ -633,7 +634,7 @@ class Controller_River extends Controller_Swiftriver {
 
 					// Run pre_save events
 					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $post);
-
+					
 					if ( ! empty($post))
 					{
 						if (isset($post['multiple']) AND $post['multiple'])
@@ -649,6 +650,9 @@ class Controller_River extends Controller_Swiftriver {
 								$filter_option->key = $entry['key'];
 								$filter_option->value = json_encode($entry['data']);
 								$filter_option->save();
+								
+								// Run post_save events
+								Swiftriver_Event::run('swiftriver.channel.option.post_save', $filter_option);
 
 								$entry["id"] = $filter_option->id;
 
@@ -672,6 +676,9 @@ class Controller_River extends Controller_Swiftriver {
 							$channel_filter_option->value = json_encode($post['data']);
 
 							$channel_filter_option->save();
+							
+							// Run post_save events
+							Swiftriver_Event::run('swiftriver.channel.option.post_save', $channel_filter_option);
 
 							// Add the ID of the newly created option
 							$post["id"] = $channel_filter_option->id;

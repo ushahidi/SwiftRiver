@@ -67,10 +67,9 @@ class Model_Link extends ORM
 		elseif ( ! $orm_link->loaded() AND $save)
 		{
 			// Get the full URL
-			$full_link = Swiftriver_Links::full($url);
 			$orm_link->link = $url;
-			$orm_link->link_full = $full_link;
-			$orm_link->link_domain = parse_url($full_link, PHP_URL_HOST);
+			$orm_link->link_full = $url;
+			$orm_link->link_domain = parse_url($url, PHP_URL_HOST);
 			
 			// Save and return
 			return $orm_link->save();

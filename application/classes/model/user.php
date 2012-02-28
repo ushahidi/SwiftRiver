@@ -89,6 +89,24 @@ class Model_User extends Model_Auth_User
 			),
 		);
 	}
+	
+	/**
+	 * Overload saving to perform additional functions
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		// Do this for first time items only
+		if ($this->loaded() === FALSE)
+		{
+			// Generate an api token
+			$this->api_key = Text::random('alnum', 32);
+			$this->api_key = hash_hmac('sha256', Text::random('alnum', 32), $this->email);
+		}
+
+		$user = parent::save();
+
+		return $user;
+	}
 
 	/**
 	 * Given a string, this function will try to find an unused username by appending a number.

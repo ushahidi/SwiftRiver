@@ -122,6 +122,23 @@ class Controller_Swiftriver extends Controller_Template {
 		// Open session
 		$this->session = Session::instance();
 		
+		// If an api key has been provided, login that user
+		$api_key = $this->request->query('api_key');
+		if ($api_key)
+		{
+			$user_orm = ORM::factory('user', array('api_key' => $api_key));
+			if ($user_orm->loaded()) 
+			{
+				Auth::instance()->force_login($user_orm);
+			}
+			else
+			{
+				// api_keys used by apps. Instead of giving the login page
+				// tell them something went wrong.
+				throw new HTTP_Exception_403();
+			}
+		}
+		
 		//if we're not logged in, gives us chance to auto login
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
 		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');

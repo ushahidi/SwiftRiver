@@ -149,8 +149,18 @@ class Model_Droplet extends ORM
 				// Check if the 'river_id' OR 'bucket_id' key is set
 				if (isset($droplet['river_id']))
 				{
-					// Add the droplet to the river
-					Model_River::add_droplet($droplet['river_id'], $orm_droplet);
+					// Add the droplet to the river(s)
+					if (is_array($droplet['river_id']))
+					{
+						foreach ($droplet['river_id'] as $river_id)
+						{
+							Model_River::add_droplet($river_id, $orm_droplet);
+						}
+					}
+					else
+					{						
+						Model_River::add_droplet($droplet['river_id'], $orm_droplet);
+					}
 				}
 				elseif (isset($droplet['bucket_id']))
 				{

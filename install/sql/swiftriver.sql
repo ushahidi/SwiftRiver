@@ -377,20 +377,21 @@ CREATE TABLE IF NOT EXISTS `channel_filters` (
 -- -----------------------------------------------------
 -- Table `users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+CREATE IF NOT EXISTS TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `riverid` varchar(255) NOT NULL,
-  `email` VARCHAR(127) NOT NULL ,
-  `name` VARCHAR(255) NULL DEFAULT NULL ,
-  `username` VARCHAR(255) NOT NULL ,
-  `password` VARCHAR(255) NOT NULL ,
-  `logins` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
-  `last_login` INT(10) UNSIGNED NULL DEFAULT NULL ,
-  UNIQUE INDEX (`email` ASC) ,
-  UNIQUE INDEX (`username` ASC) ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `email` varchar(127) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `api_key` varchar(255) NOT NULL,
+  `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `last_login` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `un_api_key` (`api_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -482,6 +483,8 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `droplet_date_pub` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Original publish date of the feed item',
   `droplet_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'Date the feed item was added to this database',
   `droplet_processed` tinyint(1) NOT NULL DEFAULT '0',
+  `semantics_complete` tinyint(1) DEFAULT '0',
+  `links_complete` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `droplet_hash_idx` (`droplet_hash`),
   KEY `droplet_type_idx` (`droplet_type`),
@@ -489,7 +492,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   KEY `droplet_date_add_idx` (`droplet_date_add`),
   KEY `droplet_processed_idx` (`droplet_processed`),
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1587 DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
+) ENGINE=InnoDB AUTO_INCREMENT=4867 DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
 
 -- -----------------------------------------------------
 -- Table `settings`

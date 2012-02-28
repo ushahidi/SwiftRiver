@@ -186,6 +186,15 @@ Route::set('crawler', 'crawler(/<id>(/<channel>))')
 		'directory'  => 'crawler'
 	));	
 	
+/**
+ * API Route
+ */
+Route::set('api', 'api(/<controller>)')
+	->defaults(array(
+		'action'     => 'api'
+	));	
+	
+	
 
 /**
  * Swiftriver Media Router (JS/CSS)

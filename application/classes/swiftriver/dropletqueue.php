@@ -94,12 +94,55 @@ class Swiftriver_Dropletqueue {
 			// Add the droplet to the current river
 			if (isset($droplet['river_id']))
 			{
-				Model_River::add_droplet($droplet['river_id'], $droplet_orm);
+				// Add the droplet to the river(s)
+				if (is_array($droplet['river_id']))
+				{
+					foreach ($droplet['river_id'] as $river_id)
+					{
+						Model_River::add_droplet($river_id, $droplet_orm);
+					}
+				}
+				else
+				{						
+					Model_River::add_droplet($droplet['river_id'], $droplet_orm);
+				}
 			}
 			
-			// Delete the droplet from memory
-			unset ($droplet, $droplet_orm);
-			return FALSE;
+			if (array_key_exists('links_complete', $droplet))
+			{
+				$droplet_orm->links_complete = 1;
+			}
+			
+			if (array_key_exists('semantics_complete', $droplet))
+			{
+				$droplet_orm->semantics_complete = 1;
+			}
+			
+			if ($droplet_orm->semantics_complete AND $droplet_orm->links_complete)
+			{
+				$droplet_orm->droplet_processed = 1;
+			}
+			
+			
+			// Update droplet meta if it is provided
+			if (array_key_exists('tags', $droplet))
+			{
+				Model_Droplet::add_tags($droplet_orm, $droplet['tags']);
+			}
+			
+			if (array_key_exists('links', $droplet))
+			{
+				Model_Droplet::add_links($droplet_orm, $droplet['links']);
+			}			
+			
+			if (array_key_exists('places', $droplet))
+			{
+				Model_Droplet::add_places($droplet_orm, $droplet['places']);
+			}			
+					
+			$droplet_orm->save();
+				
+			return NULL;
 		}
 		
 		// Validate the droplet

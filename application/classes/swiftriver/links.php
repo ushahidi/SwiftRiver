@@ -37,7 +37,7 @@ class Swiftriver_Links {
 			{
 				if ( ! in_array($url, $urls))
 				{
-					$urls[] = $url;
+					$urls[] = self::full($url);
 				}
 			}
 		}
