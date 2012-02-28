@@ -84,12 +84,12 @@ class Swiftriver_Dropletqueue {
 		// Strip the tags from to get droplet_raw
 		$droplet['droplet_raw'] = $droplet['droplet_content'];
 		
+		// Get the droplet ORM based on the hash
+		$droplet_orm = Model_Droplet::get_droplet_by_hash($droplet['droplet_hash']);
 		
 		// Check if the droplet has already been added to the queue
-		if (Model_Droplet::is_duplicate_droplet($droplet['droplet_hash']))
+		if ($droplet_orm->loaded())
 		{
-			// Get the droplet ORM based on the hash
-			$droplet_orm = Model_Droplet::get_droplet_by_hash($droplet['droplet_hash']);
 			
 			// Add the droplet to the current river
 			if (isset($droplet['river_id']))

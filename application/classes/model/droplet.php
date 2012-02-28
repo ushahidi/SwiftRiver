@@ -218,15 +218,41 @@ class Model_Droplet extends ORM
 	 */
 	public static function add_tags($orm_droplet, $tags)
 	{
-		foreach ($tags as $tag)
+		// Function to extract tag!!>--<!!tag_type from 
+		function tag($tag)
 		{
-			// Check if the tag already exists
-			$orm_tag = Model_Tag::get_tag_by_name($tag, TRUE);
-			if ($orm_tag AND ! $orm_droplet->has('tags', $orm_tag))
-			{
-				$orm_droplet->add('tags', $orm_tag);
-			}
+			return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
 		}
+		
+		// Determine the new tags
+		$current_tags = array_map("tag", $orm_droplet->tags->find_all()->as_array());
+		$change_tags = array_map("tag", $tags);
+		
+		// Function to split the  tag!!>--<!!tag_type from above into a tag and tag_type
+		function tag_split($tag)
+		{
+			$tag_parts = explode('!!>--<!!', $tag);
+			return array('tag_name' => $tag_parts[0], 
+						 'tag_type' => $tag_parts[1]);
+		}
+		$new_tags = array_map('tag_split', array_diff($change_tags, $current_tags));
+		
+		//Get the tag IDs en batch
+		$tag_ids = Model_Tag::get_tags($new_tags);
+		
+		// Add the tags in one big batch
+		if ( !empty($tag_ids))
+		{
+			$query = DB::insert('droplets_tags', array('droplet_id', 'tag_id'));
+			foreach ($tag_ids as $tag_id) {
+			    $query->values(array($orm_droplet->id, $tag_id['id']));
+			}
+			try {
+			    $result = $query->execute();
+			} catch ( Database_Exception $e ) {   
+					Kohana::$log->add(Log::ERROR, 'Database error adding tags: '.$e->getMessage());
+			}
+		}		
 	}
 	
 	

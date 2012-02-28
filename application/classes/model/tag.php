@@ -95,4 +95,64 @@ class Model_Tag extends ORM
 			return FALSE;
 		}
 	}
+	
+	/**
+	 * Checks if a given tag already exists. 
+	 * The parameter $tags is an array of hashes containing the 
+	 * tag name and type as below
+	 * E.g: $tag = array('tag_name' => 'bubba', tag_type => 'junk');
+	 *
+	 * @param string $tags Array of hashes described above
+	 * @return mixed array of tag ids if the tags exists, FALSE otherwise
+	 */
+	public static function get_tags($tags, $save = FALSE)
+	{
+		// First try to add any tags missing from the db
+		// The below generates this query to find missing tags and insert them all at once:
+		/*
+		 *     insert into tags (`tag`, `tag_type`) values
+		 *     select *
+		 *     from (select 'css3' tag, 'organization' tag_type union all
+		 *     select 'garden gnome small', 'facility') a
+		 *     where (tag, tag_type) not in
+		 *     (
+		 *     select tag, tag_type
+		 *     from tags
+		 *     where (tag, tag_type) in (
+		 *     ('css3', 'organization'),
+		 *     ('garden gnome small', 'facility')
+		 *     )
+		 *     );
+		 */
+		$query = DB::select();
+		$tags_subquery = NULL;
+		foreach ($tags as $tag)
+		{
+			$union_query = DB::select(array(DB::expr("'".$tag['tag_name']."'"), 'tag'), array(DB::expr("'".$tag['tag_type']."'"), 'tag_type'));
+			if ( ! $tags_subquery)
+			{
+				$tags_subquery = $union_query;
+			}
+			else
+			{
+				$tags_subquery = $union_query->union($tags_subquery, TRUE);
+			}
+		}
+		if ($tags_subquery)
+		{
+			$query->from(array($tags_subquery,'a'));
+			$sub = DB::select('tag', 'tag_type')
+			           ->from('tags')
+			           ->where(DB::expr('(tag, tag_type)'), 'IN', $tags);
+			$query->where(DB::expr('(tag, tag_type)'), 'NOT IN', $sub);
+			DB::insert('tags', array('tag', 'tag_type'))->select($query)->execute();
+		}
+		
+		// Get the tag IDs
+		$query = DB::select('id')
+		           ->from('tags')
+		           ->where(DB::expr('(tag, tag_type)'), 'IN', $tags);
+		
+		return $query->execute()->as_array();
+	}
 }
