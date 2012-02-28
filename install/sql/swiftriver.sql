@@ -198,16 +198,15 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_links`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_links` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `link_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX (`account_id`,`droplet_id`,`link_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
+CREATE TABLE `account_droplet_links` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `link_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`link_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `user_identities`
@@ -297,16 +296,15 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_places`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_places` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `place_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX (`account_id`,`droplet_id`,`place_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
+CREATE TABLE `account_droplet_places` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `place_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`place_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `links`
@@ -345,16 +343,15 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_tags`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_droplet_tags` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  `tag_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX (`account_id`,`droplet_id`,`tag_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
+CREATE TABLE `account_droplet_tags` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `tag_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`tag_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `channel_filters`
@@ -745,18 +742,6 @@ CREATE TABLE IF NOT EXISTS `droplet_scores` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `droplet_id` (`droplet_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
-
--- ----------------------------------------
--- TABLE 'droplet_deleted_tags'
--- ----------------------------------------
-CREATE TABLE IF NOT EXISTS `droplet_deleted_tags` (
-  `id` bigint(11) NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(11) NOT NULL,
-  `droplet_id` bigint(11) NOT NULL,
-  `tag_id` bigint(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `del_account_droplet_tag_id` (`account_id`,`droplet_id`,`tag_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

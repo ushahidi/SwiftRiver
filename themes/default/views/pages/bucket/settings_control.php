@@ -5,7 +5,9 @@
 			<h2><?php echo __("Bucket Name"); ?></h2>
 			<div class="input">
 				<?php echo Form::input('bucket_name', $bucket->bucket_name, 
-				    array('id' => 'bucket_name', 'class' => "medium")); ?>
+				    array('id' => 'bucket_name')); ?>
+			</div>
+			<div class="input">
 				<button type="button" class="channel-button" id="rename_bucket">
 					<span><?php echo __("Rename the bucket"); ?></span>
 				</button>
