@@ -288,12 +288,15 @@ class Model_River extends ORM {
 	 * @param string $sort Sorting order
 	 * @return array
 	 */
-	public static function get_droplets($user_id, $river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC')
+	public static function get_droplets($user_id, $river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
+
+		// Sanity check for the sorting method
+		$sort = empty($sort) ? 'DESC' : $sort;
 
 		$river_orm = ORM::factory('river', $river_id);
 		if ($river_orm->loaded())
@@ -315,8 +318,13 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.id', '<=', $max_id)
-			    ->order_by('droplets.droplet_date_pub', $sort)
+			    ->where('droplets.id', '<=', $max_id);
+
+			// Apply the river filters
+			self::_apply_river_filters($query, $filters);
+
+			// Ordering and grouping
+			$query->order_by('droplets.droplet_date_pub', $sort)
 			    ->group_by('droplets.id');	   
 
 			// Pagination offset
@@ -328,7 +336,7 @@ class Model_River extends ORM {
 
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
-			
+
 			// Populate buckets array			
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
@@ -356,13 +364,12 @@ class Model_River extends ORM {
 	 * @param int $since_id Lower limit of the droplet id
 	 * @return array
 	 */
-	public static function get_droplets_since_id($user_id, $river_id, $since_id)
+	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
-		
 		
 		$river_orm = ORM::factory('river', $river_id);
 		if ($river_orm->loaded())
@@ -382,8 +389,13 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('droplets.droplet_processed', '=', 1)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.id', '>', $since_id)
-			    ->order_by('droplets.droplet_date_pub', 'ASC')
+			    ->where('droplets.id', '>', $since_id);
+
+			// Apply the river filters
+			self::_apply_river_filters($query, $filters);
+
+			 // Group, order and limit
+			$query->order_by('droplets.droplet_date_pub', 'ASC')
 			    ->group_by('droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
 			    ->offset(0);
@@ -516,6 +528,129 @@ class Model_River extends ORM {
 		}
 		
 		return $collaborators;
+	}
+
+	/**
+	 * Applies a set of filters to the specified Database_Query_Select object
+	 *
+	 * @param Database_Query_Select $query Object to which the filtering predicates shall be added
+	 * @param array $filters Set of filters to apply
+	 */
+	private static function _apply_river_filters(& $query, $filters)
+	{
+		 // Check if the filter are empty
+		 if ( ! empty($filters))
+		 {
+		 	// Places fitler
+		 	if (isset($filters['places']) AND Valid::not_empty($filters['places']))
+		 	{
+		 		$group_places = FALSE;
+
+			 	// Get the places filter
+			 	$places = $filters['places'];
+
+			 	// Get the place ids
+			 	if (isset($places['ids']) AND Valid::not_empty($places['ids']))
+			 	{
+			 		$group_places = TRUE;
+			 		$query->and_where_open();
+
+			 		$place_ids = $places['ids'];
+
+			 		// Add subquery filter
+			 		$query->where('droplets.id', 'IN', 
+			 			DB::select('droplet_id')
+			 			    ->from('droplets_places')
+			 			    ->where('place_id', 'IN', $place_ids)
+			 		);
+			 	}
+
+			 	// Get the place names
+			 	if (isset($places['names']))
+			 	{
+			 		// Determine the where clause to use
+			 		$where_clause = ($group_places) ? "or_where" : "where";
+
+			 		$place_names = $places['names'];
+
+			 		// Add subquery filter based on place names
+			 		$query->$where_clause('droplets.id', 'IN', 
+			 			DB::select('droplet_id')
+			 			    ->from('droplets_places')
+			 			    ->where('place_id', 'IN',
+			 			    	 DB::select('id')
+			 			    	     ->from('places')
+			 			    	     ->where('place_name', 'IN', $place_names)
+			 			    	)
+			 		    );
+			 	}
+
+			 	// Close the place grouping
+			 	if ($group_places)
+			 	{
+			 		$query->and_where_close();
+			 	}
+			 }
+
+
+
+			 // Tags filter
+		 	if (isset($filters['tags']) AND Valid::not_empty($filters['tags']))
+		 	{
+		 		$group_tags = FALSE;
+
+			 	// Get the places filter
+			 	$tags = $filters['tags'];
+
+			 	// Get the place ids
+			 	if (isset($tags['ids']) AND Valid::not_empty($tags['ids']))
+			 	{
+			 		$group_tags = TRUE;
+			 		$query->and_where_open();
+
+			 		$tag_ids = $tags['ids'];
+
+			 		// Add subquery filter
+			 		$query->where('droplets.id', 'IN', 
+			 			DB::select('droplet_id')
+			 			    ->from('droplets_tags')
+			 			    ->where('tag_id', 'IN', $tag_ids)
+			 		);
+			 	}
+
+			 	// Get the tag names
+			 	if (isset($tags['names']) AND Valid::not_empty($tags['names']))
+			 	{
+			 		// Determine the where clause to use
+			 		$where_clause = ($group_tags) ? "or_where" : "where";
+
+			 		$tag_names = $tags['names'];
+
+			 		// Add subquery filter based on place names
+			 		$query->$where_clause('droplets.id', 'IN', 
+			 			DB::select('droplet_id')
+			 			    ->from('droplets_tags')
+			 			    ->where('tag_id', 'IN',
+			 			    	 DB::select('id')
+			 			    	     ->from('tags')
+			 			    	     ->where('tag', 'IN', $tag_names)
+			 			    	)
+			 		    );
+			 	}
+
+			 	if ($group_tags)
+			 	{
+			 		$query->and_where_close();
+			 	}
+			 }
+
+			 // Check for channel name filter
+			 if (isset($filters['channel']))
+			 {
+			 	$query->where('droplets.channel', '=', $filters['channel']);
+			 }
+		 }
+		// END filters check
 	}
 	
 }

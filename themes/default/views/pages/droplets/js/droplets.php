@@ -4,6 +4,7 @@
  */
 $(function() {
 	window.base_url = "<?php echo $fetch_base_url; ?>";
+	window.dropletFetchURL = "<?php echo $droplet_fetch_url; ?>";
 	
 	// Models for the droplet places, tags and links 
 	window.DropletPlace = Backbone.Model.extend();
@@ -90,12 +91,76 @@ $(function() {
 	
 	// Droplet & Bucket collection
 	window.DropletList = Backbone.Collection.extend({
-		model: Droplet,
-		url: base_url+"/droplets",
 		
-		/*comparator: function (droplet) {
-			return Date.parse(droplet.get('droplet_date_pub'));
-		}*/
+		model: Droplet,
+		
+		url: window.dropletFetchURL,
+
+		filterDroplets: function(filters) {
+			window.isPageFetching = true;
+
+			_.each(filters, function(data, param){
+				var dataStr = getParameterByName(param);
+				dataStr += (dataStr != "") ? "," : "";
+
+				if (Object.prototype.toString.call(data) === "[object Array]") {
+					dataStr += data.toString();
+				}
+				if (typeof data == "string") {
+					dataStr += data;
+				}
+				if (dataStr == "") {
+					delete filters[param];
+				} else {
+					// Modiy the value of the filter param
+					filters[param] = dataStr;
+				}
+
+			});
+
+			// Halt if no filters present
+			if (_.size(filters) == 0)
+				return;
+
+			// Proceed....
+
+			// Ensures that the server response includes the modified request URL
+			filters.return_url = true;
+			
+			var list = this;
+
+			// Fetch the data
+			$.ajax({
+				url: window.dropletFetchURL,
+
+				data: filters,
+
+				success: function(response) {
+					// Clear the current droplet listing
+					window.dropletList.$el.fadeOut('slow');
+					window.dropletList.$el.html("");
+
+					window.dropletList.$el.fadeIn('slow');
+
+					// Render
+					list.url = response.fetch_url;
+					list.reset(response.droplets);
+
+					// Update the URL
+					if (typeof window.history.pushState != "undefined") {
+						window.history.pushState(response, "Droplets", response.base_url);
+					}
+
+					window.isPageFetching = false;
+				},
+
+				error: function(response) {
+					window.isPageFetching = false;
+				},
+
+				dataType: "json"
+			});
+		}
 	});
 	
 	window.Droplets = new DropletList;
@@ -196,7 +261,7 @@ $(function() {
 
 		addPlace: function(place) {
 			var view = new PlaceView({model: place});
-			this.$("div.locations").append(view.render().el);
+			this.$("ul.places").append(view.render().el);
 		},
 					
 		addPlaces: function() {
@@ -513,9 +578,11 @@ $(function() {
 		template: _.template($("#tag-template").html()),
 		
 		events: {
-			"click span.actions .dropdown .confirm": "deleteTag"
+			"click span.actions .dropdown .confirm": "deleteTag",
+
+			"click a.tag-name": "applyTagsFilter"
 		},
-		
+
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
@@ -531,6 +598,15 @@ $(function() {
 					viewItem.fadeOut("slow");
 				}
 			});
+		},
+
+		applyTagsFilter: function(e) {
+			var tagId = [$(e.currentTarget).data("droplet-tag-id")];
+
+			// Apply the tags filter
+			Droplets.filterDroplets({tags: tagId});
+
+			return false;
 		}
 		
 	});
@@ -541,7 +617,7 @@ $(function() {
 		tagName: "p",
 		
 		template: _.template($("#link-template").html()),
-		
+
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
@@ -552,10 +628,25 @@ $(function() {
 	// View for an individual place
 	window.PlaceView = Backbone.View.extend({
 		
-		tagName: "p",
-		
+		tagName: "li",
+
 		template: _.template($("#place-template").html()),
+
+		events: {
+			"click a.place-name": "applyPlacesFilter",
+		},
 		
+		applyPlacesFilter: function(e) {
+			$(e.currentTarget).toggleClass("active").toggleClass("");
+
+			// Get all the selected place names
+			var placeId = [$(e.currentTarget).data("droplet-place-id")];
+
+			// Apply the places filter
+			Droplets.filterDroplets({places: placeId});
+
+		},
+
 		render: function() {
 			$(this.el).html(this.template(this.model.toJSON()));
 			return this;
@@ -608,12 +699,22 @@ $(function() {
 	// Load content while scrolling - Infinite Scrolling
 	var pageNo = 1;
 	var maxId = 0;
-	var isPageFetching = false;
+	window.isPageFetching = false;
 	var isAtLastPage = false;
 	
 	function nearBottom() {
 		var bufferPixels = 40;
 		return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - $("#next_page_button").offset().top;
+	}
+
+	function getParameterByName(name) {
+		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\[");
+		var regexStr = "[\\?&]" + name + "=([^&#]*)";
+		var regex = new RegExp(regexStr);
+
+		var results = regex.exec(window.location.search);
+
+		return (results == null) ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 	
 	var loading_msg = window.loading_message.clone();
