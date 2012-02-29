@@ -198,7 +198,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_links`
 -- -----------------------------------------------------
-CREATE TABLE `account_droplet_links` (
+CREATE TABLE IF NOT EXISTS  `account_droplet_links` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -296,7 +296,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_places`
 -- -----------------------------------------------------
-CREATE TABLE `account_droplet_places` (
+CREATE TABLE IF NOT EXISTS `account_droplet_places` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -343,7 +343,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `account_droplet_tags`
 -- -----------------------------------------------------
-CREATE TABLE `account_droplet_tags` (
+CREATE TABLE IF NOT EXISTS `account_droplet_tags` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -377,7 +377,7 @@ CREATE TABLE IF NOT EXISTS `channel_filters` (
 -- -----------------------------------------------------
 -- Table `users`
 -- -----------------------------------------------------
-CREATE IF NOT EXISTS TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `riverid` varchar(255) NOT NULL,
   `email` varchar(127) NOT NULL,
@@ -772,7 +772,7 @@ COMMIT;
 -- Data for table `users`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`) VALUES (1, 'myswiftriver@myswiftriver.com', 'Administrator', 'admin', 'c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542', 0, NULL);
+INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (1, 'myswiftriver@myswiftriver.com', 'Administrator', 'admin', 'c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542', 0, NULL, md5(rand()));
 
 COMMIT;
 
