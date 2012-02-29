@@ -266,7 +266,9 @@
 				option.set({channel: this.model.get("channel")});
 
 				// Check if the channel is enabled
-				if (typeof (this.model.get("id")) == "undefined") {
+				if (typeof (this.model.get("id")) == "undefined" || 
+					(typeof this.model.get("id") != "undefined" && this.model.get("enabled") == 0)) {
+					
 					var channelView = this;
 
 					// Enable the channel for the current river
@@ -276,17 +278,20 @@
 							// If sucessful, proceed
 							channelView.$("a span.switch").toggleClass("switch-on").toggleClass("switch-off");
 
+							var channelFilterId = (typeof model.get("id") == "undefined") 
+							    ? response.id 
+							    : model.get("id");
+
 							// Save the channel option
-							option.set({channel_filter_id: response.id});
+							option.set({channel_filter_id: channelFilterId});
 							channelView.createAndSaveChannelOption(option);
 						}
 					});
 				} else {
-					// Channel already exists for the river, set the id and save
+					// Save the channel option
 					option.set({channel_filter_id: this.model.get("id")});
 					this.createAndSaveChannelOption(option);
 				}
-
 			} else {
 				// Add the option to the panel view
 				this.optionsPanelView.addChannelOption(option);
