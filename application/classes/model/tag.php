@@ -141,7 +141,7 @@ class Model_Tag extends ORM
 		$tags_subquery = NULL;
 		foreach ($tags as $tag)
 		{
-			$union_query = DB::select(array(DB::expr("'".$tag['tag_name']."'"), 'tag'), array(DB::expr("'".$tag['tag_type']."'"), 'tag_type'));
+			$union_query = DB::select(array(DB::expr("'".addslashes($tag['tag_name'])."'"), 'tag'), array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'));
 			if ( ! $tags_subquery)
 			{
 				$tags_subquery = $union_query;
