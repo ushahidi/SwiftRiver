@@ -624,7 +624,8 @@ class Model_River extends ORM {
 			 		// Determine the where clause to use
 			 		$where_clause = ($group_tags) ? "or_where" : "where";
 
-			 		$tag_names = $tags['names'];
+			 		// Convert all the tag names to lower case
+			 		$tag_names = array_map("strtolower", $tags['names']);
 
 			 		// Add subquery filter based on place names
 			 		$query->$where_clause('droplets.id', 'IN', 
@@ -633,7 +634,7 @@ class Model_River extends ORM {
 			 			    ->where('tag_id', 'IN',
 			 			    	 DB::select('id')
 			 			    	     ->from('tags')
-			 			    	     ->where('tag', 'IN', $tag_names)
+			 			    	     ->where(DB::expr('LOWER(tag)'), 'IN', $tag_names)
 			 			    	)
 			 		    );
 			 	}
