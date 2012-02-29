@@ -335,12 +335,16 @@ class Model_Droplet extends ORM
 			? array('id', '>', 0) 
 			: array('channel', '=', $channel);
 		
+		// Flatten the predicates array into a string
+		$predicate_str = implode(" ", $predicates);
+
 		// Get the droplets ordered by pub_date in DESC order
 		// Limit to only parent items - not comments
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
 					->where('parent_id', '=', 0)
-					->where($predicates[0], $predicates[1], $predicates[2])
+					->where($predicates[0], $predicates[1], 
+						DB::expr($predicates[2].' AND EXISTS (SELECT river_id FROM channel_filters WHERE filter_enabled = 1 AND '.$predicate_str.')'))
 					->order_by('id', 'DESC')
 					->limit($limit)
 					->find_all();
