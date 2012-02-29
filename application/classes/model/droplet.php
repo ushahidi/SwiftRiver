@@ -218,10 +218,18 @@ class Model_Droplet extends ORM
 	 */
 	public static function add_tags($orm_droplet, $tags)
 	{
-		// Function to extract tag!!>--<!!tag_type from 
+		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
+		// since php array comparison is a bit limited
 		function tag($tag)
 		{
-			return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
+			if ( is_array($tag))
+			{
+				return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
+			}
+			else
+			{
+				return $tag->tag.'!!>--<!!'.$tag->tag_type;
+			}
 		}
 		
 		// Determine the new tags
@@ -241,7 +249,7 @@ class Model_Droplet extends ORM
 		$tag_ids = Model_Tag::get_tags($new_tags);
 		
 		// Add the tags in one big batch
-		if ( !empty($tag_ids))
+		if ($tag_ids)
 		{
 			$query = DB::insert('droplets_tags', array('droplet_id', 'tag_id'));
 			foreach ($tag_ids as $tag_id) {
