@@ -146,6 +146,12 @@ class Swiftriver_Plugins {
 	 */
 	public static function get_channel_config($channel)
 	{
+		if (empty(self::$channels))
+		{
+			// Load the channels
+			self::channels();
+		}
+
 		return isset(self::$channels[$channel]) ? self::$channels[$channel] : FALSE;
 	}
 	
