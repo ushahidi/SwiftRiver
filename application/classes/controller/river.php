@@ -152,8 +152,7 @@ class Controller_River extends Controller_Swiftriver {
 			// Stringify the filter parameters
 			$this->_stringify_filter_params();
 
-			// Modify the base and fetch URLs
-			$fetch_base_url .= URL::query($this->filters, TRUE);
+			// Modify the droplet fetch URL
 			$droplet_fetch_url .= URL::query($this->filters, TRUE);
 		}
 		
@@ -908,23 +907,29 @@ class Controller_River extends Controller_Swiftriver {
 				}
 
 			}
+		}
 
-			// Verify the parameters are non-empty
-			if ( ! Valid::not_empty($modified[$param]['ids']))
+		// Sanitization and duplication filtering
+		foreach ($modified as $param => & $values)
+		{
+			$param = & $param;
+			foreach ($values as $key => & $data)
 			{
-				unset ($modified[$param]['ids']);
+				$key = & $key;
+				if (Valid::not_empty($data))
+				{
+					$data = array_unique($data);
+				}
+				else
+				{
+					unset ($key);
+				}
 			}
 
-			if ( ! Valid::not_empty($modified[$param]['names']))
+			if ( ! Valid::not_empty($param))
 			{
-				unset ($modified[$param]['names']);
+				unset ($param);
 			}
-
-			if ( ! Valid::not_empty($modified[$param]))
-			{
-				unset ($modified[$param]);
-			}
-
 		}
 
 		// Replace the filters with the sanitized set

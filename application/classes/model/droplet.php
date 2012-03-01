@@ -169,6 +169,14 @@ class Model_Droplet extends ORM
 				
 				// Set the 'id' key to the newly saved droplet
 				$droplet['id'] = $orm_droplet->id;
+
+				// If the droplet has a parent id, set the droplet_orig_id
+				// to the ID of the droplet
+				if ($orm_droplet->parent_id != 0)
+				{
+					$orm_droplet->droplet_orig_id = $orm_droplet->id;
+					$orm_droplet->save();
+				}
 				
 				return $orm_droplet;
 			}
