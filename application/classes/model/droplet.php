@@ -220,9 +220,9 @@ class Model_Droplet extends ORM
 	{
 		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
 		// since php array comparison is a bit limited
-		function tag($tag)
+		function tag_merge($tag)
 		{
-			if ( is_array($tag))
+			if (is_array($tag))
 			{
 				return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
 			}
@@ -233,8 +233,8 @@ class Model_Droplet extends ORM
 		}
 		
 		// Determine the new tags
-		$current_tags = array_map("tag", $orm_droplet->tags->find_all()->as_array());
-		$change_tags = array_map("tag", $tags);
+		$current_tags = array_map("tag_merge", $orm_droplet->tags->find_all()->as_array());
+		$change_tags = array_map("tag_merge", $tags);
 		
 		// Function to split the  tag!!>--<!!tag_type from above into a tag and tag_type
 		function tag_split($tag)

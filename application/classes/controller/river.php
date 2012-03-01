@@ -904,7 +904,7 @@ class Controller_River extends Controller_Swiftriver {
 				}
 				elseif (is_string($value) AND Valid::not_empty($value))
 				{
-					$modified[$param]['names'][] = $value;
+					$modified[$param]['names'][] = trim($value);
 				}
 
 			}

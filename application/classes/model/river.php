@@ -571,7 +571,7 @@ class Model_River extends ORM {
 			 		// Determine the where clause to use
 			 		$where_clause = ($group_places) ? "or_where" : "where";
 
-			 		$place_names = $places['names'];
+			 		$place_names = array_map("strtolower", $places['names']);
 
 			 		// Add subquery filter based on place names
 			 		$query->$where_clause('droplets.id', 'IN', 
@@ -580,7 +580,7 @@ class Model_River extends ORM {
 			 			    ->where('place_id', 'IN',
 			 			    	 DB::select('id')
 			 			    	     ->from('places')
-			 			    	     ->where('place_name', 'IN', $place_names)
+			 			    	     ->where(DB::expr('LOWER(place_name)'), 'IN', $place_names)
 			 			    	)
 			 		    );
 			 	}
