@@ -336,7 +336,7 @@ class Model_River extends ORM {
 
 			// Get our droplets as an Array
 			$droplets['droplets'] = $query->execute()->as_array();
-			
+
 			// Encode content and title as utf8 in case they arent
 			foreach ($droplets['droplets'] as & $droplet) 
 			{
@@ -400,7 +400,7 @@ class Model_River extends ORM {
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
 
-			 // Group, order and limit
+			// Group, order and limit
 			$query->order_by('droplets.droplet_date_pub', 'ASC')
 			    ->group_by('droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
@@ -578,7 +578,7 @@ class Model_River extends ORM {
 			 	}
 
 			 	// Get the place names
-			 	if (isset($places['names']))
+			 	if (isset($places['names']) AND Valid::not_empty($places['names']))
 			 	{
 			 		// Determine the where clause to use
 			 		$where_clause = ($group_places) ? "or_where" : "where";
