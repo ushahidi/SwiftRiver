@@ -814,14 +814,14 @@ class Model_Droplet extends ORM
 		$content_charset = mb_detect_encoding($content, 'auto');
 		if ( ! in_array($content_charset, $exempt_charsets))
 		{
-			$droplet['droplet_content'] = iconv($content_charset, 'utf-8//TRANSLIT', $content);
+			$droplet['droplet_content'] = @iconv($content_charset, 'UTF-8//TRANSLIT', $content);
 		}
 
 		// Get the encoding for the droplet title
 		$title_charset = mb_detect_encoding($title, 'auto');
 		if ( ! in_array($title_charset, $exempt_charsets))
 		{
-			$droplet['droplet_title'] = iconv($title_charset, 'utf-8//TRANSLIT', $title);
+			$droplet['droplet_title'] = @iconv($title_charset, 'UTF-8//TRANSLIT', $title);
 		}
 	}
 }
