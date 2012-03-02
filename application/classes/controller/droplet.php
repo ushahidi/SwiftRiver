@@ -39,7 +39,16 @@ class Controller_Droplet extends Controller_Swiftriver {
 				// Get the POST data
 				$droplet = json_decode($this->request->body(), TRUE);
 				Kohana::$log->add(Log::DEBUG, "Droplet received");
-				$droplet_orm = Swiftriver_Dropletqueue::add($droplet, FALSE);
+				$droplet_orm = NULL;
+				try
+				{
+					$droplet_orm = Swiftriver_Dropletqueue::add($droplet, FALSE);
+				}
+				catch (DatabaseException $e)
+				{
+					// Do nothing
+					Kohana::$log->add(Log::ERROR, "Error adding droplet: ".$e->getMessage());
+				}
 				
 				if ($droplet_orm)
 				{

@@ -182,7 +182,7 @@ class Model_Droplet extends ORM
 			}
 			catch (Database_Exception $e)
 			{
-				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				Kohana::$log->add(Log::ERROR, "Database Error creating droplet".$e->getMessage());
 				return NULL;
 			}
 		}
@@ -209,7 +209,7 @@ class Model_Droplet extends ORM
 				
 			} catch (Database_Exception $e)
 			{
-				Kohana::$log->add(Log::ERROR, $e->getMessage());
+				Kohana::$log->add(Log::ERROR, "Database error updating droplet".$e->getMessage());
 				return FALSE;
 			}
 			
