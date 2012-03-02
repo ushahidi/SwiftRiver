@@ -795,6 +795,35 @@ class Model_Droplet extends ORM
 		
 		return TRUE;
 	}
+
+	/**
+	 * Given an array performs UTF-8 encoding of droplet title and droplet content
+	 *
+	 * @param array $droplet Array representation of the droplet
+	 */
+	public static function utf8_encode($droplet)
+	{
+		// Exempted encodings
+		$exempt_charsets = array('UTF-8', 'ASCII');
+
+		// Encode content and title as utf8 in case they aren't
+		$content = $droplet['droplet_content'];
+		$title = $droplet['droplet_title'];
+
+		// Get the encoding for the droplet content
+		$content_charset = mb_detect_encoding($content, 'auto');
+		if ( ! in_array($content_charset, $exempt_charsets))
+		{
+			$droplet['droplet_content'] = iconv($content_charset, 'UTF-8', $content);
+		}
+
+		// Get the encoding for the droplet title
+		$title_charset = mb_detect_encoding($title, 'auto');
+		if ( ! in_array($title_charset, $exempt_charsets))
+		{
+			$droplet['droplet_title'] = iconv($title_charset, 'UTF-8', $title);
+		}
+	}
 }
 
 ?>

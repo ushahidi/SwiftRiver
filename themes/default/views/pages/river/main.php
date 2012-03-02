@@ -10,12 +10,10 @@
 				<?php endif; ?>
 			</h1>
 		</hgroup>
-		<?php if (count($droplets)): ?>
-			<section class="meter">
-				<p style="padding-left:<?php echo $meter; ?>%;"><strong><?php echo $filtered_total; ?></strong> <?php echo __('Droplets'); ?></p>
-				<div><span style="width:<?php echo $meter; ?>%;"></span></div>
-			</section>		
-		<?php endif; ?>
+		<section class="meter" style="display:<?php echo ($show_meter) ? 'block' : 'none'; ?>;">
+			<p style="padding-left:<?php echo $meter; ?>%;"><strong><?php echo $filtered_total; ?></strong> <?php echo __('Droplets'); ?></p>
+			<div><span style="width:<?php echo $meter; ?>%;"></span></div>
+		</section>		
 	</div>
 	
 	<div class="center canvas">

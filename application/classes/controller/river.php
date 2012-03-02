@@ -108,6 +108,7 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('river', $this->river)
 			->bind('droplets', $droplets)
 			->bind('droplet_list_view', $droplet_list_view)
+			->bind('show_meter', $show_meter)
 			->bind('filtered_total', $filtered_total)
 			->bind('meter', $meter)
 			->bind('filters_url', $filters_url)
@@ -118,6 +119,7 @@ class Controller_River extends Controller_Swiftriver {
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
+		$show_meter =  ( ! empty($this->filters));
 		
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, 

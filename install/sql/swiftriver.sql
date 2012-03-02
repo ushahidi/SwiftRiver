@@ -486,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `semantics_complete` tinyint(1) DEFAULT '0',
   `links_complete` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplet_orig_filter_idx` (`identity_id`, `channel`, `droplet_orig_id`),
+  UNIQUE KEY `un_identity_id_channel_orig_id` (`identity_id`, `channel`, `droplet_orig_id`),
   UNIQUE KEY `droplet_hash_idx` (`droplet_hash`),
   KEY `droplet_type_idx` (`droplet_type`),
   KEY `droplet_date_pub_idx` (`droplet_date_pub`),

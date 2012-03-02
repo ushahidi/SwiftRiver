@@ -146,10 +146,10 @@ class Model_Bucket extends ORM {
 			// Encode content and title as utf8 in case they arent
 			foreach ($droplets['droplets'] as & $droplet) 
 			{
-				$droplet['droplet_content'] = utf8_encode($droplet['droplet_content']);
-				$droplet['droplet_title'] = utf8_encode($droplet['droplet_title']);
+				Model_Droplet::utf8_encode($droplet);
 			}
-			
+
+
 			// Populate buckets array			
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
@@ -216,8 +216,7 @@ class Model_Bucket extends ORM {
 			// Encode content and title as utf8 in case they arent
 			foreach ($droplets['droplets'] as & $droplet) 
 			{
-				$droplet['droplet_content'] = utf8_encode($droplet['droplet_content']);
-				$droplet['droplet_title'] = utf8_encode($droplet['droplet_title']);
+				Model_Droplet::utf8_encode($droplet);
 			}
 			
 			// Populate buckets array			
