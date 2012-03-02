@@ -119,7 +119,6 @@ class Controller_River extends Controller_Swiftriver {
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
-		$show_meter =  ( ! empty($this->filters));
 		
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, 
@@ -135,7 +134,7 @@ class Controller_River extends Controller_Swiftriver {
 		$filtered_total = count($droplets);
 				
 		// Bootstrap the droplet list
-		$droplet_list = json_encode($droplets);
+		$droplet_list = @json_encode($droplets);
 		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		    ->bind('fetch_base_url', $fetch_base_url)
@@ -170,6 +169,9 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			$meter = round( ($filtered_total / $total) * 100 );
 		}
+
+		// Determine whether to show the droplet meter
+		$show_meter =  ( ! empty($this->filters) AND $meter > 1);
 
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = $this->river_base_url.'/filters';
