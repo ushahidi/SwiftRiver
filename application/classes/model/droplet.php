@@ -801,7 +801,7 @@ class Model_Droplet extends ORM
 	 *
 	 * @param array $droplet Array representation of the droplet
 	 */
-	public static function utf8_encode($droplet)
+	public static function utf8_encode(& $droplet)
 	{
 		// Exempted encodings
 		$exempt_charsets = array('UTF-8', 'ASCII');
@@ -810,19 +810,14 @@ class Model_Droplet extends ORM
 		$content = $droplet['droplet_content'];
 		$title = $droplet['droplet_title'];
 
-		// Get the encoding for the droplet content
-		$content_charset = mb_detect_encoding($content, 'auto');
-		if ( ! in_array($content_charset, $exempt_charsets))
-		{
-			$droplet['droplet_content'] = @iconv($content_charset, 'UTF-8//TRANSLIT', $content);
-		}
+		$droplet['droplet_content'] = mb_check_encoding($content, 'UTF-8') 
+		    ? $content 
+		    : utf8_encode($content);
+		
+		$droplet['droplet_title'] = mb_check_encoding($title, 'UTF-8') 
+		    ? $title 
+		    : utf8_encode($title);
 
-		// Get the encoding for the droplet title
-		$title_charset = mb_detect_encoding($title, 'auto');
-		if ( ! in_array($title_charset, $exempt_charsets))
-		{
-			$droplet['droplet_title'] = @iconv($title_charset, 'UTF-8//TRANSLIT', $title);
-		}
 	}
 }
 
