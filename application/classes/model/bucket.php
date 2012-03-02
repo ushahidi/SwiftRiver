@@ -143,6 +143,13 @@ class Model_Bucket extends ORM {
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
 			
+			// Encode content and title as utf8 in case they arent
+			foreach ($droplets['droplets'] as & $droplet) 
+			{
+				$droplet['droplet_content'] = utf8_encode($droplet['droplet_content']);
+				$droplet['droplet_title'] = utf8_encode($droplet['droplet_title']);
+			}
+			
 			// Populate buckets array			
 			Model_Droplet::populate_buckets($droplets['droplets']);
 			
@@ -205,6 +212,13 @@ class Model_Bucket extends ORM {
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
 			$droplets['total'] = count($droplets['droplets']);
+			
+			// Encode content and title as utf8 in case they arent
+			foreach ($droplets['droplets'] as & $droplet) 
+			{
+				$droplet['droplet_content'] = utf8_encode($droplet['droplet_content']);
+				$droplet['droplet_title'] = utf8_encode($droplet['droplet_title']);
+			}
 			
 			// Populate buckets array			
 			Model_Droplet::populate_buckets($droplets['droplets']);
