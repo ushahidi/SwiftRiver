@@ -108,6 +108,9 @@ class Rss_Init {
 		// Disable caching
 		$feed->enable_cache(FALSE);
 
+		// Set the timeout to 30s
+		$feed->set_timeout(30);
+
 		// Attempt to initialize the feed, parsing it etc
 		if ($feed->init())
 		{
@@ -128,6 +131,12 @@ class Rss_Init {
 			return $feed_data;
 		}
 
+		// Log the SimplePie error
+		Kohana::$log->add(Log::ERROR, "Failed to initialize feed - :error", 
+			array(':error' => $feed->error()));
+
+		unset ($feed);
+		
 		return FALSE;
 		
 	}

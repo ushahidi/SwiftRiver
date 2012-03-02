@@ -169,6 +169,14 @@ class Model_Droplet extends ORM
 				
 				// Set the 'id' key to the newly saved droplet
 				$droplet['id'] = $orm_droplet->id;
+
+				// If the droplet has a parent id, set the droplet_orig_id
+				// to the ID of the droplet
+				if ($orm_droplet->parent_id != 0)
+				{
+					$orm_droplet->droplet_orig_id = $orm_droplet->id;
+					$orm_droplet->save();
+				}
 				
 				return $orm_droplet;
 			}
@@ -220,9 +228,9 @@ class Model_Droplet extends ORM
 	{
 		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
 		// since php array comparison is a bit limited
-		function tag($tag)
+		function tag_merge($tag)
 		{
-			if ( is_array($tag))
+			if (is_array($tag))
 			{
 				return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
 			}
@@ -233,8 +241,8 @@ class Model_Droplet extends ORM
 		}
 		
 		// Determine the new tags
-		$current_tags = array_map("tag", $orm_droplet->tags->find_all()->as_array());
-		$change_tags = array_map("tag", $tags);
+		$current_tags = array_map("tag_merge", $orm_droplet->tags->find_all()->as_array());
+		$change_tags = array_map("tag_merge", $tags);
 		
 		// Function to split the  tag!!>--<!!tag_type from above into a tag and tag_type
 		function tag_split($tag)
@@ -335,12 +343,16 @@ class Model_Droplet extends ORM
 			? array('id', '>', 0) 
 			: array('channel', '=', $channel);
 		
+		// Flatten the predicates array into a string
+		$predicate_str = implode(" ", $predicates);
+
 		// Get the droplets ordered by pub_date in DESC order
 		// Limit to only parent items - not comments
 		$result = ORM::factory('droplet')
 					->where('droplet_processed', '=', 0)
 					->where('parent_id', '=', 0)
-					->where($predicates[0], $predicates[1], $predicates[2])
+					->where($predicates[0], $predicates[1], 
+						DB::expr($predicates[2].' AND EXISTS (SELECT river_id FROM channel_filters WHERE filter_enabled = 1 AND '.$predicate_str.')'))
 					->order_by('id', 'DESC')
 					->limit($limit)
 					->find_all();

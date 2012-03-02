@@ -100,10 +100,11 @@
 						
 					</div>
 
-					<div class="item cf locations">
+					<div class="item cf">
 						<% if (places.length > 0) { %>
 							<h2><?php echo __("Location"); ?></h2>
 						<% } %>
+						<ul class="places"></ul>
 					</div>
 
 					<div class="item cf links">
@@ -184,7 +185,7 @@
 </script>
 
 <script type="text/template" id="place-template">
-	<span title="<%= place_name %>" data-droplet-place-id="<%= id %>"><%= place_name %></span>
+	<a data-droplet-place-id="<%= id %>" class="place-name"><%= place_name %></a>
 </script>
 
 <!-- related discussion -->

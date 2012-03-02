@@ -958,7 +958,7 @@ div#settings ul.tabs li.button-view a span.switch-off:before {
 }
 
 .controls select {
-   font-size: 1em;
+   font-size: 1.2em;
    padding: 3px;
    margin-bottom: 10px;
 }
@@ -1380,7 +1380,7 @@ ul.channel-options {
 ul.channel-options li {
   clear: both;
 }
-.channel-options li div.channel-option-input {
+.channel-options li div.channel-option-input { 
   padding: 0 1.0416666667%;
 }
 .channel-options li .channel-option-input label, 
@@ -1388,7 +1388,7 @@ ul.channel-options li {
   float: left;
 }
 .channel-options li .channel-option-input section.actions { 
-  width: 36.5%; 
+  width: 32.5%; 
   float: right; 
   margin: 0 0 0 3px; 
 }
@@ -1398,11 +1398,12 @@ ul.channel-options li {
 .channel-options li .channel-option-input label {
   font-weight: bold;
   padding: 5px 0 0 0;
-  width: 14.5%;
+  width: 18.5%;
 }
-.channel-options li .channel-option-input input {
+.channel-options li .channel-option-input input,
+.channel-options li .channel-option-input select {
   width: 45%;
-  margin: 0 2px;
+  margin: 0 2px 3px 2px;
 }
 /* --- CONTROLS: THEMES ---*/
 
@@ -2439,18 +2440,38 @@ article.item .detail section.meta .item ul.tags li.tag {
 }
 
 article.item .detail section.meta .item ul.tags li.tag:hover {
-   background: #D1D1D1;
+  background: #D1D1D1;
 }
-
 article.item .detail section.meta .item ul.tags li a.tag-name {
-   color: #666666;
-   font-size: 0.9em;
+  color: #666666;
+  font-size: 0.9em;
 }
-
 article.item .detail section.meta .item ul.tags li:hover a.tag-name {
-   text-decoration: none;
+  text-decoration: none;
 }
-
+article.item .detail section.meta .item ul.places li {
+  margin: 2px 0;
+}
+article.item .detail section.meta .item ul.places li a {
+  display: block;
+  padding: 8px 5px;
+  margin: 0 3px;
+  color: #666;
+  text-decoration: none;
+}
+article.item .detail section.meta .item ul.places li a:hover, 
+article.item .detail section.meta .item ul.places li a.active {
+  background: #DADADA;
+  display: block;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+article.item .detail section.meta .item ul.places li a.active {
+  background: #DADADA;
+  text-shadow: none;
+  font-weight: bold;
+}
 article.item .detail section.meta .item ul.tags li a.cross {
    display: block;
    float: left;
