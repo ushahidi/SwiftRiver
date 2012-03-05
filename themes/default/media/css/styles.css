@@ -377,12 +377,12 @@ header nav li.login ul.dropdown li div.buttons {
 .button-change a:hover {
   background: #dedede;
 }
-.page_buttons {
-  width: 40%;
+.loading {
+  width: 10%;
   margin: 20px auto;
 }
-.loading {
-  width: 10%; 
+.page_buttons {
+  width: 40%;
   margin: 20px auto;
 }
 .page_buttons a {
@@ -680,20 +680,36 @@ div.tab-controls {
 }
 /* --- TABS: SETTINGS ---*/
 div#settings ul.tabs li.button-view {
+  opacity: 0.65;
   font-size: 1em;
   padding: 0 0 0 25px;
 }
+div#settings ul.tabs li.button-view.active {
+  opacity: 1;
+}
 div#settings ul.tabs li.twitter {
-  background: #4ed3ff url(../img/icon_twitter.png) 5px center no-repeat;
+  background: #c4c4c4 url(../img/icon_twitter.png) 5px center no-repeat;
+}
+div#settings ul.tabs li.twitter.active {
+  background-color: #4ed3ff;
 }
 div#settings ul.tabs li.facebook {
-  background: #3b5999 url(../img/icon_facebook.png) 5px center no-repeat;
+  background: #c4c4c4 url(../img/icon_facebook.png) 5px center no-repeat;
+}
+div#settings ul.tabs li.facebook.active {
+  background-color: #3b5999;
 }
 div#settings ul.tabs li.rss {
-  background: #ff7700 url(../img/icon_rss.png) 5px center no-repeat;
+  background: #c4c4c4 url(../img/icon_rss.png) 5px center no-repeat;
+}
+div#settings ul.tabs li.rss.active {
+  background-color: #ff7700;
 }
 div#settings ul.tabs li.sms {
-  background: #48a63b url(../img/icon_sms.png) 5px center no-repeat;
+  background: #c4c4c4 url(../img/icon_sms.png) 5px center no-repeat;
+}
+div#settings ul.tabs li.sms.active {
+  background-color: #48a63b;
 }
 div#settings ul.tabs li.button-view a span.switch-off, div#settings ul.tabs li.button-view a span.switch-on {
   display: block;
@@ -803,8 +819,8 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   width: 70%;
 }
 .controls .input input.error {
-   color: #FF0000;
-   border: 1px solid #FF0000;
+  color: #FF0000;
+  border: 1px solid #FF0000;
 }
 .controls .input input[type="date"],
 .controls .input input[type="radio"],
@@ -824,12 +840,6 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
 .controls div.input p.button-change a {
   display: inline;
   padding: 5px 15px;
-}
-.controls div.input .checkbox {
-  padding: 5px 0;
-  margin: 3px 0;
-  font-weight: bold;
-  font-size: 13px;
 }
 .controls .data {
   clear: both;
@@ -930,7 +940,10 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   border: none;
   padding: 15px 1.0416666667%;
 }
-.controls-buttons p.button-go, .controls-buttons p.other, .controls-buttons p.button-delete-subtle, .controls-buttons section.actions {
+.controls-buttons p.button-go,
+.controls-buttons p.other,
+.controls-buttons p.button-delete-subtle,
+.controls-buttons section.actions {
   float: right;
   margin: 0 1.0416666667%;
 }
@@ -953,7 +966,7 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   height: 14px;
   margin-right: 7px;
 }
-.controls-buttons section.actions p.button-delete a{
+.controls-buttons section.actions p.button-delete a {
   padding: 10px 25px;
 }
 .form-buttons {
@@ -961,7 +974,6 @@ section.panel .controls .row:first-child, section.panel .controls .row:only-chil
   padding: 10px 5px;
   text-align: right;
 }
-
 .form-buttons p.button-go {
   float: right;
   margin-bottom: 15px;
@@ -1135,14 +1147,13 @@ ul.channel-options li {
 .channel-options li div.channel-option-input {
   padding: 0 1.0416666667%;
 }
-.channel-options li .channel-option-input label, 
-.channel-options li .channel-option-input input {
+.channel-options li .channel-option-input label, .channel-options li .channel-option-input input {
   float: left;
 }
-.channel-options li .channel-option-input section.actions { 
-  width: 32.5%; 
-  float: right; 
-  margin: 0 0 0 3px; 
+.channel-options li .channel-option-input section.actions {
+  width: 32.5%;
+  float: right;
+  margin: 0 0 0 3px;
 }
 .channel-options li .channel-option-input section.actions button {
   float: left;
@@ -1152,8 +1163,7 @@ ul.channel-options li {
   padding: 5px 0 0 0;
   width: 18.5%;
 }
-.channel-options li .channel-option-input input,
-.channel-options li .channel-option-input select {
+.channel-options li .channel-option-input input, .channel-options li .channel-option-input select {
   width: 45%;
   margin: 0 2px 3px 2px;
 }
@@ -1846,7 +1856,7 @@ article.item .summary section.actions div.dropdown div.create-name {
   width: 14.58333333%;
 }
 .list .stream article.item .summary section.content hgroup a {
-	color: #555555;
+  color: #555555;
 }
 /* --- LIST > DATA > ITEM --- */
 .list .data {
@@ -2005,8 +2015,7 @@ article.item .detail section.meta .item ul.places li a {
   color: #666;
   text-decoration: none;
 }
-article.item .detail section.meta .item ul.places li a:hover, 
-article.item .detail section.meta .item ul.places li a.active {
+article.item .detail section.meta .item ul.places li a:hover, article.item .detail section.meta .item ul.places li a.active {
   background: #DADADA;
   display: block;
   border-radius: 3px;
@@ -2018,7 +2027,7 @@ article.item .detail section.meta .item ul.places li a.active {
   text-shadow: none;
   font-weight: bold;
 }
-article.item .detail section.meta .item a.cross {
+article.item .detail section.meta .item ul.tags li a.cross {
   display: block;
   float: left;
   color: #F1F1F1;

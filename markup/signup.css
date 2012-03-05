@@ -1,0 +1,159 @@
+.nodisplay {display: none;}
+
+body {
+   color: #fff;
+   font-size: 75%;
+   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+   text-shadow: 0 1px 1px rgba(0,0,0,.45);
+   background: black url(/markup/images/signup_bg.png) no-repeat top center fixed;      
+   -o-background-size: cover;
+   -moz-background-size: cover;
+   -webkit-background-size: cover;
+   background-size: cover;
+   background-position: center top;
+   margin: 0;
+}
+
+article {
+   width: auto;
+   text-align: center;
+   box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+   -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+   -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background: #3eb7d0 url(/markup/images/signup-modal_bg.gif) bottom repeat-x;
+   padding: 10px 20px;
+   margin: 4.166666667%;
+}
+
+article h1 {
+   font-weight: normal;
+   font-size: 1.7em;
+   margin: 20px 0;
+}
+
+article p.logo a {
+   display: block;
+   width: 159px;
+   height: 47px;
+   background: url(/themes/default/media/img/header_logo.png);
+   margin: 0 auto;
+}
+
+article .message {
+   text-align: left;
+   box-shadow: 0 1px 1px rgba(0,0,0,0.1) inset;
+   -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.1) inset;
+   -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1) inset;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background: #37a0c1;
+   padding: 10px;
+   margin: 10px 0;
+}
+
+article .message .icon {
+   display: block;
+   width: 56px;
+   height: 56px;
+   margin: 0 auto;
+}
+
+article .success .icon {
+   background: url(/markup/images/signup-modal_icons.png) left top no-repeat ;
+}
+
+article .failure .icon {
+   background: url(/markup/images/signup-modal_icons.png) left -56px no-repeat ;
+}
+
+article .message h1 {
+   font-size: 1.5em;
+   margin: 10px;
+}
+
+article form {
+   margin: 0 auto 30px;
+}
+
+article input[type=email] {
+   width: 100%;
+   -moz-box-sizing: border-box; 
+   -webkit-box-sizing: border-box; 
+   box-sizing: border-box;
+   font-style: italic;
+   font-size: 1.5em;
+   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+   box-shadow: 0 1px 3px rgba(0,0,0,0.15) inset;
+   -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.15) inset;
+   -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.15) inset;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   border: 1px solid #52b6cb;
+   background: #fff;
+   padding: 10px 15px;
+   margin: 0;
+}
+
+article input[type=submit] {
+   float: left;
+   width: 100%;
+   color: #289fb8;
+   font-weight: bold;
+   font-size: 1.2em;
+   font-family: Helvetica Neue, Helvetica, Aarial, sans-serif;
+   text-decoration: none;
+   text-shadow: 0 1px 1px rgba(256,256,256,.8);
+   box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+   -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   border: none;
+   background-color: #eaf3f5;
+   padding: 12px;
+   margin: 10px 0;
+}
+
+/* --- ####### MEDIUM VIEWPORT ###### --- */
+@media screen and (min-width: 615px) {
+
+article {
+   width: 40%;
+   padding: 10px 20px;
+   margin: 50px auto 0;
+}
+
+article h1 {
+   font-size: 2em;
+   margin: 30px 0;
+}
+
+article .message .icon {
+   float: left;
+   margin: 0 10px 0 0;
+}
+
+}
+
+/* --- ####### LARGE VIEWPORT ###### --- */
+@media screen and (min-width: 960px) {
+
+article input[type=email] {
+   float: left;
+   width: 60%;
+   margin-left: 10%;
+}
+
+article input[type=submit] {
+   float: left;
+   width: auto;
+   margin: 1px 10px;
+}
+
+}

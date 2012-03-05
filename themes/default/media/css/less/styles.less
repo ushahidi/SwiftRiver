@@ -34,6 +34,11 @@ a img {
    border: none;
 }
 
+button {
+   border: none;
+}
+
+
 .center {
    width: 100%;
    margin: 0 auto;
@@ -844,24 +849,45 @@ div.tab-controls {
 /* --- TABS: SETTINGS ---*/
 
 div#settings ul.tabs li.button-view {
+   opacity: 0.65;
    font-size: 1em;
    padding: 0 0 0 25px;
 }
 
+div#settings ul.tabs li.button-view.active {
+   opacity: 1;
+}
+
 div#settings ul.tabs li.twitter {
-   background: #4ed3ff url(../img/icon_twitter.png) 5px center no-repeat;
+   background: #C4C4C4 url(../img/icon_twitter.png) 5px center no-repeat;
+}
+
+div#settings ul.tabs li.twitter.active {
+   background-color: #4ed3ff;
 }
 
 div#settings ul.tabs li.facebook {
-   background: #3b5999 url(../img/icon_facebook.png) 5px center no-repeat;
+   background: #C4C4C4 url(../img/icon_facebook.png) 5px center no-repeat;
+}
+
+div#settings ul.tabs li.facebook.active {
+   background-color: #3b5999;
 }
 
 div#settings ul.tabs li.rss {
-   background: #ff7700 url(../img/icon_rss.png) 5px center no-repeat;
+   background: #C4C4C4 url(../img/icon_rss.png) 5px center no-repeat;
+}
+
+div#settings ul.tabs li.rss.active {
+   background-color: #ff7700;
 }
 
 div#settings ul.tabs li.sms {
-   background: #48a63b url(../img/icon_sms.png) 5px center no-repeat;
+   background: #C4C4C4 url(../img/icon_sms.png) 5px center no-repeat;
+}
+
+div#settings ul.tabs li.sms.active {
+   background-color: #48a63b;
 }
 
 div#settings ul.tabs li.button-view a span.switch-off,
@@ -996,7 +1022,7 @@ section.panel .controls .controls-buttons {
 }
 .controls .input input.medium {
   width: 70%;
-},
+}
 .controls .input input.error {
    color: #FF0000;
    border: 1px solid #FF0000;
@@ -1173,7 +1199,7 @@ section.panel .controls .controls-buttons {
    height: 14px;
    margin-right: 7px;
 }
-.controls-buttons section.actions p.button-delete a{
+.controls-buttons section.actions p.button-delete a {
   padding: 10px 25px;
 }
 .form-buttons {
