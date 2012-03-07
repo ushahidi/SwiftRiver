@@ -7,6 +7,20 @@ $(document).ready(function() {
 			$(this).addClass('two_buttons');
 		}
 	});
+	
+	function hideDropdowns() {
+		$('.dropdown').fadeOut('fast');
+		$('.actions p, .actions span, .actions h3').removeClass('active');
+		$('.actions .button_change, .actions span').removeClass('active');
+		$('.has_dropdown').removeClass('active');
+	}
+	
+	// Hide dropdowns on click outside
+	$(document).click(function(e) {
+		if(e.isPropagationStopped()) return;
+	    hideDropdowns();
+	});
+	
 
 	// TOGGLE DROPDOWN
 	$('.dropdown .cancel').live('click', function(e) {
@@ -14,6 +28,10 @@ $(document).ready(function() {
 		$(this).closest('.dropdown').siblings('p').removeClass('active');
 	});
 	$('.has_dropdown > a, .actions .button-delete, .actions .button-change').live('click', function(e) {
+		
+		// Hide any other dropdowns that may be open
+		hideDropdowns();
+		
 		$(this).toggleClass('active');
 		$(this).siblings('.dropdown').fadeToggle('fast')
 		e.stopPropagation();
@@ -121,15 +139,6 @@ $(document).ready(function() {
 	}
 	countChecked();
 	$("article.item div.checkbox input").click(countChecked);
-
-	// Hide dropdowns on click outside
-	$(document).click(function(e) {
-		if(e.isPropagationStopped()) return;
-	    $('.dropdown').fadeOut('fast');
-		$('.actions p, .actions span, .actions h3').removeClass('active');
-		$('.actions .button_change, .actions span').removeClass('active');
-		$('.has_dropdown').removeClass('active');
-	});
 	
 	
 });
