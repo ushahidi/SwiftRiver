@@ -228,7 +228,7 @@ class Model_Droplet extends ORM
 	{
 		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
 		// since php array comparison is a bit limited
-		function tag_merge($tag)
+		$tag_merge = function($tag)
 		{
 			if (is_array($tag))
 			{
@@ -238,20 +238,20 @@ class Model_Droplet extends ORM
 			{
 				return $tag->tag.'!!>--<!!'.$tag->tag_type;
 			}
-		}
+		};
 		
 		// Determine the new tags
-		$current_tags = array_map("tag_merge", $orm_droplet->tags->find_all()->as_array());
-		$change_tags = array_map("tag_merge", $tags);
+		$current_tags = array_map($tag_merge, $orm_droplet->tags->find_all()->as_array());
+		$change_tags = array_map($tag_merge, $tags);
 		
 		// Function to split the  tag!!>--<!!tag_type from above into a tag and tag_type
-		function tag_split($tag)
+		$tag_split = function($tag)
 		{
 			$tag_parts = explode('!!>--<!!', $tag);
 			return array('tag_name' => $tag_parts[0], 
 						 'tag_type' => $tag_parts[1]);
-		}
-		$new_tags = array_map('tag_split', array_diff($change_tags, $current_tags));
+		};
+		$new_tags = array_map($tag_split, array_diff($change_tags, $current_tags));
 		
 		//Get the tag IDs en batch
 		$tag_ids = Model_Tag::get_tags($new_tags);
