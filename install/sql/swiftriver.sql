@@ -148,13 +148,15 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `rivers_droplets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `rivers_droplets` (
-  `river_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplet_id` BIGINT UNSIGNED NOT NULL DEFAULT 0 ,
-  INDEX `river_id_idx` (`river_id` ASC) ,
-  INDEX `droplet_id_idx` (`droplet_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CREATE TABLE `rivers_droplets` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `river_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rivers_droplet_un_river_droplet` (`river_id`,`droplet_id`),
+  KEY `river_id_idx` (`river_id`),
+  KEY `droplet_id_idx` (`droplet_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -455,10 +457,12 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `buckets_droplets`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `buckets_droplets` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `bucket_id` int(11) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `droplet_date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Date when the droplet was added to the bucket',
-  UNIQUE KEY `bucket_id` (`bucket_id`,`droplet_id`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `bucket_droplet_un_bucket_droplet` (`bucket_id`,`droplet_id`),
   KEY `bucket_id_idx` (`bucket_id`),
   KEY `droplet_id_idx` (`droplet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

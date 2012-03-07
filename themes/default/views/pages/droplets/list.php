@@ -176,16 +176,16 @@
 			</ul>
 		</span>
 	<?php endif; ?>
-	<a class="tag-name" data-droplet-tag-id="<%= id %>"><%= tag %></a>
+	<a class="tag-name"><%= tag %></a>
 </script>
 
 <script type="text/template" id="link-template">
 	<% var link_short = link_full.substr(0, 27) + "..."; %>
-	<span title="<%= link_full %>" data-droplet-link-id="<%= id %>"><a href="<%= link_full %>"><%= link_short %></a></span>
+	<span title="<%= link_full %>"><a href="<%= link_full %>"><%= link_short %></a></span>
 </script>
 
 <script type="text/template" id="place-template">
-	<a data-droplet-place-id="<%= id %>" class="place-name"><%= place_name %></a>
+	<a class="place-name"><%= place_name %></a>
 </script>
 
 <!-- related discussion -->

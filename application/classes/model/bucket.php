@@ -112,7 +112,7 @@ class Model_Bucket extends ORM {
 		if ($bucket_orm->loaded())
 		{
 			// Build Buckets Query
-			$query = DB::select(array('droplets.id', 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
 								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
@@ -128,8 +128,8 @@ class Model_Bucket extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
-				->where('droplets.id', '<=', $max_id)
-				->group_by('droplets.id')
+				->where('buckets_droplets.id', '<=', $max_id)
+				->group_by('buckets_droplets.id')
 				->order_by('buckets_droplets.droplet_date_added', 'DESC');
 				
 			// Order & Pagination offset
@@ -189,7 +189,7 @@ class Model_Bucket extends ORM {
 		if ($bucket_orm->loaded())
 		{		
 			// Build Buckets Query
-			$query = DB::select(array('droplets.id', 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
 								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
@@ -205,9 +205,9 @@ class Model_Bucket extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.droplet_processed', '=', 1)
-				->where('droplets.id', '>', $since_id)
-				->group_by('droplets.id')
-				->order_by('droplets.id', 'DESC');
+				->where('buckets_droplets.id', '>', $since_id)
+				->group_by('buckets_droplets.id')
+				->order_by('buckets_droplets.id', 'ASC');
 				
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
@@ -285,14 +285,9 @@ class Model_Bucket extends ORM {
 	public static function get_max_droplet_id($bucket_id = NULL)
 	{
 		// Build Buckets Query
-		$query = DB::select(array(DB::expr('MAX(droplets.id)'), 'id'))
-			->from('droplets')
-			->join('buckets_droplets', 'INNER')
-			->on('buckets_droplets.droplet_id', '=', 'droplets.id')
-			->join('identities')
-			->on('droplets.identity_id', '=', 'identities.id')				
-			->where('buckets_droplets.bucket_id', '=', $bucket_id)
-			->where('droplets.droplet_processed', '=', 1);
+		$query = DB::select(array(DB::expr('MAX(buckets_droplets.id)'), 'id'))
+			->from('buckets_droplets')
+			->where('buckets_droplets.bucket_id', '=', $bucket_id);
 			
 		return $query->execute()->get('id', 0);		
 	}

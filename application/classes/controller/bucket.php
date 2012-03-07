@@ -99,14 +99,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		        ->bind('fetch_base_url', $fetch_base_url)
-		        ->bind('droplet_fetch_url', $droplet_fetch_url)
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('bucket_list', $bucket_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 		
 		$fetch_base_url = $this->bucket_base_url;
-		$droplet_fetch_url = $fetch_base_url.'/droplets';
+		$droplet_js->filters = NULL;
 				
 		// Generate the List HTML
 		$droplets_list = View::factory('pages/droplets/list')

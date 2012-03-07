@@ -3,8 +3,8 @@
  * Backbone.js wiring for the droplets MVC
  */
 $(function() {
-	window.base_url = "<?php echo $fetch_base_url; ?>";
-	window.dropletFetchURL = "<?php echo $droplet_fetch_url; ?>";
+	var base_url = "<?php echo $fetch_base_url; ?>";
+	var filters = "<?php echo $filters; ?>";
 	
 	// Models for the droplet places, tags and links 
 	window.DropletPlace = Backbone.Model.extend();
@@ -15,6 +15,7 @@ $(function() {
 			account_id: <?php echo $user->account->id ?>
 		},
 		initialize: function() {
+			// Namespace bucket name if the logged in user is not the owner
 			if (parseInt(this.get("account_id")) != <?php echo $user->account->id ?>) {
 				this.set('bucket_name', this.get("account_path") + "/" + this.get("bucket_name"));
 			}
@@ -89,81 +90,21 @@ $(function() {
 		}
 	});
 	
+	function getDropletListUrl(filters) {
+		return base_url + "/droplets" + (filters.length > 0 ? '?' + filters : '');
+	}
+	
 	// Droplet & Bucket collection
 	window.DropletList = Backbone.Collection.extend({
-		
 		model: Droplet,
 		
-		url: window.dropletFetchURL,
-
-		filterDroplets: function(filters) {
-			window.isPageFetching = true;
-
-			_.each(filters, function(data, param){
-				var dataStr = getParameterByName(param);
-				dataStr += (dataStr != "") ? "," : "";
-
-				if (Object.prototype.toString.call(data) === "[object Array]") {
-					dataStr += data.toString();
-				}
-				if (typeof data == "string") {
-					dataStr += data;
-				}
-				if (dataStr == "") {
-					delete filters[param];
-				} else {
-					// Modiy the value of the filter param
-					filters[param] = dataStr;
-				}
-
-			});
-
-			// Halt if no filters present
-			if (_.size(filters) == 0)
-				return;
-
-			// Proceed....
-
-			// Ensures that the server response includes the modified request URL
-			filters.return_url = true;
-			
-			var list = this;
-
-			// Fetch the data
-			$.ajax({
-				url: window.dropletFetchURL,
-
-				data: filters,
-
-				success: function(response) {
-					// Clear the current droplet listing
-					window.dropletList.$el.fadeOut('slow');
-					window.dropletList.$el.html("");
-
-					window.dropletList.$el.fadeIn('slow');
-
-					// Render
-					list.url = response.fetch_url;
-					list.reset(response.droplets);
-
-					// Update the URL
-					if (typeof window.history.pushState != "undefined") {
-						window.history.pushState(response, "Droplets", response.base_url);
-					}
-
-					window.isPageFetching = false;
-				},
-
-				error: function(response) {
-					window.isPageFetching = false;
-				},
-
-				dataType: "json"
-			});
+		url: getDropletListUrl(filters),
+		
+		comparator: function (droplet) {
+			return Date.parse(droplet.get('droplet_date_pub'));
 		}
 	});
 	
-	window.Droplets = new DropletList;
 	window.bucketList = new BucketList();
 	
 	// Rendering for a single droplet in the list view
@@ -526,19 +467,35 @@ $(function() {
 		noContentElHidden: false,
 				
 		initialize: function() {
-			Droplets.on('add',	 this.addDroplet, this);
-			Droplets.on('reset', this.addDroplets, this); 
-			Droplets.on('destroy', this.checkEmpty, this); 
+			this.droplets = new DropletList;
+			this.droplets.on('add',	 this.addDroplet, this);
+			this.droplets.on('add',	 this.updateSinceId, this);
+			this.droplets.on('reset', this.addDroplets, this); 
+			this.droplets.on('destroy', this.checkEmpty, this);
+			
+			// Poll for new droplets every 30 seconds
+			context = this;
+			callback = this.pollNewDroplets;
+			setInterval(function() {
+				callback.call(context);
+			}, 30000);
 		},
 		
 		addDroplet: function(droplet) {
 
 			var view = new DropletView({model: droplet});
-
-			// Recent items populate at the top othewise append
-			if (maxId && droplet.get('id') > maxId) {
-				this.$el.prepend(view.render().el);
+			droplet.view = view;
+			
+			// Droplets add themselves in the view sorted
+			// according to published date.
+			var index = this.droplets.indexOf(droplet);
+			if (index > 0) {
+				// Newer droplets are added in the view before droplets
+				// they follow in the list i.e. newer droplets are added
+				// on top
+				this.droplets.at(index-1).view.$el.before(view.render().el);
 			} else {
+				// First droplet is simply appended in the view
 				this.$el.append(view.render().el);
 			}
 			
@@ -549,8 +506,9 @@ $(function() {
 		},
 		
 		addDroplets: function() {
-			Droplets.each(this.addDroplet, this);
-			if (Droplets.length) {
+			this.$el.empty();
+			this.droplets.each(this.addDroplet, this);
+			if (this.droplets.length) {
 				this.hideNoContentEl();
 			}
 		},
@@ -561,11 +519,72 @@ $(function() {
 		},
 		
 		checkEmpty: function() {
-			if (!Droplets.length) {
+			if (!this.droplets.length) {
 				this.$("h2.no-content").show();
 				this.noContentElHidden = false;
 			}
+		},
+		
+		filterDroplets: function(filters) {
+			// If there is another ajax request, try again shortly
+			if (isPageFetching || this.isSyncing) {
+				context = this;
+				callback = this.filterDroplets;
+				setTimeout(function() { callback.call(context, filters); }, 100);
+				return;
+			}
+			isPageFetching = true;
+			this.isSyncing = true
+			
+			// Generate the new filter url parameters
+			var new_filter_arr = [];
+			for(var p in filters) {
+				new_filter_arr.push(encodeURIComponent(p) + "=" + encodeURIComponent(filters[p]));
+			}
+			var new_filter = new_filter_arr.join("&");
+						
+			var dropletList = this;
+			dropletList.droplets.url = getDropletListUrl(new_filter);
+			this.droplets.fetch({
+				complete: function() {
+					isPageFetching = false;
+					dropletList.isSyncing = false;
+				},
+				success: function (model, response) {
+					// Reset pagination
+					pageNo = 1;
+					isAtLastPage = false;
+					
+					if (typeof window.history.pushState != "undefined") {
+						window.history.pushState(response, "Droplets", base_url + '?' + new_filter);
+					}
+			    }
+			});
+		},
+		
+		sinceId: 0,
+		
+		isSyncing: false,
+		
+		updateSinceId: function(droplet) {
+			if (parseInt(droplet.get("sort_id")) > this.sinceId) {
+				this.sinceId = parseInt(droplet.get("sort_id"));
+			}
+		},
+		
+		pollNewDroplets: function() { 
+			if (!this.isSyncing) {
+				this.isSyncing = true;
+				var dropletList = this;
+				this.droplets.fetch({data: {since_id: this.sinceId}, 
+				    add: true, 
+				    complete: function () {
+				        dropletList.isSyncing = false;
+				    }
+				});   
+			}		    
 		}
+		
 	});
 	
 	// View for an individual tag
@@ -601,12 +620,7 @@ $(function() {
 		},
 
 		applyTagsFilter: function(e) {
-			var tagId = [$(e.currentTarget).data("droplet-tag-id")];
-
-			// Apply the tags filter
-			Droplets.filterDroplets({tags: tagId});
-
-			return false;
+			dropletList.filterDroplets({tags: this.model.get('tag')});
 		}
 		
 	});
@@ -637,13 +651,7 @@ $(function() {
 		},
 		
 		applyPlacesFilter: function(e) {
-			$(e.currentTarget).toggleClass("active").toggleClass("");
-
-			// Get all the selected place names
-			var placeId = [$(e.currentTarget).data("droplet-place-id")];
-
-			// Apply the places filter
-			Droplets.filterDroplets({places: placeId});
+			dropletList.filterDroplets({places: this.model.get('place_name')});
 
 		},
 
@@ -675,7 +683,7 @@ $(function() {
 		
 		// Toggles the bucket membership of a droplet
 		toggleDropletMembership: function(e) {
-			droplet = Droplets.get(this.model.get('droplet_id'));
+			droplet = dropletList.droplets.get(this.model.get('droplet_id'));
 			droplet.setBucket(this.model);
 			this.$("li.checkbox a").toggleClass("selected");
 		}
@@ -699,23 +707,14 @@ $(function() {
 	// Load content while scrolling - Infinite Scrolling
 	var pageNo = 1;
 	var maxId = 0;
-	window.isPageFetching = false;
 	var isAtLastPage = false;
+	var isPageFetching = false;
 	
 	function nearBottom() {
 		var bufferPixels = 40;
 		return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - $("#next_page_button").offset().top;
 	}
 
-	function getParameterByName(name) {
-		name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\[");
-		var regexStr = "[\\?&]" + name + "=([^&#]*)";
-		var regex = new RegExp(regexStr);
-
-		var results = regex.exec(window.location.search);
-
-		return (results == null) ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-	}
 	
 	var loading_msg = window.loading_message.clone();
 	$(window).scroll(function() {
@@ -728,7 +727,7 @@ $(function() {
 			// Hide the navigation selector and show a loading message				
 			loading_msg.appendTo($("#next_page_button")).show();
 			
-			Droplets.fetch({
+			dropletList.droplets.fetch({
 			    data: {
 			        page: pageNo, 
 			        max_id: maxId
@@ -748,39 +747,13 @@ $(function() {
 	});
 	
 			
-	// Poll for new droplets
-	// We will only fetch droplets with and id newer than this
-	var sinceId = 0;
-	var isSyncing = false;
-	
-	// Update our sinceId when new droplets are added
-	Droplets.on("add", function(droplet) {
- 		if (parseInt(droplet.get("id")) > sinceId) {
-			sinceId = parseInt(droplet.get("id"));
-		}
-	});
-	
-	// Poll for new droplets every 30 seconds
-	setInterval(function() { 
-		if (!isSyncing) {
-			isSyncing = true;
-			Droplets.fetch({data: {since_id: sinceId}, 
- 			    add: true, 
-			    complete: function () {
-			        isSyncing = false;
-			    }
-			});   
-		}		    
-	}, 
-	30000);
-			
 	// Bootstrap the droplet list
 	window.dropletList = new DropletListView;
-	Droplets.reset(<?php echo $droplet_list; ?>);		
+	dropletList.droplets.reset(<?php echo $droplet_list; ?>);
 	bucketList.reset(<?php echo $bucket_list; ?>);
 	
 	// Set the maxId after inital rendering of droplet list
-	maxId = sinceId = <?php echo $max_droplet_id ?>;
+	maxId = dropletList.sinceId = <?php echo $max_droplet_id ?>;
 	
 });
 </script>

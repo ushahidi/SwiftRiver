@@ -44,12 +44,6 @@ class Controller_River extends Controller_Swiftriver {
 	protected $river_base_url = NULL;
 
 	/**
-	 * Static reference for the river filters
-	 * @var array()
-	 */
-	private $filters = array();
-
-	/**
 	 * @return	void
 	 */
 	public function before()
@@ -91,9 +85,6 @@ class Controller_River extends Controller_Swiftriver {
 			// Set the base url for this specific river
 			$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
 		}
-
-		// Get the filters to be applied to the river
-		$this->_get_river_filters();
 	}
 
 	/**
@@ -120,9 +111,12 @@ class Controller_River extends Controller_Swiftriver {
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 		
+		// River filters
+		$filters = $this->_get_river_filters();
+		
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, 
-			$max_droplet_id, NULL, $this->filters);
+			$max_droplet_id, NULL, $filters);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -138,7 +132,6 @@ class Controller_River extends Controller_Swiftriver {
 		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		    ->bind('fetch_base_url', $fetch_base_url)
-		    ->bind('droplet_fetch_url', $droplet_fetch_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('bucket_list', $bucket_list)
 		    ->bind('max_droplet_id', $max_droplet_id)
@@ -148,13 +141,10 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_fetch_url = $fetch_base_url.'/droplets';
 
 		// Check if any filters exist and modify the fetch urls
-		if ( ! empty($this->filters))
+		$droplet_js->filters = NULL;
+		if ( ! empty($filters))
 		{
-			// Stringify the filter parameters
-			$this->_stringify_filter_params();
-
-			// Modify the droplet fetch URL
-			$droplet_fetch_url .= URL::query($this->filters, TRUE);
+			$droplet_js->filters = $this->_stringify_filter_params($filters);
 		}
 		
 		// Droplet list view
@@ -171,7 +161,7 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// Determine whether to show the droplet meter
-		$show_meter =  ( ! empty($this->filters) AND $meter > 1);
+		$show_meter =  ( ! empty($filters) AND $meter > 1);
 
 		// URL's to pages that are ajax rendered on demand
 		$filters_url = $this->river_base_url.'/filters';
@@ -194,16 +184,17 @@ class Controller_River extends Controller_Swiftriver {
 				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
 				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-
+				$filters = $this->_get_river_filters();
+				
 				if ($since_id)
 				{
 				    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
-				    	$this->river->id, $since_id, $this->filters);
+				    	$this->river->id, $since_id, $filters);
 				}
 				else
 				{
 				    $droplets_array = Model_River::get_droplets($this->user->id, 
-				    	$this->river->id, $page, $max_id, NULL, $this->filters);
+				    	$this->river->id, $page, $max_id, NULL, $filters);
 				}
 				
 				$droplets = $droplets_array['droplets'];
@@ -217,26 +208,8 @@ class Controller_River extends Controller_Swiftriver {
 				        );
 				}
 				
-				// Check if filters were specified
-				$return_url = (bool) $this->request->query('return_url');
 
-				if (isset($_GET['return_url']))
-				{
-					unset ($_GET['return_url']);
-				}
-
-				// Stringify the filter parameters
-				$this->_stringify_filter_params();
-
-				$response = ($return_url == TRUE) 
-				    ? array(
-				    	"base_url" => $this->river_base_url.URL::query($this->filters, TRUE),
-				    	"fetch_url" => $this->request->url().URL::query($this->filters, TRUE), 
-				    	"droplets" => $droplets
-				    	) 
-				    : $droplets;
-
-				echo json_encode($response);
+				echo json_encode($droplets);
 
 			break;
 			
@@ -846,6 +819,8 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	private function _get_river_filters()
 	{
+		$filters = array();
+		
 		// Get filtering parameters
 		$places = $this->request->query('places');
 		$tags = $this->request->query('tags');
@@ -854,24 +829,24 @@ class Controller_River extends Controller_Swiftriver {
 		// Build the filters array
 		if (is_string($places))
 		{
-			$this->filters['places'] = explode(",", $places);
+			$filters['places'] = explode(",", $places);
 		}
 		elseif (is_array($places))
 		{
-			$this->filters['places'] = $places;
+			$filters['places'] = $places;
 		}
 
 		if (is_string($tags))
 		{
-			$this->filters['tags'] = explode(",", $tags);
+			$filters['tags'] = explode(",", $tags);
 		}
 		elseif (is_array($tags))
 		{
-			$this->filters['tags'] = $tags;
+			$filters['tags'] = $tags;
 		}
 
 		// Sanitize the filters
-		$this->_sanitize_filters();
+		$filters = $this->_sanitize_filters($filters);
 
 		// Only filter by a single channel
 		$channels = explode(",", $channel);
@@ -880,9 +855,10 @@ class Controller_River extends Controller_Swiftriver {
 		// Add the channel filters
 		if (Valid::not_empty($channel) AND (Swiftriver_Plugins::get_channel_config($channel) != FALSE))
 		{
-			$this->filters['channel'] = $channel;
+			$filters['channel'] = $channel;
 		}
-
+		
+		return $filters;
 	}
 
 	/**
@@ -890,10 +866,10 @@ class Controller_River extends Controller_Swiftriver {
 	 * filter parameters are split into two - ids and names - the
 	 * former applying to digit values and the latter to strings
 	 */
-	private function _sanitize_filters()
+	private function _sanitize_filters($filters)
 	{
 		$modified = array();
-		foreach ($this->filters as $param => $values)
+		foreach ($filters as $param => $values)
 		{
 			// Split each parameter into ids and names
 			$modified[$param]['ids'] = array();
@@ -937,27 +913,24 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// Replace the filters with the sanitized set
-		$this->filters = $modified;
+		return $modified;
 	}
 
 	/**
-	 * Converts the filter parameters into a string representation
+	 * Converts the filter parameters into a url string representation
 	 */
-	private function _stringify_filter_params()
+	private function _stringify_filter_params($filters)
 	{
-		// Reset the filters parameters back to comma-separated form
-		foreach ($this->filters as $param => $data)
+		// Convert arrays into comma separated strings
+		foreach ($filters as $param => $data)
 		{
-			$param_data = is_array($data) ? array() : $data;
 			if (is_array($data))
 			{
-				foreach ($data as $k => $v)
-				{
-					$param_data = array_merge($param_data, $v);
-				}
+				$filters[$param] = implode(",", $data['names']);
 			}
-			$this->filters[$param] = (is_array($param_data)) ? implode(",", $param_data) : $param_data;
 		}
+		
+		return http_build_query($filters);
 	}
 
 }

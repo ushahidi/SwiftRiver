@@ -302,7 +302,7 @@ class Model_River extends ORM {
 		if ($river_orm->loaded())
 		{						
 			// Build River Query
-			$query = DB::select(array('droplets.id', 'id'), 
+			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'),
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
 			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
@@ -318,14 +318,14 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.id', '<=', $max_id);
+			    ->where('rivers_droplets.id', '<=', $max_id);
 
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
 
 			// Ordering and grouping
 			$query->order_by('droplets.droplet_date_pub', $sort)
-			    ->group_by('droplets.id');	   
+			    ->group_by('rivers_droplets.id');	   
 
 			// Pagination offset
 			if ($page > 0)
@@ -380,8 +380,8 @@ class Model_River extends ORM {
 		$river_orm = ORM::factory('river', $river_id);
 		if ($river_orm->loaded())
 		{
-			$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 'droplet_content', 
-			    'droplets.channel','identity_name', 'identity_avatar', 
+			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
+			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
 			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
 			    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
 			    ->from('droplets')
@@ -395,14 +395,14 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('droplets.droplet_processed', '=', 1)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.id', '>', $since_id);
+			    ->where('rivers_droplets.id', '>', $since_id);
 
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
 
 			// Group, order and limit
 			$query->order_by('droplets.droplet_date_pub', 'ASC')
-			    ->group_by('droplets.id')
+			    ->group_by('rivers_droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
 			    ->offset(0);
 			
@@ -442,12 +442,10 @@ class Model_River extends ORM {
 	public static function get_max_droplet_id($river_id)
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr('MAX(droplets.id)'), 'id'))
+		$query = DB::select(array(DB::expr('MAX(rivers_droplets.id)'), 'id'))
 		    ->from('droplets')
 		    ->join('rivers_droplets', 'INNER')
 		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-		    ->join('identities')
-		    ->on('droplets.identity_id', '=', 'identities.id')
 		    ->where('rivers_droplets.river_id', '=', $river_id)
 		    ->where('droplets.droplet_processed', '=', 1);
 		    

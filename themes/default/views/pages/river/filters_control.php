@@ -63,25 +63,25 @@ window.RiverFiltersView = Backbone.View.extend({
 		// Place names
 		if ($(this.placeNames).val().length > 0)
 		{
-			riverFilters.places = $(this.placeNames).val();
+			riverFilters["places"] = $(this.placeNames).val();
 		}
 
 		// Tag names
 		if ($(this.tagNames).val().length > 0)
 		{
-			riverFilters.tags = $(this.tagNames).val();
+			riverFilters["tags"] = $(this.tagNames).val();
 		}
 
 		// Channel
 		if ($(this.channelName).val() != 0)
 		{
-			riverFilters.channel = $(this.channelName).val();
+			riverFilters["channel"] = $(this.channelName).val();
 		}
 
 		// Apply the filters the droplets
 		if (_.size(riverFilters) > 0)
 		{
-			window.Droplets.filterDroplets(riverFilters);
+			dropletList.filterDroplets(riverFilters);
 		}
 
 		return false;
