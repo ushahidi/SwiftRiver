@@ -45,7 +45,7 @@ class Controller_User extends Controller_Swiftriver {
 		parent::before();
 		
 		// Check if the visiting user is the owner of the account
-		if ( $this->account->is_owner($this->visited_account->id))
+		if ( $this->account->is_owner($this->visited_account->user->id))
 		{
 			$this->owner = TRUE;
 		}
@@ -136,7 +136,7 @@ class Controller_User extends Controller_Swiftriver {
 					"account_path" => $river->account->account_path,
 					"subscribed" => $this->user->has('river_subscriptions', $river),
 					"subscriber_count" => number_format($river->subscriptions->count_all()),
-					"is_owner" => $river->is_owner($this->user->account->id),
+					"is_owner" => $river->is_owner($this->user->id),
 					"is_other_account" => $river->account->id != $this->user->account->id && $this->owner,
 					"drop_count" => number_format($river->droplets->count_all())
 				);
@@ -175,7 +175,7 @@ class Controller_User extends Controller_Swiftriver {
 					"account_path" => $bucket->account->account_path,
 					"subscribed" => $this->user->has('bucket_subscriptions', $bucket),
 					"subscriber_count" => number_format($bucket->subscriptions->count_all()),
-					"is_owner" => $bucket->is_owner($this->user->account->id),
+					"is_owner" => $bucket->is_owner($this->user->id),
 					"is_other_account" => $bucket->account->id != $this->user->account->id && $this->owner,
 					"drop_count" => number_format($bucket->droplets->count_all())
 				);
