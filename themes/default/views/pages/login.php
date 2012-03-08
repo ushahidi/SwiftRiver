@@ -161,6 +161,7 @@ article#login hgroup.page-title {
 			<?php echo Form::close(); ?>
 
 				<div class="form col_6">
+				<?php if ($public_registration_enabled): ?>
 			    <?php echo Form::open(); ?>
 					<div class="field has_dropdown cf">
 						<?php if ($riverid_auth): ?>
@@ -175,6 +176,7 @@ article#login hgroup.page-title {
 						</div>
 					</div>
 				<?php echo Form::close(); ?>
+				<?Php endif; ?>	
 
 				<?php echo Form::open(); ?>
 					<div class="field has_dropdown cf">						

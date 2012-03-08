@@ -59,6 +59,7 @@ class Controller_Login extends Controller_Template {
 		
 		// For template to show RiverID branding if in use
 		$this->template->riverid_auth = $this->riverid_auth;
+		$this->template->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
 		
 		// Auto login is available
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
@@ -87,19 +88,26 @@ class Controller_Login extends Controller_Template {
 		// New user registration
 		if ($this->request->post('new_email'))
 		{
-			if ( ! Valid::email($this->request->post('new_email')))
+			if ( ! (bool) Model_Setting::get_setting('public_registration_enabled'))
 			{
-				$this->template->set('errors', array(__('The email address provided is invalid')));		        
+				$this->template->set('errors', array(__('This site is not open to public registration')));		        
 			}
-			else 
-			{    	    
-				if ($this->riverid_auth)
+			else
+			{
+				if ( ! Valid::email($this->request->post('new_email')))
 				{
-					$this->__new_user_riverid($this->request->post('new_email'));
+					$this->template->set('errors', array(__('The email address provided is invalid')));		        
 				}
-				else
-				{
-					$this->__new_user_orm($this->request->post('new_email'));
+				else 
+				{    	    
+					if ($this->riverid_auth)
+					{
+						$this->__new_user_riverid($this->request->post('new_email'));
+					}
+					else
+					{
+						$this->__new_user_orm($this->request->post('new_email'));
+					}
 				}
 			}
 		}

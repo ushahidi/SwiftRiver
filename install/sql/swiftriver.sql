@@ -770,6 +770,7 @@ START TRANSACTION;
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (1, 'site_name', 'SwiftRiver');
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (2, 'site_theme', 'default');
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (3, 'site_locale', 'en');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (4, 'public_registration_enabled', '0');
 
 COMMIT;
 
