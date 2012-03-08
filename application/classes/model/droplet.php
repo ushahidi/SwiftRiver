@@ -280,22 +280,38 @@ class Model_Droplet extends ORM
 	 */
 	public static function add_links($orm_droplet, $links)
 	{
-		foreach ($links as $url)
+		$link_reduce = function($link)
 		{
-			try
-			{
-				// Add the link
-				$orm_link = Model_Link::get_link_by_url($url, TRUE);
-				if ($orm_link AND ! $orm_droplet->has('links', $orm_link))
-				{
-					$orm_droplet->add('links', $orm_link);
-				}
+			return $link->link;
+		};
+		
+		$new_links = array_diff($links, array_map($link_reduce, $orm_droplet->links->find_all()->as_array()));
+		
+		$link_map = function($link)
+		{
+			return array (
+				'link' => $link,
+				'link_full' => $link,
+				'link_domain' => parse_url($link, PHP_URL_HOST)
+			);
+		};
+		
+		$links = array_map($link_map, $new_links);
+
+		// Get the link IDs
+		$link_ids = Model_Link::get_links($links);
+		
+		// Add the links to the droplet
+		if ($link_ids)
+		{
+			$query = DB::insert('droplets_links', array('droplet_id', 'link_id'));
+			foreach ($link_ids as $link_id) {
+			    $query->values(array($orm_droplet->id, $link_id['id']));
 			}
-			catch (Database_Exception $e)
-			{
-				// Log the error and proceed to process the next item on the list
-				Kohana::$log->add(Log::ERROR, 'A database error has occurred: '.$e->getMessage());
-				continue;
+			try {
+			    $result = $query->execute();
+			} catch ( Database_Exception $e ) {   
+					Kohana::$log->add(Log::ERROR, 'Database error adding links: '.$e->getMessage());
 			}
 		}
 	}
@@ -306,23 +322,50 @@ class Model_Droplet extends ORM
 	 *
 	 * Eg:
 	 * $places  = array(
-	 * 		array('name' => 'Nairobi', 'latitude => '-1.2857', 'longitude' => '36.820174', 'source' => 'placemaker'),
-	 *	    array('name' => 'Mombasa', 'latitude'=> '-4.050063', 'longitude' => '39.666653', 'source' => 'placemaker')
+	 * 		array('place_name' => 'Nairobi', 'latitude' => '-1.2857', 'longitude' => '36.820174', 'source' => 'placemaker'),
+	 *	    array('place_name' => 'Mombasa', 'latitude'=> '-4.050063', 'longitude' => '39.666653', 'source' => 'placemaker')
 	 * ));
 	 * @param Model_Droplet $orm_droplet Droplet ORM reference
 	 * @param array $places List of place names associated with the droplet
 	 */
 	public static function add_places($orm_droplet, $places)
 	{
-		foreach ($places as $place)
+		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
+		// since php array comparison is a bit limited
+		$place_merge = function($place)
 		{
-			// Get the place record
-			$orm_place = Model_Place::get_place_by_lat_lon($place, TRUE);
-			if ($orm_place AND ! $orm_droplet->has('places', $orm_place))
-			{
-				$orm_droplet->add('places', $orm_place);
+			return $place['place_name'].'!!>--<!!'.$place['latitude'].'!!>--<!!'.$place['longitude'];
+		};
+		
+		// Determine the new places
+		$current_places = array_map($place_merge, Model_Place::get_droplet_places($orm_droplet));
+		$change_places = array_map($place_merge, $places);
+		
+		$place_split = function($place)
+		{
+			$place_parts = explode('!!>--<!!', $place);
+			return array('place_name' => $place_parts[0], 
+						'latitude' => $place_parts[1],
+						'longitude' => $place_parts[2]);
+		};
+		$new_places = array_map($place_split, array_diff($change_places, $current_places));
+				
+		$place_ids = Model_Place::get_places($new_places);
+		
+		// Add the places in one big batch
+		if ($place_ids)
+		{
+			$query = DB::insert('droplets_places', array('droplet_id', 'place_id'));
+			foreach ($place_ids as $place_id) {
+			    $query->values(array($orm_droplet->id, $place_id['id']));
 			}
-		}
+			try {
+			    $result = $query->execute();
+			} catch ( Database_Exception $e ) {   
+					Kohana::$log->add(Log::ERROR, 'Database error adding places: '.$e->getMessage());
+			}
+		}		
+
 	}
 	
 	/**

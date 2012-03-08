@@ -184,17 +184,17 @@ DEFAULT CHARACTER SET = utf8;
 -- Table `places`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `places` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `place_name` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Full place name' ,
-  `place_point` POINT NULL DEFAULT NULL COMMENT 'POINT geometry for this place' ,
-  `place_source` VARCHAR(100) NULL DEFAULT NULL ,
-  `place_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `place_name_idx` (`place_name` ASC) ,
-  INDEX `place_point_idx` (`place_point` ASC) ,
-  INDEX `place_source_idx` (`place_source` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `place_name` varchar(255) DEFAULT NULL COMMENT 'Full place name',
+  `place_point` point DEFAULT NULL COMMENT 'POINT geometry for this place',
+  `place_source` varchar(100) DEFAULT NULL,
+  `place_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `places_un_name_point` (`place_name`,`place_point`(25)),
+  KEY `place_name_idx` (`place_name`),
+  KEY `place_point_idx` (`place_point`(25)),
+  KEY `place_source_idx` (`place_source`)
+) ENGINE=InnoDB AUTO_INCREMENT=134 DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

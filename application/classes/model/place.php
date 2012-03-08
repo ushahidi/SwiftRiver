@@ -47,6 +47,25 @@ class Model_Place extends ORM
 	}
 	
 	/**
+	 * Returns the droplet's places as an array
+	 */
+	public static function get_droplet_places($orm_droplet)
+	{
+		$query = DB::select('place_name',
+							array(DB::expr('X(place_point)'), 'longitude'),
+							array(DB::expr('Y(place_point)'), 'latitude'),
+							array('place_source', 'source'))
+					->from('droplets')
+					->join('droplets_places', 'INNER')
+					->on('droplets_places.droplet_id', '=', 'droplets.id')
+					->join('places', 'INNER')
+					->on('droplets_places.place_id', '=', 'places.id')
+					->where('droplets.id', '=', $orm_droplet->id);
+		
+		return $query->execute()->as_array();
+	}
+	
+	/**
 	 * Retrives a place using its latitude and longitude values
 	 *
 	 * @param array $coords Array with the place data; latitude and longitude
@@ -120,5 +139,75 @@ class Model_Place extends ORM
 		}
 		
 		return FALSE;
-	}	
+	}
+	
+	/**
+	 * Checks if a given place already exists. 
+	 * The parameter $places is an array of hashes containing the 
+	 * place_name, latitude and longitude
+	 * E.g: $place = array('place_name' => 'Nairobi', 'latitude' => '-1.2857', 'longitude' => '36.820174', 'source' => 'placemaker')
+	 *
+	 * @param array $place Array of hashes described above
+	 * @return mixed array of place ids if the place exists, FALSE otherwise
+	 */
+	public static function get_places($places)
+	{
+		// First try to add any links missing from the db
+		// The below generates the below query to find missing links and insert them all at once:
+		/*
+		 *   	insert into places (place_name, place_point)
+		 *   	SELECT DISTINCT * 
+		 *   	FROM (
+		 *   		SELECT 'Mombasa' AS `place_name`, GeomFromText('POINT(39.666653 -4.050063)') AS `place_point` UNION ALL 
+		 *   		SELECT 'Nairobi' AS `place_name`, GeomFromText('POINT(36.820174 -1.2857)') AS `place_point`
+		 *   	) AS `a` 
+		 *   	WHERE (place_name, place_point) NOT IN (
+		 *   		SELECT `place_name`, `place_point` 
+		 *   		FROM `places` 
+		 *   		WHERE (place_name, X(place_point), Y(place_point)) IN (
+		 *   			('Nairobi', '-1.2857', '36.820174'), 
+		 *   			('Mombasa', '-4.050063', '39.666653')
+		 *   		)
+		 *   	);
+         *   	
+         *   	
+		 */
+		$query = DB::select()->distinct(TRUE);
+		$place_subquery = NULL;
+		foreach ($places as $place)
+		{
+			$union_query = DB::select(
+							array(DB::expr("'".addslashes($place['place_name'])."'"), 'place_name'), 		
+							array(DB::expr("GeomFromText('POINT(".$place['longitude']." ".$place['latitude'].")')"), 'place_point'));
+			if ( ! $place_subquery)
+			{
+				$place_subquery = $union_query;
+			}
+			else
+			{
+				$place_subquery = $union_query->union($place_subquery, TRUE);
+			}
+		}
+		if ($place_subquery)
+		{
+			$query->from(array($place_subquery,'a'));
+			$sub = DB::select('place_name', 'place_point')
+			           ->from('places')
+			           ->where(DB::expr('(place_name, Y(place_point), X(place_point))'), 'IN', $places);
+			$query->where(DB::expr('(place_name, place_point)'), 'NOT IN', $sub);
+			DB::insert('places', array('place_name', 'place_point'))->select($query)->execute();
+		}
+		
+		// Get the tag IDs
+		if ($places)
+		{
+			$query = DB::select('id')
+			           ->from('places')
+			           ->where(DB::expr('(place_name, Y(place_point), X(place_point))'), 'IN', $places);
+
+			return $query->execute()->as_array();
+		}
+		
+		return FALSE;
+	}
 }

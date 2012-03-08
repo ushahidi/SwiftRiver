@@ -78,5 +78,73 @@ class Model_Link extends ORM
 		{
 			return FALSE;
 		}
+	}
+	
+	/**
+	 * Checks if a given link already exists. 
+	 * The parameter $links is an array of hashes containing the 
+	 * link, link_full and domain as below
+	 * E.g: $link = array('link' => 'http://t.co/mg9yqyFp', 'link_full' => 'http://ushahidi.com', 'link_domain' => 'ushahidi.com');
+	 *
+	 * @param string $links Array of hashes described above
+	 * @return mixed array of links ids if the links exists, FALSE otherwise
+	 */
+	public static function get_links($links)
+	{
+		// First try to add any links missing from the db
+		// The below generates the below query to find missing links and insert them all at once:
+		/*
+		 *		INSERT INTO `links` (`link`, `link_full`, `link_domain`) 
+		 *		SELECT DISTINCT * FROM (
+		 *			SELECT 'http://goat.com/mg9yqyFpXXXXX' AS `link`, 'http://goat.com/mg9yqyFpXXXXX' AS `link_full`, 'goat.com' AS `link_domain` UNION ALL
+		 *			SELECT 'http://t.co/mg9yqyFp' AS `link`, 'http://t.co/mg9yqyFp' AS `link_full`, 't.co' AS `link_domain`
+		 *		) AS `a` 
+		 *		WHERE (link, link_full, link_domain) NOT IN (
+		 *			SELECT `link`, `link_full`, `link_domain` 
+		 *			FROM `links` 
+		 *			WHERE (link, link_full, link_domain) IN (
+		 *				('http://t.co/mg9yqyFp', 'http://t.co/mg9yqyFp', 't.co'), 
+		 *				('http://goat.com/mg9yqyFpXXXXX', 'http://goat.com/mg9yqyFpXXXXX', 'goat.com')
+		 *			)
+		 *		)
+		 */
+		$query = DB::select()->distinct(TRUE);
+		$link_subquery = NULL;
+		foreach ($links as $link)
+		{
+			$union_query = DB::select(
+							array(DB::expr("'".addslashes($link['link'])."'"), 'link'), 		
+							array(DB::expr("'".addslashes($link['link_full'])."'"), 'link_full'),
+							array(DB::expr("'".addslashes($link['link_domain'])."'"), 'link_domain'));
+			if ( ! $link_subquery)
+			{
+				$link_subquery = $union_query;
+			}
+			else
+			{
+				$link_subquery = $union_query->union($link_subquery, TRUE);
+			}
+		}
+		if ($link_subquery)
+		{
+			$query->from(array($link_subquery,'a'));
+			$sub = DB::select('link', 'link_full', 'link_domain')
+			           ->from('links')
+			           ->where(DB::expr('(link, link_full, link_domain)'), 'IN', $links);
+			$query->where(DB::expr('(link, link_full, link_domain)'), 'NOT IN', $sub);
+			DB::insert('links', array('link', 'link_full', 'link_domain'))->select($query)->execute();
+		}
+		
+		// Get the link IDs
+		if ($links)
+		{
+			$query = DB::select('id')
+			           ->from('links')
+			           ->where(DB::expr('(link, link_full, link_domain)'), 'IN', $links);
+
+			return $query->execute()->as_array();
+		}
+		
+		return FALSE;
 	}	
 }
