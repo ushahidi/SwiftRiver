@@ -312,19 +312,18 @@ CREATE TABLE IF NOT EXISTS `account_droplet_places` (
 -- Table `links`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `links` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `link` VARCHAR(255) NULL DEFAULT NULL ,
-  `link_full` VARCHAR(255) NULL DEFAULT NULL ,
-  `link_domain` VARCHAR(255) NULL DEFAULT NULL ,
-  `link_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `link_idx` (`link` ASC) ,
-  INDEX `link_full_idx` (`link_full` ASC) ,
-  INDEX `link_domain_idx` (`link_domain` ASC) ,
-  INDEX `link_date_add_idx` (`link_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `link` varchar(255) DEFAULT NULL,
+  `link_full` varchar(255) DEFAULT NULL,
+  `link_domain` varchar(255) DEFAULT NULL,
+  `link_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `link_idx` (`link`),
+  KEY `link_full_idx` (`link_full`),
+  KEY `link_domain_idx` (`link_domain`),
+  KEY `link_date_add_idx` (`link_date_add`),
+  KEY `links_un_link_domain` (`link`,`link_full`,`link_domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
 -- Table `plugins`
