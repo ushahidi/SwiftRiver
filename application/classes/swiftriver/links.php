@@ -30,14 +30,19 @@ class Swiftriver_Links {
 		    . "{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(("
 		    . "[^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
-		// Begin matching
+		// Match URLs in text and add matched urls to the urls array.
 		if (preg_match_all("/".$pattern."/is", $text, $matches))
 		{
 			foreach ($matches[0] as $key => $url)
 			{
 				if ( ! in_array($url, $urls))
 				{
-					$urls[] = self::full($url);
+					// Expand shortened URLs
+					if (strlen($url < 25) AND strlen(parse_url($url, PHP_URL_HOST)) < 10) {
+						$url = self::full($url);
+					}
+										
+					$urls[] = $url;
 				}
 			}
 		}

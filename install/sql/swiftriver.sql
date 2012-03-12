@@ -313,16 +313,12 @@ CREATE TABLE IF NOT EXISTS `account_droplet_places` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `links` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `link` varchar(255) DEFAULT NULL,
-  `link_full` varchar(255) DEFAULT NULL,
-  `link_domain` varchar(255) DEFAULT NULL,
-  `link_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
+  `url` varchar(2048) NOT NULL DEFAULT '',
+  `url_hash` varchar(64) NOT NULL DEFAULT '',
+  `domain` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `link_idx` (`link`),
-  KEY `link_full_idx` (`link_full`),
-  KEY `link_domain_idx` (`link_domain`),
-  KEY `link_date_add_idx` (`link_date_add`),
-  KEY `links_un_link_domain` (`link`,`link_full`,`link_domain`)
+  UNIQUE KEY `url_hash` (`url_hash`),
+  KEY `domain` (`domain`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------

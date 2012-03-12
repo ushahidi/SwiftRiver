@@ -282,7 +282,7 @@ class Model_Droplet extends ORM
 	{
 		$link_reduce = function($link)
 		{
-			return $link->link;
+			return $link->url;
 		};
 		
 		$new_links = array_diff($links, array_map($link_reduce, $orm_droplet->links->find_all()->as_array()));
@@ -290,9 +290,9 @@ class Model_Droplet extends ORM
 		$link_map = function($link)
 		{
 			return array (
-				'link' => $link,
-				'link_full' => $link,
-				'link_domain' => parse_url($link, PHP_URL_HOST)
+				'url' => $link,
+				'url_hash' => hash('sha256', $link),
+				'domain' => parse_url($link, PHP_URL_HOST)
 			);
 		};
 		
@@ -578,7 +578,7 @@ class Model_Droplet extends ORM
 		}
 
 		//Query all links belonging to the selected droplet IDs
-		$query_links = DB::select('droplet_id', array('link_id', 'id'), 'link_full')
+		$query_links = DB::select('droplet_id', array('link_id', 'id'), 'url')
 					->from('droplets_links')
 					->join('links', 'INNER')
 					->on('links.id', '=', 'link_id')

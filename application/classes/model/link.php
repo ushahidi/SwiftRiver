@@ -31,20 +31,6 @@ class Model_Link extends ORM
 			),				
 		);
 
-	/**
-	 * Overload saving to perform additional functions on the link
-	 */
-	public function save(Validation $validation = NULL)
-	{
-		// Do this for first time links only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the link was first added
-			$this->link_date_add = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}
 	
 	/**
 	 * Retrives a Model_Link item from the DB and optionally creates the 
@@ -57,7 +43,7 @@ class Model_Link extends ORM
 	public static function get_link_by_url($url, $save = FALSE)
 	{
 		$orm_link = ORM::factory('link')
-					->where('link', '=', $url)
+					->where('url', '=', $url)
 					->find();
 		
 		if ($orm_link->loaded())
@@ -67,9 +53,9 @@ class Model_Link extends ORM
 		elseif ( ! $orm_link->loaded() AND $save)
 		{
 			// Get the full URL
-			$orm_link->link = $url;
-			$orm_link->link_full = $url;
-			$orm_link->link_domain = parse_url($url, PHP_URL_HOST);
+			$orm_link->url = $url;
+			$orm_link->url_hash = hash('sha256', $url);
+			$orm_link->domain = parse_url($url, PHP_URL_HOST);
 			
 			// Save and return
 			return $orm_link->save();
@@ -94,28 +80,28 @@ class Model_Link extends ORM
 		// First try to add any links missing from the db
 		// The below generates the below query to find missing links and insert them all at once:
 		/*
-		 *		INSERT INTO `links` (`link`, `link_full`, `link_domain`) 
-		 *		SELECT DISTINCT * FROM (
-		 *			SELECT 'http://goat.com/mg9yqyFpXXXXX' AS `link`, 'http://goat.com/mg9yqyFpXXXXX' AS `link_full`, 'goat.com' AS `link_domain` UNION ALL
-		 *			SELECT 'http://t.co/mg9yqyFp' AS `link`, 'http://t.co/mg9yqyFp' AS `link_full`, 't.co' AS `link_domain`
-		 *		) AS `a` 
-		 *		WHERE (link, link_full, link_domain) NOT IN (
-		 *			SELECT `link`, `link_full`, `link_domain` 
-		 *			FROM `links` 
-		 *			WHERE (link, link_full, link_domain) IN (
-		 *				('http://t.co/mg9yqyFp', 'http://t.co/mg9yqyFp', 't.co'), 
-		 *				('http://goat.com/mg9yqyFpXXXXX', 'http://goat.com/mg9yqyFpXXXXX', 'goat.com')
-		 *			)
-		 *		)
+		 *    INSERT INTO `links` (`url`, `url_hash`, `domain`) 
+		 *    SELECT DISTINCT * FROM (
+		 *    	SELECT 'http://goat.com/mg9yqyFpXXXXX' AS `url`, '7d645adf5695a8b15dd5779c2b58e48185a729eb7ab5a01702dc7586a2e5a149' AS `url_hash`, 'goat.com' AS `domain` UNION ALL
+		 *    	SELECT 'http://t.co/mg9yqyFp' AS `url`, '99edeb38bcddeb0450557a38782d16bf84d438b91ed6231e448b3ff696fc9820' AS `url_hash`, 't.co' AS `domain`
+		 *    ) AS `a` 
+		 *    WHERE (url, url_hash, domain) NOT IN (
+		 *    	SELECT `url`, `url_hash`, `domain` 
+		 *    	FROM `links` 
+		 *    	WHERE (url, url_hash, domain) IN (
+		 *    		('http://t.co/mg9yqyFp', '7d645adf5695a8b15dd5779c2b58e48185a729eb7ab5a01702dc7586a2e5a149', 't.co'), 
+		 *    		('http://goat.com/mg9yqyFpXXXXX', '99edeb38bcddeb0450557a38782d16bf84d438b91ed6231e448b3ff696fc9820', 'goat.com')
+		 *    	)
+		 *    )		
 		 */
 		$query = DB::select()->distinct(TRUE);
 		$link_subquery = NULL;
 		foreach ($links as $link)
 		{
 			$union_query = DB::select(
-							array(DB::expr("'".addslashes($link['link'])."'"), 'link'), 		
-							array(DB::expr("'".addslashes($link['link_full'])."'"), 'link_full'),
-							array(DB::expr("'".addslashes($link['link_domain'])."'"), 'link_domain'));
+							array(DB::expr("'".addslashes($link['url'])."'"), 'url'), 		
+							array(DB::expr("'".addslashes($link['url_hash'])."'"), 'url_hash'),
+							array(DB::expr("'".addslashes($link['domain'])."'"), 'domain'));
 			if ( ! $link_subquery)
 			{
 				$link_subquery = $union_query;
@@ -128,11 +114,11 @@ class Model_Link extends ORM
 		if ($link_subquery)
 		{
 			$query->from(array($link_subquery,'a'));
-			$sub = DB::select('link', 'link_full', 'link_domain')
+			$sub = DB::select('url', 'url_hash', 'domain')
 			           ->from('links')
-			           ->where(DB::expr('(link, link_full, link_domain)'), 'IN', $links);
-			$query->where(DB::expr('(link, link_full, link_domain)'), 'NOT IN', $sub);
-			DB::insert('links', array('link', 'link_full', 'link_domain'))->select($query)->execute();
+			           ->where(DB::expr('(url, url_hash, domain)'), 'IN', $links);
+			$query->where(DB::expr('(url, url_hash, domain)'), 'NOT IN', $sub);
+			DB::insert('links', array('url', 'url_hash', 'domain'))->select($query)->execute();
 		}
 		
 		// Get the link IDs
@@ -140,7 +126,7 @@ class Model_Link extends ORM
 		{
 			$query = DB::select('id')
 			           ->from('links')
-			           ->where(DB::expr('(link, link_full, link_domain)'), 'IN', $links);
+			           ->where(DB::expr('(url, url_hash, domain)'), 'IN', $links);
 
 			return $query->execute()->as_array();
 		}

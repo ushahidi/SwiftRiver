@@ -180,8 +180,8 @@
 </script>
 
 <script type="text/template" id="link-template">
-	<% var link_short = link_full.substr(0, 27) + "..."; %>
-	<span title="<%= link_full %>"><a href="<%= link_full %>"><%= link_short %></a></span>
+	<% var link_short = url.substr(0, 27) + "..."; %>
+	<span title="<%= url %>"><a href="<%= url %>"><%= link_short %></a></span>
 </script>
 
 <script type="text/template" id="place-template">
