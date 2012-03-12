@@ -28,7 +28,7 @@ return array(
 				'type' => 'text',
 				'values' => array(),
 				'placeholder' => 'E.g. Ushahidi, "African Tech"'
-			),
+			)/*,
 			'person' => array(
 				'label' => __('Person'),
 				'type' => 'text',
@@ -40,7 +40,7 @@ return array(
 				'type' => 'text',
 				'values' => array(),
 				'placeholder' => 'E.g. Nairobi, Kenya, Lamu'
-			)
+			)*/
 		),
 		'dependencies'	=> array(
 			'core' => array(
