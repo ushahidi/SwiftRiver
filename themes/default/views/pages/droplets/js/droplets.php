@@ -506,11 +506,12 @@ $(function() {
 		},
 		
 		addDroplets: function() {
-			this.$el.empty();
+			this.$('article.item').remove();
 			this.droplets.each(this.addDroplet, this);
 			if (this.droplets.length) {
 				this.hideNoContentEl();
 			}
+			this.checkEmpty();
 		},
 		
 		hideNoContentEl: function() {
