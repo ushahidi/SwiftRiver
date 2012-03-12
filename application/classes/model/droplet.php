@@ -852,6 +852,7 @@ class Model_Droplet extends ORM
 		// Encode content and title as utf8 in case they aren't
 		$content = $droplet['droplet_content'];
 		$title = $droplet['droplet_title'];
+		$identity_name = $droplet['identity_name'];
 
 		$droplet['droplet_content'] = mb_check_encoding($content, 'UTF-8') 
 		    ? $content 
@@ -860,6 +861,10 @@ class Model_Droplet extends ORM
 		$droplet['droplet_title'] = mb_check_encoding($title, 'UTF-8') 
 		    ? $title 
 		    : utf8_encode($title);
+		
+		$droplet['identity_name'] = mb_check_encoding($identity_name, 'UTF-8') 
+		    ? $identity_name 
+		    : utf8_encode($identity_name);
 
 	}
 }
