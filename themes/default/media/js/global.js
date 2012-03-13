@@ -14,13 +14,7 @@ $(document).ready(function() {
 		$('.actions .button_change, .actions span').removeClass('active');
 		$('.has_dropdown').removeClass('active');
 	}
-	
-	// Hide dropdowns on click outside
-	$(document).click(function(e) {
-		if(e.isPropagationStopped()) return;
-	    hideDropdowns();
-	});
-	
+		
 
 	// TOGGLE DROPDOWN
 	$('.dropdown .cancel').live('click', function(e) {
@@ -40,6 +34,13 @@ $(document).ready(function() {
 	$('.dropdown').live('click', function(e) {
 		e.stopPropagation();
 	});
+	
+	// Hide dropdowns on click outside
+	$(document).click(function(e) {
+		if(e.isPropagationStopped()) return;
+	    hideDropdowns();
+	});
+	
 	
 	// TOGGLE PANEL, DRAWER
 	if (screen.width <= 600) {
