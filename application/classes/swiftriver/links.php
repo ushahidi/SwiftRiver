@@ -38,7 +38,8 @@ class Swiftriver_Links {
 				if ( ! in_array($url, $urls))
 				{
 					// Expand shortened URLs
-					if (strlen($url < 25) AND strlen(parse_url($url, PHP_URL_HOST)) < 10) {
+					if (strlen($url < 25) AND strlen(parse_url($url, PHP_URL_HOST)) < 10)
+					{
 						$url = self::full($url);
 					}
 										
