@@ -138,11 +138,7 @@ article#login hgroup.page-title {
 			<?php echo Form::open(); ?>
 				<div class="form vr col_6">
 					<div class="field cf">						
-						<?php if ($riverid_auth): ?>
-							<label><?php echo __('RiverID'); ?></label>
-						<?php else: ?>
-							<label><?php echo __('Email'); ?></label>
-						<?Php endif; ?>
+						<label><?php echo __('Email'); ?></label>
 						<?php echo Form::input("username", ""); ?>
 					</div>
 					<div class="field cf">
@@ -164,11 +160,7 @@ article#login hgroup.page-title {
 				<?php if ($public_registration_enabled): ?>
 			    <?php echo Form::open(); ?>
 					<div class="field has_dropdown cf">
-						<?php if ($riverid_auth): ?>
-							<a><?php echo __('Create a RiverID'); ?></a>
-						<?php else: ?>
-							<a><?php echo __('Create an account'); ?></a>
-						<?Php endif; ?>
+						<a><?php echo __('Create an account'); ?></a>
 						<div class="dropdown" style="display:none;">
 							<label><?php echo __('Your email address') ?></label>
 							<?php echo Form::input("new_email", ""); ?>
@@ -179,12 +171,8 @@ article#login hgroup.page-title {
 				<?Php endif; ?>	
 
 				<?php echo Form::open(); ?>
-					<div class="field has_dropdown cf">						
-						<?php if ($riverid_auth): ?>
-							<a><?php echo __('Forgot your RiverID password?'); ?></a>
-						<?php else: ?>
-							<a><?php echo __('Forgot your password?'); ?></a>
-						<?Php endif; ?>						
+					<div class="field has_dropdown cf">
+						<a><?php echo __('Forgot your password?'); ?></a>
 						<div class="dropdown" style="display:none;">
 							<label><?php echo __('Your email address') ?></label>
 							<?php echo Form::input("recover_email", ""); ?>

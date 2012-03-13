@@ -58,7 +58,6 @@ class Controller_Login extends Controller_Template {
 	{	
 		
 		// For template to show RiverID branding if in use
-		$this->template->riverid_auth = $this->riverid_auth;
 		$this->template->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
 		
 		// Auto login is available
