@@ -55,6 +55,31 @@ class Swiftriver_CSRF {
 
 		return $token == $current_token;
 	}
+
+	/**
+	 * Generates and returns Javascript code snippet for
+	 * obtaining a CSRF token from the server. Requires jQuery.
+	 *
+	 * @return string
+	 */
+	public static function javascript()
+	{
+		// JS snippet to get token
+		$js = '<script type="text/javascript">'
+		    . 'function getCSRFToken() {'
+		    . ' var token = null;'
+		    . ' $.ajax({'
+		    . '	    url: "'.URL::site('csrf/generate_token').'",'
+		    . '	    async: false,'
+		    . '     success: function(json){ token = json.token; },'
+		    . '     dataType: "json"'
+		    . ' });'
+		    . ' return token;'
+		    . '}'
+		    . '</script>';
+
+		return $js;
+	}
 }
 
 ?>

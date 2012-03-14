@@ -140,7 +140,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->active = 'buckets';
 
 		// Check for form submission
-		if ($_POST)
+		if ($_POST AND Swiftriver_CSRF::valid($_POST['form_auth_id']))
 		{
 			// Extract the posted data
 			$data = Arr::extract($_POST, array('bucket_name', 'bucket_description'));

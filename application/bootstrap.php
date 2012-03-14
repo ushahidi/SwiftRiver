@@ -194,7 +194,15 @@ Route::set('api', 'api(/<controller>)')
 		'action'     => 'api'
 	));	
 	
-	
+
+/**
+ * CSRF Route
+ */
+Route::set('csrf', 'csrf(/<action>)')
+    ->defaults(array(
+    	'controller' => 'csrf',
+    	'action' => 'generate_token'
+    ));	
 
 /**
  * Swiftriver Media Router (JS/CSS)

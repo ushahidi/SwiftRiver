@@ -265,7 +265,7 @@ class Controller_River extends Controller_Swiftriver {
 		$is_new_river = TRUE;
 		
 		// Check for form submission
-		if ($_POST)
+		if ($_POST AND Swiftriver_CSRF::valid($_POST['form_auth_id']))
 		{
 			try
 			{
