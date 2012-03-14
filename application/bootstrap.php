@@ -159,7 +159,7 @@ Route::set('login_changeemail', 'login/changeemail/<id>/<email>/<token>',
 /**
  * Swiftriver Login Route
  */	
-Route::set('login', 'login(/<action>(/<id>))')
+Route::set('login', 'login(/<action>(/<id>))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'login',
 		'action'     => 'index',
@@ -232,7 +232,7 @@ Route::set('welcome', 'welcome(/<action>(/<id>))')
 /**
  * Swiftriver Settings Route
  */	
-Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))')
+Route::set('settings', 'settings(/<controller>(/<action>(/<id>)))', array('id' => '\d+'))
 	->defaults(array(
 		'controller' => 'main',
 		'action'     => 'index',
@@ -295,7 +295,8 @@ Route::set('account_settings_ajax', '<account>/ajax_settings')
  */
 Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<action>(/<id>))',
 	array(
-		'context' => '(river|bucket)'
+		'context' => '(river|bucket)',
+		'id' => '\d+'
 	))
 	->defaults(array(
 		'controller' => 'main',
@@ -309,7 +310,9 @@ Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<act
  */
 Route::set('account', '<account>(/<controller>/<name>(/<action>(/<id>(/<id2>))))',
 	array(
-		'controller' => '(user|river|bucket)'
+		'controller' => '(user|river|bucket)',
+		'id' => '\d+',
+		'id2' => '\d+'
 	))
 	->defaults(array(
 		'controller' => 'user',
@@ -327,4 +330,5 @@ Route::set('default', '(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
 		'controller' => 'swiftriver',
 		'action'     => 'index',
+		'id' => '\d+'
 	));

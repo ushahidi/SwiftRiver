@@ -79,7 +79,8 @@ class Controller_Login extends Controller_Template {
 		//Check for system messages
 		$session = Session::instance();
 		$messages = $session->get_once('system_messages');
-		if($messages) {
+		if ($messages)
+		{
 			$this->template->set('messages', $messages);        
 		}
 		
@@ -147,31 +148,42 @@ class Controller_Login extends Controller_Template {
 
 		}
 
-		// check, has the form been submitted, if so, setup validation
+		// Check, has the form been submitted, if so, setup validation
 		if ($this->request->post('username') AND $this->request->post('password'))
 		{
-			$username = $this->request->post('username');
-			$password = $this->request->post('password');
-			
-			// Check Auth if the post data validates using the rules setup in the user model
-			if (Auth::instance()->login($username, $password, $this->request->post('remember') == 1))
+			// Validate the form token
+			if (Swiftriver_CSRF::valid($this->request->post('form_auth_id')))
 			{
-				// Always redirect after a successful POST to prevent refresh warnings
-				$user = Auth::instance()->get_user();
-				$this->request->redirect(URL::site().$user->account->account_path);
+				$username = $this->request->post('username');
+				$password = $this->request->post('password');
+				
+				// Check Auth if the post data validates using the rules setup in the user model
+				if (Auth::instance()->login($username, $password, 
+					$this->request->post('remember') == 1))
+				{
+					// Always redirect after a successful POST to prevent refresh warnings
+					$user = Auth::instance()->get_user();
+					$this->request->redirect(URL::site().$user->account->account_path);
+				}
+				else
+				{
+					$this->template->set('username', $username);
+					// Get errors for display in view
+					$validation = Validation::factory($this->request->post())
+						->rule('username', 'not_empty')
+						->rule('password', 'not_empty');
+					if ($validation->check())
+					{
+						$validation->error('password', 'invalid');
+					}
+					$this->template->set('errors', $validation->errors('login'));
+				}
 			}
 			else
 			{
-				$this->template->set('username', $username);
-				// Get errors for display in view
-				$validation = Validation::factory($this->request->post())
-					->rule('username', 'not_empty')
-					->rule('password', 'not_empty');
-				if ($validation->check())
-				{
-					$validation->error('password', 'invalid');
-				}
-				$this->template->set('errors', $validation->errors('login'));
+				// Show invalid request message
+				Kohana::$log->add(Log::ERROR, "Invalid CSRF token :token", 
+					array(':token' => $this->request->post('form_auth_id')));
 			}
 		}
 	}

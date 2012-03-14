@@ -123,7 +123,6 @@ class Swiftriver_Dropletqueue {
 				$droplet_orm->droplet_processed = 1;
 			}
 			
-			
 			// Update droplet meta if it is provided
 			try
 			{

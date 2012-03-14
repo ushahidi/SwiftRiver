@@ -136,6 +136,7 @@ article#login hgroup.page-title {
 			}
 			?>					
 			<?php echo Form::open(); ?>
+				<?php echo Form::input('form_auth_id', swiftriver_CSRF::token(), array('type' => 'hidden')); ?>
 				<div class="form vr col_6">
 					<div class="field cf">						
 						<label><?php echo __('Email'); ?></label>
