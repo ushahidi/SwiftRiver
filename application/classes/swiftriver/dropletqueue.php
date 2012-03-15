@@ -149,7 +149,7 @@ class Swiftriver_Dropletqueue {
 				Kohana::$log->add(Log::ERROR, $e->getMessage());
 
 				// Throw error 500
-				throw new HTTP_Exception_500($e->getMessage())
+				throw new HTTP_Exception_500($e->getMessage());
 			}
 				
 			return NULL;

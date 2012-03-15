@@ -679,7 +679,7 @@ class Controller_River extends Controller_Swiftriver {
 					}
 					else
 					{
-						$this->response->status(400);
+						throw new HTTP_Exception_400();
 					}
 
 				break;
@@ -753,13 +753,13 @@ class Controller_River extends Controller_Swiftriver {
 							// Add the ID of the newly created option
 							$post["id"] = $channel_filter_option->id;
 
-							$this->response->body(json_encode($post));
+							echo json_encode($post);
 						}
 					}
 					else
 					{
 						// Bad request
-						$this->response->status(400);
+						throw new HTTP_Exception_400();
 					}
 
 				break;
@@ -794,10 +794,8 @@ class Controller_River extends Controller_Swiftriver {
 					$this->river->delete();
 
 					// Encode the response to be returned to the client
-					$this->response->body(json_encode(
-						array(
-							"redirect_url" => URL::site($this->dashboard_url)
-						)
+					echo json_encode(array(
+						"redirect_url" => URL::site($this->dashboard_url)
 					));
 				}
 			break;
@@ -824,11 +822,7 @@ class Controller_River extends Controller_Swiftriver {
 						$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
 
 						// Response to be pushed back to the client
-						$this->response->body(json_encode(
-							array(
-								'redirect_url' => $this->river_base_url
-							)
-						));
+						echo json_encode(array('redirect_url' => $this->river_base_url));
 					}
 					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
 					{
