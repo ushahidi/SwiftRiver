@@ -308,9 +308,54 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		$filters_control = View::factory('pages/river/filters_control')
-		    ->bind('channel_filters', $channel_filters);
+		    ->bind('channel_filters', $channel_filters)
+		    ->bind('filter_channel', $filter_channel)
+		    ->bind('tags_filter', $tags_filter)
+		    ->bind('places_filter', $places_filter);
 
 		$channel_filters =  $this->river->get_channel_filters();
+
+		$cached = self::$cache->get('river.filters');
+
+		$filter_channel = (isset($cached['channel'])) ? $cached['channel'] : '';
+		$tags_filter = '';
+		$places_filter = '';
+
+		if (isset($cached['tags']))
+		{
+			$tags_filter = "";
+			if ( ! empty($cached['tags']['ids']))
+			{
+				$ids = $cached['tags']['ids'];
+				$tags = DB::select('tag')
+				    ->from('tags')
+				    ->where('id', 'IN', $ids)
+				    ->find_all()
+				    ->as_array();
+
+				$tags_filter = implode(",", $tags).", ";
+			}
+
+			$tags_filter .= implode(",", $cached['tags']['names']);
+		}
+
+		if (isset($cached['places']))
+		{
+			$places_filter = "";
+			if ( ! empty($cached['places']['ids']))
+			{
+				$ids  =$cached['tags']['ids'];
+				$places  = DB::select('place_name')
+				    ->from('places')
+				    ->where('id', 'IN', $ids)
+				    ->find_all()
+				    ->as_array();
+
+				$places_filter = implode(",", $places).",";
+			}
+			$places_filter .= implode(", ", $cached['places']['names']);
+		}
+
 		echo $filters_control;
 	}
 
@@ -819,6 +864,7 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	private function _get_river_filters()
 	{
+
 		$filters = array();
 		
 		// Get filtering parameters
@@ -857,7 +903,10 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			$filters['channel'] = $channel;
 		}
-		
+
+		// Cache the filters
+		self::$cache->set('river.filters', $filters);
+
 		return $filters;
 	}
 
