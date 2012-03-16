@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title>SwiftRiver</title> 
+	<title><?php echo isset($title) ? $title.' - ' : ''; ?> SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -17,6 +17,7 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
 	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
@@ -25,10 +26,12 @@
 	// Dynamic JS Files
 	echo(Html::script('media/js'));
 	?>
-	<script type="text/javascript"><?php
+		
+	
+	<?php 
 		// Dynamic inline JS
-		echo $js;
-	?></script>
+		echo $js; 
+	?>
 	
 	<?php
 	    // SwiftRiver Plugin Hook

@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
   `river_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `un_river_name` (`account_id`,`river_name`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
+  KEY `river_name_url` (`river_name_url`),
   KEY `account_id_idx` (`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 
@@ -500,7 +500,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
 CREATE TABLE IF NOT EXISTS `settings` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
   `key` VARCHAR(100) NOT NULL ,
-  `value` VARCHAR(255) NULL DEFAULT NULL ,
+  `value` LONGTEXT NULL DEFAULT NULL ,
   UNIQUE INDEX (`key` ASC) ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
@@ -766,6 +766,7 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES (1, 'site_name', 'SwiftRive
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (2, 'site_theme', 'default');
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (3, 'site_locale', 'en');
 INSERT INTO `settings` (`id`, `key`, `value`) VALUES (4, 'public_registration_enabled', '0');
+INSERT INTO `settings` (`id`, `key`, `value`) VALUES (5, 'anonymous_access_enabled', '0');
 
 COMMIT;
 
@@ -774,6 +775,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (1, 'myswiftriver@myswiftriver.com', 'Administrator', 'admin', 'c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542', 0, NULL, md5(rand()));
+INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (2, 'public@myswiftriver.com', 'public', 'public', NULL, 0, NULL, NULL);
 
 COMMIT;
 
@@ -791,5 +793,6 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `accounts` (`user_id`, `account_path`) VALUES (1, 'default');
+INSERT INTO `accounts` (`user_id`, `account_path`) VALUES (2, 'public');
 
 COMMIT;

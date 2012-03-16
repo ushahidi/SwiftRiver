@@ -111,8 +111,18 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+		    ->bind('anonymous', $this->anonymous);
 		
+		// Nothing to display message
+		$droplets_list->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
+		    ->bind('message', $nothing_to_display_message);
+		$nothing_to_display_message = __('There are no drops in this bucket yet.');
+		if ($this->owner)
+		{
+			$nothing_to_display_message .= __(' Add some from your :rivers', 
+			                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
+		}		
 
 		$buckets = ORM::factory('bucket')
 			->where('account_id', '=', $this->account->id)
@@ -129,6 +139,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		// Only account owners are alllowed here
+		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
 		$this->template->content = View::factory('pages/bucket/new')
 		    ->bind('template_type', $this->template_type)
 		    ->bind('user', $this->user)
@@ -236,6 +252,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
+				// No anonymous actions
+				if ( ! $this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+			
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
@@ -418,6 +440,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
@@ -433,6 +461,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
@@ -582,6 +616,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 
 			case "POST":
+				// No anonymous buckets
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$bucket_array = json_decode($this->request->body(), TRUE);
 				try
 				{

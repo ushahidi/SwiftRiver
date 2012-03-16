@@ -13,24 +13,8 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Settngs_Plugins extends Controller_Settings_Main {
+class Controller_Settings_Plugins extends Controller_Settings_Main {
 	
-	/**
-	 * Access privileges for this controller and its children
-	 */
-	public $auth_required = 'admin';
-
-	/**
-	 * @return	void
-	 */
-	public function before()
-	{
-		// Execute parent::before first
-		parent::before();
-		
-		$this->template->header->page-title = __('Plugins');
-		$this->template->header->tab_menu = View::factory('pages/plugins/menu');
-	}
 	
 	/**
 	 * List all the Plugins
@@ -38,17 +22,19 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 	 * @param	string $page - page uri
 	 * @return	void
 	 */
-	public function action_index($page = NULL)
+	public function action_index()
 	{
-		$this->template->content = View::factory('pages/plugins/overview')
-			->bind('plugins', $result)
-			->bind('paging', $pagination)
+		$this->settings_content = View::factory('pages/settings/plugins')
+			->bind('plugins', $plugins)
 			->bind('default_sort', $sort);
+
 		$this->template->header->js = View::factory('pages/settings/js/plugins');
+
+		$this->active = 'plugins';	
 		
 		// Process Plugins
 		$this->_process_plugins();
-
+		
 		// save the data
 		if ($_POST)
 		{
@@ -86,7 +72,10 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 								// Does an install exist?
 								if (method_exists($class,'install'))
 								{
-									$class::install();
+									// Run the installer
+									// declare it first to prevent T_PAAMAYIM_NEKUDOTAYIM
+									$install = new $class;
+									$install->install();
 								}
 							}
 						}
@@ -100,23 +89,10 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 			}
 		}
 		
-		// Get Registered Plugins
-		$plugins = ORM::factory('plugin');
-		// Get the total count for the pagination
-		$total = $plugins->count_all();
-		
-		// Create a paginator
-		$pagination = new Pagination(array(
-			'total_items' => $total, 
-			'items_per_page' => 20,
-			'auto_hide' => false
-		));
-		
 		// Get the items for the query
 		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'plugin_name'; // set default sorting
 		$dir = isset($_GET['dir']) ? 'DESC' : 'ASC'; // set order_by
-		$result = $plugins->limit($pagination->items_per_page)
-			->offset($pagination->offset)
+		$plugins = ORM::factory('plugin')
 			->order_by($sort, $dir)
 			->find_all();
 	}
@@ -130,7 +106,7 @@ class Controller_Settngs_Plugins extends Controller_Settings_Main {
 	 */
 	private function _process_plugins()
 	{
-		$configs = Plugins::load_configs();
+		$configs = Swiftriver_Plugins::load_configs();
 		
 		// Sync the folder with the database
 		foreach ($configs as $key => $value)

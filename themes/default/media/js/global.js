@@ -9,10 +9,10 @@ $(document).ready(function() {
 	});
 	
 	function hideDropdowns() {
-		$('.dropdown').fadeOut('fast');
+		$('.dropdown').fadeOut('slow');
 		$('.actions p, .actions span, .actions h3').removeClass('active');
 		$('.actions .button_change, .actions span').removeClass('active');
-		$('.has_dropdown').removeClass('active');
+		$('.has_dropdown > a, .actions .button-delete, .actions .button-change').removeClass('active');
 	}
 		
 
@@ -24,7 +24,9 @@ $(document).ready(function() {
 	$('.has_dropdown > a, .actions .button-delete, .actions .button-change').live('click', function(e) {
 		
 		// Hide any other dropdowns that may be open
-		hideDropdowns();
+		if (! $(this).hasClass('active')) {
+			hideDropdowns();
+		}
 		
 		$(this).toggleClass('active');
 		$(this).siblings('.dropdown').fadeToggle('fast')
@@ -141,7 +143,14 @@ $(document).ready(function() {
 	countChecked();
 	$("article.item div.checkbox input").click(countChecked);
 	
-	
+
+	// Submit form when enter key hit in a password field
+	$('input[type=password]').keypress(function(e){
+		if(e.which == 13){
+			$(this).parents('form:first').submit();
+			e.preventDefault();
+		}
+	});
 });
 
 // Hide mobile address bar
@@ -150,6 +159,7 @@ window.addEventListener("load",function() {
 		window.scrollTo(0, 1);
 	}, 0);
 });
+
 
 function submitForm(button){
 	
@@ -169,4 +179,12 @@ function submitForm(button){
 function submitAjax(button){
 	var form = $(button).parents('form:first');
 	form.submit();
+}
+
+function flashMessage(el, text) {
+	var message = "<ul>";
+	message += text;
+	message += "</ul>";
+	// Show message and fade it out slooooowwwwwwlllllyyyy
+	el.html(message).fadeIn("fast").fadeOut(4000).html();
 }

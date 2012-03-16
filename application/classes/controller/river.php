@@ -94,7 +94,7 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		// Get the id of the current river
 		$river_id = $this->river->id;
-		
+				
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $this->river)
 			->bind('droplets', $droplets)
@@ -138,8 +138,7 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('user', $this->user);
 		    		
 		$fetch_base_url = $this->river_base_url;
-		$droplet_fetch_url = $fetch_base_url.'/droplets';
-
+		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
@@ -151,7 +150,12 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_list_view = View::factory('pages/droplets/list')
 		    ->bind('droplet_js', $droplet_js)
 		    ->bind('user', $this->user)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('anonymous', $this->anonymous);
+		
+		$droplet_list_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
+		    ->bind('anonymous', $this->anonymous);
+		$droplet_list_view->nothing_to_display->river_url = $this->request->url(TRUE);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
@@ -214,6 +218,12 @@ class Controller_River extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
+				// No anonymous actions
+				if ( ! $this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+			
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
@@ -252,6 +262,12 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		// Only account owners are alllowed here
+		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
 		// The main template
 		$this->template->content = View::factory('pages/river/new')
 			->bind('post', $post)
@@ -267,14 +283,10 @@ class Controller_River extends Controller_Swiftriver {
 		// Check for form submission
 		if ($_POST)
 		{
+			$post = Arr::extract($_POST, array('river_name', 'river_public'));
 			try
 			{
-				$river = ORM::factory('river');
-				$post = Arr::extract($_POST, array('river_name', 'river_public'));
-				$river->river_name = $post['river_name'];
-				$river->river_public = $post['river_public'];
-				$river->account_id = $this->user->account->id;            	
-				$this->river = $river->save();
+				$river = Model_River::create_new($post['river_name'], $post['river_public'], $this->user->account);
             	
 				// Redirect to the river view.
 				$this->request->redirect(URL::site().$river->account->account_path.'/river/'.$river->river_name_url);
@@ -286,7 +298,7 @@ class Controller_River extends Controller_Swiftriver {
 			catch (Database_Exception $e)
 			{
 				$errors = array(__("A river with the name ':name' already exists", 
-				                                array(':name' => $river->river_name)
+				                                array(':name' => $post['river_name'])
 				));
 			}
 		
@@ -336,6 +348,12 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+		
+		// No anonymous here
+		if ( ! $this->anonymous)
+		{
+			throw new HTTP_Exception_403();
+		}
 		
 		$query = $this->request->query('q') ? $this->request->query('q') : NULL;
 		
@@ -561,6 +579,12 @@ class Controller_River extends Controller_Swiftriver {
 	 		{
 	 			// Create a new channel filter for the river
 	 			case "POST":
+					// Is the logged in user an owner?
+					if ( ! $this->owner)
+					{
+						throw new HTTP_Exception_403();
+					}
+					
 		 			$post = json_decode($this->request->body(), TRUE);
 
 		 			// ORM instance for the filter
@@ -576,25 +600,29 @@ class Controller_River extends Controller_Swiftriver {
 		 			$channel_filter_orm->save();
 
 		 			$this->response->body(json_encode(array("id" => $channel_filter_orm->id)));
-
 	 			break;
-
 	 			case "PUT":
-	 			$channel_filter_id = $this->request->param('id', 0);
-	 			$channel_filter_orm = ORM::factory('channel_filter', $channel_filter_id);
-
-	 			if ($channel_filter_orm->loaded())
-	 			{
-	 				$post = json_decode($this->request->body(), TRUE);
-
-	 				$channel_filter_orm->filter_enabled = $post['enabled'];
-	 				$channel_filter_orm->save();
-
-	 			}
-	 			else
-	 			{
-	 				$this->response->status(400);
-	 			}
+					// Is the logged in user an owner?
+					if ( ! $this->owner)
+					{
+						throw new HTTP_Exception_403();
+					}
+					
+	 				$channel_filter_id = $this->request->param('id', 0);
+	 				$channel_filter_orm = ORM::factory('channel_filter', $channel_filter_id);
+                	
+	 				if ($channel_filter_orm->loaded())
+	 				{
+	 					$post = json_decode($this->request->body(), TRUE);
+                	
+	 					$channel_filter_orm->filter_enabled = $post['enabled'];
+	 					$channel_filter_orm->save();
+                	
+	 				}
+	 				else
+	 				{
+	 					$this->response->status(400);
+	 				}
 	 			break;
 	 		}
 	 	}

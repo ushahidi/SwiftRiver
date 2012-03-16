@@ -125,33 +125,22 @@ class Swiftriver_Dropletqueue {
 			
 			
 			// Update droplet meta if it is provided
-			try
+			if (array_key_exists('tags', $droplet))
 			{
-				// The semantics update ought to be atomic
-				if (array_key_exists('tags', $droplet))
-				{
-					Model_Droplet::add_tags($droplet_orm, $droplet['tags']);
-				}
-				
-				if (array_key_exists('links', $droplet))
-				{
-					Model_Droplet::add_links($droplet_orm, $droplet['links']);
-				}			
-				
-				if (array_key_exists('places', $droplet))
-				{
-					Model_Droplet::add_places($droplet_orm, $droplet['places']);
-				}
-					
-				$droplet_orm->save();
+				Model_Droplet::add_tags($droplet_orm, $droplet['tags']);
 			}
-			catch (Database_Exception $e)
+			
+			if (array_key_exists('links', $droplet))
 			{
-				Kohana::$log->add(Log::ERROR, $e->getMessage());
-
-				// Throw error 500
-				throw new HTTP_Exception_500($e->getMessage())
+				Model_Droplet::add_links($droplet_orm, $droplet['links']);
+			}			
+			
+			if (array_key_exists('places', $droplet))
+			{
+				Model_Droplet::add_places($droplet_orm, $droplet['places']);
 			}
+				
+			$droplet_orm->save();
 				
 			return NULL;
 		}

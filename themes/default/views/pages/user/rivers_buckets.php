@@ -6,7 +6,7 @@
 <div class="content">
 	<h1>
 		<% if (is_other_account) { %>
-			<a href="<%= item_owner_url %>"><%= account_path %>/</a>
+			<a href="<%= item_owner_url %>"><%= account_path %></a> /&nbsp;
 		<% } %>
 
 		<a href="<%= item_url %>" class="title"><%= item_name %></a>
@@ -14,38 +14,40 @@
 </div>
 <div class="summary">
 	<section class="actions">
-	    <% if ( ! is_owner ) { %>
-		    <% class_name = ""; %>			
-		    <div class="button">
-		    	<p class="button-change">
-					<a class="subscribe" onclick=""><span class="icon"></span>
-					<% if (subscribed) { %>
-						<span class="label"><?php echo __('Unsubscribe'); ?></span></a></p>
-					<% } else { %>
-						<span class="label"><?php echo __('Subscribe'); ?></span></a></p>
-					<% } %>
-		    	<div class="clear"></div>
-		    </div>
-		<% } else { %>
-			<div class="button delete-item">
-				<p class="button-change">
-					<a class="delete">
-						<span class="icon"></span>
-						<span class="nodisplay"><?php echo __('Delete '.ucfirst($active)); ?></span>
-					</a>
-				</p>
-				<div class="clear"></div>
-				<div class="dropdown container">
-					<p><?php echo __('Are you sure you want to delete this '.$active.'?'); ?></p>
-					<ul>
-						<li class="confirm">
-							<a><?php echo __('Yep.'); ?></a>
-						</li>
-						<li class="cancel"><a><?php echo __('No, nevermind.'); ?></a></li>
-					</ul>
+	    <?php if ( ! $anonymous): ?>
+	    	<% if ( ! is_owner ) { %>
+			    <% class_name = ""; %>			
+			    <div class="button">
+			    	<p class="button-change">
+						<a class="subscribe" onclick=""><span class="icon"></span>
+						<% if (subscribed) { %>
+							<span class="label"><?php echo __('Unsubscribe'); ?></span></a></p>
+						<% } else { %>
+							<span class="label"><?php echo __('Subscribe'); ?></span></a></p>
+						<% } %>
+			    	<div class="clear"></div>
+			    </div>
+			<% } else { %>
+				<div class="button delete-item">
+					<p class="button-change">
+						<a class="delete">
+							<span class="icon"></span>
+							<span class="nodisplay"><?php echo __('Delete '.ucfirst($active)); ?></span>
+						</a>
+					</p>
+					<div class="clear"></div>
+					<div class="dropdown container">
+						<p><?php echo __('Are you sure you want to delete this '.$active.'?'); ?></p>
+						<ul>
+							<li class="confirm">
+								<a><?php echo __('Yep.'); ?></a>
+							</li>
+							<li class="cancel"><a><?php echo __('No, nevermind.'); ?></a></li>
+						</ul>
+					</div>
 				</div>
-			</div>
-		<% } %>
+			<% } %>
+		<?php endif; ?>
 	</section>
 	<section class="meta">
 		<p>

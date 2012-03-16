@@ -150,8 +150,8 @@ article#login hgroup.page-title {
 						<strong><?php echo __('Remember me'); ?></strong>
 					</div>				
 					<div class="submit controls-buttons cf">
+						<?php echo Form::hidden('referrer', $referrer); ?>
 						<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
-						<!--p class="other"><a href="#"><span></span>Forgot your password?</a></p-->
 					</div>
 				</div>
 			<?php echo Form::close(); ?>

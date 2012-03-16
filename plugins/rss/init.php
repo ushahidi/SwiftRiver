@@ -14,9 +14,69 @@ class Rss_Init {
 	{
 	    // Register as a crawler
 	    Swiftriver_Crawlers::register('rss', array(new Swiftriver_Crawler_Rss(), 'crawl'));
+
+		// Hook into the settings page
+		Swiftriver_Event::add('swiftriver.settings.nav', array($this, 'settings_nav'));
+		
+		// Hook into welcome page new river creation
+		Swiftriver_Event::add('swiftriver.welcome.create_river', array($this, 'add_chanel_options'));
 	    
 		// Validate the channel option data before it's saved to the DB
 		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
+	}
+	
+	/**
+	 * Add channel options to a river created via the welcome page
+	 * 
+	 * @return	void
+	 */
+	public function add_chanel_options()
+	{
+		list($river, $user, $keywords) = Swiftriver_Event::$data;
+		
+		// Get starter URLs from site settings
+		$urls = Model_Setting::get_setting(RSS_Util::SETTING_KEY);
+		if ( ! $urls) 
+		{
+			return;
+		}
+		$urls = json_decode($urls);
+		if (empty($urls))
+		{
+			return;
+		}
+		
+		// Add a rss channel
+		$channel_filter = $river->create_channel_filter('rss', $user->id, TRUE);
+		$channel_filter->add_option('keyword', array(
+			                                'label' => 'Keyword',
+			                                'type' => 'text',
+			                                'value' => trim($keywords)
+		));
+		
+		foreach ($urls as $url => $title)
+		{
+			$channel_filter->add_option('url', array(
+				                                'label' => $title,
+				                                'type' => 'text',
+				                                'value' => $url
+			));
+		}
+	}
+	
+	
+	/**
+	 * Display link in the settings navigation
+	 * 
+	 * @return	void
+	 */
+	public function settings_nav()
+	{
+		$active = Swiftriver_Event::$data;
+		
+		echo '<li '.(($active == 'rsswelcome') ? 'class="active"' : '').'>'.
+			HTML::anchor(URL::site('settings/rsswelcome'), __('RSS Starter URLs')).
+			'</li>';
 	}
 
 
@@ -72,7 +132,7 @@ class Rss_Init {
 		elseif ($option_data['channel'] == 'rss')
 		{
 			$url = $option_data['data']['value'];
-			if (($feed = $this->_validate_feed_url($url)) != FALSE)
+			if (($feed = RSS_Util::validate_feed_url($url)) != FALSE)
 			{
 				$option_data['data']['value'] = $feed['value'];
 				$option_data['data']['title'] = $feed['title'];
@@ -80,65 +140,12 @@ class Rss_Init {
 			else
 			{
 				// Validation failed - Empty the option data
-				Kohana::$log->add(Log::ERROR, "Invalid RSS URL - :url", array(':url' => $url));
+				Kohana::$log->add(Log::DEBUG, "Invalid RSS URL - :url", array(':url' => $url));
 
 				$option_data = NULL;
 			}
 		}
 
-	}
-
-	/**
-	 * Verifies whether a URL is a valid RSS feed or points to a page
-	 * that contains an RSS feed
-	 *
-	 * @param string $url URL to validate
-	 * @return mixed Array of the feed url and title on succeed, FALSE otherwise
-	 */
-	private function _validate_feed_url($url)
-	{
-		// Include the SimplePie libraries
-		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
-		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
-
-		// Validate the url value using SimplePie
-		$feed = new SimplePie();
-		$feed->set_feed_url($url);
-
-		// Disable caching
-		$feed->enable_cache(FALSE);
-
-		// Set the timeout to 30s
-		$feed->set_timeout(30);
-
-		// Attempt to initialize the feed, parsing it etc
-		if ($feed->init())
-		{
-			// Success!
-
-			// Ensure that SimplePie is being served with the correct mime-type
-			$feed->handle_content_type();
-			
-			// Grabe the subscribe URL from SimplePie
-			$feed_data= array(
-				'value' => $feed->subscribe_url(),
-				'title' => $feed->get_title()
-			);
-
-			// Garbage collection
-			unset ($feed);
-
-			return $feed_data;
-		}
-
-		// Log the SimplePie error
-		Kohana::$log->add(Log::ERROR, "Failed to initialize feed - :error", 
-			array(':error' => $feed->error()));
-
-		unset ($feed);
-		
-		return FALSE;
-		
 	}
 }
 

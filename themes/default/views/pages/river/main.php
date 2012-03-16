@@ -3,10 +3,10 @@
 		<hgroup>
 			<h1 class="<?php echo ($river->river_public == 0) ? "private" : "public"; ?>">
 				<span class="icon"></span>
-				<?php if ($river->account->user->id == $user->id): ?>
+				<?php if ($river->account->user->id == $user->id OR $river->account->user->username == 'public'): ?>
 					<span id="display_river_name"><?php echo $river->river_name; ?></span>
 				<?php else: ?>
-					<a href="<?php echo URL::site().$river->account->account_path ?>"><span><?php echo $river->account->account_path; ?></a>/<?php echo $river->river_name; ?></span>
+					<a href="<?php echo URL::site().$river->account->account_path ?>"><span><?php echo $river->account->account_path; ?></a> / <?php echo $river->river_name; ?></span>
 				<?php endif; ?>
 			</h1>
 		</hgroup>

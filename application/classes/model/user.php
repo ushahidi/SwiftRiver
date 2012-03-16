@@ -197,11 +197,12 @@ class Model_User extends Model_Auth_User
 		$users = array();
 		$search_string = strtolower(trim($search_string));
 		$users_query = ORM::factory('user')
-		                ->or_where_open()
+		                ->where('username', '!=', 'public')
+		                ->where_open()
 		                ->where(DB::expr('lower(email)'),'like', "$search_string%")
 		                ->or_where(DB::expr('lower(name)'),'like', "$search_string%")
 		                ->or_where(DB::expr('lower(name)'),'like', "% $search_string%")
-		                ->or_where_close();;
+		                ->where_close();
 		
 		if (! empty($exclude_ids)) {
 			$users_query->and_where('id', 'not in', $exclude_ids);

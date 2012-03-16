@@ -515,13 +515,13 @@ $(function() {
 		},
 		
 		hideNoContentEl: function() {
-			this.$("h2.no-content").hide();
+			this.$(".no-content").hide();
 			this.noContentElHidden = true;
 		},
 		
 		checkEmpty: function() {
 			if (!this.droplets.length) {
-				this.$("h2.no-content").show();
+				this.$(".no-content").show();
 				this.noContentElHidden = false;
 			}
 		},

@@ -44,6 +44,10 @@
 				<?php echo Form::checkbox('public_registration_enabled', 1,  (bool)$settings['public_registration_enabled']); ?>
 				<strong><?php echo __('Allow public registration'); ?></strong>
 			</div>
+			<div class="row cf">
+				<?php echo Form::checkbox('anonymous_access_enabled', 1,  (bool)$settings['anonymous_access_enabled']); ?>
+				<strong><?php echo __('Allow anonymous access'); ?></strong>
+			</div>
 
 		<div class="row controls-buttons cf">
 			<p class="button-go" onclick="submitForm(this)"><a><?php echo __('Apply changes'); ?></a></p>

@@ -8,7 +8,7 @@
 				</span>
 			</h1>
 		</hgroup>
-		<?php if ( ! $owner): ?>
+		<?php if ( ! $owner and ! $anonymous ): ?>
 			<section class="actions" id="follow-button">
 			</section>
 		<?php endif; ?>

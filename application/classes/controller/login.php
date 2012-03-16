@@ -55,10 +55,10 @@ class Controller_Login extends Controller_Template {
 	 * @return void
 	 */	
 	public function action_index()
-	{	
-		
-		// For template to show RiverID branding if in use
+	{
+		// For template to hide/show registration fields
 		$this->template->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
+		$this->template->referrer = $this->request->query('redirect_to') ? $this->request->query('redirect_to') : NULL;
 		
 		// Auto login is available
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
@@ -73,7 +73,14 @@ class Controller_Login extends Controller_Template {
 		if (Auth::instance()->logged_in() != 0)
 		{
 			$user = Auth::instance()->get_user();
-			$this->request->redirect(URL::site().$user->account->account_path);
+			if ($user->username == 'public')
+			{
+				Auth::instance()->logout();
+			}
+			else
+			{
+				$this->request->redirect(URL::site().$user->account->account_path);
+			}
 		}
 				
 		//Check for system messages
@@ -87,28 +94,17 @@ class Controller_Login extends Controller_Template {
 		// New user registration
 		if ($this->request->post('new_email'))
 		{
-			if ( ! (bool) Model_Setting::get_setting('public_registration_enabled'))
+			$messages = $this->_new_user($this->request->post('new_email'));
+			
+			// Display the messages
+			if (isset($messages['errors']))
 			{
-				$this->template->set('errors', array(__('This site is not open to public registration')));		        
+				$this->template->set('errors', $messages['errors']);
 			}
-			else
+			if (isset($messages['messages']))
 			{
-				if ( ! Valid::email($this->request->post('new_email')))
-				{
-					$this->template->set('errors', array(__('The email address provided is invalid')));		        
-				}
-				else 
-				{    	    
-					if ($this->riverid_auth)
-					{
-						$this->__new_user_riverid($this->request->post('new_email'));
-					}
-					else
-					{
-						$this->__new_user_orm($this->request->post('new_email'));
-					}
-				}
-			}
+				$this->template->set('messages', $messages['messages']);
+			}					
 		}
 		
 		
@@ -157,8 +153,20 @@ class Controller_Login extends Controller_Template {
 			if (Auth::instance()->login($username, $password, $this->request->post('remember') == 1))
 			{
 				// Always redirect after a successful POST to prevent refresh warnings
-				$user = Auth::instance()->get_user();
-				$this->request->redirect(URL::site().$user->account->account_path);
+				// First check if a referrer was provided in the post parameters
+				// and if not provided, use the referrer from the request otherwise
+				// just redirect to the user profile if the above are not found or do
+				// not point to a url in this site
+				$redirect_to = $this->request->post('referrer');
+				$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
+				if ( ! $redirect_to 
+					OR strpos($redirect_to, URL::base($this->request)) === FALSE
+					OR strpos($redirect_to, URL::base($this->request)) != 0)
+				{
+					$user = Auth::instance()->get_user();
+					$redirect_to = URL::site().$user->account->account_path;
+				}
+				$this->request->redirect($redirect_to);
 			}
 			else
 			{
@@ -176,17 +184,72 @@ class Controller_Login extends Controller_Template {
 		}
 	}
 	
+	public function action_register_ajax()
+	{
+		$this->auto_render = FALSE;
+		
+		if ($this->request->post('new_email'))
+		{
+			$messages = $this->_new_user($this->request->post('new_email'));
+			$ret = array();
+			
+			if (isset($messages['errors']))
+			{
+				$ret['status'] = 'ERROR';
+				$ret['errors'] = $messages['errors'];
+			}
+			if (isset($messages['messages']))
+			{
+				$ret['status'] = 'OK';
+				$ret['messages'] = $messages['messages'];
+			}
+			
+			echo json_encode($ret);
+		}
+	}
+	
+	private function _new_user($email)
+	{
+		$messages = array();
+		
+		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled'))
+		{
+			$messages['errors'] = array(__('This site is not open to public registration'));
+		}
+		else
+		{
+			if ( ! Valid::email($email))
+			{
+				$messages['errors'] = array(__('The email address provided is invalid'));
+			} 
+			else
+			{
+				if ($this->riverid_auth)
+				{
+					$messages = $this->__new_user_riverid($this->request->post('new_email'));
+				}
+				else
+				{
+					$messages = $this->__new_user_orm($this->request->post('new_email'));
+				}
+			}
+		}		  
+		
+		return $messages;
+	}
+	
 	/**
 	* Send a river id registration request
 	*
 	*/
 	private function __new_user_riverid($email) 
-	{	        
+	{
+		$ret = array();
 		$riverid_api = RiverID_API::instance();
 		
 		if ( $riverid_api->is_registered($email)) 
 		{
-			$this->template->set('errors', array(__('The email address provided is already registered.')));
+			$ret['errors'] = array(__('The email address provided is already registered.'));
 		}
 		else
 		{
@@ -197,14 +260,16 @@ class Controller_Login extends Controller_Template {
 			
 			if ($response['status']) 
 			{
-				$this->template->set('messages', array(__('An email has been sent with instructions to complete the registration process.')));
+				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
 			} 
 			else 
 			{
-				$this->template->set('error', array($response['error']));
+				$ret['errors'] = array($response['error']);
 			}
 
-		}        
+		}
+		
+		return $ret;
 	}
 
 	/**
@@ -213,31 +278,36 @@ class Controller_Login extends Controller_Template {
 	*/
 	private function __new_user_orm($email)
 	{
+		$ret = array();
+		
 		// Is the email registed in this site?
 		$user = ORM::factory('user',array('email'=>$email));
 
 		if ($user->loaded())
 		{
-			$this->template->set('errors', array(__('The email address provided is already registered.')));
-			return;
-		}
-
-		$auth_token = Model_Auth_Token::create_token($email, 'new_registration');        
-		if ($auth_token->loaded())
-		{
-			//Send an email with a secret token URL
-			$mail_body = View::factory('emails/createuser')
-						 ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
-			Swiftriver_Mail::send($email, __('Please confirm your email address'), $mail_body);
-			
-			
-			$this->template->set('messages', array(__('An email has been sent with instructions to complete the registration process.')));
+			$ret['errors'] = array(__('The email address provided is already registered.'));
 		}
 		else
 		{
-			$this->template->set('messages', array(__('error')));
+			$auth_token = Model_Auth_Token::create_token($email, 'new_registration');        
+			if ($auth_token->loaded())
+			{
+				//Send an email with a secret token URL
+				$mail_body = View::factory('emails/createuser')
+							 ->bind('secret_url', $secret_url);		            
+				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
+				Swiftriver_Mail::send($email, __('Please confirm your email address'), $mail_body);
+
+
+				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
+			}
+			else
+			{
+				$ret['errors'] = array($response['error']);
+			}
 		}
+		
+		return $ret;
 	}	
 
 	/**

@@ -62,11 +62,11 @@ class Model_Setting extends ORM
 		$setting = ORM::factory('setting')
 		               ->where('key', '=', $key)
 		               ->find();
-		
-		if ($setting->loaded())
+		if ( ! $setting->loaded())
 		{
-			$setting->value = $new_value;
-			$setting->save();
+			$setting->key = $key;
 		}
+		$setting->value = $new_value;
+		$setting->save();
 	}
 }

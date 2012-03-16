@@ -1,5 +1,11 @@
 <div class="feed" id="activity_stream">
-	<h2 class="null"><?php echo __('Nothing to display yet.'); ?></h2>
+	<h2 class="null"><?php 
+			echo __('Nothing to display yet. ');
+			if ($owner) {
+				echo __('Click :here to get started and create a river', array(':here' => HTML::anchor(URL::site('welcome'), __('here'))));
+			}
+		?>
+	</h2>
 </div>
 
 <script type="text/template" id="activity_template">
