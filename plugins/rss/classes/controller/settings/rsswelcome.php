@@ -23,6 +23,7 @@ class Controller_Settings_RSSWelcome extends Controller_Settings_Main {
 	 */	
 	public function action_index()
 	{
+		$this->template->header->title = __('RSS Starter URLs');
 		$this->settings_content = View::factory('settings/welcome');
 		$this->active = 'rsswelcome';
 		

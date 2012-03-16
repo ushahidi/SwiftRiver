@@ -24,6 +24,7 @@ class Controller_Settings_Invites extends Controller_Settings_Main {
 	 */
 	public function action_index()
 	{
+		$this->template->header->title = __('Invites');
 		$this->settings_content = View::factory('pages/settings/invites');
 		$this->active = 'invites';			
 	}

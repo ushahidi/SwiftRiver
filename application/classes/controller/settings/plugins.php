@@ -24,6 +24,7 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 	 */
 	public function action_index()
 	{
+		$this->template->header->title = __('Plugins');
 		$this->settings_content = View::factory('pages/settings/plugins')
 			->bind('plugins', $plugins)
 			->bind('default_sort', $sort);

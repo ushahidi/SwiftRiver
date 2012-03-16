@@ -43,6 +43,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
+		$this->template->header->title = __('Application Settings');
 		$this->settings_content = View::factory('pages/settings/main');
 		$this->active = 'main';	
 		

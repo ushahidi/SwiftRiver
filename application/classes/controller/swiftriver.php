@@ -269,6 +269,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header = View::factory('template/header');
 			$this->template->header->user = $this->user;
 			$this->template->header->js = ''; // Dynamic Javascript
+			$this->template->header->site_name = Model_Setting::get_setting('site_name');
 			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header');

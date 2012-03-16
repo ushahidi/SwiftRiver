@@ -32,6 +32,7 @@ class Controller_Welcome extends Controller_Swiftriver {
 	public function action_index()
 	{
 		$this->template->header->js = View::factory('pages/welcome/js/main');
+		$this->template->header->title = __('Welcome');
 		$this->template->content = View::factory('pages/welcome/main');
 	}
 	

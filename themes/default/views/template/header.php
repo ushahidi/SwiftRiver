@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title><?php echo isset($title) ? $title.' - ' : ''; ?> SwiftRiver</title> 
+	<title><?php echo (isset($title) ? $title.' - ' : '').$site_name; ?></title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 

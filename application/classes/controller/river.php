@@ -94,6 +94,15 @@ class Controller_River extends Controller_Swiftriver {
 	{
 		// Get the id of the current river
 		$river_id = $this->river->id;
+		
+		if ($this->river->account->user->id == $this->user->id OR $this->river->account->user->username == 'public')
+		{
+			$this->template->header->title = $this->river->river_name;
+		}
+		else
+		{
+			$this->template->header->title = $this->river->account->account_path.' / '.$this->river->river_name;
+		}
 				
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $this->river)
@@ -262,6 +271,8 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		$this->template->header->title = __('New River');
+		
 		// Only account owners are alllowed here
 		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
 		{

@@ -88,6 +88,18 @@ class Controller_User extends Controller_Swiftriver {
 	
 	public function action_index()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('Dashboard');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Profile', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/main')
 			->bind('actions', $actions)
 			->bind('following', $following)
@@ -117,6 +129,18 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_rivers()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('My Rivers');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Rivers', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'rivers';
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
@@ -157,6 +181,18 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_buckets()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('My Buckets');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Buckets', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'buckets';
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';

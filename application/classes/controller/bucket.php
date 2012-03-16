@@ -73,6 +73,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
+		if ($this->bucket->account->user->id == $this->user->id)
+		{
+			$this->template->header->title = $this->bucket->bucket_name;
+		}
+		else
+		{
+			$this->template->header->title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
+		}
+		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
 			->bind('droplets_list', $droplets_list)
@@ -139,6 +148,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		$this->template->header->title = __('New Bucket');
+		
 		// Only account owners are alllowed here
 		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
 		{
