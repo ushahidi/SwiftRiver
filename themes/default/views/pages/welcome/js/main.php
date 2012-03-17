@@ -1,7 +1,4 @@
 <script type="text/javascript">
-/**
- * Backbone.js wiring for the droplets MVC
- */
 $(function(){ 
 	/* spotlights carousel */
 	$(".hero-statements").cycle({

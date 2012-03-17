@@ -190,7 +190,7 @@ class Controller_Login extends Controller_Template {
 		
 		if ($this->request->post('new_email'))
 		{
-			$messages = $this->_new_user($this->request->post('new_email'));
+			$messages = $this->_new_user($this->request->post('new_email'), (bool) $this->request->post('invite'));
 			$ret = array();
 			
 			if (isset($messages['errors']))
@@ -208,11 +208,18 @@ class Controller_Login extends Controller_Template {
 		}
 	}
 	
-	private function _new_user($email)
+	private function _new_user($email, $invite = FALSE)
 	{
 		$messages = array();
 		
-		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled'))
+		// Check if an admin user is logged in
+		$admin = FALSE;
+		if (Auth::instance()->logged_in())
+		{
+			$admin = Auth::instance()->get_user()->has('roles',ORM::factory('role',array('name'=>'admin')));
+		}
+		
+		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
 		{
 			$messages['errors'] = array(__('This site is not open to public registration'));
 		}
@@ -226,11 +233,11 @@ class Controller_Login extends Controller_Template {
 			{
 				if ($this->riverid_auth)
 				{
-					$messages = $this->__new_user_riverid($this->request->post('new_email'));
+					$messages = $this->__new_user_riverid($this->request->post('new_email'), $invite);
 				}
 				else
 				{
-					$messages = $this->__new_user_orm($this->request->post('new_email'));
+					$messages = $this->__new_user_orm($this->request->post('new_email'), $invite);
 				}
 			}
 		}		  
@@ -242,7 +249,7 @@ class Controller_Login extends Controller_Template {
 	* Send a river id registration request
 	*
 	*/
-	private function __new_user_riverid($email) 
+	private function __new_user_riverid($email, $invite = FALSE) 
 	{
 		$ret = array();
 		$riverid_api = RiverID_API::instance();
@@ -253,8 +260,18 @@ class Controller_Login extends Controller_Template {
 		}
 		else
 		{
-			$mail_body = View::factory('emails/createuser')
-						 ->bind('secret_url', $secret_url);
+			$mail_body = NULL;
+			if ( $invite )
+			{
+				$mail_body = View::factory('emails/invite')
+							 ->bind('secret_url', $secret_url);
+				$mail_body->site_name = Model_Setting::get_setting('site_name');
+			}
+			else
+			{
+				$mail_body = View::factory('emails/createuser')
+							 ->bind('secret_url', $secret_url);
+			}
 			$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
 			$response = $riverid_api->request_password($email, $mail_body);
 			
@@ -276,7 +293,7 @@ class Controller_Login extends Controller_Template {
 	* New user registration for ORM auth
 	*
 	*/
-	private function __new_user_orm($email)
+	private function __new_user_orm($email, $invite = FALSE)
 	{
 		$ret = array();
 		
@@ -293,10 +310,24 @@ class Controller_Login extends Controller_Template {
 			if ($auth_token->loaded())
 			{
 				//Send an email with a secret token URL
-				$mail_body = View::factory('emails/createuser')
-							 ->bind('secret_url', $secret_url);		            
+				$mail_body = NULL;
+				$mail_subject = NULL;
+				if ( $invite )
+				{
+					$mail_body = View::factory('emails/invite')
+								 ->bind('secret_url', $secret_url);
+					$mail_body->site_name = Model_Setting::get_setting('site_name');
+					$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
+				}
+				else
+				{
+					$mail_body = View::factory('emails/createuser')
+								 ->bind('secret_url', $secret_url);
+					$mail_subject = __('Please confirm your email address');
+				}
+				
 				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
-				Swiftriver_Mail::send($email, __('Please confirm your email address'), $mail_body);
+				Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 
 
 				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
