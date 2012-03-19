@@ -30,6 +30,7 @@
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
+	echo(Html::script("themes/default/media/js/buckets.js"));
 
 	// Dynamic JS Files
 	echo(Html::script('media/js'));

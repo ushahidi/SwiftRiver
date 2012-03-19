@@ -394,46 +394,30 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- -----------------------------------------------------
 -- Table `user_tokens`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `user_id` INT(11) UNSIGNED NOT NULL ,
-  `user_agent` VARCHAR(64) NOT NULL ,
-  `token` VARCHAR(64) NOT NULL ,
-  `created` INT(10) UNSIGNED NOT NULL ,
-  `expires` INT(10) UNSIGNED NOT NULL ,
-  UNIQUE INDEX (`token` ASC) ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user_id_idx` (`user_id` ASC) ,
-  CONSTRAINT `user_tokens_ibfk_1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `users` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CREATE TABLE `user_tokens` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `user_agent` varchar(64) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `created` int(10) unsigned NOT NULL,
+  `expires` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `user_id_idx` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
 -- Table `roles_users`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `roles_users` (
-  `user_id` INT(11) UNSIGNED NOT NULL ,
-  `role_id` INT(11) UNSIGNED NOT NULL ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`user_id`, `role_id`) ,
-  INDEX `account_id_idx` (`account_id` ASC) ,
-  INDEX `role_id_idxfk` (`role_id` ASC) ,
-  CONSTRAINT `roles_users_ibfk_1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `users` (`id` )
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION,
-  CONSTRAINT `role_id_idxfk`
-    FOREIGN KEY (`role_id` )
-    REFERENCES `roles` (`id` )
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `user_id` int(11) unsigned NOT NULL,
+  `role_id` int(11) unsigned NOT NULL,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `account_id_idx` (`account_id`),
+  KEY `role_id_idxfk` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -775,7 +759,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (1, 'myswiftriver@myswiftriver.com', 'Administrator', 'admin', 'c2bac288881c7dd9531c607e73b3af798499917760023656e9847b10b8e75542', 0, NULL, md5(rand()));
-INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (2, 'public@myswiftriver.com', 'public', 'public', NULL, 0, NULL, NULL);
+INSERT INTO `users` (`id`, `email`, `name`, `username`, `password`, `logins`, `last_login`, `api_key`) VALUES (2, 'public@myswiftriver.com', 'public', 'public', '', 0, NULL, '');
 
 COMMIT;
 

@@ -87,9 +87,17 @@ article#login hgroup.page-title {
 	</style>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
-	echo(Html::script("https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"));
+	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
 	?>
+	
+	<script type="text/javascript">
+		$(function() {
+
+			// Focus email field
+		    $("input[name=username]").focus();
+		});
+	</script>
 </head> 
  
 <body> 
@@ -161,7 +169,7 @@ article#login hgroup.page-title {
 				<?php if ($public_registration_enabled): ?>
 			    <?php echo Form::open(); ?>
 					<div class="field has_dropdown cf">
-						<a><?php echo __('Create an account'); ?></a>
+						<a id="create_account_link"><?php echo __('Create an account'); ?></a>
 						<div class="dropdown" style="display:none;">
 							<label><?php echo __('Your email address') ?></label>
 							<?php echo Form::input("new_email", ""); ?>
@@ -173,7 +181,7 @@ article#login hgroup.page-title {
 
 				<?php echo Form::open(); ?>
 					<div class="field has_dropdown cf">
-						<a><?php echo __('Forgot your password?'); ?></a>
+						<a id="forgot_password_link"><?php echo __('Forgot your password?'); ?></a>
 						<div class="dropdown" style="display:none;">
 							<label><?php echo __('Your email address') ?></label>
 							<?php echo Form::input("recover_email", ""); ?>
