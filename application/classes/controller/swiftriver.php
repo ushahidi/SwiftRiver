@@ -76,6 +76,12 @@ class Controller_Swiftriver extends Controller_Template {
 	 * @var string
 	 */
 	protected $dashboard_url;
+
+	/**
+	 * Cache instance
+	 * @var Cache
+	 */
+	protected static $cache = NULL;
 	
 	
 	/**
@@ -140,6 +146,11 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Execute parent::before first
 		parent::before();
+
+		if ( ! self::$cache)
+		{
+			self::$cache = Cache::instance('apc');
+		}
 		
 		// Open session
 		$this->session = Session::instance();
@@ -285,6 +296,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
 		}
+
 	}
 	
 

@@ -290,7 +290,7 @@ class Controller_River extends Controller_Swiftriver {
 		$is_new_river = TRUE;
 		
 		// Check for form submission
-		if ($_POST)
+		if ($_POST AND Swiftriver_CSRF::valid($_POST['form_auth_id']))
 		{
 			$post = Arr::extract($_POST, array('river_name', 'river_public'));
 			try
@@ -329,9 +329,54 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		$filters_control = View::factory('pages/river/filters_control')
-		    ->bind('channel_filters', $channel_filters);
+		    ->bind('channel_filters', $channel_filters)
+		    ->bind('filter_channel', $filter_channel)
+		    ->bind('tags_filter', $tags_filter)
+		    ->bind('places_filter', $places_filter);
 
 		$channel_filters =  $this->river->get_channel_filters();
+
+		$cached = self::$cache->get('river.filters');
+
+		$filter_channel = (isset($cached['channel'])) ? $cached['channel'] : '';
+		$tags_filter = '';
+		$places_filter = '';
+
+		if (isset($cached['tags']))
+		{
+			$tags_filter = "";
+			if ( ! empty($cached['tags']['ids']))
+			{
+				$ids = $cached['tags']['ids'];
+				$tags = DB::select('tag')
+				    ->from('tags')
+				    ->where('id', 'IN', $ids)
+				    ->find_all()
+				    ->as_array();
+
+				$tags_filter = implode(",", $tags).", ";
+			}
+
+			$tags_filter .= implode(",", $cached['tags']['names']);
+		}
+
+		if (isset($cached['places']))
+		{
+			$places_filter = "";
+			if ( ! empty($cached['places']['ids']))
+			{
+				$ids  =$cached['tags']['ids'];
+				$places  = DB::select('place_name')
+				    ->from('places')
+				    ->where('id', 'IN', $ids)
+				    ->find_all()
+				    ->as_array();
+
+				$places_filter = implode(",", $places).",";
+			}
+			$places_filter .= implode(", ", $cached['places']['names']);
+		}
+
 		echo $filters_control;
 	}
 
@@ -671,7 +716,7 @@ class Controller_River extends Controller_Swiftriver {
 					}
 					else
 					{
-						$this->response->status(400);
+						throw new HTTP_Exception_400();
 					}
 
 				break;
@@ -745,13 +790,13 @@ class Controller_River extends Controller_Swiftriver {
 							// Add the ID of the newly created option
 							$post["id"] = $channel_filter_option->id;
 
-							$this->response->body(json_encode($post));
+							echo json_encode($post);
 						}
 					}
 					else
 					{
 						// Bad request
-						$this->response->status(400);
+						throw new HTTP_Exception_400();
 					}
 
 				break;
@@ -786,10 +831,8 @@ class Controller_River extends Controller_Swiftriver {
 					$this->river->delete();
 
 					// Encode the response to be returned to the client
-					$this->response->body(json_encode(
-						array(
-							"redirect_url" => URL::site($this->dashboard_url)
-						)
+					echo json_encode(array(
+						"redirect_url" => URL::site($this->dashboard_url)
 					));
 				}
 			break;
@@ -816,11 +859,7 @@ class Controller_River extends Controller_Swiftriver {
 						$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
 
 						// Response to be pushed back to the client
-						$this->response->body(json_encode(
-							array(
-								'redirect_url' => $this->river_base_url
-							)
-						));
+						echo json_encode(array('redirect_url' => $this->river_base_url));
 					}
 					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
 					{
@@ -856,6 +895,7 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	private function _get_river_filters()
 	{
+
 		$filters = array();
 		
 		// Get filtering parameters
@@ -894,7 +934,10 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			$filters['channel'] = $channel;
 		}
-		
+
+		// Cache the filters
+		self::$cache->set('river.filters', $filters);
+
 		return $filters;
 	}
 

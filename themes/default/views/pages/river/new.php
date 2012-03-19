@@ -31,7 +31,7 @@
 				<?php endif; ?>
 
 				<?php echo Form::open(); ?>
-
+				<?php echo Form::input('form_auth_id', Swiftriver_CSRF::token(), array('type' => 'hidden')); ?>
 				<div class="row cf">
 					<h2><?php echo __("Create a new River"); ?></h2>
 					<div class="input new-river">

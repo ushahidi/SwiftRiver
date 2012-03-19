@@ -9,7 +9,11 @@
 						<select name="channel_name" id="channel_name">
 							<option value="0"><?php echo __("All Channels"); ?></option>
 						<?php foreach ($channel_filters as $channel => $data): ?>
-							<option value="<?php echo $channel; ?>"><?php echo ucfirst($channel); ?></option>
+							<?php if (strcasecmp($channel, $filter_channel) == 0): ?>
+							<option value="<?php echo $channel; ?>" selected><?php echo strtoupper($channel); ?></option>
+							<?php else: ?>
+							<option value="<?php echo $channel; ?>"><?php echo strtoupper($channel); ?></option>
+							<?php endif; ?>
 						<?php endforeach; ?>
 						</select>
 					</div>
@@ -17,14 +21,14 @@
 				<li>
 					<div class="channel-option-input">
 						<label><?php echo __("Tags (People, Organizations etc)"); ?></label>
-						<?php echo Form::input("tag_names", "", array('id' => "tag_names",
+						<?php echo Form::input("tag_names", $tags_filter, array('id' => "tag_names",
 						    'placeholder' => 'E.g. "Mwai Kibaki", UON, KBC, Fanta'));?>
 					</div>
 				</li>
 				<li>
 					<div class="channel-option-input">
 						<label><?php echo __("Place Names"); ?></label>
-						<?php echo Form::input("place_names", "", array('id' => "place_names",
+						<?php echo Form::input("place_names", $places_filter, array('id' => "place_names",
 						    'placeholder' => 'E.g. Nairobi, "Rift Valley", Kampala')); ?>
 					</div>
 				</li>

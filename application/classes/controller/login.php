@@ -86,7 +86,8 @@ class Controller_Login extends Controller_Template {
 		//Check for system messages
 		$session = Session::instance();
 		$messages = $session->get_once('system_messages');
-		if($messages) {
+		if ($messages)
+		{
 			$this->template->set('messages', $messages);        
 		}
 		
@@ -143,43 +144,54 @@ class Controller_Login extends Controller_Template {
 
 		}
 
-		// check, has the form been submitted, if so, setup validation
+		// Check, has the form been submitted, if so, setup validation
 		if ($this->request->post('username') AND $this->request->post('password'))
 		{
-			$username = $this->request->post('username');
-			$password = $this->request->post('password');
-			
-			// Check Auth if the post data validates using the rules setup in the user model
-			if (Auth::instance()->login($username, $password, $this->request->post('remember') == 1))
+			// Validate the form token
+			if (Swiftriver_CSRF::valid($this->request->post('form_auth_id')))
 			{
-				// Always redirect after a successful POST to prevent refresh warnings
-				// First check if a referrer was provided in the post parameters
-				// and if not provided, use the referrer from the request otherwise
-				// just redirect to the user profile if the above are not found or do
-				// not point to a url in this site
-				$redirect_to = $this->request->post('referrer');
-				$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
-				if ( ! $redirect_to 
-					OR strpos($redirect_to, URL::base($this->request)) === FALSE
-					OR strpos($redirect_to, URL::base($this->request)) != 0)
+				$username = $this->request->post('username');
+				$password = $this->request->post('password');
+				
+				// Check Auth if the post data validates using the rules setup in the user model
+				if (Auth::instance()->login($username, $password, 
+					$this->request->post('remember') == 1))
 				{
-					$user = Auth::instance()->get_user();
-					$redirect_to = URL::site().$user->account->account_path;
+					// Always redirect after a successful POST to prevent refresh warnings
+					// First check if a referrer was provided in the post parameters
+					// and if not provided, use the referrer from the request otherwise
+					// just redirect to the user profile if the above are not found or do
+					// not point to a url in this site
+					$redirect_to = $this->request->post('referrer');
+					$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
+					if ( ! $redirect_to 
+						OR strpos($redirect_to, URL::base($this->request)) === FALSE
+						OR strpos($redirect_to, URL::base($this->request)) != 0)
+					{
+						$user = Auth::instance()->get_user();
+						$redirect_to = URL::site().$user->account->account_path;
+					}
+					$this->request->redirect($redirect_to);
 				}
-				$this->request->redirect($redirect_to);
+				else
+				{
+					$this->template->set('username', $username);
+					// Get errors for display in view
+					$validation = Validation::factory($this->request->post())
+						->rule('username', 'not_empty')
+						->rule('password', 'not_empty');
+					if ($validation->check())
+					{
+						$validation->error('password', 'invalid');
+					}
+					$this->template->set('errors', $validation->errors('login'));
+				}
 			}
 			else
 			{
-				$this->template->set('username', $username);
-				// Get errors for display in view
-				$validation = Validation::factory($this->request->post())
-					->rule('username', 'not_empty')
-					->rule('password', 'not_empty');
-				if ($validation->check())
-				{
-					$validation->error('password', 'invalid');
-				}
-				$this->template->set('errors', $validation->errors('login'));
+				// Show invalid request message
+				Kohana::$log->add(Log::ERROR, "Invalid CSRF token :token", 
+					array(':token' => $this->request->post('form_auth_id')));
 			}
 		}
 	}
