@@ -262,7 +262,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			
 			case "PUT":
 				// No anonymous actions
-				if ( ! $this->anonymous)
+				if ($this->anonymous)
 				{
 					throw new HTTP_Exception_403();
 				}
