@@ -81,7 +81,7 @@ class Controller_Swiftriver extends Controller_Template {
 	 * Cache instance
 	 * @var Cache
 	 */
-	protected static $cache = NULL;
+	protected $cache = NULL;
 	
 	
 	/**
@@ -147,9 +147,17 @@ class Controller_Swiftriver extends Controller_Template {
 		// Execute parent::before first
 		parent::before();
 
-		if ( ! self::$cache)
+		if ( ! $this->cache)
 		{
-			self::$cache = Cache::instance('apc');
+			try
+			{
+				$this->cache = Cache::instance('apc');
+			}
+			catch (Cache_Exception $e)
+			{
+				// Do nothing, just log it
+				Kohana::$log->add(Log::ERROR, __('Cache not available'));
+			}
 		}
 		
 		// Open session

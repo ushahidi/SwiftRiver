@@ -336,7 +336,11 @@ class Controller_River extends Controller_Swiftriver {
 
 		$channel_filters =  $this->river->get_channel_filters();
 
-		$cached = self::$cache->get('river.filters');
+		$cached = array();
+		if( $this->cache )
+		{
+			$cached = $this->cache->get('river.filters');
+		}
 
 		$filter_channel = (isset($cached['channel'])) ? $cached['channel'] : '';
 		$tags_filter = '';
@@ -936,7 +940,10 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// Cache the filters
-		self::$cache->set('river.filters', $filters);
+		if ($this->cache)
+		{
+			$this->cache->set('river.filters', $filters);
+		}
 
 		return $filters;
 	}
