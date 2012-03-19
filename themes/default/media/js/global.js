@@ -169,7 +169,9 @@ $(document).ready(function() {
 	// Collection for all the buckets accessible to the current user
 	window.BucketList = Backbone.Collection.extend({
 		model: Bucket,
+		
 		url: buckets_url
+		
 	});
 	
 	// View for individual bucket item in a droplet list dropdown
@@ -198,7 +200,7 @@ $(document).ready(function() {
 		
 		addBucket: function(bucket) {
 			var bucketView = new HeaderBucketView({model: bucket});
-			this.$el.prepend(bucketView.render().el);
+			this.$(".create-new").before(bucketView.render().el);
 		},
 		
 		addBuckets: function() {
