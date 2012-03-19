@@ -28,12 +28,6 @@
 				<?php if ($owner): ?>
 				<ul class="actions">
 					<li class="view-panel">
-						<a href="<?php echo $discussion_url; ?>" class="discussion">
-							<span class="icon"></span>
-							<span class="label"><?php echo __("Discuss"); ?></span>
-						</a>
-					</li>
-					<li class="view-panel">
 						<a href="<?php echo $settings_url; ?>" class="settings">
 							<span class="icon"></span><?php echo __('Bucket Settings'); ?>
 						</a>
