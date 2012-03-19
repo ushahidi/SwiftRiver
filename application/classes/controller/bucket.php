@@ -105,11 +105,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		// Bootstrap the droplet list
 		$droplet_list = @json_encode($droplets);
-		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
-		        ->bind('bucket_list', $bucket_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 		
@@ -627,8 +625,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 
 			case "POST":
+			
 				// No anonymous buckets
-				if ( ! $this->owner)
+				if ($this->anonymous)
 				{
 					throw new HTTP_Exception_403();
 				}
@@ -639,7 +638,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 					$bucket_array['user_id'] = $this->user->id;
 					$bucket_array['account_id'] = $this->account->id;
 					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
-					echo json_encode($bucket_orm->as_array());
+					echo json_encode(array(
+						"id" => $bucket_orm->id, 
+						"bucket_name" => $bucket_orm->bucket_name,
+						"bucket_url" => URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket_orm->bucket_name_url,
+						"account_id" => $bucket_orm->account->id,
+						"user_id" => $bucket_orm->account->user->id,
+						"account_path" => $bucket_orm->account->account_path,
+						"subscriber_count" => $bucket_orm->get_subscriber_count()
+					));
 				}
 				catch (ORM_Validation_Exception $e)
 				{

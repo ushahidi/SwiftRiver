@@ -15,6 +15,14 @@
 	echo(Html::script('media/css'));
 	?>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	
+	<script type="text/javascript">
+		// Globals
+		window.buckets_url = "<?php echo url::site().$user->account->account_path.'/bucket/buckets/manage'; ?>";
+		window.logged_in_account = <?php echo $user->account->id; ?>;
+		window.site_url = "<?php URL::site(); ?>";
+	</script>
+	
 	<?php
 	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
@@ -37,6 +45,13 @@
 	    // SwiftRiver Plugin Hook
 	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
+	
+	<script type="text/javascript">
+		$(function() {
+			// Bootstrap the bucket list
+			bucketList.reset(<?php echo $bucket_list; ?>);
+		});
+	</script>
 </head> 
  
 <body> 

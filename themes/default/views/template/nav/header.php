@@ -19,16 +19,7 @@
 			</li>
 			<li class="buckets has_dropdown">
 				<a href="<?php echo URL::site().$user->account->account_path.'/buckets' ?>" class="arrow"><span class="icon"></span><?php echo __('Buckets');?></a>
-				<ul class="dropdown" id="dropdown_buckets">
-					<?php foreach ($buckets as $bucket): ?>
-						<li>
-							<?php if ($bucket->account->user->id != $user->id): ?>
-								<a href="<?php echo URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url; ?>"><?php echo $bucket->account->account_path ?> / <?php echo $bucket->bucket_name; ?></a>
-							<?php else: ?>
-								<a href="<?php echo URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url; ?>"><?php echo $bucket->bucket_name; ?></a>
-							<?php endif; ?>
-						</li>
-					<?php endforeach; ?>
+				<ul class="dropdown" id="header_dropdown_buckets">
 					<li class="create-new"><a href="<?php echo URL::site().$user->account->account_path.'/bucket/new'?>" class="plus"><em><?php echo __('Create new');?></em></a></li>
 				</ul>
 			</li>
@@ -72,3 +63,6 @@
 		</div>	
 	</ul>
 </nav>
+<script type="text/template" id="header-bucket-template">
+<a href="<%= bucket_url %>"><%= bucket_name %></a>
+</script> 

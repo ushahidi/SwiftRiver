@@ -10,17 +10,6 @@ $(function() {
 	window.DropletPlace = Backbone.Model.extend();
 	window.DropletTag = Backbone.Model.extend();
 	window.DropletLink = Backbone.Model.extend();
-	window.Bucket = Backbone.Model.extend({
-		defaults: {
-			account_id: <?php echo $user->account->id ?>
-		},
-		initialize: function() {
-			// Namespace bucket name if the logged in user is not the owner
-			if (parseInt(this.get("account_id")) != <?php echo $user->account->id ?>) {
-				this.set('bucket_name', this.get("account_path") + "/" + this.get("bucket_name"));
-			}
-		}
-	});
 	window.Discussion = Backbone.Model.extend();
 	window.DropletScore = Backbone.Model.extend();
 			
@@ -45,13 +34,7 @@ $(function() {
 	// Collection for a droplet's discussions
 	window.DropletDiscussionsCollection = Backbone.Collection.extend({
 		model: Discussion,
-	})
-	
-	// Collection for all the buckets accessible to the current user
-	window.BucketList = Backbone.Collection.extend({
-		model: Bucket,
-		url: "<?php echo url::site().$user->account->account_path.'/bucket/buckets/manage'; ?>"
-	});		
+	});
 	
 
 	// Droplet model
@@ -105,7 +88,6 @@ $(function() {
 		}
 	});
 	
-	window.bucketList = new BucketList();
 	
 	// Rendering for a single droplet in the list view
 	window.DropletView = Backbone.View.extend({
@@ -127,6 +109,7 @@ $(function() {
 			"click .bucket .dropdown p.create-new a": "showCreateBucket",
 			"click div.create-name button.cancel": "cancelCreateBucket",
 			"click div.create-name button.save": "saveBucket",
+			"keypress div.create-name #new-bucket-name": "checkSaveBucket",
 			
 			// Droplet deletion
 			"click ul.delete-droplet li.confirm a": "deleteDroplet",
@@ -295,6 +278,7 @@ $(function() {
 		showCreateBucket: function(e) {
 			this.$("div.dropdown div.create-name").fadeIn();
 			this.$("div.dropdown p.create-new a.plus").fadeOut();
+			this.$("div.create-name #new-bucket-name").focus();
 		},
 		
 		// When cancel buttons is clicked in the add bucket drop down
@@ -302,6 +286,13 @@ $(function() {
 			this.$("div.dropdown div.create-name").fadeOut();
 			this.$("div.dropdown p.create-new a.plus").fadeIn();
 			e.stopPropagation();
+		},
+		
+		// When enter key pressed in new bucket name input
+		checkSaveBucket: function (e) {
+			if(e.which == 13){
+				this.saveBucket(e);
+			}
 		},
 		
 		// When save button is clicked in the add bucket drop down
@@ -751,7 +742,6 @@ $(function() {
 	// Bootstrap the droplet list
 	window.dropletList = new DropletListView;
 	dropletList.droplets.reset(<?php echo $droplet_list; ?>);
-	bucketList.reset(<?php echo $bucket_list; ?>);
 	
 	// Set the maxId after inital rendering of droplet list
 	maxId = dropletList.sinceId = <?php echo $max_droplet_id ?>;

@@ -1,9 +1,9 @@
 <article class="<?php echo $template_type; ?>">
 	<div class="center page-title cf">
-		<hgroup class="edit user">
+		<hgroup class="user">
 			<img src="<?php echo Swiftriver_Users::gravatar($account->user->email, 80); ?>" />
 			<h1>
-				<span class="edit-trigger" title="dashboard" id="edit_<?php echo $account->user->id; ?>" onclick="">
+				<span>
 					<?php echo $account->user->name; ?>
 				</span>
 			</h1>

@@ -350,6 +350,7 @@ class Model_User extends Model_Auth_User
 			$ret[] = array(
 				"id" => $bucket->id, 
 				"bucket_name" => $bucket->bucket_name,
+				"bucket_url" => URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
 				"account_id" => $bucket->account->id,
 				"user_id" => $bucket->account->user->id,
 				"account_path" => $bucket->account->account_path,
