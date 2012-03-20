@@ -10,12 +10,15 @@
 					<li <?php if ($active == 'main' OR ! $active) echo 'class="active"'; ?>>
 						<a href="<?php echo URL::site().'settings';?>"><?php echo __('Application'); ?></a>
 					</li>
+					<li <?php if ($active == 'invites') echo 'class="active"'; ?>>
+						<a href="<?php echo URL::site().'settings/invites';?>"><?php echo __('Invites'); ?></a>
+					</li>					
 					<li <?php if ($active == 'plugins') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'settings/main/plugins';?>"><?php echo __('Plugins'); ?></a>
+						<a href="<?php echo URL::site().'settings/plugins';?>"><?php echo __('Plugins'); ?></a>
 					</li>
 					<?php
 					// Swiftriver Plugin Hook -- add settings nav item
-					Swiftriver_Event::run('swiftriver.settings.nav');
+					Swiftriver_Event::run('swiftriver.settings.nav', $active);
 					?>
 					<li><a href="#"><?php echo __('More'); ?></a></li>
 				</ul>

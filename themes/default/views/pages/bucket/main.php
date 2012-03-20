@@ -6,7 +6,7 @@
 				<?php if ($bucket->account->user->id == $user->id): ?>
 					<span id="display_bucket_name"><?php echo $bucket->bucket_name; ?></span>
 				<?php else: ?>
-					<a href="<?php echo URL::site().$bucket->account->account_path ?>"><span><?php echo $bucket->account->account_path; ?></a>/<?php echo $bucket->bucket_name; ?></span>
+					<a href="<?php echo URL::site().$bucket->account->account_path ?>"><span><?php echo $bucket->account->account_path; ?></a> / <?php echo $bucket->bucket_name; ?></span>
 				<?php endif; ?>
 			</h1>
 		</hgroup>
@@ -27,12 +27,6 @@
 				</ul>
 				<?php if ($owner): ?>
 				<ul class="actions">
-					<li class="view-panel">
-						<a href="<?php echo $discussion_url; ?>" class="discussion">
-							<span class="icon"></span>
-							<span class="label"><?php echo __("Discuss"); ?></span>
-						</a>
-					</li>
 					<li class="view-panel">
 						<a href="<?php echo $settings_url; ?>" class="settings">
 							<span class="icon"></span><?php echo __('Bucket Settings'); ?>

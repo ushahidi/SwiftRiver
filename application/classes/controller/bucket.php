@@ -73,6 +73,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
+		if ($this->bucket->account->user->id == $this->user->id)
+		{
+			$this->template->header->title = $this->bucket->bucket_name;
+		}
+		else
+		{
+			$this->template->header->title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
+		}
+		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
 			->bind('droplets_list', $droplets_list)
@@ -96,11 +105,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		// Bootstrap the droplet list
 		$droplet_list = @json_encode($droplets);
-		$bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js = View::factory('pages/droplets/js/droplets')
 		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
-		        ->bind('bucket_list', $bucket_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 		
@@ -111,8 +118,18 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets_list = View::factory('pages/droplets/list')
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+		    ->bind('anonymous', $this->anonymous);
 		
+		// Nothing to display message
+		$droplets_list->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
+		    ->bind('message', $nothing_to_display_message);
+		$nothing_to_display_message = __('There are no drops in this bucket yet.');
+		if ($this->owner)
+		{
+			$nothing_to_display_message .= __(' Add some from your :rivers', 
+			                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
+		}		
 
 		$buckets = ORM::factory('bucket')
 			->where('account_id', '=', $this->account->id)
@@ -129,6 +146,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
+		$this->template->header->title = __('New Bucket');
+		
+		// Only account owners are alllowed here
+		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
 		$this->template->content = View::factory('pages/bucket/new')
 		    ->bind('template_type', $this->template_type)
 		    ->bind('user', $this->user)
@@ -236,6 +261,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
+				// No anonymous actions
+				if ($this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+			
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
@@ -418,6 +449,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
@@ -433,6 +470,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 			
 			case "PUT":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
@@ -582,13 +625,28 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 
 			case "POST":
+			
+				// No anonymous buckets
+				if ($this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
 				$bucket_array = json_decode($this->request->body(), TRUE);
 				try
 				{
 					$bucket_array['user_id'] = $this->user->id;
 					$bucket_array['account_id'] = $this->account->id;
 					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
-					echo json_encode($bucket_orm->as_array());
+					echo json_encode(array(
+						"id" => $bucket_orm->id, 
+						"bucket_name" => $bucket_orm->bucket_name,
+						"bucket_url" => URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket_orm->bucket_name_url,
+						"account_id" => $bucket_orm->account->id,
+						"user_id" => $bucket_orm->account->user->id,
+						"account_path" => $bucket_orm->account->account_path,
+						"subscriber_count" => $bucket_orm->get_subscriber_count()
+					));
 				}
 				catch (ORM_Validation_Exception $e)
 				{

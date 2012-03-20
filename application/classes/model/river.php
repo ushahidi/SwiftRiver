@@ -87,8 +87,15 @@ class Model_River extends ORM {
 			$this->river_date_add = date("Y-m-d H:i:s", time());
 		}
 		
-		// Set river_name_url as river_name sanitized
-		$this->river_name_url = preg_replace('/[^\w]/', '-', strtolower(trim($this->river_name)));
+		// Set river_name_url as river_name sanitized if not provided
+		if ( ! $this->river_name_url)
+		{
+			$this->river_name_url = URL::title($this->river_name);
+		}
+		else
+		{
+			$this->river_name_url = URL::title($this->river_name_url);
+		}
 
 		$river = parent::save();
 
@@ -96,6 +103,39 @@ class Model_River extends ORM {
 		Swiftriver_Event::run('swiftriver.river.save', $river);
 
 		return $river;
+	}
+	
+	/**
+	 * Creat a river
+	 *
+	 * @return Model_River
+	 */
+	public static function create_new($river_name, $public, $account, $river_name_url = NULL)
+	{
+		$river = ORM::factory('river');
+		$river->river_name = $river_name;
+		if ($river_name_url)
+		{
+			$river->river_name_url = $river_name_url;
+		}
+		$river->river_public = $public;
+		$river->account_id = $account->id;
+		$river->save();
+		
+		return $river;
+	}
+	
+	public function create_channel_filter($channel, $user_id, $enabled)
+	{
+		$filter = new Model_Channel_Filter();
+		$filter->channel = $channel;
+		$filter->river_id = $this->id;
+		$filter->user_id = $user_id;
+		$filter->filter_enabled = $enabled;
+		$filter->filter_date_add = gmdate('Y-m-d H:i:s');
+		$filter->save();
+		
+		return $filter;
 	}
 	
 	/**
@@ -215,14 +255,7 @@ class Model_River extends ORM {
 		{
 			try {
 				// Create a new channel fitler
-				$filter = new Model_Channel_Filter();
-				$filter->channel = $channel;
-				$filter->river_id = $this->id;
-				$filter->user_id = $user_id;
-				$filter->filter_enabled = $enabled;
-				$filter->filter_date_add = date('Y-m-d H:i:s');
-				$filter->save();
-				
+				$this->create_channel_filter($channel, $user_id, $enabled);
 				return TRUE;
 			}
 			catch (Kohana_Exception $e)
@@ -466,6 +499,12 @@ class Model_River extends ORM {
 		if ( ! $user_orm->loaded())
 		{
 			return FALSE;
+		}
+		
+		// Public rivers are owned by everyone
+		if ( $this->account->user->username == 'public')
+		{
+			return TRUE;
 		}
 		
 		// Does the user own the river?

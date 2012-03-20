@@ -17,6 +17,27 @@ class Twitter_Init {
 	    	    
 		// Validate Channel Filter Settings Input
 		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
+		
+		// Hook into welcome page new river creation
+		Swiftriver_Event::add('swiftriver.welcome.create_river', array($this, 'add_chanel_options'));
+	}
+	
+	/**
+	 * Add channel options to a river created via the welcome page
+	 * 
+	 * @return	void
+	 */
+	public function add_chanel_options()
+	{
+		list($river, $user, $keywords) = Swiftriver_Event::$data;
+		
+		// Add a twitter channel
+		$channel_filter = $river->create_channel_filter('twitter', $user->id, TRUE);
+		$channel_filter->add_option('keyword', array(
+			                                'label' => 'Keyword',
+			                                'type' => 'text',
+			                                'value' => trim($keywords)
+		));
 	}
 
 	/**

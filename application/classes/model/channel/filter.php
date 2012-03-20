@@ -156,4 +156,32 @@ class Model_Channel_Filter extends ORM {
     	    $channel_filter->update();            
         }
 	}
+	
+	/**
+	 * Add a channel filter option
+	 *
+	 * @param string key
+	 * @param mixed  value
+	 * @return Model_Channel_Filter_option
+	 */	
+	public  function add_option($key, $value)
+	{
+		$filter_option = ORM::factory('channel_filter_option');
+		$filter_option->channel_filter_id = $this->id;
+		$filter_option->key = $key;
+		if(is_string($value))
+		{
+			$filter_option->value = $value;
+		}
+		else
+		{
+			$filter_option->value = json_encode($value);
+		}
+		$filter_option->save();
+		
+		// Run post_save events
+		Swiftriver_Event::run('swiftriver.channel.option.post_save', $filter_option);
+		
+		return $filter_option;
+	}
 }

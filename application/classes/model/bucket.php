@@ -84,7 +84,7 @@ class Model_Bucket extends ORM {
 		}
 		
 		// Set river_name_url as river_name sanitized
-		$this->bucket_name_url = preg_replace('/[^\w]/', '-', strtolower(trim($this->bucket_name)));
+		$this->bucket_name_url = URL::title($this->bucket_name);
 
 		$bucket = parent::save();
 

@@ -16,7 +16,7 @@
 class Controller_Settings_Main extends Controller_Swiftriver {
 	
 	// Active settings menu
-	private $active;
+	protected $active;
 
 	/**
 	 * Access privileges for this controller and its children
@@ -43,6 +43,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
+		$this->template->header->title = __('Application Settings');
 		$this->settings_content = View::factory('pages/settings/main');
 		$this->active = 'main';	
 		
@@ -56,6 +57,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 				Model_Setting::update_setting('site_name', $this->request->post('site_name'));
 				Model_Setting::update_setting('site_locale', $this->request->post('site_locale'));
 				Model_Setting::update_setting('public_registration_enabled', $this->request->post('public_registration_enabled') == 1);
+				Model_Setting::update_setting('anonymous_access_enabled', $this->request->post('anonymous_access_enabled') == 1);
 				$this->settings_content->set('messages', array(__('Settings saved successfully.')));
 			}
 			else
@@ -64,124 +66,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			}
 		}
 		
-		$setting_keys = array('site_name', 'site_locale', 'public_registration_enabled');
+		$setting_keys = array('site_name', 'site_locale', 'public_registration_enabled', 'anonymous_access_enabled');
 		$this->settings_content->settings = Model_Setting::get_settings($setting_keys);
 	}
 
-	/**
-	 * List all the Plugins
-	 *
-	 * @param	string $page - page uri
-	 * @return	void
-	 */
-	public function action_plugins()
-	{
-		$this->settings_content = View::factory('pages/settings/plugins')
-			->bind('plugins', $plugins)
-			->bind('default_sort', $sort);
-
-		$this->template->header->js = View::factory('pages/settings/js/plugins');
-
-		$this->active = 'plugins';	
-		
-		// Process Plugins
-		$this->_process_plugins();
-		
-		// save the data
-		if ($_POST)
-		{
-			if ( isset($_POST['id']) 
-				AND isset($_POST['action']) 
-				AND is_numeric($_POST['id']) 
-				AND in_array($_POST['action'], array(0, 1)) )
-			{
-				$plugin = ORM::factory('plugin', $_POST['id']);
-				if ($plugin->loaded())
-				{
-					if ($_POST['action'] == 1)
-					{
-						$plugin->plugin_enabled = 1;
-						$plugin->save();
-						
-						// Load this plugin into the system
-						Kohana::modules(array_merge(Kohana::modules(), array(
-							$plugin->plugin_path => PLUGINPATH.$plugin->plugin_path
-						)));
-						
-						$check = Kohana::modules();
-						// Was plugin loaded?
-						if ( ! isset($check[$plugin->plugin_path]))
-						{
-							$plugin->plugin_enabled = 0;
-							$plugin->save();
-						}
-						else
-						{
-							// Run default plugin functions
-							$class = ucfirst($plugin->plugin_path);
-							if (class_exists($class))
-							{
-								// Does an install exist?
-								if (method_exists($class,'install'))
-								{
-									// Run the installer
-									// declare it first to prevent T_PAAMAYIM_NEKUDOTAYIM
-									$install = new $class;
-									$install->install();
-								}
-							}
-						}
-					}
-					else
-					{
-						$plugin->plugin_enabled = 0;
-						$plugin->save();
-					}
-				}
-			}
-		}
-		
-		// Get the items for the query
-		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'plugin_name'; // set default sorting
-		$dir = isset($_GET['dir']) ? 'DESC' : 'ASC'; // set order_by
-		$plugins = ORM::factory('plugin')
-			->order_by($sort, $dir)
-			->find_all();
-	}
-	
-	/**
-	 * Private function to go through plugin directory and extract
-	 * plugins in the system, then save them in the database
-	 * so that they're available for activation in admin
-	 *
-	 * @return	void
-	 */
-	private function _process_plugins()
-	{
-		$configs = Swiftriver_Plugins::load_configs();
-		
-		// Sync the folder with the database
-		foreach ($configs as $key => $value)
-		{
-			if ( ORM::factory('plugin')
-				->where('plugin_path', '=', $key)
-				->count_all() == 0 )
-			{
-				$plugin = ORM::factory('plugin');
-				$plugin->plugin_path = $key;
-				$plugin->plugin_name = $value['name'];
-				$plugin->plugin_description = $value['description'];
-				$plugin->save();
-			}
-		}
-		
-		// Remove Any Plugins not found in the plugins folder from the database
-		foreach (ORM::factory('plugin')->find_all() as $plugin)
-		{
-			if ( ! array_key_exists($plugin->plugin_path, $configs))
-			{
-				$plugin->delete();
-			}
-		}
-	}	
 }

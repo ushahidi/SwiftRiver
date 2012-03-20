@@ -44,6 +44,12 @@ class Controller_User extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
+		// Anonymous user doesn't have a profile
+		if ( $this->visited_account->user->username == 'public')
+		{
+			Request::current()->redirect('welcome');
+		}
+		
 		// Check if the visiting user is the owner of the account
 		if ( $this->account->is_owner($this->visited_account->user->id))
 		{
@@ -60,7 +66,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('owner', $this->owner)
 			->bind('active', $this->active)
 			->bind('template_type', $this->template_type)
-			->bind('sub_content', $this->sub_content);
+			->bind('sub_content', $this->sub_content)
+			->bind('anonymous', $this->anonymous);
 			
 		// Some info about the owner of the user profile being visited
 		// Will be used later for following unfollowing
@@ -81,6 +88,18 @@ class Controller_User extends Controller_Swiftriver {
 	
 	public function action_index()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('Dashboard');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Profile', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/main')
 			->bind('actions', $actions)
 			->bind('following', $following)
@@ -110,9 +129,22 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_rivers()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('My Rivers');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Rivers', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'rivers';
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
+		$this->sub_content->anonymous = $this->anonymous;
 		$this->active = 'rivers';
 		$this->template_type = 'list';
 		
@@ -149,9 +181,22 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_buckets()
 	{
+		if($this->owner)
+		{
+			$this->template->header->title = __('My Buckets');
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Buckets', array(
+				':name' =>  Text::limit_chars($this->visited_account->user->name)
+				)
+			);
+		}
+		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'buckets';
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
+		$this->sub_content->anonymous = $this->anonymous;
 		$this->active = 'buckets';
 		$this->template_type = 'list';
 		
@@ -191,6 +236,12 @@ class Controller_User extends Controller_Swiftriver {
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+		
+		if ( $this->anonymous )
+		{
+			// No anonymous allowed here
+			throw new HTTP_Exception_403();
+		}
 		
 		switch ($this->request->method())
 		{

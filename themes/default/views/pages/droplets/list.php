@@ -1,5 +1,5 @@
 <div id="droplet-list" class="trend-container cf">
-	<h2 class="null no-content"><?php echo __('Nothing to display yet.'); ?></h2>
+	<?php echo $nothing_to_display ?>
 </div>
 <div class="page_buttons cf" id="next_page_button">
     <p class="button-view"></p>
@@ -12,13 +12,19 @@
 				<div class="actions">
 					<span class="type"></span>
 					<p class="button-change score"><a class="<%=scores ? 'scored' : '' %>"><span><%= scores ? scores : 0 %></span></a><p>
-					<div class="clear"></div>					
-					 <ul class="dropdown left">
-						<!-- Show whether droplet has been scored before -->								
-						<p style="<%= user_score ? '': 'display:none;' %>"><?php echo __("You have scored this droplet before. Change your score below?"); ?></p>						
-					 	<li class="confirm" style="<%= parseInt(user_score) == 1 ? 'display:none;' : ''  %>"><a><?php echo  __("This is useful"); ?></a></li>
-					 	<li class="not_useful" style="<%= parseInt(user_score) == -1 ? 'display:none;' : ''  %>"><a><?php echo __("This is not useful"); ?></a></li>
-					 </ul>
+					<div class="clear"></div>
+					<?php if ( ! $anonymous): ?>
+						<ul class="dropdown left">
+						   <!-- Show whether droplet has been scored before -->								
+						   <p style="<%= user_score ? '': 'display:none;' %>"><?php echo __("You have scored this droplet before. Change your score below?"); ?></p>						
+							<li class="confirm" style="<%= parseInt(user_score) == 1 ? 'display:none;' : ''  %>"><a><?php echo  __("This is useful"); ?></a></li>
+							<li class="not_useful" style="<%= parseInt(user_score) == -1 ? 'display:none;' : ''  %>"><a><?php echo __("This is not useful"); ?></a></li>
+						</ul>
+					<?php else: ?>
+						<ul class="dropdown left">
+						   <p><?php echo __("You need to :login to score droplets", array(':login' => HTML::anchor(URL::site('login'), __('log in')))); ?></p>
+						</ul>
+					<?php endif; ?>
 				</div>
 		</section>
 		<section class="content">
@@ -40,20 +46,26 @@
 						<h3><?php echo __("Add to Bucket"); ?></h3>
 						<ul></ul>
 					</div>
-					<div class="container">
-						<p class="create-new">
-							<a class="plus"><?php echo __("Create new bucket"); ?></a>
-							<div class="loading"></div>
-							<div class="system_error" style="display:none"></div>
-							<div class="create-name">
-								<input id="new-bucket-name" maxlength="25" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
-								<div class="buttons">
-									<button class="save"><?php echo __("Save"); ?></button>
-									<button class="cancel"><?php echo __("Cancel"); ?></button>
+					<?php if ( ! $anonymous): ?>
+						<div class="container">
+							<p class="create-new">
+								<a class="plus"><?php echo __("Create new bucket"); ?></a>
+								<div class="loading"></div>
+								<div class="system_error" style="display:none"></div>
+								<div class="create-name">
+									<input id="new-bucket-name" maxlength="25" type="text" value="" name="bucket_name" placeholder="<?php echo __("Name your new bucket"); ?>">
+									<div class="buttons">
+										<button class="save"><?php echo __("Save"); ?></button>
+										<button class="cancel"><?php echo __("Cancel"); ?></button>
+									</div>
 								</div>
-							</div>
-						</p>
-					</div>
+							</p>
+						</div>
+					<?php else: ?>
+						<div class="container">
+							<p><?php echo __("You need to :login to add a drop to a bucket", array(':login' => HTML::anchor(URL::site('login'), __('log in')))); ?></p>
+						</div>
+					<?php endif; ?>
 				</div>
 			</div>
 		</section>
@@ -140,17 +152,19 @@
 					</hgroup>
 					<div class="loading"></div>
 					<div class="system_error" style="display:none"></div>
-					<article class="item add-reply">
-						<div class="summary cf">
-							<section class="source">
-								<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 45); ?>"></a>
-							</section>
-							<section class="content">
-								<textarea rows="8" cols="60"></textarea>
-								<p class="button-go"><a><?php echo __("Add Comment"); ?></a></p>
-							</section>
-						</div>
-					</article>
+					<?php if ($owner): ?>
+						<article class="item add-reply">
+							<div class="summary cf">
+								<section class="source">
+									<a><img src="<?php echo Swiftriver_Users::gravatar($user->email, 45); ?>"></a>
+								</section>
+									<section class="content">
+										<textarea rows="8" cols="60"></textarea>
+										<p class="button-go"><a><?php echo __("Add Comment"); ?></a></p>
+									</section>
+							</div>
+						</article>
+					<?php endif; ?>
 				</section>
 				
 			</div>

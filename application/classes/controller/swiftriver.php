@@ -81,7 +81,15 @@ class Controller_Swiftriver extends Controller_Template {
 	 * Cache instance
 	 * @var Cache
 	 */
-	protected static $cache = NULL;
+	protected $cache = NULL;
+	
+	
+	/**
+	 * Boolean indicating whether the logged in user is the default user
+	 * @var boolean
+	 */
+	protected $anonymous = FALSE;
+	
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -90,7 +98,21 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function login_required()
 	{
-		Request::current()->redirect('login');
+		// If anonymous access is enabled, log in the public user otherwise
+		// present the login form
+		if ( (bool) Model_Setting::get_setting('anonymous_access_enabled'))
+		{
+			$user_orm = ORM::factory('user', array('username' => 'public'));
+			if ($user_orm->loaded()) 
+			{
+				Auth::instance()->force_login($user_orm);
+				return;
+			}
+		}
+		
+		$uri = $this->request->url(TRUE);
+		$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+		Request::current()->redirect('login'.$query);
 	}
 
 	/**
@@ -125,9 +147,17 @@ class Controller_Swiftriver extends Controller_Template {
 		// Execute parent::before first
 		parent::before();
 
-		if ( ! self::$cache)
+		if ( ! $this->cache)
 		{
-			self::$cache = Cache::instance('apc');
+			try
+			{
+				$this->cache = Cache::instance('apc');
+			}
+			catch (Cache_Exception $e)
+			{
+				// Do nothing, just log it
+				Kohana::$log->add(Log::ERROR, __('Cache not available'));
+			}
 		}
 		
 		// Open session
@@ -149,6 +179,18 @@ class Controller_Swiftriver extends Controller_Template {
 				throw new HTTP_Exception_403();
 			}
 		}
+		
+		// In case anonymous setting changed and user had a session,
+		// log out 
+		if (
+				Auth::instance()->logged_in() AND 
+				Auth::instance()->get_user()->username == 'public' AND 
+				! (bool) Model_Setting::get_setting('anonymous_access_enabled')
+			)
+		{
+			Auth::instance()->logout();
+		}
+		
 		
 		//if we're not logged in, gives us chance to auto login
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
@@ -182,6 +224,13 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// Logged In User
 		$this->user = Auth::instance()->get_user();
+		
+				
+		// Is anonymous logged in?
+		if ($this->user->username == 'public')
+		{
+			$this->anonymous = TRUE;
+		}
 		
 		// Is this user an admin?
 		if ($this->user->has('roles',ORM::factory('role',array('name'=>'admin'))))
@@ -239,6 +288,8 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header = View::factory('template/header');
 			$this->template->header->user = $this->user;
 			$this->template->header->js = ''; // Dynamic Javascript
+			$this->template->header->site_name = Model_Setting::get_setting('site_name');
+			$this->template->header->bucket_list = json_encode($this->user->get_buckets_array());
 			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header');
@@ -248,6 +299,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->nav_header->admin = $this->admin;
 			$this->template->header->nav_header->account = $this->account;
 			$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
+			$this->template->header->nav_header->anonymous = $this->anonymous;
 			
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');

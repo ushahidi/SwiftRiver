@@ -53,7 +53,7 @@ Restart Apache:
 Debian/Ubuntu/Linux Mint Installation
 -------------------------------------
 
-        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc
+        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php-apc
 
 Restart Apache:
 

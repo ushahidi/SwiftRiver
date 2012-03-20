@@ -15,23 +15,25 @@
 			</div>
 		</div>
 
-		<div class="row cf">
-			<h2><?php echo __("Access to the River"); ?></h2>
-			<div class="input">
-				<p class="checkbox">
-					<label>
-						<input type="radio" name="river_public" value="1" checked="checked">
-						<?php echo __("Public (Anyone)"); ?>
-					</label>
-				</p>
-				<p class="checkbox">
-					<label>
-						<input type="radio" name="river_public" value="0">
-						<?php echo __("Private (Only People I specifiy)"); ?>
-					</label>
-				</p>
-			</div>
-		</div>
+			<?php if ( ! $river->account->user->username == 'public'): ?>
+				<div class="row cf">
+					<h2><?php echo __("Access to the River"); ?></h2>
+					<div class="input">
+						<p class="checkbox">
+							<label>
+								<input type="radio" name="river_public" value="1" checked="checked">
+								<?php echo __("Public (Anyone)"); ?>
+							</label>
+						</p>
+						<p class="checkbox">
+							<label>
+								<input type="radio" name="river_public" value="0">
+								<?php echo __("Private (Only People I specifiy)"); ?>
+							</label>
+						</p>
+					</div>
+				</div>
+			<?php endif; ?>
 		<?php endif; ?>
 
 		<div class="row cf">
@@ -42,25 +44,27 @@
 			</div>
 		</div>
 		
-		<div class="row cf">
-			<!-- collaborators -->
-			<?php echo $collaborators_control; ?>
-			<!-- /collaborators -->
-
-			<!-- buttons -->
-			<div class="row controls-buttons cf">
-				<section class="item actions">
-					<p class="button-delete"><a><?php echo __("Delete River"); ?></a></p>
-					<div class="clear"></div>
-					<ul class="dropdown">
-						<p><?php echo __("Are you sure you want to delete this River?"); ?></p>
-						<li class="confirm"><a><?php echo __("Yep"); ?></a></li>
-						<li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
-					</ul>
-				</section>
+		<?php if ( ! $river->account->user->username == 'public'): ?>
+			<div class="row cf">
+				<!-- collaborators -->
+				<?php echo $collaborators_control; ?>
+				<!-- /collaborators -->
+        	
+				<!-- buttons -->
+				<div class="row controls-buttons cf">
+					<section class="item actions">
+						<p class="button-delete"><a><?php echo __("Delete River"); ?></a></p>
+						<div class="clear"></div>
+						<ul class="dropdown">
+							<p><?php echo __("Are you sure you want to delete this River?"); ?></p>
+							<li class="confirm"><a><?php echo __("Yep"); ?></a></li>
+							<li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
+						</ul>
+					</section>
+				</div>
+				<!-- /buttons -->
 			</div>
-			<!-- /buttons -->
-		</div>
+		<?php endif; ?>
 	</div>
 </div>
 
