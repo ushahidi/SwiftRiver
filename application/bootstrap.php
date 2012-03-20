@@ -96,6 +96,8 @@ Kohana::modules(array(
 	'image'        => MODPATH.'image',      // Image manipulation
 	'pagination'   => MODPATH.'pagination', // Pagination
 	'themes/default' => THEMEPATH.'default', // Themes
+
+	'K3-Cache_Redis' => MODPATH.'K3-Cache_Redis', // Redis Cache
 	));
 
 
