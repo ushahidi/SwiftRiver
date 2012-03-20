@@ -22,19 +22,19 @@ $(function(){
 			data: {new_email: email, invite: true},
 			complete: function(){
 				loading_msg.fadeOut().remove();
+				$("#invites button.save").fadeIn();
 				isPageFetching = false;
 			},
 			success: function(data) {
 				if(data.status == 'OK') {
 					flashMessage($("#invites div.system_success"), data.messages);
+					$("#invites input[name=new_email]").val("");
 				} else {
 					flashMessage($("#invites div.system_error"), data.errors);
-					$("#invites button.save").fadeIn();
 				}
 			},
 			error: function() {
 				flashMessage($("#invites div.system_error"), "<?php echo __('Oops, we are unable to register you at the moment. Try again later.'); ?>");
-				$("#invites div.form").fadeIn();
 			}
 		});
 	}
