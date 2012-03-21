@@ -38,11 +38,7 @@ class Model_User extends Model_Auth_User
 		'user_identities' => array(),
 		'account_collaborators' => array(),
 		'river_collaborators' => array(),
-		'bucket_collaborators' => array(
-			'model' => 'bucket',
-			'through' => 'bucket_collaborators',
-			'far_key' => 'bucket_id'
-			),
+		'bucket_collaborators' => array(),
 		'river_subscriptions' => array(
 			'model' => 'river',
 			'through' => 'river_subscriptions',
