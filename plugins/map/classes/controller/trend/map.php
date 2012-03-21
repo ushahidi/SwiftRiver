@@ -108,25 +108,40 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 			
 		 if ($id) 
 		 {
-			$query = DB::select('droplets.id', 'droplet_title', 
-								'droplet_content', 'droplets.channel',
-								'identity_name', 'identity_avatar', 
-								'droplet_date_pub', 
-								array(DB::expr('X(place_point)'), 'longitude'), 
-								array(DB::expr('Y(place_point)'), 'latitude'))
-				->from('droplets')
-				->join('rivers_droplets', 'INNER')
-				->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-				->join('identities')
-				->on('droplets.identity_id', '=', 'identities.id')
-				->join('droplets_places')
-				->on('droplets_places.droplet_id', '=', 'droplets.id')
-				->join('places')
-				->on('droplets_places.place_id', '=', 'places.id')
-				->where('rivers_droplets.river_id', '=', $id);
+		 	$cached = Cache::instance('redis')->get('river.trends');
+
+		 	if ( ! isset($cached[$id]))
+		 	{
+				$query = DB::select('droplets.id', 'droplet_title', 
+									'droplet_content', 'droplets.channel',
+									'identity_name', 'identity_avatar', 
+									'droplet_date_pub', 
+									array(DB::expr('X(place_point)'), 'longitude'), 
+									array(DB::expr('Y(place_point)'), 'latitude'))
+					->from('droplets')
+					->join('rivers_droplets', 'INNER')
+					->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+					->join('identities')
+					->on('droplets.identity_id', '=', 'identities.id')
+					->join('droplets_places')
+					->on('droplets_places.droplet_id', '=', 'droplets.id')
+					->join('places')
+					->on('droplets_places.place_id', '=', 'places.id')
+					->where('rivers_droplets.river_id', '=', $id);
+
+				// Get our droplets as an Array		
+				$droplets['droplets'] = $query->execute()->as_array();
+
+				// Set 5 minute Cache
+				Cache::instance('redis')->set('river.trends', array( $id => $droplets['droplets']), 300 );
+		 	}
+		 	else
+		 	{
+		 		//print_r($cached[$id]);
+		 		$droplets['droplets'] = $cached[$id];
+		 	}
 			 
-			 // Get our droplets as an Array		
-			$droplets['droplets'] = $query->execute()->as_array();
+			
 			$droplets['total'] = (int) count($droplets['droplets']);
 		 }
 		 
