@@ -385,6 +385,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/bucket/more_control')
+			->bind('bucket', $this->bucket);
+	}
+
+	/**
 	 * Ajax rendered discussion control box
 	 * 
 	 * @return	void

@@ -47,7 +47,7 @@ class Map_Init {
 	public function bucket_nav()
 	{
 		$bucket = Swiftriver_Event::$data;
-		$url = URL::site().$bucket->account->account_path.'/river/'.$bucket->bucket_name_url.'/trend/map';
+		$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/map';
 		echo '<li class="button-view"><a href="'.$url.'">'.__('Map').'</a></li>';
 	}
 	

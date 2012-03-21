@@ -55,7 +55,7 @@ class Chartsfx_Init {
 		$bucket = Swiftriver_Event::$data;
 		foreach ($this->charts as $key => $value)
 		{
-			$url = URL::site().$river->account->account_path.'/river/'.$bucket->bucket_name_url.'/trend/chartsfx/'.$key;
+			$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/chartsfx/'.$key;
 			echo '<li class="button-view"><a href="'.$url.'">'.$value.'</a></li>';
 		}
 	}
