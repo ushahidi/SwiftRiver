@@ -385,6 +385,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * Ajax rendered more control box
+	 * 
+	 * @return	void
+	 */
+	public function action_more()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+		echo View::factory('pages/bucket/more_control')
+			->bind('bucket', $this->bucket);
+	}
+
+	/**
 	 * Ajax rendered discussion control box
 	 * 
 	 * @return	void
@@ -557,6 +570,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 					if (isset($post['name_only']) AND $post['name_only'])
 					{
 						$this->bucket->bucket_name = $post['bucket_name'];
+						$this->bucket->bucket_name_url = URL::title($post['bucket_name']);
 						$this->bucket->save();
 
 						// Modify the bucket base URL

@@ -1,60 +1,74 @@
 <div class="container list select data" id="river-bucket-list">
 	<h2 class="null"><?php echo "No $active to display"; ?></h2>
+	<article class="item cf" id="item-list-header">
+		<div class="list-header">
+			<div class="cell name"><?php echo $name_header; ?></div>
+			<div class="cell activity"><?php echo __("30 Day Droplet Flow"); ?></div>
+			<div class="cell count"><?php echo __("Drop Count"); ?></div>
+			<div class="cell subscribers"><?php echo __("Subscribers"); ?></div>
+			<div class="cell actions"></div>
+		</div>
+	</article>
 </div>
 
 <script type="text/template" id="profile-row-item-template">
-<div class="content">
-	<h1>
-		<% if (is_other_account) { %>
-			<a href="<%= item_owner_url %>"><%= account_path %></a> /&nbsp;
-		<% } %>
-
-		<a href="<%= item_url %>" class="title"><%= item_name %></a>
-	</h1>
-</div>
-<div class="summary">
-	<section class="actions">
-	    <?php if ( ! $anonymous): ?>
-	    	<% if ( ! is_owner ) { %>
-			    <% class_name = ""; %>			
-			    <div class="button">
-			    	<p class="button-change">
-						<a class="subscribe" onclick=""><span class="icon"></span>
-						<% if (subscribed) { %>
-							<span class="label"><?php echo __('Unsubscribe'); ?></span></a></p>
-						<% } else { %>
-							<span class="label"><?php echo __('Subscribe'); ?></span></a></p>
-						<% } %>
-			    	<div class="clear"></div>
-			    </div>
-			<% } else { %>
-				<div class="button delete-item">
-					<p class="button-change">
-						<a class="delete">
-							<span class="icon"></span>
-							<span class="nodisplay"><?php echo __('Delete '.ucfirst($active)); ?></span>
-						</a>
-					</p>
-					<div class="clear"></div>
-					<div class="dropdown container">
-						<p><?php echo __('Are you sure you want to delete this '.$active.'?'); ?></p>
-						<ul>
-							<li class="confirm">
-								<a><?php echo __('Yep.'); ?></a>
-							</li>
-							<li class="cancel"><a><?php echo __('No, nevermind.'); ?></a></li>
-						</ul>
-					</div>
-				</div>
+<div class="row">
+	<div class="cell name">
+		<h3>
+			<% var extraClass = item_public == 1 ? "" : "private"; %>
+			<span class="icon <%= extraClass %>"></span>
+			<% if (is_other_account) { %>
+				<a href="<%= item_owner_url %>"><%= account_path %></a> /&nbsp;
 			<% } %>
-		<?php endif; ?>
-	</section>
-	<section class="meta">
-		<p>
-			<a><strong><%= subscriber_count %></strong> <?php echo __('Subscribers'); ?></a>
-			<a><strong><%= drop_count %></strong> <?php echo __('Drops'); ?></a>
-		</p>
-	</section>
+
+			<a href="<%= item_url %>" class="title"><%= item_name %></a>
+		</h3>
+	</div>
+	<div class="cell activity"><span class="activity-chart"></span></div>
+	<div class="cell count">
+		<span class="count"><%= drop_count %></span>
+	</div>
+	<div class="cell subscribers">
+		<span class="count"><%= subscriber_count %></span>
+	</div>
+	<div class="cell actions">
+		<section class="actions">
+		    <?php if ( ! $anonymous): ?>
+		    	<% if ( ! is_owner ) { %>
+				    <% class_name = ""; %>			
+				    <div class="button">
+				    	<p class="button-change">
+							<a class="subscribe" onclick=""><span class="icon"></span>
+							<% if (subscribed) { %>
+								<span class="label"><?php echo __('Unsubscribe'); ?></span></a></p>
+							<% } else { %>
+								<span class="label"><?php echo __('Subscribe'); ?></span></a></p>
+							<% } %>
+				    	<div class="clear"></div>
+				    </div>
+				<% } else { %>
+					<div class="button delete-item">
+						<p class="button-change">
+							<a class="delete">
+								<span class="icon"></span>
+								<span class="nodisplay"><?php echo __('Delete '.ucfirst($active)); ?></span>
+							</a>
+						</p>
+						<div class="clear"></div>
+						<div class="dropdown container">
+							<p><?php echo __('Are you sure you want to delete this '.$active.'?'); ?></p>
+							<ul>
+								<li class="confirm">
+									<a><?php echo __('Yep.'); ?></a>
+								</li>
+								<li class="cancel"><a><?php echo __('No, nevermind.'); ?></a></li>
+							</ul>
+						</div>
+					</div>
+				<% } %>
+			<?php endif; ?>
+		</section>
+	</div>
 </div>
 </script>
 
@@ -129,12 +143,21 @@ $(function() {
 		addItem: function (item) {
 			var view = new RiverBucketItemView({model: item});
 			this.$el.append(view.render().el);
+
+			// Show the activity
+			if (typeof item.get("activity_data") != "undefined") {
+				activityData = item.get("activity_data");
+				view.$("span.activity-chart").sparkline(activityData, 
+					{type: 'bar', barColor: '#888', barWidth: 5});
+			}
 		},
 		
 		addItems: function() {
-			this.items.each(this.addItem, this);
 			if (this.items.length) {
 				this.$("h2.null").hide();
+				this.items.each(this.addItem, this);
+			} else {
+				this.$("article#item-list-header").hide();
 			}
 		},
          

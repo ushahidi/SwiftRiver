@@ -96,6 +96,8 @@ Kohana::modules(array(
 	'image'        => MODPATH.'image',      // Image manipulation
 	'pagination'   => MODPATH.'pagination', // Pagination
 	'themes/default' => THEMEPATH.'default', // Themes
+
+	'K3-Cache_Redis' => MODPATH.'K3-Cache_Redis', // Redis Cache
 	));
 
 
@@ -194,16 +196,6 @@ Route::set('api', 'api(/<controller>)')
 		'action'     => 'api'
 	));	
 	
-
-/**
- * CSRF Route
- */
-Route::set('csrf', 'csrf(/<action>)')
-    ->defaults(array(
-    	'controller' => 'csrf',
-    	'action' => 'generate_token'
-    ));	
-
 /**
  * Swiftriver Media Router (JS/CSS)
  */	

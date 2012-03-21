@@ -14,9 +14,13 @@ class SwiftMQ_Init {
 
 	public function __construct() 
 	{
-		// Validate the channel option data before it's saved to the DB
-		Swiftriver_Event::add('swiftriver.channel.option.post_save', array($this, 'publish_new_channel_option'));
-		Swiftriver_Event::add('swiftriver.channel.option.pre_delete', array($this, 'publish_delete_channel_option'));
+		// After a new channel option has been added to the DB
+		Swiftriver_Event::add('swiftriver.channel.option.post_save', 
+		    array($this, 'publish_new_channel_option'));
+		
+		// Before the channel option is deleted from the DB
+		Swiftriver_Event::add('swiftriver.channel.option.pre_delete',
+		    array($this, 'publish_delete_channel_option'));
 		
 		$this->mq_host = Kohana::$config->load('mq.mq_host');
 	}
@@ -37,7 +41,8 @@ class SwiftMQ_Init {
 			'value' => $channel_option->value
 		);
 		
-		Kohana::$log->add(Log::DEBUG, "New channel option :message", array(':message' => var_export($message, true)));
+		Kohana::$log->add(Log::DEBUG, "New channel option :message", 
+			array(':message' => var_export($message, true)));
 		
 		try
 		{
@@ -68,7 +73,7 @@ class SwiftMQ_Init {
 	{
 		// Get the event data
 		$channel_option = & Swiftriver_Event::$data;
-		
+
 		$message = array(
 			'channel' => $channel_option->channel_filter->channel,
 			'river_id' => $channel_option->channel_filter->river->id,
@@ -76,7 +81,8 @@ class SwiftMQ_Init {
 			'value' => $channel_option->value
 		);
 		
-		Kohana::$log->add(Log::DEBUG, "New channel option :message", array(':message' => var_export($message, true)));
+		Kohana::$log->add(Log::DEBUG, 
+			"Deleting channel option :message", array(':message' => var_export($message, TRUE)));
 		
 		try
 		{

@@ -143,6 +143,7 @@ class Controller_User extends Controller_Swiftriver {
 		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'rivers';
+		$this->sub_content->name_header = __("River Name");
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
 		$this->sub_content->anonymous = $this->anonymous;
 		$this->active = 'rivers';
@@ -158,11 +159,13 @@ class Controller_User extends Controller_Swiftriver {
 			$rivers = $this->user->get_other_user_visible_rivers($this->visited_account->user->id);
 		}
 		$list_items = array();
-		foreach ($rivers as $river) {
+		foreach ($rivers as $river)
+		{
 			$list_items[] = array(
 					"id" => $river->id,
 					"type" => "river",					
 					"item_name" => $river->river_name,
+					"item_public" => $river->river_public,
 					"item_url" => URL::site().$river->account->account_path.'/river/'.$river->river_name_url,
 					"item_owner_url" => URL::site().$river->account->account_path,
 					"account_path" => $river->account->account_path,
@@ -170,7 +173,8 @@ class Controller_User extends Controller_Swiftriver {
 					"subscriber_count" => number_format($river->subscriptions->count_all()),
 					"is_owner" => $river->is_owner($this->user->id),
 					"is_other_account" => $river->account->id != $this->user->account->id && $this->owner,
-					"drop_count" => number_format($river->droplets->count_all())
+					"drop_count" => number_format($river->droplets->count_all()),
+					"activity_data" => $river->get_droplet_activity()
 				);
 		}		
 		$this->sub_content->list_items = json_encode($list_items);		
@@ -181,7 +185,7 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_buckets()
 	{
-		if($this->owner)
+		if ($this->owner)
 		{
 			$this->template->header->title = __('My Buckets');
 		}
@@ -195,6 +199,7 @@ class Controller_User extends Controller_Swiftriver {
 		
 		$this->sub_content = View::factory('pages/user/rivers_buckets');
 		$this->sub_content->active = 'buckets';
+		$this->sub_content->name_header = __("Bucket Name");
 		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
 		$this->sub_content->anonymous = $this->anonymous;
 		$this->active = 'buckets';
@@ -209,12 +214,15 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			$buckets = $this->user->get_other_user_visible_buckets($this->visited_account->user->id);
 		}
+		
 		$list_items = array();
-		foreach ($buckets as $bucket) {
+		foreach ($buckets as $bucket)
+		{
 			$list_items[] = array(
 					"id" => $bucket->id,
 					"type" => "bucket",
 					"item_name" => $bucket->bucket_name,
+					"item_public" => $bucket->bucket_publish,
 					"item_url" => URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
 					"item_owner_url" => URL::site().$bucket->account->account_path,
 					"account_path" => $bucket->account->account_path,
@@ -222,9 +230,11 @@ class Controller_User extends Controller_Swiftriver {
 					"subscriber_count" => number_format($bucket->subscriptions->count_all()),
 					"is_owner" => $bucket->is_owner($this->user->id),
 					"is_other_account" => $bucket->account->id != $this->user->account->id && $this->owner,
-					"drop_count" => number_format($bucket->droplets->count_all())
+					"drop_count" => number_format($bucket->droplets->count_all()),
+					"activity_data" => $bucket->get_droplet_activity()
 				);
 		}
+
 		$this->sub_content->list_items = json_encode($list_items);
 	}
 	

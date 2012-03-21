@@ -233,16 +233,10 @@ class Controller_Swiftriver extends Controller_Template {
 		}
 		
 		// Is this user an admin?
-		if ($this->user->has('roles',ORM::factory('role',array('name'=>'admin'))))
-		{
-			$this->admin = TRUE;
-		} 
-		else
-		{
-		    $this->admin = FALSE;
-		}
+		$this->admin = $this->user->has('roles', 
+			ORM::factory('role',array('name'=>'admin')));
 		
-		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' and
+		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' AND
                       ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
 		{
 			$this->riverid_auth = TRUE;
@@ -253,7 +247,7 @@ class Controller_Swiftriver extends Controller_Template {
 			->where('user_id', '=', $this->user->id)
 			->find();
 			
-		if ( ! $this->account->loaded() && $this->request->uri() != 'register')
+		if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
 		{
 			// Make the user create an account
 			Request::current()->redirect('register');
