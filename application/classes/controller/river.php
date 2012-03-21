@@ -64,14 +64,14 @@ class Controller_River extends Controller_Swiftriver {
 		// Action involves a specific river, check permissions
 		if ($river_name_url)
 		{
-			if (! $this->river->loaded())
+			if ( ! $this->river->loaded())
 			{
 				// Redirect to the dashboard
 				$this->request->redirect($this->dashboard_url);
 			}
 					
 			// Is the logged in user an owner
-			if ( $this->river->is_owner($this->user->id)) 
+			if ($this->river->is_owner($this->user->id)) 
 			{
 				$this->owner = TRUE;
 			}
@@ -857,6 +857,7 @@ class Controller_River extends Controller_Swiftriver {
 					if (isset($post['name_only']) AND $post['name_only'])
 					{
 						$this->river->river_name = $post['river_name'];
+						$this->river->river_name_url = URL::title($post['river_name']);
 						$this->river->save();
 
 						// Build out the new base URL for the river

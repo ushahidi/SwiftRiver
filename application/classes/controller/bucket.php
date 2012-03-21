@@ -557,6 +557,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 					if (isset($post['name_only']) AND $post['name_only'])
 					{
 						$this->bucket->bucket_name = $post['bucket_name'];
+						$this->bucket->bucket_name_url = URL::title($post['bucket_name']);
 						$this->bucket->save();
 
 						// Modify the bucket base URL
