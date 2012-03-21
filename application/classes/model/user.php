@@ -38,7 +38,11 @@ class Model_User extends Model_Auth_User
 		'user_identities' => array(),
 		'account_collaborators' => array(),
 		'river_collaborators' => array(),
-		'bucket_collaborators' => array(),
+		'bucket_collaborators' => array(
+			'model' => 'bucket',
+			'through' => 'bucket_collaborators',
+			'far_key' => 'bucket_id'
+			),
 		'river_subscriptions' => array(
 			'model' => 'river',
 			'through' => 'river_subscriptions',
@@ -139,7 +143,7 @@ class Model_User extends Model_Auth_User
 	{
 		$other_user_orm = ORM::factory('user', $other_user_id);
 		
-		if (!$other_user_orm->loaded())
+		if ( ! $other_user_orm->loaded())
 		{
 			return array();
 		}
@@ -149,7 +153,8 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->rivers->find_all() as $river)
 		{
-			if($river->river_public OR $river->is_owner($this->id)) {
+			if ($river->river_public OR $river->is_owner($this->id))
+			{
 				$rivers[] = $river;
 			}
 		}
@@ -168,7 +173,7 @@ class Model_User extends Model_Auth_User
 	{
 		$other_user_orm = ORM::factory('user', $other_user_id);
 		
-		if (!$other_user_orm->loaded())
+		if ( ! $other_user_orm->loaded())
 		{
 			return array();
 		}
@@ -178,7 +183,8 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->buckets->find_all() as $bucket)
 		{
-			if($bucket->bucket_publish OR $bucket->is_owner($this->id)) {
+			if ($bucket->bucket_publish OR $bucket->is_owner($this->id))
+			{
 				$buckets[] = $bucket;
 			}
 		}
@@ -237,15 +243,24 @@ class Model_User extends Model_Auth_User
 		$ret = array();
 		
 		// First rivers belonging to this user's account
-		$ret = array_merge($ret, $this->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
+		$ret = array_merge($ret, 
+			$this->account->rivers->order_by('river_name', 'ASC')
+			    ->find_all()->as_array()
+		);
 		
 		// Next the rivers belonging to an account this user is collaborating on
 		$account_collaborations = $this->account_collaborators
 		                               ->where("collaborator_active", "=", 1)
 		                               ->find_all();
+		
 		foreach ($account_collaborations as $collabo)
 		{
-			$ret = array_merge($ret, $collabo->account->rivers->order_by('river_name', 'ASC')->find_all()->as_array());
+			$ret = array_merge($ret, 
+				$collabo->account
+				    ->rivers
+				    ->order_by('river_name', 'ASC')
+				    ->find_all()->as_array()
+			);
 		}
 		
 		// Add individual rivers this user is collaborating on
@@ -259,7 +274,11 @@ class Model_User extends Model_Auth_User
 		}
 		
 		// Finally, the rivers the user has subscribed to
-		$ret = array_merge($ret, $this->river_subscriptions->order_by('river_name', 'ASC')->find_all()->as_array());
+		$ret = array_merge($ret, 
+			$this->river_subscriptions
+			    ->order_by('river_name', 'ASC')
+			    ->find_all()->as_array()
+		);
 		
 		return array_unique($ret);
 	}

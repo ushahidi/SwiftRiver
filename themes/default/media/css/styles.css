@@ -1707,7 +1707,8 @@ article.item .summary .content .button li a:hover {
   background: #cecece;
 }
 /* --- ITEM: ACTIONS ---*/
-article.item .summary section.actions p.button-view a, article.item .summary section.actions p.button-change a {
+article.item .summary section.actions p.button-view a, 
+article.item .summary section.actions p.button-change a {
   font-size: 0.8em;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -1740,7 +1741,8 @@ article.item .summary section.two_buttons p.button-change a {
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25) inset;
   background: #c2c2c2;
 }
-article.item .summary section.actions p.button-change a.selected, article.item .summary section.actions p.button-change a.subscribed {
+article.item .summary section.actions p.button-change a.selected, 
+article.item .summary section.actions p.button-change a.subscribed {
   color: #acacac;
   border: 1px solid transparent;
   border-top: none;
@@ -1756,11 +1758,13 @@ article.item .summary section.actions p.active a {
 article.item .summary section.actions.two_buttons p.active a {
   border-top: none;
 }
-article.item .summary section.actions p a > span.icon {
+article.item .summary section.actions p a > span.icon,
+article.item .cell section.actions p a > span.icon {
   display: block;
   height: 22px;
 }
-article.item .summary section.actions p.button-change a span.icon {
+article.item .summary section.actions p.button-change a span.icon, 
+article.item .cell section.actions p.button-change a span.icon {
   height: 18px;
   background-position: center -68px;
 }
@@ -1771,21 +1775,24 @@ article.list .page-title section.actions p.button-change a.subscribe {
   font-size: 0.8em;
   padding: 5px;
 }
-article.item .summary section.actions p.button-change a.subscribe span.icon, article.list .page-title section.actions p.button-change a.subscribe span.icon {
+article.item .summary section.actions p.button-change a.subscribe span.icon, 
+article.list .page-title section.actions p.button-change a.subscribe span.icon {
   width: 14px;
   height: 20px;
   background-position: center -288px;
   margin: 0 auto;
 }
-article.item .summary section.actions p.button-change a.delete span.icon {
+article.item .summary section.actions p.button-change a.delete span.icon, 
+article.item .cell section.actions p.button-change a.delete span.icon {
   width: 14px;
   height: 20px;
   background-position: center -374px;
 }
-article.item .summary section.actions p.active a.delete span.icon {
+article.item .summary section.actions p.active a.delete span.icon,
+article.item .cell section.actions p.active a.delete span.icon {
   background-position: center -396px;
 }
-article.item .summary section.actions p.follow_user a span.icon {
+article.item .summary section.actions p.follow_user a span.icon,  {
   display: block;
   height: 27px;
   background-position: center top;
@@ -1828,7 +1835,9 @@ article.item .summary section.actions div.dropdown div.create-name {
   width: 79.16666667%;
   padding: 0;
 }
-.list .select article.item .summary .content section.source, .list .select article.item .summary .content hgroup, .list .select article.item .summary .content .body {
+.list .select article.item .summary .content section.source, 
+.list .select article.item .summary .content hgroup, 
+.list .select article.item .summary .content .body {
   padding: 0 1.234567901%;
 }
 .list .select article.item .summary .content section.source {
@@ -1892,7 +1901,8 @@ article.item .summary section.actions div.dropdown div.create-name {
 .list .data article.item .summary section.meta {
   display: none;
 }
-.list .data article.item .summary section.meta p, .list .data article.item .summary section.meta p a {
+.list .data article.item .summary section.meta p, 
+.list .data article.item .summary section.meta p a {
   color: #888888;
   line-height: 1.8em;
 }
@@ -1908,7 +1918,8 @@ article.item .summary section.actions div.dropdown div.create-name {
   border: 1px solid #a2a2a2;
   background: #a2a2a2;
 }
-.list .data article.item .summary section.actions p a {
+.list .data article.item .summary section.actions p a, 
+.list .data article.item .cell section.actions p a {
   font-size: 11px;
   padding: 4px 10px;
   margin-left: 10px;
@@ -2907,4 +2918,46 @@ h3.push-up span {
   text-shadow: 0 0 10px #24abc8;
   text-transform: uppercase;
   filter: glow(color=#24abc8,strength=10), alpha(opacity=70);
+}
+
+.list .cell {
+  display: table-cell;
+  vertical-align: middle;
+}
+.list .list-header .cell {
+  text-transform: uppercase;
+  font-size: 80%;
+  font-weight: bold;
+  padding: 15px 0 8px 0;
+}
+.list .row section.actions { float: none; }
+
+.list .list-header .cell.name, .list .row .cell.name {
+  padding-left: 40px;
+  width: 400px;
+}
+.list .list-header .cell.count, .list .row .cell.count {
+  width: 150px;
+}
+.list .list-header .cell.activity, .list .row .cell.activity {
+  width: 330px;
+}
+.list .list-header .cell.subscribers, .list .row .cell.subscribers {
+  width: 150px;
+}
+.list .list-header .cell.actions, .list .row .cell.actions {
+  width: 100px;
+}
+.list .row .cell.actions section.actions { float: left;} 
+.list .row .cell.name .icon.private {
+  width: 30px;
+  height: 22px;
+  background-position: center -442px;
+  display: inline-block;
+  position: relative;
+  top: 5px;
+}
+.list .row .cell .count {
+  font-weight: bold;
+  font-size: 1.3em;
 }
