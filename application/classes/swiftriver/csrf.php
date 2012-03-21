@@ -25,13 +25,14 @@ class Swiftriver_CSRF {
 	 * Generates an returns a randon token for CSRF
 	 * prevention
 	 *
+	 * @param bool $replace Whether to replace the current CSRF token
 	 * @return string
 	 */	
-	public static function token()
+	public static function token($replace = FALSE)
 	{
 		$token = Session::instance()->get(self::$_csrf_session_key);
 
-		if ( ! $token)
+		if ( ! $token OR $replace)
 		{
 			// Generates a hash of variable length random alpha-numeric string
 			$token = hash('sha256', Text::random('alnum', rand(25, 32)));
@@ -56,30 +57,6 @@ class Swiftriver_CSRF {
 		return $token == $current_token;
 	}
 
-	/**
-	 * Generates and returns Javascript code snippet for
-	 * obtaining a CSRF token from the server. Requires jQuery.
-	 *
-	 * @return string
-	 */
-	public static function javascript()
-	{
-		// JS snippet to get token
-		$js = '<script type="text/javascript">'
-		    . 'function getCSRFToken() {'
-		    . ' var token = null;'
-		    . ' $.ajax({'
-		    . '	    url: "'.URL::site('csrf/generate_token').'",'
-		    . '	    async: false,'
-		    . '     success: function(json){ token = json.token; },'
-		    . '     dataType: "json"'
-		    . ' });'
-		    . ' return token;'
-		    . '}'
-		    . '</script>';
-
-		return $js;
-	}
 }
 
 ?>
