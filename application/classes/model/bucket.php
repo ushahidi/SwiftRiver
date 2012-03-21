@@ -72,7 +72,7 @@ class Model_Bucket extends ORM {
 	
 	
 	/**
-	 * Overload saving to perform additional functions on the bucket
+	 * Override saving to perform additional functions on the bucket
 	 */
 	public function save(Validation $validation = NULL)
 	{
@@ -92,6 +92,26 @@ class Model_Bucket extends ORM {
 		Swiftriver_Event::run('swiftriver.bucket.save', $bucket);
 
 		return $bucket;
+	}
+
+	/**
+	 * Override default delete behaviour to delete subscriptions
+	 * and bucket droplets before deleting the bucket entry
+	 * from the DB
+	 */
+	public function delete()
+	{
+		// Delete the bucket's droplets
+		DB::delete('buckets_droplets')
+		   ->where('bucket_id', '=', $this->id)
+		   ->execute();
+
+		// Remove the subscriptions
+		DB::delete('bucket_subscriptions')
+		    ->where('bucket_id', '=', $this->id)
+		    ->execute();
+
+		parent::delete();
 	}
 	
 	/**
@@ -368,6 +388,50 @@ class Model_Bucket extends ORM {
 	public function get_subscriber_count()
 	{
 		return $this->subscriptions->count_all();
+	}
+
+	/**
+	 * Gets the total no. of droplets added to a bucket in each of the last x days
+	 * where x is a variable parameter but has a seed value of 30
+	 *
+	 * @param int $interval
+	 * @return array
+	 */
+	public function get_droplet_activity($interval = 30)
+	{
+		// Get the interval
+		$interval = (empty($interval) AND intval($interval) > 0) 
+		    ? 30 
+		    : intval($interval);
+
+		// Date arithmetic
+		$minus_str = sprintf('-%d day', $interval);
+		$start_date = date('Y-m-d H:i:s', strtotime($minus_str, time()));
+
+		// Query to fetch the data
+		$query = DB::select(array(DB::expr('DATE_FORMAT(bd.droplet_date_added, "%Y-%m-%d")'), 'droplet_date'),
+			array(DB::expr('COUNT(bd.droplet_id)'), 'droplet_count'))
+		    ->from(array('droplets', 'd'))
+		    ->join(array('buckets_droplets', 'bd'), 'INNER')
+		    ->on('bd.droplet_id', '=', 'd.id')
+		    ->join(array('buckets', 'b'), 'INNER')
+		    ->on('bd.bucket_id', '=', 'b.id')
+		    ->where('bd.bucket_id', '=', $this->id)
+		    ->where('bd.droplet_date_added', '>=', $start_date)
+		    ->group_by('droplet_date')
+		    ->order_by('droplet_date', 'ASC');
+
+		// Execute the query and return a row of data
+		$rows = $query->execute()->as_array();
+
+		$activity = array();
+		foreach ($rows as $row)
+		{
+			$activity[] = $row['droplet_count'];
+		}
+
+		// Return
+		return $activity;
 	}
 
 }

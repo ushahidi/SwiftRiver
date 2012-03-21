@@ -50,10 +50,42 @@ class Model_Channel_Filter extends ORM {
 		}
 		else
 		{
+			// Get the channel filter options 
+			$channel_options = $this->channel_filter_options->find_all();
+
+			// Determine the event to run against the channel filter options
+			// NOTE: This is a bit ghetto
+			$event_name = ($this->filter_enabled == 0)
+			    ? "swiftriver.channel.option.pre_delete"
+			    : "swiftriver.channel.option.post_save";
+
+			foreach ($channel_options as $option)
+			{
+				// Run the event
+				Swiftriver_Event::run($event_name, $option);
+			}
+			
+			// Set the date modified
 			$this->filter_date_modified = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();
+	}
+
+	/**
+	 * Overrides the default behaviour to perform
+	 * extra tasks before removing the channel filter
+	 * entry 
+	 */
+	public function delete()
+	{
+		// Delete the channel filter options
+		DB::delete('channel_filter_options')
+		    ->where('channel_filter_id', '=', $this->id)
+		    ->execute();
+
+		// Default
+		parent::delete();
 	}
 
 	/**

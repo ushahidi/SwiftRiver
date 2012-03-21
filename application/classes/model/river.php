@@ -76,7 +76,7 @@ class Model_River extends ORM {
 	
 
 	/**
-	 * Overload saving to perform additional functions on the river
+	 * Override saving to perform additional functions on the river
 	 */
 	public function save(Validation $validation = NULL)
 	{
@@ -103,6 +103,59 @@ class Model_River extends ORM {
 		Swiftriver_Event::run('swiftriver.river.save', $river);
 
 		return $river;
+	}
+
+	/**
+	 * Override the default behaviour to perform
+	 * extra tasks before proceeding with the 
+	 * deleting the river entry from the DB
+	 */
+	public function delete()
+	{
+		// Get all the channel filter options
+		$channel_options = ORM::factory('channel_filter_option')
+		    ->where('channel_filter_id', 'IN', 
+		        DB::select('id')
+		            ->from('channel_filters')
+		            ->where('river_id', '=', $this->id)
+		        )
+		    ->find_all();
+
+		foreach ($channel_options as $option)
+		{
+			// Execute pre-delete events
+			Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $option);
+		}
+
+		// Free the result from memory
+		unset ($channel_options);
+
+		// Delete the channel filter options
+		DB::delete('channel_filter_options')
+		    ->where('channel_filter_id', 'IN', 
+		        DB::select('id')
+		            ->from('channel_filters')
+		            ->where('river_id', '=', $this->id)
+		        )
+		    ->execute();
+
+		// Delete the channel options
+		DB::delete('channel_filters')
+		    ->where('river_id', '=', $this->id)
+		    ->execute();
+
+		// Delete associated droplets
+		DB::delete('rivers_droplets')
+		    ->where('river_id', '=', $this->id)
+		    ->execute();
+
+		// Delete the subscriptions
+		DB::delete('river_subscriptions')
+		    ->where('river_id', '=', $this->id)
+		    ->execute();
+
+		// Proceed with default behaviour
+		parent::delete();
 	}
 	
 	/**
@@ -702,7 +755,52 @@ class Model_River extends ORM {
 		 }
 		// END filters check
 	}
-	
+
+	/**
+	 * Gets the number of drops added to the river in the last x days.
+	 * The drops are grouped per date
+	 *
+	 * @param int $interval How far back (in days) to get the activity
+	 * @return array
+	 */
+	public function get_droplet_activity($interval = 30)
+	{
+		// Get the interval
+		$interval = (empty($interval) AND intval($interval) > 0) 
+		    ? 30 
+		    : intval($interval);
+
+		// Date arithmetic
+		$minus_str = sprintf('-%d day', $interval);
+		$start_date = date('Y-m-d H:i:s', strtotime($minus_str, time()));
+
+		// Query to fetch the data
+		$query = DB::select(array(DB::expr('DATE_FORMAT(d.droplet_date_add, "%Y-%m-%d")'), 'droplet_date'),
+			array(DB::expr('COUNT(rd.droplet_id)'), 'droplet_count'))
+		    ->from(array('droplets', 'd'))
+		    ->join(array('rivers_droplets', 'rd'), 'INNER')
+		    ->on('rd.droplet_id', '=', 'd.id')
+		    ->join(array('rivers', 'r'), 'INNER')
+		    ->on('rd.river_id', '=', 'r.id')
+		    ->where('rd.river_id', '=', $this->id)
+		    ->where('d.droplet_date_add', '>=', $start_date)
+		    ->group_by('droplet_date')
+		    ->order_by('droplet_date', 'ASC');
+
+		// Execute the query and return a row of data
+		$rows = $query->execute()->as_array();
+
+		$activity = array();
+		foreach ($rows as $row)
+		{
+			$activity[] = $row['droplet_count'];
+		}
+
+		// Return
+		return $activity;
+
+	}
+
 }
 
 ?>
