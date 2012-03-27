@@ -50,12 +50,6 @@
 	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
 	
-	<script type="text/javascript">
-		$(function() {
-			// Bootstrap the bucket list
-			bucketList.reset(<?php echo $bucket_list; ?>);
-		});
-	</script>
 </head> 
  
 <body> 

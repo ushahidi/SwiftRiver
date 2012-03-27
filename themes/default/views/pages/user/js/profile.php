@@ -44,13 +44,40 @@
 
 	// Models
 	var RiverItem = Backbone.Model.extend({
-		toggleSubscribe: function() {
+		toggleSubscribe: function(target, view) {
+			this.save({subscribed: this.get("subscribed") ? 0 : 1}, {
+				wait: true,
+				success: function(model, response) {
+					if ($(target).hasClass("selected")) {
+						<?php if ($dashboard_view): ?>
+							view.$el.hide();
+						<?php else: ?>
+							$(target).removeClass("selected");
+						<?php endif; ?>
+					} else {
+						$(target).addClass("selected");
+					}
+				}
+			});
 		}
 	});
 
 	var BucketItem = Backbone.Model.extend({
-		toggleSubscribe: function() {
-
+		toggleSubscribe: function(target, view) {
+			this.save({subscribed: this.get("subscribed") ? 0 : 1}, {
+				wait: true,
+				success: function(model, response) {
+					if ($(target).hasClass("selected")) {
+						<?php  if ($dashboard_view): ?>
+							view.$el.hide();
+						<?php else: ?>
+							$(target).removeClass("selected");
+						<?php endif; ?>
+					} else {
+						$(target).addClass("selected");
+					}
+				}
+			});
 		}
 	});
 
@@ -80,7 +107,8 @@
 		},
 
 		toggleSubscription: function(e) {
-			// TODO - Toggle subscription
+			var parentEl = $(e.currentTarget).parent();
+			this.model.toggleSubscribe(parentEl, this);
 		},
 
 		render: function(event) {
@@ -107,7 +135,8 @@
 		},
 
 		toggleSubscription: function(e) {
-			// TODO - Toggle subscription
+			var parentEl = $(e.currentTarget).parent();
+			this.model.toggleSubscribe(parentEl, this);
 		},
 
 		render: function(event) {

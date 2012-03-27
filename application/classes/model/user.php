@@ -149,10 +149,12 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->rivers->find_all() as $river)
 		{
-			$subscribed = $river->is_owner($this->id) ? 1 : 0;
+			$subscribed = $river->is_owner($this->id) ? 0 : -1;
 			if ($river->river_public OR $river->is_owner($this->id))
 			{
 				$rivers[] = array(
+					'id' => $river->id,
+					'type' => 'river',
 					'river_name' => $river->river_name, 
 					'river_url' => $river->account->account_path.'/river/'.$river->river_name_url,
 					'subscribed' => $subscribed
@@ -184,10 +186,12 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->buckets->find_all() as $bucket)
 		{
-			$subscribed  = $bucket->is_owner($this->id) ? 1 : 0;
+			$subscribed  = $bucket->is_owner($this->id) ? 0 : -1;
 			if ($bucket->bucket_publish OR $bucket->is_owner($this->id))
 			{
 				$buckets[] = array(
+					'id' => $bucket->id,
+					'type' => 'bucket',
 					'bucket_name' => $bucket->bucket_name, 
 					'bucket_url' => $bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
 					'subscribed' => $subscribed
@@ -247,8 +251,9 @@ class Model_User extends Model_Auth_User
 	public function get_rivers() 
 	{
 		// Rivers collaborating on
-		$collaborating = DB::select('rc.river_id', DB::expr('"0" AS subscribed'),
-			'r.river_name', 
+		$collaborating = DB::select(array('rc.river_id', 'id'),
+			array(DB::expr('"river"'), 'type'),
+			DB::expr('"0" AS subscribed'), 'r.river_name', 
 			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
 		    ->from(array('river_collaborators', 'rc'))
 		    ->join(array('rivers', 'r'), 'INNER')
@@ -261,8 +266,9 @@ class Model_User extends Model_Auth_User
 
 
 		// Rivers subscribed to
-		$subscribed = DB::select('rs.river_id', DB::expr('"1" AS subscribed'), 
-			'r.river_name', 
+		$subscribed = DB::select(array('rs.river_id', 'id'), 
+			array(DB::expr('"river"'), 'type'),
+			DB::expr('"1" AS subscribed'), 'r.river_name', 
 			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
 		    ->union($collaborating, TRUE)
 		    ->from(array('river_subscriptions', 'rs'))
@@ -274,7 +280,8 @@ class Model_User extends Model_Auth_User
 		    ->where('a.user_id', '=', $this->id);
 
 		// Get all the data at once
-		$query_rivers = DB::select(array('r.id', 'river_id'), 
+		$query_rivers = DB::select(array('r.id', 'id'), 
+			array(DB::expr('"river"'), 'type'),
 			DB::expr('"0" AS subscribed'), 'r.river_name', 
 			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
 		    ->union($subscribed, TRUE)
@@ -297,8 +304,9 @@ class Model_User extends Model_Auth_User
 	public function get_buckets()
 	{
 		// Buckets collaborating on
-		$collaborating = DB::select('bc.bucket_id', DB::expr('"0" AS subscribed'),
-			'b.bucket_name', 
+		$collaborating = DB::select(array('bc.bucket_id', 'id'), 
+			array(DB::expr('"bucket"'), 'type'),
+			DB::expr('"0" AS subscribed'), 'b.bucket_name', 
 			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
 		    ->from(array('bucket_collaborators', 'bc'))
 		    ->join(array('buckets', 'b'), 'INNER')
@@ -310,8 +318,9 @@ class Model_User extends Model_Auth_User
 
 
 		// Buckets subscribed to
-		$subscribed = DB::select('bs.bucket_id', DB::expr('"1" AS subscribed'), 
-			'b.bucket_name', 
+		$subscribed = DB::select(array('bs.bucket_id', 'id'), 
+			array(DB::expr('"bucket"'), 'type'),
+			DB::expr('"1" AS subscribed'), 'b.bucket_name', 
 			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
 		    ->union($collaborating, TRUE)
 		    ->from(array('bucket_subscriptions', 'bs'))
@@ -322,7 +331,8 @@ class Model_User extends Model_Auth_User
 		    ->where('bs.user_id', '=', $this->id);
 
 		// Get all the data at once
-		$query_buckets = DB::select(array('b.id', 'bucket_id'), 
+		$query_buckets = DB::select(array('b.id', 'id'), 
+			array(DB::expr('"bucket"'), 'type'),
 			DB::expr('"0" AS subscribed'), 'b.bucket_name',
 			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
 		    ->union($subscribed, TRUE)
