@@ -30,6 +30,6 @@
 		</ul>
 	</nav>
 
-	<div id="content" class="river drops cf">
-		<?php echo $droplet_list_view; ?>
+	<div id="content" class="river list cf">
+		<?php echo $river_view_list; ?>
 	</div>

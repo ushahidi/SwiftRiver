@@ -1,3 +1,15 @@
+	<hgroup class="page-title cf">
+		<div class="center">
+			<h1><?php print $page_title; ?> <em>settings</em></h1>
+			<h2 class="back label">
+				<a href="/river">
+					<span class="icon"></span>
+					<span class="label">Return to river</span>
+				</a>
+			</h2>
+		</div>
+	</hgroup>
+
 <div class="panel-body">
 	<div id="settings" class="controls">
 		

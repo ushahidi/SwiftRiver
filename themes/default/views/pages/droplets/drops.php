@@ -4,7 +4,7 @@
 </article>
 // END MESSAGE -->
 
-<div id="drops-view-list" class="center">
+<div id="drops-view-drops" class="center">
 	<?php echo $nothing_to_display ?>
 </div>
 
@@ -13,20 +13,8 @@
 </div>
 
 <script type="text/template" id="droplet-template">
-	<div class="drop-content">
-		<div class="drop-body">
-			<h1><%= droplet_title %> <span class="drop-permalink icon"><a href="#"></a></span></h1>
-			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
-		</div>
-		<section class="drop-source cf">
-			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
-			<div class="byline">
-				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel <%= channel %>"><a href="#"><span class="icon"></span>via <%= channel %></a></p>
-			</div>
-		</section>
-	</div>
-	<div class="drop-actions stacked cf">
+	<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
+	<div class="drop-actions cf">
 		<ul class="dual-buttons move-drop">
 			<li class="button-blue share"><a href="/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
 			<li class="button-blue bucket"><a href="/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
@@ -40,6 +28,13 @@
 			<?php echo __("You need to :login to score droplets", array(':login' => HTML::anchor(URL::site('login'), __('log in')))); ?>
 		<?php endif; ?>
 	</div>
+	<section class="drop-source cf">
+		<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<div class="byline">
+			<h2><%= identity_name %></h2>
+			<p class="drop-source-channel <%= channel %>"><a href="#"><span class="icon"></span>via <%= channel %></a></p>
+		</div>
+	</section>
 </script>
 
 <script type="text/template" id="bucket-template">

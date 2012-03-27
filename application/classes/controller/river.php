@@ -108,12 +108,7 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('river', $this->river)
 			->bind('droplets', $droplets)
 			->bind('droplet_list_view', $droplet_list_view)
-			->bind('show_meter', $show_meter)
-			->bind('filtered_total', $filtered_total)
-			->bind('meter', $meter)
-			->bind('filters_url', $filters_url)
 			->bind('settings_url', $settings_url)
-			->bind('more_url', $more_url)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user);
 				
@@ -138,7 +133,7 @@ class Controller_River extends Controller_Swiftriver {
 				
 		// Bootstrap the droplet list
 		$droplet_list = @json_encode($droplets);
-		$droplet_js = View::factory('pages/droplets/js/droplets')
+		$droplet_js = View::factory('pages/droplets/js/drops')
 		    ->bind('fetch_base_url', $fetch_base_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('max_droplet_id', $max_droplet_id)
@@ -154,7 +149,7 @@ class Controller_River extends Controller_Swiftriver {
 		}
 		
 		// Droplet list view
-		$droplet_list_view = View::factory('pages/droplets/list')
+		$droplet_list_view = View::factory('pages/droplets/drops')
 		    ->bind('droplet_js', $droplet_js)
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
@@ -179,6 +174,7 @@ class Controller_River extends Controller_Swiftriver {
 		$settings_url = $this->river_base_url.'/settings';
 		$more_url = $this->river_base_url.'/more';
 	}
+
 	
 	/**
 	 * XHR endpoint for fetching droplets

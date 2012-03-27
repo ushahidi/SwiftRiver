@@ -14,6 +14,7 @@
 	// System and Other CSS
 	echo(Html::script('media/css'));
 	?>
+
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	
 	<script type="text/javascript">
@@ -27,6 +28,7 @@
 	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
+	echo(Html::script("themes/default/media/js/jquery.masonry.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
 	echo(Html::script("themes/default/media/js/jquery.sparkline.min.js"));
@@ -57,14 +59,9 @@
 </head> 
  
 <body> 
-	<header>
-		<div class="left_bar"></div>
-		<div class="center cf">
-			<hgroup>
-				<h1 class="logo"><a href="<?php echo URL::site().$user->account->account_path; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
-			</hgroup>
+	<header class="toolbar">
+		<div class="center">
+			<h1 class="logo"><a href="<?php echo URL::site().$user->account->account_path; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
 			<?php echo $nav_header;?>
 		</div>
-		<div class="right_bar"></div>
 	</header>
-	

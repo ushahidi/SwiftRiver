@@ -242,7 +242,7 @@ span.icon {
    display: block;
    width: 25px;
    height: 25px;
-   background: url(../img/icons-25x25.png) no-repeat;   
+   background: url(/markup/images/icons-25x25.png) no-repeat;   
    padding: 0 3px;
 }
 
@@ -463,7 +463,7 @@ header.toolbar {
    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.25);
    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.25);
    box-shadow: 0 1px 2px rgba(0,0,0,.25);
-   background: url(../img/header-toolbarBG.gif) bottom repeat-x;
+   background: url(/markup/images/header-toolbarBG.gif) bottom repeat-x;
 }
 
 header.toolbar .logo {
@@ -474,7 +474,7 @@ header.toolbar .logo a {
    display: block;
    width: 118px;
    height: 35px;
-   background: url(../img/logo-swiftriver.png) center left no-repeat;
+   background: url(/markup/images/logo-swiftriver.png) center left no-repeat;
    background-size: 90%;
    padding: 2.5px 0;
    margin: 0 8px;
@@ -719,7 +719,7 @@ nav.page-navigation ul li:first-child a {
 nav.page-navigation ul li.active a {
    color: #259cb5;
    font-weight: bold;
-   background: url(../img/page-navigation_active.png) center bottom no-repeat;
+   background: url(/markup/images/page-navigation_active.png) center bottom no-repeat;
 }
 
 nav.page-navigation ul li a:hover {
@@ -730,7 +730,7 @@ nav.page-navigation ul li a:hover {
 /* --------------------------- CONTENT */
 
 #content.river {
-   background: url(../img/contentBG-river-drops.gif) top repeat-x;
+   background: url(/markup/images/contentBG-river-drops.gif) top repeat-x;
 }
 
 article.drop,
@@ -891,7 +891,7 @@ p.metadata span.icon {
 }
 
 .drop-full section.drop-source {
-   background: #eaf3f5 url(../img/drop-wave_full.gif) bottom left repeat-x;
+   background: #eaf3f5 url(/markup/images/drop-wave_full.gif) bottom left repeat-x;
 }
 
 .drop-full section.drop-source p.metadata {
@@ -1057,7 +1057,7 @@ section.meta-data img.media-image {
 }
 
 .drops article.drop section.drop-source {
-   background: #eaf3f5 url(../img/drop-wave.gif) top right repeat-x;
+   background: #eaf3f5 url(/markup/images/drop-wave.gif) top right repeat-x;
    padding: 20px 10px 7px;
 }
 
@@ -1096,7 +1096,7 @@ section.meta-data img.media-image {
 }
 
 .list article.drop section.drop-source {
-   background: #eaf3f5 url(../img/drop-wave_list.gif) top right no-repeat;
+   background: #eaf3f5 url(/markup/images/drop-wave_list.gif) top right no-repeat;
    padding: 3.125%;
 }
 
@@ -1599,7 +1599,7 @@ article.modal section.drop-summary {
    -moz-border-radius-bottomright: 3px;
    border-bottom-left-radius: 3px;
    border-bottom-right-radius: 3px;
-   background: #eaf3f5 url(../img/drop-wave.gif) top right repeat-x;
+   background: #eaf3f5 url(/markup/images/drop-wave.gif) top right repeat-x;
    padding: 20px 2.083333333%;
    margin-top: 15px;
 }
@@ -1841,7 +1841,7 @@ header.toolbar ul.toolbar-menu li.user > a span.dropdown-arrow {
    float: right;
    width: 18px;
    height: 25px;
-   background: url(../img/icons-25x25.png) left -371px no-repeat;   
+   background: url(/markup/images/icons-25x25.png) left -371px no-repeat;   
 }
 
 ul.popover-window.header-toolbar {

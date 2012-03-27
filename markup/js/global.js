@@ -1,4 +1,5 @@
-$(document).ready(function() {	
+$(document).ready(function() { 
+
 	// DROP SCORING
 	$('article.drop ul.score-drop > li.like').live('click', function(e) {
 		$(this).addClass('scored').siblings().remove();
@@ -103,47 +104,5 @@ $(document).ready(function() {
 		}
 	});
 
-	// Submit form when enter key hit in a password field
-	$('input[type=password]').keypress(function(e){
-		if(e.which == 13){
-			$(this).parents('form:first').submit();
-			e.preventDefault();
-		}
-	});
 });
 
-// Hide mobile address bar
-window.addEventListener("load",function() {
-	setTimeout(function(){
-		window.scrollTo(0, 1);
-	}, 0);
-});
-
-
-function submitForm(button){
-	
-	// Remove any onclick handler attached to the button
-	$(button).removeAttr("onclick");
-
-	// Get the form
-	var form = $(button).parents('form:first');
-
-	// Disable all input submit buttons
-	$("input:submit", form).attr('disabled', 'disabled');
-
-	// Delay form submission by 500ms
-	setTimeout(function() { form.submit(); }, 500);
-}
-
-function submitAjax(button){
-	var form = $(button).parents('form:first');
-	form.submit();
-}
-
-function flashMessage(el, text) {
-	var message = "<ul>";
-	message += text;
-	message += "</ul>";
-	// Show message and fade it out slooooowwwwwwlllllyyyy
-	el.html(message).fadeIn("fast").fadeOut(4000).html();
-}
