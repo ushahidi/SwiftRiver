@@ -26,11 +26,6 @@ class Controller_User extends Controller_Swiftriver {
 	private $active;
 	
 	/**
-	 * template type
-	 */
-	private $template_type;
-	
-	/**
 	 * Is the visiting user the owner?
 	 */
 	protected $owner = FALSE;
@@ -65,13 +60,18 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('account', $this->visited_account)
 			->bind('owner', $this->owner)
 			->bind('active', $this->active)
-			->bind('template_type', $this->template_type)
 			->bind('sub_content', $this->sub_content)
-			->bind('anonymous', $this->anonymous);
+			->bind('anonymous', $this->anonymous)
+			->bind('followers', $followers)
+			->bind('following', $following);
 			
+		$following = $this->visited_account->user->following->find_all();
+		$followers =  $this->visited_account->user->followers->find_all();
+
 		// Some info about the owner of the user profile being visited
 		// Will be used later for following unfollowing
-		$this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+		// $this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+
 		$this->template->content->user_item = json_encode(array(
 				"id" => $this->visited_account->user->id,
 				"type" => "user",					
@@ -100,144 +100,110 @@ class Controller_User extends Controller_Swiftriver {
 			);
 		}
 		
-		$this->sub_content = View::factory('pages/user/main')
-			->bind('actions', $actions)
-			->bind('following', $following)
-			->bind('followers', $followers)
-			->bind('activity_stream', $activity_stream)
-			->bind('owner', $this->owner);
-		$this->active = 'main';
-		$this->template_type = 'list dashboard';
+		if ($this->owner)
+		{
+			$this->active = 'main';
+
+			$this->sub_content = View::factory('pages/user/main')
+				->bind('activity_stream', $activity_stream)
+				->bind('owner', $this->owner)
+				->bind('account', $this->visited_account)
+				->bind('profile_js', $profile_js);
+
+			$profile_js = $this->_get_profile_js(TRUE);
+		}
+		else
+		{
+			$this->_prepare_user_profile_view($activity_stream);
+		}
 		
-		$following = $this->visited_account->user->following->find_all();
-		$followers =  $this->visited_account->user->followers->find_all();;
-		
+		// Activity stream
+		$activity_stream = View::factory('template/activities')
+		    ->bind('activities', $activities)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('owner', $this->owner);
+
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
+
+		$activities = json_encode(Model_User_Action::get_activity_stream(
+			$this->visited_account->user->id, ! $this->owner));
+
+	}
+
+	/**
+	 * Displays the current user's profile
+	 */
+	public function action_profile()
+	{
+		$this->active = '';
+
+		$this->_prepare_user_profile_view($activity_stream);
 
 		// Activity stream
 		$activity_stream = View::factory('template/activities')
-		                       ->bind('activities', $activities)
-		                       ->bind('fetch_url', $fetch_url)
-		                       ->bind('owner', $this->owner);
+		    ->bind('activities', $activities)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('owner', $this->owner);
+
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
-		$activities = json_encode(Model_User_Action::get_activity_stream($this->visited_account->user->id, ! $this->owner));
 
-		$actions = 0;
+		$activities = json_encode(Model_User_Action::get_activity_stream(
+			$this->visited_account->user->id, ! $this->owner));
 	}
-	
+
+
 	/**
-	 * @return	void
+	 * Prepares profile page of the current user with all the 
+	 * necessary data
 	 */
-	public function action_rivers()
+	private function _prepare_user_profile_view(& $activity_stream)
 	{
-		if($this->owner)
-		{
-			$this->template->header->title = __('My Rivers');
-		}
-		else
-		{
-			$this->template->header->title = __(':name\'s Rivers', array(
-				':name' =>  Text::limit_chars($this->visited_account->user->name)
-				)
-			);
-		}
-		
-		$this->sub_content = View::factory('pages/user/rivers_buckets');
-		$this->sub_content->active = 'rivers';
-		$this->sub_content->name_header = __("River Name");
-		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
-		$this->sub_content->anonymous = $this->anonymous;
-		$this->active = 'rivers';
-		$this->template_type = 'list';
-		
-		// Get rivers visible to a user
-		if ($this->owner)
-		{
-			$rivers = $this->user->get_rivers();
-		}
-		else
-		{
-			$rivers = $this->user->get_other_user_visible_rivers($this->visited_account->user->id);
-		}
-		$list_items = array();
-		foreach ($rivers as $river)
-		{
-			$list_items[] = array(
-					"id" => $river->id,
-					"type" => "river",					
-					"item_name" => $river->river_name,
-					"item_public" => $river->river_public,
-					"item_url" => URL::site().$river->account->account_path.'/river/'.$river->river_name_url,
-					"item_owner_url" => URL::site().$river->account->account_path,
-					"account_path" => $river->account->account_path,
-					"subscribed" => $this->user->has('river_subscriptions', $river),
-					"subscriber_count" => number_format($river->subscriptions->count_all()),
-					"is_owner" => $river->is_owner($this->user->id),
-					"is_other_account" => $river->account->id != $this->user->account->id && $this->owner,
-					"drop_count" => number_format($river->droplets->count_all()),
-					"activity_data" => $river->get_droplet_activity()
-				);
-		}		
-		$this->sub_content->list_items = json_encode($list_items);		
+		$this->sub_content = View::factory('pages/user/profile')
+		    ->bind('activity_stream', $activity_stream)
+		    ->bind('owner', $this->owner)
+		    ->bind('profile_js', $profile_js);
+
+		// Get the javascript
+		$profile_js = $this->_get_profile_js();
+
 	}
-	
+
 	/**
-	 * @return	void
+	 * Loads and returns the JS snippet for populating the river and bucket 
+	 * views in the main and profile view dashboard pages
+	 * @return string
 	 */
-	public function action_buckets()
+	private function _get_profile_js($dashboard_view = FALSE)
 	{
+		$profile_js = View::factory('pages/user/js/profile')
+		    ->bind('rivers_list', $rivers_list)
+		    ->bind('buckets_list', $buckets_list)
+		    ->bind('river_fetch_url', $river_fetch_url)
+		    ->bind('bucket_fetch_url', $bucket_fetch_url)
+		    ->bind('dashboard_view', $dashboard_view)
+		    ->bind('owner', $this->owner);
+		
+		$base_path = URL::site().$this->visited_account->account_path.'/user/';
+		$visited_user_id = $this->visited_account->user->id;
+
+		$river_fetch_url = $base_path.'river/manage';
+		$bucket_fetch_url = $base_path.'bucket/manage';
+
 		if ($this->owner)
 		{
-			$this->template->header->title = __('My Buckets');
+			// TODO - Check the cache
+			$rivers_list = json_encode($this->user->get_rivers());
+			$buckets_list = json_encode($this->user->get_buckets());
 		}
 		else
 		{
-			$this->template->header->title = __(':name\'s Buckets', array(
-				':name' =>  Text::limit_chars($this->visited_account->user->name)
-				)
-			);
-		}
-		
-		$this->sub_content = View::factory('pages/user/rivers_buckets');
-		$this->sub_content->active = 'buckets';
-		$this->sub_content->name_header = __("Bucket Name");
-		$this->sub_content->fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
-		$this->sub_content->anonymous = $this->anonymous;
-		$this->active = 'buckets';
-		$this->template_type = 'list';
-		
-		// Get rivers visible to a user
-		if ($this->owner)
-		{
-			$buckets = $this->user->get_buckets();
-		}
-		else
-		{
-			$buckets = $this->user->get_other_user_visible_buckets($this->visited_account->user->id);
-		}
-		
-		$list_items = array();
-		foreach ($buckets as $bucket)
-		{
-			$list_items[] = array(
-					"id" => $bucket->id,
-					"type" => "bucket",
-					"item_name" => $bucket->bucket_name,
-					"item_public" => $bucket->bucket_publish,
-					"item_url" => URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
-					"item_owner_url" => URL::site().$bucket->account->account_path,
-					"account_path" => $bucket->account->account_path,
-					"subscribed" => $this->user->has('bucket_subscriptions', $bucket),
-					"subscriber_count" => number_format($bucket->subscriptions->count_all()),
-					"is_owner" => $bucket->is_owner($this->user->id),
-					"is_other_account" => $bucket->account->id != $this->user->account->id && $this->owner,
-					"drop_count" => number_format($bucket->droplets->count_all()),
-					"activity_data" => $bucket->get_droplet_activity()
-				);
+			$rivers_list = json_encode($this->user->get_other_user_visible_rivers($visited_user_id));
+			$buckets_list = json_encode($this->user->get_other_user_visible_buckets($visited_user_id));
 		}
 
-		$this->sub_content->list_items = json_encode($list_items);
+		return $profile_js;
 	}
-	
+
 	
 	/**
 	 * @return	void
@@ -371,23 +337,12 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_settings()
 	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$settings = View::factory('pages/user/settings')
-		                ->bind('collaborators_control', $collaborators_control);
-		$settings->user = $this->user;
+		// Set the current page
+		$this->active = 'settings';
+
+		$this->template->sub_content = View::factory('pages/user/settings')
+		    ->bind('user', $this->user);
 		
-		// Disable account collaboration for now
-		/*$collaborators_control = View::factory('template/collaborators')
-		                             ->bind('collaborator_list', $collaborator_list)
-		                             ->bind('fetch_url', $fetch_url)
-		                             ->bind('logged_in_user_id', $logged_in_user_id);
-		$collaborator_list = json_encode($this->account->get_collaborators());
-		$fetch_url = url::site('dashboard/collaborators');
-		$logged_in_user_id = $this->user->id;*/
-		$collaborators_control = NULL;
-		
-		echo $settings;
 	}
 	
 	/**
@@ -650,4 +605,5 @@ class Controller_User extends Controller_Swiftriver {
 			}
 		}
 	}
+
 }

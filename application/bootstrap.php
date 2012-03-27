@@ -320,6 +320,12 @@ Route::set('account', '<account>(/<controller>/<name>(/<action>(/<id>(/<id2>))))
 	));
 
 
+Route::set('account_profile', '<account>/profile')
+	->defaults(array(
+		'controller' => 'user',
+		'action'     => 'profile'
+	));
+
 
 
 

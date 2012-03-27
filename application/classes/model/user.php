@@ -149,9 +149,14 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->rivers->find_all() as $river)
 		{
+			$subscribed = $river->is_owner($this->id) ? 1 : 0;
 			if ($river->river_public OR $river->is_owner($this->id))
 			{
-				$rivers[] = $river;
+				$rivers[] = array(
+					'river_name' => $river->river_name, 
+					'river_url' => $river->account->account_path.'/river/'.$river->river_name_url,
+					'subscribed' => $subscribed
+				);
 			}
 		}
 		
@@ -179,9 +184,14 @@ class Model_User extends Model_Auth_User
 		// First the public rivers.		
 		foreach ($other_user_orm->account->buckets->find_all() as $bucket)
 		{
+			$subscribed  = $bucket->is_owner($this->id) ? 1 : 0;
 			if ($bucket->bucket_publish OR $bucket->is_owner($this->id))
 			{
-				$buckets[] = $bucket;
+				$buckets[] = array(
+					'bucket_name' => $bucket->bucket_name, 
+					'bucket_url' => $bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
+					'subscribed' => $subscribed
+				);
 			}
 		}
 		
@@ -234,76 +244,50 @@ class Model_User extends Model_Auth_User
 	 *
 	 * @return array
 	 */
-	public function get_rivers()
+	public function get_rivers() 
 	{
-		$ret = array();
-		
-		// First rivers belonging to this user's account
-		$ret = array_merge($ret, 
-			$this->account->rivers->order_by('river_name', 'ASC')
-			    ->find_all()->as_array()
-		);
-		
-		// Next the rivers belonging to an account this user is collaborating on
-		$account_collaborations = $this->account_collaborators
-		                               ->where("collaborator_active", "=", 1)
-		                               ->find_all();
-		
-		foreach ($account_collaborations as $collabo)
-		{
-			$ret = array_merge($ret, 
-				$collabo->account
-				    ->rivers
-				    ->order_by('river_name', 'ASC')
-				    ->find_all()->as_array()
-			);
-		}
-		
-		// Add individual rivers this user is collaborating on
-		$river_collaborations = $this->river_collaborators
-		                               ->where("collaborator_active", "=", 1)
-		                               ->find_all();
-		
-		foreach ($river_collaborations as $collabo)
-		{
-			$ret[] = $collabo->river;
-		}
-		
-		// Finally, the rivers the user has subscribed to
-		$ret = array_merge($ret, 
-			$this->river_subscriptions
-			    ->order_by('river_name', 'ASC')
-			    ->find_all()->as_array()
-		);
-		
-		return array_unique($ret);
+		// Rivers collaborating on
+		$collaborating = DB::select('rc.river_id', DB::expr('"0" AS subscribed'),
+			'r.river_name', 
+			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
+		    ->from(array('river_collaborators', 'rc'))
+		    ->join(array('rivers', 'r'), 'INNER')
+		    ->on('rc.river_id', '=', 'r.id')
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('r.account_id', '=', 'a.id')
+		    ->where('rc.user_id', '=', 'a.user_id')
+		    ->where('a.user_id', '=', $this->id)
+		    ->where('rc.collaborator_active', '=', 1);
+
+
+		// Rivers subscribed to
+		$subscribed = DB::select('rs.river_id', DB::expr('"1" AS subscribed'), 
+			'r.river_name', 
+			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
+		    ->union($collaborating, TRUE)
+		    ->from(array('river_subscriptions', 'rs'))
+		    ->join(array('rivers', 'r'), 'INNER')
+		    ->on('rs.river_id', '=', 'r.id')
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('r.account_id', '=', 'a.id')
+		    ->where('a.user_id', '=', 'rs.user_id')
+		    ->where('a.user_id', '=', $this->id);
+
+		// Get all the data at once
+		$query_rivers = DB::select(array('r.id', 'river_id'), 
+			DB::expr('"0" AS subscribed'), 'r.river_name', 
+			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
+		    ->union($subscribed, TRUE)
+		    ->from(array('rivers', 'r'))
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('r.account_id', '=', 'a.id')
+		    ->where('a.user_id', '=', $this->id);
+
+		return $query_rivers->execute()->as_array();
 	}
 
-	/**
-	 * Gets all the buckets accessible to the user
-	 * @return array
-	 */
-	public function get_rivers_array()
-	{
-		$ret = array();
-		
-		$rivers = $this->get_rivers();
-		
-		foreach ($rivers as $river)
-		{
-			$ret[] = array(
-				"id" => $river->id, 
-				"river_name" => $river->river_name,
-				"account_id" => $river->account->id,
-				"user_id" => $river->account->user->id,
-				"account_path" => $river->account->account_path,
-				"subscriber_count" => $river->get_subscriber_count()
-			);
-		}
-		
-		return $ret;
-	}
-	
+
+
 	/**
 	 * Gets all the buckets accessible to the user - the ones
 	 * they've created and the ones they're collaborating on
@@ -312,67 +296,42 @@ class Model_User extends Model_Auth_User
 	 */
 	public function get_buckets()
 	{
-		$buckets = array();
-		
-		// Buckets belonging to this user's account
-		$buckets = array_merge($buckets, 
-			$this->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
-		
-		// Add buckets belonging to an account this user is collaborating on
-		$account_collaborations = $this->account_collaborators
-		    ->where("collaborator_active", "=", 1)		                               
-		    ->find_all();
+		// Buckets collaborating on
+		$collaborating = DB::select('bc.bucket_id', DB::expr('"0" AS subscribed'),
+			'b.bucket_name', 
+			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
+		    ->from(array('bucket_collaborators', 'bc'))
+		    ->join(array('buckets', 'b'), 'INNER')
+		    ->on('bc.bucket_id', '=', 'b.id')
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('a.user_id', '=', 'b.user_id')
+		    ->where('bc.user_id', '=', $this->id)
+		    ->where('bc.collaborator_active', '=', 1);
 
-		foreach ($account_collaborations as $collabo)
-		{
-			$buckets = array_merge($buckets, 
-				$collabo->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
-		}
-		
-		// Add individual buckets this user is collaborating on
-		$bucket_collaborations = $this->bucket_collaborators
-		                               ->where("collaborator_active", "=", 1)
-		                               ->find_all();
-		
-		foreach ($bucket_collaborations as $collabo)
-		{
-			$buckets[] = $collabo->bucket;
-		}
-		
-		// Add the buckets this user has subscribed to
-		$buckets = array_merge($buckets, 
-			$this->bucket_subscriptions->order_by('bucket_name', 'ASC')->find_all()->as_array());
-		
-		
-		return array_unique($buckets);
+
+		// Buckets subscribed to
+		$subscribed = DB::select('bs.bucket_id', DB::expr('"1" AS subscribed'), 
+			'b.bucket_name', 
+			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
+		    ->union($collaborating, TRUE)
+		    ->from(array('bucket_subscriptions', 'bs'))
+		    ->join(array('buckets', 'b'), 'INNER')
+		    ->on('bs.bucket_id', '=', 'b.id')
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('a.user_id', '=', 'b.user_id')
+		    ->where('bs.user_id', '=', $this->id);
+
+		// Get all the data at once
+		$query_buckets = DB::select(array('b.id', 'bucket_id'), 
+			DB::expr('"0" AS subscribed'), 'b.bucket_name',
+			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
+		    ->union($subscribed, TRUE)
+		    ->from(array('buckets', 'b'))
+		    ->join(array('accounts', 'a'), 'INNER')
+		    ->on('a.user_id', '=', 'b.user_id')
+		    ->where('b.user_id', '=', $this->id);
+
+		return $query_buckets->execute()->as_array();
 	}
 
-
-	/**
-	 * Gets all the buckets accessible to the user - the ones
-	 * they've created and the ones they're collaborating on
-	 *
-	 * @return array
-	 */
-	public function get_buckets_array()
-	{
-		$ret = array();
-		
-		$buckets = $this->get_buckets();
-		
-		foreach ($buckets as $bucket)
-		{
-			$ret[] = array(
-				"id" => $bucket->id, 
-				"bucket_name" => $bucket->bucket_name,
-				"bucket_url" => URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
-				"account_id" => $bucket->account->id,
-				"user_id" => $bucket->account->user->id,
-				"account_path" => $bucket->account->account_path,
-				"subscriber_count" => $bucket->get_subscriber_count()
-			);
-		}
-		
-		return $ret;
-	}
 }

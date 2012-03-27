@@ -1,58 +1,48 @@
-<div class="feed" id="activity_stream">
-	<h2 class="null"><?php 
-			echo __('Nothing to display yet. ');
-			if ($owner) {
-				echo __('Click :here to get started and create a river', array(':here' => HTML::anchor(URL::site('welcome'), __('here'))));
-			}
-		?>
-	</h2>
-</div>
-
 <script type="text/template" id="activity_template">
-	<div class="summary cf">
-		<section class="source twitter">
-			<a href="<%= user_url %>"><img src="<%= user_avatar %>" /></a>
-		</section>
-		<div class="content">
-			<hgroup>
-				<p class="date"><%= new Date(action_date).toLocaleString() %></p>
-				<% if (action == "invite" && parseInt(action_to_self)) { %>
-					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited you to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
-				<% } %>
-				<% if (action == "invite" && !parseInt(action_to_self)) { %>
-					<h1><%= user_name %> <span><a href="<%= action_on_url %>">invited <%= action_to_name %> to collaborate on <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a></span></h1>
-				<% } %>
-				<% if (action == "create") { %>
-					<h1><%= user_name %> <span><a href="<%= action_on_url %>">created the <%= action_on %> "<%= action_on_name %>"</a></span></h1>
-				<% } %>				
-			</hgroup>
-			<?php if ($owner): ?>
-				<div class="body">
-					<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-						<p>By accepting this invitation, you will be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
-					<% } %>
-					<% if (action == "invite" && parseInt(action_to_self) && parseInt(confirmed)) { %>
-						<p>You accepted the invitation and are be able to view and edit the settings for the <a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.</p>
-					<% } %>
-				</div>
-			<?php endif; ?>
-		</div>
+	
+	<?php if ($owner): ?>
+		<a class="avatar-wrap"><img src="<%= user_avatar %>"/></a>
+	<?php else: ?>
+		<span class="icon"></span>
+	<?php endif; ?>
+
+	<div class="item-body">
+		
 		<?php if ($owner): ?>
 			<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
-				<section class="actions">
-					<div class="button">
-						<p class="button-change checkbox-options" onclick=""><a><span class="icon"></span></a></p>
-						<div class="clear"></div>
-						<div class="dropdown container">
-							<ul>
-								<li class="confirm"><a onclick=""><?php echo __('Accept'); ?></a></li>
-								<li class="cancel"><a onclick=""><?php echo __('Ignore'); ?></a></li>
-							</ul>
-						</div>
-					</div>
-				</section>
+				<div class="actions">
+					<ul class="dual-buttons">
+						<li class="button-white no-icon"><a href="#"><?php echo __('Accept'); ?></a></li>
+						<li class="button-white no-icon"><a href="#"><?php echo __('Ignore'); ?></a></li>
+					</ul>
+				</div>
 			<% } %>
 		<?php endif; ?>
+
+		<h2>
+			<a href="<%= user_url %>"><%= user_name %></a>
+			<% if (action == "invite" && parseInt(action_to_self)) { %>
+				<?php echo __("invited you to collaborate on "); ?>
+				<a href="<%= action_on_url %>"><% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a>
+			<% } %>
+			<% if (action == "invite" && !parseInt(action_to_self)) { %>
+				invited <%= action_to_name %> to collaborate on <a href="<%= action_on_url %>"> <% if (action_on == "account") { %> an <% } else { %> a <% } %> <%= action_on %></a>
+			<% } %>
+			<% if (action == "create") { %>
+				created the <a href="<%= action_on_url %>"><%= action_on %> "<%= action_on_name %>"</a>
+			<% } %>
+
+			<?php if ($owner): ?>
+				<% if (action == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
+					<p>
+					<?php echo __("By accepting this invitation, you will be able to view and edit the settings for the "); ?>
+					<a href="<%= action_on_url %>">"<%= action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.
+					</p>
+				<% } %>
+			<?php endif; ?>
+
+		</h2>
+		<p class="metadata"><%= new Date(action_date).toLocaleString() %></p>
 	</div>
 </script>
 
@@ -79,9 +69,9 @@ $(function() {
 	
 	var ActivityView = Backbone.View.extend({
 		
-		tagName: "article",
+		tagName: "div",
 		
-		className: "item",
+		className: "parameter activity-item cf",
 		
 		template: _.template($("#activity_template").html()),
 		
@@ -125,9 +115,6 @@ $(function() {
 		
 		addActivities: function() {
 			Activities.each(this.addActivity, this);
-			if (Activities.length) {
-				this.$("h2").hide();
-			}
 		}		
 	});
 	
