@@ -31,7 +31,7 @@
 			<article class="drop base cf">
 				<div class="drop-content">
 					<div class="drop-body">
-						<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a> <span class="drop-permalink icon"><a href="#"></a></span></h1>
+						<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
 						<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 					</div>
 					<section class="drop-source cf">
@@ -57,8 +57,8 @@
 			<article class="drop base cf">
 				<div class="drop-content">
 					<div class="drop-body">
-						<a href="#" class="drop-image-wrap"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-						<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a> <span class="drop-permalink icon"><a href="#"></a></span></h1>
+						<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
+						<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
 						<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 					</div>
 					<section class="drop-source cf">
@@ -84,9 +84,12 @@
 		</div>
 	</div>
 
+<div id="zoom-container">
+	<div class="modal-window"></div>
+</div>
+
 <div id="modal-container">
 	<div class="modal-window"></div>
-	<div class="modal-fade"></div>
 </div>
 
 </body>
