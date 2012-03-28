@@ -1,34 +1,30 @@
 <?php
-	$page_title = "Ushahidi at SXSW";
-	$template_type = "river-list";
+	$page_title = "Ushahidi press coverage";
+	$template_type = "bucket-list";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="page-title cf">
+	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?></h1>
+				<h1><?php print $page_title; ?> <em>discussion</em></h1>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="settings">
-					<a href="/markup/river/settings-filters.php">
+					<a href="/markup/bucket/settings-filters.php">
 						<span class="icon"></span>
-						River settings
+						Bucket settings
+					</a>
+				</h2>
+				<h2 class="back">
+					<a href="/markup/bucket/">
+						<span class="icon"></span>
+						Return to bucket
 					</a>
 				</h2>
 			</div>
 		</div>
 	</hgroup>
-
-	<nav class="page-navigation cf">
-		<ul class="center">
-			<li><a href="/markup/river">Drops</a></li>
-			<li class="active"><a href="/markup/river/view-list.php">List</a></li>
-			<li><a href="/markup/river/view-photos.php">Photos</a></li>
-			<li><a href="/markup/river/view-map.php">Map</a></li>
-			<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
-		</ul>
-	</nav>
 
 	<div id="content" class="river list cf">
 		<div class="center">
@@ -82,6 +78,23 @@
 						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
 						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
 					</ul>
+				</div>
+			</article>
+
+			<article class="add-comment drop base cf">
+				<div class="drop-content">
+					<div class="drop-body">
+						<textarea></textarea>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" /></a>
+						<div class="byline">
+							<h2>Brandon Rosage</h2>
+						</div>
+					</section>
+				</div>
+				<div class="drop-actions cf">
+					<p class="button-blue"><a href="#">Publish</a></p>
 				</div>
 			</article>
 

@@ -319,15 +319,15 @@ span.icon {
 }
 
 .back span.icon {
-   background-position: center -500px;
-}
-
-.follow span.icon {
    background-position: center -525px;
 }
 
-.follow.selected span.icon {
+.follow span.icon {
    background-position: center -550px;
+}
+
+.follow.selected span.icon {
+   background-position: center -575px;
 }
 
 .alert-message {
@@ -355,6 +355,7 @@ a.avatar-wrap {
    position: relative;
    display: inline-block;
    vertical-align: bottom;
+   overflow: hidden;
 }
 
 a.avatar-wrap:after {
@@ -364,9 +365,11 @@ a.avatar-wrap:after {
    position: absolute;
    top: -1px;
    left: -1px;
-   -wekbit-box-shadow: 0 1px 3px rgba(255,255,255,.25) inset;
-   -moz-box-shadow: 0 1px 3px rgba(255,255,255,.25) inset;
-   box-shadow: 0 1px 0 rgba(256,256,256,1), 
+   -wekbit-box-shadow: 0 1px 0 rgba(256,256,256,.8), 
+      0 1px 3px rgba(0,0,0,.25) inset;
+   -moz-box-shadow: 0 1px 0 rgba(256,256,256,.8), 
+      0 1px 3px rgba(0,0,0,.25) inset;
+   box-shadow: 0 1px 0 rgba(256,256,256,.8), 
       0 1px 3px rgba(0,0,0,.25) inset;
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
@@ -583,7 +586,6 @@ header.toolbar ul.toolbar-menu li.create a:hover {
 /* --------------------------- PAGE TITLE */
 
 hgroup.page-title {
-   text-align: left;
    text-shadow: 0 1px 1px rgba(256,256,256,.9);
    -wekbit-box-shadow: 0 -1px 3px rgba(0,0,0,.1) inset;
    -moz-box-shadow: 0 -1px 3px rgba(0,0,0,.1) inset;
@@ -595,6 +597,21 @@ hgroup.user-title {
    text-shadow: 0 1px 1px #fff;
    padding-top: 15px;
    padding-bottom: 15px;
+}
+
+hgroup.bucket-title {
+   -wekbit-box-shadow: 0 1px 1px rgba(256,256,256,1) inset;
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,1) inset;
+   box-shadow: 0 1px 1px rgba(256,256,256,1) inset;
+background-color: #eaf3f5;
+background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(234, 243, 245)), to(rgb(223, 237, 240)));
+background-image: -webkit-linear-gradient(top, rgb(234, 243, 245), rgb(223, 237, 240));
+background-image: -moz-linear-gradient(top, rgb(234, 243, 245), rgb(223, 237, 240));
+background-image: -o-linear-gradient(top, rgb(234, 243, 245), rgb(223, 237, 240));
+background-image: -ms-linear-gradient(top, rgb(234, 243, 245), rgb(223, 237, 240));
+background-image: linear-gradient(top, rgb(234, 243, 245), rgb(223, 237, 240));
+filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#eaf3f5', EndColorStr='#dfedf0');
+   border-bottom: 1px solid #dbdbdb;
 }
 
 hgroup.user-title a.avatar-wrap {
@@ -611,12 +628,14 @@ hgroup.user-title a.avatar-wrap {
    margin-right: 15px;
 }
 
+hgroup.page-title .page-h1 {
+   padding: 15px 0 10px;
+}
+
 hgroup.page-title h1 {
-   float: left;
    color: #444444;
+   text-overflow: clip clip;
    font-size: 1.6em;
-   line-height: 60px;
-   padding: 0 10px;
 }
 
 hgroup.user-title h1 {
@@ -638,16 +657,18 @@ hgroup.app-title h1 em {
    font-weight: 300;
 }
 
+hgroup.page-title .page-actions {
+   padding-bottom: 10px;
+}
+
 hgroup.page-title h2 {
-   float: right;
-   height: 60px;
+   display: inline-block;
    font-size: 0.9em;
-   line-height: 60px;
-   -wekbit-box-shadow: 1px 0 0 rgba(256,256,256,.5) inset;
-   -moz-box-shadow: 1px 0 0 rgba(256,256,256,.5) inset;
-   box-shadow: 1px 0 0 rgba(256,256,256,.5) inset;
-   border-left: 1px solid rgba(0,0,0,0.06);
-   padding: 0 10px;
+   line-height: 20px;
+}
+
+hgroup.page-title h2:last-child {
+   margin-left: 10px;
 }
 
 hgroup.user-title h2 {
@@ -656,10 +677,17 @@ hgroup.user-title h2 {
 
 hgroup.page-title h2 span.icon {
    float: left;
-   margin: 18px 0 0;
+   position: relative;
+   top: -2px;
+   width: 20px;
+   height: 20px;
 }
 
-hgroup.page-title h2 span.label {
+hgroup.page-title h2.discussion span.icon {
+   background-position: center -500px;
+}
+
+hgroup.page-title .page-actions h2 span.title {
    float: left;
 }
 
@@ -965,7 +993,7 @@ section.drop-discussion div.drop-body h1,
    font-size: 1em;
 }
 
-section.drop-discussion article.add-comment div.drop-body textarea {
+article.add-comment div.drop-body textarea {
    width: 100%;
 }
 
@@ -1155,6 +1183,56 @@ section.meta-data img.media-image {
 
 .photos article.drop div.drop-actions ul.move-drop {
    float: right;
+}
+
+/* --------------------------- BUCKET */
+
+section.bucket-rundown {
+   display: none;
+   text-shadow: 0 1px 1px #fff;
+   -wekbit-box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
+   box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
+   background: #dfedf0;
+}
+
+section.bucket-rundown .rundown-collaborators {
+   text-align: left;
+   padding: 5px 0;
+}
+
+section.bucket-rundown .rundown-collaborators h2 {
+   float: left;
+   font-size: 0.85em;
+   line-height: 2.2em;
+   padding-right: 5px;
+}
+
+section.bucket-rundown .rundown-collaborators ul,
+section.bucket-rundown .rundown-collaborators ul li {
+   display: inline;
+}
+
+section.bucket-rundown .rundown-collaborators ul li a.avatar-wrap {
+   width: 25px;
+   height: 25px;
+   margin: 0 2px;
+}
+
+section.bucket-rundown .rundown-totals ul li {
+   display: inline;
+   font-size: 0.8em;
+   padding: 0 5px;
+}
+
+section.bucket-rundown .rundown-totals ul li a {
+   color: #666666;
+}
+
+section.bucket-rundown .rundown-totals ul li strong {
+   color: #444444;
+   font-size: 2em;
+   line-height: 33px;
 }
 
 /* --------------------------- CONTAINER */
@@ -1438,7 +1516,6 @@ div.modal-window {
 }
 
 div#modal-container article.modal {
-   text-align: left;
    -moz-box-shadow: 0 2px 5px rgba(0,0,0,.45);
    -webkit-box-shadow: 0 2px 5px rgba(0,0,0,.45);
    box-shadow: 0 2px 5px rgba(0,0,0,.45);
@@ -1467,19 +1544,10 @@ article.modal hgroup.page-title {
 
 article.modal hgroup.page-title h1 {
    font-size: 1.7em;
-   line-height: 60px;
-}
-
-article.modal hgroup.page-title h2 {
-   height: 60px;
-   line-height: 60px;
-}
-
-article.modal hgroup.page-title h2 span.icon {
-   margin-top: 18px;
 }
 
 article.modal div.modal-body {
+   text-align: left;
    padding: 10px 20px;
 }
 
@@ -1593,6 +1661,7 @@ div.link-list ul li span.remove-small span.icon {
 /* ---- MODAL: DROP SUMMARY */
 
 article.modal section.drop-summary {
+   text-align: left;
    -webkit-border-bottom-left-radius: 3px;
    -webkit-border-bottom-right-radius: 3px;
    -moz-border-radius-bottomleft: 3px;
@@ -1733,8 +1802,19 @@ article.modal div.search ul.dual-buttons li a {
    clear: both;
 }
 
-hgroup.page-title h2 {
-   width: 36px;
+article.modal hgroup.page-title .page-h1 {
+   float: left;
+   text-align: left;
+   padding: 15px 0;
+}
+
+article.modal hgroup.page-title h1 {
+   font-size: 1.7em;
+}
+
+article.modal hgroup.page-title .page-actions {
+   float: right;
+   padding: 17px 0;
 }
 
 div.modal-window .settings-toolbar p,
@@ -1762,8 +1842,13 @@ div.modal-window .settings-toolbar p.close a {
    margin: 0 auto;
 }
 
-.col_3, .col_9, .col_12 {
+.col_1, .col_3, .col_9, .col_12 {
    margin: 0 1.041666667%;
+}
+
+.col_1 {
+   float: left;
+   width: 6.25%;
 }
 
 .col_3 {
@@ -1851,27 +1936,34 @@ ul.popover-window.header-toolbar {
    margin-left: -70px;
 }
 
+hgroup.page-title .page-h1 {
+   text-align: left;
+   padding: 22px 0;
+}
+
 hgroup.page-title h1 {
-   overflow: hidden;
    font-size: 2.1em;
-   line-height: 80px;
-   padding: 0 1.041666667%;
 }
 
-hgroup.page-title h2 {
-   width: auto;
-   height: 80px;
-   line-height: 80px;
-   -wekbit-box-shadow: none;
-   -moz-box-shadow: none;
-   box-shadow: none;
-   border-left: none;
-   padding: 0 1.041666667%;
+hgroup.page-title .page-actions {
+   -wekbit-box-shadow: -4px 0 5px rgba(0,0,0,.04),
+      1px 0 0 rgba(0,0,0,.1) inset;
+   -moz-box-shadow: -4px 0 5px rgba(0,0,0,.04),
+      1px 0 0 rgba(0,0,0,.1) inset;
+   box-shadow: -4px 0 5px rgba(0,0,0,.04),
+      1px 0 0 rgba(0,0,0,.1) inset;
+   text-align: left;
+   padding: 28px 0;
 }
 
-hgroup.page-title h2 span.icon {
-   padding: 0;
-   margin-top: 28px;
+hgroup.bucket-title .page-actions {
+   padding: 19px 0;
+}
+
+hgroup.page-title .page-actions h2 {
+   display: block;
+   clear: both;
+   margin-left: 10px;
 }
 
 hgroup.user-title div.user-summary {
@@ -1979,6 +2071,16 @@ nav.page-navigation ul li:first-child a {
    left: 10px;
 }
 
+/* --------------------------- BUCKET */
+
+section.bucket-rundown {
+   display: block;
+}
+
+section.bucket-rundown .rundown-totals {
+   display: none;
+}
+
 /* --------------------------- CONTAINERS */
 
 article.container div.parameter a.avatar-wrap {
@@ -2029,7 +2131,6 @@ div#confirmation-container div.modal-window {
    margin: 90px auto 20px;
 }
 
-
 div#zoom-container div.modal-window {
    width: 600px;
    min-height: 150px;
@@ -2053,6 +2154,14 @@ div.modal-window .modal.col_9 {width: auto;}
 
 hgroup.page-title h1 {
    width: 81.25%;
+}
+
+/* --------------------------- BUCKET */
+
+section.bucket-rundown .rundown-totals {
+   display: block;
+   float: right;
+   text-align: right;
 }
 
 /* --------------------------- USER */

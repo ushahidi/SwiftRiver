@@ -1,36 +1,60 @@
 <?php
-	$page_title = "Ushahidi at SXSW";
+	$page_title = "Ushahidi press coverage";
 	$template_type = "masonry";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="page-title cf">
+	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
 				<h1><?php print $page_title; ?></h1>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="settings">
-					<a href="/markup/river/settings-filters.php">
+					<a href="/markup/bucket/settings-filters.php">
 						<span class="icon"></span>
-						River settings
+						Bucket settings
+					</a>
+				</h2>
+				<h2 class="discussion">
+					<a href="/markup/bucket/discussion.php">
+						<span class="icon"></span>
+						Discussion
 					</a>
 				</h2>
 			</div>
 		</div>
 	</hgroup>
 
+	<section class="bucket-rundown cf">
+		<div class="center">
+			<!--div class="rundown-totals col_3">
+				<ul>
+					<li><strong>88</strong> drops</li>
+					<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
+				</ul>
+			</div-->
+			<div class="rundown-collaborators col_9">
+				<h2>Collaborators on this bucket</h2>
+				<ul>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
 	<nav class="page-navigation cf">
 		<ul class="center">
-			<li class="active"><a href="/markup/river">Drops</a></li>
-			<li><a href="/markup/river/view-list.php">List</a></li>
-			<li><a href="/markup/river/view-photos.php">Photos</a></li>
-			<li><a href="/markup/river/view-map.php">Map</a></li>
-			<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
+			<li class="active"><a href="/markup/bucket">Drops</a></li>
+			<li><a href="/markup/bucket/view-list.php">List</a></li>
+			<li><a href="/markup/bucket/view-photos.php">Photos</a></li>
+			<li><a href="/markup/bucket/view-map.php">Map</a></li>
+			<li><a href="/markup/bucket/view-timeline.php">Timeline</a></li>
 		</ul>
 	</nav>
 
-	<div id="content" class="river drops cf">
+	<div id="content" class="bucket drops cf">
 		<div class="center">
 
 			<!-- ALTERNATE MESSAGE TO VIEW NEW DROPS //

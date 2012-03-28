@@ -6,13 +6,17 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<h1>Ushahidi at SXSW</h1>
-			<h2 class="settings">
-				<a href="/markup/river/settings-filters.php">
-					<span class="icon"></span>
-					<span class="label">River settings</span>
-				</a>
-			</h2>
+			<div class="page-h1 col_9">
+				<h1><?php print $page_title; ?></h1>
+			</div>
+			<div class="page-actions col_3">
+				<h2 class="settings">
+					<a href="/markup/river/settings-filters.php">
+						<span class="icon"></span>
+						River settings
+					</a>
+				</h2>
+			</div>
 		</div>
 	</hgroup>
 
