@@ -251,7 +251,7 @@ class Model_User extends Model_Auth_User
 		// Rivers collaborating on
 		$collaborating = DB::select(array('rc.river_id', 'id'),
 			array(DB::expr('"river"'), 'type'),
-			DB::expr('"TRUE" AS subscribed'), 'r.river_name', 
+			DB::expr('"FALSE" AS subscribed'), 'r.river_name', 
 			array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'))
 		    ->from(array('river_collaborators', 'rc'))
 		    ->join(array('rivers', 'r'), 'INNER')
@@ -318,7 +318,7 @@ class Model_User extends Model_Auth_User
 		// Buckets subscribed to
 		$subscribed = DB::select(array('bs.bucket_id', 'id'), 
 			array(DB::expr('"bucket"'), 'type'),
-			DB::expr('"FALSE" AS subscribed'), 'b.bucket_name', 
+			DB::expr('"TRUE" AS subscribed'), 'b.bucket_name', 
 			array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'))
 		    ->union($collaborating, TRUE)
 		    ->from(array('bucket_subscriptions', 'bs'))

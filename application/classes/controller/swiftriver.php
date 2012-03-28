@@ -284,8 +284,6 @@ class Controller_Swiftriver extends Controller_Template {
 			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header');
-			$this->template->header->nav_header->rivers = $this->user->get_rivers();
-			$this->template->header->nav_header->buckets = $this->user->get_buckets();
 			$this->template->header->nav_header->user = $this->user;
 			$this->template->header->nav_header->admin = $this->admin;
 			$this->template->header->nav_header->account = $this->account;
