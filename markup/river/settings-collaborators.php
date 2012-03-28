@@ -6,13 +6,17 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<h1><?php print $page_title; ?> <em>settings</em></h1>
-			<h2 class="back label">
-				<a href="/markup/river">
-					<span class="icon"></span>
-					<span class="label">Return to river</span>
-				</a>
-			</h2>
+			<div class="page-h1 col_9">
+				<h1><?php print $page_title; ?> <em>settings</em></h1>
+			</div>
+			<div class="page-actions col_3">
+				<h2 class="back">
+					<a href="/markup/river/">
+						<span class="icon"></span>
+						Return to river
+					</a>
+				</h2>
+			</div>
 		</div>
 	</hgroup>
 
