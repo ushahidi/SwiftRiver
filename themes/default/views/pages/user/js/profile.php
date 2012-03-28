@@ -1,6 +1,6 @@
 <script type="text/template" id="river_item_template">
 	<?php if ($owner): ?>
-		<% if (subscribed == 1) { %>
+		<% if (subscribed) { %>
 		<p class="button-white follow selected">
 			<a href="#" title="">
 				<span class="icon"></span><span class="nodisplay"></span>
@@ -8,7 +8,7 @@
 		<p>
 		<% } %>
 	<?php else: ?>
-	<% var selected = (subscribed == 1) ? "selected" : ""; %>
+	<% var selected = (subscribed) ? "selected" : ""; %>
 	<p class="button-white follow <%= selected %>">
 		<a href="#" title="">
 			<span class="icon"></span><span class="nodisplay"></span>
@@ -20,7 +20,7 @@
 
 <script type="text/template" id="bucket_item_template">
 	<?php if ($owner): ?>
-		<% if (subscribed == 1) { %>
+		<% if (subscribed) { %>
 		<p class="button-white follow selected">
 			<a href="#" title="">
 				<span class="icon"></span><span class="nodisplay"></span>
@@ -28,7 +28,7 @@
 		<p>
 		<% } %>
 	<?php else: ?>
-		<% var selected = (subscribed == 1) ? "selected": ""; %>
+		<% var selected = (subscribed) ? "selected": ""; %>
 		<p class="button-white follow <%= selected %>">
 			<a href="#" title="">
 				<span class="icon"></span><span class="nodisplay"></span>
@@ -50,7 +50,7 @@
 				success: function(model, response) {
 					if ($(target).hasClass("selected")) {
 						<?php if ($dashboard_view): ?>
-							view.$el.hide();
+							view.$el.fadeOut();
 						<?php else: ?>
 							$(target).removeClass("selected");
 						<?php endif; ?>
@@ -69,7 +69,7 @@
 				success: function(model, response) {
 					if ($(target).hasClass("selected")) {
 						<?php  if ($dashboard_view): ?>
-							view.$el.hide();
+							view.$el.fadeOut();
 						<?php else: ?>
 							$(target).removeClass("selected");
 						<?php endif; ?>
@@ -166,7 +166,7 @@
 			<?php if ($dashboard_view): ?>
 				pivotEl = $("p#subscribed_rivers");
 				
-				if (river.get("subscribed") == 1) {
+				if (river.get("subscribed")) {
 					pivotEl.after(view);
 				} else {
 					pivotEl.before(view);
@@ -187,7 +187,7 @@
 			<?php if ($dashboard_view): ?>
 				pivotEl = $("p#subscribed_buckets");
 
-				if (bucket.get("subscribed") == 1) {
+				if (bucket.get("subscribed")) {
 					pivotEl.after(view);
 				} else {
 					pivotEl.before(view);

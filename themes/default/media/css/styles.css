@@ -687,7 +687,7 @@ hgroup.user-title div.follow-summary p.button-white a {
 }
 
 hgroup.user-title div.follow-summary p.follow.selected a:after {
-   content: 'ing';
+   /*content: 'ing';*/
 }
 
 /* --------------------------- PAGE NAVIGATION */

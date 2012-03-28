@@ -1,75 +1,41 @@
-<div class="container list select data" id="river-bucket-list">
-	<h2 class="null"><?php echo "No $active to display"; ?></h2>
-	<article class="item cf" id="item-list-header">
-		<div class="list-header">
-			<div class="cell name"><?php echo $name_header; ?></div>
-			<div class="cell activity"><?php echo __("30 Day Droplet Flow"); ?></div>
-			<div class="cell count"><?php echo __("Drop Count"); ?></div>
-			<div class="cell subscribers"><?php echo __("Subscribers"); ?></div>
-			<div class="cell actions"></div>
-		</div>
-	</article>
+<div class="col_12">
+	<?php if ($owner): ?>
+		<article class="container action-list base">
+			<header class="cf">
+				<div class="property-title">
+					<h1><?php echo $owner_header ?></h1>
+				</div>
+			</header>
+			<section id="owner_items" class="property-parameters">
+			</section>
+		</article>
+		<article class="container action-list base">
+			<header class="cf">
+				<div class="property-title">
+					<h1><?php echo $subscriber_header; ?></h1>
+				</div>
+			</header>
+			<section id="subscribed_items" class="property-parameters">
+			</section>
+		</article>
+	<?php else: ?>
+		<article class="container action-list base">
+			<header class="cf">
+				<div class="property-title">
+					<h1><?php echo $owner_header; ?></h1>
+				</div>
+			</header>
+			<section id="owner_items" class="property-parameters">
+			</section>
+		</article>
+	<?php endif; ?>
 </div>
 
-<script type="text/template" id="profile-row-item-template">
-<div class="row">
-	<div class="cell name">
-		<h3>
-			<% var extraClass = item_public == 1 ? "" : "private"; %>
-			<span class="icon <%= extraClass %>"></span>
-			<% if (is_other_account) { %>
-				<a href="<%= item_owner_url %>"><%= account_path %></a> /&nbsp;
-			<% } %>
-
-			<a href="<%= item_url %>" class="title"><%= item_name %></a>
-		</h3>
+<script type="text/template" id="river-bucket-item-template">
+	<div class="actions">
+		<p class="follow-count"><strong><%= subscriber_count %></strong> <?php echo __("Followers"); ?></p>
 	</div>
-	<div class="cell activity"><span class="activity-chart"></span></div>
-	<div class="cell count">
-		<span class="count"><%= drop_count %></span>
-	</div>
-	<div class="cell subscribers">
-		<span class="count"><%= subscriber_count %></span>
-	</div>
-	<div class="cell actions">
-		<section class="actions">
-		    <?php if ( ! $anonymous): ?>
-		    	<% if ( ! is_owner ) { %>
-				    <% class_name = ""; %>			
-				    <div class="button">
-				    	<p class="button-change">
-							<a class="subscribe" onclick=""><span class="icon"></span>
-							<% if (subscribed) { %>
-								<span class="label"><?php echo __('Unsubscribe'); ?></span></a></p>
-							<% } else { %>
-								<span class="label"><?php echo __('Subscribe'); ?></span></a></p>
-							<% } %>
-				    	<div class="clear"></div>
-				    </div>
-				<% } else { %>
-					<div class="button delete-item">
-						<p class="button-change">
-							<a class="delete">
-								<span class="icon"></span>
-								<span class="nodisplay"><?php echo __('Delete '.ucfirst($active)); ?></span>
-							</a>
-						</p>
-						<div class="clear"></div>
-						<div class="dropdown container">
-							<p><?php echo __('Are you sure you want to delete this '.$active.'?'); ?></p>
-							<ul>
-								<li class="confirm">
-									<a><?php echo __('Yep.'); ?></a>
-								</li>
-								<li class="cancel"><a><?php echo __('No, nevermind.'); ?></a></li>
-							</ul>
-						</div>
-					</div>
-				<% } %>
-			<?php endif; ?>
-		</section>
-	</div>
-</div>
+	<h2><a href="<%= item_url %>"><%= item_name %></a></h2>
 </script>
 
 <script type="text/javascript">
@@ -90,15 +56,15 @@ $(function() {
 	
 	var RiverBucketItemView = Backbone.View.extend({
 		
-		tagName: "article",
+		tagName: "div",
 		
-		className: "item cf",
+		className: "parameter",
 		
-		template: _.template($("#profile-row-item-template").html()),
+		template: _.template($("#river-bucket-item-template").html()),
 		
 		events: {
-			"click section.actions .button-change a.subscribe": "toggleSubscription",
-			"click section.actions .delete-item .confirm": "delete"
+			// "click section.actions .button-change a.subscribe": "toggleSubscription",
+			// "click section.actions .delete-item .confirm": "delete"
 		},
 		
 		initialize: function () {
@@ -127,38 +93,35 @@ $(function() {
 		
 	var ProfileView = Backbone.View.extend({
 		
-		el: "#river-bucket-list",
-		
-		events: {
-			"click section.actions .follow-user a.subscribe": "toggleFollow"
-		},
-		
 		initialize: function() {
 			this.items = new RiverBucketItemList;
-			this.items.on('add',	 this.addItem, this);
+			this.items.on('add', this.addItem, this);
 			this.items.on('reset', this.addItems, this);
 			
 		},
 		
 		addItem: function (item) {
-			var view = new RiverBucketItemView({model: item});
-			this.$el.append(view.render().el);
+			var view = new RiverBucketItemView({model: item}).render().el;
+			<?php if ($owner): ?>
+			if (item.get("subscribed") == true) {
+				$("section#subscribed_items").append(view);
+			} else {
+				$("section#owner_items").append(view);
+			}
+			<?php else: ?>
+				$("section#owner_items").append(view);
+			<?php endif; ?>
 
 			// Show the activity
-			if (typeof item.get("activity_data") != "undefined") {
-				activityData = item.get("activity_data");
-				view.$("span.activity-chart").sparkline(activityData, 
-					{type: 'bar', barColor: '#888', barWidth: 5});
-			}
+			// if (typeof item.get("activity_data") != "undefined") {
+			// 	activityData = item.get("activity_data");
+			// 	view.$("span.activity-chart").sparkline(activityData, 
+			// 		{type: 'bar', barColor: '#888', barWidth: 5});
+			// }
 		},
 		
 		addItems: function() {
-			if (this.items.length) {
-				this.$("h2.null").hide();
-				this.items.each(this.addItem, this);
-			} else {
-				this.$("article#item-list-header").hide();
-			}
+			this.items.each(this.addItem, this);
 		},
          
 		toggleFollow: function() {

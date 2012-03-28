@@ -1,6 +1,6 @@
 <script type="text/template" id="activity_template">
 	
-	<?php if ($owner): ?>
+	<?php if ($owner AND $gravatar_view): ?>
 		<a class="avatar-wrap"><img src="<%= user_avatar %>"/></a>
 	<?php else: ?>
 		<span class="icon"></span>
@@ -89,6 +89,14 @@ $(function() {
 		},
 		
 		render: function() {
+			var action = this.model.get("action");
+			<?php if ( ! $gravatar_view): ?>
+			if (action == "create") {
+				this.$el.addClass("add");
+			} else if (action == "invite") {
+				this.$el.addClass("follow");
+			}
+			<?php endif; ?>
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;	
 		}

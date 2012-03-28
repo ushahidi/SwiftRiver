@@ -38,7 +38,7 @@ class Controller_User extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
-		
+
 		// Anonymous user doesn't have a profile
 		if ( $this->visited_account->user->username == 'public')
 		{
@@ -52,7 +52,8 @@ class Controller_User extends Controller_Swiftriver {
 		}
 		
 		// Is the account private?
-		if ( ! $this->owner AND $this->visited_account->account_private) {
+		if ( ! $this->owner AND $this->visited_account->account_private)
+		{
 			$this->request->redirect($this->dashboard_url);
 		}
 
@@ -63,14 +64,16 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('sub_content', $this->sub_content)
 			->bind('anonymous', $this->anonymous)
 			->bind('followers', $followers)
-			->bind('following', $following);
+			->bind('following', $following)
+			->bind('view_type', $view_type);
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
+		$view_type = "dashboard";
 
 		// Some info about the owner of the user profile being visited
 		// Will be used later for following unfollowing
-		// $this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+		$this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
 
 		$this->template->content->user_item = json_encode(array(
 				"id" => $this->visited_account->user->id,
@@ -111,17 +114,21 @@ class Controller_User extends Controller_Swiftriver {
 				->bind('profile_js', $profile_js);
 
 			$profile_js = $this->_get_profile_js(TRUE);
+			$gravatar_view = TRUE;
 		}
 		else
 		{
 			$this->_prepare_user_profile_view($activity_stream);
+			$gravatar_view = FALSE;
+			$this->template->content->view_type = "user";
 		}
 		
 		// Activity stream
 		$activity_stream = View::factory('template/activities')
 		    ->bind('activities', $activities)
 		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('gravatar_view', $gravatar_view);
 
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
 
@@ -130,25 +137,105 @@ class Controller_User extends Controller_Swiftriver {
 
 	}
 
+
 	/**
-	 * Displays the current user's profile
+	 * Loads the rivers view page
 	 */
-	public function action_profile()
+	public function action_rivers()
 	{
-		$this->active = '';
+		$this->template->content->view_type = "";
 
-		$this->_prepare_user_profile_view($activity_stream);
-
-		// Activity stream
-		$activity_stream = View::factory('template/activities')
-		    ->bind('activities', $activities)
+		$this->sub_content = View::factory('pages/user/rivers_buckets')
+		    ->bind('list_items', $list_items)
 		    ->bind('fetch_url', $fetch_url)
 		    ->bind('owner', $this->owner);
+		
+		// Page title
+		if ($this->owner)
+		{
+			$this->template->header->title = __("My Rivers");
 
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
+			$this->sub_content->subscriber_header = __("Rivers you follow");
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Rivers', array(
+				':name' => Text::limit_chars($this->visited_account->user->name)
+		    ));
 
-		$activities = json_encode(Model_User_Action::get_activity_stream(
-			$this->visited_account->user->id, ! $this->owner));
+		}
+
+		$this->sub_content->owner_header = $this->template->header->title;
+
+		$rivers = ($this->owner) 
+		    ? $this->user->get_rivers() 
+		    : $this->user->get_other_user_visible_rivers($this->visited_account->user->id);
+
+
+		$items = array();
+		foreach ($rivers as $river)
+		{
+			$items[] = array(
+				'id' => $river['id'],
+				'type' => $river['type'],
+				'item_name' => $river['river_name'],
+				'item_url' => $river['river_url'],
+				'subscribed' => $river['subscribed'],
+				'subscriber_count' => ORM::factory('river', $river['id'])->subscriptions->count_all()
+			);
+		}
+
+		$list_items = json_encode($items);
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/rivers/manage';
+	}
+
+	/**
+	 * Loads the bucket view page
+	 */
+	public function action_buckets()
+	{
+		$this->template->content->view_type = "";
+
+		$this->sub_content = View::factory('pages/user/rivers_buckets')
+		    ->bind('list_items', $list_items)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('owner', $this->owner);
+		
+		// Page title
+		if ($this->owner)
+		{
+			$this->template->header->title = __("My Buckets");
+			$this->sub_content->subscriber_header = __("Buckets you follow");
+		}
+		else
+		{
+			$this->template->header->title = __(':name\'s Buckets', array(
+				':name' => Text::limit_chars($this->visited_account->user->name)
+		    ));
+		}
+
+		$this->sub_content->owner_header = $this->template->header->title;
+
+		$buckets = ($this->owner) 
+		    ? $this->user->get_buckets() 
+		    : $this->user->get_other_user_visible_buckets($this->visited_account->user->id);
+
+
+		$items = array();
+		foreach ($buckets as $bucket)
+		{
+			$items[] = array(
+				'id' => $bucket['id'],
+				'type' => $bucket['type'],
+				'item_name' => $bucket['bucket_name'],
+				'item_url' => $bucket['bucket_url'],
+				'subscribed' => $bucket['subscribed'],
+				'subscriber_count' => ORM::factory('bucket', $bucket['id'])->subscriptions->count_all()
+			);
+		}
+
+		$list_items = json_encode($items);
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/buckets/manage';
 	}
 
 
@@ -161,11 +248,11 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/profile')
 		    ->bind('activity_stream', $activity_stream)
 		    ->bind('owner', $this->owner)
-		    ->bind('profile_js', $profile_js);
+		    ->bind('profile_js', $profile_js)
+		    ->bind('account', $this->visited_account);
 
 		// Get the javascript
 		$profile_js = $this->_get_profile_js();
-
 	}
 
 	/**
@@ -213,7 +300,7 @@ class Controller_User extends Controller_Swiftriver {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
-		if ( $this->anonymous )
+		if ($this->anonymous)
 		{
 			// No anonymous allowed here
 			throw new HTTP_Exception_403();

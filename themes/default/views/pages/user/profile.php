@@ -15,7 +15,11 @@
 	<article class="container action-list base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __("Rivers"); ?></h1>
+				<h1>
+					<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>">
+						<?php echo __("Rivers"); ?>
+					</a>
+				</h1>
 
 				<?php if ( ! $owner): ?>
 				<p class="button-white add-parameter follow">
@@ -35,7 +39,11 @@
 	<article class="container action-list base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __("Buckets"); ?></h1>
+				<h1>
+					<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>">
+						<?php echo __("Buckets"); ?>
+					</a>
+				</h1>
 
 				<?php if ( ! $owner): ?>
 				<p class="button-white add-parameter follow">

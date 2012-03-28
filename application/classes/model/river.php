@@ -801,6 +801,19 @@ class Model_River extends ORM {
 
 	}
 
+	/**
+	 * Verifies whether the user with the specified id has subscribed
+	 * to this river
+	 * @return bool
+	 */
+	public function is_subscriber($user_id)
+	{
+		return $this->subscriptions
+		    ->where('user_id', '=', $user_id)
+		    ->find()
+		    ->loaded();
+	}
+
 }
 
 ?>

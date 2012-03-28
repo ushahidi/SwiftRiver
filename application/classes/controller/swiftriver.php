@@ -191,7 +191,6 @@ class Controller_Swiftriver extends Controller_Template {
 			Auth::instance()->logout();
 		}
 		
-		
 		//if we're not logged in, gives us chance to auto login
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
 		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');
@@ -222,10 +221,10 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 
+
 		// Logged In User
 		$this->user = Auth::instance()->get_user();
 		
-				
 		// Is anonymous logged in?
 		if ($this->user->username == 'public')
 		{
@@ -256,7 +255,6 @@ class Controller_Swiftriver extends Controller_Template {
 		// Logged in user's dashboard url
 		$this->dashboard_url = URL::site().$this->user->account->account_path;
 		
-		
 		// Build the base URL
 		$visited_account_path = $this->request->param('account');
 		if ($visited_account_path and $visited_account_path != $this->account->account_path) 
@@ -274,8 +272,8 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
 			$this->visited_account = $this->account;
-		}		
-		
+		}
+
 		// Load Header & Footer & variables
 		if ($this->auto_render) 
 		{

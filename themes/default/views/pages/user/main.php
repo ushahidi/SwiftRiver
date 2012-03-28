@@ -23,7 +23,11 @@
 	<article class="container action-list base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><a href="<?php echo URL::site().$account->account_path.'/profile'; ?>"><?php echo __("Rivers"); ?></a></h1>
+				<h1>
+					<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>">
+						<?php echo __("Rivers"); ?>
+					</a>
+				</h1>
 			</div>
 		</header>
 		<section id="river_listing" class="property-parameters">
@@ -38,7 +42,11 @@
 	<article class="container action-list base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><a href="<?php echo URL::site().$account->account_path.'/profile'; ?>"><?php echo __("Buckets"); ?></a></h1>
+				<h1>
+					<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>">
+						<?php echo __("Buckets"); ?>
+					</a>
+				</h1>
 			</div>
 		</header>
 		<section id="bucket_listing" class="property-parameters">

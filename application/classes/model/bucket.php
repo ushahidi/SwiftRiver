@@ -24,7 +24,7 @@ class Model_Bucket extends ORM {
 	 * One-to-many relationship definitions
 	 * @var array Relationhips
 	 */
-	protected $_has_many = array(
+	protected $_has_many = array( 
 		// A bucket has many droplets
 		'droplets' => array(
 			'model' => 'droplet',
@@ -432,6 +432,19 @@ class Model_Bucket extends ORM {
 
 		// Return
 		return $activity;
+	}
+	
+	/**
+	 * Verifies whether the user with the specified id has subscribed
+	 * to this river
+	 * @return bool
+	 */
+	public function is_subscriber($user_id)
+	{
+		return $this->subscriptions
+		    ->where('user_id', '=', $user_id)
+		    ->find()
+		    ->loaded();
 	}
 
 }

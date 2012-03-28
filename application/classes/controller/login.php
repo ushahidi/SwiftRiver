@@ -58,7 +58,9 @@ class Controller_Login extends Controller_Template {
 	{
 		// For template to hide/show registration fields
 		$this->template->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
-		$this->template->referrer = $this->request->query('redirect_to') ? $this->request->query('redirect_to') : NULL;
+		$this->template->referrer = $this->request->query('redirect_to') 
+		    ? $this->request->query('redirect_to') 
+		    : NULL;
 		
 		// Auto login is available
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
