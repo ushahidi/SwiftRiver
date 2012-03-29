@@ -1,60 +1,71 @@
-<div class="panel-body">
-	<div id="settings" class="controls">
-		<div class="row cf">
-			<div class="input">
-				<h3><?php echo __('Nickname'); ?></h3>
-				<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
+<?php echo Form::open() ?>
+<?php echo Form::input('form_auth_id', Swiftriver_CSRF::token(), array('type' => 'hidden')); ?>
+<div class="col_12">
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<h1><?php echo __("About You"); ?></h1>
 			</div>
-		</div>						    
-		<div class="row cf">
-			<div class="input">
-				<h3><?php echo __('Name'); ?></h3>
-				<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter">
+				<label>
+					<p class="field"><?php echo __('Full name'); ?></p>
+					<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
+				</label>
 			</div>
-			<div class="input">
-				<h3><?php echo __('Email'); ?></h3>
-				<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
-				<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
+			<div class="parameter">
+				<label>
+					<p class="field"><?php echo __('Nickname'); ?></p>
+					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
+				</label>
 			</div>
-		</div>
-		<div class="row cf">
-			<h2><?php echo __('Change password'); ?></h2>
-			<div class="input">
-				<h3><?php echo __('Password'); ?></h3>
-				<?php echo Form::password("password", "", array('id' => 'password')); ?>
+			<div class="parameter">
+				<label>
+					<p class="field"><?php echo __('Email address'); ?></p>
+					<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
+					<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
+				</label>
 			</div>
-			<div class="input">
-				<h3><?php echo __('Confirm password'); ?></h3>
-				<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
-			</div>
-		</div>
-		<div class="row cf">
-			<h2><?php echo __('Photo'); ?></h2>
-			<div class="input">
-				<h3><?php echo __('Current photo'); ?></h3>
-				<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" />
-				<p class="button_change"><a href="http://www.gravatar.com" target="_blank"><?php echo __('Upload new photo'); ?></a></p>
-			</div>
-		</div>
-		
-		<?php echo $collaborators_control; ?>
-		
-	</div>
-	<div class="row controls-buttons cf save-account-settings">
-		<section class="item actions">
-			<p class="button-go"><a><?php echo __('Apply changes'); ?></a></p>
-			<!-- <p class="other"><a class="close" onclick=""><?php echo __('Cancel'); ?></a></p> -->
-			<div class="clear"></div>
-			<ul class="dropdown">
-				<div id="messages"></div>
-				<div class="loading"></div>
-				<div class="container">
-					<p><?php echo __("Enter your current password below to confirm these changes"); ?></p>
-					<?php echo Form::password("current_password", "", array('id' => 'current_password')); ?>
-					<li class="confirm"><a><?php echo __("Confirm"); ?></a></li>
-					<li class="cancel"><a><?php echo __("No, never mind."); ?></a></li>
-				<div>
-			</ul>			
 		</section>
-	</div>
+	</article>
+	
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<h1><?php echo __("Password"); ?></h1>
+			</div>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter">
+				<label>
+					<p class="field"><?php echo __('Password'); ?></p>
+					<?php echo Form::password("password", "", array('id' => 'password')); ?>
+				</label>
+			</div>
+			<div class="parameter">
+				<label>
+					<p class="field"><?php echo __('Confirm password'); ?></p>
+					<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
+				</label>
+			</div>
+		</section>
+	</article>
+
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<h1><?php echo __('Photo'); ?></h1>
+			</div>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter cf">
+				<a class="avatar-wrap"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></a>
+				<p class="button-blue button-small no-icon">
+					<a href="http://www.gravatar.com" target="_blank"><?php echo __('Use a differrent photo'); ?></a>
+				</p>
+			</div>
+		</section>
+	</article>
 </div>
+<?php Form::close(); ?>
