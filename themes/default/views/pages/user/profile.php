@@ -22,7 +22,7 @@
 				</h1>
 
 				<?php if ( ! $owner): ?>
-				<p class="button-white add-parameter follow">
+				<p id="subscribe_all_rivers" class="button-white add-parameter follow">
 					<a href="#" title="<?php echo __("Subscribe"); ?>">
 						<span class="icon"></span><?php echo __("Subscribe to all"); ?>
 					</a>
@@ -46,7 +46,7 @@
 				</h1>
 
 				<?php if ( ! $owner): ?>
-				<p class="button-white add-parameter follow">
+				<p id="subscribe_all_buckets" class="button-white add-parameter follow">
 					<a href="#" title="<?php echo __("Subscribe"); ?>">
 						<span class="icon"></span><?php echo __("Subscribe to all"); ?>
 					</a>

@@ -9,7 +9,7 @@
 		</div>
 		<div id="follow_section" class="follow-summary col_3">
 			<p class="follow-count">
-				<a href="#"><strong><?php echo count($followers); ?></strong> <?php echo __("following"); ?></a>, 
+				<a href="#"><strong><?php echo count($followers); ?></strong> <?php echo __("followers"); ?></a>, 
 				<a href="#"><strong><?php echo count($following); ?></strong> <?php echo __("following"); ?></a>
 			</p>
 		</div>

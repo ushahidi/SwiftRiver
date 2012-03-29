@@ -157,23 +157,34 @@
 
 			this.buckets.on("reset", this.addBuckets, this);
 			this.buckets.on("add", this.addBucket, this);
+
+			this.bucketViews = [];
+			this.riverViews = [];
+
+			// Regsiter events
+			this.btnSubscribeRivers = $("p#subscribe_all_rivers > a");
+			this.btnSubscribeRivers.on("click", this.riverViews, this.handleSubscription);
+
+			this.btnSubscribeBuckets = $("p#subscribe_all_buckets > a");
+			this.btnSubscribeBuckets.on("click", this.bucketViews, this.handleSubscription);
 		},
 
 		// Renders a single river
 		addRiver: function(river) {
-			view = new RiverItemView({model: river}).render().el;
+			var view = new RiverItemView({model: river});
+			this.riverViews.push(view);
 
 			<?php if ($dashboard_view): ?>
 				pivotEl = $("p#subscribed_rivers");
 				
 				if (river.get("subscribed")) {
-					pivotEl.after(view);
+					pivotEl.after(view.render().el);
 				} else {
-					pivotEl.before(view);
+					pivotEl.before(view.render().el);
 				}
 
 			<?php else: ?>
-				$("section#river_listing").append(view);
+				$("section#river_listing").append(view.render().el);
 			<?php endif; ?>
 		},
 
@@ -183,23 +194,38 @@
 
 		// Renders a single bucket
 		addBucket: function(bucket) {
-			view = new BucketItemView({model: bucket}).render().el;
+			var view = new BucketItemView({model: bucket});
+			this.bucketViews.push(view);
+
 			<?php if ($dashboard_view): ?>
 				pivotEl = $("p#subscribed_buckets");
-
+				
 				if (bucket.get("subscribed")) {
-					pivotEl.after(view);
+					pivotEl.after(view.render().el);
 				} else {
-					pivotEl.before(view);
+					pivotEl.before(view.render().el);
 				}
 
 			<?php else: ?>
-				$("section#bucket_listing").append(view);
+				$("section#bucket_listing").append(view.render().el);
 			<?php endif; ?>
 		},
 
 		addBuckets: function() {
 			this.buckets.each(this.addBucket, this);
+		},
+
+		/**
+		 * Event handler for the "subscribe to all" action
+		 */
+		handleSubscription: function(e) {
+			views = e.data;
+			z = views.length;
+			for (var i=0; i<z; i++) {
+				if (!views[i].model.get("subscribed")) {
+					$("p.button-white > a", views[i].$el).trigger("click");
+				}
+			}
 		}
 	});
 

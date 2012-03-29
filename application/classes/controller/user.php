@@ -427,31 +427,19 @@ class Controller_User extends Controller_Swiftriver {
 		// Set the current page
 		$this->active = 'settings';
 
-		$this->template->sub_content = View::factory('pages/user/settings')
+		$this->sub_content = View::factory('pages/user/settings')
 		    ->bind('user', $this->user);
 		
-	}
-	
-	/**
-	 * Ajax Settings Editing Inline
-	 *
-	 * Edit User Settings
-	 * 
-	 * @return	string - json
-	 */
-	public function action_ajax_settings()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		
+
 		// Save settings
 		if ( ! empty($_POST))
 		{
 			try 
 			{
-				if (empty($_POST['password']) || empty($_POST['password_confirm']))
+				if (empty($_POST['password']) OR empty($_POST['password_confirm']))
 				{
-					// force unsetting the password! Otherwise Kohana3 will automatically hash the empty string - preventing logins
+					// Force unsetting the password! Otherwise Kohana3 will 
+					// automatically hash the empty string - preventing logins
 					unset($_POST['password'], $_POST['password_confirm']);
 				}
 				
@@ -461,7 +449,11 @@ class Controller_User extends Controller_Swiftriver {
 				if ( ! $this->riverid_auth AND
 					Auth::instance()->hash($current_password) != $this->user->password)
 				{
-					echo json_encode(array("status"=>"error", "errors" => array('Current password is incorrect')));
+					echo json_encode(array(
+						"status"=>"error", 
+						"errors" => array('Current password is incorrect')
+					));
+
 					return;
 				}
 				
@@ -517,6 +509,7 @@ class Controller_User extends Controller_Swiftriver {
 						if ( ! $resp['status'])
 						{
 							echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+
 							return;
 						}    
 					}
@@ -568,7 +561,11 @@ class Controller_User extends Controller_Swiftriver {
 					$account = ORM::factory('account',array('account_path'=>$nickname));
 					if ($account->loaded())
 					{
-						echo json_encode(array("status"=>"error", "errors" => array(__('Nickname is already taken'))));
+						echo json_encode(array(
+							"status"=>"error", 
+							"errors" => array(__('Nickname is already taken'))
+						));
+						
 						return;
 					}
 					
@@ -589,6 +586,7 @@ class Controller_User extends Controller_Swiftriver {
 			}
 		}
 	}
+	
 	
 	/**
 	 * Actions restful api
