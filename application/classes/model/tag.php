@@ -139,9 +139,12 @@ class Model_Tag extends ORM
 		 */
 		$query = DB::select()->distinct(TRUE);
 		$tags_subquery = NULL;
-		foreach ($tags as $tag)
+		foreach ($tags as & $tag)
 		{
-			$union_query = DB::select(array(DB::expr("'".addslashes($tag['tag_name'])."'"), 'tag'), array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'));
+			$tag['tag_name'] = strtolower($tag['tag_name']);
+			$tag['tag_type'] = strtolower($tag['tag_type']);
+			$tag['tag_hash'] = md5($tag['tag_name'].$tag['tag_type']);
+			$union_query = DB::select(array(DB::expr("'".addslashes($tag['tag_name'])."'"), 'tag'), array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'), array(DB::expr("'".$tag['tag_hash']."'"), 'tag_hash'));
 			if ( ! $tags_subquery)
 			{
 				$tags_subquery = $union_query;
@@ -154,19 +157,24 @@ class Model_Tag extends ORM
 		if ($tags_subquery)
 		{
 			$query->from(array($tags_subquery,'a'));
-			$sub = DB::select('tag', 'tag_type')
+			$sub = DB::select('tag', 'tag_type', 'tag_hash')
 			           ->from('tags')
-			           ->where(DB::expr('(tag, tag_type)'), 'IN', $tags);
-			$query->where(DB::expr('(tag, tag_type)'), 'NOT IN', $sub);
-			DB::insert('tags', array('tag', 'tag_type'))->select($query)->execute();
+			           ->where(DB::expr('(tag, tag_type, tag_hash)'), 'IN', $tags);
+			$query->where(DB::expr('(tag, tag_type, tag_hash)'), 'NOT IN', $sub);
+			DB::insert('tags', array('tag', 'tag_type', 'tag_hash'))->select($query)->execute();
 		}
 		
 		// Get the tag IDs
 		if ($tags)
 		{
+			$tag_hashes = array();
+			foreach ($tags as $tag)
+			{
+				$tag_hashes[] = $tag['tag_hash'];
+			}
 			$query = DB::select('id')
 			           ->from('tags')
-			           ->where(DB::expr('(tag, tag_type)'), 'IN', $tags);
+			           ->where('tag_hash', 'IN', $tag_hashes);
 
 			return $query->execute()->as_array();
 		}
