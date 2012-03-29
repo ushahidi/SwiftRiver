@@ -34,6 +34,9 @@ class Model_Bucket extends ORM {
 		// A bucket has many collaborators
 		'bucket_collaborators' => array(),
 
+		// A bucket has many collaborators
+		'comments' => array(),		
+
 		// A bucket has many subscribers
 		'subscriptions' => array(
 			'model' => 'user',
