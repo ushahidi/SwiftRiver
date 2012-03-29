@@ -1,19 +1,25 @@
 <?php
-	$page_title = "Ushahidi at SXSW";
+	$page_title = "Ushahidi press coverage";
 	$template_type = "settings";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="page-title cf">
+	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
 				<h1><?php print $page_title; ?> <em>settings</em></h1>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="back">
-					<a href="/markup/river/">
+					<a href="/markup/bucket/">
 						<span class="icon"></span>
-						Return to river
+						Return to bucket
+					</a>
+				</h2>
+				<h2 class="discussion">
+					<a href="/markup/bucket/discussion.php">
+						<span class="icon"></span>
+						Discussion
 					</a>
 				</h2>
 			</div>
@@ -22,11 +28,10 @@
 
 	<nav class="page-navigation cf">
 		<ul class="center">
-			<li><a href="/markup/river/settings-filters.php">Filters</a></li>
-			<li><a href="/markup/river/settings-channels.php">Channels</a></li>
-			<li><a href="/markup/river/settings-collaborators.php">Collaborators</a></li>
-			<li class="active"><a href="/markup/river/settings-display.php">Display</a></li>
-			<li><a href="/markup/river/settings-permissions.php">Permissions</a></li>
+			<li><a href="/markup/bucket/settings-filters.php">Filters</a></li>
+			<li><a href="/markup/bucket/settings-collaborators.php">Collaborators</a></li>
+			<li class="active"><a href="/markup/bucket/settings-display.php">Display</a></li>
+			<li><a href="/markup/bucket/settings-permissions.php">Permissions</a></li>
 		</ul>
 	</nav>
 

@@ -1,12 +1,16 @@
 <article class="modal">
 	<hgroup class="page-title cf">
-		<h1>+ Create</h1>
-		<h2 class="close">
-			<a href="#">
-				<span class="icon"></span>
-				<span class="label">Close</span>
-			</a>
-		</h2>
+		<div class="page-h1 col_9">
+			<h1>+ Create</h1>
+		</div>
+		<div class="page-actions col_3">
+			<h2 class="close">
+				<a href="#">
+					<span class="icon"></span>
+					Close
+				</a>
+			</h2>
+		</div>
 	</hgroup>
 
 	<div class="modal-body link-list">

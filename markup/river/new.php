@@ -5,7 +5,9 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<h1>Create a river</h1>
+			<div class="page-h1 col_12">
+				<h1><?php print $page_title; ?></h1>
+			</div>
 		</div>
 	</hgroup>
 

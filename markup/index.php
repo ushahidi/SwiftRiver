@@ -20,7 +20,7 @@
 	<nav class="page-navigation cf">
 		<ul class="center">
 			<li class="active"><a href="/">Dashboard</a></li>
-			<li><a href="/user/settings.php">Account settings</a></li>
+			<li><a href="/markup/user/settings.php">Account settings</a></li>
 		</ul>
 	</nav>
 
@@ -37,14 +37,14 @@
 						<div class="parameter activity-item cf">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
 							<div class="item-body">
-								<h2><a href="/user">Nat Manning</a> subscribed to the <a href="#">Reasons to hate the Patriots</a> river</h2>
+								<h2><a href="/markup/user">Nat Manning</a> subscribed to the <a href="#">Reasons to hate the Patriots</a> river</h2>
 								<p class="metadata">4:30 p.m. Jan. 13, 2012</p>
 							</div>
 						</div>
 						<div class="parameter activity-item cf">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
 							<div class="item-body">
-								<h2><a href="/user">Nat Manning</a> created the <a href="#">Top restaurants in Berkeley</a> bucket</h2>
+								<h2><a href="/markup/user">Nat Manning</a> created the <a href="#">Top restaurants in Berkeley</a> bucket</h2>
 								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
 							</div>
 						</div>
@@ -57,7 +57,7 @@
 										<li class="button-white no-icon"><a href="#">Approve</a></li>
 									</ul>
 								</div>
-								<h2><a href="/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h2>
+								<h2><a href="/markup/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h2>
 								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
 							</div>
 						</div>
