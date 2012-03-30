@@ -83,10 +83,15 @@
 					<section class="property-parameters">
 						<div class="parameter cf">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" class="avatar" /></a>
-							<p class="button-blue button-small no-icon"><a href="http://gravatar.com">Use a different photo</a></p>
+							<p class="button-blue button-small"><a href="http://gravatar.com">Use a different photo</a></p>
 						</div>
 					</section>
 				</article>
+
+				<div class="save-toolbar">
+					<p class="button-blue"><a href="#">Save changes</a></p>
+					<p class="button-blank"><a href="#">Cancel</a></p>
+				</div>
 			</div>
 		</div>
 	</div>

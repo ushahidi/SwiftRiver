@@ -11,8 +11,8 @@
 			<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
 				<div class="actions">
 					<ul class="dual-buttons">
-						<li class="button-white no-icon"><a href="#"><?php echo __('Accept'); ?></a></li>
-						<li class="button-white no-icon"><a href="#"><?php echo __('Ignore'); ?></a></li>
+						<li class="button-white"><a href="#"><?php echo __('Accept'); ?></a></li>
+						<li class="button-white"><a href="#"><?php echo __('Ignore'); ?></a></li>
 					</ul>
 				</div>
 			<% } %>

@@ -67,9 +67,10 @@ body {
 /* --------------------------- BUTTON */
 
 .button-blue a {
-   display: block;
+   display: inline-block;
    color: #fff;
    font-weight: bold;
+   line-height: 27px;
    text-align: center;
    text-shadow: 0 1px 0 rgba(0,0,0,.45);
    -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -86,6 +87,7 @@ body {
    background-image: -ms-linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
    background-image: linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#54c2d5', EndColorStr='#36b7ce');
+   padding: 5px 15px;
 }
 
 .button-blue a:hover {
@@ -105,11 +107,16 @@ body {
    top: 1px;
 }
 
+.button-blue a span.icon,
+.button-white a span.icon {
+   float:left;
+}
+
 .button-big a {
    display: inline-block;
    font-weight: bold;
    font-size: 1.5em;
-   padding: 5px 20px;
+   padding: 10px 30px;
 }
 
 .button-small a {
@@ -117,11 +124,11 @@ body {
    font-weight: normal;
    font-size: 0.9em;
    line-height: 25px;
-   padding-right: 10px;
+   padding: 3px 10px;
 }
 
 .button-white a {
-   display: block;
+   display: inline-block;
    color: #888888;
    font-weight: bold;
    line-height: 27px;
@@ -130,7 +137,7 @@ body {
    border-radius: 3px;
    border: 1px solid #e4e8e8;
    background: #fff;
-   padding-right: 10px;
+   padding: 5px 15px;
 }
 
 .button-white a:hover,
@@ -147,12 +154,12 @@ body {
    background: #54c2d5;
 }
 
-.button-white a span.icon {
-   float: left;
+.has-icon a {
+   padding-left: 0;
 }
 
-.no-icon a {
-   padding-left: 10px;
+.only-icon a {
+   padding: 0;
 }
 
 .notify-total {
@@ -182,8 +189,8 @@ ul.dual-buttons li {
    float: left;
 }
 
-ul.dual-buttons.score-drop li a {
-   padding-right: 0;
+ul.dual-buttons li a {
+   display: block;
 }
 
 ul.dual-buttons li:first-child a {
@@ -228,11 +235,8 @@ ul.dual-buttons li.button-white a span.icon {
    float: none;
 }
 
-.stacked ul li a {
-   padding: 5px 0;
-}
-
-.stacked ul li a span.icon {
+ul.dual-buttons li a span.icon {
+   float: none;
    margin: 0 auto;
 }
 
@@ -846,6 +850,8 @@ p.metadata span.icon {
    padding: 5px;
 }
 
+.drop .drop-actions ul li a {padding:0;}
+
 .drop ul.score-drop li.scored a {
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
@@ -1147,6 +1153,8 @@ section.meta-data img.media-image {
    padding: 3.125%;
 }
 
+.list .drop-actions ul li a {padding: 5px 0;}
+
 /* ---- DROP: VIEW PHOTOS */
 
 .photos article.drop section.drop-source {
@@ -1275,11 +1283,9 @@ article.container p.button-white a {
    font-weight: bold;
    font-size: 0.8em;
    line-height: 22px;
-   padding-right: 10px;
 }
 
 article.container p.button-white span.icon {
-   float: left;
    position: relative;
    top: -2px;
    width: 20px;
@@ -1334,18 +1340,13 @@ article.container div.parameter .actions {
 }
 
 article.container div.parameter div.actions p {
-   display: inline;
+   display: inline-block;
+   float: left;
 }
 
 article.container div.parameter div.actions p.follow-count {
-   line-height: 1.9em;
+   line-height: 2em;
    padding-right: 5px;
-}
-
-article.container div.parameter p.button-white a,
-article.container div.parameter p.remove-small a {
-   float: right;
-   padding: 0;
 }
 
 article.container div.parameter p.field {
@@ -1374,8 +1375,28 @@ article.container div.parameter div.actions {
    padding-top: 3.125%;
 }
 
-.settings-toolbar p.button-blue a span.icon {
-   float: left;
+#content.settings .save-toolbar {
+   opacity: .25;
+   text-align: left;
+   -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
+   -webkit-box-shadow: 0 1px 0 rgba(0,0,0,.15);
+   box-shadow: 0 2px 4px rgba(0,0,0,.1) inset;
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background: #ebebeb;
+   padding: 10px;
+   margin-bottom: 30px;
+}
+
+#content.settings .save-toolbar.visible {opacity: 1;}
+
+#content.settings .save-toolbar p {
+   display: inline-block;
+}
+
+#content.settings .save-toolbar p a {
+   padding: 10px 20px;
 }
 
 #content.settings select.boolean-operator {
@@ -1415,6 +1436,41 @@ article.container div.parameter div.actions {
 }
 
 /* --------------------------- DASHBOARD */
+
+#content.dashboard div#primer {
+   margin-top: 15px;
+}
+
+#content.dashboard div#primer .primer-item h3 a {
+   display: block;
+   font-size: 0.9em;
+   -webkit-border-radius: 0px;
+   -moz-border-radius: 0px;
+   border-radius: 0px;
+}
+
+#content.dashboard div#primer .primer-item img {display: none;}
+
+#content.dashboard p.remove {
+   font-size: 0.8em;
+   text-align: right;
+   margin: 7px 0;
+}
+
+#content.dashboard p.remove a:before {
+   font-weight: bold;
+   content: 'x ';
+   padding-right: 3px;
+}
+
+#content.dashboard p.remove a {
+   opacity: .7;
+}
+
+#content.dashboard p.remove a:hover {
+   opacity: 1;
+   text-decoration: none;
+}
 
 #content.dashboard section.property-parameters div.activity-item a.avatar-wrap {
    width: 7%;
@@ -1595,7 +1651,7 @@ article.modal div.create-new p.button-blue {
 }
 
 article.modal div.create-new p.button-blue a {
-   padding: 5px 10px;
+   padding: 0 10px;
 }
 
 /* MODAL: Channel selection */
@@ -1742,10 +1798,6 @@ article.modal div.search ul.dual-buttons {
    padding: 10px 0;
 }
 
-article.modal div.search ul.dual-buttons li a {
-   padding: 10px 15px;
-}
-
 /* --- ####### SMALL VIEWPORT ###### --- */
 
 @media screen and (max-width: 615px) {
@@ -1842,13 +1894,18 @@ div.modal-window .settings-toolbar p.close a {
    margin: 0 auto;
 }
 
-.col_1, .col_3, .col_9, .col_12 {
+.col_1, .col_2, .col_3, .col_4, .col_8, .col_9, .col_12 {
    margin: 0 1.041666667%;
 }
 
 .col_1 {
    float: left;
    width: 6.25%;
+}
+
+.col_2 {
+   float: left;
+   width: 14.58333333%;
 }
 
 .col_3 {
@@ -2060,15 +2117,15 @@ nav.page-navigation ul li:first-child a {
 
 .photos article.drop div.drop-actions ul.move-drop {
    float: none;
-   position: absolute;
+/* position: absolute;
    top: 10px;
-   right: 10px;
+   right: 10px; */
 }
 
 .photos article.drop div.drop-actions ul.score-drop {
-   position: absolute;
+/*   position: absolute;
    top: 10px;
-   left: 10px;
+   left: 10px; */
 }
 
 /* --------------------------- BUCKET */
@@ -2113,6 +2170,63 @@ article.container section.property-parameters p.field {
 }
 
 /* --------------------------- DASHBOARD */
+
+#content.dashboard div#primer .primer-item {
+   float: left;
+   width: 33.33333329%;
+   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.75) inset;
+   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.75) inset;
+   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.75) inset;
+   background: #EAF3F5;
+}
+
+#content.dashboard div#primer .primer-item h3 a {
+   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.25) inset;
+   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.25) inset;
+   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
+      1px 0 0 rgba(256,256,256,.25) inset;
+}
+
+#content.dashboard div#primer .primer-item.learn,
+#content.dashboard div#primer .primer-item.learn h3 a {
+   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
+   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
+   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
+}
+
+#content.dashboard div#primer .primer-item.search,
+#content.dashboard div#primer .primer-item.search h3 a {
+   -moz-box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
+   -webkit-box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
+   box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
+}
+
+#content.dashboard div#primer .primer-item h3 a {
+   font-size: 0.8em;
+}
+
+#content.dashboard div#primer .primer-item.learn h3 a {
+   -webkit-border-top-left-radius: 3px;
+   -moz-border-radius-topleft: 3px;
+   border-top-left-radius: 3px;
+}
+
+#content.dashboard div#primer .primer-item.search h3 a {
+   -webkit-border-top-right-radius: 3px;
+   -moz-border-radius-topright: 3px;
+   border-top-right-radius: 3px;
+}
+
+#content.dashboard div#primer .primer-item a.primer-image {
+   display: block;
+}
+
+#content.dashboard div#primer .primer-item img {display: block;width:100%;}
 
 #content.dashboard section.property-parameters div.activity-item div.item-body {
    width: 89%;

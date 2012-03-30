@@ -27,6 +27,22 @@
 	<div id="content" class="user dashboard cf">
 		<div class="center">
 			<div class="col_9">
+				<div id="primer" class="base cf">
+					<div class="primer-item learn">
+						<h3 class="button-blue"><a href="#">Learn how SwiftRiver works</a></h3>
+						<a href="#" class="primer-image"><img src="/markup/images/content/primer-learn.gif" /></a>
+					</div>
+					<div class="primer-item create">
+						<h3 class="button-blue"><a href="/markup/river/new.php">Create a river</a></h3>
+						<a href="/markup/river/new.php" class="primer-image"><img src="/markup/images/content/primer-create.gif" /></a>
+					</div>
+					<div class="primer-item search">
+						<h3 class="button-blue"><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
+						<a href="/markup/modal-search.php" class="primer-image modal-trigger"><img src="/markup/images/content/primer-search.gif" /></a>
+					</div>
+				</div>
+				<p class="remove"><a href="#primer">Hide these options</a></p>
+
 				<article class="container base">
 					<header class="cf">
 						<div class="property-title">
@@ -53,8 +69,8 @@
 							<div class="item-body">
 								<div class="actions">
 									<ul class="dual-buttons">
-										<li class="button-white no-icon"><a href="#">Reject</a></li>
-										<li class="button-white no-icon"><a href="#">Approve</a></li>
+										<li class="button-white"><a href="#">Reject</a></li>
+										<li class="button-white"><a href="#">Approve</a></li>
 									</ul>
 								</div>
 								<h2><a href="/markup/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h2>
@@ -99,21 +115,29 @@
 					<section class="property-parameters">
 						<p class="category">Your rivers</p>
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
 
 						<p class="category">Rivers you follow</p>
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
 					</section>
@@ -128,21 +152,29 @@
 					<section class="property-parameters">
 						<p class="category">Your buckets</p>
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected" title="no longer following"><a href="#"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
 						</div>
 
 						<p class="category">Buckets you follow</p>
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected" title="no longer following"><a href="#"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
 						</div>
 					</section>
