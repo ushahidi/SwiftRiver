@@ -57,6 +57,7 @@ body > nav {
 		<li><a href="#page-title-bucket">Bucket page title</a></li>
 		<li><a href="#page-title-user">User page title</a></li>
 		<li><a href="#page-navigation">Page navigation</a></li>
+		<li><a href="#rundown">Rundown</a></li>
 		<li><a href="#container">Container</a></li>
 		<li><a href="#settings-toolbar">Generic toolbar</a></li>
 		<li><a href="#save-toolbar">Save toolbar</a></li>
@@ -166,6 +167,29 @@ body > nav {
 			<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
 		</ul>
 	</nav>
+</div>
+
+<div class="sample">
+	<a name="rundown"></a>
+	<h2>Rundown: <em>Paired with navigation to preview collaborators and followers</em></h2>
+	<section class="rundown user cf">
+		<div class="center">
+			<div class="rundown-people col_6">
+				<h2>Followers</h2>
+				<ul>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				</ul>
+			</div>
+			<div class="rundown-people col_6">
+				<h2>Following</h2>
+				<ul>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				</ul>
+			</div>
+		</div>
+	</section>
 </div>
 
 <div class="sample settings">

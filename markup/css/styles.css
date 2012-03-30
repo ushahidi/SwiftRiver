@@ -1040,8 +1040,7 @@ section.meta-data h3.open span.icon {
 
 section.meta-data h3 .button-blue a {
    float: right;
-   font-weight: normal;
-   font-size: 0.9em;
+   line-height: 1.3em;
    padding: 0 5px;
 }
 
@@ -1195,49 +1194,58 @@ section.meta-data img.media-image {
 
 /* --------------------------- BUCKET */
 
-section.bucket-rundown {
+section.rundown {
    display: none;
    text-shadow: 0 1px 1px #fff;
    -wekbit-box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
    -moz-box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
    box-shadow: 0 1px 1px rgba(256,256,256,.5) inset;
+}
+
+section.rundown.user {
+   border-top: 1px solid #e5e5e5;
+   border-bottom: 1px solid #d8d8d8;
+   background: #fff;
+}
+
+section.rundown.bucket {
    background: #dfedf0;
 }
 
-section.bucket-rundown .rundown-collaborators {
+section.rundown .rundown-people {
    text-align: left;
    padding: 5px 0;
 }
 
-section.bucket-rundown .rundown-collaborators h2 {
+section.rundown .rundown-people h2 {
    float: left;
    font-size: 0.85em;
    line-height: 2.2em;
    padding-right: 5px;
 }
 
-section.bucket-rundown .rundown-collaborators ul,
-section.bucket-rundown .rundown-collaborators ul li {
+section.rundown .rundown-people ul,
+section.rundown .rundown-people ul li {
    display: inline;
 }
 
-section.bucket-rundown .rundown-collaborators ul li a.avatar-wrap {
+section.rundown .rundown-people ul li a.avatar-wrap {
    width: 25px;
    height: 25px;
    margin: 0 2px;
 }
 
-section.bucket-rundown .rundown-totals ul li {
+section.rundown .rundown-totals ul li {
    display: inline;
    font-size: 0.8em;
    padding: 0 5px;
 }
 
-section.bucket-rundown .rundown-totals ul li a {
+section.rundown .rundown-totals ul li a {
    color: #666666;
 }
 
-section.bucket-rundown .rundown-totals ul li strong {
+section.rundown .rundown-totals ul li strong {
    color: #444444;
    font-size: 2em;
    line-height: 33px;
@@ -1276,7 +1284,7 @@ article.container div.property-title h1 a {
 
 article.container div.property-title .add-parameter {
    float: right;
-   margin: 10px 0 0 10px;
+   margin: 5px 0 0 10px;
 }
 
 article.container p.button-white a {
@@ -1894,7 +1902,7 @@ div.modal-window .settings-toolbar p.close a {
    margin: 0 auto;
 }
 
-.col_1, .col_2, .col_3, .col_4, .col_8, .col_9, .col_12 {
+.col_1, .col_2, .col_3, .col_4, .col_6, .col_8, .col_9, .col_12 {
    margin: 0 1.041666667%;
 }
 
@@ -1916,6 +1924,11 @@ div.modal-window .settings-toolbar p.close a {
 .col_4 {
    float: left;
    width: 31.25%;
+}
+
+.col_6 {
+   float: left;
+   width: 47.91666667%;
 }
 
 .col_8 {
@@ -2130,11 +2143,11 @@ nav.page-navigation ul li:first-child a {
 
 /* --------------------------- BUCKET */
 
-section.bucket-rundown {
+section.rundown {
    display: block;
 }
 
-section.bucket-rundown .rundown-totals {
+section.rundown .rundown-totals {
    display: none;
 }
 
@@ -2208,6 +2221,7 @@ article.container section.property-parameters p.field {
 
 #content.dashboard div#primer .primer-item h3 a {
    font-size: 0.8em;
+   padding: 0 5px;
 }
 
 #content.dashboard div#primer .primer-item.learn h3 a {
