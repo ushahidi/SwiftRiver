@@ -59,7 +59,8 @@ body {
   margin: 0 3.125%;
 }
 /* --------------------------- BUTTON */
-.button-blue a {
+.button-blue button { border: none; cursor: pointer; }
+.button-blue a, .button-blue button {
   display: inline-block;
   color: #fff;
   font-weight: bold;
@@ -82,7 +83,7 @@ body {
   filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#54c2d5', EndColorStr='#36b7ce');
   padding: 5px 15px;
 }
-.button-blue a:hover {
+.button-blue a:hover, .button-blue button:hover {
   text-decoration: none;
   background-color: #36b7ce;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#36b7ce), to(#54c2d5));

@@ -8,12 +8,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    CSRF - http://github.com/ushahidi/Swiftriver_v2
  * @category   Helpers
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Swiftriver_CSRF {
+class CSRF {
 
 	/**
 	 * Session key for the CSRF token

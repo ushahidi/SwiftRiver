@@ -150,7 +150,7 @@ class Controller_Login extends Controller_Template {
 		if ($this->request->post('username') AND $this->request->post('password'))
 		{
 			// Validate the form token
-			if (Swiftriver_CSRF::valid($this->request->post('form_auth_id')))
+			if (CSRF::valid($this->request->post('form_auth_id')))
 			{
 				$username = $this->request->post('username');
 				$password = $this->request->post('password');
