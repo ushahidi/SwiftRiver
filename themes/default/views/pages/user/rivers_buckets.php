@@ -38,19 +38,34 @@
 
 <script type="text/template" id="river-bucket-item-template">
 	<div class="actions">
-		<p class="follow-count"><strong><%= subscriber_count %></strong> <?php echo __("Followers"); ?></p>
-		
-		<?php
-		/*
-		<% if (subscribed) { %>
-			<p id="unsubscribe_single"class="button-white follow selected">
-				<a href="#" title="<?php echo __("unsubscribe"); ?>">
+		<% var subscriber_label = (subscriber_count == 1) 
+		       ? "<?php echo __("follower"); ?>" 
+		       : "<?php echo __("followers"); ?>"; 
+		%>
+		<p class="follow-count"><strong><%= subscriber_count %></strong> <%= subscriber_label %></p>
+
+		<% if (is_owner) { %>
+			<p id="delete_item" class="remove-small">
+				<a href="#" class="modal-trigger">
 					<span class="icon"></span>
+					<span class="nodisplay"><?php echo __("Delete"); ?></span>
 				</a>
 			</p>
+		<% } else { %>
+			<% if (subscribed) { %>
+				<p id="unsubscribe_single" class="button-white follow only-icon has-icon selected">
+					<a href="#" title="<?php echo __("Unsubscribe"); ?>">
+						<span class="icon"></span>
+					</a>
+				</p>
+			<% } else { %>
+				<p id="unsubscribe_single" class="button-white follow only-icon has-icon">
+					<a href="#" title="<?php echo __("Subscribe"); ?>">
+						<span class="icon"></span>
+					</a>
+				</p>
+			<% } %>
 		<% } %>
-		*/
-		?>
 
 	</div>
 	<h2><a href="<%= item_url %>"><%= item_name %></a></h2>
@@ -71,8 +86,10 @@ $(function() {
 			{
 				wait: true, 
 				success: function(model, response) { 
+					<?php if ($owner): ?>
 					if (!model.get("subscribed"))
-						$(target).fadeOut(); 
+						$(target).fadeOut();
+					<?php endif; ?>
 				}
 			});
 		}
@@ -92,7 +109,7 @@ $(function() {
 		
 		events: {
 			"click #unsubscribe_single > a": "toggleSubscription",
-			// "click section.actions .delete-item .confirm": "delete"
+			"click #delete_item > a": "delete"
 		},
 		
 		initialize: function () {
@@ -110,7 +127,13 @@ $(function() {
 		},
 		
 		delete: function() {
-			this.model.destroy({wait: true});
+			targetEl = this.$el;
+			this.model.destroy({
+				wait: true, 
+				success: function(model, response) { 
+					$(targetEl).fadeOut();
+				}
+			});
 		},
 		
 		removeView: function() {
@@ -125,19 +148,22 @@ $(function() {
 			this.items = new RiverBucketItemList;
 			this.items.on('add', this.addItem, this);
 			this.items.on('reset', this.addItems, this);
-			
+			this.itemViews = [];
+			this.btnSubscribeAll = $("p#subscribe_all > a");
+			this.btnSubscribeAll.on("click", this.itemViews, this.handleSubscription);
 		},
 		
 		addItem: function (item) {
-			var view = new RiverBucketItemView({model: item}).render().el;
+			var view = new RiverBucketItemView({model: item});
+			this.itemViews.push(view);
 			<?php if ($owner): ?>
 			if (item.get("subscribed") == true) {
-				$("section#subscribed_items").append(view);
+				$("section#subscribed_items").append(view.render().el);
 			} else {
-				$("section#owner_items").append(view);
+				$("section#owner_items").append(view.render().el);
 			}
 			<?php else: ?>
-				$("section#owner_items").append(view);
+				$("section#owner_items").append(view.render().el);
 			<?php endif; ?>
 
 			// Show the activity
@@ -154,7 +180,21 @@ $(function() {
          
 		toggleFollow: function() {
 			userItem.toggleSubscribe();
+		},
+		
+		/**
+		 * Event handler for the "subscribe to all" action
+		 */
+		handleSubscription: function(e) {
+			views = e.data;
+			z = views.length;
+			for (var i=0; i<z; i++) {
+				if (!views[i].model.get("subscribed") && !views[i].model.get("is_owner")) {
+					$("p.button-white > a", views[i].$el).trigger("click");
+				}
+			}
 		}
+
 
 	});
 

@@ -1,40 +1,29 @@
 <script type="text/template" id="river_item_template">
-	<?php if ($owner): ?>
-		<% if (subscribed) { %>
-		<p class="button-white follow selected">
-			<a href="#" title="">
-				<span class="icon"></span><span class="nodisplay"></span>
-			</a>
-		<p>
-		<% } %>
-	<?php else: ?>
-	<% var selected = (subscribed) ? "selected" : ""; %>
-	<p class="button-white follow <%= selected %>">
-		<a href="#" title="">
-			<span class="icon"></span><span class="nodisplay"></span>
-		</a>
-	<p>
-	<?php endif; ?>
+	<% if (!is_owner) { %>	
+		<% var selected = (subscribed) ? "selected" : ""; %>
+		<div class="actions">
+			<p class="button-white follow only-icon has-icon <%= selected %>">
+				<a href="#">
+					<span class="icon"></span><span class="nodisplay"></span>
+				</a>
+			</p>
+		</div>
+	<% } %>
+	
 	<h2><a href="<?php echo URL::site(); ?><%= river_url %>"><%= river_name %></a></h2>
 </script>
 
 <script type="text/template" id="bucket_item_template">
-	<?php if ($owner): ?>
-		<% if (subscribed) { %>
-		<p class="button-white follow selected">
-			<a href="#" title="">
-				<span class="icon"></span><span class="nodisplay"></span>
-			</a>
-		<p>
-		<% } %>
-	<?php else: ?>
-		<% var selected = (subscribed) ? "selected": ""; %>
-		<p class="button-white follow <%= selected %>">
-			<a href="#" title="">
-				<span class="icon"></span><span class="nodisplay"></span>
-			</a>
-		<p>
-	<?php endif; ?>
+	<% if (!is_owner) { %>
+		<% var selected = (subscribed) ? "selected" : ""; %>
+		<div class="actions">
+			<p class="button-white follow only-icon has-icon <%= selected %>">
+				<a href="#" title="">
+					<span class="icon"></span><span class="nodisplay"></span>
+				</a>
+			</p>
+		</div>
+	<% } %>
 
 	<h2><a href="<?php echo URL::site(); ?><%= bucket_url %>"><%= bucket_name %></a></h2>
 </script>
@@ -107,7 +96,7 @@
 		},
 
 		toggleSubscription: function(e) {
-			var parentEl = $(e.currentTarget).parent();
+			var parentEl = $(e.currentTarget).parent("p");
 			this.model.toggleSubscribe(parentEl, this);
 		},
 
@@ -135,7 +124,7 @@
 		},
 
 		toggleSubscription: function(e) {
-			var parentEl = $(e.currentTarget).parent();
+			var parentEl = $(e.currentTarget).parent("p");
 			this.model.toggleSubscribe(parentEl, this);
 		},
 
@@ -222,7 +211,7 @@
 			views = e.data;
 			z = views.length;
 			for (var i=0; i<z; i++) {
-				if (!views[i].model.get("subscribed")) {
+				if (!views[i].model.get("subscribed") && !views[i].model.get("is_owner")) {
 					$("p.button-white > a", views[i].$el).trigger("click");
 				}
 			}

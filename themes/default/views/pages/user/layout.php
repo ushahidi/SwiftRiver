@@ -41,14 +41,14 @@
 	<?php $full_name = $account->user->name; ?>
 	<script type="text/template" id="user-item-template">
 		<% if (subscribed) { %>
-			<p class="button-white follow selected">
+			<p class="button-white follow has-icon selected">
 				<a href="#" title="<?php echo __("Unfollow ".$full_name); ?>">
 					<span class="icon"></span>
-					<?php echo __("Following"); ?>
+					<?php echo __("Follow"); ?>
 				</a>
 			</p>
 		<% } else { %>
-			<p class="button-white follow">
+			<p class="button-white follow has-icon">
 				<a href="#" title="<?php echo __("Follow ".$full_name); ?>">
 					<span class="icon"></span>
 					<?php echo __("Follow"); ?>

@@ -166,27 +166,8 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-
-		$rivers = ($this->owner) 
-		    ? $this->user->get_rivers() 
-		    : $this->user->get_other_user_visible_rivers($this->visited_account->user->id);
-
-
-		$items = array();
-		foreach ($rivers as $river)
-		{
-			$items[] = array(
-				'id' => $river['id'],
-				'type' => $river['type'],
-				'item_name' => $river['river_name'],
-				'item_url' => $river['river_url'],
-				'subscribed' => $river['subscribed'],
-				'subscriber_count' => ORM::factory('river', $river['id'])->subscriptions->count_all()
-			);
-		}
-
-		$list_items = json_encode($items);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/rivers/manage';
+		$list_items = $this->_get_json_rivers_list();
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
 	}
 
 	/**
@@ -215,27 +196,8 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-
-		$buckets = ($this->owner) 
-		    ? $this->user->get_buckets() 
-		    : $this->user->get_other_user_visible_buckets($this->visited_account->user->id);
-
-
-		$items = array();
-		foreach ($buckets as $bucket)
-		{
-			$items[] = array(
-				'id' => $bucket['id'],
-				'type' => $bucket['type'],
-				'item_name' => $bucket['bucket_name'],
-				'item_url' => $bucket['bucket_url'],
-				'subscribed' => $bucket['subscribed'],
-				'subscriber_count' => ORM::factory('bucket', $bucket['id'])->subscriptions->count_all()
-			);
-		}
-
-		$list_items = json_encode($items);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/buckets/manage';
+		$list_items = $this->_get_json_buckets_list();
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
 	}
 
 
@@ -271,24 +233,94 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('owner', $this->owner);
 		
 		$base_path = URL::site().$this->visited_account->account_path.'/user/';
-		$visited_user_id = $this->visited_account->user->id;
+		
 
 		$river_fetch_url = $base_path.'river/manage';
 		$bucket_fetch_url = $base_path.'bucket/manage';
 
-		if ($this->owner)
-		{
-			// TODO - Check the cache
-			$rivers_list = json_encode($this->user->get_rivers());
-			$buckets_list = json_encode($this->user->get_buckets());
-		}
-		else
-		{
-			$rivers_list = json_encode($this->user->get_other_user_visible_rivers($visited_user_id));
-			$buckets_list = json_encode($this->user->get_other_user_visible_buckets($visited_user_id));
-		}
+		$rivers_list = $this->_get_json_rivers_list(FALSE);
+		$buckets_list = $this->_get_json_buckets_list(FALSE);
 
 		return $profile_js;
+	}
+
+	/**
+	 * Gets the list of rivers available to the current user
+	 *
+	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
+	 * @return string
+	 */
+	private function _get_json_rivers_list($standardize = TRUE)
+	{
+		$visited_user_id = $this->visited_account->user->id;
+
+		$rivers = ($this->owner)
+		    ? $this->user->get_rivers()
+		    : $this->user->get_other_user_visible_rivers($visited_user_id);
+
+		$items = array();
+		foreach ($rivers as & $river)
+		{
+			$river_orm = ORM::factory('river', $river['id']);
+
+			if ( ! $standardize)
+			{
+				$river['is_owner'] = $river_orm->is_owner($this->user->id);
+			}
+			else
+			{
+				$items[] = array(
+					'id' => $river['id'],
+					'type' => $river['type'],
+					'item_name' => $river['river_name'],
+					'item_url' => $river['river_url'],
+					'subscribed' => $river['subscribed'],
+					'is_owner' => $river_orm->is_owner($this->user->id),
+					'subscriber_count' => $river_orm->subscriptions->count_all()
+				);
+			}
+		}
+
+		return ($standardize) ? json_encode($items) : json_encode($rivers);
+	}
+
+	/**
+	 * Gets the list of buckets available/accessible to the current user
+	 *
+	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
+	 * @return string
+	 */
+	private function _get_json_buckets_list($standardize = TRUE)
+	{
+		$visited_user_id = $this->visited_account->user->id;
+
+		$buckets = ($this->owner)
+		    ? $this->user->get_buckets()
+		    : $this->user->get_other_user_visible_buckets($visited_user_id);
+
+		$items = array();
+		foreach ($buckets as & $bucket)
+		{
+			$bucket_orm = ORM::factory('bucket', $bucket['id']);
+			if ( ! $standardize)
+			{
+				$bucket['is_owner'] = $bucket_orm->is_owner($this->user->id);
+			}
+			else
+			{
+				$items[] = array(
+					'id' => $bucket['id'],
+					'type' => $bucket['type'],
+					'item_name' => $bucket['bucket_name'],
+					'item_url' => $bucket['bucket_url'],
+					'subscribed' => $bucket['subscribed'],
+					'is_owner' => $bucket_orm->is_owner($this->user->id),
+					'subscriber_count' => $bucket_orm->subscriptions->count_all()
+				);
+			}
+		}
+
+		return ($standardize) ? json_encode($items) : json_encode($buckets);
 	}
 
 	
