@@ -1,7 +1,14 @@
 <div class="col_12">
 	<?php if ($owner): ?>
 		<article class="container action-list base">
-			<header class="cf">
+			<div id="owner_alert" class="alert-message blue">
+				<p>
+					<strong><?php echo __("No :item_type", array(":item_type" => $item_type)); ?></strong>
+					<?php echo __("You have not created any :item_type", array(":item_type" => $item_type)); ?>
+				</p>
+			</div>
+
+			<header id="owner_header" class="cf">
 				<div class="property-title">
 					<h1><?php echo $owner_header ?></h1>
 				</div>
@@ -9,8 +16,16 @@
 			<section id="owner_items" class="property-parameters">
 			</section>
 		</article>
+
 		<article class="container action-list base">
-			<header class="cf">
+			<div id="subscriber_alert" class="alert-message blue">
+				<p>
+					<strong><?php echo __("No subscriptions"); ?></strong>
+					<?php echo __("You have not subscribed to any :item_type", array(":item_type" => $item_type)); ?>
+				</p>
+			</div>
+
+			<header id="subscriber_header" class="cf">
 				<div class="property-title">
 					<h1><?php echo $subscriber_header; ?></h1>
 				</div>
@@ -20,7 +35,14 @@
 		</article>
 	<?php else: ?>
 		<article class="container action-list base">
-			<header class="cf">
+			<div id="owner_alert" class="alert-message blue">
+				<p>
+					<strong><?php echo __("No :item_type", array(":item_type" => $item_type)); ?></strong>
+					<?php echo __(":item_owner does not have any :item_type", 
+					array(":item_owner" => $item_owner, ":item_type" => $item_type)); ?>
+				</p>
+			</div>
+			<header id="owner_header" class="cf">
 				<div class="property-title">
 					<h1><?php echo $owner_header; ?></h1>
 					<p id="subscribe_all" class="button-white add-parameter follow">
@@ -151,17 +173,35 @@ $(function() {
 			this.itemViews = [];
 			this.btnSubscribeAll = $("p#subscribe_all > a");
 			this.btnSubscribeAll.on("click", this.itemViews, this.handleSubscription);
+
+			// DOM references - to be used for toggling visibility
+			this.subscriberHeader = $("header#subscriber_header");
+			this.subscriberListing = $("section#subscribed_items");
+			this.subscriberAlert = $("#subscriber_alert");
+
+			this.subscriberHeader.hide();
+			this.subscriberListing.hide();
 		},
 		
 		addItem: function (item) {
 			var view = new RiverBucketItemView({model: item});
 			this.itemViews.push(view);
+
 			<?php if ($owner): ?>
-			if (item.get("subscribed") == true) {
+
+			if (item.get("subscribed")) {
+				
+				// Unhide
+				if (this.subscriberHeader.css("display") == "none") {
+					this.subscriberHeader.show();
+					this.subscriberListing.show();
+					this.subscriberAlert.hide();
+				}
 				$("section#subscribed_items").append(view.render().el);
 			} else {
 				$("section#owner_items").append(view.render().el);
 			}
+
 			<?php else: ?>
 				$("section#owner_items").append(view.render().el);
 			<?php endif; ?>
@@ -175,13 +215,20 @@ $(function() {
 		},
 		
 		addItems: function() {
-			this.items.each(this.addItem, this);
+			if (this.items.length > 0) {
+				$("#owner_alert").hide();
+				this.items.each(this.addItem, this);
+			} else {
+				// Hide the ownership section
+				$("header#owner_header").hide();
+				$("section#owner_items").hide();
+			}
 		},
          
 		toggleFollow: function() {
 			userItem.toggleSubscribe();
 		},
-		
+
 		/**
 		 * Event handler for the "subscribe to all" action
 		 */

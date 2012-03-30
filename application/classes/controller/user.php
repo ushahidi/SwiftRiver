@@ -148,8 +148,13 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/rivers_buckets')
 		    ->bind('list_items', $list_items)
 		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('item_type', $item_type)
+		    ->bind('item_owner', $item_owner);
 		
+		$item_type = "rivers";
+		$item_owner = $this->visited_account->user->name;
+
 		// Page title
 		if ($this->owner)
 		{
@@ -180,7 +185,12 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/rivers_buckets')
 		    ->bind('list_items', $list_items)
 		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('item_type', $item_type)
+		    ->bind('item_owner', $item_owner);
+
+		$item_type = "buckets";
+		$item_owner = $this->visited_account->user->name;
 		
 		// Page title
 		if ($this->owner)
