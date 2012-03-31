@@ -100,7 +100,7 @@
 
 			<div class="col_3">
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Location <span class="button-blue"><a href="/markup/modal-meta-data.php" class="modal-trigger">Edit</a></span></h3>
+					<h3 class="arrow"><span class="icon"></span>Location <span class="button-blue button-small"><a href="/markup/modal-meta-data.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<p>Los Angeles, Calif. USA</p>
 					</div>

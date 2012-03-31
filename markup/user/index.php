@@ -56,11 +56,15 @@
 					</header>
 					<section class="property-parameters">
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
 					</section>
@@ -75,11 +79,15 @@
 					</header>
 					<section class="property-parameters">
 						<div class="parameter">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
 						</div>
 						<div class="parameter">
-							<p class="button-white follow selected" title="no longer following"><a href="#"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
 						</div>
 					</section>

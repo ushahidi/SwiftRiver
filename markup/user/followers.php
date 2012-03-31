@@ -29,13 +29,17 @@
 					</header>
 					<section class="property-parameters">
 						<div class="parameter cf">
-							<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							<div class="actions">
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+							</div>
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" class="avatar" /></a>
 							<h2><a href="/user">Brandon Rosage</a></h2>
 							<p>brandonrosage</p>
 						</div>
 						<div class="parameter cf">
-							<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							<div class="actions">
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+							</div>
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar1.png" class="avatar" /></a>
 							<h2><a href="/user">Juliana Rotich</a></h2>
 							<p>afromusing</p>

@@ -17,6 +17,25 @@
 		</div>
 	</hgroup>
 
+	<section class="rundown user cf">
+		<div class="center">
+			<div class="rundown-people col_6">
+				<h2>Followers</h2>
+				<ul>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				</ul>
+			</div>
+			<div class="rundown-people col_6">
+				<h2>Following</h2>
+				<ul>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
 	<nav class="page-navigation cf">
 		<ul class="center">
 			<li class="active"><a href="/">Dashboard</a></li>
