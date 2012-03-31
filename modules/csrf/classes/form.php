@@ -70,7 +70,7 @@ class Form extends Kohana_Form {
 		}
 
 		return '<form'.HTML::attributes($attributes).'>'
-		    . self::hidden('form_auth_id', CSRF::token(TRUE));
+		    . self::hidden('form_auth_id', CSRF::token());
 	}
 }
 

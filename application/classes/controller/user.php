@@ -272,10 +272,11 @@ class Controller_User extends Controller_Swiftriver {
 		foreach ($rivers as & $river)
 		{
 			$river_orm = ORM::factory('river', $river['id']);
-
+			$river_url = URL::site().$river_orm->account->account_path.'/river/'.$river['river_url'];
 			if ( ! $standardize)
 			{
 				$river['is_owner'] = $river_orm->is_owner($this->user->id);
+				$river['river_url'] = $river_url;
 			}
 			else
 			{
@@ -283,7 +284,7 @@ class Controller_User extends Controller_Swiftriver {
 					'id' => $river['id'],
 					'type' => $river['type'],
 					'item_name' => $river['river_name'],
-					'item_url' => $river['river_url'],
+					'item_url' => $river_url,
 					'subscribed' => $river['subscribed'],
 					'is_owner' => $river_orm->is_owner($this->user->id),
 					'subscriber_count' => $river_orm->subscriptions->count_all()
@@ -312,9 +313,11 @@ class Controller_User extends Controller_Swiftriver {
 		foreach ($buckets as & $bucket)
 		{
 			$bucket_orm = ORM::factory('bucket', $bucket['id']);
+			$bucket_url = URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket['bucket_url'];
 			if ( ! $standardize)
 			{
 				$bucket['is_owner'] = $bucket_orm->is_owner($this->user->id);
+				$bucket['bucket_url'] = $bucket_url;
 			}
 			else
 			{
@@ -322,7 +325,7 @@ class Controller_User extends Controller_Swiftriver {
 					'id' => $bucket['id'],
 					'type' => $bucket['type'],
 					'item_name' => $bucket['bucket_name'],
-					'item_url' => $bucket['bucket_url'],
+					'item_url' => $bucket_url,
 					'subscribed' => $bucket['subscribed'],
 					'is_owner' => $bucket_orm->is_owner($this->user->id),
 					'subscriber_count' => $bucket_orm->subscriptions->count_all()

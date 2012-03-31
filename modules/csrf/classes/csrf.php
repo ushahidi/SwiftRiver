@@ -25,18 +25,17 @@ class CSRF {
 	 * Generates an returns a randon token for CSRF
 	 * prevention
 	 *
-	 * @param bool $replace Whether to replace the current CSRF token
 	 * @return string
 	 */	
-	public static function token($replace = FALSE)
+	public static function token()
 	{
 		$token = Session::instance()->get(self::$_csrf_session_key);
 
-		if ( ! $token OR $replace)
+		if ( ! $token)
 		{
 			// Generates a hash of variable length random alpha-numeric string
 			$token = hash('sha256', Text::random('alnum', rand(25, 32)));
-			Session::instance()->set('csrf-token', $token);
+			Session::instance()->set(self::$_csrf_session_key, $token);
 		}
 
 		return $token;
@@ -56,7 +55,6 @@ class CSRF {
 
 		return $token == $current_token;
 	}
-
 }
 
 ?>
