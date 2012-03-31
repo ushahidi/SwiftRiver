@@ -30,6 +30,17 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	protected $owner = FALSE;
 	
+	/**
+	 * Buckets accessible by the current user
+	 * @var araray
+	 */
+	private $buckets = array();
+
+	/**
+	 * Rivers accessible by the current user
+	 * @var array
+	 */
+	private $rivers = array();
 	
 	/**
 	 * @return	void
@@ -171,7 +182,7 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-		$list_items = $this->_get_json_rivers_list();
+		$list_items = json_encode($this->_get_rivers_list());
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
 	}
 
@@ -206,7 +217,7 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-		$list_items = $this->_get_json_buckets_list();
+		$list_items = json_encode($this->_get_buckets_list());
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
 	}
 
@@ -221,7 +232,9 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('activity_stream', $activity_stream)
 		    ->bind('owner', $this->owner)
 		    ->bind('profile_js', $profile_js)
-		    ->bind('account', $this->visited_account);
+		    ->bind('account', $this->visited_account)
+		    ->bind('buckets', $this->buckets)
+		    ->bind('rivers', $this->rivers);
 
 		// Get the javascript
 		$profile_js = $this->_get_profile_js();
@@ -248,19 +261,22 @@ class Controller_User extends Controller_Swiftriver {
 		$river_fetch_url = $base_path.'river/manage';
 		$bucket_fetch_url = $base_path.'bucket/manage';
 
-		$rivers_list = $this->_get_json_rivers_list(FALSE);
-		$buckets_list = $this->_get_json_buckets_list(FALSE);
+		$this->rivers =  $this->_get_rivers_list(FALSE);
+		$this->buckets = $this->_get_buckets_list(FALSE);
+
+		$buckets_list = json_encode($this->buckets);
+		$rivers_list = json_encode($this->rivers);
 
 		return $profile_js;
 	}
 
 	/**
-	 * Gets the list of rivers available to the current user
+	 * Generates the list of rivers available to the current user
 	 *
 	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
-	 * @return string
+	 * @return array
 	 */
-	private function _get_json_rivers_list($standardize = TRUE)
+	private function _get_rivers_list($standardize = TRUE)
 	{
 		$visited_user_id = $this->visited_account->user->id;
 
@@ -292,16 +308,16 @@ class Controller_User extends Controller_Swiftriver {
 			}
 		}
 
-		return ($standardize) ? json_encode($items) : json_encode($rivers);
+		return  ($standardize) ? $items : $rivers;
 	}
 
 	/**
-	 * Gets the list of buckets available/accessible to the current user
+	 * Generates the list of buckets available/accessible to the current user
 	 *
 	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
-	 * @return string
+	 * @return array
 	 */
-	private function _get_json_buckets_list($standardize = TRUE)
+	private function _get_buckets_list($standardize = TRUE)
 	{
 		$visited_user_id = $this->visited_account->user->id;
 
@@ -333,7 +349,7 @@ class Controller_User extends Controller_Swiftriver {
 			}
 		}
 
-		return ($standardize) ? json_encode($items) : json_encode($buckets);
+		return ($standardize) ? $items : $buckets;
 	}
 
 	
@@ -600,19 +616,19 @@ class Controller_User extends Controller_Swiftriver {
 				} // END if - email address change
 				
 				// Nickname is changing
-				if ($_POST['nickname'] != $this->user->account->account_path)
+				if ($_POST['username'] != $this->user->account->account_path)
 				{
-					$nickname = $_POST['nickname'];
+					$username = $_POST['username'];
 					// Make sure the account path is not already taken
-					$account = ORM::factory('account',array('account_path'=>$nickname));
+					$account = ORM::factory('account',array('account_path' => $username));
 					if ($account->loaded())
 					{
-						$messages = __('The specified nickname is already taken');
+						$messages = __('The specified username is alread taken');
 						return;
 					}
 					
 					// Update
-					$this->user->account->account_path = $nickname;
+					$this->user->account->account_path = $username;
 					$this->user->account->save();
 				}
 
