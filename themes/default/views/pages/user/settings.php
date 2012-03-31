@@ -23,8 +23,8 @@
 			</div>
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('Nickname'); ?></p>
-					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
+					<p class="field"><?php echo __('Username'); ?></p>
+					<?php echo Form::input("username", $user->account->account_path, array('id' => 'username')); ?>
 				</label>
 			</div>
 			<div class="parameter">
