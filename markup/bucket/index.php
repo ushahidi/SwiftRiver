@@ -26,7 +26,7 @@
 		</div>
 	</hgroup>
 
-	<section class="bucket-rundown cf">
+	<section class="rundown bucket cf">
 		<div class="center">
 			<!--div class="rundown-totals col_3">
 				<ul>
@@ -34,7 +34,7 @@
 					<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
 				</ul>
 			</div-->
-			<div class="rundown-collaborators col_9">
+			<div class="rundown-people col_9">
 				<h2>Collaborators on this bucket</h2>
 				<ul>
 					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>

@@ -118,7 +118,8 @@ class Controller_Login extends Controller_Template {
 			
 			if ( ! Valid::email($email))
 			{
-				$this->template->set('errors', array(__('The email address provided is invalid')));		        
+				$this->template->set('errors', 
+					array(__('The email address provided is invalid')));		        
 			}
 			else 
 			{
@@ -128,7 +129,8 @@ class Controller_Login extends Controller_Template {
 
 				if ( ! $user->loaded())
 				{
-					$this->template->set('errors', array(__('The email address provided not registered')));		        
+					$this->template->set('errors', 
+						array(__('The email address provided not registered')));		        
 				} 
 				else
 				{
@@ -150,7 +152,7 @@ class Controller_Login extends Controller_Template {
 		if ($this->request->post('username') AND $this->request->post('password'))
 		{
 			// Validate the form token
-			if (Swiftriver_CSRF::valid($this->request->post('form_auth_id')))
+			if (CSRF::valid($this->request->post('form_auth_id')))
 			{
 				$username = $this->request->post('username');
 				$password = $this->request->post('password');
@@ -166,6 +168,7 @@ class Controller_Login extends Controller_Template {
 					// not point to a url in this site
 					$redirect_to = $this->request->post('referrer');
 					$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
+					
 					if ( ! $redirect_to 
 						OR strpos($redirect_to, URL::base($this->request)) === FALSE
 						OR strpos($redirect_to, URL::base($this->request)) != 0)
@@ -204,7 +207,8 @@ class Controller_Login extends Controller_Template {
 		
 		if ($this->request->post('new_email'))
 		{
-			$messages = $this->_new_user($this->request->post('new_email'), (bool) $this->request->post('invite'));
+			$messages = $this->_new_user($this->request->post('new_email'), 
+				(bool) $this->request->post('invite'));
 			$ret = array();
 			
 			if (isset($messages['errors']))
@@ -230,7 +234,8 @@ class Controller_Login extends Controller_Template {
 		$admin = FALSE;
 		if (Auth::instance()->logged_in())
 		{
-			$admin = Auth::instance()->get_user()->has('roles',ORM::factory('role',array('name'=>'admin')));
+			$admin = Auth::instance()->get_user()->has('roles', 
+				ORM::factory('role',array('name'=>'admin')));
 		}
 		
 		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)

@@ -1,4 +1,8 @@
 $(document).ready(function() {	
+	// BUTTON CHECK FOR ICON
+	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
+	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
+
 	// DROP SCORING
 	$('article.drop ul.score-drop > li.like').live('click', function(e) {
 		$(this).addClass('scored').siblings().remove();
@@ -86,6 +90,19 @@ $(document).ready(function() {
 		$('#confirmation-container').fadeIn('fast').addClass('visible');
 		$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
 		e.preventDefault();
+	});
+
+	// HIDE OPTION MENU
+	$('.remove a').live('click', function(e) {
+		var optionToHide = $(this).attr("href");
+		$(optionToHide).fadeOut('fast').remove();
+		$(this).parent().fadeOut('fast').remove();
+		e.preventDefault();
+	});
+
+	// DISPLAY SAVE TOOLBAR
+	$('.settings input').change(function () {
+		$('.save-toolbar').addClass('visible');
 	});
 
 	// ACCORDION MENU

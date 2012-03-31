@@ -8,12 +8,12 @@
  * http://www.gnu.org/copyleft/gpl.html
  *
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    CSRF - http://github.com/ushahidi/Swiftriver_v2
  * @category   Helpers
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Swiftriver_CSRF {
+class CSRF {
 
 	/**
 	 * Session key for the CSRF token
@@ -25,18 +25,17 @@ class Swiftriver_CSRF {
 	 * Generates an returns a randon token for CSRF
 	 * prevention
 	 *
-	 * @param bool $replace Whether to replace the current CSRF token
 	 * @return string
 	 */	
-	public static function token($replace = FALSE)
+	public static function token()
 	{
 		$token = Session::instance()->get(self::$_csrf_session_key);
 
-		if ( ! $token OR $replace)
+		if ( ! $token)
 		{
 			// Generates a hash of variable length random alpha-numeric string
 			$token = hash('sha256', Text::random('alnum', rand(25, 32)));
-			Session::instance()->set('csrf-token', $token);
+			Session::instance()->set(self::$_csrf_session_key, $token);
 		}
 
 		return $token;
@@ -56,7 +55,6 @@ class Swiftriver_CSRF {
 
 		return $token == $current_token;
 	}
-
 }
 
 ?>

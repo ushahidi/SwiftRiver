@@ -148,8 +148,13 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/rivers_buckets')
 		    ->bind('list_items', $list_items)
 		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('item_type', $item_type)
+		    ->bind('item_owner', $item_owner);
 		
+		$item_type = "rivers";
+		$item_owner = $this->visited_account->user->name;
+
 		// Page title
 		if ($this->owner)
 		{
@@ -166,27 +171,8 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-
-		$rivers = ($this->owner) 
-		    ? $this->user->get_rivers() 
-		    : $this->user->get_other_user_visible_rivers($this->visited_account->user->id);
-
-
-		$items = array();
-		foreach ($rivers as $river)
-		{
-			$items[] = array(
-				'id' => $river['id'],
-				'type' => $river['type'],
-				'item_name' => $river['river_name'],
-				'item_url' => $river['river_url'],
-				'subscribed' => $river['subscribed'],
-				'subscriber_count' => ORM::factory('river', $river['id'])->subscriptions->count_all()
-			);
-		}
-
-		$list_items = json_encode($items);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/rivers/manage';
+		$list_items = $this->_get_json_rivers_list();
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
 	}
 
 	/**
@@ -199,7 +185,12 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/rivers_buckets')
 		    ->bind('list_items', $list_items)
 		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner);
+		    ->bind('owner', $this->owner)
+		    ->bind('item_type', $item_type)
+		    ->bind('item_owner', $item_owner);
+
+		$item_type = "buckets";
+		$item_owner = $this->visited_account->user->name;
 		
 		// Page title
 		if ($this->owner)
@@ -215,27 +206,8 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$this->sub_content->owner_header = $this->template->header->title;
-
-		$buckets = ($this->owner) 
-		    ? $this->user->get_buckets() 
-		    : $this->user->get_other_user_visible_buckets($this->visited_account->user->id);
-
-
-		$items = array();
-		foreach ($buckets as $bucket)
-		{
-			$items[] = array(
-				'id' => $bucket['id'],
-				'type' => $bucket['type'],
-				'item_name' => $bucket['bucket_name'],
-				'item_url' => $bucket['bucket_url'],
-				'subscribed' => $bucket['subscribed'],
-				'subscriber_count' => ORM::factory('bucket', $bucket['id'])->subscriptions->count_all()
-			);
-		}
-
-		$list_items = json_encode($items);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/buckets/manage';
+		$list_items = $this->_get_json_buckets_list();
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
 	}
 
 
@@ -271,24 +243,97 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('owner', $this->owner);
 		
 		$base_path = URL::site().$this->visited_account->account_path.'/user/';
-		$visited_user_id = $this->visited_account->user->id;
+		
 
 		$river_fetch_url = $base_path.'river/manage';
 		$bucket_fetch_url = $base_path.'bucket/manage';
 
-		if ($this->owner)
-		{
-			// TODO - Check the cache
-			$rivers_list = json_encode($this->user->get_rivers());
-			$buckets_list = json_encode($this->user->get_buckets());
-		}
-		else
-		{
-			$rivers_list = json_encode($this->user->get_other_user_visible_rivers($visited_user_id));
-			$buckets_list = json_encode($this->user->get_other_user_visible_buckets($visited_user_id));
-		}
+		$rivers_list = $this->_get_json_rivers_list(FALSE);
+		$buckets_list = $this->_get_json_buckets_list(FALSE);
 
 		return $profile_js;
+	}
+
+	/**
+	 * Gets the list of rivers available to the current user
+	 *
+	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
+	 * @return string
+	 */
+	private function _get_json_rivers_list($standardize = TRUE)
+	{
+		$visited_user_id = $this->visited_account->user->id;
+
+		$rivers = ($this->owner)
+		    ? $this->user->get_rivers()
+		    : $this->user->get_other_user_visible_rivers($visited_user_id);
+
+		$items = array();
+		foreach ($rivers as & $river)
+		{
+			$river_orm = ORM::factory('river', $river['id']);
+			$river_url = URL::site().$river_orm->account->account_path.'/river/'.$river['river_url'];
+			if ( ! $standardize)
+			{
+				$river['is_owner'] = $river_orm->is_owner($this->user->id);
+				$river['river_url'] = $river_url;
+			}
+			else
+			{
+				$items[] = array(
+					'id' => $river['id'],
+					'type' => $river['type'],
+					'item_name' => $river['river_name'],
+					'item_url' => $river_url,
+					'subscribed' => $river['subscribed'],
+					'is_owner' => $river_orm->is_owner($this->user->id),
+					'subscriber_count' => $river_orm->subscriptions->count_all()
+				);
+			}
+		}
+
+		return ($standardize) ? json_encode($items) : json_encode($rivers);
+	}
+
+	/**
+	 * Gets the list of buckets available/accessible to the current user
+	 *
+	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
+	 * @return string
+	 */
+	private function _get_json_buckets_list($standardize = TRUE)
+	{
+		$visited_user_id = $this->visited_account->user->id;
+
+		$buckets = ($this->owner)
+		    ? $this->user->get_buckets()
+		    : $this->user->get_other_user_visible_buckets($visited_user_id);
+
+		$items = array();
+		foreach ($buckets as & $bucket)
+		{
+			$bucket_orm = ORM::factory('bucket', $bucket['id']);
+			$bucket_url = URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket['bucket_url'];
+			if ( ! $standardize)
+			{
+				$bucket['is_owner'] = $bucket_orm->is_owner($this->user->id);
+				$bucket['bucket_url'] = $bucket_url;
+			}
+			else
+			{
+				$items[] = array(
+					'id' => $bucket['id'],
+					'type' => $bucket['type'],
+					'item_name' => $bucket['bucket_name'],
+					'item_url' => $bucket_url,
+					'subscribed' => $bucket['subscribed'],
+					'is_owner' => $bucket_orm->is_owner($this->user->id),
+					'subscriber_count' => $bucket_orm->subscriptions->count_all()
+				);
+			}
+		}
+
+		return ($standardize) ? json_encode($items) : json_encode($buckets);
 	}
 
 	
@@ -426,14 +471,27 @@ class Controller_User extends Controller_Swiftriver {
 	{
 		// Set the current page
 		$this->active = 'settings';
+		$this->template->content->view_type = 'settings';
 
 		$this->sub_content = View::factory('pages/user/settings')
-		    ->bind('user', $this->user);
+		    ->bind('user', $this->user)
+		    ->bind('messages', $messages)
+		    ->bind('success', $success);
 		
 
 		// Save settings
 		if ( ! empty($_POST))
 		{
+			$success = FALSE;
+
+			// Check for CSRF token
+			if ( ! isset($_POST['form_auth_id']) OR ! CSRF::valid($_POST['form_auth_id']))
+			{
+				// TODO - Prompt the user to specify their password
+				$messages = __('Possible cross-site request forgery (CSRF) attack.');
+				return;
+			}
+
 			try 
 			{
 				if (empty($_POST['password']) OR empty($_POST['password_confirm']))
@@ -443,30 +501,19 @@ class Controller_User extends Controller_Swiftriver {
 					unset($_POST['password'], $_POST['password_confirm']);
 				}
 				
-				$current_password = $_POST['current_password'];
-				
-				// Authenticate changes for non river id auth by checking if old password matches
-				if ( ! $this->riverid_auth AND
-					Auth::instance()->hash($current_password) != $this->user->password)
-				{
-					echo json_encode(array(
-						"status"=>"error", 
-						"errors" => array('Current password is incorrect')
-					));
-
-					return;
-				}
-				
-				
 				// Password is changing and we are using RiverID authentication
-				if ( ! empty($_POST['password']) and ! empty($_POST['password_confirm']))
+				if ( ! empty($_POST['password']) AND ! empty($_POST['password_confirm']))
 				{
 					$post = Model_Auth_User::get_password_validation($_POST);
 					if ( ! $post->check())
 					{
-						throw new ORM_Validation_Exception('', $post);
+						$messages = __("The specified passwords do not match or are invalid. "
+							."Passwords must be at least 8 characters");
+						return;
+
 					}
 					
+					// Are we using RiverID?
 					if ($this->riverid_auth)
 					{
 						$resp = RiverID_API::instance()
@@ -474,7 +521,7 @@ class Controller_User extends Controller_Swiftriver {
 
 						if ( ! $resp['status'])
 						{
-							echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
+							$messages = $resp['error'];
 							return;
 						}
 
@@ -491,8 +538,7 @@ class Controller_User extends Controller_Swiftriver {
 					
 					if ( ! Valid::email($new_email))
 					{
-						echo json_encode(array("status"=>"error", "errors" => array(__('Email provided is invalid'))));
-						return;
+						$messages = __('The provided email is invalid');
 					}
 					
 					if ($this->riverid_auth)
@@ -508,8 +554,7 @@ class Controller_User extends Controller_Swiftriver {
 						
 						if ( ! $resp['status'])
 						{
-							echo json_encode(array("status"=>"error", "errors" => array($resp['error'])));
-
+							$messages = $resp['error'];
 							return;
 						}    
 					}
@@ -517,9 +562,10 @@ class Controller_User extends Controller_Swiftriver {
 					{
 						// Make sure the new email address is not yet registered
 						$user = ORM::factory('user',array('email'=>$new_email));
+
 						if ($user->loaded())
 						{
-							echo json_encode(array("status"=>"error", "errors" => array(__('New email is already registered'))));
+							$messages = __('New email is already registered');
 							return;
 						}
 						
@@ -530,7 +576,7 @@ class Controller_User extends Controller_Swiftriver {
 							$mail_body = View::factory('emails/changeemail')
 											   ->bind('secret_url', $secret_url);		            
 							
-							$secret_url = url::site('login/changeemail/'
+							$secret_url = URL::site('login/changeemail/'
 													.$this->user->id
 													.'/'
 													.urlencode($new_email)
@@ -542,7 +588,7 @@ class Controller_User extends Controller_Swiftriver {
 						}
 						else
 						{
-							echo json_encode(array("status"=>"error", "errors" => array(__('Error'))));
+							$messages = __('Error');
 							return;
 						}
 					}
@@ -551,7 +597,7 @@ class Controller_User extends Controller_Swiftriver {
 					// Only do so after the tokens sent above are validated
 					unset($_POST['email']);
 
-				} // end if - email address change
+				} // END if - email address change
 				
 				// Nickname is changing
 				if ($_POST['nickname'] != $this->user->account->account_path)
@@ -561,11 +607,7 @@ class Controller_User extends Controller_Swiftriver {
 					$account = ORM::factory('account',array('account_path'=>$nickname));
 					if ($account->loaded())
 					{
-						echo json_encode(array(
-							"status"=>"error", 
-							"errors" => array(__('Nickname is already taken'))
-						));
-						
+						$messages = __('The specified nickname is already taken');
 						return;
 					}
 					
@@ -574,15 +616,17 @@ class Controller_User extends Controller_Swiftriver {
 					$this->user->account->save();
 				}
 
+
 				$this->user->update_user($_POST, array('name', 'password', 'email'));
 
-				echo json_encode(array("status"=>"success"));
+				$success = TRUE;
+				$messages = __("Your information has been successfully updated!");
+
 			}
 			catch (ORM_Validation_Exception $e)
 			{
 				// Get the validation errors
-				$errors = $e->errors('user');
-				echo json_encode(array("status"=>"error", "errors" => $errors));
+				$messages = $e->errors('user');
 			}
 		}
 	}

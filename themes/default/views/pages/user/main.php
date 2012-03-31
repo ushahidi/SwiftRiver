@@ -1,4 +1,20 @@
 <div class="col_9">
+	<div id="primer" class="base cf">
+		<div class="primer-item learn">
+			<h3 class="button-blue"><a href="#">Learn how SwiftRiver works</a></h3>
+			<a href="#" class="primer-image"><img src="/markup/images/content/primer-learn.gif" /></a>
+		</div>
+		<div class="primer-item create">
+			<h3 class="button-blue"><a href="/markup/river/new.php">Create a river</a></h3>
+			<a href="/markup/river/new.php" class="primer-image"><img src="/markup/images/content/primer-create.gif" /></a>
+		</div>
+		<div class="primer-item search">
+			<h3 class="button-blue"><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
+			<a href="/markup/modal-search.php" class="primer-image modal-trigger"><img src="/markup/images/content/primer-search.gif" /></a>
+		</div>
+	</div>
+	<p class="remove"><a href="#primer">Hide these options</a></p>
+
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title"><h1><?php echo __("Activity"); ?></h1></div>

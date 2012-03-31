@@ -1,6 +1,13 @@
 <?php echo Form::open() ?>
-<?php echo Form::input('form_auth_id', Swiftriver_CSRF::token(), array('type' => 'hidden')); ?>
 <div class="col_12">
+
+	<?php if (isset($success)): ?>
+		<?php $css_class = ($success) ? "blue" : "red"; ?>
+		<div class="alert-message <?php echo $css_class; ?>">
+			<p><?php echo $messages; ?></p>
+		</div>
+	<?php endif; ?>
+
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
@@ -67,5 +74,8 @@
 			</div>
 		</section>
 	</article>
+	<div class="save-toolbar">
+		<p class="button-blue"><button type="submit"><?php echo __("Save Changes"); ?></button></p>
+	</div>
 </div>
 <?php Form::close(); ?>
