@@ -10,7 +10,7 @@
 		</div>
 	<% } %>
 	
-	<h2><a href="<?php echo URL::site(); ?><%= river_url %>"><%= river_name %></a></h2>
+	<h2><a href="<%= river_url %>"><%= river_name %></a></h2>
 </script>
 
 <script type="text/template" id="bucket_item_template">
@@ -25,7 +25,7 @@
 		</div>
 	<% } %>
 
-	<h2><a href="<?php echo URL::site(); ?><%= bucket_url %>"><%= bucket_name %></a></h2>
+	<h2><a href="<%= bucket_url %>"><%= bucket_name %></a></h2>
 </script>
 
 <script type="text/javascript">

@@ -260,7 +260,8 @@ class Controller_Swiftriver extends Controller_Template {
 		if ($visited_account_path and $visited_account_path != $this->account->account_path) 
 		{
 			$this->base_url = URL::site().$visited_account_path.'/'.$this->request->controller();
-			$this->visited_account = ORM::factory('account', array('account_path' => $visited_account_path));
+			$this->visited_account = ORM::factory('account', 
+				array('account_path' => $visited_account_path));
 			
 			// Visited account doesn't exist?
 			if ( ! $this->visited_account->loaded())
@@ -283,12 +284,15 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->site_name = Model_Setting::get_setting('site_name');
 			
 			// Header Nav
-			$this->template->header->nav_header = View::factory('template/nav/header');
-			$this->template->header->nav_header->user = $this->user;
-			$this->template->header->nav_header->admin = $this->admin;
-			$this->template->header->nav_header->account = $this->account;
-			$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
-			$this->template->header->nav_header->anonymous = $this->anonymous;
+			$this->template->header->nav_header = View::factory('template/nav/header')
+			    ->bind('user', $this->user)
+			    ->bind('admin', $this->admin)
+			    ->bind('account', $this->account)
+			    ->bind('anonymous', $this->anonymous)
+			    ->bind('num_notifications', $num_notifications);
+			
+			// Notification count
+			$num_notifications = Model_User_Action::count_notifications($this->user->id);
 			
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');

@@ -1,6 +1,16 @@
 <ul class="toolbar-menu">
-	<li class="search"><a href="/modal-search.php" class="modal-trigger"><span class="icon"></span><span class="label">Search</span></a></li>
-	<li class="create"><a href="/modal-create.php" class="modal-trigger"><span class="icon"></span><span class="label">Create</span></a></li>
+	<li class="search">
+		<a href="#" class="modal-trigger" title="<?php echo __("Search"); ?>">
+			<span class="icon"></span>
+			<span class="label"><?php echo __("Search"); ?></span>
+		</a>
+	</li>
+	<li class="create">
+		<a href="#" class="modal-trigger" title="<?php echo __("Create"); ?>">
+			<span class="icon"></span>
+			<span class="label"><?php echo __("Create"); ?></span>
+		</a>
+	</li>
 	<?php if ($user AND ! $anonymous): ?>
 	<li class="user popover">
 		<a href="#" class="popover-trigger">
@@ -14,11 +24,38 @@
 			<span class="nodisplay"><?php echo $user->name; ?></span>
 		</a>
 		<ul class="popover-window base header-toolbar">
-			<li><a href="#">Rivers</a></li>
-			<li><a href="#">Buckets</a></li>
-			<li class="group"><a href="<?php echo URL::site().$user->account->account_path; ?>"><?php echo __('Profile');?></a></li>
-			<li><a href="#">Account settings</a></li>
-			<li><a href="<?php echo URL::site().'login/done'; ?>"><em><?php echo __('Log out');?></em></a></li>
+			<li>
+				<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>">
+					<?php echo __("Rivers"); ?>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>">
+					<?php echo __("Buckets"); ?>
+				</a>
+			</li>
+			<li class="group">
+				<a href="<?php echo URL::site().$user->account->account_path; ?>">
+					<?php echo __('Profile');?>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
+					<?php echo __("Account settings"); ?>
+				</a>
+			</li>
+			<?php if ($admin): ?>
+			<li>
+				<a href="<?php echo URL::site().'settings/main'; ?>">
+					<?php echo __("Website Settings"); ?>
+				</a>
+			</li>
+			<?php endif; ?>
+			<li>
+				<a href="<?php echo URL::site().'login/done'; ?>">
+					<em><?php echo __('Log out');?></em>
+				</a>
+			</li>
 		</ul>
 	</li>
 	<?php else: ?>			
