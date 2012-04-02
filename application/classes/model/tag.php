@@ -41,6 +41,8 @@ class Model_Tag extends ORM
 
 		// Ensure Tag Type Goes In as Lower Case
 		$this->tag_type = strtolower($this->tag_type);
+		
+		$this->tag_hash = md5($this->tag.$this->tag_type);
 
 		// Do this for first time items only
 		if ($this->loaded() === FALSE)

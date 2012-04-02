@@ -107,10 +107,11 @@ class Controller_River extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/river/main')
 			->bind('river', $this->river)
 			->bind('droplets', $droplets)
-			->bind('droplet_list_view', $droplet_list_view)
+			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
 			->bind('owner', $this->owner)
-			->bind('user', $this->user);
+			->bind('user', $this->user)
+			->bind('river_base_url', $this->river_base_url);
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
@@ -119,7 +120,7 @@ class Controller_River extends Controller_Swiftriver {
 		$filters = $this->_get_river_filters();
 		
 		//Get Droplets
-		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 1, 
+		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
 			$max_droplet_id, NULL, $filters);
 		
 		// Total Droplets Before Filtering
@@ -132,8 +133,8 @@ class Controller_River extends Controller_Swiftriver {
 		$filtered_total = count($droplets);
 				
 		// Bootstrap the droplet list
-		$droplet_list = @json_encode($droplets);
-		$droplet_js = View::factory('pages/droplets/js/drops')
+		$droplet_list = json_encode($droplets);
+		$droplet_js = View::factory('pages/drop/js/drops')
 		    ->bind('fetch_base_url', $fetch_base_url)
 		    ->bind('droplet_list', $droplet_list)
 		    ->bind('max_droplet_id', $max_droplet_id)
@@ -148,16 +149,16 @@ class Controller_River extends Controller_Swiftriver {
 			$droplet_js->filters = $this->_stringify_filter_params($filters);
 		}
 		
-		// Droplet list view
-		$droplet_list_view = View::factory('pages/droplets/drops')
-		    ->bind('droplet_js', $droplet_js)
-		    ->bind('user', $this->user)
-		    ->bind('owner', $this->owner)
-		    ->bind('anonymous', $this->anonymous);
+		// Select droplet list view with drops view as the default if list not specified
+		$droplets_view = View::factory('pages/drop/drops');
+		$droplets_view->droplet_js = $droplet_js;
+		$droplets_view->user = $this->user;
+		$droplets_view->owner = $this->owner;
+		$droplets_view->anonymous = $this->anonymous;
 		
-		$droplet_list_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
+		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
-		$droplet_list_view->nothing_to_display->river_url = $this->request->url(TRUE);
+		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
 
 		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
 		$meter = 0;
@@ -174,6 +175,19 @@ class Controller_River extends Controller_Swiftriver {
 		$settings_url = $this->river_base_url.'/settings';
 		$more_url = $this->river_base_url.'/more';
 	}
+	
+	/**
+	* Below are aliases for the index.
+	*/
+	public function action_drops() {
+		$this->action_index();
+	}
+	public function action_list() {
+		$this->action_index();
+	}
+	public function action_drop() {
+		$this->action_index();
+	}
 
 	
 	/**
@@ -187,32 +201,41 @@ class Controller_River extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "GET":
-				//Use page paramter or default to page 1
-				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-				$filters = $this->_get_river_filters();
-				
-				if ($since_id)
+				$drop_id = $this->request->param('id');
+				$page = 1;
+				if ($drop_id)
 				{
-				    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
-				    	$this->river->id, $since_id, $filters);
+					// Specific drop requested
+					$droplets_array = Model_River::get_droplets($this->user->id, 
+				    	$this->river->id, $drop_id);
+					$droplets = array_pop($droplets_array['droplets']);
 				}
 				else
 				{
-				    $droplets_array = Model_River::get_droplets($this->user->id, 
-				    	$this->river->id, $page, $max_id, NULL, $filters);
-				}
-				
-				$droplets = $droplets_array['droplets'];
+					//Use page paramter or default to page 1
+					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+					$filters = $this->_get_river_filters();
 
-				//Throw a 404 if a non existent page is requested
-				if ($page > 1 AND empty($droplets))
+					if ($since_id)
+					{
+					    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
+					    	$this->river->id, $since_id, $filters);
+					}
+					else
+					{
+					    $droplets_array = Model_River::get_droplets($this->user->id, 
+					    	$this->river->id, 0, $page, $max_id, NULL, $filters);
+					}
+					$droplets = $droplets_array['droplets'];
+				}				
+				
+
+				//Throw a 404 if a non existent page/drop is requested
+				if (($page > 1 OR $drop_id) AND empty($droplets))
 				{
-				    throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
+				    throw new HTTP_Exception_404('The requested page was not found on this server.');
 				}
 				
 
@@ -505,6 +528,88 @@ class Controller_River extends Controller_Swiftriver {
 		}
 	}
 	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_links()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$link_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$link_array = json_decode($this->request->body(), true);
+				$url = $link_array['url'];
+				if ( ! Valid::url($url))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid url"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$link_orm = Model_Account_Droplet_Link::get_link($url, $droplet_id, $account_id);
+				echo json_encode(array('id' => $link_orm->link->id, 'tag' => $link_orm->link->url));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_link($droplet_id, $link_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_places()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$place_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$places_array = json_decode($this->request->body(), true);
+				$place_name = $places_array['place_name'];
+				if ( ! Valid::not_empty($place_name))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid location"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$place_orm = Model_Account_Droplet_Place::get_place($place_name, $droplet_id, $account_id);
+				echo json_encode(array('id' => $place_orm->place->id, 'place_name' => $place_orm->place->place_name));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_place($droplet_id, $place_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
 	 /**
 	  * Replies restful api
 	  */ 
@@ -532,7 +637,7 @@ class Controller_River extends Controller_Swiftriver {
 				$droplet['droplet_type'] = 'reply';
 				$droplet['channel'] = 'swiftriver';
 				$droplet['droplet_title'] = $droplet['droplet_content'];
-				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', time());
+				$droplet['droplet_date_pub'] = gmdate('Y-m-d H:i:s', time());
 				$droplet['droplet_orig_id'] = 0;
 				$droplet['droplet_locale'] = 'en';
 				$droplet['identity_orig_id'] = $this->user->id;
@@ -551,7 +656,7 @@ class Controller_River extends Controller_Swiftriver {
 						'channel' => $droplet['channel'],
 						'identity_avatar' => $droplet['identity_avatar'],
 						'identity_name' => $droplet['identity_name'],
-						'droplet_date_pub' => $droplet['droplet_date_pub'],
+						'droplet_date_pub' => gmdate('M d, Y H:i:s', time()).' UTC',
 						'droplet_content' => $droplet['droplet_content']
 					));
 				}

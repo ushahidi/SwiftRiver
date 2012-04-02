@@ -73,29 +73,32 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
+		$page_title = "";
 		if ($this->bucket->account->user->id == $this->user->id)
 		{
-			$this->template->header->title = $this->bucket->bucket_name;
+			$page_title = $this->bucket->bucket_name;
 		}
 		else
 		{
-			$this->template->header->title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
+			$page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
 		}
+		$this->template->header->title = $page_title;
 		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('bucket', $this->bucket)
-			->bind('droplets_list', $droplets_list)
+			->bind('droplets_view', $droplets_view)
 			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
 			->bind('more', $more)
 			->bind('owner', $this->owner)
-			->bind('user', $this->user);
+			->bind('user', $this->user)
+			->bind('page_title', $page_title);
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 1, $max_droplet_id);
+		$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, 1, $max_droplet_id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -104,8 +107,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets = $droplets_array['droplets'];
 				
 		// Bootstrap the droplet list
-		$droplet_list = @json_encode($droplets);
-		$droplet_js = View::factory('pages/droplets/js/droplets')
+		$droplet_list = json_encode($droplets);
+		$droplet_js = View::factory('pages/drop/js/drops')
 		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
@@ -115,14 +118,14 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplet_js->filters = NULL;
 				
 		// Generate the List HTML
-		$droplets_list = View::factory('pages/droplets/list')
+		$droplets_view = View::factory('pages/drop/drops')
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 		
 		// Nothing to display message
-		$droplets_list->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
+		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
 		    ->bind('message', $nothing_to_display_message);
 		$nothing_to_display_message = __('There are no drops in this bucket yet.');
 		if ($this->owner)
@@ -139,6 +142,19 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$settings_url = $this->bucket_base_url.'/settings';
 		$discussion_url = $this->bucket_base_url.'/discussion';
 		$more = $this->bucket_base_url.'/more';
+	}
+	
+	/**
+	* Below are aliases for the index.
+	*/
+	public function action_drops() {
+		$this->action_index();
+	}
+	public function action_list() {
+		$this->action_index();
+	}
+	public function action_drop() {
+		$this->action_index();
 	}
 	
 	/**
@@ -231,24 +247,36 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "GET":
-				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-				
-				
-				$droplets_array = array();
-				if ($since_id)
+				$drop_id = $this->request->param('id');
+				$page = 1;
+				if ($drop_id)
 				{
-				    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id);
+					// Specific drop requested
+					$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, $drop_id);
+					$droplets = array_pop($droplets_array['droplets']);
 				}
 				else
 				{
-				    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, $page, $max_id);
+					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+					
+					
+					$droplets_array = array();
+					if ($since_id)
+					{
+					    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id);
+					}
+					else
+					{
+					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id);
+					}
+        			
+					$droplets = $droplets_array['droplets'];
 				}
-        		
-				$droplets = $droplets_array['droplets'];
+				
 				//Throw a 404 if a non existent page is requested
-				if ($page > 1 AND empty($droplets))
+				if (($page > 1 OR $drop_id) AND empty($droplets))
 				{
 				    throw new HTTP_Exception_404(
 				        'The requested page :page was not found on this server.',

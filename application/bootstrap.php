@@ -311,8 +311,6 @@ Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<act
 Route::set('account', '<account>(/<controller>/<name>(/<action>(/<id>(/<id2>))))',
 	array(
 		'controller' => '(user|river|bucket)',
-		'id' => '\d+',
-		'id2' => '\d+'
 	))
 	->defaults(array(
 		'controller' => 'user',

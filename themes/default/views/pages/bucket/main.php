@@ -1,46 +1,51 @@
-<article class="list">
-	<div class="cf center page-title">
-		<hgroup>
-			<h1 class="<?php echo ($bucket->bucket_publish == 0) ? "private" : "public"; ?>">
-				<span class="icon"></span>
-				<?php if ($bucket->account->user->id == $user->id): ?>
-					<span id="display_bucket_name"><?php echo $bucket->bucket_name; ?></span>
-				<?php else: ?>
-					<a href="<?php echo URL::site().$bucket->account->account_path ?>"><span><?php echo $bucket->account->account_path; ?></a> / <?php echo $bucket->bucket_name; ?></span>
-				<?php endif; ?>
-			</h1>
-		</hgroup>
-	</div>
-	
-	<div class="center canvas">
-		<section class="panel">		
-			<nav class="cf">
-				<ul class="views">
-					<li class="droplets active"><a><?php echo __('Drops');?></a></li>
-					<?php
-					// SwiftRiver Plugin Hook -- Add Bucket Nav Item
-					Swiftriver_Event::run('swiftriver.bucket.nav', $bucket);
-					?>
-					<li class="view-panel" id="bucket_more_url">
-						<a href="<?php echo $more; ?>"><span class="arrow"></span><?php echo __('Trends'); ?></a>
-					</li>
-				</ul>
-				<?php if ($owner): ?>
-				<ul class="actions">
-					<li class="view-panel">
-						<a href="<?php echo $settings_url; ?>" class="settings">
-							<span class="icon"></span><?php echo __('Bucket Settings'); ?>
-						</a>
-					</li>
-				</ul>
-				<?php endif; ?>
-			</nav>
-			<div class="drawer"></div>
-		</section>
-
-		<div class="container stream">
-			<?php echo $droplets_list; ?>
+<hgroup class="page-title bucket-title cf">
+	<div class="center">
+		<div class="page-h1 col_9">
+			<h1><?php print $page_title; ?></h1>
 		</div>
-
+		<div class="page-actions col_3">
+			<h2 class="settings">
+				<a href="/markup/bucket/settings-filters.php">
+					<span class="icon"></span>
+					Bucket settings
+				</a>
+			</h2>
+			<h2 class="discussion">
+				<a href="/markup/bucket/discussion.php">
+					<span class="icon"></span>
+					Discussion
+				</a>
+			</h2>
+		</div>
 	</div>
-</article>	
+</hgroup>
+
+<section class="rundown bucket cf">
+	<div class="center">
+		<!--div class="rundown-totals col_3">
+			<ul>
+				<li><strong>88</strong> drops</li>
+				<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
+			</ul>
+		</div-->
+		<div class="rundown-people col_9">
+			<h2>Collaborators on this bucket</h2>
+			<ul>
+				<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+				<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+			</ul>
+		</div>
+	</div>
+</section>
+
+<nav class="page-navigation cf">
+	<ul class="center">
+		<li id="drops-navigation-link"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">Drops</a></li>
+		<li id="list-navigation-link"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
+		<li><a href="#">Photos</a></li>
+		<li><a href="#">Map</a></li>
+		<li><a href="#">Timeline</a></li>
+	</ul>
+</nav>
+
+<?php echo $droplets_view; ?>

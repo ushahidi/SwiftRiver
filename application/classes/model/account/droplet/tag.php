@@ -29,8 +29,8 @@ class Model_Account_Droplet_Tag extends ORM {
 	 * Checks if a given tag already exists. 
 	 *
 	 * @param string $tag_name The tag string
-	 * @param Model_Droplet $orm_droplet Droplet this tag belongs to
-	 * @param Model_Account $orm_account Account this tag belongs to 
+	 * @param Model_Droplet $droplet_id Droplet id this tag belongs to
+	 * @param Model_Account $account_id Account id this tag belongs to 
 	 * @return Model_Account_Droplet_Tag
 	 */
 	public static function get_tag($tag_name, $droplet_id,  $account_id)

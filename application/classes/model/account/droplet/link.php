@@ -24,35 +24,35 @@ class Model_Account_Droplet_Link extends ORM {
 		'account' => array(),
 		'link' => array()
 	);
-		    
-    /**
-     * Checks if a given link already exists creating it if it doesn't
-     *
-     * @param string $url The link url
-     * @param Model_Droplet $orm_droplet Droplet this tag belongs to
-     * @param Model_Account $orm_account Account this tag belongs to 
-     * @return Model_Account_Droplet_Link
-     */
-    public static function get_link($url, $orm_droplet,  $orm_account)
-    {    	
-        $orm_link = Model_Link::get_link_by_url($url, TRUE);
+	
+	/**
+	* Checks if a given link already exists creating it if it doesn't
+	*
+	* @param string $url The link url
+	* @param Model_Droplet $droplet_id Droplet id this link belongs to
+	* @param Model_Account $account_id Account id this link belongs to 
+	* @return Model_Account_Droplet_Link
+	*/
+	public static function get_link($url, $droplet_id,  $account_id)
+	{
+		$orm_link = Model_Link::get_link_by_url($url, TRUE);
         
-        $account_link = ORM::factory('account_droplet_link')
-                        ->where('droplet_id', '=', $orm_droplet->id)
+		$account_link = ORM::factory('account_droplet_link')
+                        ->where('droplet_id', '=', $droplet_id)
                         ->where('link_id', '=', $orm_link->id)
-                        ->where('account_id', '=', $orm_account->id)
+                        ->where('account_id', '=', $account_id)
                         ->find();
                         
         
-        if ( ! $account_link->loaded())
-        {
-            $account_link->link_id = $orm_link->id;
-            $account_link->droplet_id = $orm_droplet->id;
-            $account_link->account_id = $orm_account->id;            
-            $account_link->save();
-        }
+		if ( ! $account_link->loaded())
+		{
+			$account_link->link_id = $orm_link->id;
+			$account_link->droplet_id = $droplet_id;
+			$account_link->account_id = $account_id;
+			$account_link->save();
+		}
         
-        return $account_link;
-    }
+		return $account_link;
+	}
 }
 ?>

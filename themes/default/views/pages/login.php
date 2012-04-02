@@ -87,7 +87,7 @@ article#login hgroup.page-title {
 	</style>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 	<?php
-	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
+	echo(Html::script("themes/default/media/js/jquery-1.7.2.min.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
 	?>
 	
@@ -111,7 +111,7 @@ article#login hgroup.page-title {
 		<div class="right_bar"></div>
 	</header>
 	
-	<article id="login">
+	<article id="login" class="modal">
 		<div class="center canvas controls">
 			<hgroup class="page-title cf">
 				<h1>Log in</h1>
