@@ -124,7 +124,7 @@ class Model_Bucket extends ORM {
 	 * @param int $id ID of the Bucket
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($user_id, $bucket_id = NULL, $page = NULL, $max_id = PHP_INT_MAX)
+	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -150,12 +150,23 @@ class Model_Bucket extends ORM {
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.droplet_processed', '=', 1)
-				->where('buckets_droplets.id', '<=', $max_id)
-				->group_by('buckets_droplets.id')
-				->order_by('buckets_droplets.droplet_date_added', 'DESC');
+				->where('droplets.droplet_processed', '=', 1);
+				
+			if ($drop_id)
+			{
+				// Return a specific drop
+				$query->where('droplets.id', '=', $drop_id);
+			}
+			else
+			{
+				// Return all drops
+				$query->where('buckets_droplets.id', '<=', $max_id);
+			}
+			
 				
 			// Order & Pagination offset
+			$query->group_by('buckets_droplets.id');
+			$query->order_by('buckets_droplets.droplet_date_added', 'DESC');
 			$query->order_by('droplets.id', 'DESC');
 			if ($page)
 			{
@@ -180,10 +191,10 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets']);
+			Model_Droplet::populate_links($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets']);
+			Model_Droplet::populate_places($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);
@@ -249,10 +260,10 @@ class Model_Bucket extends ORM {
 			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
 			
 			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets']);			
+			Model_Droplet::populate_links($droplets['droplets'], $bucket_orm->account_id);			
 			
 			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets']);
+			Model_Droplet::populate_places($droplets['droplets'], $bucket_orm->account_id);
 
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);

@@ -25,8 +25,11 @@
 
 	<nav class="page-navigation cf">
 		<ul class="center">
-			<li class="active"><a href="/river"><?php echo __('Drops');?></a></li>
-			<li><a href="/river/view-list.php">List</a></li>
+			<li id="drops-navigation-link"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#"><?php echo __('Drops');?></a></li>
+			<li id="list-navigation-link"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
+			<li><a href="#">Photos</a></li>
+			<li><a href="#">Map</a></li>
+			<li><a href="#">Timeline</a></li>
 			<?php
 			// SwiftRiver Plugin Hook -- Add River Nav Item
 			Swiftriver_Event::run('swiftriver.river.nav', $river);
@@ -34,6 +37,5 @@
 		</ul>
 	</nav>
 
-	<div id="content" class="river drops cf">
-		<?php echo $droplet_list_view; ?>
-	</div>
+	
+	<?php echo $droplets_view; ?>

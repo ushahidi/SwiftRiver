@@ -3,7 +3,7 @@
  
 <head> 
 	<meta charset="utf-8"> 
-	<title><?php echo (isset($title) ? $title.' - ' : '').$site_name; ?></title> 
+	<title><?php echo (isset($title) ? $title.' ~ ' : '').$site_name; ?></title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
@@ -21,11 +21,15 @@
 		// Globals
 		window.buckets_url = "<?php echo url::site().$user->account->account_path.'/bucket/buckets/manage'; ?>";
 		window.logged_in_account = <?php echo $user->account->id; ?>;
+		window.logged_in_user = <?php echo $user->id; ?>;
 		window.site_url = "<?php URL::site(); ?>";
 	</script>
 	
 	<?php
-	echo(Html::script("themes/default/media/js/jquery-1.7.1.min.js"));
+	echo(Html::script("themes/default/media/js/jquery-1.7.2.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.outside.js"));
+	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
@@ -45,6 +49,13 @@
 	    // SwiftRiver Plugin Hook
 	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
+	
+	<script type="text/javascript">
+		$(function() {
+			// Bootstrap the bucket list
+			bucketList.reset(<?php echo $bucket_list; ?>);
+		});
+	</script>
 	
 </head> 
  

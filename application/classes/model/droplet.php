@@ -527,13 +527,9 @@ class Model_Droplet extends ORM
 					->from('droplets_tags')
 					->join('tags', 'INNER')
 					->on('tags.id', '=', 'tag_id')
-					->where('droplet_id', 'IN', $droplet_ids);
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('tags.id', 'NOT IN', $query_deleted_tags);
 		
-		if (count($deleted_tag_ids) > 0)
-		{
-			$query_tags->where('tags.id', 'NOT IN', $deleted_tag_ids);
-		}
-					
 				
 		// Group the tags per droplet
 		$droplet_tags = array();
@@ -564,7 +560,7 @@ class Model_Droplet extends ORM
 	 *
 	 * @param array $droplets
 	*/
-	public static function populate_links(& $droplets)
+	public static function populate_links(& $droplets, $account_id)
 	{		
 		if (empty($droplets))
 			return;
@@ -576,13 +572,31 @@ class Model_Droplet extends ORM
 			$droplet['links'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
-
+		
+		//Query account links belonging to the selected droplet IDs
+		$query_account = DB::select('droplet_id', array('link_id', 'id'), 'url')		            
+					->from('account_droplet_links')
+					->join('links', 'INNER')
+					->on('links.id', '=', 'link_id')
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('account_id', '=', $account_id)
+					->where('deleted', '=', 0);
+		
+		// Get all deleted droplet links for the current account
+		$query_deleted_links = DB::select('link_id')
+		    ->from('account_droplet_links')
+		    ->where('account_id', '=', $account_id)
+		    ->where('droplet_id', 'IN', $droplet_ids)
+		    ->where('deleted', '=', 1);
+		
 		//Query all links belonging to the selected droplet IDs
 		$query_links = DB::select('droplet_id', array('link_id', 'id'), 'url')
+					->union($query_account, TRUE)
 					->from('droplets_links')
 					->join('links', 'INNER')
 					->on('links.id', '=', 'link_id')
-					->where('droplet_id', 'IN', $droplet_ids);
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('links.id', 'NOT IN', $query_deleted_links);
 				
 		// Group the links per droplet
 		$droplet_links = array();
@@ -613,7 +627,7 @@ class Model_Droplet extends ORM
 	 *
 	 * @param array $droplets
 	*/
-	public static function populate_places(& $droplets)
+	public static function populate_places(& $droplets, $account_id)
 	{		
 		if (empty($droplets))
 			return;
@@ -625,13 +639,31 @@ class Model_Droplet extends ORM
 			$droplet['places'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
+		
+		//Query account links belonging to the selected droplet IDs
+		$query_account = DB::select('droplet_id', array('place_id', 'id'), 'place_name')
+					->from('account_droplet_places')
+					->join('places', 'INNER')
+					->on('places.id', '=', 'place_id')
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('account_id', '=', $account_id)
+					->where('deleted', '=', 0);
+		
+		// Get all deleted droplet links for the current account
+		$query_deleted_places = DB::select('place_id')
+		    ->from('account_droplet_places')
+		    ->where('account_id', '=', $account_id)
+		    ->where('droplet_id', 'IN', $droplet_ids)
+		    ->where('deleted', '=', 1);
 
 		//Query all places belonging to the selected droplet IDs
 		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name')
+					->union($query_account, TRUE)
 					->from('droplets_places')
 					->join('places', 'INNER')
 					->on('places.id', '=', 'place_id')
-					->where('droplet_id', 'IN', $droplet_ids);
+					->where('droplet_id', 'IN', $droplet_ids)
+					->where('places.id', 'NOT IN', $query_deleted_places);
 				
 		// Group the places per droplet
 		$droplet_places = array();
@@ -678,7 +710,8 @@ class Model_Droplet extends ORM
 		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 
 		        array('droplets.parent_id', 'parent_id'), 
 		        array('droplets.channel', 'channel'), 'droplet_content', 
-		        'identity_name', 'identity_avatar', 'droplet_date_pub'
+		        'identity_name', 'identity_avatar', 
+				array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub')
 		    )
 		    ->from('droplets')
 		    ->join('identities', 'INNER')
@@ -735,17 +768,17 @@ class Model_Droplet extends ORM
 		if ( ! isset($droplet_array['droplet_score']))
 			return;
 		
-		$droplet_score_arr = $droplet_array['droplet_score'];
+		$droplet_score = $droplet_array['droplet_score'];
 		
 		$droplet_score_orm = ORM::factory('droplet_score')
-							->where('droplet_id', '=', $droplet_score_arr['droplet_id'])
-							->where('user_id', '=', $droplet_score_arr['user_id'])
+							->where('droplet_id', '=', $this->id)
+							->where('user_id', '=', $droplet_score['user_id'])
 							->find();
 		
 		// Set the values, if a score already exists... change it.
-		$droplet_score_orm->droplet_id = $droplet_score_arr['droplet_id'];
-		$droplet_score_orm->user_id = $droplet_score_arr['user_id'];
-		$droplet_score_orm->score = $droplet_score_arr['score'];
+		$droplet_score_orm->droplet_id = $this->id;
+		$droplet_score_orm->user_id = $droplet_score['user_id'];
+		$droplet_score_orm->score = $droplet_score['user_score'];
 		$droplet_score_orm->save();
 	}
 
@@ -824,16 +857,104 @@ class Model_Droplet extends ORM
 		}
 		
 		// Checkf for user-defined tag
-		$user_tag_orm = $droplet_orm->account_droplet_tags
+		$account_droplet_tag_orm = $droplet_orm->account_droplet_tags
 		    ->where('account_id', '=', $account_id)
 		    ->where('droplet_id', '=', $droplet_id)
 		    ->where('tag_id', '=', $tag_id)
 		    ->where('deleted', '=', 0)
 		    ->find();
 
-		if ($user_tag_orm->loaded())
+		if ($account_droplet_tag_orm->loaded())
 		{
-			$user_tag_orm->delete();
+			$account_droplet_tag_orm->delete();
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Removes the given link from a droplet
+	 * @param int $droplet_id ID of the droplet
+	 * @param int $link_id ID of the link	
+	 * @return boolean
+	 */	
+	public static function delete_link($droplet_id, $link_id, $account_id)
+	{
+		$droplet_orm = ORM::factory('droplet', $droplet_id);		
+		if ( ! $droplet_orm->loaded())
+			return FALSE;
+			
+		$link_orm = ORM::factory('link', $link_id);
+		if ( ! $link_orm->loaded())
+			return FALSE;
+			
+		if ($droplet_orm->has('links', $link_orm)) 
+		{
+			// System-generated tag; Do not delete from the DB
+			$deleted_orm = ORM::factory('account_droplet_link');
+			$deleted_orm->account_id = $account_id;
+			$deleted_orm->droplet_id = $droplet_id;
+			$deleted_orm->link_id = $link_id;
+			$deleted_orm->deleted = 1;
+
+			$deleted_orm->save();
+		}
+		
+		// Check for user-defined link
+		$account_droplet_link = $droplet_orm->account_droplet_links
+		    ->where('account_id', '=', $account_id)
+		    ->where('droplet_id', '=', $droplet_id)
+		    ->where('link_id', '=', $link_id)
+		    ->where('deleted', '=', 0)
+		    ->find();
+
+		if ($account_droplet_link->loaded())
+		{
+			$account_droplet_link->delete();
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Removes the given link from a droplet
+	 * @param int $droplet_id ID of the droplet
+	 * @param int $place_id ID of the place
+	 * @return boolean
+	 */	
+	public static function delete_place($droplet_id, $place_id, $account_id)
+	{
+		$droplet_orm = ORM::factory('droplet', $droplet_id);		
+		if ( ! $droplet_orm->loaded())
+			return FALSE;
+			
+		$place_orm = ORM::factory('place', $place_id);
+		if ( ! $place_orm->loaded())
+			return FALSE;
+			
+		if ($droplet_orm->has('places', $place_orm)) 
+		{
+			// System-generated tag; Do not delete from the DB
+			$deleted_orm = ORM::factory('account_droplet_place');
+			$deleted_orm->account_id = $account_id;
+			$deleted_orm->droplet_id = $droplet_id;
+			$deleted_orm->place_id = $place_id;
+			$deleted_orm->deleted = 1;
+
+			$deleted_orm->save();
+		}
+		
+		// Check for user-defined link
+		$account_droplet_place = $droplet_orm->account_droplet_places
+		    ->where('account_id', '=', $account_id)
+		    ->where('droplet_id', '=', $droplet_id)
+		    ->where('place_id', '=', $place_id)
+		    ->where('deleted', '=', 0)
+		    ->find();
+
+		if ($account_droplet_place->loaded())
+		{
+			$account_droplet_place->delete();
 		}
 		
 		return TRUE;

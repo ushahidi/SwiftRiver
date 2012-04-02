@@ -3,15 +3,6 @@ $(document).ready(function() {
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
 
-	// DROP SCORING
-	$('article.drop ul.score-drop > li.like').live('click', function(e) {
-		$(this).addClass('scored').siblings().remove();
-		$(this).children().append('<span class="user-score">Useful</span>');
-	});
-	$('article.drop ul.score-drop > li.dislike').live('click', function(e) {
-		$(this).addClass('scored').siblings().remove();
-		$(this).children().append('<span class="user-score">Not useful</span>');
-	});
 
 	// POPOVER WINDOWS
 	function popoverHide () {
@@ -27,30 +18,47 @@ $(document).ready(function() {
 	});
  
 	// MODAL WINDOWS
-	function modalHide () {
-		$("#modal-container div.modal-window").bind( "clickoutside", function(event){
-			$(this).parent().fadeOut('fast').removeClass('visible');
-			$('body').removeClass('noscroll');
-			$(this).unbind();
-		});
+	window.modalHide = function () {
+		var el = $("#modal-container div.modal-window");
+		el.parent().fadeOut('fast').removeClass('visible');
+		$('body').removeClass('noscroll');
+		el.unbind();
 	}
-	$('a.modal-trigger').live('click', function(e) {
-		var url = $(this).attr('href');
-		$('#modal-container div.modal-window').load(url + ' .modal');
+	function registerModalHide() {
+		$("#modal-container div.modal-window").bind( "clickoutside", function(event){
+			modalHide();
+		});
+		function keyHandler(e) {
+			if(e.keyCode == 27){
+				// Escape key pressed
+				$(window).unbind("keypress", keyHandler);
+				modalHide();
+			}
+		}
+		$(window).bind( "keypress", keyHandler);
+	}
+	window.modalShow = function (el) {
+		$('#modal-container div.modal-window').html(el);
 		$('#modal-container').fadeIn('fast').addClass('visible');
 		$('body').addClass('noscroll');
 		if ($('body').hasClass('zoomed')) {
 			$('div.modal-window').unbind();
 		} 
 		else {
-			modalHide(); 
+			registerModalHide(); 
 		}
+	}
+	$('a.modal-trigger').live('click', function(e) {
+		var url = $(this).attr('href');
+		$.get(url, function(data) {
+			modalShow($(data).filter(".modal"));
+		})
 		e.preventDefault();
 	});
 	$('article.modal h2.close a').live('click', function(e) {
 		$('#modal-container').fadeOut('fast').removeClass('visible');
 		if ($('body').hasClass('zoomed')) {
-			zoomHide();
+			registerZoomHide();
 		} 
 		else {
 			$('body').removeClass('noscroll');
@@ -60,19 +68,36 @@ $(document).ready(function() {
 	});
 
 	// ZOOM WINDOWS
-	function zoomHide () {
+	window.zoomHide = function() {
+		var el = $("#zoom-container div.modal-window");
+		el.parent().fadeOut('fast').removeClass('visible');
+		$('body').removeClass('noscroll zoomed');
+		el.unbind();
+	}
+	function registerZoomHide() {
 		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
-			$(this).parent().fadeOut('fast').removeClass('visible');
-			$('body').removeClass('noscroll zoomed');
-			$(this).unbind();
+			zoomHide();
 		});
+		function keyHandler(e) {
+			if(e.keyCode == 27){
+				// Escape key pressed
+				$(window).unbind("keypress", keyHandler);
+				zoomHide();
+			}
+		}
+		$(window).bind( "keypress", keyHandler);
+	}
+	window.zoomShow = function (el) {
+		$('#zoom-container div.modal-window').html(el);
+		$('#zoom-container').fadeIn('fast').addClass('visible');
+		$('body').addClass('noscroll zoomed');
+		registerZoomHide();
 	}
 	$('a.zoom-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
-		$('#zoom-container div.modal-window').load(url + ' .modal');
-		$('#zoom-container').fadeIn('fast').addClass('visible');
-		$('body').addClass('noscroll zoomed');
-		zoomHide();
+		$.get(url, function(data) {
+			zoomShow($(data).filter(".modal"));
+		})
 		e.preventDefault();
 	});
 	$('#zoom-container .close a').live('click', function(e) {
@@ -111,14 +136,14 @@ $(document).ready(function() {
 	});
 
 	// Toggle channel selection
-	$('form input[type=checkbox]').live('click', function() {
-		if ($(this).is(':checked')) {
-			$(this).parents('label').addClass('selected');
-		}
-		else {
-			$(this).parents('label').removeClass('selected');
-		}
-	});
+	//$('form input[type=checkbox]').live('click', function() {
+	//	if ($(this).is(':checked')) {
+	//		$(this).parents('label').addClass('selected');
+	//	}
+	//	else {
+	//		$(this).parents('label').removeClass('selected');
+	//	}
+	//});
 
 	// Submit form when enter key hit in a password field
 	$('input[type=password]').keypress(function(e){

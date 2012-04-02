@@ -355,5 +355,75 @@ class Model_User extends Model_Auth_User
 			$k["subscribed"] = ($subscribed == "FALSE") ? FALSE : TRUE;
 		}
 	}
+	
+	/**
+	* Gets all the buckets accessible to the user - the ones
+	* they've created and the ones they're collaborating on
+	*
+	* @return array
+	*/
+	public function get_buckets_orm()
+	{
+		$buckets = array();
+		
+		// Buckets belonging to this user's account
+		$buckets = array_merge($buckets, 
+			$this->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		
+		// Add buckets belonging to an account this user is collaborating on
+		$account_collaborations = $this->account_collaborators
+		    ->where("collaborator_active", "=", 1)		                               
+		    ->find_all();
+		
+		foreach ($account_collaborations as $collabo)
+		{
+			$buckets = array_merge($buckets, 
+				$collabo->account->buckets->order_by('bucket_name', 'ASC')->find_all()->as_array());
+		}
+		
+		// Add individual buckets this user is collaborating on
+		$bucket_collaborations = $this->bucket_collaborators
+		                               ->where("collaborator_active", "=", 1)
+		                               ->find_all();
+		
+		foreach ($bucket_collaborations as $collabo)
+		{
+			$buckets[] = $collabo->bucket;
+		}
+		
+		// Add the buckets this user has subscribed to
+		$buckets = array_merge($buckets, 
+			$this->bucket_subscriptions->order_by('bucket_name', 'ASC')->find_all()->as_array());
+
+
+		return array_unique($buckets);
+	}
+	
+	/**
+	* Gets all the buckets accessible to the user - the ones
+	* they've created and the ones they're collaborating on
+	*
+	* @return array
+	*/
+	public function get_buckets_array()
+	{
+		$ret = array();
+
+		$buckets = $this->get_buckets_orm();
+
+		foreach ($buckets as $bucket)
+		{
+			$ret[] = array(
+				"id" => $bucket->id, 
+				"bucket_name" => $bucket->bucket_name,
+				"bucket_url" => URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url,
+				"account_id" => $bucket->account->id,
+				"user_id" => $bucket->account->user->id,
+				"account_path" => $bucket->account->account_path,
+				"subscriber_count" => $bucket->get_subscriber_count()
+				);
+			}
+			return $ret;
+		}
 
 }

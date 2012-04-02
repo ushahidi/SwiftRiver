@@ -59,11 +59,10 @@
 		</ul>
 	</li>
 	<?php else: ?>			
-	<?php echo Form::open('login'); ?>
-	<li class="user">
-		<a href="#" class="modal-trigger"><span class="label"><?php echo __('Log in');?></span></a>
+	<li class="login">
+		<a href="<?php echo URL::site('login'); ?>" class="modal-trigger"><span class="icon"></span><span class="label">Log in</span></a>
+	</li>
 	<?php endif; ?>
-	</li>	
 </ul>
 
 <script type="text/template" id="header-bucket-template">

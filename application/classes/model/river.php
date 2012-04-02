@@ -18,7 +18,7 @@ class Model_River extends ORM {
 	/**
 	 * Number of droplets to show per page
 	 */
-	const DROPLETS_PER_PAGE = 20;
+	const DROPLETS_PER_PAGE = 50;
 	
 	/**
 	 * A river has many channel_filters
@@ -374,7 +374,7 @@ class Model_River extends ORM {
 	 * @param string $sort Sorting order
 	 * @return array
 	 */
-	public static function get_droplets($user_id, $river_id, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
+	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
@@ -403,8 +403,18 @@ class Model_River extends ORM {
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('rivers_droplets.id', '<=', $max_id);
+			    ->where('droplets.droplet_processed', '=', 1);
+			
+			if ($drop_id)
+			{
+				// Return a specific drop
+				$query->where('droplets.id', '=', $drop_id);
+			}
+			else
+			{
+				// Return all drops
+				$query->where('rivers_droplets.id', '<=', $max_id);
+			}
 
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
@@ -436,10 +446,10 @@ class Model_River extends ORM {
 			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets']);
+			Model_Droplet::populate_links($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets']);
+			Model_Droplet::populate_places($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);
@@ -487,7 +497,7 @@ class Model_River extends ORM {
 			self::_apply_river_filters($query, $filters);
 
 			// Group, order and limit
-			$query->order_by('droplets.droplet_date_pub', 'ASC')
+			$query->order_by('rivers_droplets.id', 'ASC')
 			    ->group_by('rivers_droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
 			    ->offset(0);
@@ -507,10 +517,10 @@ class Model_River extends ORM {
 			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets']);
+			Model_Droplet::populate_links($droplets['droplets'], $river_orm->account_id);
         	
 			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets']);
+			Model_Droplet::populate_places($droplets['droplets'], $river_orm->account_id);
 			
 			// Populate the discussions array
 			Model_Droplet::populate_discussions($droplets['droplets']);
