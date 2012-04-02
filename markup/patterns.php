@@ -57,7 +57,7 @@ body > nav {
 		<li><a href="#page-title-bucket">Bucket page title</a></li>
 		<li><a href="#page-title-user">User page title</a></li>
 		<li><a href="#page-navigation">Page navigation</a></li>
-		<li><a href="#rundown">Rundown</a></li>
+		<li><a href="#page-navigation-filters">Page navigation with filters</a></li>
 		<li><a href="#container">Container</a></li>
 		<li><a href="#settings-toolbar">Generic toolbar</a></li>
 		<li><a href="#save-toolbar">Save toolbar</a></li>
@@ -118,6 +118,13 @@ body > nav {
 		<div class="center">
 			<div class="page-h1 col_9">
 				<h1>Page title</h1>
+				<div class="rundown-people">
+					<h2>Collaborators on this bucket</h2>
+					<ul>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="settings">
@@ -159,37 +166,39 @@ body > nav {
 	<a name="page-navigation"></a>
 	<h2>Page navigation: <em>Used for pages with alternate views or child pages</em></h2>
 	<nav class="page-navigation cf">
-		<ul class="center">
-			<li class="active"><a href="/markup/river">Drops</a></li>
-			<li><a href="/markup/river/view-list.php">List</a></li>
-			<li><a href="/markup/river/view-photos.php">Photos</a></li>
-			<li><a href="/markup/river/view-map.php">Map</a></li>
-			<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
-		</ul>
+		<div class="center">
+			<div class="river touchcarousel col_12">
+				<ul class="touchcarousel-container">
+					<li class="active"><a href="/markup/river">Drops</a></li>
+					<li><a href="/markup/river/view-list.php">List</a></li>
+					<li><a href="/markup/river/view-photos.php">Photos</a></li>
+					<li><a href="/markup/river/view-map.php">Map</a></li>
+					<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
+				</ul>
+			</div>
+		</div>
 	</nav>
 </div>
 
 <div class="sample">
-	<a name="rundown"></a>
-	<h2>Rundown: <em>Paired with navigation to preview collaborators and followers</em></h2>
-	<section class="rundown user cf">
+	<a name="page-navigation-filters"></a>
+	<h2>Page navigation with filters: <em>Used for pages with alternate views and filters</em></h2>
+	<nav class="page-navigation cf">
 		<div class="center">
-			<div class="rundown-people col_6">
-				<h2>Followers</h2>
-				<ul>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+			<div id="page-views" class="river touchcarousel col_9">
+				<ul class="touchcarousel-container">
+					<li class="touchcarousel-item active"><a href="/markup/river">Drops</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-list.php">List</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-photos.php">Photos</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-map.php">Map</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-timeline.php">Timeline</a></li>
 				</ul>
 			</div>
-			<div class="rundown-people col_6">
-				<h2>Following</h2>
-				<ul>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-				</ul>
+			<div class="filter-actions col_3">
+				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
 			</div>
 		</div>
-	</section>
+	</nav>
 </div>
 
 <div class="sample settings">

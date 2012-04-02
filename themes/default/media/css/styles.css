@@ -59,8 +59,7 @@ body {
   margin: 0 3.125%;
 }
 /* --------------------------- BUTTON */
-.button-blue button { border: none; cursor: pointer; }
-.button-blue a, .button-blue button {
+.button-blue a {
   display: inline-block;
   color: #fff;
   font-weight: bold;
@@ -83,7 +82,7 @@ body {
   filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#54c2d5', EndColorStr='#36b7ce');
   padding: 5px 15px;
 }
-.button-blue a:hover, .button-blue button:hover {
+.button-blue a:hover {
   text-decoration: none;
   background-color: #36b7ce;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#36b7ce), to(#54c2d5));
@@ -322,8 +321,8 @@ a.avatar-wrap:after {
 }
 a.avatar-wrap img {
   width: 100%;
-  max-width:60px;
-  max-height:60px;
+  max-width: 60px;
+  max-height: 60px;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -639,6 +638,16 @@ nav.page-navigation ul li a:hover {
   color: #259cb5;
   text-decoration: none;
 }
+nav.page-navigation .filter-actions {
+  text-align: right;
+}
+nav.page-navigation .filter-actions p {
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+nav.page-navigation .filter-actions p.button-blue a {
+  line-height: 15px;
+}
 /* --------------------------- CONTENT */
 #content.river {
   background: url(../img/contentBG-river-drops.gif) top repeat-x;
@@ -713,11 +722,7 @@ p.metadata span.icon {
   background-position: center -481px;
   margin-left: 10px;
 }
-/* ---- DROP: ACTIONS */.drop .drop-actions p a {
-  text-align: center;
-  padding: 5px;
-}
-.drop .drop-actions ul li a {
+/* ---- DROP: ACTIONS */.drop .drop-actions ul li a {
   padding: 0;
 }
 .drop ul.score-drop li.scored a {
@@ -1006,21 +1011,21 @@ section.rundown.user {
 section.rundown.bucket {
   background: #dfedf0;
 }
-section.rundown .rundown-people {
+.rundown-people {
   text-align: left;
-  padding: 5px 0;
+  padding-top: 5px;
 }
-section.rundown .rundown-people h2 {
+.rundown-people h2 {
   float: left;
   font-size: 0.85em;
   line-height: 2.2em;
   padding-right: 5px;
 }
-section.rundown .rundown-people ul,
-section.rundown .rundown-people ul li {
+.rundown-people ul,
+.rundown-people ul li {
   display: inline;
 }
-section.rundown .rundown-people ul li a.avatar-wrap {
+.rundown-people ul li a.avatar-wrap {
   width: 25px;
   height: 25px;
   margin: 0 2px;
@@ -1041,7 +1046,7 @@ section.rundown .rundown-totals ul li strong {
 /* --------------------------- CONTAINER */
 article.container a.remove-large {
   float: right;
-  margin: 20px 10px;
+  margin: 20px 10px 20px 0;
 }
 article.container div.property-title {
   float: left;
@@ -1065,7 +1070,7 @@ article.container div.property-title h1 a {
 }
 article.container div.property-title .add-parameter {
   float: right;
-  margin: 5px 0 0 10px;
+  margin: 5px 0 0 5px;
 }
 article.container p.button-white a {
   font-weight: bold;
@@ -1166,14 +1171,13 @@ article.container div.parameter div.actions {
 #content.settings .save-toolbar p a {
   padding: 10px 20px;
 }
-#content.settings select.boolean-operator {
-  width: 15%;
+select.boolean-operator {
+  display: block;
   color: #444444;
   font: bold 1.1em/1em Helvetica Neue, Helvetica, Arial, sans-serif;
   text-transform: uppercase;
-  border: 1px solid #ccc;
   padding: 3px;
-  background: transparent;
+  margin: 0 auto;
 }
 #content.settings div.alert-message {
   margin-top: 15px;
@@ -1340,6 +1344,9 @@ article.modal div.modal-body {
   text-align: left;
   padding: 10px 20px;
 }
+article.modal div.modal-body.modal-containers {
+  background: #f6f6f6;
+}
 article.modal div.modal-body.create-new {
   border-top: 1px solid #e5e5e5;
 }
@@ -1351,13 +1358,13 @@ div.modal-window .modal.col_9 {
   margin: 0;
 }
 /* ---- MODAL: DROP ZOOM */
-div.modal-window .settings-toolbar {
+#zoom-container .drop-full .settings-toolbar {
   position: fixed;
   bottom: 10px;
   right: 30px;
   padding: 10px;
 }
-div.modal-window .settings-toolbar .close {
+#zoom-container .drop-full .settings-toolbar .close {
   display: none;
 }
 /* ---- MODAL: FORM SELECT LIST */
@@ -1550,6 +1557,19 @@ article.modal div.search ul.dual-buttons {
     float: none;
     clear: both;
   }
+  #page-views.col_9 {
+    float: left;
+  }
+  .rundown-people {
+    display: none;
+  }
+  .filter-actions {
+    float: left;
+    width: 18.75%;
+    -moz-box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset;
+    -webkit-box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 1px 0 0 rgba(0, 0, 0, 0.1) inset;
+  }
   article.modal hgroup.page-title .page-h1 {
     float: left;
     text-align: left;
@@ -1561,17 +1581,6 @@ article.modal div.search ul.dual-buttons {
   article.modal hgroup.page-title .page-actions {
     float: right;
     padding: 17px 0;
-  }
-  div.modal-window .settings-toolbar p,
-  div.modal-window .settings-toolbar p.close {
-    display: inline-block;
-  }
-  div.modal-window .settings-toolbar p a {
-    font-size: 16px;
-  }
-  div.modal-window .settings-toolbar p.close a {
-    color: #259CB5;
-    margin-right: 10px;
   }
 }
 /* --- ####### MEDIUM VIEWPORT ###### --- */
@@ -1665,7 +1674,7 @@ article.modal div.search ul.dual-buttons {
     float: right;
     width: 18px;
     height: 25px;
-    background: url(../img/icons-25x25.png) left -371px no-repeat;
+    background: url(/markup/images/icons-25x25.png) left -371px no-repeat;
   }
   ul.popover-window.header-toolbar {
     width: auto;
@@ -1680,17 +1689,21 @@ article.modal div.search ul.dual-buttons {
   hgroup.page-title h1 {
     font-size: 2.1em;
   }
-  hgroup.page-title .page-actions {
+  hgroup.page-title .page-actions,
+  nav.page-navigation .filter-actions {
     -wekbit-box-shadow: -4px 0 5px rgba(0, 0, 0, 0.04), 1px 0 0 rgba(0, 0, 0, 0.1) inset;
     -moz-box-shadow: -4px 0 5px rgba(0, 0, 0, 0.04), 1px 0 0 rgba(0, 0, 0, 0.1) inset;
     box-shadow: -4px 0 5px rgba(0, 0, 0, 0.04), 1px 0 0 rgba(0, 0, 0, 0.1) inset;
     text-align: left;
+  }
+  hgroup.page-title .page-actions {
     padding: 28px 0;
   }
   hgroup.bucket-title .page-actions {
-    padding: 19px 0;
+    padding: 34px 0;
   }
-  hgroup.page-title .page-actions h2 {
+  hgroup.page-title .page-actions h2,
+  nav.page-navigation .filter-actions p {
     display: block;
     clear: both;
     margin-left: 10px;
@@ -1705,8 +1718,11 @@ article.modal div.search ul.dual-buttons {
   nav.page-navigation ul li a {
     font-size: 1em;
   }
-  nav.page-navigation ul li:first-child a {
-    padding-left: 1.041666667%;
+  nav.page-navigation .river ul.touchcarousel-container li a {
+    width: 40px;
+  }
+  nav.page-navigation .settings ul.touchcarousel-container li a {
+    width: 70px;
   }
   #content.drops,
   #content.photos {
@@ -1917,15 +1933,174 @@ article.modal div.search ul.dual-buttons {
     width: 92%;
   }
   /* --------------------------- MODAL */
-  div.modal-window .settings-toolbar {
+  #zoom-container .drop-full .settings-toolbar {
     top: 20px;
     right: auto;
     bottom: auto;
     margin-left: 610px;
   }
 }
-
 .loading img {
-	margin: 0 auto; 
-	display: block;
+  margin: 0 auto;
+  display: block;
+}
+/******************************************************\
+*
+*  1. Main containers (carousel size, background)
+*
+\******************************************************/
+.touchcarousel {
+  position: relative;
+  /* style is removed after carousel is inited, use !important if you want to keep it*/
+
+  overflow: hidden;
+  margin-right: 0;
+  margin-left: 0;
+}
+.touchcarousel.col_9 {
+  width: 75%;
+}
+.touchcarousel .touchcarousel-container {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  left: 0;
+}
+.touchcarousel .touchcarousel-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+/******************************************************\
+*
+*  2. Carousel items (item styling, spacing between items)
+*
+\******************************************************/
+.touchcarousel .touchcarousel-item {
+  /* use margin-right for spacing between items */
+
+  margin: 0 0 0 0;
+  padding: 0;
+  float: left;
+}
+/* Last carousel item  */
+.touchcarousel .touchcarousel-item.last {
+  margin-right: 0 !important;
+}
+/******************************************************\
+*
+*  3. Arrows(direction) navigation
+*
+\******************************************************/
+/* arrow hitstate and icon holder */
+.touchcarousel .arrow-holder {
+  height: 100%;
+  width: 15px;
+  position: absolute;
+  top: 0;
+  display: block;
+  cursor: pointer;
+  z-index: 25;
+}
+.touchcarousel .arrow-holder.left {
+  left: 0;
+  -moz-box-shadow: 5px 0 5px #f6f6f6 inset;
+  -webkit-box-shadow: 5px 0 5px #f6f6f6 inset;
+  box-shadow: 5px 0 5px #f6f6f6 inset;
+}
+.touchcarousel .arrow-holder.right {
+  right: 0;
+  -moz-box-shadow: -5px 0 5px #f6f6f6 inset;
+  -webkit-box-shadow: -5px 0 5px #f6f6f6 inset;
+  box-shadow: -5px 0 5px #f6f6f6 inset;
+}
+/* arrow icons */
+.touchcarousel .arrow-icon {
+  width: 15px;
+  height: 15px;
+  margin-top: 8px;
+  margin-left: -6px;
+  position: absolute;
+  cursor: pointer;
+}
+.touchcarousel .arrow-holder.disabled {
+  cursor: default;
+}
+.touchcarousel .arrow-holder.disabled .arrow-icon {
+  cursor: default;
+}
+/******************************************************\
+*
+*  4. Paging navigation
+*
+\******************************************************/
+.touchcarousel .tc-paging-container {
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  margin-top: -20px;
+  z-index: 25;
+}
+.touchcarousel .tc-paging-centerer {
+  float: left;
+  position: relative;
+  left: 50%;
+}
+.touchcarousel .tc-paging-centerer-inside {
+  float: left;
+  position: relative;
+  left: -50%;
+}
+/* Paging items */
+.touchcarousel .tc-paging-item {
+  float: left;
+  cursor: pointer;
+  position: relative;
+  display: block;
+  text-indent: -9999px;
+}
+/******************************************************\
+*
+*  5. Scrollbar
+*
+\******************************************************/
+.touchcarousel .scrollbar-holder {
+  position: absolute;
+  z-index: 30;
+  left: 6px;
+  right: 6px;
+  bottom: 0;
+  height: 2px;
+  overflow: hidden;
+}
+.touchcarousel .scrollbar {
+  position: absolute;
+  left: 0;
+  height: 4px;
+  bottom: 0px;
+}
+.touchcarousel .scrollbar.dark {
+  background-color: rgba(50, 159, 192, 0.75);
+}
+.touchcarousel .scrollbar.light {
+  background-color: #d2d2d2;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+/******************************************************\
+*
+*  6. Cursors
+*
+\******************************************************/
+/* IE and Opera use "move", FF uses -moz-grab */
+.touchcarousel .grab-cursor {
+  cursor: url(grab.png) 8 8, move;
+}
+.touchcarousel .grabbing-cursor {
+  cursor: url(grabbing.png) 8 8, move;
+}
+/* Cursor that used when mouse drag is disabled */
+.touchcarousel .auto-cursor {
+  cursor: auto;
 }

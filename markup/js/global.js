@@ -3,6 +3,16 @@ $(document).ready(function() {
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
 
+	// DETERMINE NEED FOR MASONRY SCRIPT
+	if ($("#content.drops").length > 0) {
+		$.getScript('/markup/js/jquery.masonry.js');
+	}
+
+	// DETERMINE NEED FOR SCROLLING VIEWS
+	if ($("#page-views ul").children().length > 2) {
+		$.getScript('/markup/js/jquery.touch.min.js');
+	}
+
 	// DROP SCORING
 	$('article.drop ul.score-drop > li.like').live('click', function(e) {
 		$(this).addClass('scored').siblings().remove();
