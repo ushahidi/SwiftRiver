@@ -6,13 +6,9 @@
 	<title><?php print $page_title; ?> ~ SwiftRiver</title> 
 	<link rel="shortcut icon" href="#">
 	<link type="text/css" href="/markup/css/styles.css" rel="stylesheet" />
+	<link type="text/css" href="/markup/css/touch.css" rel="stylesheet" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/markup/js/jquery.outside.js"></script>
-	<?php
-	if ($template_type == "masonry"){
-	  echo "<script type='text/javascript' src='/js/jquery.masonry.js'></script>";
-	}
-	?>
 	<script type="text/javascript" src="/markup/js/global.js"></script>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 </head> 

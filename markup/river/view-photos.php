@@ -11,7 +11,7 @@
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="settings">
-					<a href="/markup/river/settings-filters.php">
+					<a href="/markup/river/settings-channels.php">
 						<span class="icon"></span>
 						River settings
 					</a>
@@ -21,13 +21,20 @@
 	</hgroup>
 
 	<nav class="page-navigation cf">
-		<ul class="center">
-			<li><a href="/markup/river">Drops</a></li>
-			<li><a href="/markup/river/view-list.php">List</a></li>
-			<li class="active"><a href="/markup/river/view-photos.php">Photos</a></li>
-			<li><a href="/markup/river/view-map.php">Map</a></li>
-			<li><a href="/markup/river/view-timeline.php">Timeline</a></li>
-		</ul>
+		<div class="center">
+			<div id="page-views" class="river touchcarousel col_9">
+				<ul class="touchcarousel-container">
+					<li class="touchcarousel-item"><a href="/markup/river">Drops</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-list.php">List</a></li>
+					<li class="touchcarousel-item active"><a href="/markup/river/view-photos.php">Photos</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-map.php">Map</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/view-timeline.php">Timeline</a></li>
+				</ul>
+			</div>
+			<div class="filter-actions col_3">
+				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
+			</div>
+		</div>
 	</nav>
 
 	<div id="content" class="river photos cf">

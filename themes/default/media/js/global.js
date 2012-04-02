@@ -3,6 +3,15 @@ $(document).ready(function() {
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
 
+	// DETERMINE NEED FOR MASONRY SCRIPT
+	if ($("#content.drops").length > 0) {
+		$.getScript('jquery.masonry.js');
+	}
+
+	// DETERMINE NEED FOR SCROLLING VIEWS
+	if ($("#page-views ul").children().length > 2) {
+		$.getScript('jquery.touch.min.js');
+	}
 
 	// POPOVER WINDOWS
 	function popoverHide () {

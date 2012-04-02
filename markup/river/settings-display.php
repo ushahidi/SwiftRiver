@@ -21,13 +21,16 @@
 	</hgroup>
 
 	<nav class="page-navigation cf">
-		<ul class="center">
-			<li><a href="/markup/river/settings-filters.php">Filters</a></li>
-			<li><a href="/markup/river/settings-channels.php">Channels</a></li>
-			<li><a href="/markup/river/settings-collaborators.php">Collaborators</a></li>
-			<li class="active"><a href="/markup/river/settings-display.php">Display</a></li>
-			<li><a href="/markup/river/settings-permissions.php">Permissions</a></li>
-		</ul>
+		<div class="center">
+			<div id="page-views" class="settings touchcarousel col_12">
+				<ul class="touchcarousel-container">
+					<li class="touchcarousel-item"><a href="/markup/river/settings-channels.php">Channels</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/settings-collaborators.php">Collaborators</a></li>
+					<li class="touchcarousel-item active"><a href="/markup/river/settings-display.php">Display</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/settings-permissions.php">Permissions</a></li>
+				</ul>
+			</div>
+		</div>
 	</nav>
 
 	<div id="content" class="settings cf">

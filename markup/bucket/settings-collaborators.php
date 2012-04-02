@@ -8,6 +8,13 @@
 		<div class="center">
 			<div class="page-h1 col_9">
 				<h1><?php print $page_title; ?> <em>settings</em></h1>
+				<div class="rundown-people">
+					<h2>Collaborators on this bucket</h2>
+					<ul>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="back">
@@ -27,12 +34,15 @@
 	</hgroup>
 
 	<nav class="page-navigation cf">
-		<ul class="center">
-			<li><a href="/markup/bucket/settings-filters.php">Filters</a></li>
-			<li class="active"><a href="/markup/bucket/settings-collaborators.php">Collaborators</a></li>
-			<li><a href="/markup/bucket/settings-display.php">Display</a></li>
-			<li><a href="/markup/bucket/settings-permissions.php">Permissions</a></li>
-		</ul>
+		<div class="center">
+			<div id="page-views" class="settings touchcarousel col_12">
+				<ul class="touchcarousel-container">
+					<li class="touchcarousel-item active"><a href="/markup/bucket/settings-collaborators.php">Collaborators</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/settings-display.php">Display</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/settings-permissions.php">Permissions</a></li>
+				</ul>
+			</div>
+		</div>
 	</nav>
 
 	<div id="content" class="settings collaborators cf">

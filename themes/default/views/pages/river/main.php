@@ -24,18 +24,23 @@
 	</hgroup>
 
 	<nav class="page-navigation cf">
-		<ul class="center">
-			<li id="drops-navigation-link"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#"><?php echo __('Drops');?></a></li>
-			<li id="list-navigation-link"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
-			<li><a href="#">Photos</a></li>
-			<li><a href="#">Map</a></li>
-			<li><a href="#">Timeline</a></li>
-			<?php
-			// SwiftRiver Plugin Hook -- Add River Nav Item
-			Swiftriver_Event::run('swiftriver.river.nav', $river);
-			?>
-		</ul>
+		<div class="center">
+			<div id="page-views" class="river touchcarousel col_9">
+				<ul class="touchcarousel-container">
+					<li id="drops-navigation-link" class="touchcarousel-item"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#"><?php echo __('Drops');?></a></li>
+					<li id="list-navigation-link" class="touchcarousel-item"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
+					<li class="touchcarousel-item"><a href="#">Photos</a></li>
+					<li class="touchcarousel-item"><a href="#">Map</a></li>
+					<li class="touchcarousel-item"><a href="#">Timeline</a></li>
+					<?php
+					// SwiftRiver Plugin Hook -- Add River Nav Item
+					Swiftriver_Event::run('swiftriver.river.nav', $river);
+					?>
+				</ul>
+			</div>
+			<div class="filter-actions col_3">
+				<p class="button-blue button-small"><a href="/markup/river/filters.php" class="zoom-trigger">Filters</a></p>
+			</div>
 	</nav>
-
 	
 	<?php echo $droplets_view; ?>

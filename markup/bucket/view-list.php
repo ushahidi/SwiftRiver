@@ -8,10 +8,17 @@
 		<div class="center">
 			<div class="page-h1 col_9">
 				<h1><?php print $page_title; ?></h1>
+				<div class="rundown-people">
+					<h2>Collaborators on this bucket</h2>
+					<ul>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
+						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+					</ul>
+				</div>
 			</div>
 			<div class="page-actions col_3">
 				<h2 class="settings">
-					<a href="/markup/bucket/settings-filters.php">
+					<a href="/markup/bucket/settings-collaborators.php">
 						<span class="icon"></span>
 						Bucket settings
 					</a>
@@ -26,32 +33,21 @@
 		</div>
 	</hgroup>
 
-	<section class="bucket-rundown cf">
+	<nav class="page-navigation cf">
 		<div class="center">
-			<!--div class="rundown-totals col_3">
-				<ul>
-					<li><strong>88</strong> drops</li>
-					<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
-				</ul>
-			</div-->
-			<div class="rundown-collaborators col_9">
-				<h2>Collaborators on this bucket</h2>
-				<ul>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+			<div id="page-views" class="river touchcarousel col_9">
+				<ul class="touchcarousel-container">
+					<li class="touchcarousel-item"><a href="/markup/bucket">Drops</a></li>
+					<li class="touchcarousel-item active"><a href="/markup/bucket/view-list.php">List</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/view-photos.php">Photos</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/view-map.php">Map</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/view-timeline.php">Timeline</a></li>
 				</ul>
 			</div>
+			<div class="filter-actions col_3">
+				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
+			</div>
 		</div>
-	</section>
-
-	<nav class="page-navigation cf">
-		<ul class="center">
-			<li><a href="/markup/bucket">Drops</a></li>
-			<li class="active"><a href="/markup/bucket/view-list.php">List</a></li>
-			<li><a href="/markup/bucket/view-photos.php">Photos</a></li>
-			<li><a href="/markup/bucket/view-map.php">Map</a></li>
-			<li><a href="/markup/bucket/view-timeline.php">Timeline</a></li>
-		</ul>
 	</nav>
 
 	<div id="content" class="river list cf">
