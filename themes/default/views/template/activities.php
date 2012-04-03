@@ -28,7 +28,8 @@
 			
 			<% if (action_name == "invite" && !parseInt(action_to_self)) { %>
 				<% var determiner = (action_on == "account") ? "an" : "the"; %>
-				invited <%= action_to_name %> to collaborate on <%= determiner %> <a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
+				invited <%= action_to_name %> to collaborate on <%= determiner %> 
+				<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
 			<% } %>
 
 			<% if (action_name == "create") { %>
@@ -39,7 +40,8 @@
 				<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
 					<p>
 					<?php echo __("By accepting this invitation, you will be able to view and edit the settings for the "); ?>
-					<a href="<%= action_on_url %>">"<%= user_data.action_on_name %>"</a> <%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.
+					<a href="<%= action_on_url %>">"<%= user_data.action_on_name %>"</a> 
+					<%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.
 					</p>
 				<% } %>
 			<?php endif; ?>
@@ -61,11 +63,13 @@
 			<a href="<%= user_url %>"><%= user_name %></a>
 			<% if (action_name == "invite") { %>
 				<% if (users.length == 2) { %>
-					invited <%= users[0].action_to_name %> and <%= users[1].action_to_name %> to collaborate on the 
+					<?php echo __("invited"); ?> <%= users[0].action_to_name %> and <%= users[1].action_to_name %> 
+					<?php echo __("to collaborate on the "); ?>
 					<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
 				<% } else if (users.length > 2) { %>
 					<% var user_count = users.length - 1; %>
-					invited <%= users[0].action_to_name %> and <%= user_count %> others to collaborate on the
+					<?php echo __("invited"); ?> <%= users[0].action_to_name %> and <%= user_count %> 
+					<?php echo __("others to collaborate on the"); ?>
 					<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
 				<% } %>
 			<% } %>
