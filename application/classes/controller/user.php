@@ -122,6 +122,7 @@ class Controller_User extends Controller_Swiftriver {
 				->bind('activity_stream', $activity_stream)
 				->bind('owner', $this->owner)
 				->bind('account', $this->visited_account)
+				->bind('has_activity', $has_activity)
 				->bind('profile_js', $profile_js);
 
 			$profile_js = $this->_get_profile_js(TRUE);
@@ -143,8 +144,11 @@ class Controller_User extends Controller_Swiftriver {
 
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
 
-		$activities = json_encode(Model_User_Action::get_activity_stream(
-			$this->visited_account->user->id, ! $this->owner));
+		$activity_list = Model_User_Action::get_activity_stream(
+			$this->visited_account->user->id, ! $this->owner);
+
+		$has_activity = count($activity_list) > 0;
+		$activities = json_encode($activity_list);
 
 	}
 

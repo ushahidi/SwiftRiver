@@ -26,69 +26,14 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 	{
 		$this->template->header->title = __('Plugins');
 		$this->settings_content = View::factory('pages/settings/plugins')
-			->bind('plugins', $plugins)
-			->bind('default_sort', $sort);
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('plugins_list', $plugins_list);
 
-		$this->template->header->js = View::factory('pages/settings/js/plugins');
-
-		$this->active = 'plugins';	
+		$this->active = 'plugins';
 		
 		// Process Plugins
 		$this->_process_plugins();
 		
-		// save the data
-		if ($_POST)
-		{
-			if ( isset($_POST['id']) 
-				AND isset($_POST['action']) 
-				AND is_numeric($_POST['id']) 
-				AND in_array($_POST['action'], array(0, 1)) )
-			{
-				$plugin = ORM::factory('plugin', $_POST['id']);
-				if ($plugin->loaded())
-				{
-					if ($_POST['action'] == 1)
-					{
-						$plugin->plugin_enabled = 1;
-						$plugin->save();
-						
-						// Load this plugin into the system
-						Kohana::modules(array_merge(Kohana::modules(), array(
-							$plugin->plugin_path => PLUGINPATH.$plugin->plugin_path
-						)));
-						
-						$check = Kohana::modules();
-						// Was plugin loaded?
-						if ( ! isset($check[$plugin->plugin_path]))
-						{
-							$plugin->plugin_enabled = 0;
-							$plugin->save();
-						}
-						else
-						{
-							// Run default plugin functions
-							$class = ucfirst($plugin->plugin_path);
-							if (class_exists($class))
-							{
-								// Does an install exist?
-								if (method_exists($class,'install'))
-								{
-									// Run the installer
-									// declare it first to prevent T_PAAMAYIM_NEKUDOTAYIM
-									$install = new $class;
-									$install->install();
-								}
-							}
-						}
-					}
-					else
-					{
-						$plugin->plugin_enabled = 0;
-						$plugin->save();
-					}
-				}
-			}
-		}
 		
 		// Get the items for the query
 		$sort = isset($_GET['sort']) ? $_GET['sort'] : 'plugin_name'; // set default sorting
@@ -96,6 +41,46 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 		$plugins = ORM::factory('plugin')
 			->order_by($sort, $dir)
 			->find_all();
+
+		$entries =  array();
+		foreach ($plugins as $plugin)
+		{
+			$entries[] = array(
+				'id' => $plugin->id, 
+				'plugin_name' => $plugin->plugin_name, 
+				'plugin_description' => $plugin->plugin_description,
+				'plugin_enabled' => ($plugin->plugin_enabled == 1)
+			);
+		}
+		$plugins_list = json_encode($entries);
+		$fetch_url = URL::site().'settings/plugins/manage';
+		unset ($entries);
+
+	}
+
+	public function action_manage()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		switch ($this->request->method())
+		{
+			// Update the plugin
+			case "PUT":
+				$plugin_id = $this->request->param('id');
+				$item_array = json_decode($this->request->body(), TRUE);
+				$plugin_orm = ORM::factory('plugin', $plugin_id);
+
+				if ( ! $plugin_orm->loaded())
+				{
+					throw new HTTP_Exception_404("The requested plugin could not be found");
+				}
+
+				$plugin_orm->plugin_enabled = $item_array['plugin_enabled'];
+				$plugin_orm->save();
+
+			break;
+		}
 	}
 	
 	/**

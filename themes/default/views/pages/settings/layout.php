@@ -1,32 +1,33 @@
-<article id="droplet-full" class="list dashboard cf">
-	<div class="cf center page-title">
-		<h1><span><?php echo __('Settings') ?></span></h1>
+<hgroup class="app-title cf">
+	<div class="center">
+		<div class="col_12">
+			<h1><?php echo __('Site Settings'); ?></h1>
+		</div>
 	</div>
-	
-	<div class="center canvas cf">
-		<section class="panel">		
-			<nav class="cf">
-				<ul class="views">
-					<li <?php if ($active == 'main' OR ! $active) echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'settings';?>"><?php echo __('Application'); ?></a>
-					</li>
-					<li <?php if ($active == 'invites') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'settings/invites';?>"><?php echo __('Invites'); ?></a>
-					</li>					
-					<li <?php if ($active == 'plugins') echo 'class="active"'; ?>>
-						<a href="<?php echo URL::site().'settings/plugins';?>"><?php echo __('Plugins'); ?></a>
-					</li>
-					<?php
-					// Swiftriver Plugin Hook -- add settings nav item
-					Swiftriver_Event::run('swiftriver.settings.nav', $active);
-					?>
-					<li><a href="#"><?php echo __('More'); ?></a></li>
-				</ul>
-			</nav>
-			<div class="panel_body"></div>
-		</section>
-		
-		<?php echo $settings_content; ?>
-		
-	</div>	
-</article>
+</hgroup>
+
+<nav class="page-navigation cf">
+	<ul class="center">
+		<li <?php if ($active == 'main' OR ! $active) echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site().'settings';?>"><?php echo __('Application'); ?></a>
+		</li>
+		<li <?php if ($active == 'users') echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site().'settings/users';?>"><?php echo __('Users'); ?></a>
+		</li>					
+		<li <?php if ($active == 'plugins') echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site().'settings/plugins';?>"><?php echo __('Plugins'); ?></a>
+		</li>
+		<?php
+			// Swiftriver Plugin Hook -- add settings nav item
+			Swiftriver_Event::run('swiftriver.settings.nav', $active);
+		?>
+	</ul>
+</nav>
+
+<div id="content" class="settings cf">
+	<div class="center">
+		<div class="col_12">
+			<?php echo $settings_content; ?>
+		</div>
+	</div>
+</div>
