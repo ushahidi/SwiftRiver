@@ -25,107 +25,120 @@ $(document).ready(function() {
 		popoverHide();
 		return false;
 	});
- 
-	// **************
-	// MODAL WINDOWS
-	// **************
 	
-	// Reference for all modal dialogs in the app
-	window.swDialog = function() { return this; };
-	swDialog.zoomShow = function(data) {
-		swDialog.show({containerEl: "#zoom-container", data: data, zoom: true});
+	// A common object for all window types
+	function Dialog(contents, modal) {
+		this.modal = (modal == undefined ? false : modal);
+		this.container = this.modal ? "#modal-container" : "#zoom-container";
+		this.contents = contents;
 	}
-
-	// Initiates dialog display and registers the necessary events
-	/**
-	 * Options parameter is a key-value object. Supported keys are:
-	 *     containerEl - Element to overlay the current view with the dialog, 
-	 *     data - Content to be rendered, 
-	 *     zoom - true/false. When true, renders the dialog in zoom mode
-	 *
-	 */
-	swDialog.show = function(options) {
-		if (typeof options == 'undefined') {
-			throw "ERROR: No parameters specified";
+	
+	// Hides a window
+	Dialog.prototype.hide = function() {
+		// Do nothing if an attempt is made to close a zoom window
+		// when a modal window is open
+		if(!this.modal && $('body').hasClass('has_modal')) {			
 			return;
+		} 
+		
+		var el = $(this.container + " div.modal-window");
+		el.parent().fadeOut('fast').removeClass('visible');
+				
+		if (!this.modal) {			
+			$('body').removeClass("zoomed");
+		} else {			
+			$('body').removeClass("has_modal");
 		}
-		containerEl = (typeof options.containerEl == 'undefined') 
-		    ? "#modal-container" : options.containerEl;
-		zoom = (typeof options.zoom == 'undefined') ? false : options.zoom;
-
-		swDialog.container  = $(containerEl);
-		swDialog.modalWindow = $("div.modal-window", swDialog.container);
-		bodyClass = (zoom == true) ? "noscroll zoomed" : "noscroll";
-
-		// Hide the dialog
-		swDialog.modalWindow.hide();
-
-		// Display the dialog
-		swDialog.container.fadeIn(200, function() {
-			swDialog.modalWindow.show().html(options.data);
-			$(this).addClass('visible');
-			$('body').addClass(bodyClass);
-
-			if ($('body').hasClass('zoomed')) {
-				swDialog.modalWindow.unbind();
-			}
+		
+		if (!$('body').hasClass('zoomed') && !$('body').hasClass('has_modal')) {
+			$('body').removeClass('noscroll');
+		}
+		
+		el.unbind();
+		return this;
+	};
+	
+	// Bind window close event handlers
+	Dialog.prototype._registerHide = function() {
+		var context = this;
+		
+		// Close when clicked outside
+		$(this.container + " div.modal-window").bind("clickoutside", function(event){
+			context.hide();
+			return false;
 		});
-
-		// Create and register the hide function
-		swDialog.hide = function() {
-			swDialog.container.fadeOut(200, function() { 
-				$('body').removeClass(bodyClass);
-				$(this).removeClass("visible"); 
-				swDialog.modalWindow.unbind();
-			});
-		}
-
-
-		// ***************
-		// Register events
-		// ***************
-		swDialog.modalWindow.bind("clickoutside", function(e){ swDialog.hide(); });
-		$("h2.close a", swDialog.modalWindow).live("click", function(e) { swDialog.hide(); });
-
-		// Keypress
-		swDialog.keyHandler = function(e) {
-			if (e.keyCode == 27) {
-				$(window).unbind("keypress", this);
-				swDialog.hide();
+		
+		// Close the window when the escape key is pressed
+		var keyHandler = function (e) {
+			if(e.keyCode == 27){
+				if (context.hide()) {
+					$(window).unbind("keypress", keyHandler);
+				}
+				return false;
 			}
 		}
-		$(window).bind("keypress", swDialog.keyHandler);
-
-	}; // END swDialog
-
-	$('a.modal-trigger').live('click', function(e) {
-		var url = $(this).data('dialog-url');
-		if (typeof url == 'undefined' || url == '') {
-			url = $(this).attr("href");
+		$(window).bind("keypress", keyHandler);
+		return this;
+	};
+	
+	// Show the window
+	Dialog.prototype.show = function() {
+		$(this.container + ' div.modal-window').html(this.contents);
+		$(this.container).fadeIn('fast').addClass('visible');
+		$('body').addClass('noscroll');
+		this._registerHide(); 
+		if (!this.modal) {
+			$('body').addClass('zoomed');
+		} else {
+			$('body').addClass('has_modal');
 		}
-		$.get(url, function(data) {
-			swDialog.show({
-				containerEl: "#modal-container", 
-				data: $(data).filter(".modal")
-			});
-		});
-		e.preventDefault(); 
-	});
-
-
-	// ZOOM WINDOWS
-	$('a.zoom-trigger').live('click', function(e) {
+		return this;
+	};
+ 
+	// MODAL WINDOWS
+	var modalWindow = null;
+	window.modalHide = function () {
+		if(modalWindow) {
+			modalWindow.hide();
+		}
+	}
+	window.modalShow = function (contents) {
+		modalWindow = new Dialog(contents, true).show();
+	}
+	$('a.modal-trigger').live('click', function() {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
-			swDialog.show({
-				containerEl: "#zoom-container", 
-				data: $(data).filter(".modal"), 
-				zoom: true
-			});
+			modalShow($(data).filter(".modal"));
 		})
-		e.preventDefault();
+		return false;
+	});
+	$('article.modal h2.close a').live('click', function(e) {
+		modalWindow.hide();
+		return false;
 	});
 
+	// ZOOM WINDOWS
+	var zoomWindow = null;
+	window.zoomHide = function() {
+		if (zoomWindow) {
+			zoomWindow.hide();
+		}
+	}
+	window.zoomShow = function (contents) {
+		zoomWindow = new Dialog(contents).show();
+	}
+	$('a.zoom-trigger').live('click', function() {
+		var url = $(this).attr('href');
+		$.get(url, function(data) {
+			zoomShow($(data).filter(".modal"));
+		})
+		return false;
+	});
+	$('#zoom-container .close a').live('click', function() {
+		zoomHide();
+		return false;
+	});
+		
 	// CONFIRMATION MESSAGES
 	$('.follow a').live('click', function(e) {
 		var ConfirmationMessage = $(this).attr('title');

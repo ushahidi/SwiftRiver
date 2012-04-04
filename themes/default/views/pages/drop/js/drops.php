@@ -115,7 +115,7 @@ $(function() {
 	var DropBaseView = Backbone.View.extend({	
 		showAddToBucketModal: function() {
 			var addToBucketView = new AddToBucketView({model: this.model});
-			swDialog.show({data: addToBucketView.render().el});
+			modalShow(addToBucketView.render().el);
 			return false;
 		},
 					
@@ -809,7 +809,7 @@ $(function() {
 		
 		showEditMetadata: function() {
 			var editMetadataView = new EditMetadataView({model: this.model, collection: this.collection});
-			swDialog.show({data: editMetadataView.render().el});
+			modalShow(editMetadataView.render().el);
 			return false;
 		}
 	});
@@ -950,8 +950,9 @@ $(function() {
 		dropsView: null,
 				
 		resetView: function() {
-			//detachScrollHandler();
 			$("#content").empty();
+			modalHide();
+			zoomHide();
 			dropsList.off(null, null, this.dropsView);
 			this.dropsView = null;
 		},
@@ -1013,7 +1014,7 @@ $(function() {
 		dropZoomView: function(id) {
 			var drop = dropsList.get(id);
 			var detailView = new DropDetailView({model: drop});
-			swDialog.zoomShow(detailView.render().el);
+			zoomShow(detailView.render().el);
 			$("#zoom-container div.modal-window").bind("clickoutside", function(event){
 				if(!appRouter.listingDone) {
 					appRouter.navigate("/drops", {trigger: true});
