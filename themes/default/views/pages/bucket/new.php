@@ -34,7 +34,6 @@
 			?>
 			<div class="controls">
 				<?php echo Form::open(); ?>
-				<?php echo Form::input('form_auth_id', CSRF::token(), array('type' => 'hidden')); ?>
 				<div class="row cf">
 					<h2><?php echo __("Create a new Bucket"); ?></h2>
 					<div class="input new-bucket">

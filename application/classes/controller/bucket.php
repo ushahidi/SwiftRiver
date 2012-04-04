@@ -162,7 +162,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
-		$this->template->header->title = __('New Bucket');
+		$this->template->header->title = __('Create a Bucket');
 		
 		// Only account owners are alllowed here
 		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
