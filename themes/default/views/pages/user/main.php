@@ -16,13 +16,24 @@
 	<p class="remove"><a href="#primer">Hide these options</a></p>
 
 	<article class="container base">
+		<?php if ($has_activity): ?>
 		<header class="cf">
 			<div class="property-title"><h1><?php echo __("Activity"); ?></h1></div>
 		</header>
 		<section id="activity_stream" class="property-parameters">
 			<?php echo $activity_stream; ?>
 		</section>
+		<?php else: ?>
+		<div class="alert-message blue">
+			<p>
+				<strong><?php echo __("Empty activity stream"); ?></strong>
+				<?php echo __("There are no items in your activity stream"); ?>
+			</p>
+		</div>
+		<?php endif; ?>
 	</article>
+	<?php
+	/*
 	<article class="container action-list base">
 		<header class="cf">
 			<div class="property-title">
@@ -33,6 +44,8 @@
 			<!-- List what has taken place this past week -->
 		</section>
 	</article>
+	*/
+	?>
 </div>
 
 <div class="col_3">

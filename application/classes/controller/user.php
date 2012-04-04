@@ -122,6 +122,7 @@ class Controller_User extends Controller_Swiftriver {
 				->bind('activity_stream', $activity_stream)
 				->bind('owner', $this->owner)
 				->bind('account', $this->visited_account)
+				->bind('has_activity', $has_activity)
 				->bind('profile_js', $profile_js);
 
 			$profile_js = $this->_get_profile_js(TRUE);
@@ -143,8 +144,11 @@ class Controller_User extends Controller_Swiftriver {
 
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
 
-		$activities = json_encode(Model_User_Action::get_activity_stream(
-			$this->visited_account->user->id, ! $this->owner));
+		$activity_list = Model_User_Action::get_activity_stream(
+			$this->visited_account->user->id, ! $this->owner);
+
+		$has_activity = count($activity_list) > 0;
+		$activities = json_encode($activity_list);
 
 	}
 
@@ -287,11 +291,9 @@ class Controller_User extends Controller_Swiftriver {
 		$items = array();
 		foreach ($rivers as & $river)
 		{
-			$river_orm = ORM::factory('river', $river['id']);
-			$river_url = URL::site().$river_orm->account->account_path.'/river/'.$river['river_url'];
+			$river_url = URL::site().$river['river_url'];
 			if ( ! $standardize)
 			{
-				$river['is_owner'] = $river_orm->is_owner($this->user->id);
 				$river['river_url'] = $river_url;
 			}
 			else
@@ -302,8 +304,8 @@ class Controller_User extends Controller_Swiftriver {
 					'item_name' => $river['river_name'],
 					'item_url' => $river_url,
 					'subscribed' => $river['subscribed'],
-					'is_owner' => $river_orm->is_owner($this->user->id),
-					'subscriber_count' => $river_orm->subscriptions->count_all()
+					'is_owner' => $river['is_owner'],
+					'subscriber_count' => $river['subscriber_count']
 				);
 			}
 		}
@@ -328,11 +330,10 @@ class Controller_User extends Controller_Swiftriver {
 		$items = array();
 		foreach ($buckets as & $bucket)
 		{
-			$bucket_orm = ORM::factory('bucket', $bucket['id']);
-			$bucket_url = URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket['bucket_url'];
+			
+			$bucket_url = URL::site().$bucket['bucket_url'];
 			if ( ! $standardize)
 			{
-				$bucket['is_owner'] = $bucket_orm->is_owner($this->user->id);
 				$bucket['bucket_url'] = $bucket_url;
 			}
 			else
@@ -343,8 +344,8 @@ class Controller_User extends Controller_Swiftriver {
 					'item_name' => $bucket['bucket_name'],
 					'item_url' => $bucket_url,
 					'subscribed' => $bucket['subscribed'],
-					'is_owner' => $bucket_orm->is_owner($this->user->id),
-					'subscriber_count' => $bucket_orm->subscriptions->count_all()
+					'is_owner' => $bucket['is_owner'],
+					'subscriber_count' => $bucket['subscriber_count']
 				);
 			}
 		}
@@ -749,6 +750,20 @@ class Controller_User extends Controller_Swiftriver {
 				$this->template->content->errors = $post->errors("validation");
 			}
 		}
+	}
+
+	/**
+	 * Loads the dialog for creating a new item (bucket|river|drop)
+	 */
+	public function action_create()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		$modal_create =  View::factory('dialogs/modal_create')
+		    ->bind('account', $this->account);
+
+		echo $modal_create;
 	}
 
 }

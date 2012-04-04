@@ -26,93 +26,103 @@ $(document).ready(function() {
 		return false;
 	});
  
+	// **************
 	// MODAL WINDOWS
-	window.modalHide = function () {
-		var el = $("#modal-container div.modal-window");
-		el.parent().fadeOut('fast').removeClass('visible');
-		$('body').removeClass('noscroll');
-		el.unbind();
+	// **************
+	
+	// Reference for all modal dialogs in the app
+	window.swDialog = function() { return this; };
+	swDialog.zoomShow = function(data) {
+		swDialog.show({containerEl: "#zoom-container", data: data, zoom: true});
 	}
-	function registerModalHide() {
-		$("#modal-container div.modal-window").bind( "clickoutside", function(event){
-			modalHide();
+
+	// Initiates dialog display and registers the necessary events
+	/**
+	 * Options parameter is a key-value object. Supported keys are:
+	 *     containerEl - Element to overlay the current view with the dialog, 
+	 *     data - Content to be rendered, 
+	 *     zoom - true/false. When true, renders the dialog in zoom mode
+	 *
+	 */
+	swDialog.show = function(options) {
+		if (typeof options == 'undefined') {
+			throw "ERROR: No parameters specified";
+			return;
+		}
+		containerEl = (typeof options.containerEl == 'undefined') 
+		    ? "#modal-container" : options.containerEl;
+		zoom = (typeof options.zoom == 'undefined') ? false : options.zoom;
+
+		swDialog.container  = $(containerEl);
+		swDialog.modalWindow = $("div.modal-window", swDialog.container);
+		bodyClass = (zoom == true) ? "noscroll zoomed" : "noscroll";
+
+		// Hide the dialog
+		swDialog.modalWindow.hide();
+
+		// Display the dialog
+		swDialog.container.fadeIn(200, function() {
+			swDialog.modalWindow.show().html(options.data);
+			$(this).addClass('visible');
+			$('body').addClass(bodyClass);
+
+			if ($('body').hasClass('zoomed')) {
+				swDialog.modalWindow.unbind();
+			}
 		});
-		function keyHandler(e) {
-			if(e.keyCode == 27){
-				// Escape key pressed
-				$(window).unbind("keypress", keyHandler);
-				modalHide();
+
+		// Create and register the hide function
+		swDialog.hide = function() {
+			swDialog.container.fadeOut(200, function() { 
+				$('body').removeClass(bodyClass);
+				$(this).removeClass("visible"); 
+				swDialog.modalWindow.unbind();
+			});
+		}
+
+
+		// ***************
+		// Register events
+		// ***************
+		swDialog.modalWindow.bind("clickoutside", function(e){ swDialog.hide(); });
+		$("h2.close a", swDialog.modalWindow).live("click", function(e) { swDialog.hide(); });
+
+		// Keypress
+		swDialog.keyHandler = function(e) {
+			if (e.keyCode == 27) {
+				$(window).unbind("keypress", this);
+				swDialog.hide();
 			}
 		}
-		$(window).bind( "keypress", keyHandler);
-	}
-	window.modalShow = function (el) {
-		$('#modal-container div.modal-window').html(el);
-		$('#modal-container').fadeIn('fast').addClass('visible');
-		$('body').addClass('noscroll');
-		if ($('body').hasClass('zoomed')) {
-			$('div.modal-window').unbind();
-		} 
-		else {
-			registerModalHide(); 
-		}
-	}
+		$(window).bind("keypress", swDialog.keyHandler);
+
+	}; // END swDialog
+
 	$('a.modal-trigger').live('click', function(e) {
-		var url = $(this).attr('href');
-		$.get(url, function(data) {
-			modalShow($(data).filter(".modal"));
-		})
-		e.preventDefault();
-	});
-	$('article.modal h2.close a').live('click', function(e) {
-		$('#modal-container').fadeOut('fast').removeClass('visible');
-		if ($('body').hasClass('zoomed')) {
-			registerZoomHide();
-		} 
-		else {
-			$('body').removeClass('noscroll');
-			$('div.modal-window').unbind();
+		var url = $(this).data('dialog-url');
+		if (typeof url == 'undefined' || url == '') {
+			url = $(this).attr("href");
 		}
-		e.preventDefault();
+		$.get(url, function(data) {
+			swDialog.show({
+				containerEl: "#modal-container", 
+				data: $(data).filter(".modal")
+			});
+		});
+		e.preventDefault(); 
 	});
 
+
 	// ZOOM WINDOWS
-	window.zoomHide = function() {
-		var el = $("#zoom-container div.modal-window");
-		el.parent().fadeOut('fast').removeClass('visible');
-		$('body').removeClass('noscroll zoomed');
-		el.unbind();
-	}
-	function registerZoomHide() {
-		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
-			zoomHide();
-		});
-		function keyHandler(e) {
-			if(e.keyCode == 27){
-				// Escape key pressed
-				$(window).unbind("keypress", keyHandler);
-				zoomHide();
-			}
-		}
-		$(window).bind( "keypress", keyHandler);
-	}
-	window.zoomShow = function (el) {
-		$('#zoom-container div.modal-window').html(el);
-		$('#zoom-container').fadeIn('fast').addClass('visible');
-		$('body').addClass('noscroll zoomed');
-		registerZoomHide();
-	}
 	$('a.zoom-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
-			zoomShow($(data).filter(".modal"));
+			swDialog.show({
+				containerEl: "#zoom-container", 
+				data: $(data).filter(".modal"), 
+				zoom: true
+			});
 		})
-		e.preventDefault();
-	});
-	$('#zoom-container .close a').live('click', function(e) {
-		$('#zoom-container').fadeOut('fast').removeClass('visible');
-		$('body').removeClass('noscroll zoomed');
-		$('div.modal-window').unbind();
 		e.preventDefault();
 	});
 

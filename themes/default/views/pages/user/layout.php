@@ -2,10 +2,10 @@
 	<div class="center">
 		<div class="user-summary col_9">
 			<a class="avatar-wrap" href="<?php echo URL::site().$account->account_path; ?>">
-				<img src="<?php echo Swiftriver_Users::gravatar($account->user->email, 156); ?>" />
+				<img src="<?php echo Swiftriver_Users::gravatar($account->user->email, 131); ?>" class="avatar"/>
 			</a>
 			<h1><?php echo $account->user->name; ?></h1>
-			<h2><?php echo $account->user->username; ?></h2>
+			<h2 class="label"><?php echo $account->user->username; ?></h2>
 		</div>
 		<div id="follow_section" class="follow-summary col_3">
 			<p class="follow-count">

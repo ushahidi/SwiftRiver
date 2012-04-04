@@ -284,13 +284,11 @@ Route::set('account_settings', '<account>/settings')
 		'action'     => 'settings'
 	));	
 
-Route::set('account_settings_ajax', '<account>/ajax_settings')
-	->defaults(array(
-		'controller' => 'user',
-		'action'     => 'ajax_settings'
-	));
-	
-
+Route::set('account_create_new', '<account>/create')
+    ->defaults(array(
+    	'controller' => 'user',
+    	'action' => 'create'
+    ));
 /**
  * Trends
  */

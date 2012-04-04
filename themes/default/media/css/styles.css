@@ -321,8 +321,8 @@ a.avatar-wrap:after {
 }
 a.avatar-wrap img {
   width: 100%;
-  max-width: 60px;
-  max-height: 60px;
+  /*max-width: 60px;*/
+  /*max-height: 60px;*/
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;

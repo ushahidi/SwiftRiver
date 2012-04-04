@@ -1,44 +1,105 @@
-<?php echo Form::open(); ?>
+<?php echo Form::open(); ?> 
 	<input type="hidden" name="action" value="">
 	<input type="hidden" name="id" value="">
-	<div class="container list select data">
-	<?php if ($plugins->count()): ?>
-		<?php
-			$i = 0;
-			foreach ($plugins as $plugin):
-		?>
-			<article class="item cf <?php if($i == 0) echo "alt_row"; ?>" id="item_<?php echo $plugin->id; ?>">
-				<div class="content">
-					<hgroup>
-						<h3><a href="#" class="title"><?php echo $plugin->plugin_name; ?></a></h3>
-						<span class="description"><?php echo $plugin->plugin_description; ?></span>
-					</hgroup>
-				</div>
-				<div class="summary">
-					<section class="actions">
-						<?php if ($plugin->plugin_enabled): ?>
-							<p class="button-delete"><a><?php echo __('Deactivate Plugin'); ?></a></p>
-							<ul class="dropdown">
-								<p><?php echo __('Are you sure you want to deactivate this Plugin?'); ?></p>
-								<li class="confirm"><a onclick="pluginAction(this, 0,<?php echo $plugin->id; ?>)"><?php echo __('Yep.'); ?></a></li>
-								<li class="cancel"><a onclick=""><?php echo __('No, nevermind.'); ?></a></li>
-							</ul>
-						<?php else: ?>
-							<p class="button-delete button-delete-subtle"><a><?php echo __('Activate Plugin'); ?></a></p>
-							<ul class="dropdown">
-								<p><?php echo __('Are you sure you want to activate this Plugin?'); ?></p>
-								<li class="confirm"><a onclick="pluginAction(this, 1,<?php echo $plugin->id; ?>)"><?php echo __('Yep.'); ?></a></li>
-								<li class="cancel"><a onclick=""><?php echo __('No, nevermind.'); ?></a></li>
-							</ul>
-						<?php endif; ?>
-					</section>
-				</div>
-			</article>
-			<?php $i = ($i == 0) ? 1 : 0; ?>
-		<?php endforeach; ?>
-		
-	<?php else:?>
-		<li><?php echo __('No Plugins in the System'); ?></li>
-	<?php endif; ?>
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<h1><?php echo __("Plugins"); ?></h1>
+			</div>
+		</header>
+		<section id="plugin_listing" class="property-parameters">
+		</section>
+	</article>
+<?php echo Form::close(); ?>
+
+<script type="text/template" id="plugin_item_template">
+	<div class="actions">
+		<% var link_title = (plugin_enabled)
+		       ? "<?php echo __('Deactivate Plugin'); ?>" 
+		       : "<?php echo __('Activate Plugin'); ?>"; 
+
+		    var selected = (plugin_enabled)? "selected" : "";
+		%>
+		<p class="button-white has-icon only-icon follow <%= selected %>">
+			<a href="#" title="<%= link_title %>">
+				<span class="icon">
+				<span class="nodisplay"><%= link_title %></span>
+			</a>
+		</p>
 	</div>
-<?php echo Form::close(); ?> 
+	<h2><a href="#" title="<%= plugin_name %>"><%= plugin_name %></a></h2>
+	<p class="metadata"><%= plugin_description %></p>
+</script>
+
+<script type="text/javascript">
+$(function() {
+
+	var PluginItem = Backbone.Model.extend({
+		toggleActivation: function(target) {
+			this.save({
+				plugin_enabled: this.get("plugin_enabled")? 0: 1
+			},
+			{
+				wait: true,
+				success: function(model, response) {
+					if (model.get("plugin_enabled") == 1) {
+						$(target).addClass("selected");
+					} else {
+						$(target).removeClass("selected");
+					}
+				}
+			}
+		)}
+	});
+
+	var PluginItemList = Backbone.Collection.extend({
+		model: PluginItem
+	});
+
+	var PluginItemView = Backbone.View.extend({
+
+		tagName: "div",
+
+		className: "parameter",
+
+		template: _.template($("#plugin_item_template").html()),
+
+		events: {
+			"click p.button-white > a": "toggleActivation"
+		},
+
+		toggleActivation: function(e) {
+			targetEl = $(e.currentTarget).parent('p');
+			this.model.toggleActivation(targetEl);
+		},
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		}
+	});
+
+	var PluginsView = Backbone.View.extend({
+		el: "section#plugin_listing",
+
+		initialize: function() {
+			this.plugins = new PluginItemList;
+			this.plugins.on("reset", this.addPlugins, this);
+			this.plugins.on("add", this.addPlugin, this);
+		},
+
+		addPlugin: function(plugin) {
+			view = new PluginItemView({model: plugin}).render().el;
+			this.$el.append(view);
+		},
+
+		addPlugins: function() {
+			this.plugins.each(this.addPlugin, this);
+		}
+	});
+
+	var pluginsView =  new PluginsView;
+	pluginsView.plugins.url = "<?php echo $fetch_url; ?>";
+	pluginsView.plugins.reset(<?php echo $plugins_list; ?>);
+});
+</script>
