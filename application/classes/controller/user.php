@@ -752,4 +752,18 @@ class Controller_User extends Controller_Swiftriver {
 		}
 	}
 
+	/**
+	 * Loads the dialog for creating a new item (bucket|river|drop)
+	 */
+	public function action_create()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		$modal_create =  View::factory('dialogs/modal_create')
+		    ->bind('account', $this->account);
+
+		echo $modal_create;
+	}
+
 }
