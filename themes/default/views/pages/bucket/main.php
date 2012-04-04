@@ -2,6 +2,18 @@
 	<div class="center">
 		<div class="page-h1 col_9">
 			<h1><?php print $page_title; ?></h1>
+			<?php if ( ! empty($collaborators)): ?>
+			<div class="rundown-people">
+				<h2>Collaborators on this bucket</h2>
+				<ul>
+					<?php foreach ($collaborators as $collaborator): ?>
+						<?php if ($collaborator['collaborator_active'] == 1): ?>
+							<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
+						<?php endif; ?>
+					<?php endforeach;?>
+				</ul>
+			</div>
+			<?php endif; ?>			
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="settings">
@@ -19,29 +31,6 @@
 		</div>
 	</div>
 </hgroup>
-
-<section class="rundown bucket cf">
-	<div class="center">
-		<!--div class="rundown-totals col_3">
-			<ul>
-				<li><strong>88</strong> drops</li>
-				<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
-			</ul>
-		</div-->
-		<?php if ( ! empty($collaborators)): ?>
-		<div class="rundown-people col_9">
-			<h2>Collaborators on this bucket</h2>
-			<ul>
-				<?php foreach ($collaborators as $collaborator): ?>
-					<?php if ($collaborator['collaborator_active'] == 1): ?>
-						<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
-					<?php endif; ?>
-				<?php endforeach;?>
-			</ul>
-		</div>
-		<?php endif; ?>
-	</div>
-</section>
 
 <nav class="page-navigation cf">
 	<ul class="center">
