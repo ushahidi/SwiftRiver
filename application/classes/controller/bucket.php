@@ -164,7 +164,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	public function action_new()
 	{
-		$this->template->header->title = __('New Bucket');
+		$this->template->header->title = __('Create a Bucket');
 		
 		// Only account owners are alllowed here
 		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
@@ -183,7 +183,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->active = 'buckets';
 
 		// Check for form submission
-		if ($_POST AND Swiftriver_CSRF::valid($_POST['form_auth_id']))
+		if ($_POST AND CSRF::valid($_POST['form_auth_id']))
 		{
 			// Extract the posted data
 			$data = Arr::extract($_POST, array('bucket_name', 'bucket_description'));
