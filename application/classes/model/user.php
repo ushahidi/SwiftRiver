@@ -155,8 +155,10 @@ class Model_User extends Model_Auth_User
 					'id' => $river->id,
 					'type' => 'river',
 					'river_name' => $river->river_name, 
-					'river_url' => $river->river_name_url,
-					'subscribed' => $river->is_subscriber($this->id)
+					'river_url' => $river->account->account_path."/river/".$river->river_name_url,
+					'subscribed' => $river->is_subscriber($this->id),
+					'subscriber_count' => $river->get_subscriber_count(),
+					'is_owner' => $river->is_owner($this->id)
 				);
 			}
 		}
@@ -191,8 +193,10 @@ class Model_User extends Model_Auth_User
 					'id' => $bucket->id,
 					'type' => 'bucket',
 					'bucket_name' => $bucket->bucket_name, 
-					'bucket_url' => $bucket->bucket_name_url,
-					'subscribed' => $bucket->is_subscriber($this->id)
+					'bucket_url' => $bucket->account->account_path."/bucket/".$bucket->bucket_name_url,
+					'subscribed' => $bucket->is_subscriber($this->id),
+					'subscriber_count' => $bucket->get_subscriber_count(),
+					'is_owner' => $bucket->is_owner($this->id)
 				);
 			}
 		}
@@ -250,41 +254,56 @@ class Model_User extends Model_Auth_User
 	{
 		// Rivers collaborating on
 		$collaborating = DB::select(array('rc.river_id', 'id'),
-			array(DB::expr('"river"'), 'type'),
-			array(DB::expr('"FALSE"'), 'subscribed'), 'r.river_name', 
-			array('r.river_name_url', 'river_url'))
+		    array(DB::expr('"river"'), 'type'),
+		    array(DB::expr('"FALSE"'), 'subscribed'), 'r.river_name', 
+		    array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'),
+		    array(DB::expr('COUNT(rs.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"TRUE"'), 'is_owner'))
 		    ->from(array('river_collaborators', 'rc'))
 		    ->join(array('rivers', 'r'), 'INNER')
 		    ->on('rc.river_id', '=', 'r.id')
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('r.account_id', '=', 'a.id')
+		    ->join(array('river_subscriptions', 'rs'), 'LEFT')
+		    ->on('rs.river_id', '=', 'rc.river_id')
 		    ->where('rc.user_id', '=', $this->id)
-		    ->where('rc.collaborator_active', '=', 1);
+		    ->where('rc.collaborator_active', '=', 1)
+		    ->group_by('rc.river_id');
 
 
 		// Rivers subscribed to
 		$subscribed = DB::select(array('rs.river_id', 'id'), 
-			array(DB::expr('"river"'), 'type'),
-			array(DB::expr('"TRUE"'), 'subscribed'), 'r.river_name', 
-			array('r.river_name_url', 'river_url'))
+		    array(DB::expr('"river"'), 'type'),
+		    array(DB::expr('"TRUE"'), 'subscribed'), 'r.river_name', 
+		    array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'),
+		    array(DB::expr('COUNT(rs2.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"FALSE"'), 'is_owner'))
 		    ->union($collaborating, TRUE)
 		    ->from(array('river_subscriptions', 'rs'))
 		    ->join(array('rivers', 'r'), 'INNER')
 		    ->on('rs.river_id', '=', 'r.id')
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('r.account_id', '=', 'a.id')
-		    ->where('rs.user_id', '=', $this->id);
+		    ->join(array('river_subscriptions', 'rs2'), 'LEFT')
+		    ->on('rs2.river_id', '=', 'rs.river_id')
+		    ->where('rs.user_id', '=', $this->id)
+		    ->group_by('rs.river_id');
 
 		// Get all the data at once
 		$query_rivers = DB::select(array('r.id', 'id'), 
-			array(DB::expr('"river"'), 'type'),
-			array(DB::expr('"FALSE"'), 'subscribed'), 'r.river_name', 
-			array('r.river_name_url', 'river_url'))
+		    array(DB::expr('"river"'), 'type'),
+		    array(DB::expr('"FALSE"'), 'subscribed'), 'r.river_name', 
+		    array(DB::expr('CONCAT(a.account_path, "/river/", r.river_name_url)'), 'river_url'),
+		    array(DB::expr('COUNT(rs.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"TRUE"'), 'is_owner'))
 		    ->union($subscribed, TRUE)
 		    ->from(array('rivers', 'r'))
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('r.account_id', '=', 'a.id')
-		    ->where('a.user_id', '=', $this->id);
+		    ->join(array('river_subscriptions', 'rs'), 'LEFT')
+		    ->on('rs.river_id', '=', 'r.id')
+		    ->where('a.user_id', '=', $this->id)
+		    ->group_by('r.id');
 		
 		$result = $query_rivers->execute()->as_array();
 		$this->_sanitize_bool_strings($result);
@@ -303,41 +322,56 @@ class Model_User extends Model_Auth_User
 	{
 		// Buckets collaborating on
 		$collaborating = DB::select(array('bc.bucket_id', 'id'), 
-			array(DB::expr('"bucket"'), 'type'),
-			array(DB::expr('"FALSE"'), 'subscribed'), 'b.bucket_name', 
-			array('b.bucket_name_url', 'bucket_url'))
+		    array(DB::expr('"bucket"'), 'type'),
+		    array(DB::expr('"FALSE"'), 'subscribed'), 'b.bucket_name', 
+		    array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'),
+		    array(DB::expr('COUNT(bs.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"TRUE"'), 'is_owner'))
 		    ->from(array('bucket_collaborators', 'bc'))
 		    ->join(array('buckets', 'b'), 'INNER')
 		    ->on('bc.bucket_id', '=', 'b.id')
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('a.user_id', '=', 'b.user_id')
+		    ->join(array('bucket_subscriptions', 'bs'), 'LEFT')
+		    ->on('bs.bucket_id', '=', 'bc.bucket_id')
 		    ->where('bc.user_id', '=', $this->id)
-		    ->where('bc.collaborator_active', '=', 1);
+		    ->where('bc.collaborator_active', '=', 1)
+		    ->group_by('bc.bucket_id');
 
 
 		// Buckets subscribed to
 		$subscribed = DB::select(array('bs.bucket_id', 'id'), 
-			array(DB::expr('"bucket"'), 'type'),
-			array(DB::expr('"TRUE"'), 'subscribed'), 'b.bucket_name', 
-			array('b.bucket_name_url', 'bucket_url'))
+		    array(DB::expr('"bucket"'), 'type'),
+		    array(DB::expr('"TRUE"'), 'subscribed'), 'b.bucket_name', 
+		    array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'),
+		    array(DB::expr('COUNT(bs2.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"FALSE"'), 'is_owner'))
 		    ->union($collaborating, TRUE)
 		    ->from(array('bucket_subscriptions', 'bs'))
 		    ->join(array('buckets', 'b'), 'INNER')
 		    ->on('bs.bucket_id', '=', 'b.id')
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('a.user_id', '=', 'b.user_id')
-		    ->where('bs.user_id', '=', $this->id);
+		    ->join(array('bucket_subscriptions', 'bs2'), 'LEFT')
+		    ->on('bs2.bucket_id', '=', 'bs.bucket_id')
+		    ->where('bs.user_id', '=', $this->id)
+		    ->group_by('bs.bucket_id');
 
 		// Get all the data at once
 		$query_buckets = DB::select(array('b.id', 'id'), 
-			array(DB::expr('"bucket"'), 'type'),
-			array(DB::expr('"FALSE"'), 'subscribed'), 'b.bucket_name',
-			array('b.bucket_name_url', 'bucket_url'))
+		    array(DB::expr('"bucket"'), 'type'),
+		    array(DB::expr('"FALSE"'), 'subscribed'), 'b.bucket_name',
+		    array(DB::expr('CONCAT(a.account_path, "/bucket/", b.bucket_name_url)'), 'bucket_url'),
+		    array(DB::expr('COUNT(bs.user_id)'), 'subscriber_count'),
+		    array(DB::expr('"TRUE"'), 'is_owner'))
 		    ->union($subscribed, TRUE)
 		    ->from(array('buckets', 'b'))
 		    ->join(array('accounts', 'a'), 'INNER')
 		    ->on('a.user_id', '=', 'b.user_id')
-		    ->where('b.user_id', '=', $this->id);
+		    ->join(array('bucket_subscriptions', 'bs'), 'LEFT')
+		    ->on('bs.bucket_id', '=', 'b.id')
+		    ->where('b.user_id', '=', $this->id)
+		    ->group_by('b.id');
 
 		$result = $query_buckets->execute()->as_array();
 		$this->_sanitize_bool_strings($result);
@@ -352,7 +386,9 @@ class Model_User extends Model_Auth_User
 		foreach ($result as & $k)
 		{
 			$subscribed = $k["subscribed"];
+			$is_owner = $k["is_owner"];
 			$k["subscribed"] = ($subscribed == "FALSE") ? FALSE : TRUE;
+			$k["is_owner"] = ($is_owner == "FALSE") ? FALSE : TRUE;
 		}
 	}
 	

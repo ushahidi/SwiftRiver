@@ -179,13 +179,18 @@ class Controller_River extends Controller_Swiftriver {
 	/**
 	* Below are aliases for the index.
 	*/
-	public function action_drops() {
+	public function action_drops()
+	{
 		$this->action_index();
 	}
-	public function action_list() {
+	
+	public function action_list()
+	{
 		$this->action_index();
 	}
-	public function action_drop() {
+
+	public function action_drop()
+	{
 		$this->action_index();
 	}
 

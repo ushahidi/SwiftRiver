@@ -1,12 +1,14 @@
 <ul class="toolbar-menu">
 	<li class="search">
-		<a href="#" class="modal-trigger" title="<?php echo __("Search"); ?>">
+		<a href="#" class="modal-trigger" title="<?php echo __("Search"); ?>"
+		    data-dialog-url="">
 			<span class="icon"></span>
 			<span class="label"><?php echo __("Search"); ?></span>
 		</a>
 	</li>
 	<li class="create">
-		<a href="#" class="modal-trigger" title="<?php echo __("Create"); ?>">
+		<a href="#" class="modal-trigger" title="<?php echo __("Create"); ?>" 
+		    data-dialog-url="<?php echo URL::site().$account->account_path.'/create'; ?>">
 			<span class="icon"></span>
 			<span class="label"><?php echo __("Create"); ?></span>
 		</a>

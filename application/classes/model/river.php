@@ -575,14 +575,7 @@ class Model_River extends ORM {
 		{
 			return TRUE;
 		}
-
 		
-		// Is the user id an account collaborator?
-		if ($this->account->account_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
-		{
-			return TRUE;
-		}
-				
 		// Is the user id a river collaborator?
 		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
 		{
