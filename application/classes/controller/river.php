@@ -24,19 +24,19 @@ class Controller_River extends Controller_Swiftriver {
 	 * ORM reference for the currently selected river
 	 * @var Model_River
 	 */
-	private $river;
+	protected $river;
 	
 	/**
 	 * Boolean indicating whether the logged in user owns the river
 	 * @var bool
 	 */
-	private $owner = FALSE; 
+	protected $owner = FALSE; 
 
 	/**
 	 * Whether the river is newly created
 	 * @var bool
 	 */
-	private $is_newly_created = FALSE;
+	protected $is_newly_created = FALSE;
 	
 	/**
 	 * Base URL for this river.
@@ -83,8 +83,16 @@ class Controller_River extends Controller_Swiftriver {
 			}
 			
 			// Set the base url for this specific river
-			$this->river_base_url = $this->base_url.'/'.$this->river->river_name_url;
+			$this->river_base_url = $this->_get_base_url($this->river);
 		}
+	}
+	
+	/**
+	 * @return	string
+	 */
+	protected function _get_base_url($river)
+	{
+		return URL::site().$river->account->account_path.'/river/'.$river->river_name_url;
 	}
 
 	/**
@@ -402,19 +410,6 @@ class Controller_River extends Controller_Swiftriver {
 
 		echo $filters_control;
 	}
-
-	/**
-	 * Ajax rendered settings control box
-	 * 
-	 * @return	void
-	 */
-	public function action_settings()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		echo $this->_get_settings_view();
-	}
 	
 	/**
 	 * River collaborators restful api
@@ -427,7 +422,7 @@ class Controller_River extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		// No anonymous here
-		if ( ! $this->anonymous)
+		if ($this->anonymous)
 		{
 			throw new HTTP_Exception_403();
 		}
@@ -668,59 +663,7 @@ class Controller_River extends Controller_Swiftriver {
 		}
 	}
 	
-	
-	/**
-	 * Generates the view for the settings JavaScript
-	 * @return View
-	 */
-	private function _get_settings_view($new = TRUE)
-	{
-		// Load the view for the settings UI
-		$settings = View::factory('pages/river/settings_control')
-		    ->bind('settings_js', $settings_js)
-		    ->bind('is_newly_created', $this->is_newly_created)
-		    ->bind('river', $this->river)
-		    ->bind('collaborators_control', $collaborators_control);
 		
-		$collaborators_control = NULL;
-		
-		if ( ! $this->is_newly_created)
-		{
-			$collaborators_control = View::factory('template/collaborators')
-					                             ->bind('collaborator_list', $collaborator_list)
-					                             ->bind('fetch_url', $fetch_url)
-					                             ->bind('logged_in_user_id', $logged_in_user_id);
-			
-			$collaborator_list = json_encode($this->river->get_collaborators());
-			$fetch_url = $this->river_base_url.'/collaborators';
-			$logged_in_user_id = $this->user->id;			
-		}
-		    
-		// JavaScript for settings UI
-		$settings_js = View::factory('pages/river/js/settings')
-		    ->bind('channels_url', $channels_url)
-		    ->bind('channel_options_url', $channel_options_url)
-		    ->bind('channels_list', $channels_list)
-		    ->bind('river_url_root', $river_url_root)
-		    ->bind('river_data', $river_data);
-		
-		// River data
-		$river_data = json_encode(array(
-			'id' => $this->river->id, 
-			'river_name' => $this->river->river_name, 
-			'river_public' => $this->river->river_public
-		));
-
-		// URLs for XHR endpoints
-		$river_url_root = $this->river_base_url.'/save_settings';
-		$channels_url = $this->river_base_url.'/channels';
-		$channel_options_url = $this->river_base_url.'/channel_options';
-
-		$channels_list = json_encode($this->river->get_channel_filter_data());
-		
-		return $settings;
-	}
-	
 	/**
 	 * XHR endpoint for adding/updating channel filters
 	 *

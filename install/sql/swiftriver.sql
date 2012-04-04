@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
 -- -----------------------------------------------------
 -- Table `rivers`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `rivers` (
+CREATE TABLE `rivers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `river_name` varchar(25) NOT NULL DEFAULT '',
@@ -94,12 +94,13 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_active` tinyint(4) NOT NULL DEFAULT '1',
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
+  `default_layout` varchar(10) DEFAULT 'drops',
   `river_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `river_name_url` (`river_name_url`),
   KEY `account_id_idx` (`account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -229,7 +230,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `buckets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `buckets` (
+CREATE TABLE `buckets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Creator of this bucket',
@@ -237,12 +238,13 @@ CREATE TABLE IF NOT EXISTS `buckets` (
   `bucket_name_url` varchar(30) NOT NULL DEFAULT '',
   `bucket_description` text,
   `bucket_publish` tinyint(4) NOT NULL DEFAULT '0',
+  `default_layout` varchar(10) DEFAULT 'drops',
   `bucket_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_bucket_name` (`account_id`,`bucket_name`),
   UNIQUE KEY `un_bucket_name_url` (`account_id`,`bucket_name_url`),
   KEY `bucket_date_add_idx` (`bucket_date_add`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------

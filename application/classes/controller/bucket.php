@@ -26,7 +26,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 * or is a collaborator
 	 * @var bool
 	 */
-	private $owner = FALSE; 
+	protected $owner = FALSE; 
 	
 	
 	/**
@@ -67,8 +67,16 @@ class Controller_Bucket extends Controller_Swiftriver {
 			}
 			
 			// Set the base url for this specific bucket
-			$this->bucket_base_url = $this->base_url.'/'.$this->bucket->bucket_name_url;
+			$this->bucket_base_url = $this->_get_base_url($this->bucket);
 		}
+	}
+	
+	/**
+	 * @return	string
+	 */
+	protected function _get_base_url($bucket)
+	{
+		return URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url;
 	}
 
 	public function action_index()
@@ -85,14 +93,10 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template->header->title = $page_title;
 		
 		$this->template->content = View::factory('pages/bucket/main')
-			->bind('bucket', $this->bucket)
 			->bind('droplets_view', $droplets_view)
-			->bind('discussion_url', $discussion_url)
 			->bind('settings_url', $settings_url)
-			->bind('more', $more)
-			->bind('owner', $this->owner)
-			->bind('user', $this->user)
 			->bind('page_title', $page_title);
+		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
@@ -140,8 +144,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 		// Links to ajax rendered menus
 		$settings_url = $this->bucket_base_url.'/settings';
-		$discussion_url = $this->bucket_base_url.'/discussion';
-		$more = $this->bucket_base_url.'/more';
 	}
 	
 	/**

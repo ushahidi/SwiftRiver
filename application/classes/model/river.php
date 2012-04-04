@@ -64,13 +64,12 @@ class Model_River extends ORM {
 				array('not_empty'),
 				array('max_length', array(':value', 25)),
 			),
-			'river_name_url' => array(
-				array('not_empty'),
-				array('max_length', array(':value', 25)),
-			),
 			'river_public' => array(
 				array('in_array', array(':value', array('0', '1')))
 			),
+			'default_layout' => array(
+				array('in_array', array(':value', array('drops', 'list')))
+			)
 		);
 	}
 	
@@ -87,15 +86,8 @@ class Model_River extends ORM {
 			$this->river_date_add = date("Y-m-d H:i:s", time());
 		}
 		
-		// Set river_name_url as river_name sanitized if not provided
-		if ( ! $this->river_name_url)
-		{
-			$this->river_name_url = URL::title($this->river_name);
-		}
-		else
-		{
-			$this->river_name_url = URL::title($this->river_name_url);
-		}
+		// Set river_name_url to the sanitized version of river_name sanitized
+		$this->river_name_url = URL::title($this->river_name);
 
 		$river = parent::save();
 

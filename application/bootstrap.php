@@ -288,7 +288,8 @@ Route::set('account_settings_ajax', '<account>/ajax_settings')
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'ajax_settings'
-	));	
+	));
+	
 
 /**
  * Trends
@@ -302,6 +303,18 @@ Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<act
 		'controller' => 'main',
 		'action'     => 'index',
 		'directory'  => 'trend'
+	));
+	
+/**
+ * River and bucket settings
+ */
+Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<controller>(/<action>(/<id>)))',
+	array(
+		'directory' => '(river|bucket)',
+	))
+	->defaults(array(
+		'controller' => 'settings',
+		'action'     => 'index'
 	));
 	
 

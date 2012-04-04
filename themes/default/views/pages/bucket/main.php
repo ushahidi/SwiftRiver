@@ -5,7 +5,7 @@
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="settings">
-				<a href="/markup/bucket/settings-filters.php">
+				<a href="<?php echo $settings_url; ?>">
 					<span class="icon"></span>
 					Bucket settings
 				</a>
@@ -28,13 +28,18 @@
 				<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
 			</ul>
 		</div-->
+		<?php if ( ! empty($collaborators)): ?>
 		<div class="rundown-people col_9">
 			<h2>Collaborators on this bucket</h2>
 			<ul>
-				<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-				<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
+				<?php foreach ($collaborators as $collaborator): ?>
+					<?php if ($collaborator['collaborator_active'] == 1): ?>
+						<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
+					<?php endif; ?>
+				<?php endforeach;?>
 			</ul>
 		</div>
+		<?php endif; ?>
 	</div>
 </section>
 

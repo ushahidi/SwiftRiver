@@ -4,14 +4,14 @@ $(document).ready(function() {
 	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
 
 	// DETERMINE NEED FOR MASONRY SCRIPT
-	if ($("#content.drops").length > 0) {
-		$.getScript('jquery.masonry.js');
-	}
-
-	// DETERMINE NEED FOR SCROLLING VIEWS
-	if ($("#page-views ul").children().length > 2) {
-		$.getScript('jquery.touch.min.js');
-	}
+	//if ($("#content.drops").length > 0) {
+	//	$.getScript('jquery.masonry.js');
+	//}
+    //
+	//// DETERMINE NEED FOR SCROLLING VIEWS
+	//if ($("#page-views ul").children().length > 2) {
+	//	$.getScript('jquery.touch.min.js');
+	//}
 
 	// POPOVER WINDOWS
 	function popoverHide () {
@@ -135,9 +135,13 @@ $(document).ready(function() {
 	});
 
 	// DISPLAY SAVE TOOLBAR
-	$('.settings input').change(function () {
+	$('.settings select').change(function () {
 		$('.save-toolbar').addClass('visible');
 	});
+	$('.settings input').keypress(function () {
+		$('.save-toolbar').addClass('visible');
+	});
+	
 
 	// ACCORDION MENU
 	$('section.meta-data h3').live('click', function(e) {
@@ -172,7 +176,6 @@ window.addEventListener("load",function() {
 
 
 function submitForm(button){
-	
 	// Remove any onclick handler attached to the button
 	$(button).removeAttr("onclick");
 
@@ -197,4 +200,16 @@ function flashMessage(el, text) {
 	message += "</ul>";
 	// Show message and fade it out slooooowwwwwwlllllyyyy
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
+}
+
+function showConfirmationMessage(message) {
+	$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>" + message + "</p></article></div>");
+	$('#confirmation-container').fadeIn('fast').addClass('visible');
+	$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
+}
+
+function showDefaultAvatar(source) {
+	source.onerror = "";
+	source.src = window.default_avatar_url;
+	return true;
 }

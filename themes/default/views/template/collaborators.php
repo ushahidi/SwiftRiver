@@ -1,59 +1,69 @@
-<div class="row controls list cf" id="collaborator-control">
-	<h2><?php echo __('Collaborators'); ?></h2>
-	<div class="input">
-		<h3><?php echo __('Add people to share with below'); ?></h3>
-		<input type="text" placeholder="+ Type name..." id="add-collaborator-input" />
-		<div id="livesearch">
-			<div class="searching"></div>
-			<ul></ul>
+<div id="content" class="settings collaborators cf">
+	<div class="center">
+		<div class="col_12">
+			<div class="settings-toolbar">
+				<p class="button-blue button-small create"><a href="#" class="modal-trigger"><span class="icon"></span>Add collaborator</a></p>
+			</div>
+			
+			<div class="alert-message blue" style="display:none;">
+				<p><strong>No collaborators.</strong> You can add collaborators by selecting the "Add collaborator" button above.</p>
+			</div>
+			
 		</div>
 	</div>
-	<div class="data"></div>
 </div>
 
-
 <script type="text/template" id="collaborator-template">
-	<div class="content">
-		<h1><span class="badge"><img src="<%= avatar %>" /></span><a href="<?php echo url::site('user').'/<%= account_path %>' ?>" class="go"><%= name %></a></h1>
-	</div>
-	<% if (id != <?php echo $logged_in_user_id ?>) { %>
-	<div class="summary">
-		<section class="actions">
-			<div class="button">
-				<p class="button-change">
-					<a class="delete">
-						<span class="icon"></span>
-						<span class="nodisplay"><?php echo __('Remove'); ?></span>
-					</a>
-				</p>
-				<div class="clear"></div>
-				<div class="dropdown container">
-					<p><?php echo __('Are you sure you want to stop sharing with this person?'); ?></p>
-					<ul>
-						<li class="confirm"><a onclick=""><?php echo __('Yep'); ?></a></li>
-						<li class="cancel"><a onclick=""><?php echo __('No, nevermind'); ?></a></li>
-					</ul>
-				</div>
+	<article class="container base">
+		<header class="cf">
+			<% if (id != logged_in_user) { %>
+			<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+			<% } %>
+			<div class="property-title">
+				<a href="#" class="avatar-wrap"><img src="<%= avatar %>" /></a>
+				<h1><%= name %> </h1>
 			</div>
-		</section>
-		<section class="meta">
-			<p>
-				<span>Editor</span>
-				<% if (collaborator_active == 1) { %>
-					<span>(<?php echo __('active'); ?>)</span>
-				<% } else { %>
-					<span>(<?php echo __('waiting for invitation acceptance'); ?>)</span>
-				<% } %> 
-			</p>
-		</section>
-	</div>
-	<% } %>
+		</header>
+	</article>	
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
-	<span class="badge"><img src="<%= avatar %>" /></span><a><%= name %></a>
+	<a class="avatar-wrap"><img src="<%= avatar %>" /></span></a><%= name %>
 </script>
 
+<script type="text/template" id="collaborator-modal-template">
+	<hgroup class="page-title cf">
+		<div class="page-h1 col_9">
+			<h1>Add collaborator</h1>
+		</div>
+		<div class="page-actions col_3">
+			<h2 class="close">
+				<a href="#">
+					<span class="icon"></span>
+					Close
+				</a>
+			</h2>
+		</div>
+	</hgroup>
+
+	<div class="modal-body create-new">
+		<form>
+			<h2>Invite a person to collaborate on this river</h2>
+			<div class="field">
+				<input type="text" placeholder="Type name or email address" class="name" name="search_box" />
+				<div class="livesearch">
+					<ul></ul>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="modal-body link-list">
+		<h2 style="display:none">Added collaborators</h2>
+		<ul>
+		</ul>
+	</div>
+</script>
 
 <script type="text/javascript">
 
@@ -82,7 +92,7 @@ $(function() {
 		template: _.template($("#collaborator-template").html()),
 		
 		events: {
-			"click .actions .dropdown .confirm a": "removeCollaborator",	
+			"click a.remove-large": "removeCollaborator",	
 		},
 		
 		render: function() {
@@ -90,20 +100,22 @@ $(function() {
 			return this;	
 		},
 				
-		removeCollaborator: function(e) {
+		removeCollaborator: function() {
 			var viewItem = this;
+			var message = this.model.get("name") + " is no longer a collaborator.";
 			this.model.destroy({
 				wait: true,
 				success: function() {
 					$(viewItem.el).fadeOut("slow");
+					showConfirmationMessage(message);
 				}
 			});
-			e.stopPropagation();
+			return false;
 		}
 	});
 	
 	// Initialize the list of collaborators.
-	var Collaborators = new CollaboratorList;
+	var collaborators = new CollaboratorList;
 	
 	// Search result view
 	var SearchResultView = Backbone.View.extend({
@@ -113,18 +125,18 @@ $(function() {
 		template: _.template($("#collaborator-search-result-template").html()),
 		
 		events: {
-			"click a": "addCollaborator"
+			"click": "addCollaborator"
 		},
 		
 		addCollaborator: function(e) {
 			var viewItem = this.$el;
-			Collaborators.create(this.model.toJSON(),{
+			collaborators.create(this.model.toJSON(),{
 				wait: true,
 				success: function() {
 					viewItem.fadeOut();
 				}
 			});
-			e.stopPropagation();
+			return false;
 		},
 		
 		render: function() {
@@ -133,73 +145,85 @@ $(function() {
 		}	
 	});
 	
-	// The collaborator control
-	var CollaboratorControl = Backbone.View.extend({
+	// The modal view for adding collaborators
+	var AddCollaboratorsView = Backbone.View.extend({
 		
-		el: "#collaborator-control",
+		tagName: "article",
+		
+		className: "modal",
+		
+		template: _.template($("#collaborator-modal-template").html()),
 		
 		events: {
 			"click": "resetSearch",
-			"keyup #add-collaborator-input": "liveSearch"
+			"focusout input[name=search_box]": "resetSearch",
+			"focus input[name=search_box]": "liveSearch",
+			"keyup input[name=search_box]": "liveSearch"
 		},
 		
 		initialize: function() {
-			Collaborators.on('add',	 this.addCollaborator, this);
-			Collaborators.on('reset', this.addCollaborators, this);
-			
 			// Search results collection
 			this.searchResults = new CollaboratorList;
 			this.searchResults.on('add', this.addSearchResult, this);
 			this.searchResults.on('reset', this.removeSearchResults, this);
+			
+			collaborators.on('add',	 this.addCollaborator, this);
 		},
 		
-		// Clear the search input and remove the dropdown
-		resetSearch: function(e) {
-			if(e.isPropagationStopped()) return;
-			this.$("#livesearch ul").html("");
-			this.$("#add-collaborator-input").val("");
+		render: function() {
+			this.$el.html(this.template());
+			
+			// List of current collaborators
+			//collaborators.each(this.addCollaborator, this)
+			
+			return this;	
 		},
 		
 		addCollaborator: function(collaborator) {
-			var view = new CollaboratorView({model: collaborator});	
-			this.$(".data").append(view.render().el);
+			this.$("div.link-list h2").show();
+			this.$("div.link-list ul").append("<li><a href=\"#\">" + collaborator.get("name") + "</a></li>");
 		},
 		
-		addCollaborators: function() {
-			Collaborators.each(this.addCollaborator, this);
+		focusSearchBox: function() {
+			this.$("input[name=search_box]").focus();
+		},
+		
+		// Clear the search input and remove the dropdown
+		resetSearch: function() {
+			this.$(".livesearch").fadeOut("slow").children("li").remove();
+			this.$("#add-collaborator-input").val("");
 		},
 		
 		// Display a search result
 		addSearchResult: function(searchResult) {
 			var view = new SearchResultView({model: searchResult});	
-			this.$("#livesearch ul").append(view.render().el);
+			this.$(".livesearch ul").append(view.render().el);
 		},
 		
 		
 		// Clear the search results
 		removeSearchResults: function() {
-			this.$("#livesearch ul").html("");
+			this.$(".livesearch ul").html("");
 		},
 		
 		// Handle keyup event and only do an ajax request if there has been none in the last
 		// 500ms
 		liveSearch: function(e) {
-			// Search only when non control key is released
-			if (!((e.keyCode >= 16 && e.keyCode <= 90) || e.keyCode == 8))
-				return;
-			
 			var view = this;
-			var collaboratorsList = Collaborators; // Pass this on to the call back
+			var collaboratorsList = collaborators; // Pass this on to the call back
 			if (view.timer) {
 				clearTimeout(view.timer);
 			}
 			
 			var doLiveSearch = this.doLiveSearch;
+			var resetSearch = this.resetSearch;
 			view.timer = setTimeout(function() {
 			        view.searchResults.reset();
-			        if ($.trim(view.$("#add-collaborator-input").val())) {
+			        if ($.trim(view.$("input[name=search_box]").val())) {
 			            doLiveSearch(view, collaboratorsList);
-			        }
+			        } else {
+			            resetSearch();
+					}
 			        view.timer = null;
 			    }, 500);
 		},
@@ -208,22 +232,15 @@ $(function() {
 		doLiveSearch: function(view, collaboratorsList) {
 			if (! view.loading_msg) {
 				// If there isn't already another search in progress
-				view.loading_msg = window.loading_message.clone();
-				view.loading_msg.appendTo($("#livesearch div.searching")).append("Searching...");
+				view.$(".livesearch").fadeIn().children("ul").html("Searching...");
 			}
 			$.ajax({
 				url: fetch_url,
 				dataType: "json",
 				data: {
-					q: 	view.$("#add-collaborator-input").val()
+					q: 	view.$("input[name=search_box]").val()
 				},
 				
-				complete: function () {
-					// Hide the loading message
-					view.loading_msg.fadeOut();
-					view.loading_msg = null;
-				},
-			
 				success: function(response){
 					if (response.length) {
 						// Remove already existing collaborators					
@@ -235,25 +252,69 @@ $(function() {
 					
 						// Feedback if no results
 						if (!results.length) {
-							view.$("#livesearch ul").html("<strong>no results<strong>");
+							view.$(".livesearch ul").html("<strong>no results<strong>");
 						} else {
-							// Add the search results if any to the live search view					
+							// Add the search results if any to the live search view
+							view.$(".livesearch ul").html("");
 							_.each(results, function(searchResult) {
 								view.searchResults.add(searchResult, view);
 							});
 						}
 					} else {
-						view.$("#livesearch ul").html("<strong>no results<strong>");
+						view.$(".livesearch ul").html("<strong>no results<strong>");
 					}
 				}
 			});
 		}
 	});
 	
+	var CollaboratorsControl = Backbone.View.extend({
+		
+		el: "div.collaborators",
+		
+		events: {
+			"click .settings-toolbar p.create a": "showAddCollaboratorsModal"
+		},
+		
+		initialize: function() {
+			collaborators.on('add',	 this.addCollaborator, this);
+			collaborators.on('reset', this.addCollaborators, this);
+			
+			collaborators.on('reset', this.checkEmpty, this);
+			collaborators.on('add', this.checkEmpty, this);
+			collaborators.on('remove', this.checkEmpty, this);
+		},
+		
+		showAddCollaboratorsModal: function() {
+			var addCollaboratorsView = new AddCollaboratorsView({model: this.model});
+			modalShow(addCollaboratorsView.render().el);
+			addCollaboratorsView.focusSearchBox();
+			return false;
+		},
+		
+		addCollaborator: function(collaborator) {
+			var view = new CollaboratorView({model: collaborator});	
+			this.$(".col_12").append(view.render().el);
+		},
+		
+		addCollaborators: function() {
+			collaborators.each(this.addCollaborator, this);
+		},
+		
+		checkEmpty: function() {
+			if (collaborators.length) {
+				this.$(".alert-message").fadeOut();
+			} else {
+				this.$(".alert-message").fadeIn();
+			}
+		}
+				
+	});
+	
 		
 	// Bootstrap the list
-	var collaboratorControl = new CollaboratorControl;
-	Collaborators.reset(<?php echo $collaborator_list ?>);
+	var collaboratorsControl = new CollaboratorsControl;
+	collaborators.reset(<?php echo $collaborator_list ?>);
 });
 	
 </script>
