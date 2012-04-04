@@ -120,6 +120,14 @@ $(document).ready(function() {
 		$(this).toggleClass('open').siblings('div.meta-data-content').slideToggle('fast');
 	});
 
+	// SCROLL TO BUOY
+	if ($("#buoy").length > 0) {
+		$.getScript('/markup/js/jquery.scrollto.js');
+		$('#buoy').prepend("<div class='buoy-message base'><p>Here's where you left off.</p></div>");
+		$('#buoy .buoy-message').delay(1000).fadeIn('fast');
+		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
+	}
+
 	// Toggle channel selection
 	$('form input[type=checkbox]').live('click', function() {
 		if ($(this).is(':checked')) {

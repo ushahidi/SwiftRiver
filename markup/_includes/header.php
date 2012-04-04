@@ -20,6 +20,7 @@
 			<ul class="toolbar-menu">
 				<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon"></span><span class="label">Search</span></a></li>
 				<li class="create"><a href="/markup/modal-create.php" class="modal-trigger"><span class="icon"></span><span class="label">Create</span></a></li>
+				<!--li class="login"><a href="/login" class="modal-trigger"><span class="label">Log in</span></a></li-->
 				<li class="user popover">
 					<a href="#" class="popover-trigger">
 						<span class="dropdown-arrow"></span>

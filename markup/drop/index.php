@@ -56,7 +56,7 @@
 						<div class="drop-content">
 							<div class="drop-body">
 								<a href="#" class="drop-image-wrap"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-								<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a> <span class="drop-permalink icon"><a href="#"></a></span></h1>
+								<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a></h1>
 								<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 							</div>
 							<section class="drop-source cf">

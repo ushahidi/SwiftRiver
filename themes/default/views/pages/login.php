@@ -2,95 +2,17 @@
 <html> 
  
 <head> 
-	<meta charset="utf-8"> 
-	<title>Log in - SwiftRiver</title> 
+    <meta charset="utf-8"> 
+	<title>Log in ~ SwiftRiver</title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
-	<link rel="icon" href="/images/favicon.png" type="image/png">
-	<?php echo(Html::style("themes/default/media/css/styles.css")); ?>
-	<style>
-.col_6 {
-   padding: 0 1.041666667%;
-}
-
-article#login .body {
-   padding: 2.083333333% 1.041666667%;
-}
-
-article#login .canvas {
-   -moz-box-shadow: 0 2px 3px rgba(0,0,0,.07);
-   -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.07);
-   box-shadow: 0 2px 3px rgba(0,0,0,.07);
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   margin: 20px auto;
-}
-
-article#login hgroup.page-title {
-   border-bottom: 1px solid #f0f0f0;
-   background: #f9f9f9;
-   padding: 15px 2.083333333%;
-}
-
-article#login hgroup.page-title h1 {
-   color: #555555;
-   font: bold 2.4em/1em Helvetica Neue, Helvetica, Arial, sans-serif;
-   text-shadow: 0 1px 1px #fff;
-}
-
-article#login .form .field {
-   color: #666666;
-   padding: 2.083333333% 0;
-}
-
-article#login .form .field label {
-   display: inline-block;
-   width: 30.43478261%;
-   font-weight: bold;
-}
-
-article#login .form .field input {
-   box-shadow: 0 1px 1px rgba(0,0,0,.4) inset;
-   -moz-box-shadow: 0 1px 1px rgba(0,0,0,.15) inset;
-   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.4) inset;
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   border: 1px solid #e0e0e0;
-}
-
-article#login .form .field .dropdown .buttons {
-   float: none;
-}
-
-/* --- ####### MEDIUM VIEWPORT ###### --- */
-@media screen and (min-width: 615px) {
-.vr {
-   box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
-   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
-   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.1) inset;
-}
-
-.col_6 {
-   float: left;
-   width: 47.91666667%;
-   padding: 0 1.041666667%;
-}
-
-article#login hgroup.page-title {
-   padding: 2.083333333%;
-}
-
-}
-	</style>
-	<meta name="viewport" content="width=device-width; initial-scale=1.0">
+	<link rel="icon" href="/images/favicon.png" type="image/png">	<?php echo(Html::style("themes/default/media/css/styles.css")); ?>
 	<?php
 	echo(Html::script("themes/default/media/js/jquery-1.7.2.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/global.js"));
 	?>
-	
 	<script type="text/javascript">
 		$(function() {
 
@@ -98,32 +20,46 @@ article#login hgroup.page-title {
 		    $("input[name=username]").focus();
 		});
 	</script>
+	<meta name="viewport" content="width=device-width; initial-scale=1.0">
 </head> 
  
 <body> 
-	<header>
-		<div class="left_bar"></div>
-		<div class="center cf">
-			<hgroup>
-				<h1 class="logo"><a href="<?php echo url::site() ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
-			</hgroup>
+	<header class="toolbar">
+		<div class="center">
+			<h1 class="logo"><a href="/markup/"><span class="nodisplay">SwiftRiver</span></a></h1>
+			<ul class="toolbar-menu">
+				<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon"></span><span class="label">Search</span></a></li>
+				<li class="create"><a href="/markup/modal-create.php" class="modal-trigger"><span class="icon"></span><span class="label">Create</span></a></li>
+				<li class="login"><a href="/login" class="modal-trigger"><span class="label">Log in</span></a></li>
+			</ul>
 		</div>
-		<div class="right_bar"></div>
 	</header>
 	
-	<article id="login" class="modal">
-		<div class="center canvas controls">
-			<hgroup class="page-title cf">
-				<h1>Log in</h1>
-			</hgroup>
-			<div class="body cf">
+	<hgroup class="page-title cf">
+		<div class="center">
+			<div class="page-h1 col_12">
+				<h1>Get started</h1>
+			</div>
+		</div>
+	</hgroup>
+
+	<nav class="page-navigation cf">
+		<ul class="center">
+			<li class="active"><a href="/login">Log in</a></li>
+			<li><a href="/markup/user/create.php">Create an account</a></li>
+		</ul>
+	</nav>
+
+	<div id="content" class="settings cf">
+		<div class="center">
+			<div class="modal col_9">
 			<?php
 			if (isset($errors))
 			{
 				foreach ($errors as $message)
 				{
 					?>
-					<div class="system_message system_error">
+					<div class="alert-message red">
 						<p><strong>Uh oh.</strong> <?php echo $message; ?></p>
 					</div>
 					<?php
@@ -136,7 +72,7 @@ article#login hgroup.page-title {
 				foreach ($messages as $message)
 				{
 					?>
-					<div class="system_message system_success">
+					<div class="alert-message blue">
 						<p><strong><?php echo __('Success!'); ?></strong> <?php echo $message; ?></p>
 					</div>
 					<?php
@@ -144,61 +80,65 @@ article#login hgroup.page-title {
 			}
 			?>					
 			<?php echo Form::open(); ?>
-				<div class="form vr col_6">
-					<div class="field cf">						
-						<label><?php echo __('Email'); ?></label>
-						<?php echo Form::input("username", ""); ?>
-					</div>
-					<div class="field cf">
-						<label><?php echo __('Password'); ?></label>
-						<?php echo Form::password("password", ""); ?>
-					</div>
-					<div class="field cf">
-						<?php echo Form::checkbox('remember', 1); ?>
-						<strong><?php echo __('Remember me'); ?></strong>
-					</div>				
-					<div class="submit controls-buttons cf">
-						<?php echo Form::hidden('referrer', $referrer); ?>
-						<p class="button-go" onclick="submitForm(this)"><a>Get started</a></p>
-					</div>
+				<article class="container base">
+					<header class="cf">
+						<div class="property-title">
+							<h1>Enter your account information</h1>
+						</div>
+					</header>
+					<section class="property-parameters">
+						<div class="parameter">
+							<label for="username">
+								<p class="field"><?php echo __('Email'); ?></p>
+								<?php echo Form::input("username", ""); ?>
+							</label>
+						</div>
+						<div class="parameter">
+							<label for="password">
+								<p class="field"><?php echo __('Password'); ?></p>
+								<?php echo Form::password("password", ""); ?>
+							</label>
+						</div>
+						<div class="parameter">
+							<label for="remember">
+								<?php echo Form::checkbox('remember', 1); ?>
+								<?php echo __('Remember me'); ?>
+							</label>
+						</div>
+					</section>
+				</article>
+
+				<div class="save-toolbar">
+					<?php echo Form::hidden('referrer', $referrer); ?>
+					<p class="button-blue" onclick="submitForm(this)"><a>Log in</a></p>
 				</div>
 			<?php echo Form::close(); ?>
+			</div>
 
-				<div class="form col_6">
-				<?php if ($public_registration_enabled): ?>
-			    <?php echo Form::open(); ?>
-					<div class="field has_dropdown cf">
-						<a id="create_account_link"><?php echo __('Create an account'); ?></a>
-						<div class="dropdown" style="display:none;">
-							<label><?php echo __('Your email address') ?></label>
-							<?php echo Form::input("new_email", ""); ?>
-							<div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Register');?></button></div>
-						</div>
-					</div>
-				<?php echo Form::close(); ?>
-				<?Php endif; ?>	
-
-				<?php echo Form::open(); ?>
-					<div class="field has_dropdown cf">
-						<a id="forgot_password_link"><?php echo __('Forgot your password?'); ?></a>
-						<div class="dropdown" style="display:none;">
-							<label><?php echo __('Your email address') ?></label>
+			<div class="col_3">
+				<section class="meta-data">
+					<h3 class="arrow"><span class="icon"></span>Forgot your password?</h3>
+					<div class="meta-data-content">
+					<?php echo Form::open(); ?>
+						<label>
+							<?php echo __('Your email address') ?>
 							<?php echo Form::input("recover_email", ""); ?>
-							<div class="buttons" onclick="submitForm(this)"><button class="save"><?php echo __('Reset password');?></button></div>
-						</div>
+						</label>
+						<p class="button-blue button-small" onclick="submitForm(this)"><a><?php echo __('Reset password');?></a></p>
+					<?php echo Form::close(); ?>
 					</div>
-				<?php echo Form::close(); ?>
-				</div>
+				</section>
 			</div>
 		</div>
-	</article>
-	
-	<footer class="center">
-		<p><a href="/">SwiftRiver</a></p>
-		<ul>
-			<li><a href="#">Who uses it.</a></li>
-			<li><a href="#">How it works.</a></li>
-		</ul>
-	</footer>
+	</div>
+
+<div id="zoom-container">
+	<div class="modal-window"></div>
+</div>
+
+<div id="modal-container">
+	<div class="modal-window"></div>
+</div>
+
 </body> 
 </html>
