@@ -1206,6 +1206,9 @@ article.container div.parameter div.actions {
   text-align: left;
   padding-top: 3.125%;
 }
+.modal-body .settings-toolbar {
+  padding: 3.125% 0;
+}
 .save-toolbar {
   opacity: .25;
   text-align: left;
@@ -1222,8 +1225,12 @@ article.container div.parameter div.actions {
 .save-toolbar.visible {
   opacity: 1;
 }
+.settings-toolbar p,
 .save-toolbar p {
   display: inline-block;
+}
+.settings-toolbar p:first-child {
+  margin-right: 10px;
 }
 .save-toolbar p a {
   padding: 10px 20px;
@@ -1878,6 +1885,11 @@ article.modal div.search ul.dual-buttons {
   article.container section.property-parameters p.field {
     float: left;
     width: 130px;
+  }
+  article.container section.property-parameters p.title {
+    float: left;
+    width: 90px;
+    padding: 6px 5px 6px 0;
   }
   /* --------------------------- USER */
   #content.user section.property-parameters div.activity-item span.icon {

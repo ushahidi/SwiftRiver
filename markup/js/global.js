@@ -57,7 +57,10 @@ $(document).ready(function() {
 		}
 		e.preventDefault();
 	});
-	$('article.modal h2.close a').live('click', function(e) {
+	$('a.remove-large').live('click', function(e) {
+		$('div.modal-window').unbind();
+	});
+	$('article.modal .close a').live('click', function(e) {
 		$('#modal-container').fadeOut('fast').removeClass('visible');
 		if ($('body').hasClass('zoomed')) {
 			zoomHide();
