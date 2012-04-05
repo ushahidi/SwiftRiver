@@ -1,15 +1,26 @@
 <div class="sign-up-box null no-content" style="display: none;">
 		<div class="sb-panel cf">
-			<div class="help-text highlight-box ht-not-ready">
-				<h3><?php echo __('Nothing to display yet.') ?></h3>
-				<p><?php echo __('The river will start flowing as soon as there is content and this page will update automatically or you can refresh manually', array('refresh manually' => HTML::anchor($river_url, __('refresh manually')))) ?><br /><br /></p>
-				<p><strong><?php echo __('Taking too long? Save this link and come back later') ?></strong>  <?php echo HTML::anchor($river_url, $river_url); ?></p>
-				<?php if ( $anonymous ): ?>
-					<p><strong><?php echo __('Already have an account?') ?></strong> <a href="<?php echo URL::site('login') ?>" class="previous"><?php echo __('Log in here') ?></a>.</p>
+			<div class="alert-message blue">
+				<p>
+					<strong><?php echo __('Nothing to display yet.') ?></strong>
+					<?php echo __('The river will start flowing as soon as there is content '
+					    .'and this page will update automatically or you can refresh manually', 
+					    array('refresh manually' => HTML::anchor($river_url, __('refresh manually'))));
+					?>
+				</p>
+				<p>
+					<?php echo __('Taking too long? Save this link and come back later') ?>
+					<?php echo HTML::anchor($river_url, $river_url); ?>
+				</p>
+				<?php if ($anonymous): ?>
+					<p>
+						<strong><?php echo __('Already have an account?') ?></strong> 
+						<a href="<?php echo URL::site('login') ?>" class="previous"><?php echo __('Log in here') ?></a>.
+					</p>
 				<?php endif; ?>
 			</div>
 			
-			<?php if ( $anonymous ): ?>
+			<?php if ($anonymous): ?>
 				<h3 class="push-up"><span><?php echo __('In the mean time...') ?></h3>
 				
 				<?php if ((bool) Model_Setting::get_setting('public_registration_enabled')): ?>

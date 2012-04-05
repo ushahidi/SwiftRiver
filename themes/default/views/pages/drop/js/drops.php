@@ -146,6 +146,12 @@ $(function() {
 			} else if (new_score == -1 || (new_score == 0 && old_score == -1)) {
 				this.showDropScore("ul.score-drop > li.dislike");
 			}
+		},
+
+		shareDrop: function(e) {
+			shareView = new ShareDropView({model: this.model});
+			modalShow(shareView.render().el);
+			e.stopPropagation();
 		}
 	})
 	
@@ -160,7 +166,8 @@ $(function() {
 			"click p.discussion a": "showDetail",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click ul.score-drop > li.like a": "likeDrop",
-			"click ul.score-drop > li.dislike a": "dislikeDrop"
+			"click ul.score-drop > li.dislike a": "dislikeDrop",
+			"click li.share > a": "shareDrop"
 		},
 		
 		initialize: function(options) {
@@ -203,7 +210,8 @@ $(function() {
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click .settings-toolbar .button-big a": "showFullDrop",
 			"click ul.score-drop > li.like a": "likeDrop",
-			"click ul.score-drop > li.dislike a": "dislikeDrop"
+			"click ul.score-drop > li.dislike a": "dislikeDrop",
+			"click li.share > a": "shareDrop"
 		},
 		
 		initialize: function() {
@@ -212,7 +220,7 @@ $(function() {
 			this.discussions.on('reset', this.addDiscussions, this);
 			this.discussions.on('add', this.addDiscussion, this);
 			
-			this.model.on("change:user_score", this.updateDropScore, this)
+			this.model.on("change:user_score", this.updateDropScore, this);
 		},
 						
 		render: function(eventName) {
@@ -855,6 +863,20 @@ $(function() {
 		addMetadataBlock: function (collection) {
 			var view = new MetadataView({collection: collection, model: this.model});
 			this.$("article .center .col_3").append(view.render().el);
+		}
+	});
+
+	// VIEW: Share drop
+	var ShareDropView = Backbone.View.extend({
+		tagName: "article",
+
+		className: "modal",
+
+		template: _.template($("#share-drop-template").html()),
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
 		}
 	});
 	

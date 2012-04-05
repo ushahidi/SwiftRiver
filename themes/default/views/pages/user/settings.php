@@ -75,7 +75,7 @@
 		</section>
 	</article>
 	<div class="save-toolbar">
-		<p class="button-blue"><button type="submit"><?php echo __("Save Changes"); ?></button></p>
+		<p class="button-blue" onclick="submitForm(this);"><a><?php echo __("Save Changes"); ?></a></p>
 	</div>
 </div>
 <?php Form::close(); ?>

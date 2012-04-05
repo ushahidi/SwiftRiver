@@ -46,7 +46,10 @@ class Controller_Bucket_Display extends Controller_Bucket_Settings {
 			}
 			catch (Database_Exception $e)
 			{
-				$this->settings_content->errors = array(__("A bucket with the name ':name' name already exists", array(":name" => $this->request->post('bucket_name'))));
+				$this->settings_content->errors = array(
+					__("A bucket with the name ':name' name already exists", 
+						array(":name" => $this->request->post('bucket_name')))
+				);
 			}
 		}
 		
