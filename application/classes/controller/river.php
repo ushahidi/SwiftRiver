@@ -346,9 +346,6 @@ class Controller_River extends Controller_Swiftriver {
 		}
 				
 		$this->active = 'rivers';
-
-		// Get the settings control		
-		$settings_control = $this->_get_settings_view();
 	}
 
 	/**

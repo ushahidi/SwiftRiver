@@ -41,6 +41,7 @@
 			<div class="filter-actions col_3">
 				<p class="button-blue button-small"><a href="/markup/river/filters.php" class="zoom-trigger">Filters</a></p>
 			</div>
+		</div>
 	</nav>
 	
 	<?php echo $droplets_view; ?>
