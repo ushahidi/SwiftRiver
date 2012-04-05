@@ -48,7 +48,7 @@
 	
 				<article class="container base">
 					<header class="cf">
-						<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+						<a href="/markup/modal-prompt.php" class="remove-large modal-trigger"><span class="icon"></span><span class="nodisplay">Remove</span></a>
 						<div class="property-title">
 							<a href="#" class="avatar-wrap"><img src="/markup/images/channel-twitter.gif" /></a>
 							<h1>Twitter</h1>
@@ -85,6 +85,7 @@
 						<div class="parameter">
 							<label for="rss_url">
 								<p class="field">Feed URL</p>
+								<p class="title">Mashable News headlines</p>
 								<input type="text" name="rss_url" placeholder="Enter the RSS feed's URL" />
 								<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
 							</label>

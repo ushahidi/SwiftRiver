@@ -112,6 +112,10 @@ $(document).ready(function() {
 		})
 		return false;
 	});
+	// Disable click-outside-to-close for select prompts
+	$('a.remove-large').live('click', function(e) {
+		$('div.modal-window').unbind();
+	});
 	$('article.modal h2.close a').live('click', function(e) {
 		modalWindow.hide();
 		return false;
