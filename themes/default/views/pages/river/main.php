@@ -19,6 +19,10 @@
 					</a>
 				</h2>
 			</div>
+			<?php else: ?>
+			<div class="follow-summary col_3">
+				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
+			</div>
 			<?php endif; ?>
 		</div>
 	</hgroup>

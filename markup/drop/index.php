@@ -56,7 +56,7 @@
 						<div class="drop-content">
 							<div class="drop-body">
 								<a href="#" class="drop-image-wrap"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-								<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a> <span class="drop-permalink icon"><a href="#"></a></span></h1>
+								<h1>Saluting <a href="#">@chiefkariuki</a> and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc <a href="#">@ushahidi</a></h1>
 								<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 							</div>
 							<section class="drop-source cf">
@@ -107,14 +107,14 @@
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Media</h3>
+					<h3 class="arrow"><span class="icon"></span>Media <span class="button-blue button-small"><a href="/markup/modal-meta-media.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<a href="#" class="media-image-wrap"><img src="/markup/images/content/drop-image.png" class="media-image" /></a>
 					</div>
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Links</h3>
+					<h3 class="arrow"><span class="icon"></span>Links <span class="button-blue button-small"><a href="/markup/modal-meta-links.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<ul class="meta-list">
 							<li><a href="#">http://theglobaljournal.net</a></li>
@@ -128,7 +128,7 @@
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Tags</h3>
+					<h3 class="arrow"><span class="icon"></span>Tags <span class="button-blue button-small"><a href="/markup/modal-meta-tags.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<ul class="meta-list">
 							<li><a href="#">Ushahidi</a></li>

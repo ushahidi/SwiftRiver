@@ -16,8 +16,8 @@
 	<div class="modal-body link-list">
 		<ul>
 			<li><a href="/markup/river/new.php">River</a></li>
-			<li><a href="#">Bucket</a></li>
-			<li><a href="#">Drop</a></li>
+			<li><a href="/markup/bucket/new.php">Bucket</a></li>
+			<li><a href="/markup/drop/new.php">Drop</a></li>
 		</ul>
 	</div>
 </article>

@@ -64,7 +64,8 @@ body > nav {
 		<li><a href="#drops-drop">Drop: In 'drops' view</a></li>
 		<li><a href="#list-drop">Drop: In 'list' view</a></li>
 		<li><a href="#photos-drop">Drop: In 'photos' view</a></li>
-		<li><a href="#alert-message">Message</a></li>
+		<li><a href="#generic-message">Generic message</a></li>
+		<li><a href="#alert-message">Alert message</a></li>
 	</ul>
 </nav>
 
@@ -348,10 +349,18 @@ body > nav {
 </div>
 
 <div id="content" class="sample settings">
-	<a name="alert-message"></a>
-	<h2>Message: <em>Used when no content exists</em></h2>
+	<a name="generic-message"></a>
+	<h2>Generic message: <em>Used when no content exists</em></h2>
 	<div class="alert-message blue">
 		<p><strong>No more channels.</strong> You can flow new channels into your river by selecting the "Add channel" button above.</p>
+	</div>
+</div>
+
+<div id="content" class="sample settings">
+	<a name="alert-message"></a>
+	<h2>Red message: <em>Used for errors and alerts</em></h2>
+	<div class="alert-message red">
+		<p><strong>Uh oh.</strong> Look out. Bad stuff happened.</p>
 	</div>
 </div>
 </body>

@@ -266,72 +266,80 @@ span.icon {
    background-position: center -75px;
 }
 
-.twitter span.icon {
+.like.scored span.icon {
    background-position: center -100px;
 }
 
-.facebook span.icon {
+.dislike.scored span.icon {
    background-position: center -125px;
 }
 
-.google span.icon {
+.twitter span.icon {
    background-position: center -150px;
 }
 
-.rss span.icon {
+.facebook span.icon {
    background-position: center -175px;
 }
 
-.email span.icon {
+.google span.icon {
    background-position: center -200px;
 }
 
-.permalink span.icon {
+.rss span.icon {
+   background-position: center -225px;
+}
+
+.email span.icon {
    background-position: center -250px;
 }
 
-.close span.icon {
-   background-position: center -250px;
-}
-
-.settings span.icon {
+.swiftriver span.icon {
    background-position: center -275px;
 }
 
-.search span.icon {
+.close span.icon {
    background-position: center -300px;
 }
 
-.create span.icon {
+.settings span.icon {
    background-position: center -325px;
 }
 
-.add span.icon {
+.search span.icon {
    background-position: center -350px;
 }
 
+.create span.icon {
+   background-position: center -375px;
+}
+
+.add span.icon {
+   background-position: center -400px;
+}
+
 .remove-large span.icon {
-   background-position: center -425px;
-}
-
-.remove-small span.icon {
-   background-position: center -450px;
-}
-
-.discussion span.icon {
    background-position: center -475px;
 }
 
-.back span.icon {
+.remove-small span.icon {
+   background-position: center -500px;
+}
+
+.discussion span.icon {
    background-position: center -525px;
 }
 
+.back span.icon {
+   background-position: center -575px;
+}
+
 .follow span.icon {
-   background-position: center -550px;
+   background-position: center -600px;
 }
 
 .follow.selected span.icon {
-   background-position: center -575px;
+   background-position: center -625px;
 }
 
 .alert-message {
@@ -341,6 +349,11 @@ span.icon {
    border-radius: 3px;
    border: 1px solid #cbe1e8;
    background: #eaf3f5;
+}
+
+.alert-message.red {
+   border: 1px solid #dc9494;
+   background: #eec6c6;
 }
 
 .alert-message p {
@@ -382,8 +395,6 @@ a.avatar-wrap:after {
 
 a.avatar-wrap img {
    width: 100%;
-   max-width:60px;
-   max-height:60px;
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
    border-radius: 3px;
@@ -502,6 +513,10 @@ header.toolbar ul.toolbar-menu > li > a {
    display: block;
    width: 40px;
    height: 40px;
+   color: #fff;
+   font-weight: bold;
+   font-size: 0.9em;
+   text-shadow: 0 1px 1px rgba(0,0,0,.45);
    border-right: 1px solid rgba(0,0,0,0.1);
    border-left: 1px solid rgba(256,256,256,0.17);
    padding: 0 7px;
@@ -516,6 +531,10 @@ header.toolbar ul.toolbar-menu > li span.icon {
    margin: 6px auto;
 }
 
+header.toolbar ul.toolbar-menu > li span.label {
+   line-height: 40px;
+}
+
 header.toolbar ul.toolbar-menu li.search a {
    border-left: none;
 }
@@ -523,6 +542,14 @@ header.toolbar ul.toolbar-menu li.search a {
 header.toolbar ul.toolbar-menu li.user > a {
    border-right: none;
    padding: 4px 0 0 5px;
+}
+
+header.toolbar ul.toolbar-menu li.login > a {
+  border-right: none;
+}
+
+header.toolbar ul.toolbar-menu li.login > a span.label {
+  display: block;
 }
 
 header.toolbar ul.toolbar-menu li.user > a span.notification {
@@ -690,11 +717,15 @@ hgroup.page-title h2 span.icon {
 }
 
 hgroup.page-title h2.discussion span.icon {
-   background-position: center -500px;
+   background-position: center -550px;
 }
 
 hgroup.page-title .page-actions h2 span.title {
    float: left;
+}
+
+hgroup.page-title div.follow-summary {
+   padding-bottom: 3.5%;
 }
 
 hgroup.user-title div.follow-summary {
@@ -854,7 +885,7 @@ p.metadata span.icon {
    top: 4px;
    width: 17px;
    height: 15px;
-   background-position: center -481px;
+   background-position: center -531px;
    margin-left: 10px;
 }
 
@@ -863,11 +894,15 @@ p.metadata span.icon {
 .drop .drop-actions ul li a {padding:0;}
 
 .drop ul.score-drop li.scored a {
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   border: 1px solid #e4e8e8;
    background-color: #eaf3f5;
+}
+
+.drop ul.score-drop li.like.scored a {
+   border: 1px solid #81c279;
+}
+
+.drop ul.score-drop li.dislike.scored a {
+   border: 1px solid #cc9898;
 }
 
 .drop ul.score-drop li.scored a span.user-score {
@@ -902,24 +937,35 @@ p.metadata span.icon {
 
 .drop section.drop-source div.byline p.drop-source-channel a span.icon {
    float: left;
+   position: relative;
    width: 15px;
-   height: 15px;
+   top: -5px;
+   margin-right: 5px;
+   padding: 0;
 }
 
-.twitter.drop-source-channel span.icon {
-   background-position: -4px -104px;
+/* ---- DROP: BUOY */
+
+#buoy {
+   -moz-box-shadow: 0 1px 10px rgba(54, 183, 206,.5);
+   -webkit-box-shadow: 0 1px 10px rgba(54, 183, 206,.5);
+   box-shadow: 0 1px 10px rgba(54, 183, 206,.5);
 }
 
-.facebook.drop-source-channel span.icon {
-   background-position: -4px -129px;
+#buoy .buoy-message {
+   display: none;
+   position: absolute;
+   top: -50px;
+   width: 100%;
+   border: 3px solid #259cb5;
 }
 
-.google.drop-source-channel span.icon {
-   background-position: -4px -154px;
-}
-
-.rss.drop-source-channel span.icon {
-   background-position: -4px -179px;
+#buoy .buoy-message p {
+   color: #444444;
+   font-weight: bold;
+   background: url(../img/icon-buoy.png) left no-repeat;
+   padding: 20px 10px 20px 40px;
+   margin-left: 5px;
 }
 
 /* ---- DROP: VIEW FULL */
@@ -941,11 +987,22 @@ p.metadata span.icon {
 
 .drop-full section.drop-source a.avatar-wrap {
    float: left;
+   width: 17%;
    margin-right: 10px;
 }
 
 .drop-full div.drop-body h1 {
    font-size: 1.1em;
+}
+
+.drop-full label p.field {
+   font-weight: bold;
+   padding: 5px 0;
+}
+
+.drop-full div.drop-body textarea,
+.drop-full .drop-fullstory textarea {
+   width: 100%;
 }
 
 .drop-full .col_9 > .base > div.drop-actions ul.move-drop,
@@ -964,6 +1021,10 @@ p.metadata span.icon {
 
 .drop-full section.drop-sub h2 {
    font-size: 0.9em;
+}
+
+.drop-full .save-toolbar {
+   margin-top: 15px;
 }
 
 /* VIEW FULL > FULL STORY */
@@ -1038,11 +1099,11 @@ section.meta-data h3 span.icon {
    float: left;
    width: 10px;
    height: 15px;
-   background-position: -8px -405px;
+   background-position: -8px -455px;
 }
 
 section.meta-data h3.open span.icon {
-   background-position: -8px -381px;
+   background-position: -8px -431px;
 }
 
 section.meta-data h3 .button-blue a {
@@ -1307,6 +1368,28 @@ article.container p.button-white span.icon {
    height: 20px;
 }
 
+article.container .actions {
+   float: right;
+}
+
+article.container header .actions {
+   padding: 20px 10px;
+}
+
+article.container .actions p {
+   display: inline-block;
+   float: left;
+}
+
+article.container .actions p.follow-count {
+   line-height: 2em;
+   padding-right: 5px;
+}
+
+article.container header .actions p.follow-count {
+   font-size: 0.9em;
+}
+
 /* ---- CONTAINER: PARAMETERS */
 
 article.container section.property-parameters {
@@ -1350,24 +1433,13 @@ article.container div.parameter h2 a {
    font-weight: bold;
 }
 
-article.container div.parameter .actions {
-   float: right;
-}
-
-article.container div.parameter div.actions p {
-   display: inline-block;
-   float: left;
-}
-
-article.container div.parameter div.actions p.follow-count {
-   line-height: 2em;
-   padding-right: 5px;
+article.container div.parameter label {
+   font-size: 0.9em;
 }
 
 article.container div.parameter p.field {
    color: #666666;
    font-weight: bold;
-   font-size: 0.9em;
    text-shadow: 0 1px 1px #fff;
    padding: 6px 0;
 }
@@ -1390,7 +1462,7 @@ article.container div.parameter div.actions {
    padding-top: 3.125%;
 }
 
-#content.settings .save-toolbar {
+.save-toolbar {
    opacity: .25;
    text-align: left;
    -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -1404,14 +1476,18 @@ article.container div.parameter div.actions {
    margin-bottom: 30px;
 }
 
-#content.settings .save-toolbar.visible {opacity: 1;}
+.save-toolbar.visible {opacity: 1;}
 
-#content.settings .save-toolbar p {
+.save-toolbar p {
    display: inline-block;
 }
 
-#content.settings .save-toolbar p a {
+.save-toolbar p a {
    padding: 10px 20px;
+}
+
+#content.settings .col_3 {
+   padding-top: 15px;
 }
 
 select.boolean-operator {
@@ -1712,19 +1788,19 @@ article.modal div.link-list ul li span.icon {
 }
 
 div.link-list ul li.twitter span.icon {
-   background-position: left -104px;
+   background-position: left -154px;
 }
 
 div.link-list ul li.facebook span.icon {
-   background-position: left -129px;
+   background-position: left -179px;
 }
 
 div.link-list ul li.google span.icon {
-   background-position: left -152px;
+   background-position: left -202px;
 }
 
 div.link-list ul li.email span.icon {
-   background-position: left -204px;
+   background-position: left -254px;
 }
 
 div.link-list ul li span.remove-small span.icon {
@@ -1985,10 +2061,6 @@ header.toolbar ul.toolbar-menu {
 
 header.toolbar ul.toolbar-menu > li > a {
    width: auto;
-   color: #fff;
-   font-weight: bold;
-   font-size: 0.9em;
-   text-shadow: 0 1px 1px rgba(0,0,0,.45);
    padding: 0 10px;
    margin: 7px 0;
 }
@@ -1997,10 +2069,6 @@ header.toolbar ul.toolbar-menu > li span.icon,
 header.toolbar ul.toolbar-menu > li span.label {
    display: block;
    float: left;
-}
-
-header.toolbar ul.toolbar-menu > li span.label {
-   line-height: 40px;
 }
 
 header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
@@ -2014,7 +2082,7 @@ header.toolbar ul.toolbar-menu li.user > a span.dropdown-arrow {
    float: right;
    width: 18px;
    height: 25px;
-   background: url(/markup/images/icons-25x25.png) left -371px no-repeat;   
+   background: url(../img/icons-25x25.png) left -421px no-repeat;   
 }
 
 ul.popover-window.header-toolbar {
@@ -2057,6 +2125,12 @@ nav.page-navigation .filter-actions p {
    display: block;
    clear: both;
    margin-left: 10px;
+}
+
+hgroup.page-title div.follow-summary {
+   text-align: right;
+   padding-top: 18px;
+   padding-bottom: 0;
 }
 
 hgroup.user-title div.user-summary {
@@ -2102,6 +2176,10 @@ nav.page-navigation .settings ul.touchcarousel-container li a {
 
 .drops article.drop section.drop-source a.avatar-wrap {
    width: 20%;
+}
+
+.drop-full section.drop-source a.avatar-wrap {
+   width: 7%;
 }
 
 .drop-full section.drop-discussion h2 {
@@ -2325,8 +2403,21 @@ hgroup.user-title a.avatar-wrap {
    width: 17%;
 }
 
+hgroup.user-title.dashboard a.avatar-wrap {
+   width: 10%;
+}
+
 hgroup.user-title h1 {
    font-size: 2.5em;
+}
+
+hgroup.user-title.dashboard h1 {
+   font-size: 2.2em;
+   padding-top: 2.5%;
+}
+
+hgroup.user-title.dashboard div.follow-summary {
+   padding-top: 2.5%;
 }
 
 #content.user section.property-parameters div.activity-item span.icon {
@@ -2378,7 +2469,7 @@ hgroup.user-title h1 {
 }
 
 .touchcarousel.col_9 {
-   width: 75%;
+   width: 74.9%;
 }
 .touchcarousel .touchcarousel-container {
 	position: relative;    
@@ -2544,28 +2635,3 @@ hgroup.user-title h1 {
 
 /* Cursor that used when mouse drag is disabled */
 .touchcarousel .auto-cursor{ cursor:auto; }
-
-.livesearch {
-  position: absolute;
-  border: 1px solid #e4e8e8;
-  background-color: #eaf3f5;
-  width: 25%;
-  height: 130px;
-  overflow: auto;
-  display: none;
-}
-
-.livesearch li {
-  margin: 5px;
-  border: 1px solid #eaf3f5;
-}
-
-.livesearch li:hover {
-  cursor: pointer;
-  background-color: #f5fafd;
-  border: 1px solid #e4e8e8;
-}
-
-.livesearch a.avatar-wrap {
-  margin-right: 5px;
-}

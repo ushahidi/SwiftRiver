@@ -95,14 +95,16 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
-			->bind('page_title', $page_title);
+			->bind('page_title', $page_title)
+			->bind('owner', $this->owner);
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, 1, $max_droplet_id);
+		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
+			$this->bucket->id, 0, 1, $max_droplet_id);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -149,13 +151,18 @@ class Controller_Bucket extends Controller_Swiftriver {
 	/**
 	* Below are aliases for the index.
 	*/
-	public function action_drops() {
+	public function action_drops()
+	{
 		$this->action_index();
 	}
-	public function action_list() {
+
+	public function action_list()
+	{
 		$this->action_index();
 	}
-	public function action_drop() {
+
+	public function action_drop()
+	{
 		$this->action_index();
 	}
 	
@@ -211,29 +218,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 			}
 		}
 		
-	}
-	
-	/**
-	 * Generates the view for the settings JS
-	 *
-	 * @return View
-	 */
-	private function _get_settings_js_view()
-	{
-		// Javascript view
-		$settings_js  = View::factory('pages/bucket/js/settings')
-		   ->bind('bucket_url_root', $bucket_url_root)
-		   ->bind('bucket_data', $bucket_data);
-
-		$bucket_url_root = $this->bucket_base_url.'/save_settings';
-
-		$bucket_data = json_encode(array(
-			'id' => $this->bucket->id,
-			'bucket_name' => $this->bucket->bucket_name,
-			'bucket_publish' => $this->bucket->bucket_publish
-		));
-
-		return $settings_js;
 	}
 	
 	/**
@@ -415,19 +399,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Ajax rendered more control box
-	 * 
-	 * @return	void
-	 */
-	public function action_more()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		echo View::factory('pages/bucket/more_control')
-			->bind('bucket', $this->bucket);
-	}
-
-	/**
 	 * Ajax rendered discussion control box
 	 * 
 	 * @return	void
@@ -440,37 +411,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 	
 
-	/**
-	 * Ajax rendered settings control box
-	 * 
-	 * @return	void
-	 */
-	public function action_settings()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		$settings_control = View::factory('pages/bucket/settings_control')
-		                        ->bind('collaborators_control', $collaborators_control)
-		                        ->bind('bucket', $this->bucket)
-		                        ->bind('settings_js', $settings_js);
-		
-		// Javascript view
-		$settings_js  = $this->_get_settings_js_view();
-		
-		$collaborators_control = View::factory('template/collaborators')
-		                             ->bind('collaborator_list', $collaborator_list)
-		                             ->bind('fetch_url', $fetch_url)
-		                             ->bind('logged_in_user_id', $logged_in_user_id);
-
-		$collaborator_list = json_encode($this->bucket->get_collaborators());
-		$fetch_url = $this->bucket_base_url.'/collaborators';
-		$logged_in_user_id = $this->user->id;
-		
-		
-		echo $settings_control;	
-	}
-	
 	/**
 	 * Bucket collaborators restful api
 	 * 

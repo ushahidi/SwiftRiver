@@ -15,11 +15,12 @@
 			</div>
 			<?php endif; ?>			
 		</div>
+		<?php if ($owner): ?>
 		<div class="page-actions col_3">
 			<h2 class="settings">
 				<a href="<?php echo $settings_url; ?>">
 					<span class="icon"></span>
-					Bucket settings
+					<?php echo __("Bucket settings"); ?>
 				</a>
 			</h2>
 			<h2 class="discussion">
@@ -29,6 +30,11 @@
 				</a>
 			</h2>
 		</div>
+		<?php else: ?>
+		<div class="follow-summary col_3">
+			<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
+		</div>
+		<?php endif; ?>
 	</div>
 </hgroup>
 

@@ -1,1 +1,3 @@
-<h2 class="null no-content"><?php echo $message; ?></h2>
+<div class="alert-message blue">
+	<p><?php echo $message; ?></p>
+</div>

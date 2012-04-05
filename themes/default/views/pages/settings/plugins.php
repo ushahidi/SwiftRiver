@@ -1,34 +1,34 @@
 <?php echo Form::open(); ?> 
 	<input type="hidden" name="action" value="">
 	<input type="hidden" name="id" value="">
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title">
-				<h1><?php echo __("Plugins"); ?></h1>
-			</div>
-		</header>
-		<section id="plugin_listing" class="property-parameters">
-		</section>
-	</article>
+	<div class="settings-toolbar"></div>
 <?php echo Form::close(); ?>
 
 <script type="text/template" id="plugin_item_template">
-	<div class="actions">
-		<% var link_title = (plugin_enabled)
-		       ? "<?php echo __('Deactivate Plugin'); ?>" 
-		       : "<?php echo __('Activate Plugin'); ?>"; 
+	<header class="cf">
+		<div class="actions">
+			<% var link_title = (plugin_enabled)
+			       ? "<?php echo __('deactivated plugin'); ?>" 
+			       : "<?php echo __('activated plugin'); ?>"; 
 
-		    var selected = (plugin_enabled)? "selected" : "";
-		%>
-		<p class="button-white has-icon only-icon follow <%= selected %>">
-			<a href="#" title="<%= link_title %>">
-				<span class="icon">
-				<span class="nodisplay"><%= link_title %></span>
-			</a>
-		</p>
-	</div>
-	<h2><a href="#" title="<%= plugin_name %>"><%= plugin_name %></a></h2>
-	<p class="metadata"><%= plugin_description %></p>
+			    var selected = (plugin_enabled)? "selected" : "";
+			%>
+			<p class="button-white has-icon only-icon follow <%= selected %>">
+				<a href="#" title="<%= link_title %>">
+					<span class="icon">
+					<span class="nodisplay"><%= link_title %></span>
+				</a>
+			</p>
+		</div>
+		<div class="property-title">
+			<h1><%= plugin_name %></h1>
+		</div>
+	</header>
+	<section class="property-parameters">
+		<div class="parameter">
+			<h2><%= plugin_description %></h2>
+		</div>
+	</section>
 </script>
 
 <script type="text/javascript">
@@ -58,9 +58,9 @@ $(function() {
 
 	var PluginItemView = Backbone.View.extend({
 
-		tagName: "div",
+		tagName: "article",
 
-		className: "parameter",
+		className: "container base",
 
 		template: _.template($("#plugin_item_template").html()),
 
@@ -80,7 +80,6 @@ $(function() {
 	});
 
 	var PluginsView = Backbone.View.extend({
-		el: "section#plugin_listing",
 
 		initialize: function() {
 			this.plugins = new PluginItemList;
@@ -90,7 +89,7 @@ $(function() {
 
 		addPlugin: function(plugin) {
 			view = new PluginItemView({model: plugin}).render().el;
-			this.$el.append(view);
+			$("div.settings-toolbar").after(view);
 		},
 
 		addPlugins: function() {
