@@ -294,7 +294,7 @@ span.icon {
    background-position: center -250px;
 }
 
-.permalink span.icon {
+.swiftriver span.icon {
    background-position: center -275px;
 }
 
@@ -724,6 +724,10 @@ hgroup.page-title .page-actions h2 span.title {
    float: left;
 }
 
+hgroup.page-title div.follow-summary {
+   padding-bottom: 3.5%;
+}
+
 hgroup.user-title div.follow-summary {
    clear: both;
    padding-top: 3.5%;
@@ -933,24 +937,11 @@ p.metadata span.icon {
 
 .drop section.drop-source div.byline p.drop-source-channel a span.icon {
    float: left;
+   position: relative;
    width: 15px;
-   height: 15px;
-}
-
-.twitter.drop-source-channel span.icon {
-   background-position: -4px -154px;
-}
-
-.facebook.drop-source-channel span.icon {
-   background-position: -4px -179px;
-}
-
-.google.drop-source-channel span.icon {
-   background-position: -4px -204px;
-}
-
-.rss.drop-source-channel span.icon {
-   background-position: -4px -229px;
+   top: -5px;
+   margin-right: 5px;
+   padding: 0;
 }
 
 /* ---- DROP: BUOY */
@@ -996,11 +987,22 @@ p.metadata span.icon {
 
 .drop-full section.drop-source a.avatar-wrap {
    float: left;
+   width: 17%;
    margin-right: 10px;
 }
 
 .drop-full div.drop-body h1 {
    font-size: 1.1em;
+}
+
+.drop-full label p.field {
+   font-weight: bold;
+   padding: 5px 0;
+}
+
+.drop-full div.drop-body textarea,
+.drop-full .drop-fullstory textarea {
+   width: 100%;
 }
 
 .drop-full .col_9 > .base > div.drop-actions ul.move-drop,
@@ -1019,6 +1021,10 @@ p.metadata span.icon {
 
 .drop-full section.drop-sub h2 {
    font-size: 0.9em;
+}
+
+.drop-full .save-toolbar {
+   margin-top: 15px;
 }
 
 /* VIEW FULL > FULL STORY */
@@ -1456,7 +1462,7 @@ article.container div.parameter div.actions {
    padding-top: 3.125%;
 }
 
-#content.settings .save-toolbar {
+.save-toolbar {
    opacity: .25;
    text-align: left;
    -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -1470,13 +1476,13 @@ article.container div.parameter div.actions {
    margin-bottom: 30px;
 }
 
-#content.settings .save-toolbar.visible {opacity: 1;}
+.save-toolbar.visible {opacity: 1;}
 
-#content.settings .save-toolbar p {
+.save-toolbar p {
    display: inline-block;
 }
 
-#content.settings .save-toolbar p a {
+.save-toolbar p a {
    padding: 10px 20px;
 }
 
@@ -2121,6 +2127,12 @@ nav.page-navigation .filter-actions p {
    margin-left: 10px;
 }
 
+hgroup.page-title div.follow-summary {
+   text-align: right;
+   padding-top: 18px;
+   padding-bottom: 0;
+}
+
 hgroup.user-title div.user-summary {
    float: left;
 }
@@ -2164,6 +2176,10 @@ nav.page-navigation .settings ul.touchcarousel-container li a {
 
 .drops article.drop section.drop-source a.avatar-wrap {
    width: 20%;
+}
+
+.drop-full section.drop-source a.avatar-wrap {
+   width: 7%;
 }
 
 .drop-full section.drop-discussion h2 {
@@ -2387,8 +2403,21 @@ hgroup.user-title a.avatar-wrap {
    width: 17%;
 }
 
+hgroup.user-title.dashboard a.avatar-wrap {
+   width: 10%;
+}
+
 hgroup.user-title h1 {
    font-size: 2.5em;
+}
+
+hgroup.user-title.dashboard h1 {
+   font-size: 2.2em;
+   padding-top: 2.5%;
+}
+
+hgroup.user-title.dashboard div.follow-summary {
+   padding-top: 2.5%;
 }
 
 #content.user section.property-parameters div.activity-item span.icon {

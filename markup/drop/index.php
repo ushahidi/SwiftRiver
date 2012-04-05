@@ -107,14 +107,14 @@
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Media</h3>
+					<h3 class="arrow"><span class="icon"></span>Media <span class="button-blue button-small"><a href="/markup/modal-meta-media.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<a href="#" class="media-image-wrap"><img src="/markup/images/content/drop-image.png" class="media-image" /></a>
 					</div>
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Links</h3>
+					<h3 class="arrow"><span class="icon"></span>Links <span class="button-blue button-small"><a href="/markup/modal-meta-links.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<ul class="meta-list">
 							<li><a href="#">http://theglobaljournal.net</a></li>
@@ -128,7 +128,7 @@
 				</section>
 
 				<section class="meta-data">
-					<h3 class="arrow"><span class="icon"></span>Tags</h3>
+					<h3 class="arrow"><span class="icon"></span>Tags <span class="button-blue button-small"><a href="/markup/modal-meta-tags.php" class="modal-trigger">Edit</a></span></h3>
 					<div class="meta-data-content">
 						<ul class="meta-list">
 							<li><a href="#">Ushahidi</a></li>

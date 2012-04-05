@@ -294,7 +294,7 @@ span.icon {
    background-position: center -250px;
 }
 
-.permalink span.icon {
+.swiftriver span.icon {
    background-position: center -275px;
 }
 
@@ -937,24 +937,11 @@ p.metadata span.icon {
 
 .drop section.drop-source div.byline p.drop-source-channel a span.icon {
    float: left;
+   position: relative;
    width: 15px;
-   height: 15px;
-}
-
-.twitter.drop-source-channel span.icon {
-   background-position: -4px -154px;
-}
-
-.facebook.drop-source-channel span.icon {
-   background-position: -4px -179px;
-}
-
-.google.drop-source-channel span.icon {
-   background-position: -4px -204px;
-}
-
-.rss.drop-source-channel span.icon {
-   background-position: -4px -229px;
+   top: -5px;
+   margin-right: 5px;
+   padding: 0;
 }
 
 /* ---- DROP: BUOY */
@@ -1000,11 +987,22 @@ p.metadata span.icon {
 
 .drop-full section.drop-source a.avatar-wrap {
    float: left;
+   width: 17%;
    margin-right: 10px;
 }
 
 .drop-full div.drop-body h1 {
    font-size: 1.1em;
+}
+
+.drop-full label p.field {
+   font-weight: bold;
+   padding: 5px 0;
+}
+
+.drop-full div.drop-body textarea,
+.drop-full .drop-fullstory textarea {
+   width: 100%;
 }
 
 .drop-full .col_9 > .base > div.drop-actions ul.move-drop,
@@ -1023,6 +1021,10 @@ p.metadata span.icon {
 
 .drop-full section.drop-sub h2 {
    font-size: 0.9em;
+}
+
+.drop-full .save-toolbar {
+   margin-top: 15px;
 }
 
 /* VIEW FULL > FULL STORY */
@@ -1460,7 +1462,7 @@ article.container div.parameter div.actions {
    padding-top: 3.125%;
 }
 
-#content.settings .save-toolbar {
+.save-toolbar {
    opacity: .25;
    text-align: left;
    -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -1474,13 +1476,13 @@ article.container div.parameter div.actions {
    margin-bottom: 30px;
 }
 
-#content.settings .save-toolbar.visible {opacity: 1;}
+.save-toolbar.visible {opacity: 1;}
 
-#content.settings .save-toolbar p {
+.save-toolbar p {
    display: inline-block;
 }
 
-#content.settings .save-toolbar p a {
+.save-toolbar p a {
    padding: 10px 20px;
 }
 
@@ -2176,6 +2178,10 @@ nav.page-navigation .settings ul.touchcarousel-container li a {
    width: 20%;
 }
 
+.drop-full section.drop-source a.avatar-wrap {
+   width: 7%;
+}
+
 .drop-full section.drop-discussion h2 {
    padding-left: 1.041666667%;
 }
@@ -2629,28 +2635,3 @@ hgroup.user-title.dashboard div.follow-summary {
 
 /* Cursor that used when mouse drag is disabled */
 .touchcarousel .auto-cursor{ cursor:auto; }
-
-.livesearch {
-  position: absolute;
-  border: 1px solid #e4e8e8;
-  background-color: #eaf3f5;
-  width: 25%;
-  height: 130px;
-  overflow: auto;
-  display: none;
-}
-
-.livesearch li {
-  margin: 5px;
-  border: 1px solid #eaf3f5;
-}
-
-.livesearch li:hover {
-  cursor: pointer;
-  background-color: #f5fafd;
-  border: 1px solid #e4e8e8;
-}
-
-.livesearch a.avatar-wrap {
-  margin-right: 5px;
-}

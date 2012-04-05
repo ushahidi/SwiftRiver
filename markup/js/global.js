@@ -1,7 +1,7 @@
 $(document).ready(function() { 
 	// BUTTON CHECK FOR ICON
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
-	$('.button-blue a, .button-white a').has('span.icon').parents('p').addClass('has-icon');
+	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
 
 	// DETERMINE NEED FOR MASONRY SCRIPT
 	if ($("#content.drops").length > 0) {
@@ -111,9 +111,11 @@ $(document).ready(function() {
 	});
 
 	// DISPLAY SAVE TOOLBAR
-	$('.settings input').change(function () {
-		$('.save-toolbar').addClass('visible');
-	});
+	if ($(".save-toolbar").length > 0) {
+		$('input, textarea').change(function () {
+			$('.save-toolbar').addClass('visible');
+		});
+	}
 
 	// ACCORDION MENU
 	$('section.meta-data h3').live('click', function(e) {
