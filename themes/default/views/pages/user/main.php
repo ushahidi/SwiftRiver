@@ -5,8 +5,8 @@
 			<a href="#" class="primer-image"><img src="/markup/images/content/primer-learn.gif" /></a>
 		</div>
 		<div class="primer-item create">
-			<h3 class="button-blue"><a href="/markup/river/new.php">Create a river</a></h3>
-			<a href="/markup/river/new.php" class="primer-image"><img src="/markup/images/content/primer-create.gif" /></a>
+			<h3 class="button-blue"><a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>">Create a river</a></h3>
+			<a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>" class="primer-image"><img src="/markup/images/content/primer-create.gif" /></a>
 		</div>
 		<div class="primer-item search">
 			<h3 class="button-blue"><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>

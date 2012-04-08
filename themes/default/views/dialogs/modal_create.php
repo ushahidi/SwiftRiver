@@ -16,12 +16,12 @@
 	<div class="modal-body link-list">
 		<ul>
 			<li>
-				<a href="<?php echo URL::site().$account->account_path.'/river/new'; ?>">
+				<a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>">
 					<?php echo __("River"); ?>
 				</a>
 			</li>
 			<li>
-				<a href="<?php echo URL::site().$account->account_path.'/bucket/new'; ?>">
+				<a href="<?php echo URL::site().$account->account_path.'/bucket/create'; ?>">
 					<?php echo __("Bucket"); ?>
 				</a>
 			</li>

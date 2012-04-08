@@ -342,7 +342,6 @@ class Controller_River extends Controller_Swiftriver {
 				                                array(':name' => $post['river_name'])
 				));
 			}
-		
 		}
 				
 		$this->active = 'rivers';

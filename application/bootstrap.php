@@ -257,26 +257,19 @@ Route::set('account_rivers', '<account>/rivers')
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'rivers'
-	));	
-	
-Route::set('account_river_new', '<account>/river/new')
-	->defaults(array(
-		'controller' => 'river',
-		'action'     => 'new'
 	));
 
 Route::set('account_buckets', '<account>/buckets')
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'buckets'
-	));	
+	));
 
 Route::set('account_bucket_new', '<account>/bucket/new')
 	->defaults(array(
 		'controller' => 'bucket',
 		'action'     => 'new'
-	));	
-
+	));
 
 Route::set('account_settings', '<account>/settings')
 	->defaults(array(
@@ -314,7 +307,19 @@ Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<con
 		'controller' => 'settings',
 		'action'     => 'index'
 	));
-	
+
+/**
+ * River and bucket create
+ */
+Route::set('river_bucket_create', '<account>/<directory>/create(/<action>(/<id>))',
+	array(
+		'directory' => '(river|bucket)',
+		'id' => '\d+'
+	))
+	->defaults(array(
+		'controller' => 'create',
+		'action'     => 'index'
+	));
 
 /**
  * Rivers and Buckets
