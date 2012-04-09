@@ -184,6 +184,16 @@ class Model_River extends ORM {
 	}
 	
 	/**
+	 * Gets the base URL of this river
+	 *
+	 * @return string
+	 */
+	public function get_base_url()
+	{
+		return URL::site().$this->account->account_path.'/river/'.$this->river_name_url;
+	}
+
+	/**
 	 * Gets the list of the channel filters for the current river and returns the
 	 * result as an array
 	 *

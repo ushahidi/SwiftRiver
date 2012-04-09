@@ -83,16 +83,8 @@ class Controller_River extends Controller_Swiftriver {
 			}
 			
 			// Set the base url for this specific river
-			$this->river_base_url = $this->_get_base_url($this->river);
+			$this->river_base_url = $this->river->get_base_url();
 		}
-	}
-	
-	/**
-	 * @return	string
-	 */
-	protected function _get_base_url($river)
-	{
-		return URL::site().$river->account->account_path.'/river/'.$river->river_name_url;
 	}
 
 	/**
