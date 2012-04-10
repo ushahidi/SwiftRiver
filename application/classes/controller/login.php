@@ -13,22 +13,24 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Controller_Login extends Controller_Template {
-	
-	/**
-	 * @var	 bool auto render
-	 */
-	public $auto_render = TRUE;
-	
-	/**
-	 * @var	 string	 page template
-	 */
-	public $template = 'pages/login';
+class Controller_Login extends Controller_Swiftriver {
 	
 	/**
 	 * Are we using RiverID?
 	 */
-	 public $riverid_auth = FALSE;	
+	 public $riverid_auth = FALSE;
+
+	 /**
+	  * Error messages
+	  * @var array
+	  */
+	 private $errors;
+
+	 /**
+	  * Notification messages when an action is successful
+	  * @var array
+	  */
+	 private $messages;
 	
 	/**
 	 * The before() method is called before main controller action.
@@ -40,6 +42,8 @@ class Controller_Login extends Controller_Template {
 	 */
 	public function before()
 	{
+		// $this->auth_required = array('login');
+
 		// Execute parent::before first
 		parent::before();
 		
@@ -47,6 +51,10 @@ class Controller_Login extends Controller_Template {
 		{
 			$this->riverid_auth = TRUE;
 		}
+
+		$this->template->content = View::factory('pages/login')
+		    ->bind('errors', $this->errors)
+		    ->bind('messages', $this->messages);
 	}
 	
 	/**
@@ -57,40 +65,17 @@ class Controller_Login extends Controller_Template {
 	public function action_index()
 	{
 		// For template to hide/show registration fields
-		$this->template->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
-		$this->template->referrer = $this->request->query('redirect_to') 
+		$this->template->content->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
+		$this->template->content->referrer = $this->request->query('redirect_to') 
 		    ? $this->request->query('redirect_to') 
 		    : NULL;
 		
-		// Auto login is available
-		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
-		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');
-		if( ! Auth::instance()->logged_in() AND $supports_auto_login)
-		{
-			Auth::instance()->auto_login();
-		}
-		
-		
-		// If user already signed-in
-		if (Auth::instance()->logged_in() != 0)
-		{
-			$user = Auth::instance()->get_user();
-			if ($user->username == 'public')
-			{
-				Auth::instance()->logout();
-			}
-			else
-			{
-				$this->request->redirect(URL::site().$user->account->account_path);
-			}
-		}
-				
 		//Check for system messages
 		$session = Session::instance();
 		$messages = $session->get_once('system_messages');
 		if ($messages)
 		{
-			$this->template->set('messages', $messages);        
+			$this->$messages =  $messages;
 		}
 		
 		
@@ -102,11 +87,11 @@ class Controller_Login extends Controller_Template {
 			// Display the messages
 			if (isset($messages['errors']))
 			{
-				$this->template->set('errors', $messages['errors']);
+				$this->$errors = $messages['errors'];
 			}
 			if (isset($messages['messages']))
 			{
-				$this->template->set('messages', $messages['messages']);
+				$this->$messages = $messages['messages'];
 			}					
 		}
 		
@@ -118,8 +103,7 @@ class Controller_Login extends Controller_Template {
 			
 			if ( ! Valid::email($email))
 			{
-				$this->template->set('errors', 
-					array(__('The email address provided is invalid')));		        
+				$this->$errors =  array(__('The email address provided is invalid'));
 			}
 			else 
 			{
@@ -129,8 +113,7 @@ class Controller_Login extends Controller_Template {
 
 				if ( ! $user->loaded())
 				{
-					$this->template->set('errors', 
-						array(__('The email address provided not registered')));		        
+					$this->$errors = array(__('The email address provided not registered'));
 				} 
 				else
 				{
@@ -180,7 +163,8 @@ class Controller_Login extends Controller_Template {
 				}
 				else
 				{
-					$this->template->set('username', $username);
+					$this->template->content->set('username', $username);
+					
 					// Get errors for display in view
 					$validation = Validation::factory($this->request->post())
 						->rule('username', 'not_empty')
@@ -189,7 +173,7 @@ class Controller_Login extends Controller_Template {
 					{
 						$validation->error('password', 'invalid');
 					}
-					$this->template->set('errors', $validation->errors('login'));
+					$this->$errors =  $validation->errors('login');
 				}
 			}
 			else
@@ -201,31 +185,7 @@ class Controller_Login extends Controller_Template {
 		}
 	}
 	
-	public function action_register_ajax()
-	{
-		$this->auto_render = FALSE;
-		
-		if ($this->request->post('new_email'))
-		{
-			$messages = $this->_new_user($this->request->post('new_email'), 
-				(bool) $this->request->post('invite'));
-			$ret = array();
-			
-			if (isset($messages['errors']))
-			{
-				$ret['status'] = 'ERROR';
-				$ret['errors'] = $messages['errors'];
-			}
-			if (isset($messages['messages']))
-			{
-				$ret['status'] = 'OK';
-				$ret['messages'] = $messages['messages'];
-			}
-			
-			echo json_encode($ret);
-		}
-	}
-	
+
 	private function _new_user($email, $invite = FALSE)
 	{
 		$messages = array();

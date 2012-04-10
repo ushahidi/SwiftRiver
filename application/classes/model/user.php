@@ -25,7 +25,7 @@ class Model_User extends Model_Auth_User
 	 */
 	protected $_has_many = array(
 		// auth
-		'roles' => array('through' => 'roles_users'),
+		'roles' => array('through' => 'roles_users', 'model' => 'role', 'far_key' => 'role_id'),
 		'user_tokens' => array(),
 		'buckets' => array(),
 		'user_actions' => array(),
@@ -305,9 +305,7 @@ class Model_User extends Model_Auth_User
 		    ->where('a.user_id', '=', $this->id)
 		    ->group_by('r.id');
 		
-		$result = $query_rivers->execute()->as_array();
-		$this->_sanitize_bool_strings($result);
-		return $result;
+		return $query_rivers->execute()->as_array();
 	}
 
 
@@ -373,23 +371,7 @@ class Model_User extends Model_Auth_User
 		    ->where('b.user_id', '=', $this->id)
 		    ->group_by('b.id');
 
-		$result = $query_buckets->execute()->as_array();
-		$this->_sanitize_bool_strings($result);
-		return $result;
-	}
-
-	/**
-	 * Coverts boolean strings to actual boolean values
-	 */
-	private function _sanitize_bool_strings(& $result)
-	{
-		foreach ($result as & $k)
-		{
-			$subscribed = $k["subscribed"];
-			$is_owner = $k["is_owner"];
-			$k["subscribed"] = ($subscribed == "FALSE") ? FALSE : TRUE;
-			$k["is_owner"] = ($is_owner == "FALSE") ? FALSE : TRUE;
-		}
+		return $query_buckets->execute()->as_array();
 	}
 	
 	/**

@@ -292,9 +292,20 @@ class Controller_User extends Controller_Swiftriver {
 		foreach ($rivers as & $river)
 		{
 			$river_url = URL::site().$river['river_url'];
+
+			$is_owner = is_string($river['is_owner']) 
+			    ? (($river['is_owner'] == 'FALSE') ? FALSE : TRUE)
+			    : $river['is_owner'];
+
+			$subscribed = is_string($river['subscribed']) 
+			    ? (($river['subscribed'] == 'FALSE') ? FALSE: TRUE)
+			    : $river['subscribed'];
+
 			if ( ! $standardize)
 			{
 				$river['river_url'] = $river_url;
+				$river['is_owner'] = $is_owner;
+				$river['subscribed'] = $subscribed;
 			}
 			else
 			{
@@ -303,8 +314,8 @@ class Controller_User extends Controller_Swiftriver {
 					'type' => $river['type'],
 					'item_name' => $river['river_name'],
 					'item_url' => $river_url,
-					'subscribed' => $river['subscribed'],
-					'is_owner' => $river['is_owner'],
+					'subscribed' => $subscribed,
+					'is_owner' => $is_owner,
 					'subscriber_count' => $river['subscriber_count']
 				);
 			}
@@ -332,9 +343,19 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			
 			$bucket_url = URL::site().$bucket['bucket_url'];
+			$is_owner = is_string($bucket['is_owner']) 
+			    ? (($bucket['is_owner'] == 'FALSE') ? FALSE : TRUE)
+			    : $bucket['is_owner'];
+
+			$subscribed = is_string($bucket['subscribed']) 
+			    ? (($bucket['subscribed'] == 'FALSE') ? FALSE: TRUE)
+			    : $bucket['subscribed'];
+			    
 			if ( ! $standardize)
 			{
 				$bucket['bucket_url'] = $bucket_url;
+				$bucket['subscribed'] = $subscribed;
+				$bucket['is_owner'] = $is_owner;
 			}
 			else
 			{
@@ -343,8 +364,8 @@ class Controller_User extends Controller_Swiftriver {
 					'type' => $bucket['type'],
 					'item_name' => $bucket['bucket_name'],
 					'item_url' => $bucket_url,
-					'subscribed' => $bucket['subscribed'],
-					'is_owner' => $bucket['is_owner'],
+					'subscribed' => $subscribed,
+					'is_owner' => $is_owner,
 					'subscriber_count' => $bucket['subscriber_count']
 				);
 			}

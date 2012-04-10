@@ -5,6 +5,7 @@
 <div id="drops-view" class="center cf">
 	<?php echo $nothing_to_display ?>
 </div>
+
 <div class="cf"></div>
 <div class="meow page_buttons cf" id="next_page_button">
     <p class="button-view"></p>

@@ -440,14 +440,11 @@ $(function() {
 		},
 				
 		initialize: function(options) {
-			var el = null;
-			if (options.layout == "list") {
-				el = this.make("article", {"class": "river list"})
-			} else {
-				el = this.make("article", {"class": "river drops cf"})
-			}
+			var el = (options.layout == "list")
+			    ? this.make("article", {"class": "river list"})
+			    : this.make("article", {"class": "river drops cf"});
 			this.setElement(el);
-			
+
 			dropsList.on('add',	 this.addDrop, this);
 			dropsList.on('reset', this.addDrops, this); 
 			dropsList.on('destroy', this.checkEmpty, this);
@@ -501,12 +498,11 @@ $(function() {
 		},
 		
 		addDrops: function() {
-			dropsList.each(this.addDrop, this);
-			if (dropsList.length) {
+			if (!this.checkEmpty()) {
 				this.hideNoContentEl();
+				dropsList.each(this.addDrop, this);
+				this.isInitialized = true;
 			}
-			this.checkEmpty();			
-			this.isInitialized = true;
 		},
 		
 		hideNoContentEl: function() {
@@ -518,7 +514,9 @@ $(function() {
 			if (!dropsList.length) {
 				this.$(".no-content").show();
 				this.noContentElHidden = false;
+				return true;
 			}
+			return false;
 		},
 		
 		filterDroplets: function(filters) {
