@@ -9,7 +9,9 @@
 	<nav class="page-navigation cf">
 		<ul class="center">
 			<li class="active"><a href="/login"><?php echo __("Log in"); ?></a></li>
+			<?php if ($public_registration_enabled): ?>
 			<li><a href="#"><?php echo __("Create an account"); ?></a></li>
+			<?php endif; ?>
 		</ul>
 	</nav>
 
@@ -20,7 +22,7 @@
 			<?php if (isset($errors)): ?>
 				<?php foreach ($errors as $message): ?>
 					<div class="alert-message red">
-						<p><strong>Uh oh.</strong> <?php echo $message; ?></p>
+						<p><?php echo $message; ?></p>
 					</div>
 				<?php endforeach; ?>
 			<?php endif; ?>

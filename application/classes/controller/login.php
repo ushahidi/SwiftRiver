@@ -16,23 +16,6 @@
 class Controller_Login extends Controller_Swiftriver {
 	
 	/**
-	 * Are we using RiverID?
-	 */
-	 public $riverid_auth = FALSE;
-
-	 /**
-	  * Error messages
-	  * @var array
-	  */
-	 private $errors;
-
-	 /**
-	  * Notification messages when an action is successful
-	  * @var array
-	  */
-	 private $messages;
-	
-	/**
 	 * The before() method is called before main controller action.
 	 * In our template controller we override this method so that we can
 	 * set up default values. These variables are then available to our
@@ -42,8 +25,6 @@ class Controller_Login extends Controller_Swiftriver {
 	 */
 	public function before()
 	{
-		// $this->auth_required = array('login');
-
 		// Execute parent::before first
 		parent::before();
 		
@@ -52,9 +33,7 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->riverid_auth = TRUE;
 		}
 
-		$this->template->content = View::factory('pages/login')
-		    ->bind('errors', $this->errors)
-		    ->bind('messages', $this->messages);
+		$this->template->content = View::factory('pages/login');
 	}
 	
 	/**
@@ -64,6 +43,11 @@ class Controller_Login extends Controller_Swiftriver {
 	 */	
 	public function action_index()
 	{
+		if ($this->user)
+		{
+			$this->request->redirect($this->dashboard_url);
+		}
+
 		// For template to hide/show registration fields
 		$this->template->content->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
 		$this->template->content->referrer = $this->request->query('redirect_to') 
@@ -87,11 +71,11 @@ class Controller_Login extends Controller_Swiftriver {
 			// Display the messages
 			if (isset($messages['errors']))
 			{
-				$this->$errors = $messages['errors'];
+				$this->template->content->set('errors', $messages['errors']);
 			}
 			if (isset($messages['messages']))
 			{
-				$this->$messages = $messages['messages'];
+				$this->template->content->set('messages', $messages['messages']);
 			}					
 		}
 		
@@ -100,10 +84,11 @@ class Controller_Login extends Controller_Swiftriver {
 		if ($this->request->post('recover_email'))
 		{
 			$email = $this->request->post('recover_email');
-			
-			if ( ! Valid::email($email))
+			$csrf_token = $this->request->post('form_auth_id');
+			if ( ! Valid::email($email) OR ! CSRF::valid($csrf_token))
 			{
-				$this->$errors =  array(__('The email address provided is invalid'));
+				$this->template->content->set('errors', 
+					array(__('The email address you have provided is invalid')));
 			}
 			else 
 			{
@@ -113,7 +98,8 @@ class Controller_Login extends Controller_Swiftriver {
 
 				if ( ! $user->loaded())
 				{
-					$this->$errors = array(__('The email address provided not registered'));
+					$this->template->content->set('errors', 
+						array(__('The provided email address is not registered')));
 				} 
 				else
 				{
@@ -164,7 +150,7 @@ class Controller_Login extends Controller_Swiftriver {
 				else
 				{
 					$this->template->content->set('username', $username);
-					
+
 					// Get errors for display in view
 					$validation = Validation::factory($this->request->post())
 						->rule('username', 'not_empty')
@@ -173,7 +159,7 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$validation->error('password', 'invalid');
 					}
-					$this->$errors =  $validation->errors('login');
+					$this->template->content->set('errors', $validation->errors('login'));
 				}
 			}
 			else
@@ -240,7 +226,7 @@ class Controller_Login extends Controller_Swiftriver {
 		else
 		{
 			$mail_body = NULL;
-			if ( $invite )
+			if ($invite)
 			{
 				$mail_body = View::factory('emails/invite')
 							 ->bind('secret_url', $secret_url);
@@ -291,7 +277,7 @@ class Controller_Login extends Controller_Swiftriver {
 				//Send an email with a secret token URL
 				$mail_body = NULL;
 				$mail_subject = NULL;
-				if ( $invite )
+				if ($invite)
 				{
 					$mail_body = View::factory('emails/invite')
 								 ->bind('secret_url', $secret_url);
@@ -334,11 +320,11 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ($response['status']) 
 		{
-			$this->template->set('messages', array(__('An email has been sent with instructions to complete the password reset process.')));
+			$this->messages = array(__('An email has been sent with instructions to complete the password reset process.'));
 		} 
 		else 
 		{
-			$this->template->set('error', array($response['error']));
+			$this->$errors = array($response['error']);
 		}
 	}
 
@@ -358,98 +344,15 @@ class Controller_Login extends Controller_Swiftriver {
 			Swiftriver_Mail::send($email, __('Password Reset'), $mail_body);
 			
 			
-			$this->template->set('messages', array(__('An email has been sent with instructions to complete the password reset process.')));
+			$this->messages = array(
+				__('An email has been sent with instructions to complete the password reset process.'));
 		}
 		else
 		{
-			$this->template->set('messages', array(__('error')));
+			$this->$messages = array(__('error'));
 		}
 	}
 
-	/**
-	 * Reset password
-	 * 
-	 * @return void
-	 */	
-	public function action_reset()
-	{
-		$this->auto_render = FALSE;	    
-		$template = View::factory('pages/reset')
-						  ->bind('errors', $errors);
-
-		$user_id = intval($this->request->param('id', 0));
-		$email = $this->request->param('email');
-		$token = $this->request->param('token');
-
-		$user = ORM::factory('user', $user_id);
-		if ($user->loaded())
-		{
-			// If we have userid only, get email from the user object
-			$email = $user->email;
-		}	        
-		
-		
-		// If the form has been filled in and submitted
-		if ($email AND $this->request->post('password_confirm') AND $this->request->post('password'))
-		{
-			// Validate the passwords
-			$post = Model_Auth_User::get_password_validation($this->request->post());
-			if ( ! $post->check())
-			{
-				$errors = $post->errors('user');
-			}
-			else
-			{
-				// Do a RiverID password reset
-				if ($this->riverid_auth)
-				{
-					$riverid_api = RiverID_API::instance();
-					$resp = $riverid_api->set_password($email, $token, $this->request->post('password'));
-					 
-					if ( ! $resp['status']) 
-					{
-						$errors = array($resp['error']);
-					}
-					else
-					{
-						$session = Session::instance();
-						$session->set('system_messages', array(__('Password reset was successful. Proceed to Log in')));
-						$this->request->redirect('login');
-						return;
-					}
-				}
-				else
-				{
-					// Do an ORM password reset
-					if (Model_Auth_Token::is_valid_token($email, $token, 'password_reset') OR
-						Model_Auth_Token::is_valid_token($email, $token, 'new_registration'))
-					{
-						if ( ! $user->loaded() ) {
-							// New user registration
-							$user->username = $user->email = $email;
-							$user->save();
-							
-							// Allow the user be able to login immediately
-							$login_role = ORM::factory('role',array('name'=>'login'));
-							$user->add('roles', $login_role);
-						}                   
-						$user->password = $this->request->post('password');
-						$user->save();
-						Session::instance()->set('system_messages', array(__('Password reset was successful. Proceed to Log in')));
-						$this->request->redirect('login');
-						return;	                    
-					}
-					else
-					{
-						$errors = array(__('Error'));
-					}
-				}
-			}
-		}
-
-		echo $template;
-	}	
-	
 	
 	/**
 	 * Change email address
@@ -487,7 +390,7 @@ class Controller_Login extends Controller_Swiftriver {
 				}
 			}
 
-			if(empty($errors))
+			if (empty($errors))
 			{
 				// Email change was validated, make the change to the user object
 				$user->email = $user->username = $new_email;

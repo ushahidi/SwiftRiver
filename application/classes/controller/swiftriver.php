@@ -95,6 +95,12 @@ class Controller_Swiftriver extends Controller_Template {
 	 * @var string
 	 */
 	protected $nav_header_url;
+
+	/**
+	 * Name of the current controller
+	 * @var string
+	 */
+	protected $controller_name;
 	
 	
 	/**
@@ -115,8 +121,11 @@ class Controller_Swiftriver extends Controller_Template {
 				return;
 			}
 		}
+
 		$uri = $this->request->url(TRUE);
-		$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+		$query = ($this->controller_name == 'swiftriver') 
+		    ? '' 
+		    : URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
 
 		Request::current()->redirect('login'.$query);
 	}
@@ -152,6 +161,9 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Execute parent::before first
 		parent::before();
+
+		// Set the name of the controller
+		$this->controller_name = $this->request->controller();
 
 		if ( ! $this->cache)
 		{
@@ -205,8 +217,15 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		if( ! Auth::instance()->logged_in() AND $supports_auto_login)
 		{
+			// Controller exempt from auth check
+			$exempt_controllers = Kohana::$config->load('auth.ignore_controllers');
+
 			Auth::instance()->auto_login();
-			if ( ! Auth::instance()->get_user() AND $this->auth_required)
+			if 
+			( 
+				! Auth::instance()->get_user() AND 
+				! in_array($this->controller_name, $exempt_controllers)
+			)
 			{
 				$this->login_required();
 			}
