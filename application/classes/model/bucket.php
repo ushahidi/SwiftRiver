@@ -116,6 +116,16 @@ class Model_Bucket extends ORM {
 
 		parent::delete();
 	}
+
+	/**
+	 * Gets the base URL of this bucket
+	 *
+	 * @return string
+	 */
+	public function get_base_url()
+	{
+		return URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url;
+	}	
 	
 	/**
 	 * Get the droplets for the specified bucket

@@ -67,16 +67,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			}
 			
 			// Set the base url for this specific bucket
-			$this->bucket_base_url = $this->_get_base_url($this->bucket);
+			$this->bucket_base_url = $this->bucket->get_base_url();
 		}
-	}
-	
-	/**
-	 * @return	string
-	 */
-	protected function _get_base_url($bucket)
-	{
-		return URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url;
 	}
 
 	public function action_index()
