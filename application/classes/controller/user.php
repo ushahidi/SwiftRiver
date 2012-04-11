@@ -787,4 +787,47 @@ class Controller_User extends Controller_Swiftriver {
 		echo $modal_create;
 	}
 
+	/**
+	 * REST endpoint for sharing droplets via email
+	 */
+	public function action_share()
+	{
+		$this->template = '';
+		$this->auto_render = FALSE;
+
+		if ($_POST)
+		{
+			// Extract the input data
+			$post = Arr::extract($_POST, array('form_auth_id', 'recipient', 
+				'subject', 'body'));
+
+			// Setup validation
+			$validation = Validation::factory($post)
+			    ->rule('recipient', 'not_empty')
+			    ->rule('recipient', 'email')
+			    ->rule('subject', 'not_empty')
+			    ->rule('body', 'not_empty');
+
+			// Validate
+			if ( ! $validation->check())
+			{
+				$this->response->status(400);
+			}
+			else
+			{
+				// Modify the mail body to include the email address of the
+				// use sharing content
+				$mail_body = __(':sender has shared an item with you."\r\n":body',
+					array(':sender' => $this->user->username, ':body' => $post['body']));
+
+				// Send the email
+				Swiftriver_Mail::send($post['recipient'], $post['subject'], $mail_body);
+			}
+		}
+		else
+		{
+			throw new HTTP_Exception_405("Only HTTP POST requests are allowed");
+		}
+	}
+
 }

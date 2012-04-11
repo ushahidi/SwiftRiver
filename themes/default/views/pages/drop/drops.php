@@ -303,6 +303,7 @@
 </script>
 
 <script type="text/template" id="share-drop-template">
+<article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Share this drop"); ?></h1>
@@ -317,9 +318,16 @@
 		</div>
 	</hgroup>
 	<div class="modal-body link-list">
+		<% var shareURL = encodeURIComponent("<?php echo $base_sharing_url; ?>" + '/drop/' + id); %>
 		<ul>
-			<li class="twitter"><a href="#"><span class="icon"></span><?php echo __("Twitter"); ?></a></li>
-			<li class="facebook"><a href="#"><span class="icon"></span><?php echo __("Facebook"); ?></a></li>
+			<li class="twitter">
+				<a href="https://twitter.com/share?url=<%= shareURL %>&text=<%= encodeURIComponent(droplet_title) %>" target="_blank">
+					<span class="icon"></span><?php echo __("Twitter"); ?>
+				</a>
+			</li>
+			<li class="facebook">
+				<a href="#"><span class="icon"></span><?php echo __("Facebook"); ?><a/>
+			</li>
 			<li class="email"><a href="#"><span class="icon"></span><?php echo __("Email"); ?></a></li>
 		</ul>
 	</div>
@@ -327,9 +335,93 @@
 		<a class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
 		<div class="drop-content">
 			<p><strong><%= identity_name %>:</strong> <%= droplet_title %></p>
-			<p class="drop-source-channel rss"><a href="#"><span class="icon"></span>via <%= channel %></a></p>
+			<p class="drop-source-channel rss">
+				<a href="#"><span class="icon"></span>via <%= channel %></a>
+			</p>
 		</div>
 	</section>
+</article>
 </script>
 
+<script type="text/template" id="email-dialog-template">
+<article class="modal">
+	<hgroup class="page-title cf">
+		<div class="page-h1 col_9">
+			<h1><?php echo __("Share via Email"); ?></h1>
+		</div>
+		<div class="page-actions col_3">
+			<h2 class="close">
+				<a href="#">
+					<span class="icon"></span>
+					<?php echo __("Close"); ?>
+				</a>
+			</h2>
+		</div>
+	</hgroup>
+
+	<div class="modal-body">
+		<!-- notifications -->
+		<div class="alert-message red" id="error" style="display: none;">
+			<p>
+				<strong><?php echo __("Email sharing error"); ?></strong>
+				<?php echo __("Please provide all the information in the form below"); ?>
+			</p>
+		</div>
+		<div class="alert-message blue" id="success" style="display: none;">
+			<p>
+				<?php echo __("The drop has been successfully shared via email!"); ?>
+			</p>
+		</div>
+		<!-- /notitications -->
+
+		<?php echo Form::open(); ?>
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<label>
+						<p class="field"><?php echo __("From:"); ?></p>
+						<?php echo Form::input('sender', $user->username, array('readonly')); ?>
+					</label>
+				</div>
+			</section>
+		</article>
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<label>
+						<p class="field"><?php echo __("To:"); ?></p>
+						<?php echo Form::input('recipient', ''); ?>
+					</label>
+				</div>
+			</section>
+		</article>
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<label>
+						<p class="field"><?php echo __("Subject:"); ?></p>
+						<input type="text" name="subject" value="<%= droplet_title %>" />
+					</label>
+				</div>
+			</section>
+		</article>
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<% var dropletURL = "<?php echo $base_sharing_url; ?>" + '/drop/' + id; %>
+					<label>
+						<p class="field"><?php echo __("Message:"); ?></p>
+						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= dropletURL %></textarea>
+					</label>
+				</div>
+			</section>
+		</article>
+		<p class="button-blue" id="send_sharing_email">
+			<a href="#"><?php echo __("Send"); ?></a>
+		</p>
+		<?php echo Form::close(); ?>
+	</div>
+</article>
+
+</script>
 <?php echo $droplet_js; ?>

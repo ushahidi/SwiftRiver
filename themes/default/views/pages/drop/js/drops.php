@@ -872,10 +872,71 @@ $(function() {
 
 		template: _.template($("#share-drop-template").html()),
 
+		events: {
+			"click li.email > a": "showEmailDialog"
+		},
+
+		showEmailDialog: function() {
+			var emailView = new EmailDropView({model: this.model});
+			modalShow(emailView.render().el);
+			return false;
+		},
+
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
 		}
+	});
+
+	var EmailDropView = Backbone.View.extend({
+		tagName: "article",
+
+		className: "modal",
+
+		template: _.template($("#email-dialog-template").html()),
+
+		events: {
+			"click #send_sharing_email > a": "sendEmail"
+		},
+
+		sendEmail: function() {
+			var data = {};
+			$(":input", this.$("form")).each(function(field){
+				data[$(this).attr("name")] = $(this).val();
+			});
+			var context = this;
+
+			// Submit for sharing
+			$.ajax({
+				url: "<?php echo URL::site().$user->account->account_path.'/share'; ?>",
+				
+				type: "POST",
+				
+				data: data,
+
+				success: function(response) {
+					// Show success message
+					context.$("#success").show();
+
+					// Close the dialog
+					setTimeout(function(){context.$("h2.close a").trigger("click");}, 1500);
+				},
+
+				error: function() {
+					// Show error message
+					context.$("#error").show();
+				},
+
+				dataType: "json"
+			});
+			return false;
+		},
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		}
+
 	});
 	
 	
