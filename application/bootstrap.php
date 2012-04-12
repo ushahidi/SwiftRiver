@@ -253,42 +253,21 @@ Route::set('register', 'register')
 /**
  * Account Route
  */
-Route::set('account_rivers', '<account>/rivers')
+Route::set('account_pages', '<account>/<action>',
+    array(
+    	'action' => '(rivers|buckets|create|settings|share|followers|following)'
+    ))
 	->defaults(array(
 		'controller' => 'user',
-		'action'     => 'rivers'
+		'action'     => 'index'
 	));
 
-Route::set('account_buckets', '<account>/buckets')
-	->defaults(array(
-		'controller' => 'user',
-		'action'     => 'buckets'
-	));
 
 Route::set('account_bucket_new', '<account>/bucket/new')
 	->defaults(array(
 		'controller' => 'bucket',
 		'action'     => 'new'
 	));
-
-Route::set('account_settings', '<account>/settings')
-	->defaults(array(
-		'controller' => 'user',
-		'action'     => 'settings'
-	));	
-
-Route::set('account_create_new', '<account>/create')
-    ->defaults(array(
-    	'controller' => 'user',
-    	'action' => 'create'
-    ));
-
-// Route for sharing a droplet
-Route::set('account_drop_share', '<account>/share')
-    ->defaults(array(
-    	'controller' => 'user',
-    	'action' => 'share'
-    ));
 
 /**
  * Trends

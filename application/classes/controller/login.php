@@ -48,11 +48,16 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->request->redirect($this->dashboard_url);
 		}
 
-		// For template to hide/show registration fields
-		$this->template->content->public_registration_enabled = (bool) Model_Setting::get_setting('public_registration_enabled');
-		$this->template->content->referrer = $this->request->query('redirect_to') 
+		// Get the referriing URL
+		$referrer = $this->request->query('redirect_to') 
 		    ? $this->request->query('redirect_to') 
 		    : NULL;
+
+		// For template to hide/show registration fields
+		$this->template->content->set(array(
+			'public_registration_enabled' => (bool) Model_Setting::get_setting('public_registration_enabled'),
+			'referrer' => $referrer
+		));
 		
 		//Check for system messages
 		$session = Session::instance();
@@ -292,7 +297,7 @@ class Controller_Login extends Controller_Swiftriver {
 				}
 				
 				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
-				Swiftriver_Mail::send($email, $mail_subject, $mail_body);
+				Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
 
 
 				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
