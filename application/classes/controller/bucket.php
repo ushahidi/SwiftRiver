@@ -68,26 +68,29 @@ class Controller_Bucket extends Controller_Swiftriver {
 			
 			// Set the base url for this specific bucket
 			$this->bucket_base_url = $this->bucket->get_base_url();
+
+			// Bucket Page Title
+			$this->page_title = "";
+			if ($this->bucket->account->user->id == $this->user->id)
+			{
+				$this->page_title = $this->bucket->bucket_name;
+			}
+			else
+			{
+				$this->page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
+			}
 		}
 	}
 
 	public function action_index()
 	{
-		$page_title = "";
-		if ($this->bucket->account->user->id == $this->user->id)
-		{
-			$page_title = $this->bucket->bucket_name;
-		}
-		else
-		{
-			$page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
-		}
-		$this->template->header->title = $page_title;
+		$this->template->header->title = $this->page_title;
 		
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
-			->bind('page_title', $page_title)
+			->bind('discussion_url', $discussion_url)
+			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner);
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 			
@@ -136,8 +139,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->where('account_id', '=', $this->account->id)
 			->find_all();
 
-		// Links to ajax rendered menus
+		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
+		$discussion_url = $this->bucket_base_url.'/discussion';
 	}
 	
 	/**
@@ -389,19 +393,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 			break;
 		}
 	}
-	
-	/**
-	 * Ajax rendered discussion control box
-	 * 
-	 * @return	void
-	 */
-	public function action_discussion()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		echo View::factory('pages/bucket/discussion_control');
-	}
-	
 
 	/**
 	 * Bucket collaborators restful api

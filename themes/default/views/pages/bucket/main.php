@@ -7,9 +7,7 @@
 				<h2>Collaborators on this bucket</h2>
 				<ul>
 					<?php foreach ($collaborators as $collaborator): ?>
-						<?php if ($collaborator['collaborator_active'] == 1): ?>
-							<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
-						<?php endif; ?>
+						<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
 					<?php endforeach;?>
 				</ul>
 			</div>
@@ -24,7 +22,7 @@
 				</a>
 			</h2>
 			<h2 class="discussion">
-				<a href="/markup/bucket/discussion.php">
+				<a href="<?php echo $discussion_url; ?>">
 					<span class="icon"></span>
 					Discussion
 				</a>

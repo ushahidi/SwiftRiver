@@ -309,6 +309,18 @@ Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<con
 	));
 
 /**
+ * River and bucket discussions
+ */
+Route::set('river_bucket_discussion', '<account>/<directory>/<name>/discussion(/<action>(/<id>))',
+	array(
+		'directory' => '(river|bucket)',
+	))
+	->defaults(array(
+		'controller' => 'discussion',
+		'action'     => 'index'
+	));	
+
+/**
  * River and bucket create
  */
 Route::set('river_bucket_create', '<account>/<directory>/create(/<action>(/<id>))',

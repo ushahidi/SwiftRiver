@@ -629,6 +629,7 @@ class Model_River extends ORM {
 			$collaborators[] = array('id' => $collaborator->user->id, 
 			                         'name' => $collaborator->user->name,
 			                         'account_path' => $collaborator->user->account->account_path,
+			                         'collaborator_active' => $collaborator->collaborator_active,
 			                         'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}

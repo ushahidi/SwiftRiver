@@ -304,20 +304,45 @@ class Model_Bucket extends ORM {
 	 *
 	 * @return array
 	 */	
-	public function get_collaborators()
+	public function get_collaborators($active_only = FALSE)
 	{
 		$collaborators = array();		
 		foreach ($this->bucket_collaborators->find_all() as $collaborator)
 		{
+			if ($active_only AND ! (bool) $collaborator->collaborator_active)
+				continue;
+			
 			$collaborators[] = array('id' => $collaborator->user->id, 
 			                         'name' => $collaborator->user->name,
 			                         'account_path' => $collaborator->user->account->account_path,
+			                         'collaborator_active' => $collaborator->collaborator_active,
 			                         'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}
 		
 		return $collaborators;
 	}
+
+	/**
+	 * Gets a buckets's discussion
+	 *
+	 * @return array
+	 */	
+	public function get_comments()
+	{
+		$comments = array();		
+		foreach ($this->comments->find_all() as $comment)
+		{
+			$comments[] = array('id' => $comment->id, 
+				'name' => $comment->user->name,
+				'comment_content' => $comment->comment_content,
+				'date' => $comment->comment_date_add,
+				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40)
+			);
+		}
+		
+		return $comments;
+	}	
 	
 	/**
 	 * Get the max droplet id in a bucket
@@ -332,7 +357,7 @@ class Model_Bucket extends ORM {
 			->from('buckets_droplets')
 			->where('buckets_droplets.bucket_id', '=', $bucket_id);
 			
-		return $query->execute()->get('id', 0);		
+		return $query->execute()->get('id', 0);
 	}
 	
 	/*
