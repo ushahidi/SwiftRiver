@@ -5,12 +5,16 @@
 				<img src="<?php echo Swiftriver_Users::gravatar($account->user->email, 131); ?>" class="avatar"/>
 			</a>
 			<h1><?php echo $account->user->name; ?></h1>
-			<h2 class="label"><?php echo $account->user->username; ?></h2>
+			<h2 class="label"><?php echo $account->account_path; ?></h2>
 		</div>
 		<div id="follow_section" class="follow-summary col_3">
 			<p class="follow-count">
-				<a href="#"><strong><?php echo count($followers); ?></strong> <?php echo __("followers"); ?></a>, 
-				<a href="#"><strong><?php echo count($following); ?></strong> <?php echo __("following"); ?></a>
+				<a id="follower_count" href="<?php echo URL::site().$account->account_path.'/followers'; ?>">
+					<strong><?php echo count($followers); ?></strong> <?php echo __("followers"); ?>
+				</a>, 
+				<a id="following_count" href="<?php echo URL::site().$account->account_path.'/following'; ?>">
+					<strong><?php echo count($following); ?></strong> <?php echo __("following"); ?>
+				</a>
 			</p>
 		</div>
 	</div>
@@ -20,10 +24,14 @@
 <nav class="page-navigation cf">
 	<ul class="center">
 		<li <?php if ($active == 'main') echo 'class="active"'; ?>>
-			<a href="<?php echo URL::site().$account->account_path; ?>"><?php echo __("Dashboard"); ?></a>
+			<a href="<?php echo URL::site().$account->account_path; ?>">
+				<?php echo __("Dashboard"); ?>
+			</a>
 		</li>
 		<li <?php if ($active == 'settings') echo 'class="active"'; ?>>
-			<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>"><?php echo __("Account Settings"); ?></a>
+			<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
+				<?php echo __("Account Settings"); ?>
+			</a>
 		</li>
 
 	</ul>
@@ -40,16 +48,16 @@
 <?php if ( ! $owner AND ! $anonymous): ?>
 	<?php $full_name = $account->user->name; ?>
 	<script type="text/template" id="user-item-template">
-		<% if (subscribed) { %>
+		<% if (following) { %>
 			<p class="button-white follow has-icon selected">
-				<a href="#" title="<?php echo __("Unfollow ".$full_name); ?>">
+				<a href="#" title="<?php echo __("no longer following ".$full_name); ?>">
 					<span class="icon"></span>
-					<?php echo __("Follow"); ?>
+					<?php echo __("Following"); ?>
 				</a>
 			</p>
 		<% } else { %>
 			<p class="button-white follow has-icon">
-				<a href="#" title="<?php echo __("Follow ".$full_name); ?>">
+				<a href="#" title="<?php echo __("now following ".$full_name); ?>">
 					<span class="icon"></span>
 					<?php echo __("Follow"); ?>
 				</a>
@@ -64,10 +72,18 @@
 			
 			toggleFollow: function(target) {
 				this.save(
-					{subscribed: this.get("subscribed") ? 0 : 1}, 
+					{following: this.get("following") ? 0 : 1}, 
 					{
 						wait: true, 
 						success: function(model, response) {
+							var count = parseInt($("#follower_count > strong").html());
+							if (model.get("following") == 0) {
+								count -= 1;
+								$("#follower_count > strong").html(count);
+							} else {
+								count += 1;
+								$("#follower_count > strong").html(count);
+							}
 							$(target).remove();
 						}
 					});

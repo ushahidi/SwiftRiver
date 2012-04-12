@@ -25,7 +25,7 @@ class Model_User extends Model_Auth_User
 	 */
 	protected $_has_many = array(
 		// auth
-		'roles' => array('through' => 'roles_users'),
+		'roles' => array('through' => 'roles_users', 'model' => 'role', 'far_key' => 'role_id'),
 		'user_tokens' => array(),
 		'buckets' => array(),
 		'user_actions' => array(),
@@ -306,9 +306,7 @@ class Model_User extends Model_Auth_User
 		    ->where('a.user_id', '=', $this->id)
 		    ->group_by('r.id');
 		
-		$result = $query_rivers->execute()->as_array();
-		$this->_sanitize_bool_strings($result);
-		return $result;
+		return $query_rivers->execute()->as_array();
 	}
 
 
@@ -374,23 +372,7 @@ class Model_User extends Model_Auth_User
 		    ->where('b.user_id', '=', $this->id)
 		    ->group_by('b.id');
 
-		$result = $query_buckets->execute()->as_array();
-		$this->_sanitize_bool_strings($result);
-		return $result;
-	}
-
-	/**
-	 * Coverts boolean strings to actual boolean values
-	 */
-	private function _sanitize_bool_strings(& $result)
-	{
-		foreach ($result as & $k)
-		{
-			$subscribed = $k["subscribed"];
-			$is_owner = $k["is_owner"];
-			$k["subscribed"] = ($subscribed == "FALSE") ? FALSE : TRUE;
-			$k["is_owner"] = ($is_owner == "FALSE") ? FALSE : TRUE;
-		}
+		return $query_buckets->execute()->as_array();
 	}
 	
 	/**
@@ -459,8 +441,48 @@ class Model_User extends Model_Auth_User
 				"account_path" => $bucket->account->account_path,
 				"subscriber_count" => $bucket->get_subscriber_count()
 				);
-			}
-			return $ret;
 		}
+
+		return $ret;
+	}
+
+	/**
+	 * Gets the list of users following the currently loaded user 
+	 * @return array
+	 */
+	public function get_followers()
+	{
+		$query = DB::select(array('uf.follower_id', 'id'), 
+			array('u.name', 'user_name'), 'u.username', 'a.account_path')
+		    ->from(array('users', 'u'))
+		    ->join(array('user_followers', 'uf'))
+		    ->on('uf.follower_id', '=', 'u.id')
+		    ->join(array('accounts', 'a'))
+		    ->on('a.user_id', '=', 'uf.follower_id')
+		    ->where('uf.user_id', '=', $this->id);
+
+		// Execute query and return results
+		return $query->execute()->as_array();
+	}
+
+	/**
+	 * Gets the list of users the currently loaded user is following
+	 * @return array
+	 */
+	public function get_following()
+	{
+		$query = DB::select(array('u.id', 'id'), 
+			array('u.name', 'user_name'), 'u.username', 'a.account_path')
+		    ->from(array('users', 'u'))
+		    ->join(array('user_followers', 'uf'))
+		    ->on('uf.user_id', '=', 'u.id')
+		    ->join(array('accounts', 'a'))
+		    ->on('a.user_id', '=', 'uf.user_id')
+		    ->where('uf.follower_id', '=', $this->id);
+
+		// Execute query and return results
+		return $query->execute()->as_array();
+
+	}
 
 }

@@ -23,4 +23,7 @@ return array(
 	'session_key'  => 'auth_user',
 	'users'        => array(),
 	'exempt'       => array('admin'), // Perform local auth instead of RiverID auth for these users.
+
+	// No authentication for these controllers
+	'ignore_controllers' => array('login')
 );

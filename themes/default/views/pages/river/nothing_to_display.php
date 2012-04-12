@@ -1,5 +1,5 @@
-<div class="sign-up-box null no-content" style="display: none;">
-		<div class="sb-panel cf">
+<div class="no-content base" style="display: none;">
+		<div class="col_9">
 			<div class="alert-message blue">
 				<p>
 					<strong><?php echo __('Nothing to display yet.') ?></strong>

@@ -19,9 +19,12 @@
 	
 	<script type="text/javascript">
 		// Globals
-		window.buckets_url = "<?php echo url::site().$user->account->account_path.'/bucket/buckets/manage'; ?>";
+		<?php if ( ! empty($user)): ?>
+		window.buckets_url = "<?php echo $nav_header_url.'/bucket/buckets/manage'; ?>";
 		window.logged_in_account = <?php echo $user->account->id; ?>;
 		window.logged_in_user = <?php echo $user->id; ?>;
+		<?php endif; ?>
+
 		window.site_url = "<?php URL::site(); ?>";
 	</script>
 	
@@ -50,19 +53,24 @@
 	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
 	
+	<?php if (isset($bucket_list)): ?>
 	<script type="text/javascript">
 		$(function() {
 			// Bootstrap the bucket list
 			bucketList.reset(<?php echo $bucket_list; ?>);
 		});
 	</script>
+	<?php endif; ?>
 	
 </head> 
  
 <body> 
 	<header class="toolbar">
 		<div class="center">
-			<h1 class="logo"><a href="<?php echo URL::site().$user->account->account_path; ?>"><span class="nodisplay">SwiftRiver</span></a></h1>
+			<h1 class="logo">
+				<a href="<?php echo $nav_header_url; ?>">
+					<span class="nodisplay">SwiftRiver</span></a>
+				</h1>
 			<?php echo $nav_header;?>
 		</div>
 	</header>
