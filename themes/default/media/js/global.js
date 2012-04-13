@@ -3,16 +3,6 @@ $(document).ready(function() {
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
 
-	// DETERMINE NEED FOR MASONRY SCRIPT
-	//if ($("#content.drops").length > 0) {
-	//	$.getScript('jquery.masonry.js');
-	//}
-    //
-	//// DETERMINE NEED FOR SCROLLING VIEWS
-	//if ($("#page-views ul").children().length > 2) {
-	//	$.getScript('jquery.touch.min.js');
-	//}
-
 	// POPOVER WINDOWS
 	function popoverHide () {
 		$(".popover-window").bind( "clickoutside", function(event){
@@ -28,22 +18,29 @@ $(document).ready(function() {
 	
 	// A common object for all window types
 	function Dialog(contents, modal) {
+		// Whether the dialog is modal or not
 		this.modal = (modal == undefined ? false : modal);
-		this.container = this.modal ? "#modal-container" : "#zoom-container";
+
+		// Overlay  holding the dialog
+		this.container = this.modal ? $("#modal-container") : $("#zoom-container");
+
+		// Contents of the dialog
 		this.contents = contents;
+
+		// The dialog box
+		this.dialogBox = $("div.modal-window", this.container);
 	}
 	
 	// Hides a window
 	Dialog.prototype.hide = function() {
 		// Do nothing if an attempt is made to close a zoom window
 		// when a modal window is open
-		if(!this.modal && $('body').hasClass('has_modal')) {			
+		if (!this.modal && $('body').hasClass('has_modal')) {			
 			return;
 		} 
 		
-		var el = $(this.container + " div.modal-window");
-		el.parent().fadeOut('slow');
-				
+		this.container.fadeOut('slow');
+
 		if (!this.modal) {			
 			$('body').removeClass("zoomed");
 		} else {			
@@ -54,7 +51,7 @@ $(document).ready(function() {
 			$('body').removeClass('noscroll');
 		}
 		
-		el.unbind();
+		this.dialogBox.unbind();
 		return this;
 	};
 	
@@ -63,7 +60,7 @@ $(document).ready(function() {
 		var context = this;
 		
 		// Close when clicked outside
-		$(this.container + " div.modal-window").bind("clickoutside", function(event){
+		this.dialogBox.bind("clickoutside", function(event){
 			context.hide();
 			return false;
 		});
@@ -83,15 +80,17 @@ $(document).ready(function() {
 	
 	// Show the window
 	Dialog.prototype.show = function() {
-		$(this.container + ' div.modal-window').html(this.contents);
-		$(this.container).fadeIn('slow');
+		this.dialogBox.html(this.contents);
+		this.container.fadeIn('slow');
 		$('body').addClass('noscroll');
 		this._registerHide(); 
+		
 		if (!this.modal) {
 			$('body').addClass('zoomed');
 		} else {
 			$('body').addClass('has_modal');
 		}
+
 		return this;
 	};
  
@@ -178,16 +177,6 @@ $(document).ready(function() {
 		$('#buoy .buoy-message').delay(1000).fadeIn('fast');
 		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
 	}
-
-	// Toggle channel selection
-	//$('form input[type=checkbox]').live('click', function() {
-	//	if ($(this).is(':checked')) {
-	//		$(this).parents('label').addClass('selected');
-	//	}
-	//	else {
-	//		$(this).parents('label').removeClass('selected');
-	//	}
-	//});
 
 	// Submit form when enter key hit in a password field
 	$('input[type=password]').keypress(function(e){
