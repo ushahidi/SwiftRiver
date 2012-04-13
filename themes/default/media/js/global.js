@@ -108,7 +108,7 @@ $(document).ready(function() {
 	$('a.modal-trigger').live('click', function() {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
-			modalShow($(data).filter(".modal"));
+			modalShow($(data).find(".modal"));
 		})
 		return false;
 	});
@@ -158,14 +158,12 @@ $(document).ready(function() {
 	});
 
 	// DISPLAY SAVE TOOLBAR
-	if ($(".save-toolbar").length > 0) {
-		$('input, textarea').keypress(function () {
-			$('.save-toolbar').addClass('visible');
-		});
-		$('select').change(function () {
-			$('.save-toolbar').addClass('visible');
-		});
-	}
+	$('input, textarea').live('keypress', function () {
+		$(this).closest("form").find('.save-toolbar').addClass('visible');
+	});
+	$('select').live('change', function () {
+		$(this).closest("form").find('.save-toolbar').addClass('visible');
+	});
 	
 
 	// ACCORDION MENU

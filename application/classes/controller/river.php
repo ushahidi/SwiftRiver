@@ -156,6 +156,8 @@ class Controller_River extends Controller_Swiftriver {
 		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
 		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
+		
+		$settings_url = $this->river_base_url.'/settings';
 	}
 	
 	/**

@@ -6,15 +6,6 @@
 		</div>
 	</hgroup>
 
-	<nav class="page-navigation cf">
-		<ul class="center">
-			<li class="active"><a href="/login"><?php echo __("Log in"); ?></a></li>
-			<?php if ($public_registration_enabled): ?>
-			<li><a href="#"><?php echo __("Create an account"); ?></a></li>
-			<?php endif; ?>
-		</ul>
-	</nav>
-
 	<div id="content" class="settings cf">
 		<div class="center">
 			<div class="modal col_9">
@@ -35,7 +26,7 @@
 				<?php endforeach; ?>
 			<?php endif; ?>
 
-			<?php echo Form::open(); ?>
+			<?php echo Form::open(URL::site('login')); ?>
 				<article class="container base">
 					<header class="cf">
 						<div class="property-title">
@@ -65,13 +56,27 @@
 				</article>
 
 				<div class="save-toolbar">
-					<?php echo Form::hidden('referrer', $referrer); ?>
 					<p class="button-blue" onclick="submitForm(this)"><a><?php echo __("Log in"); ?></a></p>
 				</div>
+				<?php echo Form::hidden('referrer', $referrer); ?>
 			<?php echo Form::close(); ?>
 			</div>
 
 			<div class="col_3">
+				<?php if ($public_registration_enabled): ?>
+					<section class="meta-data">
+						<h3 class="arrow"><span class="icon"></span><?php echo __("Create an account"); ?></h3>
+						<div class="meta-data-content">
+						<?php echo Form::open(); ?>
+							<label>
+								<?php echo __('Your email address') ?>
+								<?php echo Form::input("new_email", ""); ?>
+							</label>
+							<p class="button-blue button-small" onclick="submitForm(this)"><a><?php echo __('Create your account');?></a></p>
+						<?php echo Form::close(); ?>
+						</div>
+					</section>
+				<?php endif; ?>
 				<section class="meta-data">
 					<h3 class="arrow"><span class="icon"></span><?php echo __("Forgot your password?"); ?></h3>
 					<div class="meta-data-content">

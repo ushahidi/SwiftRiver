@@ -20,8 +20,11 @@
 	<script type="text/javascript">
 		// Globals
 		<?php if ( ! empty($user)): ?>
-		window.logged_in_account = <?php echo $user->account->id; ?>;
-		window.logged_in_user = <?php echo $user->id; ?>;
+			<?php if ($user->account->id): ?>
+			window.logged_in_account = <?php echo $user->account->id; ?>;
+			<?php endif; ?>
+			
+			window.logged_in_user = <?php echo $user->id; ?>;
 		<?php endif; ?>
 
 		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
@@ -68,7 +71,7 @@
 	<header class="toolbar">
 		<div class="center">
 			<h1 class="logo">
-				<a href="<?php echo $nav_header_url; ?>">
+				<a href="<?php echo URL::site(); ?>">
 					<span class="nodisplay">SwiftRiver</span></a>
 				</h1>
 			<?php echo $nav_header;?>
