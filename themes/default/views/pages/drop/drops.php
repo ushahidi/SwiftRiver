@@ -318,10 +318,9 @@
 		</div>
 	</hgroup>
 	<div class="modal-body link-list">
-		<% var shareURL = encodeURIComponent("<?php echo $base_sharing_url; ?>" + '/drop/' + id); %>
 		<ul>
 			<li class="twitter">
-				<a href="https://twitter.com/share?url=<%= shareURL %>&text=<%= encodeURIComponent(droplet_title) %>" target="_blank">
+				<a href="https://twitter.com/share?url=<%= drop_url %>&text=<%= encodeURIComponent(droplet_title) %>" target="_blank">
 					<span class="icon"></span><?php echo __("Twitter"); ?>
 				</a>
 			</li>
@@ -408,10 +407,9 @@
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<% var dropletURL = "<?php echo $base_sharing_url; ?>" + '/drop/' + id; %>
 					<label>
 						<p class="field"><?php echo __("Message:"); ?></p>
-						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= dropletURL %></textarea>
+						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= drop_url %></textarea>
 					</label>
 				</div>
 			</section>

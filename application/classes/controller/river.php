@@ -154,8 +154,7 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('droplet_js', $droplet_js)
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
-		    ->bind('anonymous', $this->anonymous)
-		    ->bind('base_sharing_url', $this->river_base_url);
+		    ->bind('anonymous', $this->anonymous);
 
 		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);

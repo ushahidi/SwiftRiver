@@ -25,7 +25,7 @@
 		window.logged_in_user = <?php echo $user->id; ?>;
 		<?php endif; ?>
 
-		window.site_url = "<?php URL::site(); ?>";
+		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
 	</script>
 	
 	<?php
