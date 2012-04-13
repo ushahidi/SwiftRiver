@@ -114,6 +114,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
+	    $droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		
 		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;

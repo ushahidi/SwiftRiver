@@ -174,7 +174,6 @@ class Controller_Swiftriver extends Controller_Template {
 			catch (Cache_Exception $e)
 			{
 				// Do nothing, just log it
-				Kohana::$log->add(Log::ERROR, __('Cache not available'));
 			}
 		}
 		
@@ -306,8 +305,6 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->visited_account = $this->account;
 			}
 
-			$bucket_list = json_encode($this->user->get_buckets_array());
-
 			// Notification count
 			$num_notifications = Model_User_Action::count_notifications($this->user->id);
 
@@ -321,7 +318,6 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header = View::factory('template/header')
 			    ->bind('user', $this->user)
 			    ->bind('site_name', $site_name)
-			    ->bind('bucket_list', $bucket_list)
 			    ->bind('nav_header_url', $this->nav_header_url);
 
 			$this->template->header->js = ''; // Dynamic Javascript

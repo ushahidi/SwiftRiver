@@ -133,14 +133,12 @@ class Controller_River extends Controller_Swiftriver {
 		$filtered_total = count($droplets);
 				
 		// Bootstrap the droplet list
-		$droplet_list = json_encode($droplets);
-		$droplet_js = View::factory('pages/drop/js/drops')
-		    ->bind('fetch_base_url', $fetch_base_url)
-		    ->bind('droplet_list', $droplet_list)
-		    ->bind('max_droplet_id', $max_droplet_id)
-		    ->bind('user', $this->user);
-		    		
-		$fetch_base_url = $this->river_base_url;
+		$droplet_js = View::factory('pages/drop/js/drops');
+		$droplet_js->fetch_base_url = $this->river_base_url;
+		$droplet_js->droplet_list = json_encode($droplets);
+		$droplet_js->max_droplet_id = $max_droplet_id;
+		$droplet_js->user = $this->user;
+		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
@@ -155,25 +153,9 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
-
 		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
 		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
-
-		// Droplets Meter - Percentage of Filtered Droplets against All Droplets
-		$meter = 0;
-		if ($total > 0)
-		{
-			$meter = round( ($filtered_total / $total) * 100 );
-		}
-
-		// Determine whether to show the droplet meter
-		$show_meter =  ( ! empty($filters) AND $meter > 1);
-
-		// URL's to pages that are ajax rendered on demand
-		$filters_url = $this->river_base_url.'/filters';
-		$settings_url = $this->river_base_url.'/settings';
-		$more_url = $this->river_base_url.'/more';
 	}
 	
 	/**

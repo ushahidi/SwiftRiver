@@ -20,7 +20,6 @@
 	<script type="text/javascript">
 		// Globals
 		<?php if ( ! empty($user)): ?>
-		window.buckets_url = "<?php echo $nav_header_url.'/bucket/buckets/manage'; ?>";
 		window.logged_in_account = <?php echo $user->account->id; ?>;
 		window.logged_in_user = <?php echo $user->id; ?>;
 		<?php endif; ?>
@@ -30,16 +29,24 @@
 	
 	<?php
 	echo(Html::script("themes/default/media/js/jquery-1.7.2.min.js"));
-	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
+	
+	// Outside events plugin
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
+	
+	// Masonry plugin
 	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
+	
+	// Fileupload jQuery plugin
 	echo(Html::script("themes/default/media/js/jquery.ui.widget.js"));
 	echo(Html::script("themes/default/media/js/jquery.iframe-transport.js"));
 	echo(Html::script("themes/default/media/js/jquery.fileupload.js"));
+	
+	// Backbone
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
+	
+	// SwiftRiver global JS
 	echo(Html::script("themes/default/media/js/global.js"));
-	echo(Html::script("themes/default/media/js/buckets.js"));
 
 	// Dynamic JS Files
 	echo(Html::script('media/js'));
@@ -55,16 +62,6 @@
 	    // SwiftRiver Plugin Hook
 	    Swiftriver_Event::run('swiftriver.template.head');
 	?>
-	
-	<?php if (isset($bucket_list)): ?>
-	<script type="text/javascript">
-		$(function() {
-			// Bootstrap the bucket list
-			bucketList.reset(<?php echo $bucket_list; ?>);
-		});
-	</script>
-	<?php endif; ?>
-	
 </head> 
  
 <body> 

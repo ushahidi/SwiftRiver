@@ -66,7 +66,3 @@
 	</li>
 	<?php endif; ?>
 </ul>
-
-<script type="text/template" id="header-bucket-template">
-<a href="<%= bucket_url %>"><%= bucket_name %></a>
-</script> 
