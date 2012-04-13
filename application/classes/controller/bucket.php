@@ -92,6 +92,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('discussion_url', $discussion_url)
 			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner);
+
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 			
         // The maximum droplet id for pagination and polling
@@ -123,7 +124,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
-		    ->bind('anonymous', $this->anonymous);
+		    ->bind('anonymous', $this->anonymous)
+		    ->bind('base_sharing_url', $this->bucket_base_url);
 		
 		// Nothing to display message
 		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
