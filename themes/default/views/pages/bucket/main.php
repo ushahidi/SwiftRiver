@@ -4,10 +4,15 @@
 			<h1><?php print $page_title; ?></h1>
 			<?php if ( ! empty($collaborators)): ?>
 			<div class="rundown-people">
-				<h2>Collaborators on this bucket</h2>
+				<h2><?php __echo("Collaborators on this bucket"); ?></h2>
 				<ul>
 					<?php foreach ($collaborators as $collaborator): ?>
-						<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
+						<li>
+							<a href="<?php echo URL::site().$collaborator['account_path'] ?>" 
+								class="avatar-wrap" title="<?php echo $collaborator['name']; ?>">
+								<img src="<?php echo $collaborator['avatar']; ?>" />
+							</a>
+						</li>
 					<?php endforeach;?>
 				</ul>
 			</div>
@@ -24,13 +29,18 @@
 			<h2 class="discussion">
 				<a href="<?php echo $discussion_url; ?>">
 					<span class="icon"></span>
-					Discussion
+					<?php echo __("Discussion"); ?>
 				</a>
 			</h2>
 		</div>
 		<?php else: ?>
 		<div class="follow-summary col_3">
-			<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
+			<p class="button-score button-white follow">
+				<a href="#" title="now following">
+					<span class="icon"></span>
+					<?php echo __("Follow"); ?>
+				</a>
+			</p>
 		</div>
 		<?php endif; ?>
 	</div>
@@ -38,11 +48,16 @@
 
 <nav class="page-navigation cf">
 	<ul class="center">
-		<li id="drops-navigation-link"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">Drops</a></li>
-		<li id="list-navigation-link"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
-		<li><a href="#">Photos</a></li>
-		<li><a href="#">Map</a></li>
-		<li><a href="#">Timeline</a></li>
+		<li id="drops-navigation-link">
+			<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
+				<?php echo __("Drops"); ?>
+			</a>
+		</li>
+		<li id="list-navigation-link">
+			<a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">
+				<?php echo __("List"); ?>
+			</a>
+		</li>
 	</ul>
 </nav>
 

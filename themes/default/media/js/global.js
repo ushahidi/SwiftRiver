@@ -29,8 +29,12 @@ $(document).ready(function() {
 	// A common object for all window types
 	function Dialog(contents, modal) {
 		this.modal = (modal == undefined ? false : modal);
-		this.container = this.modal ? "#modal-container" : "#zoom-container";
+		this.container = this.modal ? $("#modal-container") : $("#zoom-container");
 		this.contents = contents;
+		this.dialogBox = $("div.modal-window", this.container);
+		
+		// Hide the dialog box
+		this.dialogBox.hide();
 	}
 	
 	// Hides a window
@@ -41,20 +45,16 @@ $(document).ready(function() {
 			return;
 		} 
 		
-		var el = $(this.container + " div.modal-window");
-		el.parent().fadeOut('slow');
+		var context = this;
+		this.container.fadeOut('fast', function() {
+			$(this).removeClass('visible');
+			var className  = "noscroll";
+			className += (context.modal) ? " has_modal" : " zoomed";
+			$('body').removeClass(className);
+			
+			context.dialogBox.unbind();
+		});
 				
-		if (!this.modal) {			
-			$('body').removeClass("zoomed");
-		} else {			
-			$('body').removeClass("has_modal");
-		}
-		
-		if (!$('body').hasClass('zoomed') && !$('body').hasClass('has_modal')) {
-			$('body').removeClass('noscroll');
-		}
-		
-		el.unbind();
 		return this;
 	};
 	
@@ -63,7 +63,7 @@ $(document).ready(function() {
 		var context = this;
 		
 		// Close when clicked outside
-		$(this.container + " div.modal-window").bind("clickoutside", function(event){
+		this.dialogBox.bind("clickoutside", function(e){
 			context.hide();
 			return false;
 		});
@@ -83,15 +83,20 @@ $(document).ready(function() {
 	
 	// Show the window
 	Dialog.prototype.show = function() {
-		$(this.container + ' div.modal-window').html(this.contents);
-		$(this.container).fadeIn('slow');
-		$('body').addClass('noscroll');
-		this._registerHide(); 
-		if (!this.modal) {
-			$('body').addClass('zoomed');
-		} else {
-			$('body').addClass('has_modal');
-		}
+		var context = this;
+
+		this.container.fadeIn('slow', function() {
+			var className = 'noscroll';
+			className += (context.modal) ? ' has_modal' : ' zoomed';
+
+			$(this).addClass('visible');
+			$('body').addClass(className);
+			context.dialogBox.show().html(context.contents);
+			if (!context.modal) {
+				context._registerHide();
+			}
+		});
+		 
 		return this;
 	};
  
@@ -140,14 +145,14 @@ $(document).ready(function() {
 	});
 		
 	// CONFIRMATION MESSAGES
-	$('.follow a').live('click', function(e) {
-		var ConfirmationMessage = $(this).attr('title');
-		var ConfirmationContext = $(this).closest('div.parameter').find('h2').html();
-		$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>You are "+ ConfirmationMessage + " " + ConfirmationContext +".</p></article></div>");
-		$('#confirmation-container').fadeIn('fast').addClass('visible');
-		$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
-		e.preventDefault();
-	});
+	// $('.follow a').live('click', function(e) {
+	// 	var ConfirmationMessage = $(this).attr('title');
+	// 	var ConfirmationContext = $(this).closest('div.parameter').find('h2').html();
+	// 	$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>You are "+ ConfirmationMessage + " " + ConfirmationContext +".</p></article></div>");
+	// 	$('#confirmation-container').fadeIn('fast').addClass('visible');
+	// 	$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
+	// 	e.preventDefault();
+	// });
 
 	// HIDE OPTION MENU
 	$('.remove a').live('click', function(e) {
@@ -180,16 +185,6 @@ $(document).ready(function() {
 		$('#buoy .buoy-message').delay(1000).fadeIn('fast');
 		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
 	}
-
-	// Toggle channel selection
-	//$('form input[type=checkbox]').live('click', function() {
-	//	if ($(this).is(':checked')) {
-	//		$(this).parents('label').addClass('selected');
-	//	}
-	//	else {
-	//		$(this).parents('label').removeClass('selected');
-	//	}
-	//});
 
 	// Submit form when enter key hit in a password field
 	$('input[type=password]').keypress(function(e){

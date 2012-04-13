@@ -70,15 +70,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 			$this->bucket_base_url = $this->bucket->get_base_url();
 
 			// Bucket Page Title
-			$this->page_title = "";
-			if ($this->bucket->account->user->id == $this->user->id)
-			{
-				$this->page_title = $this->bucket->bucket_name;
-			}
-			else
-			{
-				$this->page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
-			}
+			$this->page_title = ($this->owner) 
+			    ? $this->bucket->bucket_name 
+			    : $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
 		}
 	}
 
