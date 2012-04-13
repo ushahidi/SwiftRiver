@@ -170,18 +170,6 @@ class Model_River extends ORM {
 		return $river;
 	}
 	
-	public function create_channel_filter($channel, $user_id, $enabled)
-	{
-		$filter = new Model_Channel_Filter();
-		$filter->channel = $channel;
-		$filter->river_id = $this->id;
-		$filter->user_id = $user_id;
-		$filter->filter_enabled = $enabled;
-		$filter->filter_date_add = gmdate('Y-m-d H:i:s');
-		$filter->save();
-		
-		return $filter;
-	}
 	
 	/**
 	 * Gets the base URL of this river
@@ -192,139 +180,7 @@ class Model_River extends ORM {
 	{
 		return URL::site().$this->account->account_path.'/river/'.$this->river_name_url;
 	}
-
-	/**
-	 * Gets the list of the channel filters for the current river and returns the
-	 * result as an array
-	 *
-	 * @return array
-	 */
-	public function get_channel_filters()
-	{
-		// Get the channel filters
-		$results = ORM::factory('channel_filter')
-			->select('id', 'channel', 'filter_enabled')
-			->where('river_id', '=', $this->id)
-			->find_all();
-		
-		$filters = array();
-		foreach ($results as $result)
-		{
-			$filters[$result->channel] = array(
-				'id' => $result->id,
-				'enabled' => $result->filter_enabled
-				);
-		}
-		
-		return $filters;
-	}
-
-	/**
-	 * Gets a list of the available channels, their data and configuration options
-	 *
-	 * @return array
-	 */
-	public function get_channel_filter_data()
-	{
-		$filter_data = array();
-
-		// Get the channels for this river
-		$river_channels = $this->get_channel_filters();
-
-		// Get the the list channels that are plugins
-		$channel_plugins = Swiftriver_Plugins::channels();
-
-		foreach (array_keys($channel_plugins) as $channel)
-		{
-			$filter_data_entry = array();
-			$option_data = array();
-
-			if (array_key_exists($channel, $river_channels))
-			{
-				$filter_data_entry['id'] = $river_channels[$channel]['id'];
-				$filter_data_entry['enabled'] = $river_channels[$channel]['enabled'];
-				
-				// Get the filter options for the current channel
-				$option_data = Model_Channel_Filter::get_channel_filter_options($channel, $this->id);
-			}
-			else
-			{
-				$filter_data_entry['enabled'] = 0;
-			}
-
-			$filter_data_entry = array_merge($filter_data_entry, array(
-				'channel' => $channel,
-
-				'channel_name' => $channel_plugins[$channel]['name'],
-
-				'grouped' => isset($channel_plugins[$channel]['group']),
-				
-				'group_key' => isset($channel_plugins[$channel]['group']) 
-				    ? $channel_plugins[$channel]['group']['key'] 
-				    : "",
-				
-				'group_label' => isset($channel_plugins[$channel]['group']) 
-				    ? $channel_plugins[$channel]['group']['label'] 
-				    : "",
-
-				'options' => array($channel_plugins[$channel]['options']),
-
-				'data' => $option_data
-			));
-			
-
-			$filter_data[] = $filter_data_entry;
-		}
-
-		return $filter_data;
-	}
 	
-	/**
-	 * Modifies the status of a channel associated with the river. If the 
-	 * channel is not associated with the river, it is created.
-	 *
-	 * @param string $channel Name of the channel
-	 * @param int $user_id ID of the user modifying the status of the channel
-	 * @param int $enabled Status flag of the channel
-	 * @return bool TRUE on succeed, FALSE otherwise
-	 */
-	public function modify_channel_status($channel, $user_id, $enabled)
-	{
-		// Check if the channel exists
-		$filter = ORM::factory('channel_filter')
-			->where('channel', '=', $channel)
-			->where('user_id', '=', $user_id)
-			->where('river_id', '=', $this->id)
-			->find();
-	
-		if ($filter->loaded())
-		{
-			// Modify existing channel fitler
-			$filter->filter_enabled = $enabled;
-			$filter->filter_date_modified = date('Y-m-d H:i:s');
-			$filter->save();
-		
-			return TRUE;
-		}
-		else
-		{
-			try {
-				// Create a new channel fitler
-				$this->create_channel_filter($channel, $user_id, $enabled);
-				return TRUE;
-			}
-			catch (Kohana_Exception $e)
-			{
-				// Catch and log exception
-				Kohana::$log->add(Log::ERROR, 
-				    "An error occurred while enabling/disabling the channel: :error",
-				    array(":error" => $e->getMessage())
-				);
-			
-				return FALSE;
-			}
-		}
-	}
 	
 	/**
 	 * Adds a droplet to river
@@ -598,22 +454,118 @@ class Model_River extends ORM {
 	}
 	
 	/**
-	 * Get a list of channel names in this river
+	 * Get a list of channels in this river
 	 *
-	 * @param integer $river_id
 	 * @return array
 	 */
-	public function get_channels()
+	public function get_channels($filter_active = FALSE)
 	{
-		$ret = array();
-		
-		foreach ($this->channel_filters->find_all() as $channel_filter)
-		{
-			$ret[] = $channel_filter->channel;
+		// Get the channel filters
+		$query = ORM::factory('channel_filter')
+			->select('id', 'channel', 'filter_enabled')
+			->where('river_id', '=', $this->id);
+			
+		if ($filter_active) {
+			$query->where('filter_enabled', '=', TRUE);
 		}
 		
-		return $ret;
+		$channels_orm = $query->find_all();
+		
+		$channels_array = array();
+		foreach ($channels_orm as $channel_orm)
+		{
+			$channel_config = Swiftriver_Plugins::get_channel_config($channel_orm->channel);
+			
+			if ( ! $channel_config)
+				continue;
+				
+			$channels_array[] = array(
+				'id' => $channel_orm->id,
+				'channel' => $channel_orm->channel,
+				'name' => $channel_config['name'],
+				'enabled' => (bool) $channel_orm->filter_enabled,
+				'options' => $this->get_channel_options($channel_orm)
+			);
+		}
+		
+		return $channels_array;
 	}
+	
+	/**
+	 * Get a river's channel options with configuration added
+	 *
+	 * @param Model_Channel_Filter $channel_orm 
+	 * @param int $id Id of channel filter to be returned
+	 * @return array
+	 */
+	public function get_channel_options($channel_orm, $id = NULL)
+	{
+		$options = array();
+		
+		$channel_config = Swiftriver_Plugins::get_channel_config($channel_orm->channel);
+		
+		$query = $channel_orm->channel_filter_options;
+		
+		if ($id)
+		{
+			$query->where('id', '=', $id);
+		}
+		
+		foreach ($query->find_all() as $channel_option) {
+			$option = json_decode($channel_option->value);
+			$option->id = $channel_option->id;
+			$option->key = $channel_option->key;
+			
+			if (! isset($channel_config['options'][$channel_option->key]))
+				continue;
+			$options[] = $option;
+		}
+		
+		return $options;
+	}
+	
+	/**
+	 * Get a specific channel
+	 *
+	 * @return array
+	 */
+	public function get_channel($channelKey)
+	{
+		$channel = $this->channel_filters
+		                ->where('channel', '=', $channelKey)
+		                ->find();
+		
+		if ( ! $channel->loaded() ) {
+			$channel = new Model_Channel_Filter();
+			$channel->channel = $channelKey;
+			$channel->river_id = $this->id;
+			$channel->filter_enabled = TRUE;
+			$channel->filter_date_add = gmdate('Y-m-d H:i:s');
+			$channel->save();
+		}
+		
+		return $channel;
+	}
+	
+	/**
+	 * Get a specific channel
+	 *
+	 * @return Model_Channel_Filter
+	 */
+	public function get_channel_by_id($id)
+	{
+		$channel = $this->channel_filters
+		                ->where('id', '=', $id)
+		                ->find();
+		
+		if ($channel->loaded())
+		{
+			return $channel;
+		}
+		
+		return FALSE;
+	}
+	
 	
 	/**
 	 * Gets a river's collaborators as an array

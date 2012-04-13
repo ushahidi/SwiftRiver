@@ -23,6 +23,9 @@ class Rss_Init {
 	    
 		// Validate the channel option data before it's saved to the DB
 		Swiftriver_Event::add('swiftriver.channel.option.pre_save', array($this, 'validate'));
+		
+		// Extract feed urls from an OPML file upload
+		Swiftriver_Event::add('swiftriver.channel.option.file', array($this, 'opml_import'));
 	}
 	
 	/**
@@ -88,64 +91,50 @@ class Rss_Init {
 		// Get the event data
 		$option_data = & Swiftriver_Event::$data;
 		
+		
+		if ( ! (isset($option_data['channel']) AND $option_data['channel'] == 'rss'))
+			return;
+			
+			$url = $option_data['value'];
 
-		// Proceed only if the channel is RSS
-		if ( ! empty($_FILES) AND $option_data["key"] == "opml_import")
-		{
-			$file_data = $option_data['opml_import'];
+			if ( ! ($feed = RSS_Util::validate_feed_url($url)))
+				throw new SwiftRiver_Exception_ChannelOption('Invalid URL');
 
-			// Validation
-			if (Upload::type($file_data, array('xml')))
-			{
-				// Begin processing the feed
-				$importer = new Swiftriver_OPML_Import();
-				$importer->init($file_data['tmp_name']);
-
-				// Load the channel configuration
-				$channel_config = Swiftriver_Plugins::get_channel_config('rss');
-
-				// Get the feed entries
-				$feed_entries = array();
-				foreach ($importer->get_feeds() as $feed)
-				{
-					// Skip valiation of the RSS URL on the premise that the 
-					// URLs were validated at source?
-					$entry = array(
-						"label" => $channel_config['options']['url']['label'],
-						"type" => $channel_config['options']['url']['type'],
-						"value" => $feed['url'],
-						"title" => $feed['title']
-					);
-					
-					$feed_entries[] = array(
-						"channel_filter_id" => $option_data["channel_filter_id"],
-						"key" => "url",
-						"data" => $entry
-					);
-				}
-
-				// Reset the option data
-				$option_data = $feed_entries;
-				$option_data['multiple'] = TRUE;
-			}
+			$option_data['value'] = $feed['value'];
+			$option_data['title'] = $feed['title'];
+	}
+	
+	/**
+	 * Extract urls from an opml file
+	 */
+	public function opml_import()
+	{
+		// Get the event data
+		$file = & Swiftriver_Event::$data;
+		
+		if ($file['key'] != 'opml_import')
+			return;
+			
+		if (! Upload::type($file, array('xml')))
+			throw new SwiftRiver_Exception_ChannelOption('Invalid file type');
+			
+		// Begin processing the feed
+		$importer = new Swiftriver_OPML_Import();
+		$importer->init($file['tmp_name']);
+		
+		// Get the feed entries
+		if ( ! isset($file['option_data'])) {
+			$file['option_data'] = array();
 		}
-		elseif ($option_data['channel'] == 'rss')
+	
+		foreach ($importer->get_feeds() as $feed)
 		{
-			$url = $option_data['data']['value'];
-			if (($feed = RSS_Util::validate_feed_url($url)) != FALSE)
-			{
-				$option_data['data']['value'] = $feed['value'];
-				$option_data['data']['title'] = $feed['title'];
-			}
-			else
-			{
-				// Validation failed - Empty the option data
-				Kohana::$log->add(Log::DEBUG, "Invalid RSS URL - :url", array(':url' => $url));
-
-				$option_data = NULL;
-			}
+			$file['option_data'][] = array(
+				'key' => 'url',
+				'value' => $feed['url'],
+				'title' => $feed['title']
+			);
 		}
-
 	}
 }
 

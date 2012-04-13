@@ -56,6 +56,10 @@ $(function() {
 	// Droplet model
 	var Drop = Backbone.Model.extend({
 		
+		initialize: function() {
+			this.set("drop_url", site_url.substring(0, site_url.length-1) + base_url + '/drop/' + this.get("id"));
+		},
+		
 		// Add/Remove a droplet from a bucket
 		setBucket: function(changeBucket) {
 			// Is this droplet already in the bucket?
@@ -148,10 +152,10 @@ $(function() {
 			}
 		},
 
-		shareDrop: function(e) {
+		shareDrop: function() {
 			shareView = new ShareDropView({model: this.model});
 			modalShow(shareView.render().el);
-			e.stopPropagation();
+		    return false;
 		}
 	})
 	

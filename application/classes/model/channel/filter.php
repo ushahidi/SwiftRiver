@@ -69,7 +69,12 @@ class Model_Channel_Filter extends ORM {
 			$this->filter_date_modified = date("Y-m-d H:i:s", time());
 		}
 
-		return parent::save();
+		$ret = parent::save();
+		
+		// Run post_save events
+		Swiftriver_Event::run('swiftriver.channel.option.post_save', $this);
+		
+		return $ret;
 	}
 
 	/**
@@ -190,30 +195,36 @@ class Model_Channel_Filter extends ORM {
 	}
 	
 	/**
-	 * Add a channel filter option
+	 * Update channel filter option and creates it if it doesn't exist
 	 *
-	 * @param string key
+	 * @param int id
 	 * @param mixed  value
 	 * @return Model_Channel_Filter_option
 	 */	
-	public  function add_option($key, $value)
+	public  function update_option($value, $id = 0)
 	{
-		$filter_option = ORM::factory('channel_filter_option');
+		$filter_option = ORM::factory('channel_filter_option', $id);
 		$filter_option->channel_filter_id = $this->id;
-		$filter_option->key = $key;
-		if(is_string($value))
-		{
-			$filter_option->value = $value;
-		}
-		else
-		{
-			$filter_option->value = json_encode($value);
-		}
+		$filter_option->key = $value['key'];		
+		unset($value['key']);
+		$filter_option->value = json_encode($value);
 		$filter_option->save();
-		
-		// Run post_save events
-		Swiftriver_Event::run('swiftriver.channel.option.post_save', $filter_option);
-		
+				
 		return $filter_option;
+	}
+	
+	/**
+	 * Update channel filter option and creates it if it doesn't exist
+	 *
+	 * @param int id
+	 * @return void
+	 */	
+	public  function delete_option($id)
+	{
+		$filter_option = ORM::factory('channel_filter_option', $id);
+		if ($filter_option->loaded())
+		{
+			$filter_option->delete();
+		}
 	}
 }

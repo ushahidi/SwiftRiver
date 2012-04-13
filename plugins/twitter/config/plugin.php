@@ -28,19 +28,13 @@ return array(
 				'type' => 'text',
 				'values' => array(),
 				'placeholder' => 'E.g. Ushahidi, "African Tech"'
-			)/*,
-			'person' => array(
-				'label' => __('Person'),
+			),
+			'user' => array(
+				'label' => __('User'),
 				'type' => 'text',
 				'values' => array(),
 				'placeholder' => 'E.g. @ushahidi, @dkobia'
-			),
-			'place' => array(
-				'label' => __('Place'),
-				'type' => 'text',
-				'values' => array(),
-				'placeholder' => 'E.g. Nairobi, Kenya, Lamu'
-			)*/
+			)
 		),
 		'dependencies'	=> array(
 			'core' => array(

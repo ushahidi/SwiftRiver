@@ -100,33 +100,17 @@ class Controller_River_Create extends Controller_River {
 	 */
 	public function action_open()
 	{
-		// This River
-		$id = $this->request->param('id', 0);
-		$river = ORM::factory('river')
-			->where('id', '=', $id)
-			->where('account_id', '=', $this->visited_account->id)
-			->find();
-
-		if ( ! $river->loaded())
-		{
-			$this->request->redirect(URL::site().$this->account_path.'/river/create');
-		}
-
-		$this->step_content = View::factory('pages/river/settings/channels')
-			->bind('channels_url', $channels_url)
-			->bind('channel_options_url', $channel_options_url)
-			->bind('channels_list', $channels_list);
-
+		$this->step_content = View::factory('pages/river/settings/channels');
 		$this->step = 'open';
 
-		// Get the base url for this specific river
-		$river_base_url = $river->get_base_url();
-
-		// URLs for XHR endpoints
-		$channels_url = $river_base_url.'/channels';
-		$channel_options_url = $river_base_url.'/channel_options';
-
-		$channels_list = json_encode($river->get_channel_filter_data());
+		// This River
+		$id = $this->request->param('id', 0);
+		$river = ORM::factory('river', $id);
+		if ($river->loaded()){
+			$this->step_content->channels_config = json_encode(Swiftriver_Plugins::channels());
+			$this->step_content->channels = json_encode($river->get_channels(TRUE));
+			$this->step_content->base_url = $river->get_base_url().'/settings/channels';
+		}
 	}
 
 	/**

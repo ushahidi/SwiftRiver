@@ -25,7 +25,7 @@
 		window.logged_in_user = <?php echo $user->id; ?>;
 		<?php endif; ?>
 
-		window.site_url = "<?php URL::site(); ?>";
+		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
 	</script>
 	
 	<?php
@@ -33,6 +33,9 @@
 	echo(Html::script("themes/default/media/js/jquery.cycle.all.latest.min.js"));
 	echo(Html::script("themes/default/media/js/jquery.outside.js"));
 	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.ui.widget.js"));
+	echo(Html::script("themes/default/media/js/jquery.iframe-transport.js"));
+	echo(Html::script("themes/default/media/js/jquery.fileupload.js"));
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
 	echo(Html::script("themes/default/media/js/global.js"));

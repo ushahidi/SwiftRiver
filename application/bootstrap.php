@@ -286,7 +286,7 @@ Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<act
 /**
  * River and bucket settings
  */
-Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<controller>(/<action>(/<id>)))',
+Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<controller>(/<action>(/<id>(/<id2>))))',
 	array(
 		'directory' => '(river|bucket)',
 	))
