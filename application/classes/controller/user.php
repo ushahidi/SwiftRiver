@@ -91,7 +91,7 @@ class Controller_User extends Controller_Swiftriver {
 				"type" => "user",					
 				"item_name" => $this->visited_account->user->name,
 				"item_url" => URL::site().$this->visited_account->account_path,
-				"subscribed" => $this->user->has('following', $this->visited_account->user),
+				"following" => $this->user->has('following', $this->visited_account->user),
 				"is_owner" => $this->user->id == $this->visited_account->user->id				
 			));
 			
@@ -462,14 +462,14 @@ class Controller_User extends Controller_Swiftriver {
 					}
 					
 					// Are following
-					if ($item_array['subscribed'] == 1 AND 
+					if ($item_array['following'] == 1 AND 
 						! $this->user->has('following', $user_orm))
 					{
 						$this->user->add('following', $user_orm);
 					}
 					
 					// Are unfollowing
-					if ($item_array['subscribed'] == 0 AND 
+					if ($item_array['following'] == 0 AND 
 						$this->user->has('following', $user_orm))
 					{
 						$this->user->remove('following', $user_orm);
@@ -829,5 +829,78 @@ class Controller_User extends Controller_Swiftriver {
 			throw new HTTP_Exception_405("Only HTTP POST requests are allowed");
 		}
 	}
+
+	/**
+	 * Loads the list of followers
+	 */
+	public function action_followers()
+	{
+		$this->template->header->title = __("Followers");
+
+		$this->sub_content = View::factory('pages/user/followers')
+		    ->bind('owner', $this->owner)
+		    ->bind('follower_list', $follower_list)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('account_owner', $account_owner)
+		    ->bind('user', $this->user);
+
+		$this->sub_content->header_title = __("Followers");
+		$this->sub_content->following_mode = FALSE;
+		$account_owner = $this->visited_account->user->name;
+
+		// Get the list of users the curernt user is following
+		$following = array();
+		foreach ($this->user->get_following() as $follow)
+		{
+			$following[] = $follow['id'];
+		}
+
+		$followers = ($this->owner) 
+		    ? $this->user->get_followers() 
+		    : $this->visited_account->user->get_followers();
+
+		foreach ($followers as & $follower)
+		{
+			$follower['user_avatar'] = Swiftriver_Users::gravatar($follower['username'], 35);
+			$follower['user_url'] = URL::site().$follower['account_path'];
+			$follower['following'] = in_array($follower['id'], $following);
+			$follower['type'] = "user";
+		}
+
+		$follower_list = json_encode($followers);
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';
+	}
+
+	/**
+	 * Displays the users being followed
+	 */
+	public function action_following()
+	{
+		$this->template->header->title = __("Following");
+		$this->sub_content = View::factory('pages/user/followers')
+		    ->bind('owner', $this->owner)
+		    ->bind('follower_list', $follower_list)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('account_owner', $account_owner)
+		    ->bind('user', $this->user);
+
+		$this->sub_content->header_title = __("Following");
+		$this->sub_content->following_mode = TRUE;
+		$account_owner = $this->visited_account->user->name;
+
+		$following = ($this->owner) 
+		    ? $this->user->get_following() 
+		    : $this->visited_account->user->get_following();
+
+		foreach ($following as & $follow)
+		{
+			$follow['user_avatar'] = Swiftriver_Users::gravatar($follow['username'], 35);
+			$follow['user_url'] = URL::site().$follow['account_path'];
+			$follow['following'] = TRUE;
+			$follow['type'] = "user";
+		}
+
+		$follower_list = json_encode($following);
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	}
 
 }

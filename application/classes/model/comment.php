@@ -26,6 +26,15 @@ class Model_Comment extends ORM
 		);
 
 	/**
+	 * A comment has many droplet_scores
+	 *
+	 * @var array Relationships
+	 */
+	protected $_has_many = array(
+		'comment_scores' => array()
+		);	
+
+	/**
 	 * Validation for comments
 	 * @param array $arr
 	 * @return array
@@ -33,9 +42,7 @@ class Model_Comment extends ORM
 	public function validate($arr)
 	{
 		return Validation::factory($arr)
-			->rule('comment_title', 'not_empty')
-			->rule('comment_title', 'min_length', array(':value', 3))
-			->rule('comment_title', 'max_length', array(':value', 255))
+			->rule('comment_content', 'min_length', array(':value', 3))
 			->rule('comment_content', 'not_empty');
 	}
 	

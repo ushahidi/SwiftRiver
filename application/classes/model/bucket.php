@@ -116,6 +116,16 @@ class Model_Bucket extends ORM {
 
 		parent::delete();
 	}
+
+	/**
+	 * Gets the base URL of this bucket
+	 *
+	 * @return string
+	 */
+	public function get_base_url()
+	{
+		return URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url;
+	}	
 	
 	/**
 	 * Get the droplets for the specified bucket
@@ -312,6 +322,27 @@ class Model_Bucket extends ORM {
 		
 		return $collaborators;
 	}
+
+	/**
+	 * Gets a buckets's discussion
+	 *
+	 * @return array
+	 */	
+	public function get_comments()
+	{
+		$comments = array();		
+		foreach ($this->comments->find_all() as $comment)
+		{
+			$comments[] = array('id' => $comment->id, 
+				'name' => $comment->user->name,
+				'comment_content' => $comment->comment_content,
+				'date' => $comment->comment_date_add,
+				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40)
+			);
+		}
+		
+		return $comments;
+	}	
 	
 	/**
 	 * Get the max droplet id in a bucket
@@ -326,7 +357,7 @@ class Model_Bucket extends ORM {
 			->from('buckets_droplets')
 			->where('buckets_droplets.bucket_id', '=', $bucket_id);
 			
-		return $query->execute()->get('id', 0);		
+		return $query->execute()->get('id', 0);
 	}
 	
 	/*

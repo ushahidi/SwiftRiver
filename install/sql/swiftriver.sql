@@ -169,7 +169,6 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `bucket_id` INT(11) unsigned NOT NULL DEFAULT 0,  
   `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
   `parent_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `comment_title` VARCHAR(255) NOT NULL ,
   `comment_content` TEXT NOT NULL ,
   `comment_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
   `comment_date_modified` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
@@ -637,7 +636,7 @@ CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
-  `collaborator_active` tinyint(1) NOT NULL DEFAULT '0',
+  `collaborator_active` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`bucket_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
@@ -731,6 +730,19 @@ CREATE TABLE IF NOT EXISTS `droplet_scores` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `droplet_id` (`droplet_id`,`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
+-- TABLE 'comment_scores'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `comment_scores` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `comment_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `score` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `comment_id` (`comment_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
