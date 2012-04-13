@@ -28,14 +28,14 @@ return array(
 		// Fields
 		'channel_options' => array(
 			'url' => array(
-				'label' => __('Rss/Atom URL'),
+				'label' => __('Feed URL'),
 				'type' => 'text',
 				'placeholder' => 'E.g. ihub.co.ke/blog/feed'
 			),
 			'opml_import' => array(
-				'label' => 'Import OPML File',
+				'label' => 'OPML File',
 				'type' => 'file'
-			),
+			)
 		),
 		
 		// Plugin dependencies

@@ -97,44 +97,32 @@ class Swiftriver_Plugins {
 	public static function channels($reload = FALSE)
 	{
 		if ( ! $reload AND ! empty(self::$channels))
-		{
 			return self::$channels;
-		}
-		else
-		{
-			$channels = array();
-		
-			// Load the plugin configs and fetch only those that 
-			// have the channel property set to TRUE
-			$plugins = Kohana::$config->load('plugin');
-			foreach($plugins as $key => $plugin)
-			{
-				if (isset($plugin['channel']) AND $plugin['channel'] == TRUE)
-				{
-					$active = ORM::factory('plugin')
-						->where('plugin_path', '=', $key)
-						->where('plugin_enabled', '=', '1')
-						->find();
-					
-					if ($active->loaded())
-					{
-						$channel_config = array();
-					
-						// Validate the channel configuration
-						if ( ! self::_validate_channel_plugin_config($plugin, $channel_config))
-							continue;
-					
-						// Set the plugin name
-						$channel_config['name'] = $plugin['name'];
 
-						$channels[$key] = $channel_config;
-					}
-				}
+		self::$channels = array();
+		
+		// Load the plugin configs and fetch only those that 
+		// have the channel property set to TRUE
+		$config_plugins = Kohana::$config->load('plugin');
+		$active_plugins = ORM::factory('plugin')
+		                     ->where('plugin_enabled', '=', '1')
+		                     ->find_all();
+		foreach ($active_plugins as $active_plugin)
+		{
+			$plugin_config = $config_plugins[$active_plugin->plugin_path];
+			if (isset($plugin_config['channel']) AND $plugin_config['channel'] == TRUE )
+			{
+				if ( ! ($channel_config = self::_validate_channel_plugin_config($plugin_config)))
+					continue;
+
+				self::$channels[] = array(
+					'name' => $plugin_config['name'],
+					'channel' => $active_plugin->plugin_path,
+					'options' => $channel_config
+				);
 			}
-		
-			self::$channels = $channels;
 		}
-		
+
 		return self::$channels;
 	}
 
@@ -144,15 +132,21 @@ class Swiftriver_Plugins {
 	 * @param string $channel Name of the channel
 	 * @return mixed An array with the channel configuration on succeed, FALSE otherwise
 	 */
-	public static function get_channel_config($channel)
+	public static function get_channel_config($channel_name)
 	{
 		if (empty(self::$channels))
 		{
 			// Load the channels
 			self::channels();
 		}
+		
+		foreach (self::$channels as $channel)
+		{
+			if ($channel['channel'] == $channel_name)
+				return $channel;
+		}
 
-		return isset(self::$channels[$channel]) ? self::$channels[$channel] : FALSE;
+		return FALSE;
 	}
 	
 	/**
@@ -163,77 +157,35 @@ class Swiftriver_Plugins {
 	 * @return bool TRUE if the config for the channel plugin is in order, 
 	 *     FALSE otherwise
 	 */
-	private static function _validate_channel_plugin_config($plugin, array & $channel_config)
+	private static function _validate_channel_plugin_config($plugin)
 	{
-		// Get the plugin name
-		$plugin_name = $plugin['name'];
-		
-		// 
-		// Step 1. Check for grouping
-		// 
-		if (isset($plugin['channel_group_options']))
-		{
-			if ($plugin['channel_group_options'])
-			{
-				// Validation for 'channel_group_name'
-				if (isset($plugin['channel_group_name']) AND is_array($plugin['channel_group_name']))
-				{
-					$channel_config['group'] = array();
-					foreach ($plugin['channel_group_name'] as $k => $v)
-					{
-						$channel_config['group']['key'] = $k;
-						$channel_config['group']['label'] = $v;
-					}
-				}
-				else
-				{
-					// Log the config error
-					Kohana::$log->add(Log::ERROR, ":plugin plugin config error. "
-					    ."'channel_group_name' MUST be specified as a key=>value array.", 
-					    array(':plugin' => $plugin_name));
-				
-					return FALSE;
-				}
-			}
-			else
-			{
-				// Log the config error
-				Kohana::$log->add(Log::ERROR, ":plugin config error. 'channel_group_options' MUST be set to TRUE", 
-				    array(':plugin' => $plugin_name));
-				
-				return FALSE;
-			}
-		}
-		
-		// 
-		// Step 2. Check for channel options
-		// 
-		if (isset($plugin['channel_options']) AND is_array($plugin['channel_options']))
-		{
-			$channel_config['options'] = $plugin['channel_options'];
-
-			// Escape placeholder values
-			foreach ($plugin['channel_options'] as $option => $data)
-			{
-				foreach ($data as $key => $value)
-				{
-					if ($key == 'placeholder')
-					{
-						$channel_config['options'][$option][$key] = htmlentities($value);
-					}
-				}
-			}
-		}
-		else
+		if (! isset($plugin['channel_options']) OR ! is_array($plugin['channel_options']))
 		{
 			// Log the config error
 			Kohana::$log->add(Log::ERROR, ":plugin plugin config error. "
-			    . "'channel_options' MUST be an array.", array(':plugin' => $plugin_name));
+			    . "'channel_options' MUST be an array.", array(':plugin' => $plugin['name']));
 			
 			return FALSE;
 		}
 		
-		return TRUE;
+		foreach ($plugin['channel_options'] as $key =>  & $option)
+		{
+			$option['key'] = $key;
+			if (isset($option['placeholder']))
+			{
+				$option['placeholder'] = htmlentities($option['placeholder']);
+			}
+			
+			if(isset($option['group_options'])) {
+				// Has group options, set the key for each
+				foreach ($option['group_options'] as $key =>  & $opt)
+				{
+					$opt['key'] = $key;
+				}
+			}
+		}
+
+		return $plugin['channel_options'];
 	}
 
 

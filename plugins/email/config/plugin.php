@@ -25,44 +25,48 @@ return array(
 		'version'		=> '0.1.0',
 
 		'channel'		=> TRUE,
-		// Group the channel options
-		'channel_group_options' => TRUE,
-		
-		// Name of the group
-		'channel_group_name' => array('email' => 'Email Account'),
 		
 		// Fields for an email account
 		'channel_options' => array(
-			// Server host
-			'host' => array(
-				'label' => __('Server Host'),
-				'type' => 'text',
-			),
+			'email' => array(
+				
+				'label' => __('Email Account'),	
+						
+				'type' => 'group',
 			
-			// Server port
-			'port' => array(
-				'label' => __('Server Port'),
-				'type' => 'text'
-			),
-			// Email server username
-			'username' => array(
-				'label' => __('Username'),
-				'type' => 'text'
-			),
-			// Password for the email account above
-			'password' => array(
-				'label' => __('Password'), 
-				'type' => 'password'
-			),
-			'servertype' => array(
-				'label' => __('Server Type (IMAP/POP3)'),
-				'type' => 'select',
-				'values' => array('IMAP', 'POP')
-			),
-			'ssl' => array(
-				'label' => __('SSL Enabled?'),
-				'type' => 'select',
-				'values' => array('Yes', 'No')
+				'group_options' => array(
+					// Server host
+					'host' => array(
+						'label' => __('Server Host'),
+						'type' => 'text',
+					),
+					
+					// Server port
+					'port' => array(
+						'label' => __('Server Port'),
+						'type' => 'text'
+					),
+					// Email server username
+					'username' => array(
+						'label' => __('Username'),
+						'type' => 'text'
+					),
+					// Password for the email account above
+					'password' => array(
+						'label' => __('Password'), 
+						'type' => 'password'
+					),
+					'servertype' => array(
+						'label' => __('Server Type (IMAP/POP3)'),
+						'type' => 'select',
+						'values' => array('IMAP', 'POP')
+					),
+					'ssl' => array(
+						'label' => __('SSL Enabled?'),
+						'type' => 'select',
+						'values' => array('Yes', 'No')
+					)
+				)
 			)
 		),
 		

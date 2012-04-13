@@ -44,13 +44,16 @@ class Swiftriver_OPML_Import {
 			// Get the body node
 			// All <outline> entries should be within the <body> element
 			$body = $this->dom->getElementsByTagName("body");
+			
+			if ($body AND $body->item(0))
+			{
+				// Create SimpleXMLElement object from the body node
+				$node = simplexml_import_dom($body->item(0));
 
-			// Create SimpleXMLElement object from the body node
-			$node = simplexml_import_dom($body->item(0));
-
-			// Traverse the node and extrac the <outline> entries
-			$this->_traverse_node($node);
-
+				// Traverse the node and extrac the <outline> entries
+				$this->_traverse_node($node);
+			}
+			
 			return TRUE;
 		}
 		catch (Kohana_Exception $e)

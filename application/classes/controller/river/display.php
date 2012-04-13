@@ -38,7 +38,7 @@ class Controller_River_Display extends Controller_River_Settings {
 				
 				// Redirect to the new URL with a success messsage
 				$session->set("messages", array(__("Display settings were saved successfully.")));
-				$this->request->redirect($this->_get_base_url($this->river).'/settings/display');
+				$this->request->redirect($this->river->get_base_url().'/settings/display');
 			}
 			catch (ORM_Validation_Exception $e)
 			{

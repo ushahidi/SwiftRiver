@@ -105,7 +105,12 @@ class Controller_River_Create extends Controller_River {
 
 		// This River
 		$id = $this->request->param('id', 0);
-		
+		$river = ORM::factory('river', $id);
+		if ($river->loaded()){
+			$this->step_content->channels_config = json_encode(Swiftriver_Plugins::channels());
+			$this->step_content->channels = json_encode($river->get_channels(TRUE));
+			$this->step_content->base_url = $river->get_base_url().'/settings/channels';
+		}
 	}
 
 	/**
