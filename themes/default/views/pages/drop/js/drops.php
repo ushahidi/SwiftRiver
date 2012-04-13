@@ -148,10 +148,10 @@ $(function() {
 			}
 		},
 
-		shareDrop: function(e) {
+		shareDrop: function() {
 			shareView = new ShareDropView({model: this.model});
 			modalShow(shareView.render().el);
-			e.stopPropagation();
+		    return false;
 		}
 	})
 	

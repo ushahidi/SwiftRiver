@@ -42,7 +42,7 @@ $(document).ready(function() {
 		} 
 		
 		var el = $(this.container + " div.modal-window");
-		el.parent().fadeOut('slow').removeClass('visible');
+		el.parent().fadeOut('slow');
 				
 		if (!this.modal) {			
 			$('body').removeClass("zoomed");
@@ -84,7 +84,7 @@ $(document).ready(function() {
 	// Show the window
 	Dialog.prototype.show = function() {
 		$(this.container + ' div.modal-window').html(this.contents);
-		$(this.container).fadeIn('slow').addClass('visible')
+		$(this.container).fadeIn('slow');
 		$('body').addClass('noscroll');
 		this._registerHide(); 
 		if (!this.modal) {
