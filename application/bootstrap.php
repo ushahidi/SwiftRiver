@@ -282,6 +282,14 @@ Route::set('account_create_new', '<account>/create')
     	'controller' => 'user',
     	'action' => 'create'
     ));
+
+// Route for sharing a droplet
+Route::set('account_drop_share', '<account>/share')
+    ->defaults(array(
+    	'controller' => 'user',
+    	'action' => 'share'
+    ));
+
 /**
  * Trends
  */

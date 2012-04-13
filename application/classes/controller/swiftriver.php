@@ -89,6 +89,18 @@ class Controller_Swiftriver extends Controller_Template {
 	 * @var boolean
 	 */
 	protected $anonymous = FALSE;
+
+	/**
+	 * URL for the navigation header
+	 * @var string
+	 */
+	protected $nav_header_url;
+
+	/**
+	 * Name of the current controller
+	 * @var string
+	 */
+	protected $controller_name;
 	
 	
 	/**
@@ -109,9 +121,12 @@ class Controller_Swiftriver extends Controller_Template {
 				return;
 			}
 		}
-		
+
 		$uri = $this->request->url(TRUE);
-		$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+		$query = ($this->controller_name == 'swiftriver') 
+		    ? '' 
+		    : URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+
 		Request::current()->redirect('login'.$query);
 	}
 
@@ -147,6 +162,9 @@ class Controller_Swiftriver extends Controller_Template {
 		// Execute parent::before first
 		parent::before();
 
+		// Set the name of the controller
+		$this->controller_name = $this->request->controller();
+
 		if ( ! $this->cache)
 		{
 			try
@@ -162,6 +180,7 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Open session
 		$this->session = Session::instance();
+		$this->nav_header_url = URL::site();
 		
 		// If an api key has been provided, login that user
 		$api_key = $this->request->query('api_key');
@@ -179,7 +198,7 @@ class Controller_Swiftriver extends Controller_Template {
 				throw new HTTP_Exception_403();
 			}
 		}
-		
+
 		// In case anonymous setting changed and user had a session,
 		// log out 
 		if (
@@ -190,14 +209,23 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			Auth::instance()->logout();
 		}
-		
-		//if we're not logged in, gives us chance to auto login
+
+
+		// If we're not logged in, gives us chance to auto login
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
 		$supports_auto_login = $supports_auto_login->hasMethod('auto_login');
+		
 		if( ! Auth::instance()->logged_in() AND $supports_auto_login)
 		{
+			// Controller exempt from auth check
+			$exempt_controllers = Kohana::$config->load('auth.ignore_controllers');
+
 			Auth::instance()->auto_login();
-			if ( ! Auth::instance()->get_user() )
+			if 
+			( 
+				! Auth::instance()->get_user() AND 
+				! in_array($this->controller_name, $exempt_controllers)
+			)
 			{
 				$this->login_required();
 			}
@@ -205,14 +233,14 @@ class Controller_Swiftriver extends Controller_Template {
 
 		if 
 		(
-			// auth is required AND user role given in auth_required is NOT logged in
+			// Auth is required AND user role given in auth_required is NOT logged in
 			$this->auth_required !== FALSE AND 
 				Auth::instance()->logged_in($this->auth_required) === FALSE
 		)
 		{
 			if (Auth::instance()->logged_in())
 			{
-				// user is logged in but not on the secure_actions list
+				// User is logged in but not on the secure_actions list
 				$this->access_required();
 			}
 			else
@@ -222,67 +250,82 @@ class Controller_Swiftriver extends Controller_Template {
 		}
 
 
-		// Logged In User
+		// Get the logged In User
 		$this->user = Auth::instance()->get_user();
 		
-		// Is anonymous logged in?
-		if ($this->user->username == 'public')
+		if ($this->user)
 		{
-			$this->anonymous = TRUE;
-		}
-		
-		// Is this user an admin?
-		$this->admin = $this->user->has('roles', 
-			ORM::factory('role',array('name'=>'admin')));
-		
-		if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' AND
-                      ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
-		{
-			$this->riverid_auth = TRUE;
+
+			// Is anonymous logged in?
+			if ($this->user->username == 'public')
+			{
+				$this->anonymous = TRUE;
+			}
+			
+			// Is this user an admin?
+			$this->admin = $this->user->has('roles', 
+				ORM::factory('role',array('name'=>'admin')));
+			
+			if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' AND
+	                      ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
+			{
+				$this->riverid_auth = TRUE;
+			}
+
+			// Does this user have an account space?
+			$this->account = ORM::factory('account')
+				->where('user_id', '=', $this->user->id)
+				->find();
+				
+			if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
+			{
+				// Make the user create an account
+				Request::current()->redirect('register');
+			}
+			
+			// Logged in user's dashboard url
+			$this->dashboard_url = URL::site().$this->user->account->account_path;
+			
+			// Build the base URL
+			$visited_account_path = $this->request->param('account');
+			if ($visited_account_path AND $visited_account_path != $this->account->account_path) 
+			{
+				$this->base_url = URL::site().$visited_account_path.'/'.$this->request->controller();
+				$this->visited_account = ORM::factory('account', 
+					array('account_path' => $visited_account_path));
+				
+				// Visited account doesn't exist?
+				if ( ! $this->visited_account->loaded())
+				{
+					$this->request->redirect($this->dashboard_url);
+				}
+			}
+			else
+			{
+				$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
+				$this->visited_account = $this->account;
+			}
+
+			$bucket_list = json_encode($this->user->get_buckets_array());
+
+			// Notification count
+			$num_notifications = Model_User_Action::count_notifications($this->user->id);
+
+			$this->nav_header_url .= $this->user->account->account_path;
 		}
 
-		// Does this user have an account space?
-		$this->account = ORM::factory('account')
-			->where('user_id', '=', $this->user->id)
-			->find();
-			
-		if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
-		{
-			// Make the user create an account
-			Request::current()->redirect('register');
-		}
-		
-		// Logged in user's dashboard url
-		$this->dashboard_url = URL::site().$this->user->account->account_path;
-		
-		// Build the base URL
-		$visited_account_path = $this->request->param('account');
-		if ($visited_account_path and $visited_account_path != $this->account->account_path) 
-		{
-			$this->base_url = URL::site().$visited_account_path.'/'.$this->request->controller();
-			$this->visited_account = ORM::factory('account', 
-				array('account_path' => $visited_account_path));
-			
-			// Visited account doesn't exist?
-			if ( ! $this->visited_account->loaded())
-			{
-				$this->request->redirect($this->dashboard_url);
-			}
-		}
-		else
-		{
-			$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
-			$this->visited_account = $this->account;
-		}
 
 		// Load Header & Footer & variables
 		if ($this->auto_render) 
 		{
-			$this->template->header = View::factory('template/header');
-			$this->template->header->user = $this->user;
+			$this->template->header = View::factory('template/header')
+			    ->bind('user', $this->user)
+			    ->bind('site_name', $site_name)
+			    ->bind('bucket_list', $bucket_list)
+			    ->bind('nav_header_url', $this->nav_header_url);
+
 			$this->template->header->js = ''; // Dynamic Javascript
-			$this->template->header->site_name = Model_Setting::get_setting('site_name');
-			$this->template->header->bucket_list = json_encode($this->user->get_buckets_array());
+			$site_name = Model_Setting::get_setting('site_name');
 			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header')
@@ -291,10 +334,7 @@ class Controller_Swiftriver extends Controller_Template {
 			    ->bind('account', $this->account)
 			    ->bind('anonymous', $this->anonymous)
 			    ->bind('num_notifications', $num_notifications);
-			
-			// Notification count
-			$num_notifications = Model_User_Action::count_notifications($this->user->id);
-			
+
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
 		}
@@ -307,6 +347,13 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function action_index()
 	{
-		$this->request->redirect($this->dashboard_url);
+		if ($this->user)
+		{
+			$this->request->redirect($this->dashboard_url);
+		}
+		else
+		{
+			$this->login_required();
+		}
 	}	
 }

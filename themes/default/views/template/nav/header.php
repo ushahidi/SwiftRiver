@@ -5,13 +5,13 @@
 			<span class="label"><?php echo __("Search"); ?></span>
 		</a>
 	</li>
+	<?php if ($user AND ! $anonymous): ?>
 	<li class="create">
 		<a href="<?php echo URL::site().$account->account_path.'/create'; ?>" class="modal-trigger" title="<?php echo __("Create"); ?>">
 			<span class="icon"></span>
 			<span class="label"><?php echo __("Create"); ?></span>
 		</a>
 	</li>
-	<?php if ($user AND ! $anonymous): ?>
 	<li class="user popover">
 		<a href="#" class="popover-trigger">
 			<span class="dropdown-arrow"></span>
@@ -60,7 +60,9 @@
 	</li>
 	<?php else: ?>			
 	<li class="login">
-		<a href="<?php echo URL::site('login'); ?>" class="modal-trigger"><span class="icon"></span><span class="label">Log in</span></a>
+		<a href="<?php echo URL::site('login'); ?>" class="modal-trigger">
+			<span class="label"><?php echo __("Log in"); ?></span>
+		</a>
 	</li>
 	<?php endif; ?>
 </ul>

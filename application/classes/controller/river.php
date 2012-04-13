@@ -150,12 +150,13 @@ class Controller_River extends Controller_Swiftriver {
 		}
 		
 		// Select droplet list view with drops view as the default if list not specified
-		$droplets_view = View::factory('pages/drop/drops');
-		$droplets_view->droplet_js = $droplet_js;
-		$droplets_view->user = $this->user;
-		$droplets_view->owner = $this->owner;
-		$droplets_view->anonymous = $this->anonymous;
-		
+		$droplets_view = View::factory('pages/drop/drops')
+		    ->bind('droplet_js', $droplet_js)
+		    ->bind('user', $this->user)
+		    ->bind('owner', $this->owner)
+		    ->bind('anonymous', $this->anonymous)
+		    ->bind('base_sharing_url', $this->river_base_url);
+
 		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
 		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);

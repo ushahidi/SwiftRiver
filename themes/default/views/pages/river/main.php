@@ -6,7 +6,8 @@
 					<?php if ($river->account->user->id == $user->id OR $river->account->user->username == 'public'): ?>
 						<span id="display_river_name"><?php echo $river->river_name; ?></span>
 					<?php else: ?>
-						<a href="<?php echo URL::site().$river->account->account_path ?>"><span><?php echo $river->account->account_path; ?></a> / <?php echo $river->river_name; ?></span>
+						<a href="<?php echo URL::site().$river->account->account_path ?>">
+							<span><?php echo $river->account->account_path; ?></a> / <?php echo $river->river_name; ?></span>
 					<?php endif; ?>
 				</h1>
 			</div>
@@ -21,7 +22,11 @@
 			</div>
 			<?php else: ?>
 			<div class="follow-summary col_3">
-				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
+				<p class="button-score button-white follow">
+					<a href="#" title="now following">
+						<span class="icon"></span><?php echo __("Follow"); ?>
+					</a>
+				</p>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -31,8 +36,16 @@
 		<div class="center">
 			<div id="page-views" class="river touchcarousel col_9">
 				<ul class="touchcarousel-container">
-					<li id="drops-navigation-link" class="touchcarousel-item"><a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#"><?php echo __('Drops');?></a></li>
-					<li id="list-navigation-link" class="touchcarousel-item"><a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">List</a></li>
+					<li id="drops-navigation-link" class="touchcarousel-item">
+						<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
+							<?php echo __('Drops');?>
+						</a>
+					</li>
+					<li id="list-navigation-link" class="touchcarousel-item">
+						<a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">
+							<?php echo __("List"); ?>
+						</a>
+					</li>
 					<li class="touchcarousel-item"><a href="#">Photos</a></li>
 					<li class="touchcarousel-item"><a href="#">Map</a></li>
 					<li class="touchcarousel-item"><a href="#">Timeline</a></li>
