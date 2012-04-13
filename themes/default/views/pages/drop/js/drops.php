@@ -6,6 +6,31 @@ $(function() {
 	var base_url = "<?php echo $fetch_base_url; ?>";
 	var filters = "<?php echo $filters; ?>";
 	
+	// Bucket list
+	var Bucket = Backbone.Model.extend({
+		defaults: {
+			account_id: logged_in_account
+		},
+		initialize: function() {
+			// Namespace bucket name if the logged in user is not the owner
+			if (parseInt(this.get("account_id")) != logged_in_account) {
+				this.set('bucket_name', this.get("account_path") + " / " + this.get("bucket_name"));
+			}
+		}
+	});
+
+	// Collection for all the buckets accessible to the current user
+	var BucketList = Backbone.Collection.extend({
+		model: Bucket,
+		
+		url: "<?php echo URL::site().$user->account->account_path.'/bucket/buckets/manage'; ?>"
+	});
+	
+	var bucketList = new BucketList();
+	
+	// Bootstrap the bucket list
+	bucketList.reset(<?php echo $bucket_list; ?>);
+	
 	// Discussion model
 	var Discussion = Backbone.Model.extend();
 	

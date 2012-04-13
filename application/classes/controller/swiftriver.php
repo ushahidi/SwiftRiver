@@ -82,25 +82,12 @@ class Controller_Swiftriver extends Controller_Template {
 	 * @var Cache
 	 */
 	protected $cache = NULL;
-	
-	
+		
 	/**
 	 * Boolean indicating whether the logged in user is the default user
 	 * @var boolean
 	 */
 	protected $anonymous = FALSE;
-
-	/**
-	 * URL for the navigation header
-	 * @var string
-	 */
-	protected $nav_header_url;
-
-	/**
-	 * Name of the current controller
-	 * @var string
-	 */
-	protected $controller_name;
 	
 	
 	/**
@@ -112,7 +99,7 @@ class Controller_Swiftriver extends Controller_Template {
 	{
 		// If anonymous access is enabled, log in the public user otherwise
 		// present the login form
-		if ( (bool) Model_Setting::get_setting('anonymous_access_enabled'))
+		if ( (bool) Model_Setting::get_setting('anonymous_access_enabled') AND $this->request->controller() != 'login')
 		{
 			$user_orm = ORM::factory('user', array('username' => 'public'));
 			if ($user_orm->loaded()) 
@@ -121,13 +108,12 @@ class Controller_Swiftriver extends Controller_Template {
 				return;
 			}
 		}
-
-		$uri = $this->request->url(TRUE);
-		$query = ($this->controller_name == 'swiftriver') 
-		    ? '' 
-		    : URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
-
-		Request::current()->redirect('login'.$query);
+		
+		if ($this->request->controller() != 'swiftriver') {
+			$uri = $this->request->url(TRUE);
+			$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+			Request::current()->redirect('login'.$query);
+		}
 	}
 
 	/**
@@ -150,6 +136,9 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	public function before()
 	{
+		// Execute parent::before first
+		parent::before();
+		
 		try
 		{
 			$this->session = Session::instance();
@@ -158,12 +147,7 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			session_destroy();
 		}
-		
-		// Execute parent::before first
-		parent::before();
-
-		// Set the name of the controller
-		$this->controller_name = $this->request->controller();
+				
 
 		if ( ! $this->cache)
 		{
@@ -174,13 +158,11 @@ class Controller_Swiftriver extends Controller_Template {
 			catch (Cache_Exception $e)
 			{
 				// Do nothing, just log it
-				Kohana::$log->add(Log::ERROR, __('Cache not available'));
 			}
 		}
 		
 		// Open session
 		$this->session = Session::instance();
-		$this->nav_header_url = URL::site();
 		
 		// If an api key has been provided, login that user
 		$api_key = $this->request->query('api_key');
@@ -209,7 +191,16 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			Auth::instance()->logout();
 		}
-
+		
+		// Anonymous logged in and login controller requested, logout
+		if (
+				Auth::instance()->logged_in() AND 
+				Auth::instance()->get_user()->username == 'public' AND 
+				$this->request->controller() == 'login'
+			)
+		{
+			Auth::instance()->logout();
+		}
 
 		// If we're not logged in, gives us chance to auto login
 		$supports_auto_login = new ReflectionClass(get_class(Auth::instance()));
@@ -224,7 +215,7 @@ class Controller_Swiftriver extends Controller_Template {
 			if 
 			( 
 				! Auth::instance()->get_user() AND 
-				! in_array($this->controller_name, $exempt_controllers)
+				! in_array($this->request->controller(), $exempt_controllers)
 			)
 			{
 				$this->login_required();
@@ -305,13 +296,6 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->base_url = URL::site().$this->account->account_path.'/'.$this->request->controller();
 				$this->visited_account = $this->account;
 			}
-
-			$bucket_list = json_encode($this->user->get_buckets_array());
-
-			// Notification count
-			$num_notifications = Model_User_Action::count_notifications($this->user->id);
-
-			$this->nav_header_url .= $this->user->account->account_path;
 		}
 
 
@@ -320,9 +304,7 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			$this->template->header = View::factory('template/header')
 			    ->bind('user', $this->user)
-			    ->bind('site_name', $site_name)
-			    ->bind('bucket_list', $bucket_list)
-			    ->bind('nav_header_url', $this->nav_header_url);
+			    ->bind('site_name', $site_name);
 
 			$this->template->header->js = ''; // Dynamic Javascript
 			$site_name = Model_Setting::get_setting('site_name');
@@ -332,8 +314,13 @@ class Controller_Swiftriver extends Controller_Template {
 			    ->bind('user', $this->user)
 			    ->bind('admin', $this->admin)
 			    ->bind('account', $this->account)
-			    ->bind('anonymous', $this->anonymous)
-			    ->bind('num_notifications', $num_notifications);
+			    ->bind('anonymous', $this->anonymous);
+			$this->template->header->nav_header->controller = $this->request->controller();
+			
+			if ($this->user)
+			{
+				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
+			}
 
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');

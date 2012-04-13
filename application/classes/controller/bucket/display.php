@@ -38,7 +38,7 @@ class Controller_Bucket_Display extends Controller_Bucket_Settings {
 				
 				// Redirect to the new URL with a success messsage
 				$session->set("messages", array(__("Display settings were saved successfully.")));
-				$this->request->redirect($this->_get_base_url($this->bucket).'/settings/display');
+				$this->request->redirect($this->bucket->get_base_url($this->bucket).'/settings/display');
 			}
 			catch (ORM_Validation_Exception $e)
 			{

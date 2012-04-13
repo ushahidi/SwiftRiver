@@ -753,6 +753,10 @@ class Controller_User extends Controller_Swiftriver {
 				if ($account->loaded())
 				{
 					$this->template->content->errors = array(__('Nickname is already taken'));
+					
+					// Set below for the template to show the previously entered values
+					$this->user->account->account_path = $nickname;
+					$this->user->name = $this->request->post('name');
 				}
 				else
 				{

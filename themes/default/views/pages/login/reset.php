@@ -2,7 +2,7 @@
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="page-h1 col_12">
-			<h1><?php echo __('Registration'); ?></h1>
+			<h1>Password Reset</h1>
 		</div>
 	</div>
 </hgroup>
@@ -31,27 +31,27 @@
 			<article class="container base">
 				<header class="cf">
 					<div class="property-title">
-						<h1>Enter information below to complete registration</h1>
+						<h1>Enter your new password</h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Nickname'); ?></p>
-							<?php echo Form::input("nickname", $user->account->account_path); ?>
+							<p class="field"><?php echo __('Password'); ?></p>
+							<?php echo Form::password("password", ""); ?>
 						</label>
 					</div>
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Your Name'); ?></p>
-							<?php echo Form::input("name", $user->name); ?>
+							<p class="field"><?php echo __('Verify Password'); ?></p>
+							<?php echo Form::password("password_confirm", ""); ?>
 						</label>
 					</div>
 				</section>
 			</article>
 
 			<div class="save-toolbar">
-				<p class="button-blue" onclick="submitForm(this)"><a>Get started</a></p>
+				<p class="button-blue" onclick="submitForm(this)"><a>Set your password</a></p>
 			</div>
 			<?php echo Form::close(); ?>
 		</div>
