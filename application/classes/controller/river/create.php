@@ -51,10 +51,16 @@ class Controller_River_Create extends Controller_River {
 		$this->template->content = View::factory('pages/river/create')
 			->bind('account_path', $this->account_path)
 			->bind('step', $this->step)
-			->bind('step_content', $this->step_content);
+			->bind('step_content', $this->step_content)
+			->bind('open_url', $this->open_url)
+			->bind('view_url', $this->view_url);
 
 		// Account Path
 		$this->account_path = $this->user->account->account_path;
+		// Open Url
+		$this->open_url = '#';
+		// View Url
+		$this->view_url = '#';
 	}
 
 	/**
@@ -101,17 +107,24 @@ class Controller_River_Create extends Controller_River {
 	public function action_open()
 	{
 		$this->step_content = View::factory('pages/river/settings/channels');
-		$this->step = 'open';
+		$this->step = 'open';	
 
 		// This River
 		$id = $this->request->param('id', 0);
 		$river = ORM::factory('river', $id);
-		if ($river->loaded())
+		if ( ! $river->loaded())
 		{
-			$this->step_content->channels_config = json_encode(Swiftriver_Plugins::channels());
-			$this->step_content->channels = json_encode($river->get_channels(TRUE));
-			$this->step_content->base_url = $river->get_base_url().'/settings/channels';
+			$this->request->redirect(URL::site().$this->account_path.'/river/create');
 		}
+
+		$this->step_content->channels_config = json_encode(Swiftriver_Plugins::channels());
+		$this->step_content->channels = json_encode($river->get_channels(TRUE));
+		$this->step_content->base_url = $river->get_base_url().'/settings/channels';
+
+		// Open Url
+		$this->open_url = URL::site().$this->account_path.'/river/create/open/'.$river->id;
+		// View Url
+		$this->view_url = URL::site().$this->account_path.'/river/create/view/'.$river->id;	
 	}
 
 	/**
@@ -121,7 +134,23 @@ class Controller_River_Create extends Controller_River {
 	 */
 	public function action_view()
 	{
-		$this->step_content = View::factory('pages/river/create/view');
+		$this->step_content = View::factory('pages/river/create/view')
+			->bind('river_base_url', $river_base_url);
 		$this->step = 'view';
+
+		// This River
+		$id = $this->request->param('id', 0);
+		$river = ORM::factory('river', $id);
+		if ( ! $river->loaded())
+		{
+			$this->request->redirect(URL::site().$this->account_path.'/river/create');
+		}
+
+		$river_base_url = $river->get_base_url();
+
+		// Open Url
+		$this->open_url = URL::site().$this->account_path.'/river/create/open/'.$river->id;
+		// View Url
+		$this->view_url = URL::site().$this->account_path.'/river/create/view/'.$river->id;	
 	}	
 }
