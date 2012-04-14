@@ -40,7 +40,7 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user);
-		$this->template->content->collaborators = $this->bucket->get_collaborators();
+		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 
 		// Links to ajax rendered menus
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -79,8 +79,31 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 
 				break;
 
+			case "PUT":
+
+				$post = json_decode($this->request->body(), TRUE);
+				$comment_id = intval($this->request->param('id', 0));
+				$score = ( isset($post['score']) AND in_array($post['score'], array(1, -1) ) )
+					 ? $post['score'] : 0;
+				$comment = ORM::factory('comment', $comment_id);
+				// Comment loaded and does not belong to this user
+				// User can't vote on their own comments
+				if ($comment->loaded() AND $comment->user_id != $this->user->id)
+				{
+					$comment_score = ORM::factory('comment_score')
+						->where('comment_id', '=', $comment->id)
+						->where('user_id', '=', $this->user->id)
+						->find();
+					$comment_score->comment_id = $comment->id;
+					$comment_score->user_id = $this->user->id;
+					$comment_score->score = $score;
+					$comment_score->save();
+				}
+				echo View::factory('profiler/stats');
+				break;
+
 			default:
-				echo json_encode($this->bucket->get_comments());
+				echo json_encode($this->bucket->get_comments($this->user->id));
 				break;
 		}
 	}	

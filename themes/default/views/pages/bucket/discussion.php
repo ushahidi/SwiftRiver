@@ -66,8 +66,8 @@
 			</div>
 			<div class="drop-actions stacked cf">
 				<ul class="dual-buttons score-drop">
-					<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-					<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+					<li class="button-white like <%= parseInt(score) == 1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
+					<li class="button-white dislike <%= parseInt(score) == -1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
 				</ul>
 			</div>
 		</article>	
@@ -107,9 +107,14 @@
 
 		// Models
 		window.Comment = Backbone.Model.extend({
-			urlRoot: fetch_url
+			urlRoot: fetch_url,
+
+			// Score the comment
+			score: function(val) {
+				this.save({score: val});
+			}			
 		});
-		 
+		
 		window.CommentCollection = Backbone.Collection.extend({
 			model:Comment,
 			url: fetch_url
@@ -155,10 +160,33 @@
 				$(this.el).html(this.template(this.model.toJSON()));
 				return this;
 			},
-		 
+
+			events:{
+				"click ul.score-drop > li.like a": "likeComment",
+				"click ul.score-drop > li.dislike a": "dislikeComment",
+			},
+
 			close:function () {
 				$(this.el).unbind();
 				$(this.el).remove();
+			},
+
+			showCommentScore: function(selector) {
+				var el = this.$(selector);
+				el.toggleClass('scored');
+				if (el.hasClass("scored")) {
+					el.siblings("li").removeClass("scored");
+				}
+			},			
+
+			likeComment: function() {
+				this.model.score(1);
+				return false;
+			},
+			
+			dislikeComment: function() {
+				this.model.score(-1);
+				return false;
 			}
 		});
 		 
@@ -213,11 +241,13 @@
 
 			saveComment:function (event) {
 				var newComment = new window.Comment;
+				var now = new Date();
 				newComment.set({
 					comment_content:$('#comment_content').val(),
 					name:'<?php echo $user->name; ?>',
-					date:'<?php echo date('Y-m-d H:i:s', time()); ?>',
-					avatar:'<?php echo Swiftriver_Users::gravatar($user->email); ?>'
+					date:now.format("yyyy-mm-dd HH:MM:ss"),
+					avatar:'<?php echo Swiftriver_Users::gravatar($user->email); ?>',
+					score:0
 				});
 				newComment.save(
 					newComment.attributes,
@@ -274,7 +304,6 @@
 		var app = new AppRouter();
 		Backbone.history.start();
 	});
-	</script>	
+	</script>
 
-
-
+	

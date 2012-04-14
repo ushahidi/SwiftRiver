@@ -326,21 +326,38 @@ class Model_Bucket extends ORM {
 	/**
 	 * Gets a buckets's discussion
 	 *
+	 * @param int - signed in user
 	 * @return array
 	 */	
-	public function get_comments()
+	public function get_comments($user_id = 0)
 	{
-		$comments = array();		
+		$comments = array();
+		$i = 0;	
 		foreach ($this->comments->find_all() as $comment)
 		{
-			$comments[] = array('id' => $comment->id, 
+			$comments[$i] = array(
+				'id' => $comment->id, 
 				'name' => $comment->user->name,
 				'comment_content' => $comment->comment_content,
 				'date' => $comment->comment_date_add,
-				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40)
+				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40),
+				'score' => 0
 			);
+
+			// Attach [signed in] users score
+			if ($user_id)
+			{
+				foreach ($comment->comment_scores
+					->where('user_id', '=', $user_id)
+					->find_all() as $score)
+				{
+					$comments[$i]['score'] = $score->score;
+				}				
+			}
+
+			$i++;
 		}
-		
+
 		return $comments;
 	}	
 	
