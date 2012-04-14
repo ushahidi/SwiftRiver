@@ -320,7 +320,8 @@
 	<div class="modal-body link-list">
 		<ul>
 			<li class="twitter">
-				<a href="https://twitter.com/share?url=<%= drop_url %>&text=<%= encodeURIComponent(droplet_title) %>" target="_blank">
+				<a href="https://twitter.com/share?url=<%= encodeURIComponent(drop_url) %>&text=<%= encodeURIComponent(droplet_title) %>" 
+				    target="_blank">
 					<span class="icon"></span><?php echo __("Twitter"); ?>
 				</a>
 			</li>

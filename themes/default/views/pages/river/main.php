@@ -46,9 +46,6 @@
 							<?php echo __("List"); ?>
 						</a>
 					</li>
-					<li class="touchcarousel-item"><a href="#">Photos</a></li>
-					<li class="touchcarousel-item"><a href="#">Map</a></li>
-					<li class="touchcarousel-item"><a href="#">Timeline</a></li>
 					<?php
 					// SwiftRiver Plugin Hook -- Add River Nav Item
 					Swiftriver_Event::run('swiftriver.river.nav', $river);

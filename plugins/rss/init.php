@@ -52,17 +52,17 @@ class Rss_Init {
 		// Add a rss channel
 		$channel_filter = $river->create_channel_filter('rss', $user->id, TRUE);
 		$channel_filter->add_option('keyword', array(
-			                                'label' => 'Keyword',
-			                                'type' => 'text',
-			                                'value' => trim($keywords)
+			'label' => 'Keyword',
+			'type' => 'text',
+			'value' => trim($keywords)
 		));
 		
 		foreach ($urls as $url => $title)
 		{
 			$channel_filter->add_option('url', array(
-				                                'label' => $title,
-				                                'type' => 'text',
-				                                'value' => $url
+				'label' => $title,
+				'type' => 'text',
+				'value' => $url
 			));
 		}
 	}
@@ -115,7 +115,7 @@ class Rss_Init {
 		if ($file['key'] != 'opml_import')
 			return;
 			
-		if (! Upload::type($file, array('xml')))
+		if ( ! Upload::type($file, array('xml')))
 			throw new SwiftRiver_Exception_ChannelOption('Invalid file type');
 			
 		// Begin processing the feed
@@ -123,7 +123,8 @@ class Rss_Init {
 		$importer->init($file['tmp_name']);
 		
 		// Get the feed entries
-		if ( ! isset($file['option_data'])) {
+		if ( ! isset($file['option_data']))
+		{
 			$file['option_data'] = array();
 		}
 	

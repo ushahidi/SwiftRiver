@@ -465,7 +465,8 @@ class Model_River extends ORM {
 			->select('id', 'channel', 'filter_enabled')
 			->where('river_id', '=', $this->id);
 			
-		if ($filter_active) {
+		if ($filter_active)
+		{
 			$query->where('filter_enabled', '=', TRUE);
 		}
 		
@@ -511,7 +512,8 @@ class Model_River extends ORM {
 			$query->where('id', '=', $id);
 		}
 		
-		foreach ($query->find_all() as $channel_option) {
+		foreach ($query->find_all() as $channel_option)
+		{
 			$option = json_decode($channel_option->value);
 			$option->id = $channel_option->id;
 			$option->key = $channel_option->key;
@@ -535,7 +537,8 @@ class Model_River extends ORM {
 		                ->where('channel', '=', $channelKey)
 		                ->find();
 		
-		if ( ! $channel->loaded() ) {
+		if ( ! $channel->loaded())
+		{
 			$channel = new Model_Channel_Filter();
 			$channel->channel = $channelKey;
 			$channel->river_id = $this->id;
@@ -578,11 +581,12 @@ class Model_River extends ORM {
 		
 		foreach ($this->river_collaborators->find_all() as $collaborator)
 		{
-			$collaborators[] = array('id' => $collaborator->user->id, 
-			                         'name' => $collaborator->user->name,
-			                         'account_path' => $collaborator->user->account->account_path,
-			                         'collaborator_active' => $collaborator->collaborator_active,
-			                         'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
+			$collaborators[] = array(
+				'id' => $collaborator->user->id, 
+				'name' => $collaborator->user->name,
+				'account_path' => $collaborator->user->account->account_path,
+				'collaborator_active' => $collaborator->collaborator_active,
+				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}
 		

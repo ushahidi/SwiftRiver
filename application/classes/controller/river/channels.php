@@ -95,7 +95,8 @@ class Controller_River_Channels extends Controller_River_Settings {
 				
 		$channel = $this->river->get_channel_by_id($channel_id);
 		
-		if ( ! $channel) {
+		if ( ! $channel)
+		{
 			throw new HTTP_Exception_404();
 		}
 
@@ -143,7 +144,8 @@ class Controller_River_Channels extends Controller_River_Settings {
 		$channel_id = intval($this->request->param('id', 0));
 		$channel = $this->river->get_channel_by_id($channel_id);
 		
-		if ( ! $channel) {
+		if ( ! $channel)
+		{
 			throw new HTTP_Exception_404();
 		}
 		
@@ -173,7 +175,8 @@ class Controller_River_Channels extends Controller_River_Settings {
 		
 		// Create the filter options
 		$options_array = array();
-		foreach ($file['option_data'] as $option_data) {
+		foreach ($file['option_data'] as $option_data)
+		{
 			// Validate option data first, skip failures
 			try
 			{

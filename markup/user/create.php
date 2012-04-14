@@ -52,7 +52,7 @@
 				</section>
 			</div>
 		</div>
-	</article>
+	</div>
 
 <div id="zoom-container">
 	<div class="modal-window"></div>
