@@ -69,8 +69,13 @@ class Form extends Kohana_Form {
 			$attributes['method'] = 'post';
 		}
 
+		// Only render the CSRF field when the POST method is used
+		$hidden_csrf_field = ($attributes['method'] == 'post')
+		    ? self::hidden('form_auth_id', CSRF::token())
+		    : '';
+
 		return '<form'.HTML::attributes($attributes).'>'
-		    . self::hidden('form_auth_id', CSRF::token());
+		    . $hidden_csrf_field;
 	}
 }
 

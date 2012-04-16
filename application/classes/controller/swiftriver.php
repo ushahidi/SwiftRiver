@@ -99,7 +99,11 @@ class Controller_Swiftriver extends Controller_Template {
 	{
 		// If anonymous access is enabled, log in the public user otherwise
 		// present the login form
-		if ( (bool) Model_Setting::get_setting('anonymous_access_enabled') AND $this->request->controller() != 'login')
+		if
+		( 
+			(bool) Model_Setting::get_setting('anonymous_access_enabled') AND 
+			$this->request->controller() != 'login'
+		)
 		{
 			$user_orm = ORM::factory('user', array('username' => 'public'));
 			if ($user_orm->loaded()) 
@@ -109,7 +113,8 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 		
-		if ($this->request->controller() != 'swiftriver') {
+		if ($this->request->controller() != 'swiftriver')
+		{
 			$uri = $this->request->url(TRUE);
 			$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
 			Request::current()->redirect('login'.$query);
@@ -183,11 +188,12 @@ class Controller_Swiftriver extends Controller_Template {
 
 		// In case anonymous setting changed and user had a session,
 		// log out 
-		if (
-				Auth::instance()->logged_in() AND 
-				Auth::instance()->get_user()->username == 'public' AND 
-				! (bool) Model_Setting::get_setting('anonymous_access_enabled')
-			)
+		if
+		(
+			Auth::instance()->logged_in() AND 
+			Auth::instance()->get_user()->username == 'public' AND 
+			! (bool) Model_Setting::get_setting('anonymous_access_enabled')
+		)
 		{
 			Auth::instance()->logout();
 		}
@@ -324,6 +330,16 @@ class Controller_Swiftriver extends Controller_Template {
 
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
+
+			// Store the search scope as session data
+			if (in_array($this->request->controller(), array('river', 'bucket')))
+			{
+				Session::instance()->set('search_scope', $this->request->controller());
+			}
+			elseif ($this->request->controller() != 'search')
+			{
+				Session::instance()->set('search_scope', 'all');
+			}
 		}
 
 	}

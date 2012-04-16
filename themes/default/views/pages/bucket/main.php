@@ -4,7 +4,7 @@
 			<h1><?php print $page_title; ?></h1>
 			<?php if ( ! empty($collaborators)): ?>
 			<div class="rundown-people">
-				<h2><?php __echo("Collaborators on this bucket"); ?></h2>
+				<h2><?php echo __("Collaborators on this bucket"); ?></h2>
 				<ul>
 					<?php foreach ($collaborators as $collaborator): ?>
 						<li>

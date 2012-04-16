@@ -1027,6 +1027,8 @@ $(function() {
 	}
 	newDropsList.on('add', updateSinceId, this);
 	
+	// Check if polling is enabled
+	<?php if ($polling_enabled): ?>
 	// Poll for new drops every 30 seconds
 	setInterval(function() {
 		if (!isSyncing) {
@@ -1039,6 +1041,7 @@ $(function() {
 			});   
 		}		    
 	}, 30000);
+	<?php endif; ?>
 			
 	// Bootstrap the droplet list
 	dropsList.reset(<?php echo $droplet_list; ?>);

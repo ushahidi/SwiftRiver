@@ -84,6 +84,9 @@ class Controller_River extends Controller_Swiftriver {
 			
 			// Set the base url for this specific river
 			$this->river_base_url = $this->river->get_base_url();
+
+			// Store the id of the current river in session - for search
+			Session::instance()->set('search_river_id', $this->river->id);
 		}
 	}
 
@@ -139,6 +142,7 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
 		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
+		$droplet_js->polling_enabled = TRUE;
 		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
@@ -268,60 +272,7 @@ class Controller_River extends Controller_Swiftriver {
 			break;
 		}
 	}
-	
-	
-	/**
-	 * Create a New River
-	 *
-	 * @return	void
-	 */
-	public function action_new()
-	{
-		$this->template->header->title = __("Create a River");
-		
-		// Only account owners are alllowed here
-		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
-		{
-			throw new HTTP_Exception_403();
-		}
-		
-		// The main template
-		$this->template->content = View::factory('pages/river/new')
-			->bind('post', $post)
-			->bind('template_type', $this->template_type)
-			->bind('user', $this->user)
-			->bind('active', $this->active)
-			->bind('settings_control', $settings_control)
-			->bind('errors', $errors)
-			->bind('is_new_river', $is_new_river);
-		
-		$is_new_river = TRUE;
-		
-		// Check for form submission
-		if ($_POST AND CSRF::valid($_POST['form_auth_id']))
-		{
-			$post = Arr::extract($_POST, array('river_name', 'river_public'));
-			try
-			{
-				$river = Model_River::create_new($post['river_name'], $post['river_public'], $this->user->account);
-            	
-				// Redirect to the river view.
-				$this->request->redirect(URL::site().$river->account->account_path.'/river/'.$river->river_name_url);
-			}
-			catch (ORM_Validation_Exception $e)
-			{
-				$errors = $e->errors('validation');
-			}
-			catch (Database_Exception $e)
-			{
-				$errors = array(__("A river with the name ':name' already exists", 
-				                                array(':name' => $post['river_name'])
-				));
-			}
-		}
-				
-		$this->active = 'rivers';
-	}
+
 
 	/**
 	 * Ajax rendered filter control box

@@ -107,7 +107,12 @@ $(document).ready(function() {
 	$('a.modal-trigger').live('click', function() {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
-			modalShow($(data).find(".modal"));
+			// Dirty hack to work aroud cases where .find() yields
+			// no results
+			var el = $(data).find(".modal").length == 0
+			    ? $(data).filter(".modal")
+			    : $(data).find(".modal");
+			modalShow(el);
 		})
 		return false;
 	});

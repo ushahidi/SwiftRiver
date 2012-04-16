@@ -131,7 +131,10 @@ class Model_Bucket extends ORM {
 	 * Get the droplets for the specified bucket
 	 *
 	 * @param int $user_id Logged in user id	
-	 * @param int $id ID of the Bucket
+	 * @param int $bucket_id ID of the Bucket
+	 * @param int $drop_id
+	 * @param int $page Page number - determines the offset for the result set
+	 * @param int $max_id Upper limit of the droplet ids to be returned
 	 * @return array $droplets Total and Array of Droplets
 	 */
 	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX)
@@ -193,21 +196,8 @@ class Model_Bucket extends ORM {
 				Model_Droplet::utf8_encode($droplet);
 			}
 
-
-			// Populate buckets array			
-			Model_Droplet::populate_buckets($droplets['droplets']);
-			
-			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
-			
-			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets'], $bucket_orm->account_id);
-			
-			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets'], $bucket_orm->account_id);
-			
-			// Populate the discussions array
-			Model_Droplet::populate_discussions($droplets['droplets']);
+			// Populate the metadata
+			Model_Droplet::populate_metadata($droplets['droplets'], $bucket_orm->account_id);
 			
 			$droplets['total'] = count($droplets['droplets']);
 		}
@@ -220,6 +210,7 @@ class Model_Bucket extends ORM {
 	 *
 	 * @param int $user_id Logged in user id	
 	 * @param int $id ID of the Bucket
+	 * @param int $since_id
 	 * @return array $droplets Total and Array of Droplets
 	 */
 	public static function get_droplets_since_id($user_id, $bucket_id, $since_id)
@@ -264,20 +255,7 @@ class Model_Bucket extends ORM {
 			}
 			
 			// Populate buckets array			
-			Model_Droplet::populate_buckets($droplets['droplets']);
-			
-			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets'], $bucket_orm->account_id);
-			
-			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets'], $bucket_orm->account_id);			
-			
-			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets'], $bucket_orm->account_id);
-
-			// Populate the discussions array
-			Model_Droplet::populate_discussions($droplets['droplets']);
-			
+			Model_Droplet::populate_metadata($droplets['droplets'], $bucket_orm->account_id);
 		}
 
 		return $droplets;
@@ -504,6 +482,108 @@ class Model_Bucket extends ORM {
 		    ->where('user_id', '=', $user_id)
 		    ->find()
 		    ->loaded();
+	}
+
+	/**
+	 * Searches for the specified search term in the bucket identified by $bucket_id
+	 *
+	 * @param string $search_term Content to search for in the specified river
+	 * @param int $bucket_id ID of the bucket being searched
+	 * @param int $user_id ID of the user performing the search
+	 *
+	 * @return array
+	 */
+	public static function search($search_term, $bucket_id, $user_id, $page = 1)
+	{
+		$buckets = array();
+
+		// The page must always be set
+		$page = (empty($page)) ? 1 : $page;
+
+		// Check if the specified bucket exists
+		$bucket_orm = ORM::factory('bucket', $bucket_id);
+		if ($bucket_orm->loaded())
+		{
+			// Build the SQL "LIKE" expression
+			$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
+
+			// Build Buckets Query
+			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
+								'droplet_title', 'droplet_content', 
+								'droplets.channel','identity_name', 'identity_avatar', 
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+								array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+				->from('droplets')
+				->join('buckets_droplets', 'INNER')
+				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+				->join('identities')
+				->on('droplets.identity_id', '=', 'identities.id')
+				->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+				->where('buckets_droplets.bucket_id', '=', $bucket_id)
+				->where('droplets.droplet_processed', '=', 1)
+			    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
+			    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
+			    ->group_by('buckets_droplets.id')
+			    ->order_by('droplets.droplet_date_add', 'DESC')
+				->limit(self::DROPLETS_PER_PAGE)
+				->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+
+			$droplets = $query->execute()->as_array();
+
+			// Populate the metadata
+			Model_Droplets::populate_metadata($droplet, $bucket_orm->account_id);
+		}
+
+		return $buckets;
+	}
+
+	/**
+	 * Given a search term, finds all buckets whose name or url
+	 * contains the term
+	 *
+	 * @param string $search_term  The term to use for matching
+	 * @param int $user_id ID of the user initiating the search
+	 */
+	public static function get_like($search_term, $user_id)
+	{
+		// Search expression
+		$search_expr = DB::expr(__("'%:search_term%'", 
+			array(':search_term' => $search_term)));
+
+		// Get the buckets accessible t
+		$buckets = array();
+
+		$user_orm = ORM::factory('user', $user_id);
+		if ($user_orm->loaded())
+		{
+			// Buckets owned by the user in $user_id
+			$owner_buckets = DB::select('id', 'bucket_name', 'bucket_name_url')
+			    ->from('buckets')
+			    ->where_open()
+			    ->where('account_id', '=', $user_orm->account->id)
+			    ->where('bucket_name', 'LIKE', $search_expr)
+			    ->or_where('bucket_name_url', 'LIKE', $search_expr)
+			    ->where_close();
+
+
+			// All public buckets not owned by the user
+			$all_buckets = DB::select('id', 'bucket_name', 'bucket_name_url')
+			    ->union($owner_buckets)
+			    ->from('buckets')
+			    ->where('bucket_publish', '=', 1)
+			    ->and_where_open()
+			    ->where('account_id', '<>', $user_orm->account->id)
+			    ->where('bucket_name', 'LIKE', $search_expr)
+			    ->or_where('bucket_name_url', 'LIKE', $search_expr)
+			    ->and_where_close();
+
+			$buckets = $all_buckets->execute()->as_array();
+		}
+
+		return $buckets;
 	}
 
 }

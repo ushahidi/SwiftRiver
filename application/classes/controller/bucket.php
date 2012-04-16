@@ -79,6 +79,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 			{
 				$this->page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
 			}
+
+			// Store the ID of the current bucket in session data - for search
+			Session::instance()->set('search_bucket_id', $this->bucket->id);
 		}
 	}
 
@@ -116,6 +119,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 	    $droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
+	    $droplet_js->polling_enabled = TRUEl
 		
 		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;
@@ -125,8 +129,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
-		    ->bind('anonymous', $this->anonymous)
-		    ->bind('base_sharing_url', $this->bucket_base_url);
+		    ->bind('anonymous', $this->anonymous);
 		
 		// Nothing to display message
 		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
@@ -163,60 +166,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 	public function action_drop()
 	{
 		$this->action_index();
-	}
-	
-	/**
-	 * Create new bucket page
-	 */
-	public function action_new()
-	{
-		$this->template->header->title = __('Create a Bucket');
-		
-		// Only account owners are alllowed here
-		if ( ! $this->account->is_owner($this->visited_account->user->id) OR $this->anonymous)
-		{
-			throw new HTTP_Exception_403();
-		}
-		
-		$this->template->content = View::factory('pages/bucket/new')
-		    ->bind('template_type', $this->template_type)
-		    ->bind('user', $this->user)
-		    ->bind('active', $this->active)
-		    ->bind('post', $post)
-		    ->bind('errors', $errors);
-		
-		$this->template_type = 'dashboard';
-		$this->active = 'buckets';
-
-		// Check for form submission
-		if ($_POST AND CSRF::valid($_POST['form_auth_id']))
-		{
-			// Extract the posted data
-			$data = Arr::extract($_POST, array('bucket_name', 'bucket_description'));
-			
-			try
-			{
-				// Save the bucket
-				$bucket = ORM::factory('bucket');
-				$bucket->bucket_name = $data['bucket_name'];
-				$bucket->bucket_description = $data['bucket_description'];
-				$bucket->account_id = $this->account->id;
-				$bucket->user_id = $this->user->id;            
-				$bucket->save();
-				Request::current()->redirect(URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url);
-			}
-			catch (ORM_Validation_Exception $e)
-			{
-				$errors = $e->errors('validation');
-			}
-			catch (Database_Exception $e)
-			{
-				$errors = array(__("A bucket with the name ':name' already exists", 
-				                                array(':name' => $bucket->bucket_name)
-				));
-			}
-		}
-		
 	}
 	
 	/**
