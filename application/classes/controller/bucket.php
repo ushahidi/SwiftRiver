@@ -119,7 +119,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
 	    $droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
-	    $droplet_js->polling_enabled = TRUEl
+	    $droplet_js->polling_enabled = TRUE;
 		
 		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;
