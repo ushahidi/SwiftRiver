@@ -93,7 +93,24 @@ $(document).ready(function() {
 
 		return this;
 	};
- 
+	
+	function loadUrl(url, cssClass, callback, context) {
+		if (!context) {
+			context = this;
+		}
+		$.get(url, function(data) {
+			// jQuery doesn't have a method like closest() that traverses
+			// down the DOM so the below is required to check if the root
+			// node of the data retrieved contains the class we want otherwise
+			// find starting with the children.
+			var content = $(data);
+			if (! content.hasClass(cssClass)) {
+				content = $(data).find("." + cssClass);
+			}
+			callback.call(context, content);
+		})
+	}
+	
 	// MODAL WINDOWS
 	var modalWindow = null;
 	window.modalHide = function () {
@@ -105,10 +122,7 @@ $(document).ready(function() {
 		modalWindow = new Dialog(contents, true).show();
 	}
 	$('a.modal-trigger').live('click', function() {
-		var url = $(this).attr('href');
-		$.get(url, function(data) {
-			modalShow($(data).find(".modal"));
-		})
+		loadUrl($(this).attr('href'), "modal", modalShow);
 		return false;
 	});
 	$('article.modal .close a').live('click', function(e) {
@@ -127,10 +141,7 @@ $(document).ready(function() {
 		zoomWindow = new Dialog(contents).show();
 	}
 	$('a.zoom-trigger').live('click', function() {
-		var url = $(this).attr('href');
-		$.get(url, function(data) {
-			zoomShow($(data).filter(".modal"));
-		})
+		loadUrl($(this).attr('href'), "modal", zoomShow);
 		return false;
 	});
 	$('#zoom-container .close a').live('click', function() {

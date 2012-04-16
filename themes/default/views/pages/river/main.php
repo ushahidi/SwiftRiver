@@ -53,7 +53,7 @@
 				</ul>
 			</div>
 			<div class="filter-actions col_3">
-				<p class="button-blue button-small"><a href="/markup/river/filters.php" class="zoom-trigger">Filters</a></p>
+				<p class="button-blue button-small"><a href="/markup/river/filters.php" class="modal-trigger">Filters</a></p>
 			</div>
 		</div>
 	</nav>
