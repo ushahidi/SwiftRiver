@@ -18,37 +18,33 @@ class Map_Init {
 	public function __construct()
 	{
 		// Create Menu Item
-		Swiftriver_Event::add('swiftriver.river.nav.more', array($this, 'river_nav'));
-		Swiftriver_Event::add('swiftriver.bucket.nav.more', array($this, 'bucket_nav'));
+		Swiftriver_Event::add('swiftriver.river.nav', array($this, 'map_nav'));
+		Swiftriver_Event::add('swiftriver.bucket.nav', array($this, 'map_nav'));
 		
 		// For adding our js/css to the header
 		//Swiftriver_Event::add('swiftriver.template.head', array($this, 'template_header'));
 	}
 	
-	
-
-    /**
-	 * Display map link in river navigation bar
-	 * 
-	 * @return	void
-	 */
-	public function river_nav()
-	{
-		$river = Swiftriver_Event::$data;
-		$url = URL::site().$river->account->account_path.'/river/'.$river->river_name_url.'/trend/map';
-		echo '<li class="button-view"><a href="'.$url.'">'.__('Map').'</a></li>';
-	}
-	
 	/**
-	 * Display map link in the bucket navigation bar
+	 * Display map link in river|bucket navigation bar
 	 * 
 	 * @return	void
 	 */
-	public function bucket_nav()
+	public function map_nav()
 	{
-		$bucket = Swiftriver_Event::$data;
-		$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/map';
-		echo '<li class="button-view"><a href="'.$url.'">'.__('Map').'</a></li>';
+		// Get the nav data
+		$nav = Swiftriver_Event::$data;
+
+		// Add new nav item
+		$nav[] = array(
+			'id' => '',
+			'active' => (Request::$current->controller() == 'map') ? 'active' : '',
+			'url' => '/trend/map',
+			'label' => __('Map')
+		);
+
+		// Return the nav $data
+		Swiftriver_Event::$data = $nav;
 	}
 	
 }

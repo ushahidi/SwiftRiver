@@ -1147,6 +1147,15 @@ $(function() {
 	window.appRouter = new AppRouter;
 	// Start Backbone history
 	Backbone.history.start({pushState: true, root: base_url + "/"});
-	
+
+	// Onclick Handlers for Drops/List
+	$("#drops-navigation-link a").click(function() {
+		appRouter.navigate('/drops', {trigger: true});
+		return false;
+	});
+	$("#list-navigation-link a").click(function() {
+		appRouter.navigate('/list', {trigger: true});
+		return false;
+	});
 });
 </script>

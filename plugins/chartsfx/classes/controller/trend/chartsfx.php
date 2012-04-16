@@ -36,19 +36,19 @@ Class Controller_Trend_Chartsfx extends Controller_Trend_Main {
 
 	public function action_bubble()
 	{
-		$this->template->content->trend = View::factory('chartsfx/bubble')
+		$this->trend = View::factory('chartsfx/bubble')
 			->bind('flare_url', $this->flare_url);		
 	}
 
 	public function action_sunburst()
 	{
-		$this->template->content->trend = View::factory('chartsfx/sunburst')
+		$this->trend = View::factory('chartsfx/sunburst')
 			->bind('flare_url', $this->flare_url);		
 	}
 
 	public function action_cluster()
 	{
-		$this->template->content->trend = View::factory('chartsfx/cluster')
+		$this->trend = View::factory('chartsfx/cluster')
 			->bind('flare_url', $this->flare_url);		
 	}		
 
