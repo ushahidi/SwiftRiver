@@ -117,8 +117,8 @@ class Controller_River extends Controller_Swiftriver {
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 		
 		// River filters
-		$filters = $this->_get_river_filters();
-		
+		$filters = $this->_get_filters();
+				
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
 			$max_droplet_id, NULL, $filters);
@@ -139,12 +139,13 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
 		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
+		$droplet_js->channels = json_encode($this->river->get_channels());
 		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
 		{
-			$droplet_js->filters = $this->_stringify_filter_params($filters);
+			$droplet_js->filters = json_encode($filters);
 		}
 		
 		// Select droplet list view with drops view as the default if list not specified
@@ -205,7 +206,7 @@ class Controller_River extends Controller_Swiftriver {
 					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
 					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-					$filters = $this->_get_river_filters();
+					$filters = $this->_get_filters();
 
 					if ($since_id)
 					{
@@ -323,70 +324,6 @@ class Controller_River extends Controller_Swiftriver {
 		$this->active = 'rivers';
 	}
 
-	/**
-	 * Ajax rendered filter control box
-	 * 
-	 * @return	void
-	 */
-	public function action_filters()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-		$filters_control = View::factory('pages/river/filters_control')
-		    ->bind('channel_filters', $channel_filters)
-		    ->bind('filter_channel', $filter_channel)
-		    ->bind('tags_filter', $tags_filter)
-		    ->bind('places_filter', $places_filter);
-
-		$channel_filters =  $this->river->get_channel_filters();
-
-		$cached = array();
-		if( $this->cache )
-		{
-			$cached = $this->cache->get('river.filters');
-		}
-
-		$filter_channel = (isset($cached['channel'])) ? $cached['channel'] : '';
-		$tags_filter = '';
-		$places_filter = '';
-
-		if (isset($cached['tags']))
-		{
-			$tags_filter = "";
-			if ( ! empty($cached['tags']['ids']))
-			{
-				$ids = $cached['tags']['ids'];
-				$tags = DB::select('tag')
-				    ->from('tags')
-				    ->where('id', 'IN', $ids)
-				    ->find_all()
-				    ->as_array();
-
-				$tags_filter = implode(",", $tags).", ";
-			}
-
-			$tags_filter .= implode(",", $cached['tags']['names']);
-		}
-
-		if (isset($cached['places']))
-		{
-			$places_filter = "";
-			if ( ! empty($cached['places']['ids']))
-			{
-				$ids  =$cached['tags']['ids'];
-				$places  = DB::select('place_name')
-				    ->from('places')
-				    ->where('id', 'IN', $ids)
-				    ->find_all()
-				    ->as_array();
-
-				$places_filter = implode(",", $places).",";
-			}
-			$places_filter .= implode(", ", $cached['places']['names']);
-		}
-
-		echo $filters_control;
-	}
 	
 	/**
 	 * River collaborators restful api
@@ -642,129 +579,27 @@ class Controller_River extends Controller_Swiftriver {
 	
 	
 	/**
-	 * Grabs and packs the place and tag filters from a HTTP GET request
+	 * Return filter parameters as a hash array
 	 */
-	private function _get_river_filters()
+	private function _get_filters()
 	{
-
 		$filters = array();
+		$parameters = array('tags', 'channel', 'start_date', 'end_date');
 		
-		// Get filtering parameters
-		$places = $this->request->query('places');
-		$tags = $this->request->query('tags');
-		$channel = strtolower($this->request->query('channel'));
-
-		// Build the filters array
-		if (is_string($places))
+		foreach ($parameters as $parameter)
 		{
-			$filters['places'] = explode(",", $places);
+			$values = $this->request->query($parameter);
+			if ($values) {
+				$filters[$parameter] = array();				
+				// Parameters are array strings that are comma delimited
+				// The below converts them into a php array, trimming each
+				// value
+				foreach (explode(',', urldecode($values)) as $value) {
+					$filters[$parameter][] = trim($value);
+				}
+			}
 		}
-		elseif (is_array($places))
-		{
-			$filters['places'] = $places;
-		}
-
-		if (is_string($tags))
-		{
-			$filters['tags'] = explode(",", $tags);
-		}
-		elseif (is_array($tags))
-		{
-			$filters['tags'] = $tags;
-		}
-
-		// Sanitize the filters
-		$filters = $this->_sanitize_filters($filters);
-
-		// Only filter by a single channel
-		$channels = explode(",", $channel);
-		$channel = $channels[count($channels) - 1];
-
-		// Add the channel filters
-		if (Valid::not_empty($channel) AND (Swiftriver_Plugins::get_channel_config($channel) != FALSE))
-		{
-			$filters['channel'] = $channel;
-		}
-
-		// Cache the filters
-		if ($this->cache)
-		{
-			$this->cache->set('river.filters', $filters);
-		}
-
+		
 		return $filters;
 	}
-
-	/**
-	 * Runs sanitization checks on a set of filter parameters. The
-	 * filter parameters are split into two - ids and names - the
-	 * former applying to digit values and the latter to strings
-	 */
-	private function _sanitize_filters($filters)
-	{
-		$modified = array();
-		foreach ($filters as $param => $values)
-		{
-			// Split each parameter into ids and names
-			$modified[$param]['ids'] = array();
-			$modified[$param]['names'] = array();
-
-			foreach ($values as $value)
-			{
-				if (intval($value) > 0)
-				{
-					$modified[$param]['ids'][] = $value;
-				}
-				elseif (is_string($value) AND Valid::not_empty($value))
-				{
-					$modified[$param]['names'][] = trim($value);
-				}
-
-			}
-		}
-
-		// Sanitization and duplication filtering
-		foreach ($modified as $param => & $values)
-		{
-			$param = & $param;
-			foreach ($values as $key => & $data)
-			{
-				$key = & $key;
-				if (Valid::not_empty($data))
-				{
-					$data = array_unique($data);
-				}
-				else
-				{
-					unset ($key);
-				}
-			}
-
-			if ( ! Valid::not_empty($param))
-			{
-				unset ($param);
-			}
-		}
-
-		// Replace the filters with the sanitized set
-		return $modified;
-	}
-
-	/**
-	 * Converts the filter parameters into a url string representation
-	 */
-	private function _stringify_filter_params($filters)
-	{
-		// Convert arrays into comma separated strings
-		foreach ($filters as $param => $data)
-		{
-			if (is_array($data))
-			{
-				$filters[$param] = implode(",", $data['names']);
-			}
-		}
-		
-		return http_build_query($filters);
-	}
-
 }

@@ -250,16 +250,12 @@ class Model_River extends ORM {
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
 			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			                    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+			                    array('user_scores.score','user_score'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
-			    ->on('all_scores.droplet_id', '=', 'droplets.id')
-			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
-			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('droplets.droplet_processed', '=', 1);
 			
@@ -276,6 +272,10 @@ class Model_River extends ORM {
 
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
+			
+			// Left join for user scores
+			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
+		    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
 
 			// Ordering and grouping
 			$query->order_by('droplets.droplet_date_pub', $sort)
@@ -337,22 +337,23 @@ class Model_River extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
 			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
 			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+			    array('user_scores.score','user_score'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
-			    ->on('all_scores.droplet_id', '=', 'droplets.id')
-			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
-			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('droplets.droplet_processed', '=', 1)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('rivers_droplets.id', '>', $since_id);
 
 			// Apply the river filters
 			self::_apply_river_filters($query, $filters);
+			
+			// Left join for user scores
+			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
+				->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
+		    
 
 			// Group, order and limit
 			$query->order_by('rivers_droplets.id', 'ASC')
@@ -602,119 +603,32 @@ class Model_River extends ORM {
 	private static function _apply_river_filters(& $query, $filters)
 	{
 		 // Check if the filter are empty
-		 if ( ! empty($filters))
-		 {
-		 	// Places fitler
-		 	if (isset($filters['places']) AND Valid::not_empty($filters['places']))
-		 	{
-		 		$group_places = FALSE;
+		if (empty($filters))
+			return;
 
-			 	// Get the places filter
-			 	$places = $filters['places'];
+		if (! empty($filters['channel'])) {
+			$query->where('droplets.channel', 'IN', $filters['channel']);
+		}
+		
+		if (! empty($filters['tags'])) {
+			$query->join('droplets_tags', 'INNER')
+				->on('droplets_tags.droplet_id', '=', 'droplets.id')
+				->join('tags', 'INNER')
+				->on('droplets_tags.tag_id', '=', 'tags.id')
+				->where('tag', 'IN', $filters['tags']);
+		}
+		
+		if (! empty($filters['start_date'])) {
+			$start_date = array_shift($filters['start_date']);
+			$start_date = new DateTime($start_date);
+			$query->where('droplets.droplet_date_pub', '>=', $start_date->format('Y-m-d'));
+		}
 
-			 	// Get the place ids
-			 	if (isset($places['ids']) AND Valid::not_empty($places['ids']))
-			 	{
-			 		$group_places = TRUE;
-			 		$query->and_where_open();
-
-			 		$place_ids = $places['ids'];
-
-			 		// Add subquery filter
-			 		$query->where('droplets.id', 'IN', 
-			 			DB::select('droplet_id')
-			 			    ->from('droplets_places')
-			 			    ->where('place_id', 'IN', $place_ids)
-			 		);
-			 	}
-
-			 	// Get the place names
-			 	if (isset($places['names']) AND Valid::not_empty($places['names']))
-			 	{
-			 		// Determine the where clause to use
-			 		$where_clause = ($group_places) ? "or_where" : "where";
-
-			 		$place_names = array_map("strtolower", $places['names']);
-
-			 		// Add subquery filter based on place names
-			 		$query->$where_clause('droplets.id', 'IN', 
-			 			DB::select('droplet_id')
-			 			    ->from('droplets_places')
-			 			    ->where('place_id', 'IN',
-			 			    	 DB::select('id')
-			 			    	     ->from('places')
-			 			    	     ->where(DB::expr('LOWER(place_name)'), 'IN', $place_names)
-			 			    	)
-			 		    );
-			 	}
-
-			 	// Close the place grouping
-			 	if ($group_places)
-			 	{
-			 		$query->and_where_close();
-			 	}
-			 }
-
-
-
-			 // Tags filter
-		 	if (isset($filters['tags']) AND Valid::not_empty($filters['tags']))
-		 	{
-		 		$group_tags = FALSE;
-
-			 	// Get the places filter
-			 	$tags = $filters['tags'];
-
-			 	// Get the place ids
-			 	if (isset($tags['ids']) AND Valid::not_empty($tags['ids']))
-			 	{
-			 		$group_tags = TRUE;
-			 		$query->and_where_open();
-
-			 		$tag_ids = $tags['ids'];
-
-			 		// Add subquery filter
-			 		$query->where('droplets.id', 'IN', 
-			 			DB::select('droplet_id')
-			 			    ->from('droplets_tags')
-			 			    ->where('tag_id', 'IN', $tag_ids)
-			 		);
-			 	}
-
-			 	// Get the tag names
-			 	if (isset($tags['names']) AND Valid::not_empty($tags['names']))
-			 	{
-			 		// Determine the where clause to use
-			 		$where_clause = ($group_tags) ? "or_where" : "where";
-
-			 		// Convert all the tag names to lower case
-			 		$tag_names = array_map("strtolower", $tags['names']);
-
-			 		// Add subquery filter based on place names
-			 		$query->$where_clause('droplets.id', 'IN', 
-			 			DB::select('droplet_id')
-			 			    ->from('droplets_tags')
-			 			    ->where('tag_id', 'IN',
-			 			    	 DB::select('id')
-			 			    	     ->from('tags')
-			 			    	     ->where(DB::expr('LOWER(tag)'), 'IN', $tag_names)
-			 			    	)
-			 		    );
-			 	}
-
-			 	if ($group_tags)
-			 	{
-			 		$query->and_where_close();
-			 	}
-			 }
-
-			 // Check for channel name filter
-			 if (isset($filters['channel']))
-			 {
-			 	$query->where('droplets.channel', '=', $filters['channel']);
-			 }
-		 }
-		// END filters check
+		if (! empty($filters['end_date'])) {
+			$end_date = array_shift($filters['end_date']);
+			$end_date = new DateTime($end_date);
+			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d'));
+		}
 	}
 
 	/**
