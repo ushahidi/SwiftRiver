@@ -952,6 +952,9 @@ section.meta-data img.media-image {
   width: 100%;
 }
 /* ---- DROP: VIEW DROPS */
+.drops article.drop {
+  margin: 15px 0;
+}
 .drops article.drop div.drop-actions {
   padding: 5px 10px 15px;
 }
@@ -987,6 +990,30 @@ section.meta-data img.media-image {
 .drops article.drop div.drop-actions > ul li {
   float: left;
 }
+
+/**** Transitions ****/
+.masonry,
+.masonry .masonry-brick {
+  -webkit-transition-duration: 0.7s;
+     -moz-transition-duration: 0.7s;
+       -o-transition-duration: 0.7s;
+          transition-duration: 0.7s;
+}
+
+.masonry {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.masonry .masonry-brick {
+  -webkit-transition-property: left, right, top;
+     -moz-transition-property: left, right, top;
+       -o-transition-property: left, right, top;
+          transition-property: left, right, top;
+}
+
 /* ---- DROP: VIEW LIST */
 .list article.drop .drop-content {
   float: left;

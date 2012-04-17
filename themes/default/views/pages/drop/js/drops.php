@@ -159,6 +159,27 @@ $(function() {
 		
 		comparator: function (droplet) {
 			return Date.parse(droplet.get('droplet_date_pub'));
+		},
+		
+		add: function (model, options) {
+			
+			var isReset = this.length == 0;
+			
+			// Do the default add from parent class
+ 			Backbone.Collection.prototype.add.call(this, model, options);
+			
+			// Our custom event raised when not a reset
+			if (!isReset) {
+				// Get the Backbone model objects that have just been added
+				var models = [];
+				_.each(model, function(drop) {
+					models.push(dropsList.get(drop.id));
+				})
+
+				// Custom event that unlike the add event, will contain an
+				// array of all the models that were added at once.
+				this.trigger("drops", models);
+			}
 		}
 	});
 	
@@ -489,8 +510,6 @@ $(function() {
 		
 		noContentElHidden: false,
 		
-		isInitialized: false,
-		
 		events: {
 			"click article.alert-message a": "showNewDrops"
 		},
@@ -498,12 +517,20 @@ $(function() {
 		initialize: function(options) {
 			var el = (options.layout == "list")
 			    ? this.make("article", {"class": "river list"})
-			    : this.make("article", {"class": "river drops cf"});
+			    : this.make("article", {"class": "river drops cf", "style": "position: relative;"});
 			this.setElement(el);
 
-			dropsList.on('add',	 this.addDrop, this);
-			dropsList.on('reset', this.addDrops, this); 
+			dropsList.on('reset', this.initDrops, this); 
 			dropsList.on('destroy', this.checkEmpty, this);
+			
+			if (options.layout == "list") {
+				// For list layout we can add drops directly, no masonry required
+				dropsList.on('add', this.addDrop, this);
+			} else {
+				// Masonry requires all new drops to be added at once for a smooth
+				// animation
+				dropsList.on('drops', this.addDrops, this);
+			}
 			
 			newDropsList.on('add', this.alertNewDrops, this);
 			newDropsList.on('reset', this.resetNewDropsAlert, this);
@@ -516,6 +543,25 @@ $(function() {
 			this.alertNewDrops();
 			
 			return this;
+		},
+		
+		addDrops: function(drops) {
+			// Get the views for each drop
+			var views = [];
+			var id = maxId;
+			_.each(drops, function(drop) {
+				id = Math.max(id, drop.get("sort_id"));
+				views.push(new DropView({model: drop, layout: this.options.layout}).render().el);
+			}, this)
+			
+			// Add the drops to the view all at once and do masonry
+			if (id > maxId) {
+				// New drops, prepend them
+				 this.$("#drops-view").prepend(views).masonry('reload');
+			} else {
+				// Pagination, append the drops
+				this.$("#drops-view").append(views).masonry('appended', $(views), true);
+			}
 		},
 		
 		addDrop: function(drop) {
@@ -536,15 +582,7 @@ $(function() {
 					this.$("#drops-view").append(view.render().el);
 				}
 			} else {
-				if (this.isInitialized) {
-					if (drop.get("sort_id") > maxId) {
-						this.$("#drops-view").prepend(view.render().el).masonry('reload');
-					} else {
-						this.$("#drops-view").append(view.render().el).masonry('appended', view.$el, true );
-					}
-				} else {
-					this.$("#drops-view").append(view.render().el);
-				}
+				this.$("#drops-view").prepend(view.render().el);
 			}
 			
 			if (!this.noContentElHidden) {
@@ -553,14 +591,49 @@ $(function() {
 			
 		},
 		
-		addDrops: function() {
+		initDrops: function() {
 			// Remove drops if any from the view
 			this.$("article.drop").remove();
+			
+			// When a reset is done after initialization, redo masonry.
+			var doMasonry = false;
+			if (this.$("#drops-view").hasClass("masonry")) {
+				this.$("#drops-view").masonry('destroy');
+				doMasonry = true;
+			}
 			
 			if (!this.checkEmpty()) {
 				this.hideNoContentEl();
 				dropsList.each(this.addDrop, this);
-				this.isInitialized = true;
+			}
+			
+			if (doMasonry) {
+				this.masonry();
+			}
+		},
+		
+		masonry: function() {
+			// Do masonry
+			if (this.options.layout == "drops") {
+				// MASONRY: DROPS
+				if ((window.innerWidth >= 615) && (window.innerWidth <= 960)) {
+					this.$('#drops-view').masonry({
+						itemSelector: 'article.drop',
+						isAnimated: !Modernizr.csstransitions,
+						columnWidth: function( containerWidth ) {
+							return containerWidth / 3;
+						}
+					});
+				}
+				else if (window.innerWidth >= 960) {
+					this.$('#drops-view').masonry({
+						itemSelector: 'article.drop',
+						isAnimated: !Modernizr.csstransitions,
+						columnWidth: function( containerWidth ) {
+							return containerWidth / 4;
+						}
+					});
+				}
 			}
 		},
 		
@@ -1075,18 +1148,19 @@ $(function() {
     
 			// Hide the navigation selector and show a loading message				
 			loading_msg.appendTo(bottomEl).show();
-    
+			
 			dropsList.fetch({
 			    data: {
 			        page: pageNo, 
 			        max_id: maxId
 			    }, 
-			    add: true, 
-			    complete: function (model, response) {
-			        isPageFetching = false;
+			    add: true,
+			    complete: function(model, response) {
+					// Reanable scrolling after a delay
+					setTimeout(function(){ isPageFetching = false; }, 700);
 			        loading_msg.fadeOut('normal');
 			    },
-			    error: function (model, response) {
+			    error: function(model, response) {
 			        if (response.status == 404) {
 			            isAtLastPage = true;
 			        }
@@ -1156,7 +1230,7 @@ $(function() {
 			if (!this.view) {
 				this.view = new DropsView({layout: layout});
 				this.view.render();
-				this.view.addDrops();
+				this.view.initDrops();
 			}
 			return this.view.el;
 		},
@@ -1164,13 +1238,9 @@ $(function() {
 		dropsView: function() {
 			$("#drops-navigation-link").addClass("active");
 			$("#list-navigation-link").removeClass("active");
-			this.resetView();			
+			this.resetView();		
 			$("#content").append(this.getView("drops"));
-			// Do masonry
-			$('#drops-view').masonry({
-				itemSelector: 'article.drop',
-				isAnimated: true
-			});
+			this.view.masonry();
 			this.listingDone = true;
 			
 			// Apply filter parameters to the navigation if any
