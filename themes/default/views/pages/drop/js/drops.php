@@ -4,7 +4,29 @@
  */
 $(function() {
 	var base_url = "<?php echo $fetch_base_url; ?>";
-	var filters = "<?php echo $filters; ?>";
+	var default_view = "<?php echo $default_view; ?>";
+	
+	// Filters
+	var Filter = Backbone.Model.extend({
+		
+		getString: function() {
+			var query = "";
+			var data = this.toJSON();
+			for (filter in data) {
+				if (query.length) {
+					query += "&";
+				}
+				query += filter + "=" + data[filter];
+			}
+			return query;
+		},
+		
+		isEmpty: function() {
+			return _.keys(this.attributes).length == 0;
+		}
+	});
+	
+	var filters = new Filter(<?php echo $filters; ?>);
 	
 	// Bucket list
 	var Bucket = Backbone.Model.extend({
@@ -119,19 +141,46 @@ $(function() {
 			this.save({user_score: score, droplet_score: {user_score: score, user_id: window.logged_in_user}});
 		}
 	});
-	
-	function getDropletListUrl(filters) {
-		return base_url + "/droplets" + (filters.length > 0 ? '?' + filters : '');
+		
+	function getDropletListUrl(applyFilters) {
+		var f = "";
+		
+		if (applyFilters) {
+			f = filters.getString();
+		}
+		
+		return base_url + "/droplets" + (f.length > 0 ? '?' + f : '');
 	}
 	
 	// Droplet & Bucket collection
 	var DropsList = Backbone.Collection.extend({
 		model: Drop,
 		
-		url: getDropletListUrl(filters),
+		url: getDropletListUrl(true),
 		
 		comparator: function (droplet) {
 			return Date.parse(droplet.get('droplet_date_pub'));
+		},
+		
+		add: function (model, options) {
+			
+			var isReset = this.length == 0;
+			
+			// Do the default add from parent class
+ 			Backbone.Collection.prototype.add.call(this, model, options);
+			
+			// Our custom event raised when not a reset
+			if (!isReset) {
+				// Get the Backbone model objects that have just been added
+				var models = [];
+				_.each(model, function(drop) {
+					models.push(dropsList.get(drop.id));
+				})
+
+				// Custom event that unlike the add event, will contain an
+				// array of all the models that were added at once.
+				this.trigger("drops", models);
+			}
 		}
 	});
 	
@@ -462,8 +511,6 @@ $(function() {
 		
 		noContentElHidden: false,
 		
-		isInitialized: false,
-		
 		events: {
 			"click article.alert-message a": "showNewDrops"
 		},
@@ -471,12 +518,20 @@ $(function() {
 		initialize: function(options) {
 			var el = (options.layout == "list")
 			    ? this.make("article", {"class": "river list"})
-			    : this.make("article", {"class": "river drops cf"});
+			    : this.make("article", {"class": "river drops cf", "style": "position: relative;"});
 			this.setElement(el);
 
-			dropsList.on('add',	 this.addDrop, this);
-			dropsList.on('reset', this.addDrops, this); 
+			dropsList.on('reset', this.initDrops, this); 
 			dropsList.on('destroy', this.checkEmpty, this);
+			
+			if (options.layout == "list") {
+				// For list layout we can add drops directly, no masonry required
+				dropsList.on('add', this.addDrop, this);
+			} else {
+				// Masonry requires all new drops to be added at once for a smooth
+				// animation
+				dropsList.on('drops', this.addDrops, this);
+			}
 			
 			newDropsList.on('add', this.alertNewDrops, this);
 			newDropsList.on('reset', this.resetNewDropsAlert, this);
@@ -489,6 +544,25 @@ $(function() {
 			this.alertNewDrops();
 			
 			return this;
+		},
+		
+		addDrops: function(drops) {
+			// Get the views for each drop
+			var views = [];
+			var id = maxId;
+			_.each(drops, function(drop) {
+				id = Math.max(id, drop.get("sort_id"));
+				views.push(new DropView({model: drop, layout: this.options.layout}).render().el);
+			}, this)
+			
+			// Add the drops to the view all at once and do masonry
+			if (id > maxId) {
+				// New drops, prepend them
+				 this.$("#drops-view").prepend(views).masonry('reload');
+			} else {
+				// Pagination, append the drops
+				this.$("#drops-view").append(views).masonry('appended', $(views), true);
+			}
 		},
 		
 		addDrop: function(drop) {
@@ -509,15 +583,7 @@ $(function() {
 					this.$("#drops-view").append(view.render().el);
 				}
 			} else {
-				if (this.isInitialized) {
-					if (drop.get("sort_id") > maxId) {
-						this.$("#drops-view").prepend(view.render().el).masonry('reload');
-					} else {
-						this.$("#drops-view").append(view.render().el).masonry('appended', view.$el, true );
-					}
-				} else {
-					this.$("#drops-view").append(view.render().el);
-				}
+				this.$("#drops-view").prepend(view.render().el);
 			}
 			
 			if (!this.noContentElHidden) {
@@ -526,11 +592,49 @@ $(function() {
 			
 		},
 		
-		addDrops: function() {
+		initDrops: function() {
+			// Remove drops if any from the view
+			this.$("article.drop").remove();
+			
+			// When a reset is done after initialization, redo masonry.
+			var doMasonry = false;
+			if (this.$("#drops-view").hasClass("masonry")) {
+				this.$("#drops-view").masonry('destroy');
+				doMasonry = true;
+			}
+			
 			if (!this.checkEmpty()) {
 				this.hideNoContentEl();
 				dropsList.each(this.addDrop, this);
-				this.isInitialized = true;
+			}
+			
+			if (doMasonry) {
+				this.masonry();
+			}
+		},
+		
+		masonry: function() {
+			// Do masonry
+			if (this.options.layout == "drops") {
+				// MASONRY: DROPS
+				if ((window.innerWidth >= 615) && (window.innerWidth <= 960)) {
+					this.$('#drops-view').masonry({
+						itemSelector: 'article.drop',
+						isAnimated: !Modernizr.csstransitions,
+						columnWidth: function( containerWidth ) {
+							return containerWidth / 3;
+						}
+					});
+				}
+				else if (window.innerWidth >= 960) {
+					this.$('#drops-view').masonry({
+						itemSelector: 'article.drop',
+						isAnimated: !Modernizr.csstransitions,
+						columnWidth: function( containerWidth ) {
+							return containerWidth / 4;
+						}
+					});
+				}
 			}
 		},
 		
@@ -546,43 +650,6 @@ $(function() {
 				return true;
 			}
 			return false;
-		},
-		
-		filterDroplets: function(filters) {
-			// If there is another ajax request, try again shortly
-			if (isPageFetching || this.isSyncing) {
-				context = this;
-				callback = this.filterDroplets;
-				setTimeout(function() { callback.call(context, filters); }, 100);
-				return;
-			}
-			isPageFetching = true;
-			this.isSyncing = true
-			
-			// Generate the new filter url parameters
-			var new_filter_arr = [];
-			for(var p in filters) {
-				new_filter_arr.push(encodeURIComponent(p) + "=" + encodeURIComponent(filters[p]));
-			}
-			var new_filter = new_filter_arr.join("&");
-						
-			var dropsView = this;
-			dropsList.url = getDropletListUrl(new_filter);
-			dropsList.fetch({
-				complete: function() {
-					isPageFetching = false;
-					dropsView.isSyncing = false;
-				},
-				success: function (model, response) {
-					// Reset pagination
-					pageNo = 1;
-					isAtLastPage = false;
-					
-					if (typeof window.history.pushState != "undefined") {
-						window.history.pushState(response, "Droplets", base_url + '?' + new_filter);
-					}
-			    }
-			});
 		},
 		
 		alertNewDrops: function() {
@@ -968,6 +1035,93 @@ $(function() {
 
 	});
 	
+	// Filters modal window
+	var FiltersView = Backbone.View.extend({
+		tagName: "article",
+
+		className: "modal",
+
+		template: _.template($("#filters-modal-template").html()),
+		
+		events: {
+			"click .save-toolbar .button-blue a": "applyFilter",
+			"click .save-toolbar .button-blank a": "resetFilter"
+		},
+		
+		render: function() {
+			this.$el.html(this.template({filters: filters, channels: <?php echo $channels; ?>}));
+			return this;
+		},
+		
+		applyFilter: function() {
+			if (!this.$('.save-toolbar').hasClass('visible'))
+				return false;
+			
+			// Prepare a key value pair of data to send to the server
+			var data = {};
+			this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
+				var input = $(el);
+				var value = $.trim(input.val());
+				if (value.length) {
+					data[input.attr("name")] = encodeURIComponent(value);
+				}
+			});
+			
+			// If there is a filter or a previous filter has been cleared
+			if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
+				
+				var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
+				var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
+				
+				isSyncing = isPageFetching = true
+				var view = this;
+				
+				// Show a loading message if the GET request takes longer than 500ms
+				var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
+				$.get(base_url + "/droplets", data, function(response) {
+					// Success, replace the drops list with the new data
+					dropsList.reset(response);
+					
+					// Update the filter
+					filters = new Filter(data);
+					appRouter.setFilter(filters.getString(), false);
+					dropsList.url = newDropsList.url = getDropletListUrl(true);
+
+					// Reset pagination
+					pageNo = 1;
+					isAtLastPage = false;
+					
+					modalHide();
+				}, "json")
+				.complete(function() {
+					isSyncing = isPageFetching = false;
+									
+					clearTimeout(t);
+					loading_msg.replaceWith(save_toolbar);
+				});
+			}
+			
+			return false;
+		},
+		
+		resetFilter: function() {
+			this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
+				$(el).val("");
+			});	
+			
+			this.applyFilter();
+			
+			return false;
+		}
+	})
+	
+	// Bind to the filters button which is our of any of our views.
+	$("nav.page-navigation div.filter-actions a").click(function () {
+		var view = new FiltersView();
+		modalShow(view.render().el);
+		return false;
+	})
+	
 	
 	// Load content while scrolling - Infinite Scrolling
 	var pageNo = 1;
@@ -995,18 +1149,19 @@ $(function() {
     
 			// Hide the navigation selector and show a loading message				
 			loading_msg.appendTo(bottomEl).show();
-    
+			
 			dropsList.fetch({
 			    data: {
 			        page: pageNo, 
 			        max_id: maxId
 			    }, 
-			    add: true, 
-			    complete: function (model, response) {
-			        isPageFetching = false;
+			    add: true,
+			    complete: function(model, response) {
+					// Reanable scrolling after a delay
+					setTimeout(function(){ isPageFetching = false; }, 700);
 			        loading_msg.fadeOut('normal');
 			    },
-			    error: function (model, response) {
+			    error: function(model, response) {
 			        if (response.status == 404) {
 			            isAtLastPage = true;
 			        }
@@ -1051,53 +1206,64 @@ $(function() {
 	
 	var AppRouter = Backbone.Router.extend({
 		routes: {
-			"drops" : "dropsView",			
-			"list" : "listView",
 			"drop/:id" : "dropFullView",
 			"drop/:id/zoom" : "dropZoomView",
 			"*actions": "defaultRoute"
 		},
 		
+		initialize: function() {
+			this.route(/^drops(\?.+)?$/, "dropsView");
+			this.route(/^list(\?.+)?$/, "listView");
+		},
+		
 		listingDone: false,
 		
-		dropsView: null,
+		// Cache for the drops view to unbinding event handlers
+		// when the view changes.
+		view: null,
 				
 		resetView: function() {
 			$("#content").empty();
 			modalHide();
 			zoomHide();
-			dropsList.off(null, null, this.dropsView);
-			this.dropsView = null;
+			dropsList.off(null, null, this.view);
+			this.view = null;
 		},
 		
-		getDropsView: function (layout) {
-			if (!this.dropsView) {
-				this.dropsView = new DropsView({layout: layout});
-				this.dropsView.render();
-				this.dropsView.addDrops();
+		getView: function (layout) {
+			if (!this.view) {
+				this.view = new DropsView({layout: layout});
+				this.view.render();
+				this.view.initDrops();
 			}
-			return this.dropsView.el;
+			return this.view.el;
 		},
 		
 		dropsView: function() {
 			$("#drops-navigation-link").addClass("active");
 			$("#list-navigation-link").removeClass("active");
-			this.resetView();			
-			$("#content").append(this.getDropsView("drops"));
-			// Do masonry
-			$('#drops-view').masonry({
-				itemSelector: 'article.drop',
-				isAnimated: true
-			});
+			this.resetView();		
+			$("#content").append(this.getView("drops"));
+			this.view.masonry();
 			this.listingDone = true;
+			
+			// Apply filter parameters to the navigation if any
+			if (!filters.isEmpty()) {
+				this.setFilter(filters.getString(), true);
+			}
 		},
 		
 		listView: function() {
 			$("#list-navigation-link").addClass("active");
 			$("#drops-navigation-link").removeClass("active");
 			this.resetView();
-			$("#content").append(this.getDropsView("list"));
+			$("#content").append(this.getView("list"));
 			this.listingDone = true;
+			
+			// Apply filter parameters to the navigation if any
+			if (!filters.isEmpty()) {
+				this.setFilter(filters.getString(), true);
+			}
 		},
 		
 		dropFullView: function (id) {
@@ -1106,7 +1272,7 @@ $(function() {
 			if (!drop) {
 				// Drop not in the local collection, request it from the server
 				drop = new Drop({id: id});
-				drop.urlRoot = getDropletListUrl('');
+				drop.urlRoot = getDropletListUrl(false);
 				var context = this;
 				var callback = this.dropFullView;
 				drop.fetch({
@@ -1139,7 +1305,22 @@ $(function() {
 		},
 				
 		defaultRoute: function(actions){
-			this.navigate("/drops", {trigger: true});
+			if (default_view == 'list') {
+				this.navigate("/list", {trigger: true});
+			} else {
+				this.navigate("/drops", {trigger: true});
+			}
+		},
+		
+		setFilter: function(query, repl) {
+			var fragment = "drops";
+			if (this.view.options.layout == "list") {
+				fragment = "list";
+			} 
+			if (query) {
+				fragment += '?' + query;
+			}
+			this.navigate(fragment, {replace: repl});
 		}
 	});
 	

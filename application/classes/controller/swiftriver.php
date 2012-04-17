@@ -113,12 +113,9 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 		
-		if ($this->request->controller() != 'swiftriver')
-		{
-			$uri = $this->request->url(TRUE);
-			$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
-			Request::current()->redirect('login'.$query);
-		}
+		$uri = $this->request->url(TRUE);
+		$query = URL::query(array('redirect_to' => $uri.URL::query()), FALSE);
+		Request::current()->redirect('login'.$query);
 	}
 
 	/**
@@ -282,7 +279,14 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			
 			// Logged in user's dashboard url
-			$this->dashboard_url = URL::site().$this->user->account->account_path;
+			if ($this->anonymous)
+			{
+				$this->dashboard_url = URL::site('welcome');
+			}
+			else
+			{
+				$this->dashboard_url = URL::site().$this->user->account->account_path;
+			}
 			
 			// Build the base URL
 			$visited_account_path = $this->request->param('account');
@@ -314,6 +318,7 @@ class Controller_Swiftriver extends Controller_Template {
 			    ->bind('site_name', $site_name);
 
 			$this->template->header->js = ''; // Dynamic Javascript
+			$this->template->header->css = ''; // Dynamic CSS
 			$site_name = Model_Setting::get_setting('site_name');
 			
 			// Header Nav

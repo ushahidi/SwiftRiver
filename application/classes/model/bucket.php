@@ -18,7 +18,7 @@ class Model_Bucket extends ORM {
 	/**
 	 * No. of droplets to return on each fetch
 	 */
-	const DROPLETS_PER_PAGE = 20;
+	const DROPLETS_PER_PAGE = 50;
 	
 	/**
 	 * One-to-many relationship definitions

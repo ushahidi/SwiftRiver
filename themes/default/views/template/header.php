@@ -11,6 +11,9 @@
 	<?php
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
+	// Inline css
+	echo $css; 
+	
 	// System and Other CSS
 	echo(Html::script('media/css'));
 	?>
@@ -38,6 +41,7 @@
 	
 	// Masonry plugin
 	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
+	echo(Html::script("themes/default/media/js/modernizr.custom.01220.js"));
 	
 	// Fileupload jQuery plugin
 	echo(Html::script("themes/default/media/js/jquery.ui.widget.js"));

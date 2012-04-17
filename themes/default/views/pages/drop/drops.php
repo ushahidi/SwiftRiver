@@ -421,6 +421,69 @@
 		<?php echo Form::close(); ?>
 	</div>
 </article>
-
 </script>
+
+<script type="text/template" id="filters-modal-template">
+	<hgroup class="page-title cf">
+		<div class="page-h1 col_9">
+			<h1>Filters</h1>
+		</div>
+		<div class="page-actions col_3">
+			<h2 class="close">
+				<a href="#">
+					<span class="icon"></span>
+					Close
+				</a>
+			</h2>
+		</div>
+	</hgroup>
+
+	<div class="modal-body modal-containers link-list">
+		<?php echo Form::open(); ?>
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<label for="channel">
+						<p class="field">Channel</p>
+						<select name="channel">
+							<option value="">Any</option>
+							<% for (channel in channels) { %>
+								<% var selected =  channels[channel]['channel'] == filters.get('channel') ? 'selected' : '' %>
+								<option value="<%= channels[channel]['channel'] %>" <%= selected %>><%= channels[channel]['name'] %></option>
+							<% } %>
+						</select>
+					</label>
+				</div>
+			</section>
+			
+			<section class="property-parameters">
+				<div class="parameter">
+					<label for="tags">
+						<p class="field">Tags</p>
+						<input type="text" name="tags" value="<%= filters.get('tags') ? decodeURIComponent(filters.get('tags')).replace(',', ', ') : '' %>"/>
+					</label>
+				</div>
+			</section>
+			
+			<section class="property-parameters">
+				<div class="parameter">
+					<label for="date">
+						<p class="field">Date</p>
+						<input type="date" name="start_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('start_date') %>" />
+						<span class="combine">to</span>
+						<input type="date" name="end_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('end_date') %>" />
+					</label>
+					</label>
+				</div>
+			</section>
+		</article>
+		
+		<div class="save-toolbar">
+			<p class="button-blue"><a href="#"><?php echo __("Apply Filter"); ?></a></p>
+			<p class="button-blank"><a href="#"><?php echo __("Remove Filter"); ?></a></p>
+		</div>
+		<?php echo Form::close(); ?>
+	</div>
+</script>
+
 <?php echo $droplet_js; ?>
