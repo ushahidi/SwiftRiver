@@ -11,6 +11,9 @@
 	<?php
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
+	// Inline css
+	echo $css; 
+	
 	// System and Other CSS
 	echo(Html::script('media/css'));
 	?>
