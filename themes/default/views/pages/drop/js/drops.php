@@ -1210,7 +1210,7 @@ $(function() {
 			"drop/:id/zoom" : "dropZoomView",
 			"*actions": "defaultRoute"
 		},
-		
+
 		initialize: function() {
 			this.route(/^drops(\?.+)?$/, "dropsView");
 			this.route(/^list(\?.+)?$/, "listView");

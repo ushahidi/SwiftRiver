@@ -1,28 +1,3 @@
-<?php if ( ! empty($search_term)): ?>
-<hgroup class="page-title cf">
-	<div class="center">
-		<div class="page-h1 col_9">
-			<h1><?php echo __("Search results "); ?> <em><?php echo $search_term; ?></em></h1>
-		</div>
-	</div>
-</hgroup>
-
-<nav class="page-navigation cf">
-	<div class="center">
-		<div id="page-views" class="river touchcarousel col_12">
-			<ul class="touchcarousel-container">
-				<li class="touchcarousel-item active"><a href="#"><?php echo __("Drops"); ?></a></li>
-				<li class="touchcarousel-item"><a href="#"><?php echo __("Rivers"); ?></a></li>
-				<li class="touchcarousel-item"><a href="#"><?php echo __("Buckets"); ?></a></li>
-				<li class="touchcarousel-item"><a href="#"><?php echo __("Users"); ?></a></li>
-			</ul>
-		</div>
-	</div>
-</nav>
-
-<?php echo $droplets_view; ?>
-<?php else: ?>
-
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
@@ -39,12 +14,11 @@
 	</hgroup>
 
 	<div class="modal-body search">
-	<?php echo Form::open(URL::site('search'), array('method' => 'GET')); ?>
-		<?php echo Form::hidden('scope', Session::instance()->get('search_scope')); ?>
+	<?php echo Form::open(URL::site('search'), array('method' => 'GET', 'id'=>'drop_search_form')); ?>
 		<div class="field cf">
 			<?php echo Form::input('q', '', array('class'=> "search", 'placeholder' => __("What do you want to search for?"))); ?>
 			<ul class="dual-buttons">
-				<?php if (Session::instance()->get('search_scope') !== 'all'): ?>
+				<?php if ( ! empty($search_scope) AND $search_scope != 'all'): ?>
 				<li class="button-blue">
 					<a href="#" onclick="submitForm(this)">
 					<?php 
@@ -54,13 +28,29 @@
 					</a>
 				</li>
 				<?php endif; ?>
-				<li class="button-blue">
-					<a href="#" onclick="submitForm(this)"><?php echo __("Search everything"); ?></a>
+				<?php $submit_js = ($search_scope == 'all') ? 'submitForm(this)' : ''; ?>
+				<li class="button-blue" id="search_all">
+					<a href="#" onclick="<?php echo $submit_js; ?>"><?php echo __("Search everything"); ?></a>
 				</li>
 			</ul>
 		</div>
 	<?php echo Form::close(); ?>
 	</div>
-</article>
 
-<?php endif; ?>
+	<?php if ($search_scope != 'all'): ?>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var searchForm = $("#drop_search_form");
+			var element = document.createElement('input');
+			$(element).attr({'type': 'hidden', 'name':'search_scope', 'value': 'all'});
+			$(element).appendTo(searchForm);
+
+			// Event bindings for the "Search Everything" button
+			$("#search_all > a", searchForm).live('click', function(){
+				searchForm.submit();
+			});
+		});
+	</script>
+	<?php endif; ?>
+
+</article>

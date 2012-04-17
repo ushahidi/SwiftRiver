@@ -13,8 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Droplet extends ORM
-{
+class Model_Droplet extends ORM {
 
 	/**
 	 * A droplet has and belongs to many links, places, tags and attachments
@@ -717,7 +716,7 @@ class Model_Droplet extends ORM
 	 *
 	 * @param array $droplets Droplets to be populated with comments/discussions
 	 */
-	public static function populate_discussions(array & $droplets)
+	public static function populate_discussions(& $droplets)
 	{
 		if (empty($droplets))
 			return;
@@ -728,6 +727,7 @@ class Model_Droplet extends ORM
 			$droplet['discussions'] = array();
 			$droplet_ids[] = $droplet['id'];
 		}
+
 
 		// Query to fetch the comments
 		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 
@@ -1013,43 +1013,102 @@ class Model_Droplet extends ORM
 	}
 
 	/**
-	 * Given a search term, finds all droplets that contain the term
+	 * Retrieves the list of droplets that matche the specified filters
 	 *
-	 * @param string $search_term Term to search for
+	 * @param array $filters Set of filters to apply to the droplets list
 	 * @param int $user_id ID of the user initiating the search
 	 * @param int $page Page number - for calculating the offset of the resultest
 	 */
-	public static function search($search_term, $user_id, $page = 1)
+	public static function search($filters, $user_id, $page = 1)
 	{
-		// Sanity check for the page number
-		$page = (empty($page)) ? 1 : $page;
+		$user_orm = ORM::factory('user', $user_id);
+		$droplets = array();
 
-		// Build the SQL "LIKE" expression
-		$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
+		if ($user_orm->loaded())
+		{
+			// Sanity check for the page number
+			$page = (empty($page)) ? 1 : $page;
 
-		// Build Buckets Query
-		$query = DB::select(array('droplets.id', 'id'), array('droplets.id', 'sort_id'),
-							'droplet_title', 'droplet_content', 
-							'droplets.channel','identity_name', 'identity_avatar', 
-							array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-							array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
-			->from('droplets')
-			->join('identities')
-			->on('droplets.identity_id', '=', 'identities.id')
-			->join(array('droplet_scores', 'all_scores'), 'LEFT')
-		    ->on('all_scores.droplet_id', '=', 'droplets.id')
-		    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
-		    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-		    ->where('droplets.droplet_processed', '=', 1)
-		    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
-		    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
-		    ->group_by('droplets.id')
-		    ->order_by('droplets.droplet_date_add', 'DESC')
-		    ->limit(20)
-		    ->offset(20 * ($page - 1));
+			// Build Buckets Query
+			$query = DB::select(array('droplets.id', 'id'), 
+				    array(DB::expr('UNIX_TIMESTAMP(droplets.droplet_date_add)'), 'sort_id'),
+				    'droplet_title', 'droplet_content', 
+				    'droplets.channel','identity_name', 'identity_avatar', 
+				    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+				    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+				->from('droplets')
+				->join('identities')
+				->on('droplets.identity_id', '=', 'identities.id')
+				->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+			    ->where('droplets.droplet_processed', '=', 1);
 
-		return $query->execute()->as_array();
+			self::apply_droplets_filter($query, $filters);
 
+			$query->group_by('droplets.id')
+			    ->order_by('droplets.droplet_date_add', 'DESC')
+			    ->limit(20)
+			    ->offset(20 * ($page - 1));
+
+			$droplets = $query->execute()->as_array();
+
+			Model_Droplet::populate_metadata($droplets, $user_orm->account->id);
+		}
+
+		return $droplets;
+	}
+
+
+	/**
+	 * Applies a set of filters to the specified Database_Query_Select object
+	 *
+	 * @param Database_Query_Select $query Object to which the filtering predicates shall be added
+	 * @param array $filters Set of filters to apply
+	 */
+	public static function apply_droplets_filter(& $query, $filters)
+	{
+		 // Check if the filter are empty
+		if (empty($filters))
+			return;
+
+		if ( ! empty($filters['channel']))
+		{
+			$query->where('droplets.channel', 'IN', $filters['channel']);
+		}
+		
+		if ( ! empty($filters['tags']))
+		{
+			$query->join('droplets_tags', 'INNER')
+				->on('droplets_tags.droplet_id', '=', 'droplets.id')
+				->join('tags', 'INNER')
+				->on('droplets_tags.tag_id', '=', 'tags.id')
+				->where('tag', 'IN', $filters['tags']);
+		}
+
+		if ( ! empty($filters['places']))
+		{
+			$query->join('droplets_places', 'INNER')
+				->on('droplets_places.droplet_id', '=', 'droplets.id')
+				->join('places', 'INNER')
+				->on('droplets_places.place_id', '=', 'places.id')
+				->where('place_name', 'IN', $filters['places']);
+		}
+		
+		if ( ! empty($filters['start_date']))
+		{
+			$start_date = array_shift($filters['start_date']);
+			$start_date = new DateTime($start_date);
+			$query->where('droplets.droplet_date_pub', '>=', $start_date->format('Y-m-d'));
+		}
+
+		if ( ! empty($filters['end_date']))
+		{
+			$end_date = array_shift($filters['end_date']);
+			$end_date = new DateTime($end_date);
+			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d'));
+		}
 	}
 }
 

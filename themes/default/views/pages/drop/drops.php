@@ -326,7 +326,11 @@
 				</a>
 			</li>
 			<li class="facebook">
-				<a href="#"><span class="icon"></span><?php echo __("Facebook"); ?><a/>
+				<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(droplet_title); %>
+				<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %>" 
+				    target="_blank">
+				    <span class="icon"></span><?php echo __("Facebook"); ?>
+			    <a/>
 			</li>
 			<li class="email"><a href="#"><span class="icon"></span><?php echo __("Email"); ?></a></li>
 		</ul>

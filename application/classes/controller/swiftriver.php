@@ -335,16 +335,6 @@ class Controller_Swiftriver extends Controller_Template {
 
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
-
-			// Store the search scope as session data
-			if (in_array($this->request->controller(), array('river', 'bucket')))
-			{
-				Session::instance()->set('search_scope', $this->request->controller());
-			}
-			elseif ($this->request->controller() != 'search')
-			{
-				Session::instance()->set('search_scope', 'all');
-			}
 		}
 
 	}

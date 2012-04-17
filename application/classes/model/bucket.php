@@ -135,9 +135,11 @@ class Model_Bucket extends ORM {
 	 * @param int $drop_id
 	 * @param int $page Page number - determines the offset for the result set
 	 * @param int $max_id Upper limit of the droplet ids to be returned
+	 * @param array $filters Set of predicates to filter the desired result
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX)
+	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, 
+		$max_id = PHP_INT_MAX, $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
@@ -175,7 +177,9 @@ class Model_Bucket extends ORM {
 				// Return all drops
 				$query->where('buckets_droplets.id', '<=', $max_id);
 			}
-			
+
+			// Apply filters
+			Model_Droplet::apply_droplets_filter($query, $filters);
 				
 			// Order & Pagination offset
 			$query->group_by('buckets_droplets.id');
@@ -290,11 +294,12 @@ class Model_Bucket extends ORM {
 			if ($active_only AND ! (bool) $collaborator->collaborator_active)
 				continue;
 			
-			$collaborators[] = array('id' => $collaborator->user->id, 
-			                         'name' => $collaborator->user->name,
-			                         'account_path' => $collaborator->user->account->account_path,
-			                         'collaborator_active' => $collaborator->collaborator_active,
-			                         'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
+			$collaborators[] = array(
+				'id' => $collaborator->user->id, 
+				'name' => $collaborator->user->name,
+				'account_path' => $collaborator->user->account->account_path,
+				'collaborator_active' => $collaborator->collaborator_active,
+				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}
 		
@@ -485,62 +490,6 @@ class Model_Bucket extends ORM {
 	}
 
 	/**
-	 * Searches for the specified search term in the bucket identified by $bucket_id
-	 *
-	 * @param string $search_term Content to search for in the specified river
-	 * @param int $bucket_id ID of the bucket being searched
-	 * @param int $user_id ID of the user performing the search
-	 *
-	 * @return array
-	 */
-	public static function search($search_term, $bucket_id, $user_id, $page = 1)
-	{
-		$buckets = array();
-
-		// The page must always be set
-		$page = (empty($page)) ? 1 : $page;
-
-		// Check if the specified bucket exists
-		$bucket_orm = ORM::factory('bucket', $bucket_id);
-		if ($bucket_orm->loaded())
-		{
-			// Build the SQL "LIKE" expression
-			$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
-
-			// Build Buckets Query
-			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
-								'droplet_title', 'droplet_content', 
-								'droplets.channel','identity_name', 'identity_avatar', 
-								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-								array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
-				->from('droplets')
-				->join('buckets_droplets', 'INNER')
-				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
-				->join('identities')
-				->on('droplets.identity_id', '=', 'identities.id')
-				->join(array('droplet_scores', 'all_scores'), 'LEFT')
-			    ->on('all_scores.droplet_id', '=', 'droplets.id')
-			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
-			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
-			    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
-			    ->group_by('buckets_droplets.id')
-			    ->order_by('droplets.droplet_date_add', 'DESC')
-				->limit(self::DROPLETS_PER_PAGE)
-				->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-
-			$droplets = $query->execute()->as_array();
-
-			// Populate the metadata
-			Model_Droplets::populate_metadata($droplet, $bucket_orm->account_id);
-		}
-
-		return $buckets;
-	}
-
-	/**
 	 * Given a search term, finds all buckets whose name or url
 	 * contains the term
 	 *
@@ -560,8 +509,11 @@ class Model_Bucket extends ORM {
 		if ($user_orm->loaded())
 		{
 			// Buckets owned by the user in $user_id
-			$owner_buckets = DB::select('id', 'bucket_name', 'bucket_name_url')
+			$owner_buckets = DB::select('buckets.id', 'buckets.bucket_name', 
+				    'buckets.bucket_name_url', 'accounts.account_path')
 			    ->from('buckets')
+			    ->join('accounts', 'INNER')
+			    ->on('buckets.account_id', '=', 'accounts.id')
 			    ->where_open()
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('bucket_name', 'LIKE', $search_expr)
@@ -570,9 +522,12 @@ class Model_Bucket extends ORM {
 
 
 			// All public buckets not owned by the user
-			$all_buckets = DB::select('id', 'bucket_name', 'bucket_name_url')
+			$all_buckets = DB::select('buckets.id', 'buckets.bucket_name', 
+				    'buckets.bucket_name_url', 'accounts.account_path')
 			    ->union($owner_buckets)
 			    ->from('buckets')
+			    ->join('accounts', 'INNER')
+			    ->on('buckets.account_id', '=', 'accounts.id')
 			    ->where('bucket_publish', '=', 1)
 			    ->and_where_open()
 			    ->where('account_id', '<>', $user_orm->account->id)

@@ -252,7 +252,7 @@ Route::set('register', 'register')
 /**
  * Search 
  */
-Route::set('search', 'search(/<action>)')
+Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
     ->defaults(array(
     	'controller' => 'search',
     	'action' => 'index'
