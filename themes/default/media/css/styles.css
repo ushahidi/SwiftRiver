@@ -954,6 +954,7 @@ section.meta-data img.media-image {
 /* ---- DROP: VIEW DROPS */
 .drops article.drop {
   margin: 15px 0;
+  overflow: hidden;
 }
 .drops article.drop div.drop-actions {
   padding: 5px 10px 15px;
