@@ -26,7 +26,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 	// Active Menu
 	public static $active = 'droplets';
 
-	private $trend;
+	protected $trend;
 	
 	protected $context;
 	
@@ -61,22 +61,45 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				{
 					// It doesn't -- redirect back to dashboard
 					$this->request->redirect($this->dashboard_url);
-				}			
+				}
+
+				// Is the logged in user an owner
+				if ($this->river->is_owner($this->user->id)) 
+				{
+					$this->owner = TRUE;
+				}
+				
+				// If this river is not public and no ownership...
+				if( ! $this->river->river_public AND ! $this->owner)
+				{
+					$request->redirect($this->dashboard_url);			
+				}
 				
 				$this->id = $this->river->id;
 				$this->droplets = Model_River::get_droplets($this->user->id, $this->river->id, 0);
 				
-				// Default template for river trends
-				$this->template->content = View::factory('pages/trend/river')
+				// Default template for river content
+				$this->template->content = View::factory('pages/river/layout')
 					->bind('river', $this->river)
-					->bind('droplets', $this->droplets)
-					->bind('more_url', $this->more_url)
-					->bind('drops_url', $drops_url)			
-					->bind('active', self::$active)
+					->bind('river_base_url', $this->river_base_url)
+					->bind('settings_url', $this->settings_url)
+					->bind('owner', $this->owner)
+					->bind('user', $this->user)
+					->bind('river_base_url', $this->river_base_url)
+					->bind('nav', $this->nav);
+
+				// Trend template
+				$this->template->content->sub_content = View::factory('pages/trend/river')
 					->bind('trend', $this->trend);
+
+				// Set the base url for this specific river
+				$this->river_base_url = $this->river->get_base_url();
+
+				// Settings url
+				$this->settings_url = $this->river_base_url.'/settings';
 				
-				$drops_url = URL::site().$this->river->account->account_path.'/river/'.$this->river->river_name_url;
-				$this->more_url = url::site().$this->account->account_path.'/river/'.$this->river->river_name_url.'/more';
+				// Navigation Items
+				$this->nav = Swiftriver_Navs::river($this->river);				
 				break;
 							
 			case "bucket":

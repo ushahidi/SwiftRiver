@@ -431,6 +431,29 @@ class Model_Droplet extends ORM
 		return $buckets;
 	}
 	
+	/**
+	 * Given an array of droplets, populates the buckets, tags, links, 
+	 * discussions and locations array elements
+	 *
+	 * @param array $droplets List of droplets to populate with metadata
+	 */
+	public static function populate_metadata(& $droplets, $account_id)
+	{
+		// Populate the buckets array
+		Model_Droplet::populate_buckets($droplets);
+
+		// Populate tags array			
+		Model_Droplet::populate_tags($droplets, $account_id);
+		
+		// Populate links array			
+		Model_Droplet::populate_links($droplets, $account_id);
+    	
+		// Populate places array			
+		Model_Droplet::populate_places($droplets, $account_id);
+		
+		// Populate the discussions array
+		Model_Droplet::populate_discussions($droplets);
+	}
 
 	/**
 	 * Given an array of droplets, populates a buckets array element
@@ -986,6 +1009,46 @@ class Model_Droplet extends ORM
 		$droplet['identity_name'] = mb_check_encoding($identity_name, 'UTF-8') 
 		    ? $identity_name 
 		    : utf8_encode($identity_name);
+
+	}
+
+	/**
+	 * Given a search term, finds all droplets that contain the term
+	 *
+	 * @param string $search_term Term to search for
+	 * @param int $user_id ID of the user initiating the search
+	 * @param int $page Page number - for calculating the offset of the resultest
+	 */
+	public static function search($search_term, $user_id, $page = 1)
+	{
+		// Sanity check for the page number
+		$page = (empty($page)) ? 1 : $page;
+
+		// Build the SQL "LIKE" expression
+		$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
+
+		// Build Buckets Query
+		$query = DB::select(array('droplets.id', 'id'), array('droplets.id', 'sort_id'),
+							'droplet_title', 'droplet_content', 
+							'droplets.channel','identity_name', 'identity_avatar', 
+							array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+							array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+			->from('droplets')
+			->join('identities')
+			->on('droplets.identity_id', '=', 'identities.id')
+			->join(array('droplet_scores', 'all_scores'), 'LEFT')
+		    ->on('all_scores.droplet_id', '=', 'droplets.id')
+		    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+		    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+		    ->where('droplets.droplet_processed', '=', 1)
+		    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
+		    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
+		    ->group_by('droplets.id')
+		    ->order_by('droplets.droplet_date_add', 'DESC')
+		    ->limit(20)
+		    ->offset(20 * ($page - 1));
+
+		return $query->execute()->as_array();
 
 	}
 }

@@ -26,8 +26,8 @@ class Chartsfx_Init {
 			);
 
 		// Create Menu Items
-		Swiftriver_Event::add('swiftriver.river.nav.more', array($this, 'river_nav'));
-		Swiftriver_Event::add('swiftriver.bucket.nav.more', array($this, 'bucket_nav'));
+		Swiftriver_Event::add('swiftriver.river.nav', array($this, 'chartsfx_nav'));
+		Swiftriver_Event::add('swiftriver.bucket.nav', array($this, 'chartsfx_nav'));
 	}
 
     /**
@@ -35,31 +35,26 @@ class Chartsfx_Init {
 	 * 
 	 * @return	void
 	 */
-	public function river_nav()
+	public function chartsfx_nav()
 	{
-		$river = Swiftriver_Event::$data;
+
+		// Get the nav data
+		$nav = Swiftriver_Event::$data;
+
+		// Add new nav items
 		foreach ($this->charts as $key => $value)
 		{
-			$url = URL::site().$river->account->account_path.'/river/'.$river->river_name_url.'/trend/chartsfx/'.$key;
-			echo '<li class="button-view"><a href="'.$url.'">'.$value.'</a></li>';
+			$nav[] = array(
+				'id' => '',
+				'active' => (Request::$current->controller() == 'chartsfx') ? 'active' : '',
+				'url' => '/trend/chartsfx/'.$key,
+				'label' => $value
+			);
 		}
-	}
-	
-	/**
-	 * Display ChartsFX link in the bucket navigation bar
-	 * 
-	 * @return	void
-	 */
-	public function bucket_nav()
-	{
-		$bucket = Swiftriver_Event::$data;
-		foreach ($this->charts as $key => $value)
-		{
-			$url = URL::site().$bucket->account->account_path.'/bucket/'.$bucket->bucket_name_url.'/trend/chartsfx/'.$key;
-			echo '<li class="button-view"><a href="'.$url.'">'.$value.'</a></li>';
-		}
-	}
-	
+
+		// Return the nav $data
+		Swiftriver_Event::$data = $nav;
+	}	
 }
 
 // Initialize the plugin

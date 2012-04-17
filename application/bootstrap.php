@@ -249,6 +249,15 @@ Route::set('register', 'register')
 		'action'     => 'register'
 	));	
 
+/**
+ * Search 
+ */
+Route::set('search', 'search(/<action>)')
+    ->defaults(array(
+    	'controller' => 'search',
+    	'action' => 'index'
+    ));
+
 	
 /**
  * Account Route

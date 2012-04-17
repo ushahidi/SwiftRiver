@@ -1,7 +1,7 @@
 <ul class="toolbar-menu">
 	<?php if ($user AND $user->account->loaded()): ?>
 	<li class="search">
-		<a href="/markup/modal-search.php" class="modal-trigger" title="<?php echo __("Search"); ?>">
+		<a href="<?php echo URL::site('search'); ?>" class="modal-trigger" title="<?php echo __("Search"); ?>">
 			<span class="icon"></span>
 			<span class="label"><?php echo __("Search"); ?></span>
 		</a>

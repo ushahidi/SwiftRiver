@@ -1181,6 +1181,8 @@ $(function() {
 	}
 	newDropsList.on('add', updateSinceId, this);
 	
+	// Check if polling is enabled
+	<?php if ($polling_enabled): ?>
 	// Poll for new drops every 30 seconds
 	setInterval(function() {
 		if (!isSyncing) {
@@ -1193,6 +1195,7 @@ $(function() {
 			});   
 		}		    
 	}, 30000);
+	<?php endif; ?>
 			
 	// Bootstrap the droplet list
 	dropsList.reset(<?php echo $droplet_list; ?>);
@@ -1320,6 +1323,15 @@ $(function() {
 	window.appRouter = new AppRouter;
 	// Start Backbone history
 	Backbone.history.start({pushState: true, root: base_url + "/"});
-	
+
+	// Onclick Handlers for Drops/List
+	$("#drops-navigation-link a").click(function() {
+		appRouter.navigate('/drops', {trigger: true});
+		return false;
+	});
+	$("#list-navigation-link a").click(function() {
+		appRouter.navigate('/list', {trigger: true});
+		return false;
+	});
 });
 </script>

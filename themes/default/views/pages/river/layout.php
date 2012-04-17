@@ -36,20 +36,13 @@
 		<div class="center">
 			<div id="page-views" class="river touchcarousel col_9">
 				<ul class="touchcarousel-container">
-					<li id="drops-navigation-link" class="touchcarousel-item">
-						<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
-							<?php echo __('Drops');?>
+					<?php foreach ($nav as $item): ?>
+					<li id="<?php echo $item['id']; ?>" class="touchcarousel-item <?php echo $item['active']; ?>">
+						<a href="<?php echo $river_base_url.$item['url']; ?>">
+							<?php echo $item['label'];?>
 						</a>
 					</li>
-					<li id="list-navigation-link" class="touchcarousel-item">
-						<a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">
-							<?php echo __("List"); ?>
-						</a>
-					</li>
-					<?php
-					// SwiftRiver Plugin Hook -- Add River Nav Item
-					Swiftriver_Event::run('swiftriver.river.nav', $river);
-					?>
+					<?php endforeach; ?>
 				</ul>
 			</div>
 			<div class="filter-actions col_3">
@@ -58,4 +51,4 @@
 		</div>
 	</nav>
 	
-	<?php echo $droplets_view; ?>
+	<?php echo $sub_content; ?>

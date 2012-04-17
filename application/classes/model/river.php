@@ -232,7 +232,8 @@ class Model_River extends ORM {
 	 * @param string $sort Sorting order
 	 * @return array
 	 */
-	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, $max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
+	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, 
+		$max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
@@ -297,20 +298,9 @@ class Model_River extends ORM {
 				Model_Droplet::utf8_encode($droplet);
 			}
 			
-			// Populate buckets array			
-			Model_Droplet::populate_buckets($droplets['droplets']);
-			
-			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
-			
-			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets'], $river_orm->account_id);
-			
-			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets'], $river_orm->account_id);
-			
-			// Populate the discussions array
-			Model_Droplet::populate_discussions($droplets['droplets']);
+			// Populate the metadata arrays
+			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
+
 		}
 
 		return $droplets;
@@ -369,20 +359,8 @@ class Model_River extends ORM {
 				Model_Droplet::utf8_encode($droplet);
 			}
 
-			// Populate buckets array			
-			Model_Droplet::populate_buckets($droplets['droplets']);
-        	
-			// Populate tags array			
-			Model_Droplet::populate_tags($droplets['droplets'], $river_orm->account_id);
-			
-			// Populate links array			
-			Model_Droplet::populate_links($droplets['droplets'], $river_orm->account_id);
-        	
-			// Populate places array			
-			Model_Droplet::populate_places($droplets['droplets'], $river_orm->account_id);
-			
-			// Populate the discussions array
-			Model_Droplet::populate_discussions($droplets['droplets']);
+			// Populate the metadata
+			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
 		}
 				
 		return $droplets;
@@ -689,6 +667,109 @@ class Model_River extends ORM {
 		    ->loaded();
 	}
 
+
+	/**
+	 * Searches for the specified search term in the river identified by $river_id
+	 *
+	 * @param int $river_id ID of the river being searched
+	 * @param string $search_term Content to search for in the specified river
+	 * @param int $user_id ID of the user performing the search
+	 * @param int $page PAge number to be used for calculating the offset
+	 *
+	 * @return array
+	 */
+	public static function search($search_term, $river_id, $user_id, $page = 1)
+	{
+		$droplets = array();
+
+		// The page must always be set
+		$page = (empty($page)) ? 1 : $page;
+
+		// Check if the specified river exists
+		$river_orm = ORM::factory('river', $river_id);
+		if ($river_orm->loaded())
+		{
+			// Build the SQL "LIKE" expression
+			$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
+
+			// Build River Query
+			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'),
+			                    'droplet_title', 'droplet_content', 
+			                    'droplets.channel','identity_name', 'identity_avatar', 
+			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			                    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
+			    ->from('droplets')
+			    ->join('rivers_droplets', 'INNER')
+			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+			    ->join('identities', 'INNER')
+			    ->on('droplets.identity_id', '=', 'identities.id')
+			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
+			    ->on('all_scores.droplet_id', '=', 'droplets.id')
+			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+			    ->where('rivers_droplets.river_id', '=', $river_id)
+			    ->where('droplets.droplet_processed', '=', 1)
+			    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
+			    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
+			    ->group_by('rivers_droplets.id')
+			    ->order_by('droplets.droplet_date_add', 'DESC')
+				->limit(self::DROPLETS_PER_PAGE)
+				->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+
+			$droplets =  $query->execute()->as_array();
+
+			// Populate metadata
+			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
+
+		}
+
+		return $droplets;
+	}
+
+	/**
+	 * Given a search term, finds all rivers whose name or url
+	 * contains the term
+	 *
+	 * @param string $search_term  The term to use for matching
+	 * @param int $user_id ID of the user initiating the search
+	 */
+	public static function get_like($search_term, $user_id)
+	{
+		// Search expression
+		$search_expr = DB::expr(__("'%:search_term%'", 
+			array(':search_term' => $search_term)));
+
+		$rivers = array();
+
+		$user_orm = ORM::factory('user', $user_id);
+		if ($user_orm->loaded())
+		{
+			// Rivers owned by the user in $user_id
+			$owner_rivers = DB::select('id', 'river_name', 'river_name_url')
+			    ->from('rivers')
+			    ->where_open()
+			    ->where('account_id', '=', $user_orm->account->id)
+			    ->where('river_name', 'LIKE', $search_expr)
+			    ->or_where('river_name_url', 'LIKE', $search_expr)
+			    ->where_close();
+
+
+			// All public rivers not owned by the user
+			$all_rivers = DB::select('id', 'river_name', 'river_name_url')
+			    ->union($owner_rivers)
+			    ->from('rivers')
+			    ->where('river_public', '=', 1)
+			    ->and_where_open()
+			    ->where('account_id', '<>', $user_orm->account->id)
+			    ->where('river_name', 'LIKE', $search_expr)
+			    ->or_where('river_name_url', 'LIKE', $search_expr)
+			    ->and_where_close();
+
+			$rivers = $all_rivers->execute()->as_array();
+		}
+
+		return $rivers;
+	}
 }
 
 ?>

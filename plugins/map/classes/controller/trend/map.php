@@ -38,11 +38,11 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 	}
 	
 	public function action_index() 
-	{       
-		$this->template->content->active = 'map';        
-		$this->template->content->trend =  View::factory('map/index')
-						->bind("geojson_url", $geojson_url)
-						->bind("droplet_base_url", $droplet_base_url);
+	{
+		$this->trend =  View::factory('map/index')
+			->bind("geojson_url", $geojson_url)
+			->bind("droplet_base_url", $droplet_base_url);
+
 		if ($this->context == 'bucket')
 		{
 			$geojson_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url.'/trend/map/geojson';
