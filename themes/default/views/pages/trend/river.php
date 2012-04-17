@@ -1,6 +1,6 @@
-	<div id="content" class="river">
+	<div id="content" class="river cf">
 		<div class="center">
-			<div class="col_12">
+			<article class="drop col_12 base cf">
 				<?php echo $trend; ?>
 			</div>
 		</div>

@@ -83,9 +83,7 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 				'coordinates' => array($droplet['longitude'], $droplet['latitude'])
 			);
 			$geo_droplet['properties'] = array(
-				'droplet_id' => $droplet['id'],
-				'droplet_title' => $droplet['droplet_title'],
-				'droplet_content' => $droplet['droplet_content']
+				'droplet_id' => $droplet['id']
 			);
 			$ret{'features'}[] = $geo_droplet;
 		}
@@ -101,92 +99,143 @@ class Controller_Trend_Map extends Controller_Trend_Main {
 	 */
 	 private function _get_geo_river($id = NULL) 
 	 {
-		 $droplets = array(
+		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
 			
-		 if ($id) 
-		 {
-		 	$cached = Cache::instance('redis')->get('river.trends');
+		if ($id) 
+		{
+			// If we have cache engine, retrieve any set keys
+			if ($this->cache)
+			{
+				try
+				{
+					$cached = $this->cache->get('river.trends.map.'.$id);
+				}
+				catch (Cache_Exception $e)
+				{
+					// Do nothing, just log it
+				}				
+			}
 
-		 	if ( ! isset($cached[$id]))
-		 	{
-				$query = DB::select('droplets.id', 'droplet_title', 
-									'droplet_content', 'droplets.channel',
-									'identity_name', 'identity_avatar', 
-									'droplet_date_pub', 
+			if ( ! isset($cached) OR is_null($cached) )
+			{
+				$query = DB::select('droplets.id', 'droplet_date_pub', 
 									array(DB::expr('X(place_point)'), 'longitude'), 
 									array(DB::expr('Y(place_point)'), 'latitude'))
 					->from('droplets')
 					->join('rivers_droplets', 'INNER')
 					->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-					->join('identities')
-					->on('droplets.identity_id', '=', 'identities.id')
 					->join('droplets_places')
 					->on('droplets_places.droplet_id', '=', 'droplets.id')
 					->join('places')
 					->on('droplets_places.place_id', '=', 'places.id')
-					->where('rivers_droplets.river_id', '=', $id);
+					->where('rivers_droplets.river_id', '=', $id)
+					->order_by('droplet_date_pub', 'DESC')
+					->limit(2000);
 
 				// Get our droplets as an Array		
 				$droplets['droplets'] = $query->execute()->as_array();
 
-				// Set 5 minute Cache
-				Cache::instance('redis')->set('river.trends', array( $id => $droplets['droplets']), 300 );
-		 	}
-		 	else
-		 	{
-		 		//print_r($cached[$id]);
-		 		$droplets['droplets'] = $cached[$id];
-		 	}
-			 
+				// If we have cache engine, set the key
+				if ($this->cache)
+				{
+					// Set 5 minute Cache
+					try
+					{
+						$cached = $this->cache->set('river.trends.map.'.$id, $droplets['droplets'], 300 );
+
+					}
+					catch (Cache_Exception $e)
+					{
+						// Do nothing, just log it
+					}					
+				}
+			}
+			else
+			{
+				$droplets['droplets'] = $cached;
+			}
+			
 			
 			$droplets['total'] = (int) count($droplets['droplets']);
-		 }
-		 
-		 return $droplets;
-	 }    
+		}
+		
+		return $droplets;
+	}    
 
 	/**
 	 * Get geotagged droplets from a Bucket
 	 *
 	 * @param int $id ID of the bucket	
 	 */
-	 private function _get_geo_bucket($id = NULL) 
-	 {
-		 $droplets = array(
+	private function _get_geo_bucket($id = NULL) 
+	{
+		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
 			);
 
-		 if ($id) 
-		 {
-			$query = DB::select('droplets.id', 'droplet_title', 
-								'droplet_content', 'droplets.channel',
-								'identity_name', 'identity_avatar', 
-								'droplet_date_pub', 
-								array(DB::expr('X(place_point)'), 'longitude'), 
-								array(DB::expr('Y(place_point)'), 'latitude'))
-				->from('droplets')
-				->join('buckets_droplets', 'INNER')
-				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
-				->join('identities')
-				->on('droplets.identity_id', '=', 'identities.id')
-				->join('droplets_places')
-				->on('droplets_places.droplet_id', '=', 'droplets.id')
-				->join('places')
-				->on('droplets_places.place_id', '=', 'places.id')
-				->where('buckets_droplets.bucket_id', '=', $id);
+		if ($id) 
+		{
 
-			 // Get our droplets as an Array		
-			$droplets['droplets'] = $query->execute()->as_array();
+			// If we have cache engine, retrieve any set keys
+			if ($this->cache)
+			{
+				try
+				{
+					$cached = $this->cache->get('bucket.trends.map.'.$id);
+				}
+				catch (Cache_Exception $e)
+				{
+					// Do nothing, just log it
+				}				
+			}
+
+			if ( ! isset($cached) OR is_null($cached) )
+			{
+				$query = DB::select('droplets.id', 'droplet_date_pub', 
+									array(DB::expr('X(place_point)'), 'longitude'), 
+									array(DB::expr('Y(place_point)'), 'latitude'))
+					->from('droplets')
+					->join('buckets_droplets', 'INNER')
+					->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+					->join('droplets_places')
+					->on('droplets_places.droplet_id', '=', 'droplets.id')
+					->join('places')
+					->on('droplets_places.place_id', '=', 'places.id')
+					->where('buckets_droplets.bucket_id', '=', $id)
+					->order_by('droplet_date_pub', 'DESC')
+					->limit(2000);
+
+				// Get our droplets as an Array		
+				$droplets['droplets'] = $query->execute()->as_array();
+				
+				// If we have cache engine, set the key
+				if ($this->cache)
+				{
+					// Set 5 minute Cache
+					try
+					{
+						$cached = $this->cache->set('bucket.trends.map.'.$id, $droplets['droplets'], 300 );
+					}
+					catch (Cache_Exception $e)
+					{
+						// Do nothing, just log it
+					}					
+				}				
+			}
+			else
+			{
+				$droplets['droplets'] = $cached;
+			}				
+			
 			$droplets['total'] = (int) count($droplets['droplets']);
-		 }
+		}
 
-		 return $droplets;
-	 }
+		return $droplets;
+	}
 
 }
-
 ?>
