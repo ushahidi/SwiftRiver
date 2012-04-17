@@ -1071,13 +1071,13 @@ $(function() {
 			if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
 				
 				var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
-				var save_toolbar = this.$(".save-toolbar .button-blue").clone();
+				var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
 				
 				isSyncing = isPageFetching = true
 				var view = this;
 				
 				// Show a loading message if the GET request takes longer than 500ms
-				var t = setTimeout(function() { this.$(".save-toolbar .button-blue").replaceWith(loading_msg); }, 500);
+				var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
 				$.get(base_url + "/droplets", data, function(response) {
 					// Success, replace the drops list with the new data
 					dropsList.reset(response);
