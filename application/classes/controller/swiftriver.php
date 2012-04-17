@@ -158,7 +158,8 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			try
 			{
-				$this->cache = Cache::instance('apc');
+				// Load the default Cache engine
+				$this->cache = Cache::instance('default');
 			}
 			catch (Cache_Exception $e)
 			{

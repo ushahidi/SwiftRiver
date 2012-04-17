@@ -810,7 +810,7 @@ $(function() {
 			} else if(this.collection instanceof Links) {
 				this.$("h3 .icon").after("Links");
 			} else if(this.collection instanceof Places) {
-				this.$("h3 .icon").after("Locations");
+				this.$("h3 .icon").after("Places");
 			} 
 			
 			this.collection.each(this.addMetadata, this)

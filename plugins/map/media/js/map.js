@@ -1,5 +1,12 @@
 $(document).ready(function() {
+    // Resize Map Window
+    $("#map").height( $(document).height() - ( $('.page-title').height() + $('.page-title').height() + $('.page-navigation').height() + 15 ) );
     
+    // Detect Browser Window Resize
+    $(window).resize(function () {
+        $("#map").height( $(document).height() - ( $('.page-title').height() + $('.page-title').height() + $('.page-navigation').height() + 15 ) );
+    });
+
     // Popup close event
     function onPopupClose(evt) {
         // 'this' is the popup.
