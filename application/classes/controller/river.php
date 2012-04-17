@@ -150,6 +150,7 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js->channels = json_encode($this->river->get_channels());
 		$droplet_js->polling_enabled = TRUE;
+		$droplet_js->default_view = $this->river->default_layout;
 		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;

@@ -4,6 +4,7 @@
  */
 $(function() {
 	var base_url = "<?php echo $fetch_base_url; ?>";
+	var default_view = "<?php echo $default_view; ?>";
 	
 	// Filters
 	var Filter = Backbone.Model.extend({
@@ -1304,7 +1305,11 @@ $(function() {
 		},
 				
 		defaultRoute: function(actions){
-			this.navigate("/drops", {trigger: true});
+			if (default_view == 'list') {
+				this.navigate("/list", {trigger: true});
+			} else {
+				this.navigate("/drops", {trigger: true});
+			}
 		},
 		
 		setFilter: function(query, repl) {

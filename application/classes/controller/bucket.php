@@ -121,6 +121,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 	    $droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js->channels = json_encode(array());
 	    $droplet_js->polling_enabled = TRUE;
+		$droplet_js->default_view = $this->bucket->default_layout;
 		
 		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;
