@@ -176,7 +176,30 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 	}
 	
+	public function action_register_ajax()
+	{
+		$this->auto_render = FALSE;
 
+		if ($this->request->post('new_email'))
+		{
+			$messages = $this->_new_user($this->request->post('new_email'), (bool) $this->request->post('invite'));
+			$ret = array();
+        
+			if (isset($messages['errors']))
+			{
+				$ret['status'] = 'ERROR';
+				$ret['errors'] = $messages['errors'];
+			}
+			if (isset($messages['messages']))
+			{
+				$ret['status'] = 'OK';
+				$ret['messages'] = $messages['messages'];
+			}
+        
+			echo json_encode($ret);
+		}
+	}
+	
 	private function _new_user($email, $invite = FALSE)
 	{
 		$messages = array();
