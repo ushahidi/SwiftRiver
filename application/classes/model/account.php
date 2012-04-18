@@ -30,14 +30,14 @@ class Model_Account extends ORM
 		'snapshots' => array(),
 		'sources' => array(),
 		'account_collaborators' => array(),
-		'droplets_attachments' => array(
-			'model' => 'droplets_attachment',
-			'through' => 'accounts_droplets_attachments'
-			),
 		'droplets_links' => array(
 			'model' => 'droplets_link',
 			'through' => 'accounts_droplets_links'
 			),
+		'droplets_media' => array(
+			'model' => 'droplets_media',
+			'through' => 'accounts_droplets_media'
+			),		
 		'droplets_tags' => array(
 			'model' => 'droplets_tag',
 			'through' => 'accounts_droplets_tags'

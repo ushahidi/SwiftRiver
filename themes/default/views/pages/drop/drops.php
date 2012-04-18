@@ -13,6 +13,9 @@
 </script>
 
 <script type="text/template" id="drop-drops-view-template">
+	<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
+		<a href="#" class="drop-image-wrap zoom-trigger"><img src="/media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+	<% i++; }; return i > 1; }); %>
 	<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 	<div class="drop-actions cf">
 		<?php if ( ! $anonymous): ?>
@@ -50,6 +53,9 @@
 <script type="text/template" id="drop-list-view-template">
 	<div class="drop-content">
 		<div class="drop-body">
+			<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
+				<a href="#" class="drop-image-wrap zoom-trigger"><img src="/media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+			<% i++; }; return i > 1; }); %>		
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">

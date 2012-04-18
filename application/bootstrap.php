@@ -197,7 +197,7 @@ Route::set('api', 'api(/<controller>)')
 	));	
 	
 /**
- * Swiftriver Media Router (JS/CSS)
+ * Swiftriver Media Router (JS/CSS/Thumb)
  */	
 Route::set('media_js', 'media/js')
 	->defaults(array(
@@ -209,7 +209,13 @@ Route::set('media_css', 'media/css')
 	->defaults(array(
 		'controller' => 'media',
 		'action'     => 'css',
-	));	 
+	));
+
+Route::set('media_thumb', 'media/thumb')
+	->defaults(array(
+		'controller' => 'media',
+		'action'     => 'thumb',
+	));	 	
 	
 Route::set('media', 'media(/<file>)', array('file' => '.+'))
     ->defaults(array(

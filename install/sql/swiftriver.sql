@@ -107,16 +107,15 @@ CREATE TABLE `rivers` (
 -- Table `media`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `media` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `media_name` VARCHAR(255) NULL DEFAULT NULL ,
-  `media_file` VARCHAR(255) NULL DEFAULT NULL ,
-  `media_thumb` VARCHAR(255) NULL DEFAULT NULL ,
-  `media_mime` VARCHAR(50) NULL DEFAULT NULL ,
-  `media_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `media_file_idx` (`media_file` ASC) ,
-  INDEX `media_mime_idx` (`media_mime` ASC) ,
-  INDEX `media_date_add_idx` (`media_date_add` ASC) )
+  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `media` VARCHAR(255) NOT NULL DEFAULT '',
+  `media_hash` VARCHAR(64) NOT NULL DEFAULT '',
+  `media_type` VARCHAR(50) NOT NULL DEFAULT 'image',
+  `media_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  INDEX `media_date_add_idx` (`media_date_add` ASC),
+  INDEX `media_hash_idx` (`media_hash` ASC),
+  INDEX `media_type_idx` (`media_type` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -136,15 +135,17 @@ CREATE TABLE IF NOT EXISTS `droplets_places` (
 
 
 -- -----------------------------------------------------
--- Table `accounts_droplets_media`
+-- Table `account_droplet_media`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `accounts_droplets_media` (
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `droplets_media_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 ,
-  INDEX `account_id_idx` (`account_id` ASC) ,
-  INDEX `droplets_media_id_idx` (`droplets_media_id` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CREATE TABLE IF NOT EXISTS  `account_droplet_media` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `media_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `account_id` (`account_id`,`droplet_id`,`media_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
