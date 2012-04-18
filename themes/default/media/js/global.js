@@ -148,15 +148,39 @@ $(document).ready(function() {
 		zoomHide();
 		return false;
 	});
-		
+	
+
+	// Click handler for the DOM elements that
+	// generate confirmation messages when clicked
+	var clickHandler = function(obj) {
+		var msg = $(obj).data('title');
+		// Only proceed when there's content
+		if (msg != undefined) {
+			var context = $(obj).closest('div.parameter').find('h2').html();
+			if (context == null) {
+				context = '';
+			}
+
+			// Container for the confirmatino messages
+			container = $('#confirmation-container')
+
+			// Build out the HTML
+			var replaceHTML = "<div class=\"modal-window\">" +
+			    "<article class=\"modal base\">" + 
+			    "<p>You are " + msg + " " + context + "</p>" +
+			    "</article>" +
+			    "</div>";
+			
+			$('div.modal-window', container).replaceWith(replaceHTML);
+
+			container.fadeIn('fast').addClass('visible');
+			container.delay(1000).fadeOut('fast').removeClass('visible');
+		}
+	};
+
 	// CONFIRMATION MESSAGES
-	$('.follow a').live('click', function(e) {
-		var ConfirmationMessage = $(this).attr('title');
-		var ConfirmationContext = $(this).closest('div.parameter').find('h2').html();
-		$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>You are "+ ConfirmationMessage + " " + ConfirmationContext +".</p></article></div>");
-		$('#confirmation-container').fadeIn('fast').addClass('visible');
-		$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
-		e.preventDefault();
+	$('.follow a').live('click', function() {
+		clickHandler(this);
 	});
 
 	// HIDE OPTION MENU
@@ -171,7 +195,7 @@ $(document).ready(function() {
 	$('input, textarea').live('keypress', function () {
 		$('.save-toolbar').addClass('visible');
 	});
-	$('select').live('change', function () {
+	$('select').on('change', function () {
 		$('.save-toolbar').addClass('visible');
 	});
 	
@@ -231,12 +255,6 @@ function flashMessage(el, text) {
 	message += "</ul>";
 	// Show message and fade it out slooooowwwwwwlllllyyyy
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
-}
-
-function showConfirmationMessage(message) {
-	$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>" + message + "</p></article></div>");
-	$('#confirmation-container').fadeIn('fast').addClass('visible');
-	$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
 }
 
 function showDefaultAvatar(source) {

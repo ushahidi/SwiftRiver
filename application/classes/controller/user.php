@@ -94,10 +94,6 @@ class Controller_User extends Controller_Swiftriver {
 				"following" => $this->user->has('following', $this->visited_account->user),
 				"is_owner" => $this->user->id == $this->visited_account->user->id				
 			));
-			
-			
-		$this->template->header->js = View::factory('pages/user/js/settings')
-			->bind('account', $this->visited_account);
 	}
 	
 	public function action_index()

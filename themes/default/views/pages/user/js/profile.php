@@ -1,10 +1,11 @@
 <script type="text/template" id="river_item_template">
 	<% if (!is_owner) { %>	
 		<% var selected = (subscribed) ? "selected" : ""; %>
+		<% var title = (subscribed) ? "Unsubsribe" : "Subscribe"; %>
 		<% var displayMessage = (subscribed)? "no longer following" : "now following"; %>
 		<div class="actions">
 			<p class="button-white follow only-icon has-icon <%= selected %>">
-				<a href="#" title="<%= displayMessage %>">
+				<a href="#" title="<%= title %>" data-title="<%= displayMessage %>">
 					<span class="icon"></span><span class="nodisplay"></span>
 				</a>
 			</p>
@@ -17,10 +18,11 @@
 <script type="text/template" id="bucket_item_template">
 	<% if (!is_owner) { %>
 		<% var selected = (subscribed) ? "selected" : ""; %>
+		<% var title = (subscribed) ? "Unsubsribe" : "Subscribe"; %>
 		<% var displayMessage = (subscribed)? "no longer following" : "now following"; %>
 		<div class="actions">
 			<p class="button-white follow only-icon has-icon <%= selected %>">
-				<a href="#" title="<%= displayMessage %>">
+				<a href="#" title="<%= title %>" data-title="<%= displayMessage %>">
 					<span class="icon"></span><span class="nodisplay"></span>
 				</a>
 			</p>
@@ -212,6 +214,7 @@
 		handleSubscription: function(e) {
 			views = e.data;
 			z = views.length;
+
 			for (var i=0; i<z; i++) {
 				if (!views[i].model.get("subscribed") && !views[i].model.get("is_owner")) {
 					$("p.button-white > a", views[i].$el).trigger("click");

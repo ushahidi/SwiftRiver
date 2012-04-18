@@ -50,14 +50,16 @@
 	<script type="text/template" id="user-item-template">
 		<% if (following) { %>
 			<p class="button-white follow has-icon selected">
-				<a href="#" title="<?php echo __("no longer following ".$full_name); ?>">
+				<a href="#" title="<?php echo __("Unfollow ".$full_name) ?>" 
+				    data-title="<?php echo __("no longer following ".$full_name); ?>">
 					<span class="icon"></span>
 					<?php echo __("Following"); ?>
 				</a>
 			</p>
 		<% } else { %>
 			<p class="button-white follow has-icon">
-				<a href="#" title="<?php echo __("now following ".$full_name); ?>">
+				<a href="#" title="<?php echo __("Follow ".$full_name)?>" 
+				    data-title="<?php echo __("now following ".$full_name); ?>">
 					<span class="icon"></span>
 					<?php echo __("Follow"); ?>
 				</a>

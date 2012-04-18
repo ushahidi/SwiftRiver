@@ -60,17 +60,12 @@
 
 	// Dynamic JS Files
 	echo(Html::script('media/js'));
-	?>
-		
+
+	// Dynamic inline JS
+	echo $js; 
 	
-	<?php 
-		// Dynamic inline JS
-		echo $js; 
-	?>
-	
-	<?php
-	    // SwiftRiver Plugin Hook
-	    Swiftriver_Event::run('swiftriver.template.head');
+    // SwiftRiver Plugin Hook
+    Swiftriver_Event::run('swiftriver.template.head');
 	?>
 </head> 
  
