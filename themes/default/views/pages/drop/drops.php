@@ -14,7 +14,7 @@
 
 <script type="text/template" id="drop-drops-view-template">
 	<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
-		<a href="#" class="drop-image-wrap zoom-trigger"><img src="/media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+		<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
 	<% i++; }; return i > 1; }); %>
 	<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 	<div class="drop-actions cf">
@@ -44,7 +44,9 @@
 		<?php endif; ?>
 	</div>
 	<section class="drop-source cf">
-		<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% if ( identity_avatar) { %>
+			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% } %>
 		<div class="byline">
 			<h2><%= identity_name %></h2>
 			<p class="drop-source-channel <%= channel %>">
@@ -58,7 +60,7 @@
 	<div class="drop-content">
 		<div class="drop-body">
 			<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
-				<a href="#" class="drop-image-wrap zoom-trigger"><img src="/media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
 			<% i++; }; return i > 1; }); %>		
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
