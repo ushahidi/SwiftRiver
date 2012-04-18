@@ -21,11 +21,15 @@
 		<?php if ( ! $anonymous): ?>
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 				<?php if ( ! $anonymous): ?>
 					<li class="button-blue bucket">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+						    <span class="icon"></span>
+						</a>
 					</li>
 				<?php endif; ?>
 			</ul>
@@ -79,10 +83,14 @@
 		<?php if ( ! $anonymous): ?>
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 				<li class="button-blue bucket">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 			</ul>		
 			<ul class="dual-buttons score-drop">
