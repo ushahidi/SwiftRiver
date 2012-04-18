@@ -240,7 +240,7 @@ $(function() {
 		tagName: "article",
 			
 		events: {
-			"click h1 a.zoom-trigger": "showDetail",
+			"click a.zoom-trigger": "showDetail",
 			"click p.discussion a": "showDetail",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click ul.score-drop > li.like a": "likeDrop",
