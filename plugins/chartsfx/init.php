@@ -46,7 +46,8 @@ class Chartsfx_Init {
 		{
 			$nav[] = array(
 				'id' => '',
-				'active' => (Request::$current->controller() == 'chartsfx') ? 'active' : '',
+				'active' => ( Request::$current->controller() == 'chartsfx' AND 
+					Request::$current->action() == $key ) ? 'active' : '',
 				'url' => '/trend/chartsfx/'.$key,
 				'label' => $value
 			);

@@ -72,7 +72,9 @@
 			</p>
 		</div>
 		<section class="drop-source cf">
-			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+			<% if ( identity_avatar) { %>
+				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+			<% } %>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
 				<p class="drop-source-channel <%= channel %>">
