@@ -1,7 +1,7 @@
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="page-h1 col_9">
-			<h1><?php echo $river->river_name; ?> <em>settings</em></h1>
+			<h1><?php echo $river->river_name; ?> <em><?php echo __("Settings"); ?></em></h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="back">
