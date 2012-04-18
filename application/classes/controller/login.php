@@ -259,14 +259,17 @@ class Controller_Login extends Controller_Swiftriver {
 				$mail_body = View::factory('emails/invite')
 							 ->bind('secret_url', $secret_url);
 				$mail_body->site_name = Model_Setting::get_setting('site_name');
+				$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
 			}
 			else
 			{
 				$mail_body = View::factory('emails/createuser')
 							 ->bind('secret_url', $secret_url);
+				$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
 			}
 			$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
-			$response = $riverid_api->request_password($email, $mail_body);
+			$site_email = Kohana::$config->load('useradmin.email_address');
+			$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 			
 			if ($response['status']) 
 			{
@@ -316,7 +319,7 @@ class Controller_Login extends Controller_Swiftriver {
 				{
 					$mail_body = View::factory('emails/createuser')
 								 ->bind('secret_url', $secret_url);
-					$mail_subject = __('Please confirm your email address');
+					$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
 				}
 				
 				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
@@ -344,7 +347,9 @@ class Controller_Login extends Controller_Swiftriver {
 		$mail_body = View::factory('emails/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
 		$secret_url = url::site('login/reset/'.$user->id.'/%token%', TRUE, TRUE);
-		$response = $riverid_api->request_password($email, $mail_body);
+		$site_email = Kohana::$config->load('useradmin.email_address');
+		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		
 		if ($response['status']) 
 		{
@@ -369,7 +374,8 @@ class Controller_Login extends Controller_Swiftriver {
 			$mail_body = View::factory('emails/resetpassword')
 						 ->bind('secret_url', $secret_url);		            
 			$secret_url = url::site('login/reset/'.$user->id.'/'.$auth_token->token, TRUE, TRUE);
-			Swiftriver_Mail::send($email, __('Password Reset'), $mail_body);
+			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 			
 			
 			$this->messages = array(

@@ -587,8 +587,10 @@ class Controller_User extends Controller_Swiftriver {
 						
 						$secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
 						
+						$site_email = Kohana::$config->load('useradmin.email_address');
+						$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 						$resp = RiverID_API::instance()
-							->change_email($this->user->email, $new_email, $current_password, $mail_body);
+							->change_email($this->user->email, $new_email, $current_password, $mail_body, $mail_subject, $site_email);
 						
 						if ( ! $resp['status'])
 						{
