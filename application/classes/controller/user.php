@@ -94,10 +94,6 @@ class Controller_User extends Controller_Swiftriver {
 				"following" => $this->user->has('following', $this->visited_account->user),
 				"is_owner" => $this->user->id == $this->visited_account->user->id				
 			));
-			
-			
-		$this->template->header->js = View::factory('pages/user/js/settings')
-			->bind('account', $this->visited_account);
 	}
 	
 	public function action_index()
@@ -501,174 +497,184 @@ class Controller_User extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Account settings controls
+	 * Account settings
 	 * 
 	 * @return	void
 	 */
 	public function action_settings()
 	{
+		if ( ! $this->owner)
+		{
+			$this->request->redirect($this->dashboard_url);
+		}
+		
 		// Set the current page
 		$this->active = 'settings';
 		$this->template->content->view_type = 'settings';
+		$this->template->header->js = View::factory('pages/user/js/settings');
+		$this->template->header->js->user = $this->user;
 
 		$this->sub_content = View::factory('pages/user/settings')
 		    ->bind('user', $this->user)
-		    ->bind('messages', $messages)
-		    ->bind('success', $success);
+		    ->bind('errors', $this->errors);
 		
-
-		// Save settings
 		if ( ! empty($_POST))
 		{
-			$success = FALSE;
-
-			// Check for CSRF token
-			if ( ! isset($_POST['form_auth_id']) OR ! CSRF::valid($_POST['form_auth_id']))
+			$this->_update_settings();
+		}
+		
+		$session = Session::instance();
+		$this->sub_content->messages = $session->get('messages');
+		$session->delete('messages');
+	}
+	
+	private function _update_settings()
+	{	
+		// Validate current password
+		$validated = FALSE;
+		$current_password = $_POST['current_password'];
+		if ($this->riverid_auth)
+		{
+			$response = RiverID_API::instance()->signin($this->user->email, $_POST['current_password']);
+			$validated = ($response AND $response['status']);
+		}
+		else
+		{
+			$validated =  (Auth::instance()->hash($current_password) == $this->user->password);
+		}
+        
+		if ( ! $validated)
+		{
+			$this->errors = __('Current password is incorrect');
+			return;
+		}
+		
+		$messages = array();
+        
+		// Password is changing and we are using RiverID authentication
+		if ( ! empty($_POST['password']) OR ! empty($_POST['password_confirm']))
+		{
+			$post = Model_Auth_User::get_password_validation($_POST);
+			if ( ! $post->check())
 			{
-				// TODO - Prompt the user to specify their password
-				$messages = __('Possible cross-site request forgery (CSRF) attack.');
+				$this->errors = $post->errors('user');
 				return;
 			}
-
-			try 
+        
+			// Are we using RiverID?
+			if ($this->riverid_auth)
 			{
-				if (empty($_POST['password']) OR empty($_POST['password_confirm']))
+				$resp = RiverID_API::instance()
+						   ->change_password($this->user->email, $_POST['current_password'], $_POST['password']);
+        
+				if ( ! $resp['status'])
 				{
-					// Force unsetting the password! Otherwise Kohana3 will 
-					// automatically hash the empty string - preventing logins
-					unset($_POST['password'], $_POST['password_confirm']);
+					$this->errors = $resp['error'];
+					return;
 				}
-				
-				// Password is changing and we are using RiverID authentication
-				if ( ! empty($_POST['password']) AND ! empty($_POST['password_confirm']))
-				{
-					$post = Model_Auth_User::get_password_validation($_POST);
-					if ( ! $post->check())
-					{
-						$messages = __("The specified passwords do not match or are invalid. "
-							."Passwords must be at least 8 characters");
-						return;
-
-					}
-					
-					// Are we using RiverID?
-					if ($this->riverid_auth)
-					{
-						$resp = RiverID_API::instance()
-								   ->change_password($this->user->email, $_POST['current_password'], $_POST['password']);
-
-						if ( ! $resp['status'])
-						{
-							$messages = $resp['error'];
-							return;
-						}
-
-						// For API calls below, use this new password
-						$current_password = $_POST['password'];
-						unset($_POST['password'], $_POST['password_confirm']);
-					}			        
-				} 
-
-				// Email address is changing
-				if ($_POST['email'] != $this->user->email)
-				{
-					$new_email = $_POST['email'];
-					
-					if ( ! Valid::email($new_email))
-					{
-						$messages = __('The provided email is invalid');
-					}
-					
-					if ($this->riverid_auth)
-					{
-						// RiverID email change process
-						$mail_body = View::factory('emails/changeemail')
-									 ->bind('secret_url', $secret_url);		            
-						
-						$secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
-						
-						$site_email = Kohana::$config->load('useradmin.email_address');
-						$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
-						$resp = RiverID_API::instance()
-							->change_email($this->user->email, $new_email, $current_password, $mail_body, $mail_subject, $site_email);
-						
-						if ( ! $resp['status'])
-						{
-							$messages = $resp['error'];
-							return;
-						}    
-					}
-					else
-					{
-						// Make sure the new email address is not yet registered
-						$user = ORM::factory('user',array('email'=>$new_email));
-
-						if ($user->loaded())
-						{
-							$messages = __('New email is already registered');
-							return;
-						}
-						
-						$auth_token = Model_Auth_Token::create_token($new_email, 'change_email');
-						if ($auth_token->loaded())
-						{
-							// Send an email with a secret token URL
-							$mail_body = View::factory('emails/changeemail')
-											   ->bind('secret_url', $secret_url);		            
-							
-							$secret_url = URL::site('login/changeemail/'
-													.$this->user->id
-													.'/'
-													.urlencode($new_email)
-													.'/'
-													.$auth_token->token, TRUE, TRUE);
-							
-							// Send email to the user using the new address
-							Swiftriver_Mail::send($new_email, __('Email Change'), $mail_body);
-						}
-						else
-						{
-							$messages = __('Error');
-							return;
-						}
-					}
-					
-					// Don't change email address immediately.
-					// Only do so after the tokens sent above are validated
-					unset($_POST['email']);
-
-				} // END if - email address change
-				
-				// Nickname is changing
-				if ($_POST['username'] != $this->user->account->account_path)
-				{
-					$username = $_POST['username'];
-					// Make sure the account path is not already taken
-					$account = ORM::factory('account',array('account_path' => $username));
-					if ($account->loaded())
-					{
-						$messages = __('The specified username is alread taken');
-						return;
-					}
-					
-					// Update
-					$this->user->account->account_path = $username;
-					$this->user->account->save();
-				}
-
-
-				$this->user->update_user($_POST, array('name', 'password', 'email'));
-
-				$success = TRUE;
-				$messages = __("Your information has been successfully updated!");
-
-			}
-			catch (ORM_Validation_Exception $e)
-			{
-				// Get the validation errors
-				$messages = $e->errors('user');
-			}
+        
+				// For API calls below, use this new password
+				$current_password = $_POST['password'];
+				unset($_POST['password'], $_POST['password_confirm']);
+			}			        
 		}
+        
+		// Email address is changing
+		if ($_POST['email'] != $this->user->email)
+		{
+			$new_email = $_POST['email'];
+        
+			if ( ! Valid::email($new_email))
+			{
+				$this->errors = __('Invalid email address');
+				return;
+			}
+        
+			if ($this->riverid_auth)
+			{
+				// RiverID email change process
+				$mail_body = View::factory('emails/changeemail')
+							 ->bind('secret_url', $secret_url);		            
+        
+				$secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
+				$site_email = Kohana::$config->load('useradmin.email_address');
+				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
+				$resp = RiverID_API::instance()
+					->change_email($this->user->email, $new_email, $current_password, $mail_body, $mail_subject, $site_email);
+        
+				if ( ! $resp['status'])
+				{
+					$this->errors = $resp['error'];
+					return;
+				}    
+			}
+			else
+			{
+				// Make sure the new email address is not yet registered
+				$user = ORM::factory('user',array('email'=>$new_email));
+        
+				if ($user->loaded())
+				{
+					$this->errors = __('The new email address has already been registered');
+					return;
+				}
+        
+				$auth_token = Model_Auth_Token::create_token($new_email, 'change_email');
+				if ($auth_token->loaded())
+				{
+					// Send an email with a secret token URL
+					$mail_body = View::factory('emails/changeemail')
+									   ->bind('secret_url', $secret_url);		            
+        
+					$secret_url = URL::site('login/changeemail/'
+											.$this->user->id
+											.'/'
+											.urlencode($new_email)
+											.'/'
+											.$auth_token->token, TRUE, TRUE);
+        
+					// Send email to the user using the new address
+					$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
+					Swiftriver_Mail::send($new_email, $mail_subject, $mail_body);
+				}
+				else
+				{
+					$this->errors = __('Error');
+					return;
+				}
+				
+				$messages[] = __("A confirmation email has been sent to :email", array(':email' => $new_email));
+			}
+        
+			// Don't change email address immediately.
+			// Only do so after the tokens sent above are validated
+			unset($_POST['email']);
+        
+		} // END if - email address change
+        
+		// Nickname is changing
+		if ($_POST['nickname'] != $this->user->account->account_path)
+		{
+			$nickname = $_POST['nickname'];
+			// Make sure the account path is not already taken
+			$account = ORM::factory('account',array('account_path' => $nickname));
+			if ($account->loaded())
+			{
+				$this->errors = __('Nickname is already taken');
+				return;
+			}
+        
+			// Update
+			$this->user->account->account_path = $nickname;
+			$this->user->account->save();
+		}
+        
+        
+		$this->user->update_user($_POST, array('name', 'password', 'email'));
+        
+		$messages[] = __("Account settings were saved successfully.");
+		Session::instance()->set("messages", $messages);
+		$this->request->redirect(URL::site($this->user->account->account_path.'/settings'));
 	}
 	
 	

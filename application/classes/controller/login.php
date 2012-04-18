@@ -67,6 +67,12 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->messages = $messages;
 		}
 		
+		$errors = $session->get_once('system_errors');
+		if ($errors)
+		{
+			$this->template->content->set('errors', $errors);
+		}
+		
 		
 		// New user registration
 		if ($this->request->post('new_email'))
@@ -476,10 +482,11 @@ class Controller_Login extends Controller_Swiftriver {
 	 */		
 	public function action_changeemail()
 	{
-		$this->auto_render = FALSE;	    
-		$template = View::factory('pages/changeemail')
-						  ->bind('errors', $errors);
-
+		// Force logout
+		Auth::instance()->logout();
+		
+		$session = Session::instance();
+		
 		$user_id = intval($this->request->param('id', 0));
 		$user = ORM::factory('user', $user_id);
 		$new_email = $this->request->param('email');
@@ -511,16 +518,16 @@ class Controller_Login extends Controller_Swiftriver {
 				$user->email = $user->username = $new_email;
 				$user->save();
 
-				// Force a logout
-				$session = Session::instance();
 				$session->set('system_messages', array(__('Email changed successfully. Proceed to Log in')));
-				Auth::instance()->logout();
-				$this->request->redirect('login');
-
-				return;
+			}
+			else
+			{
+				$session->set('system_errors', $errors);
 			}
 		}           
-
+		
+		// Redirect to login page
+		$this->request->redirect('login');
 		echo $template;   
 	}
 
