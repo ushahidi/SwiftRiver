@@ -250,8 +250,9 @@ class Model_Droplet extends ORM {
 		$tag_split = function($tag)
 		{
 			$tag_parts = explode('!!>--<!!', $tag);
-			return array('tag_name' => $tag_parts[0], 
-						 'tag_type' => $tag_parts[1]);
+			return array(
+				'tag_name' => $tag_parts[0], 
+				'tag_type' => $tag_parts[1]);
 		};
 		$new_tags = array_map($tag_split, array_diff($change_tags, $current_tags));
 		
@@ -262,13 +263,18 @@ class Model_Droplet extends ORM {
 		if ($tag_ids)
 		{
 			$query = DB::insert('droplets_tags', array('droplet_id', 'tag_id'));
-			foreach ($tag_ids as $tag_id) {
+			foreach ($tag_ids as $tag_id)
+			{
 			    $query->values(array($orm_droplet->id, $tag_id['id']));
 			}
-			try {
+
+			try
+			{
 			    $result = $query->execute();
-			} catch ( Database_Exception $e ) {   
-					Kohana::$log->add(Log::ERROR, 'Database error adding tags: '.$e->getMessage());
+			}
+			catch (Database_Exception $e)
+			{   
+				Kohana::$log->add(Log::ERROR, 'Database error adding tags: '.$e->getMessage());
 			}
 		}		
 	}
@@ -293,7 +299,7 @@ class Model_Droplet extends ORM {
 		{
 			return array (
 				'url' => $link,
-				'url_hash' => hash('sha256', $link),
+				'url_hash' => hash('md5', $link),
 				'domain' => parse_url($link, PHP_URL_HOST)
 			);
 		};
@@ -307,13 +313,18 @@ class Model_Droplet extends ORM {
 		if ($link_ids)
 		{
 			$query = DB::insert('droplets_links', array('droplet_id', 'link_id'));
-			foreach ($link_ids as $link_id) {
+			foreach ($link_ids as $link_id)
+			{
 			    $query->values(array($orm_droplet->id, $link_id['id']));
 			}
-			try {
+
+			try
+			{
 			    $result = $query->execute();
-			} catch ( Database_Exception $e ) {   
-					Kohana::$log->add(Log::ERROR, 'Database error adding links: '.$e->getMessage());
+			}
+			catch (Database_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, 'Database error adding links: '.$e->getMessage());
 			}
 		}
 	}
@@ -339,7 +350,7 @@ class Model_Droplet extends ORM {
 		{
 			return array (
 				'media' => $media,
-				'media_hash' => hash('sha256', $media),
+				'media_hash' => hash('md5', $media),
 				'media_type' => $type
 			);
 		};
@@ -353,13 +364,18 @@ class Model_Droplet extends ORM {
 		if ($media_ids)
 		{
 			$query = DB::insert('droplets_media', array('droplet_id', 'media_id'));
-			foreach ($media_ids as $media_id) {
+			foreach ($media_ids as $media_id)
+			{
 			    $query->values(array($orm_droplet->id, $media_id['id']));
 			}
-			try {
+
+			try
+			{
 			    $result = $query->execute();
-			} catch ( Database_Exception $e ) {   
-					Kohana::$log->add(Log::ERROR, 'Database error adding media: '.$e->getMessage());
+			}
+			catch (Database_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, 'Database error adding media: '.$e->getMessage());
 			}
 		}
 	}	
@@ -404,13 +420,18 @@ class Model_Droplet extends ORM {
 		if ($place_ids)
 		{
 			$query = DB::insert('droplets_places', array('droplet_id', 'place_id'));
-			foreach ($place_ids as $place_id) {
+			foreach ($place_ids as $place_id)
+			{
 			    $query->values(array($orm_droplet->id, $place_id['id']));
 			}
-			try {
+
+			try
+			{
 			    $result = $query->execute();
-			} catch ( Database_Exception $e ) {   
-					Kohana::$log->add(Log::ERROR, 'Database error adding places: '.$e->getMessage());
+			}
+			catch (Database_Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, 'Database error adding places: '.$e->getMessage());
 			}
 		}		
 
@@ -895,8 +916,8 @@ class Model_Droplet extends ORM {
 	 */
 	public function update_from_array($droplet_array) 
 	{
-		$this->__update_buckets($droplet_array);
-		$this->__update_score($droplet_array);
+		$this->_update_buckets($droplet_array);
+		$this->_update_score($droplet_array);
 	}
 	
 	/**
@@ -905,7 +926,7 @@ class Model_Droplet extends ORM {
 	 * @param array
 	 * @return void
 	 */	
-	private function __update_score($droplet_array)
+	private function _update_score($droplet_array)
 	{
 		if ( ! isset($droplet_array['droplet_score']))
 			return;
@@ -930,7 +951,7 @@ class Model_Droplet extends ORM {
 	 * @param array
 	 * @return void
 	 */	
-	private function __update_buckets($droplet_array)
+	private function _update_buckets($droplet_array)
 	{
 
 		// Function to xxtract the bucket ids from the array
