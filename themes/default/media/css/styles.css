@@ -1890,6 +1890,7 @@ article.modal div.search ul.dual-buttons {
     float: left;
     width: 17.72151899%;
     padding: 1.041666667%;
+    min-height: 85px;
   }
   .list article.drop section.drop-source a.avatar-wrap,
   .list article.drop section.drop-source div.byline {

@@ -71,6 +71,7 @@ $(function() {
 		toggleActivation: function(e) {
 			targetEl = $(e.currentTarget).parent('p');
 			this.model.toggleActivation(targetEl);
+			return false;
 		},
 
 		render: function() {

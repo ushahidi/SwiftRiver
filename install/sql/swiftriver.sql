@@ -109,7 +109,7 @@ CREATE TABLE `rivers` (
 CREATE TABLE IF NOT EXISTS `media` (
   `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `media` VARCHAR(255) NOT NULL DEFAULT '',
-  `media_hash` VARCHAR(64) NOT NULL DEFAULT '',
+  `media_hash` VARCHAR(32) NOT NULL DEFAULT '',
   `media_type` VARCHAR(50) NOT NULL DEFAULT 'image',
   `media_date_add` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS `account_droplet_places` (
 CREATE TABLE IF NOT EXISTS `links` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `url` varchar(2048) NOT NULL DEFAULT '',
-  `url_hash` varchar(64) NOT NULL DEFAULT '',
+  `url_hash` varchar(32) NOT NULL DEFAULT '',
   `domain` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `url_hash` (`url_hash`),

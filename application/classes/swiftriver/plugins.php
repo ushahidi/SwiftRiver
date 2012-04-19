@@ -34,7 +34,15 @@ class Swiftriver_Plugins {
 		$plugin_entries = array();
 		foreach ($active_plugins as $plugin)
 		{
-			$plugin_entries[$plugin->plugin_path] = PLUGINPATH.$plugin->plugin_path;
+			$plugin_path = PLUGINPATH.$plugin->plugin_path;
+			if ( ! is_dir(realpath($plugin_path.DIRECTORY_SEPARATOR)))
+			{
+				// Plugin no longer exists. Delete.
+				$plugin->delete();
+				continue;
+			}
+			
+			$plugin_entries[$plugin->plugin_path] = $plugin_path;
 		}
 		
 		// Add the plugin entries to the list of Kohana modules
