@@ -1,13 +1,35 @@
-<?php echo Form::open() ?>
 <div class="col_12">
-
-	<?php if (isset($success)): ?>
-		<?php $css_class = ($success) ? "blue" : "red"; ?>
-		<div class="alert-message <?php echo $css_class; ?>">
-			<p><?php echo $messages; ?></p>
+	<?php if (isset($errors)): ?>
+		<div class="alert-message red">
+		<p><strong>Uh oh.</strong></p>
+		<ul>
+			<?php if (is_array($errors)): ?>
+				<?php foreach ($errors as $error): ?>
+					<li><?php echo $error; ?></li>
+				<?php endforeach; ?>
+			<?php else: ?>
+				<li><?php echo $errors; ?></li>
+			<?php endif; ?>
+		</ul>
+		</div>
+	<?php endif; ?>
+	
+	<?php if (isset($messages)): ?>
+		<div class="alert-message blue">
+		<p><strong>Success.</strong></p>
+		<ul>
+			<?php if (is_array($messages)): ?>
+				<?php foreach ($messages as $message): ?>
+					<li><?php echo $message; ?></li>
+				<?php endforeach; ?>
+			<?php else: ?>
+				<li><?php echo $messages; ?></li>
+			<?php endif; ?>
+		</ul>
 		</div>
 	<?php endif; ?>
 
+	<?php echo Form::open(NULL, array('id' => 'account-settings-form')) ?>
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
@@ -23,8 +45,8 @@
 			</div>
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('Username'); ?></p>
-					<?php echo Form::input("username", $user->account->account_path, array('id' => 'username')); ?>
+					<p class="field"><?php echo __('Nickname'); ?></p>
+					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
 				</label>
 			</div>
 			<div class="parameter">
@@ -74,8 +96,51 @@
 			</div>
 		</section>
 	</article>
-	<div class="save-toolbar">
-		<p class="button-blue" onclick="submitForm(this);"><a><?php echo __("Save Changes"); ?></a></p>
+	<div class="save-toolbar" id="save1">
+		<p class="button-blue"><a href="#"><?php echo __("Save Changes"); ?></a></p>
 	</div>
+	<?php echo Form::hidden("current_password"); ?>
+	<?php Form::close(); ?>
 </div>
-<?php Form::close(); ?>
+
+<article class="modal" style="display: none;" id="password_prompt">
+	<hgroup class="page-title cf">
+		<div class="page-h1 col_9">
+			<h1>Enter your current password</h1>
+		</div>
+		<div class="page-actions col_3">
+			<h2 class="close">
+				<a href="#">
+					<span class="icon"></span>
+					Close
+				</a>
+			</h2>
+		</div>
+	</hgroup>
+
+	<div class="modal-body">
+		
+		<div class="alert-message red" style="display:none">
+			<p><strong>Uh oh.</strong> <span class="message"></span></p>
+		</div>
+
+		<div class="alert-message blue" style="display:none">
+			<p><strong>Success</strong> <span class="message"></span></p>
+		</div>
+		
+		<article class="container base">
+			<section class="property-parameters">
+				<div class="parameter">
+					<label for="river_name">
+						<p class="field">Current Password</p>
+						<?php echo Form::password("current_password_prompt"); ?>
+					</label>
+				</div>
+			</section>
+		</article>
+
+		<div class="save-toolbar" id="save2">
+			<p class="button-blue"><a href="#"><?php echo __("Save"); ?></a></p>
+		</div>
+	</div>
+</article>

@@ -67,6 +67,12 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->messages = $messages;
 		}
 		
+		$errors = $session->get_once('system_errors');
+		if ($errors)
+		{
+			$this->template->content->set('errors', $errors);
+		}
+		
 		
 		// New user registration
 		if ($this->request->post('new_email'))
@@ -176,7 +182,30 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 	}
 	
+	public function action_register_ajax()
+	{
+		$this->auto_render = FALSE;
 
+		if ($this->request->post('new_email'))
+		{
+			$messages = $this->_new_user($this->request->post('new_email'), (bool) $this->request->post('invite'));
+			$ret = array();
+        
+			if (isset($messages['errors']))
+			{
+				$ret['status'] = 'ERROR';
+				$ret['errors'] = $messages['errors'];
+			}
+			if (isset($messages['messages']))
+			{
+				$ret['status'] = 'OK';
+				$ret['messages'] = $messages['messages'];
+			}
+        
+			echo json_encode($ret);
+		}
+	}
+	
 	private function _new_user($email, $invite = FALSE)
 	{
 		$messages = array();
@@ -236,14 +265,17 @@ class Controller_Login extends Controller_Swiftriver {
 				$mail_body = View::factory('emails/invite')
 							 ->bind('secret_url', $secret_url);
 				$mail_body->site_name = Model_Setting::get_setting('site_name');
+				$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
 			}
 			else
 			{
 				$mail_body = View::factory('emails/createuser')
 							 ->bind('secret_url', $secret_url);
+				$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
 			}
 			$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
-			$response = $riverid_api->request_password($email, $mail_body);
+			$site_email = Kohana::$config->load('useradmin.email_address');
+			$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 			
 			if ($response['status']) 
 			{
@@ -293,7 +325,7 @@ class Controller_Login extends Controller_Swiftriver {
 				{
 					$mail_body = View::factory('emails/createuser')
 								 ->bind('secret_url', $secret_url);
-					$mail_subject = __('Please confirm your email address');
+					$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
 				}
 				
 				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
@@ -321,7 +353,9 @@ class Controller_Login extends Controller_Swiftriver {
 		$mail_body = View::factory('emails/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
 		$secret_url = url::site('login/reset/'.$user->id.'/%token%', TRUE, TRUE);
-		$response = $riverid_api->request_password($email, $mail_body);
+		$site_email = Kohana::$config->load('useradmin.email_address');
+		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		
 		if ($response['status']) 
 		{
@@ -346,7 +380,8 @@ class Controller_Login extends Controller_Swiftriver {
 			$mail_body = View::factory('emails/resetpassword')
 						 ->bind('secret_url', $secret_url);		            
 			$secret_url = url::site('login/reset/'.$user->id.'/'.$auth_token->token, TRUE, TRUE);
-			Swiftriver_Mail::send($email, __('Password Reset'), $mail_body);
+			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 			
 			
 			$this->messages = array(
@@ -447,10 +482,11 @@ class Controller_Login extends Controller_Swiftriver {
 	 */		
 	public function action_changeemail()
 	{
-		$this->auto_render = FALSE;	    
-		$template = View::factory('pages/changeemail')
-						  ->bind('errors', $errors);
-
+		// Force logout
+		Auth::instance()->logout();
+		
+		$session = Session::instance();
+		
 		$user_id = intval($this->request->param('id', 0));
 		$user = ORM::factory('user', $user_id);
 		$new_email = $this->request->param('email');
@@ -482,16 +518,16 @@ class Controller_Login extends Controller_Swiftriver {
 				$user->email = $user->username = $new_email;
 				$user->save();
 
-				// Force a logout
-				$session = Session::instance();
 				$session->set('system_messages', array(__('Email changed successfully. Proceed to Log in')));
-				Auth::instance()->logout();
-				$this->request->redirect('login');
-
-				return;
+			}
+			else
+			{
+				$session->set('system_errors', $errors);
 			}
 		}           
-
+		
+		// Redirect to login page
+		$this->request->redirect('login');
 		echo $template;   
 	}
 

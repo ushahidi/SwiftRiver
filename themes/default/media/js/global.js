@@ -258,6 +258,12 @@ function flashMessage(el, text) {
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
 }
 
+function showConfirmationMessage(message) {
+	$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>" + message + "</p></article></div>");
+	$('#confirmation-container').fadeIn('fast').addClass('visible');
+	$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
+}
+
 function showDefaultAvatar(source) {
 	source.onerror = "";
 	source.src = window.default_avatar_url;

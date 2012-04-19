@@ -129,11 +129,16 @@ class RiverID_API {
 	 * @param   string   mailbody
 	 * @return  array
 	 */
-	public function request_password($email, $mailbody)
+	public function request_password($email, $mailbody, $mailsubject, $mailfrom)
 	{
 		$api_url = $this->api_endpoint.'/requestpassword';
 		
-		$response = $this->__call_api($api_url, array('email' => $email, 'mailbody' => $mailbody));
+		$response = $this->__call_api($api_url, array(
+			'email' => $email, 
+			'mailbody' => $mailbody, 
+			'mailsubject' => $mailsubject, 
+			'mailfrom' => $mailfrom
+			));
 	   
 		if ($response AND $response->success)
 			return array('status' => TRUE);
@@ -177,7 +182,7 @@ class RiverID_API {
 	 * @param   string   mailbody
 	 * @return  array
 	 */        
-	public function change_email($oldemail, $newemail, $password, $mailbody)
+	public function change_email($oldemail, $newemail, $password, $mailbody, $mailsubject, $mailfrom)
 	{
 		$api_url = $this->api_endpoint.'/changeemail';
 		
@@ -186,7 +191,9 @@ class RiverID_API {
 				'oldemail' => $oldemail, 
 				'newemail' => $newemail, 
 				'password' => $password, 
-				'mailbody' => $mailbody
+				'mailbody' => $mailbody,
+				'mailsubject' => $mailsubject, 
+				'mailfrom' => $mailfrom
 			)
 		);
 		

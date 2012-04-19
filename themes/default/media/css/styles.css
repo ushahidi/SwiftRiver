@@ -1326,7 +1326,11 @@ select.boolean-operator {
 }
 #content.settings div.alert-message p {
   text-align: left;
-  padding: 20px;
+  margin: 20px;
+}
+#content.settings div.alert-message ul {
+  text-align: left;
+  margin: -20px 20px 20px 20px;
 }
 /* --------------------------- USER */
 #content.user article.container div.property-title {

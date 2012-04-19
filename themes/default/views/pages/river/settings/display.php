@@ -2,7 +2,7 @@
 	<div class="center">
 		<div class="col_12">
 			<?php if (isset($errors)): ?>
-				<div class="alert-message blue">
+				<div class="alert-message red">
 				<?php foreach ($errors as $message): ?>
 					<p><strong>Uh oh.</strong> <?php echo $message; ?></p>
 				<?php endforeach; ?>

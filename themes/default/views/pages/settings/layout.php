@@ -13,7 +13,10 @@
 		</li>
 		<li <?php if ($active == 'users') echo 'class="active"'; ?>>
 			<a href="<?php echo URL::site().'settings/users';?>"><?php echo __('Users'); ?></a>
-		</li>					
+		</li>
+		<li <?php if ($active == 'invites') echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site().'settings/invites';?>"><?php echo __('Invites'); ?></a>
+		</li>
 		<li <?php if ($active == 'plugins') echo 'class="active"'; ?>>
 			<a href="<?php echo URL::site().'settings/plugins';?>"><?php echo __('Plugins'); ?></a>
 		</li>
