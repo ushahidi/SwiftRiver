@@ -13,8 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Media extends ORM
-{
+class Model_Media extends ORM {
 	/**
 	 * Media has and belongs to many droplets and accounts
 	 *

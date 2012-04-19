@@ -152,7 +152,7 @@ $(document).ready(function() {
 
 	// Click handler for the DOM elements that
 	// generate confirmation messages when clicked
-	var clickHandler = function(obj) {
+	var clickHandler = function(obj, evt) {
 		var msg = $(obj).data('title');
 		// Only proceed when there's content
 		if (msg != undefined) {
@@ -175,12 +175,13 @@ $(document).ready(function() {
 
 			container.fadeIn('fast').addClass('visible');
 			container.delay(1000).fadeOut('fast').removeClass('visible');
+			evt.stopPropagation();
 		}
 	};
 
 	// CONFIRMATION MESSAGES
-	$('.follow a').live('click', function() {
-		clickHandler(this);
+	$('.follow a').live('click', function(e) {
+		clickHandler(this, e);
 	});
 
 	// HIDE OPTION MENU
