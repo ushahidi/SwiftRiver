@@ -91,8 +91,6 @@ class Controller_River extends Controller_Swiftriver {
 			// Navigation Items
 			$this->nav = Swiftriver_Navs::river($this->river);
 
-			// Store the id of the current river in session - for search
-			Session::instance()->set('search_river_id', $this->river->id);
 		}
 	}
 
@@ -101,6 +99,11 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
+		// Session data for search - only stored when the river
+		// is in view
+		$this->session->set('search_river_id', $this->river->id);
+		$this->session->set('search_scope', 'river');
+
 		// Get the id of the current river
 		$river_id = $this->river->id;
 		
@@ -545,12 +548,14 @@ class Controller_River extends Controller_Swiftriver {
 		foreach ($parameters as $parameter)
 		{
 			$values = $this->request->query($parameter);
-			if ($values) {
+			if ($values)
+			{
 				$filters[$parameter] = array();				
 				// Parameters are array strings that are comma delimited
 				// The below converts them into a php array, trimming each
 				// value
-				foreach (explode(',', urldecode($values)) as $value) {
+				foreach (explode(',', urldecode($values)) as $value)
+				{
 					$filters[$parameter][] = trim($value);
 				}
 			}

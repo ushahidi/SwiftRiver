@@ -20,9 +20,9 @@ class Chartsfx_Init {
 	public function __construct()
 	{
 		$this->charts = array(
-				'bubble' => __('Bubble Chart'),
-				'sunburst' => __('Sunburst Chart'),
-				'cluster' => __('Cluster Chart')
+				'bubble' => __('Bubbles'),
+				'sunburst' => __('Sunburst'),
+				'cluster' => __('Cluster')
 			);
 
 		// Create Menu Items
@@ -46,7 +46,8 @@ class Chartsfx_Init {
 		{
 			$nav[] = array(
 				'id' => '',
-				'active' => (Request::$current->controller() == 'chartsfx') ? 'active' : '',
+				'active' => ( Request::$current->controller() == 'chartsfx' AND 
+					Request::$current->action() == $key ) ? 'active' : '',
 				'url' => '/trend/chartsfx/'.$key,
 				'label' => $value
 			);

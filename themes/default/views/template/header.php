@@ -47,7 +47,10 @@
 	echo(Html::script("themes/default/media/js/jquery.ui.widget.js"));
 	echo(Html::script("themes/default/media/js/jquery.iframe-transport.js"));
 	echo(Html::script("themes/default/media/js/jquery.fileupload.js"));
-	
+
+	// Touch Plugin
+	echo(Html::script("themes/default/media/js/jquery.touch.min.js"));
+
 	// Backbone
 	echo(Html::script("themes/default/media/js/underscore-min.js"));
 	echo(Html::script("themes/default/media/js/backbone-min.js"));
@@ -57,17 +60,12 @@
 
 	// Dynamic JS Files
 	echo(Html::script('media/js'));
-	?>
-		
+
+	// Dynamic inline JS
+	echo $js; 
 	
-	<?php 
-		// Dynamic inline JS
-		echo $js; 
-	?>
-	
-	<?php
-	    // SwiftRiver Plugin Hook
-	    Swiftriver_Event::run('swiftriver.template.head');
+    // SwiftRiver Plugin Hook
+    Swiftriver_Event::run('swiftriver.template.head');
 	?>
 </head> 
  

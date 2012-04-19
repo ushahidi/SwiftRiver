@@ -262,6 +262,7 @@ class Model_River extends ORM {
 			
 			if ($drop_id)
 			{
+				Kohana::$log->add(Log::DEBUG, $drop_id);
 				// Return a specific drop
 				$query->where('droplets.id', '=', $drop_id);
 			}
@@ -272,11 +273,11 @@ class Model_River extends ORM {
 			}
 
 			// Apply the river filters
-			self::_apply_river_filters($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters);
 			
 			// Left join for user scores
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
-		    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
 
 			// Ordering and grouping
 			$query->order_by('droplets.droplet_date_pub', $sort)
@@ -338,12 +339,11 @@ class Model_River extends ORM {
 			    ->where('rivers_droplets.id', '>', $since_id);
 
 			// Apply the river filters
-			self::_apply_river_filters($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters);
 			
 			// Left join for user scores
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
 				->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
-		    
 
 			// Group, order and limit
 			$query->order_by('rivers_droplets.id', 'ASC')
@@ -573,43 +573,6 @@ class Model_River extends ORM {
 	}
 
 	/**
-	 * Applies a set of filters to the specified Database_Query_Select object
-	 *
-	 * @param Database_Query_Select $query Object to which the filtering predicates shall be added
-	 * @param array $filters Set of filters to apply
-	 */
-	private static function _apply_river_filters(& $query, $filters)
-	{
-		 // Check if the filter are empty
-		if (empty($filters))
-			return;
-
-		if (! empty($filters['channel'])) {
-			$query->where('droplets.channel', 'IN', $filters['channel']);
-		}
-		
-		if (! empty($filters['tags'])) {
-			$query->join('droplets_tags', 'INNER')
-				->on('droplets_tags.droplet_id', '=', 'droplets.id')
-				->join('tags', 'INNER')
-				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where('tag', 'IN', $filters['tags']);
-		}
-		
-		if (! empty($filters['start_date'])) {
-			$start_date = array_shift($filters['start_date']);
-			$start_date = new DateTime($start_date);
-			$query->where('droplets.droplet_date_pub', '>=', $start_date->format('Y-m-d'));
-		}
-
-		if (! empty($filters['end_date'])) {
-			$end_date = array_shift($filters['end_date']);
-			$end_date = new DateTime($end_date);
-			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d'));
-		}
-	}
-
-	/**
 	 * Gets the number of drops added to the river in the last x days.
 	 * The drops are grouped per date
 	 *
@@ -669,64 +632,6 @@ class Model_River extends ORM {
 
 
 	/**
-	 * Searches for the specified search term in the river identified by $river_id
-	 *
-	 * @param int $river_id ID of the river being searched
-	 * @param string $search_term Content to search for in the specified river
-	 * @param int $user_id ID of the user performing the search
-	 * @param int $page PAge number to be used for calculating the offset
-	 *
-	 * @return array
-	 */
-	public static function search($search_term, $river_id, $user_id, $page = 1)
-	{
-		$droplets = array();
-
-		// The page must always be set
-		$page = (empty($page)) ? 1 : $page;
-
-		// Check if the specified river exists
-		$river_orm = ORM::factory('river', $river_id);
-		if ($river_orm->loaded())
-		{
-			// Build the SQL "LIKE" expression
-			$search_expr = DB::expr(__("'%:search_term%'", array(':search_term' => $search_term)));
-
-			// Build River Query
-			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'),
-			                    'droplet_title', 'droplet_content', 
-			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			                    array(DB::expr('SUM(all_scores.score)'),'scores'), array('user_scores.score','user_score'))
-			    ->from('droplets')
-			    ->join('rivers_droplets', 'INNER')
-			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-			    ->join('identities', 'INNER')
-			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->join(array('droplet_scores', 'all_scores'), 'LEFT')
-			    ->on('all_scores.droplet_id', '=', 'droplets.id')
-			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
-			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.droplet_processed', '=', 1)
-			    ->where('droplets.droplet_raw', 'LIKE', $search_expr)
-			    ->or_where('droplets.droplet_title', 'LIKE', $search_expr)
-			    ->group_by('rivers_droplets.id')
-			    ->order_by('droplets.droplet_date_add', 'DESC')
-				->limit(self::DROPLETS_PER_PAGE)
-				->offset(self::DROPLETS_PER_PAGE * ($page - 1));
-
-			$droplets =  $query->execute()->as_array();
-
-			// Populate metadata
-			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
-
-		}
-
-		return $droplets;
-	}
-
-	/**
 	 * Given a search term, finds all rivers whose name or url
 	 * contains the term
 	 *
@@ -745,8 +650,11 @@ class Model_River extends ORM {
 		if ($user_orm->loaded())
 		{
 			// Rivers owned by the user in $user_id
-			$owner_rivers = DB::select('id', 'river_name', 'river_name_url')
+			$owner_rivers = DB::select('rivers.id', 'rivers.river_name', 
+				'rivers.river_name_url', 'accounts.account_path')
 			    ->from('rivers')
+			    ->join('accounts', 'INNER')
+			    ->on('rivers.account_id', '=', 'accounts.id')
 			    ->where_open()
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('river_name', 'LIKE', $search_expr)
@@ -755,9 +663,12 @@ class Model_River extends ORM {
 
 
 			// All public rivers not owned by the user
-			$all_rivers = DB::select('id', 'river_name', 'river_name_url')
+			$all_rivers = DB::select('rivers.id', 'rivers.river_name', 
+				'rivers.river_name_url', 'accounts.account_path')
 			    ->union($owner_rivers)
 			    ->from('rivers')
+			    ->join('accounts', 'INNER')
+			    ->on('rivers.account_id', '=', 'accounts.id')
 			    ->where('river_public', '=', 1)
 			    ->and_where_open()
 			    ->where('account_id', '<>', $user_orm->account->id)

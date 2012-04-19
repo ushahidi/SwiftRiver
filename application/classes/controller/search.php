@@ -15,38 +15,69 @@
 class Controller_Search extends Controller_Swiftriver {
 
 	/**
-	 * @var string
-	 * Scope of the search
+	 * Search filters
+	 * @var array
 	 */
-	private $search_scope;
+	private $filters;
 
 	/**
-	 * Term being searched
 	 * @var string
 	 */
 	private $search_term;
 
 	/**
-	 * Search filters
-	 * @var array
+	 * View for the content below the navigation section
+	 * @var Kohana_View
 	 */
-	private $filters;
+	private $sub_content;
+
+
+	public function before()
+	{
+		parent::before();
+
+		// Check for search filters
+		$this->filters = $this->session->get('search_filters');
+		if (empty($this->filters))
+		{
+			$this->session->bind('search_filters', $this->filters);
+		}
+
+		$this->search_term = $this->session->get('search_term');
+		if (empty($this->search_term))
+		{
+			$this->session->bind('search_term', $this->search_term);
+		}
+		
+		// Layout for the seach page
+		$this->template->content = View::factory('pages/search/layout')
+		    ->bind('sub_content', $this->sub_content);
+		
+		$this->template->content->search_term = $this->session->get('search_term');
+		$this->template->content->search_filters = $this->session->get('query_string');
+	}
 	
 
+	/**
+	 * Landing page
+	 */
 	public function action_index()
 	{
 		$this->template->header->title = __("Search");
-
-		$this->template->content = View::factory('pages/search/main')
-		    ->bind('search_term', $this->search_term)
-		    ->bind('droplets_view', $droplets_view)
-		    ->bind('search_scope', $this->search_scope);
+		$this->template->content->active = 'drops';
 
 		// Check for seach query
 		if ( ! empty($_GET['q']))
 		{
+			$this->sub_content = View::factory('pages/drop/drops')
+			    ->bind('droplet_js', $droplet_js)
+			    ->bind('user', $this->user)
+			    ->bind('owner', $this->owner)
+		        ->bind('anonymous', $this->anonymous);
+
 			// Get the search results
 			$results = $this->_handle_search($_GET);
+
 
 			// Bootstrap the droplet list
 			$droplet_js = View::factory('pages/drop/js/drops')
@@ -55,26 +86,30 @@ class Controller_Search extends Controller_Swiftriver {
 
 			$droplet_js->fetch_base_url = URL::site().'search';
 			$droplet_js->droplet_list = json_encode($results['droplets']);
-			$droplet_js->max_droplet_id = $results['droplets'][0]['id'];
+			$droplet_js->max_droplet_id = PHP_INT_MAX;
 			$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 			$droplet_js->polling_enabled = FALSE;
+			$droplet_js->channels = json_encode(array());
+			$droplet_js->default_view = "drops";
 
-			// Generate the List HTML
-			$droplets_view = View::factory('pages/drop/drops')
-				->bind('droplet_js', $droplet_js)
-				->bind('user', $this->user)
-				->bind('owner', $this->owner)
-			    ->bind('anonymous', $this->anonymous);
-
-			$droplets_view->nothing_to_display = View::factory('pages/search/nothing_to_display')
-			    ->bind('search_term', $this->search_term);
-
-
-			// Set the search scope to all
-			Session::instance()->set('search_scope', 'all');
-			
+			$this->sub_content->nothing_to_display = View::factory('pages/search/nothing_to_display');
+			$this->sub_content->nothing_to_display->search_term = $this->session->get('search_term');
+			$this->session->set('search_scope', 'all');
 		}
 
+	}
+
+	/**
+	 * Loads the search dialog
+	 */
+	public function action_main()
+	{
+		// Only serve the dialog via XHR
+		if ($this->request->is_ajax())
+		{
+			$this->template = View::factory('pages/search/main');
+			$this->template->search_scope = $this->session->get('search_scope');
+		}
 	}
 
 	// Aliases for the index action
@@ -84,6 +119,11 @@ class Controller_Search extends Controller_Swiftriver {
 	}
 
 	public function action_list()
+	{
+		$this->action_index();
+	}
+
+	public function action_drop()
 	{
 		$this->action_index();
 	}
@@ -160,9 +200,29 @@ class Controller_Search extends Controller_Swiftriver {
 	 */
 	private function _handle_search($parameters)
 	{
+		// Bind the variables to session data
+		$this->session
+		    ->bind('search_users', $search_users)
+		    ->bind('search_buckets', $search_buckets)
+		    ->bind('search_rivers', $search_rivers);
+
 		// Sanitize the search term - strip all HTML
 		$this->search_term = strip_tags($parameters['q']);
-		$this->search_scope = $parameters['scope'];
+
+		// Get the scope of the search
+		$search_scope = (isset($parameters['search_scope'])) 
+		    ? $parameters['search_scope'] 
+		    : $this->session->get('search_scope');
+
+		// Defaults the scope to 'all' if no scope exists
+		if (empty($search_scope))
+		{
+			$search_scope = "all";
+		}
+
+		// Reset the search scope - for cases where the value
+		// in $parameters is different from the one in session data
+		$this->session->set('search_scope', $search_scope);
 
 		// Get the page number for the request
 		$page = (isset($parmaters['page']) AND intval($parameters['page']) > 0) 
@@ -174,69 +234,100 @@ class Controller_Search extends Controller_Swiftriver {
 			// Matched droplets
 			'droplets' => array(),
 
-			// Matched users
-			'users' => array(),
-
-			// Matched buckets
-			'buckets' => array(),
-
-			// Matched rivers
-			'rivers' => array(),
-
 			// Page used for the search
 			'page' => $page
 		);
 
 		// Build the search filters as HTTP query parameters
-		$this->filters = http_build_query(array(
-			'scope' => $this->search_scope, 
+		$this->filters = array(
 			'q'=>$this->search_term
-		));
+		);
+
+		$this->session->set('query_string', http_build_query($this->filters));
+
+		$user_id = $this->user->id;
+
+		// Query filters for the droplet fetch
+		$query_filters = array(
+			'places' => array($this->search_term),
+			'tags' => array($this->search_term)
+		);
 
 		// Check the search scope
-		switch ($this->search_scope)
+		switch ($search_scope)
 		{
 			// Global search
 			case 'all':
 				// Get users
-				$results['users'] = Model_User::get_like($this->search_term);
+				$search_users = Model_User::get_like($this->search_term);
 
 				// Get buckets - public, owned and those collaborating on
-				$results['buckets'] = Model_Bucket::get_like($this->search_term, 
-					$this->user->id);
+				$search_buckets = Model_Bucket::get_like($this->search_term, $user_id);
 
 				// Get rivers - public, owned and those collaborating on
-				$results['rivers'] = Model_River::get_like($this->search_term, 
-					$this->user->id);
+				$search_rivers = Model_River::get_like($this->search_term, $user_id);
 
 				// Get the droplets
-				$results['droplets'] = Model_Droplet::search($this->search_term, 
-					$this->user->id, $page);
+				$results['droplets'] = Model_Droplet::search($query_filters, $user_id, $page);
 
 			break;
 
 			// River search
 			case 'river':
 				// Get the river id
-				$river_id = Session::instance()->get('search_river_id');
-				$results['droplets'] = Model_River::search($this->search_term, 
-					$river_id, $this->user->id, $page);
+				$river_id = $this->session->get('search_river_id');
+
+				$data = Model_River::get_droplets($user_id, $river_id, 0, $page, 
+					PHP_INT_MAX, 'DESC', $query_filters);
+
+				$results['droplets'] = $data['droplets'];
 			break;
 
 			// Bucket search
 			case 'bucket':
 				// Get the bucket id
-				$bucket_id = Session::instance()->get('search_bucket_id');
+				$bucket_id = $this->session->get('search_bucket_id');
 
 				// Get the droplets
-				$results['droplets'] = Model_Bucket::search($this->search_term, 
-					$bucket_id, $this->user->id, $page);
+				$data = Model_Bucket::get_droplets($user_id, $bucket_id, 0, $page, 
+					PHP_INT_MAX, $query_filters);
+
+				$results['droplets'] = $data['droplets'];
 			break;
 
 		}
 
 		// Return
 		return $results;
+	}
+
+	public function action_buckets()
+	{
+		$this->template->content->active = 'buckets';
+
+		$this->sub_content = View::factory('pages/search/buckets');
+		$this->sub_content->search_term = $this->session->get('search_term');
+		$this->sub_content->buckets = $this->session->get('search_buckets');
+
+	}
+
+	public function action_rivers()
+	{
+		$this->template->content->active = 'rivers';
+
+		$this->sub_content = View::factory('pages/search/rivers');
+		$this->sub_content->search_term = $this->session->get('search_term');
+		$this->sub_content->rivers = $this->session->get('search_rivers');
+	}
+
+	public function action_users()
+	{
+		$this->template->content->active = 'users';
+
+		$this->sub_content = View::factory('pages/search/users');
+		$this->sub_content->search_term = $this->session->get('search_term');
+		$this->sub_content->users =  $this->session->get('search_users');
+
 	}
 }
 ?>

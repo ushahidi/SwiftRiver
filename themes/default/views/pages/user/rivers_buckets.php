@@ -68,7 +68,7 @@
 
 		<% if (is_owner) { %>
 			<p id="delete_item" class="remove-small">
-				<a href="#" class="modal-trigger">
+				<a href="#">
 					<span class="icon"></span>
 					<span class="nodisplay"><?php echo __("Delete"); ?></span>
 				</a>
@@ -136,7 +136,6 @@ $(function() {
 		
 		initialize: function () {
 			this.model.on('change', this.render, this);
-			this.model.on('destroy', this.removeView, this);
 		},
 		
 		render: function() {
@@ -148,7 +147,7 @@ $(function() {
 			this.model.toggleSubscribe(this.$el);
 		},
 		
-		delete: function() {
+		delete: function(e) {
 			targetEl = this.$el;
 			this.model.destroy({
 				wait: true, 
@@ -156,11 +155,10 @@ $(function() {
 					$(targetEl).fadeOut();
 				}
 			});
-		},
-		
-		removeView: function() {
-			this.$el.fadeOut("slow");
+
+			e.stopPropagation();
 		}
+		
 	});
 		
 		

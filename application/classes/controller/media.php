@@ -80,4 +80,22 @@ class Controller_Media extends Controller {
 		// SwiftRiver Plugin Hook -- Add Custom JS
 		Swiftriver_Event::run('swiftriver.header.css');
 	}
+
+	/**
+	 * On the fly thumbnails
+	 *
+	 * @return	void
+	 */	
+	public function action_thumb()
+	{
+		define ('FILE_CACHE_DIRECTORY', Kohana::$cache_dir.'/thumbs/');
+		define ('ALLOW_ALL_EXTERNAL_SITES', true);
+		
+		// Load TimThumb
+		$path = Kohana::find_file( 'vendor', 'timthumb/timthumb' );
+		if( false === $path ) {
+			throw new Kohana_Cache_Exception('TimThumb vendor code not found');
+		}
+		require_once( $path );
+	}	
 }

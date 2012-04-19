@@ -79,14 +79,15 @@ class Controller_Bucket extends Controller_Swiftriver {
 			{
 				$this->page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
 			}
-
-			// Store the ID of the current bucket in session data - for search
-			Session::instance()->set('search_bucket_id', $this->bucket->id);
 		}
 	}
 
 	public function action_index()
 	{
+		// Session data for search - only stored when the bucket is in view
+		$this->session->set('search_bucket_id', $this->bucket->id);
+		$this->session->set('search_scope', 'bucket');
+
 		$this->template->header->title = $this->page_title;
 		
 		$this->template->content = View::factory('pages/bucket/main')

@@ -44,7 +44,7 @@ class Swiftriver_Navs {
 			);
 		}
 
-		// Plugins
+		// SwiftRiver Plugin Hook -- Add Nav Items
 		Swiftriver_Event::run('swiftriver.river.nav', $nav);
 
 		return $nav;

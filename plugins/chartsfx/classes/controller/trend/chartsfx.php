@@ -54,39 +54,74 @@ Class Controller_Trend_Chartsfx extends Controller_Trend_Main {
 
 	public function action_flare()
 	{
-		// Get Top Tags
-		$tags = DB::select( 'tags.tag', array(DB::expr('COUNT(*)'), 'tag_count') )
-			->from('droplets_tags')
-			->join('tags', 'INNER')
-				->on('droplets_tags.tag_id', '=', 'tags.id')
-			->join($this->context.'s_droplets', 'INNER')
-				->on('droplets_tags.droplet_id', '=', $this->context.'s_droplets.droplet_id')
-			->where($this->context.'s_droplets.'.$this->context.'_id', '=', $this->id)
-			->group_by('tags.tag')
-			->order_by('tag_count', 'DESC')
-			->limit(200)
-			->execute()
-			->as_array();
-		
-		// Shuffling the array gives a much better visual
-		shuffle($tags);
-
-		$json = array(
-				'name' => 'tags',
-				'children' => array()
-			);
-
-		//++ TODO - Group tags by entity type (organization, person, location etc)
-		foreach ($tags as $tag)
+		// If we have cache engine, retrieve any set keys
+		if ($this->cache)
 		{
-			$json['children'][] = array(
-					'name' => $tag['tag'],
-					'children' => array(array(
-							'name' => $tag['tag'],
-							'size' => $tag['tag_count']
-							)
-						)
+			try
+			{
+				$cached = $this->cache->get($this->context.'.trends.chartsfx.flare1.'.$this->id);
+			}
+			catch (Cache_Exception $e)
+			{
+				// Do nothing, just log it
+			}				
+		}
+
+		if ( ! isset($cached) OR is_null($cached) )
+		{
+			// Get Top Tags
+			$tags = DB::select( 'tags.tag', array(DB::expr('COUNT(*)'), 'tag_count') )
+				->from('droplets_tags')
+				->join('tags', 'INNER')
+					->on('droplets_tags.tag_id', '=', 'tags.id')
+				->join($this->context.'s_droplets', 'INNER')
+					->on('droplets_tags.droplet_id', '=', $this->context.'s_droplets.droplet_id')
+				->where($this->context.'s_droplets.'.$this->context.'_id', '=', $this->id)
+				->group_by('tags.tag')
+				->order_by('tag_count', 'DESC')
+				->limit(200)
+				->execute()
+				->as_array();
+			
+			// Shuffling the array gives a much better visual
+			shuffle($tags);
+
+			$json = array(
+					'name' => 'tags',
+					'children' => array()
 				);
+
+			//++ TODO - Group tags by entity type (organization, person, location etc)
+			foreach ($tags as $tag)
+			{
+				$json['children'][] = array(
+						'name' => $tag['tag'],
+						'children' => array(array(
+								'name' => $tag['tag'],
+								'size' => $tag['tag_count']
+								)
+							)
+					);
+			}
+
+			// If we have cache engine, set the key
+			if ($this->cache)
+			{
+				// Set 5 minute Cache
+				try
+				{
+					$cached = $this->cache->set($this->context.'.trends.chartsfx.flare1.'.$this->id, $json, 300 );
+
+				}
+				catch (Cache_Exception $e)
+				{
+					// Do nothing, just log it
+				}					
+			}			
+		}
+		else
+		{
+			$json = $cached;
 		}
 
 		$this->auto_render = false;
@@ -95,44 +130,79 @@ Class Controller_Trend_Chartsfx extends Controller_Trend_Main {
 
 	public function action_flare2()
 	{
-		// Get Top Tags
-		$tags = DB::select( 'tags.tag', 'tags.tag_type', array(DB::expr('COUNT(*)'), 'tag_count') )
-			->from('droplets_tags')
-			->join('tags', 'INNER')
-				->on('droplets_tags.tag_id', '=', 'tags.id')
-			->join($this->context.'s_droplets', 'INNER')
-				->on('droplets_tags.droplet_id', '=', $this->context.'s_droplets.droplet_id')
-			->where($this->context.'s_droplets.'.$this->context.'_id', '=', $this->id)
-			->group_by('tags.tag')
-			->order_by('tag_count', 'DESC')
-			->limit(100)
-			->execute()
-			->as_array();
-		
-		// Shuffling the array gives a much better visual
-		shuffle($tags);
-
-		$json = array(
-				'name' => 'tags',
-				'children' => array()
-			);
-
-		//++ TODO - Group tags by entity type (organization, person, location etc)
-		$new_array = array();
-		foreach ($tags as $tag)
+		// If we have cache engine, retrieve any set keys
+		if ($this->cache)
 		{
-			$new_array[$tag['tag_type']][] = array(
-					'name' => $tag['tag'],
-					'size' => $tag['tag_count']
-				);
+			try
+			{
+				$cached = $this->cache->get($this->context.'.trends.chartsfx.flare2.'.$this->id);
+			}
+			catch (Cache_Exception $e)
+			{
+				// Do nothing, just log it
+			}				
 		}
 
-		foreach ($new_array as $key => $value)
-		{
-			$json['children'][] = array(
-					'name' => $key,
-					'children' => $value
+		if ( ! isset($cached) OR is_null($cached) )
+		{		
+			// Get Top Tags
+			$tags = DB::select( 'tags.tag', 'tags.tag_type', array(DB::expr('COUNT(*)'), 'tag_count') )
+				->from('droplets_tags')
+				->join('tags', 'INNER')
+					->on('droplets_tags.tag_id', '=', 'tags.id')
+				->join($this->context.'s_droplets', 'INNER')
+					->on('droplets_tags.droplet_id', '=', $this->context.'s_droplets.droplet_id')
+				->where($this->context.'s_droplets.'.$this->context.'_id', '=', $this->id)
+				->group_by('tags.tag')
+				->order_by('tag_count', 'DESC')
+				->limit(100)
+				->execute()
+				->as_array();
+			
+			// Shuffling the array gives a much better visual
+			shuffle($tags);
+
+			$json = array(
+					'name' => 'tags',
+					'children' => array()
 				);
+
+			//++ TODO - Group tags by entity type (organization, person, location etc)
+			$new_array = array();
+			foreach ($tags as $tag)
+			{
+				$new_array[$tag['tag_type']][] = array(
+						'name' => $tag['tag'],
+						'size' => $tag['tag_count']
+					);
+			}
+
+			foreach ($new_array as $key => $value)
+			{
+				$json['children'][] = array(
+						'name' => $key,
+						'children' => $value
+					);
+			}
+
+			// If we have cache engine, set the key
+			if ($this->cache)
+			{
+				// Set 5 minute Cache
+				try
+				{
+					$cached = $this->cache->set($this->context.'.trends.chartsfx.flare2.'.$this->id, $json, 300 );
+
+				}
+				catch (Cache_Exception $e)
+				{
+					// Do nothing, just log it
+				}					
+			}
+		}
+		else
+		{
+			$json = $cached;
 		}
 
 		$this->auto_render = false;

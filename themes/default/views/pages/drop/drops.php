@@ -13,16 +13,23 @@
 </script>
 
 <script type="text/template" id="drop-drops-view-template">
+	<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
+		<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+	<% i++; }; return i > 1; }); %>
 	<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 	<div class="drop-actions cf">
 		<?php if ( ! $anonymous): ?>
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 				<?php if ( ! $anonymous): ?>
 					<li class="button-blue bucket">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+						    <span class="icon"></span>
+						</a>
 					</li>
 				<?php endif; ?>
 			</ul>
@@ -37,7 +44,9 @@
 		<?php endif; ?>
 	</div>
 	<section class="drop-source cf">
-		<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% if ( identity_avatar) { %>
+			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% } %>
 		<div class="byline">
 			<h2><%= identity_name %></h2>
 			<p class="drop-source-channel <%= channel %>">
@@ -50,6 +59,9 @@
 <script type="text/template" id="drop-list-view-template">
 	<div class="drop-content">
 		<div class="drop-body">
+			<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
+				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+			<% i++; }; return i > 1; }); %>		
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
@@ -60,7 +72,9 @@
 			</p>
 		</div>
 		<section class="drop-source cf">
-			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+			<% if ( identity_avatar) { %>
+				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+			<% } %>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
 				<p class="drop-source-channel <%= channel %>">
@@ -73,10 +87,14 @@
 		<?php if ( ! $anonymous): ?>
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 				<li class="button-blue bucket">
-					<a href="#" class="modal-trigger"><span class="icon"></span></a>
+					<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+					    <span class="icon"></span>
+					</a>
 				</li>
 			</ul>		
 			<ul class="dual-buttons score-drop">
@@ -326,7 +344,11 @@
 				</a>
 			</li>
 			<li class="facebook">
-				<a href="#"><span class="icon"></span><?php echo __("Facebook"); ?><a/>
+				<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(droplet_title); %>
+				<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %>" 
+				    target="_blank">
+				    <span class="icon"></span><?php echo __("Facebook"); ?>
+			    <a/>
 			</li>
 			<li class="email"><a href="#"><span class="icon"></span><?php echo __("Email"); ?></a></li>
 		</ul>

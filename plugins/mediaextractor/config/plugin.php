@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Config for Link Extractor Plugin
+ * Config for Image Extractor Plugin
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -16,9 +16,9 @@
 
 return array(
 	//same name as plugin folder
-	'linkextractor' => array(
-		'name'			=> 'Link Extractor',
-		'description'	=> 'Extract link entities from content along with getting the full urls',
+	'mediaextractor' => array(
+		'name'			=> 'Media Extractor',
+		'description'	=> 'Extract image, video and audio entities from content',
 		'author'		=> 'David Kobia',
 		'email'			=> 'david@ushahidi.com',
 		'version'		=> '0.1.0',

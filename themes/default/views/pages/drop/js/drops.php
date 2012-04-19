@@ -240,7 +240,7 @@ $(function() {
 		tagName: "article",
 			
 		events: {
-			"click h1 a.zoom-trigger": "showDetail",
+			"click a.zoom-trigger": "showDetail",
 			"click p.discussion a": "showDetail",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click ul.score-drop > li.like a": "likeDrop",
@@ -877,7 +877,7 @@ $(function() {
 			} else if(this.collection instanceof Links) {
 				this.$("h3 .icon").after("Links");
 			} else if(this.collection instanceof Places) {
-				this.$("h3 .icon").after("Locations");
+				this.$("h3 .icon").after("Places");
 			} 
 			
 			this.collection.each(this.addMetadata, this)
@@ -1210,7 +1210,7 @@ $(function() {
 			"drop/:id/zoom" : "dropZoomView",
 			"*actions": "defaultRoute"
 		},
-		
+
 		initialize: function() {
 			this.route(/^drops(\?.+)?$/, "dropsView");
 			this.route(/^list(\?.+)?$/, "listView");
