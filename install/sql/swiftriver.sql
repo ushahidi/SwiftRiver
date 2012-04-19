@@ -661,14 +661,14 @@ CREATE TABLE IF NOT EXISTS `twitter_crawls` (
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `auth_tokens` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(1024) NOT NULL DEFAULT '',
-  `token` varchar(255) NOT NULL DEFAULT '',
-  `type` varchar(255) DEFAULT NULL,
+  `token` varchar(32) NOT NULL DEFAULT '',
+  `type` varchar(20) DEFAULT NULL,
+  `data` text,
   `created_date` datetime DEFAULT NULL,
   `expire_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `login_tokens_un_token` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `auth_tokens_un_token` (`token`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
 -- ----------------------------------------

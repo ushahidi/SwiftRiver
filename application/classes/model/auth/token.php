@@ -22,12 +22,12 @@ class Model_Auth_Token extends ORM {
 	 * @param $type
 	 * @return Model_Auth_Token
 	 */	
-	public static function create_token($email, $type)
+	public static function create_token($type, $data)
 	{
 		$auth_token = ORM::factory('auth_token');
-		$auth_token->email = $email;
-		$auth_token->token = Text::random('alnum', 16);
 		$auth_token->type = $type;
+		$auth_token->data = json_encode($data);
+		$auth_token->token = md5(Text::random('alnum', 16).serialize($data));
 		$auth_token->created_date = date("Y-m-d H:i:s", time());
 		//Expire in 24 hours
 		$auth_token->expire_date = date("Y-m-d H:i:s", time()+86400);
@@ -37,28 +37,27 @@ class Model_Auth_Token extends ORM {
 	}
     
     /**
-	 * Check if a token is valid
+	 * Get a token
 	 *
-	 * @param $email
+	 * @param $token
 	 * @param $type
-	 * @return boolean
+	 * @return mixed
 	 */	
-	public static function is_valid_token($email, $token, $type, $delete = TRUE)
+	public static function get_token($token, $type, $delete = TRUE)
 	{
 		$auth_token = ORM::factory("auth_token")
 		                ->where("token", "=", $token)
 		                ->where("type", "=", $type)
-		                ->where("email", "=", $email)
 		                ->where("expire_date", ">", DB::expr("SYSDATE()"))
 		                ->find();
-		$ret = FALSE;
+
 		if ($auth_token->loaded())
 		{
-			$ret = TRUE;
-			$auth_token->delete();
+			return $auth_token;
 		}        
-		return $ret;
+		return FALSE;
 	}
+	
 }
 
 ?>

@@ -596,7 +596,7 @@ class Controller_User extends Controller_Swiftriver {
 				$mail_body = View::factory('emails/changeemail')
 							 ->bind('secret_url', $secret_url);		            
         
-				$secret_url = url::site('login/changeemail/'.$this->user->id.'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
+				$secret_url = url::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
 				$site_email = Kohana::$config->load('useradmin.email_address');
 				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 				$resp = RiverID_API::instance()
@@ -619,7 +619,10 @@ class Controller_User extends Controller_Swiftriver {
 					return;
 				}
         
-				$auth_token = Model_Auth_Token::create_token($new_email, 'change_email');
+				$auth_token = Model_Auth_Token::create_token('change_email', array(
+					'new_email' => $new_email,
+					'old_email' => $this->user->email
+					));
 				if ($auth_token->loaded())
 				{
 					// Send an email with a secret token URL
@@ -627,7 +630,7 @@ class Controller_User extends Controller_Swiftriver {
 									   ->bind('secret_url', $secret_url);		            
         
 					$secret_url = URL::site('login/changeemail/'
-											.$this->user->id
+											.urlencode($this->user->email)
 											.'/'
 											.urlencode($new_email)
 											.'/'
@@ -768,7 +771,7 @@ class Controller_User extends Controller_Swiftriver {
 				}
 				else
 				{
-					// The data check out, create the account and proceed to Swift!
+					// The data checks out, create the account and proceed to Swift!
 					$this->user->account->account_path = $nickname;
 					$this->user->account->save();
 					$this->user->name = $this->request->post('name');

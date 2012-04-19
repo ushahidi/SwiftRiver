@@ -9,6 +9,8 @@
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
 	<link rel="icon" href="<?php echo url::base(); ?>themes/default/media/img/favicon.png" type="image/png">
 	<?php
+	echo $meta; 
+	
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
 	// Inline css

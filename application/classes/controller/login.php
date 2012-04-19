@@ -117,11 +117,11 @@ class Controller_Login extends Controller_Swiftriver {
 					// Do the password reset depending on the auth driver we are using.
 					if ($this->riverid_auth) 
 					{
-						$this->__password_reset_riverid($email, $user);
+						$this->__password_reset_riverid($email);
 					}
 					else
 					{
-						$this->__password_reset_orm($email, $user);
+						$this->__password_reset_orm($email);
 					}
 				}
 			}
@@ -308,7 +308,7 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 		else
 		{
-			$auth_token = Model_Auth_Token::create_token($email, 'new_registration');        
+			$auth_token = Model_Auth_Token::create_token('new_registration', array('email' => $email));
 			if ($auth_token->loaded())
 			{
 				//Send an email with a secret token URL
@@ -347,12 +347,12 @@ class Controller_Login extends Controller_Swiftriver {
 	* Send a river id password reset request
 	*
 	*/	
-	private function __password_reset_riverid($email, $user)
+	private function __password_reset_riverid($email)
 	{
 		$riverid_api = RiverID_API::instance();		            
 		$mail_body = View::factory('emails/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
-		$secret_url = url::site('login/reset/'.$user->id.'/%token%', TRUE, TRUE);
+		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
 		$site_email = Kohana::$config->load('useradmin.email_address');
 		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
@@ -371,15 +371,15 @@ class Controller_Login extends Controller_Swiftriver {
 	* Password reset for ORM auth.
 	*
 	*/	
-	private function __password_reset_orm($email, $user)
+	private function __password_reset_orm($email)
 	{
-		$auth_token = Model_Auth_Token::create_token($email, 'password_reset');        
+		$auth_token = Model_Auth_Token::create_token('password_reset', array('email' => $email));
 		if ($auth_token->loaded())
 		{
 			//Send an email with a secret token URL
 			$mail_body = View::factory('emails/resetpassword')
 						 ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/reset/'.$user->id.'/'.$auth_token->token, TRUE, TRUE);
+			$secret_url = url::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
 			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 			
@@ -403,20 +403,13 @@ class Controller_Login extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/login/reset')
 		                                 ->bind('errors', $errors);
         
-		$user_id = intval($this->request->param('id', 0));
 		$email = $this->request->param('email');
 		$token = $this->request->param('token');
-        
-		$user = ORM::factory('user', $user_id);
-		if ($user->loaded())
-		{
-			// If we have userid only, get email from the user object
-			$email = $user->email;
-		}	        
-        
-        
+		
+		$user = ORM::factory('user', array('email' => $email));
+		
 		// If the form has been filled in and submitted
-		if ($email AND $this->request->post('password_confirm') AND $this->request->post('password'))
+		if ($user->loaded() AND $this->request->post('password_confirm') AND $this->request->post('password'))
 		{
 			// Validate the passwords
 			$post = Model_Auth_User::get_password_validation($this->request->post());
@@ -436,40 +429,163 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$errors = array($resp['error']);
 					}
-					else
-					{
-						$session = Session::instance();
-						$session->set('system_messages', array(__('Password reset was successful. Proceed to Log in')));
-						$this->request->redirect('login');
-						return;
-					}
 				}
 				else
 				{
 					// Do an ORM password reset
-					if (Model_Auth_Token::is_valid_token($email, $token, 'password_reset') OR
-						Model_Auth_Token::is_valid_token($email, $token, 'new_registration'))
+					$token = Model_Auth_Token::get_token($token, 'password_reset');
+					if ($token)
 					{
-						if ( ! $user->loaded() ) {
-							// New user registration
-							$user->username = $user->email = $email;
+						$data = json_decode($token->data);
+						$token->delete();
+						if ($email != $data->email) {
+							// The email in the request does not match
+							// the email in the token
+							$errors = array(__('Invalid email'));
+						}
+						else
+						{
+							$user->password = $this->request->post('password');
 							$user->save();
-        
-							// Allow the user be able to login immediately
-							$login_role = ORM::factory('role',array('name'=>'login'));
-							$user->add('roles', $login_role);
-						}                   
-						$user->password = $this->request->post('password');
-						$user->save();
-						Session::instance()->set('system_messages', array(__('Password reset was successful. Proceed to Log in')));
-						$this->request->redirect('login');
-						return;	                    
+						}                    
 					}
 					else
 					{
 						$errors = array(__('Error'));
 					}
 				}
+			}
+			
+			if ( ! $errors)
+			{
+				// Auto login
+				Auth::instance()->login($user->username, $this->request->post('password'), FALSE);
+				
+				// Show a message and redirect to swift
+				$this->template->content = View::factory('pages/login/landing');
+				$this->template->content->messages = array(__('Password reset was successful.'));
+				$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
+			}
+		}
+	}
+	
+	/**
+	* Create an account
+	* 
+	* @return void
+	*/	
+	public function action_create()
+	{
+		$this->template->content = View::factory('pages/login/create')
+		                                 ->bind('form_name', $form_name)
+		                                 ->bind('form_nickname', $form_nickname)
+		                                 ->bind('errors', $errors);
+		$email = $this->request->param('email');
+		$token = $this->request->param('token');
+		
+		$user = ORM::factory('user', array('email' => $email));
+		
+		if ($user->loaded())
+		{
+			$this->template->content = View::factory('pages/login/landing');
+			$this->template->content->errors = array(__('Email is already registered'));
+			$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
+			return;
+		} else {
+			// To retun user entered values in case of errors
+			$form_name = $this->request->post('name');
+			$form_nickname = $this->request->post('nickname');
+		}
+		
+		if ($this->request->post() AND ! $user->loaded())
+		{
+			$post = Model_Auth_User::get_password_validation($this->request->post())
+									->rule('name', 'not_empty')
+									->rule('nickname', 'not_empty')
+									->rule('nickname', 'alpha_dash');
+									
+			if ( ! $post->check())
+			{
+				$errors = $post->errors('user');
+			}
+			else
+			{
+				// RiverID validation
+				if ($this->riverid_auth)
+				{
+					$riverid_api = RiverID_API::instance();
+					$resp = $riverid_api->set_password($email, $token, $this->request->post('password'));
+        
+					if ( ! $resp['status']) 
+					{
+						$errors = array($resp['error']);
+					}
+					
+				}
+				else
+				{
+					// ORM auth validation
+					$token = Model_Auth_Token::get_token($token, 'new_registration');
+					if (! $token)
+					{
+						$errors = array(__('Error'));
+					}
+					else
+					{
+						$data = json_decode($token->data);
+						$token->delete();
+						
+						if ($email != $data->email) {
+							// The email in the request does not match
+							// the email in the token
+							$errors = array(__('Invalid email'));
+						}
+					}
+				}
+				
+				// Is the nickname taken?
+				$nickname = strtolower($this->request->post('nickname'));
+				$account = ORM::factory('account',array('account_path' => $nickname));
+				if ($account->loaded())
+				{
+					$errors = array(__('Nickname is already taken'));
+				}
+			}
+			
+			if ( ! $errors )
+			{
+				// User entry
+				$user = ORM::factory('user');
+				$user->username = $user->email = $email;
+				$user->name = $this->request->post('name');
+				
+				
+				if ( ! $this->riverid_auth) {
+					// Password only needed locally for ORM auth
+					$user->password = $this->request->post('password');
+				}
+				
+				$user->save();
+				
+				// Account entry
+				$nickname = strtolower($this->request->post('nickname'));
+				$user->account->account_path = $nickname;
+				$user->account->user_id = $user->id;
+				$user->account->save();
+				
+				
+				// Allow the user be able to login immediately
+				$login_role = ORM::factory('role',array('name'=>'login'));
+				$user->add('roles', $login_role);
+				$user->save();
+				
+				// Auto login
+				Auth::instance()->login($user->username, $this->request->post('password'), FALSE);
+				
+				// Show a message and redirect to swift
+				$this->template->content = View::factory('pages/login/landing');
+				$this->template->content->messages = array(__('Account was created successfuly.'));
+				$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
 			}
 		}
 	}
@@ -482,53 +598,65 @@ class Controller_Login extends Controller_Swiftriver {
 	 */		
 	public function action_changeemail()
 	{
+		$this->template->content = View::factory('pages/login/landing');
+		$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
+		
 		// Force logout
 		Auth::instance()->logout();
 		
 		$session = Session::instance();
 		
-		$user_id = intval($this->request->param('id', 0));
-		$user = ORM::factory('user', $user_id);
-		$new_email = $this->request->param('email');
+		$old_email = $this->request->param('old_email');
+		$new_email = $this->request->param('new_email');
 		$token = $this->request->param('token');
+		
+		$user = ORM::factory('user', array('email' => $old_email));
 
-		if ($user->loaded())
+		if ($this->riverid_auth)
 		{
-			if ($this->riverid_auth)
+			$riverid_api = RiverID_API::instance();
+			$resp = $riverid_api->confirm_email($new_email, $token);	        
+        
+			if ( ! $resp['status']) 
 			{
-				$riverid_api = RiverID_API::instance();
-				$resp = $riverid_api->confirm_email($new_email, $token);	        
-
-				if ( ! $resp['status']) 
-				{
-					$errors = array($resp['error']);
-				}            
-			}
-			else
+				$errors = array($resp['error']);
+			}            
+		}
+		else
+		{
+			$token = Model_Auth_Token::get_token($token, 'change_email');
+			if ( $token)
 			{
-				if ( ! Model_Auth_Token::is_valid_token($new_email, $token, 'change_email'))
-				{
-					$errors = array(__('Error'));
+				$data = json_decode($token->data);
+				$token->delete();
+				
+				if ($new_email != $data->new_email OR $old_email != $data->old_email) {
+					// The emails in the request does not match
+					// the emails in the token
+					$errors = array(__('Invalid email'));
 				}
 			}
-
-			if (empty($errors))
-			{
-				// Email change was validated, make the change to the user object
-				$user->email = $user->username = $new_email;
-				$user->save();
-
-				$session->set('system_messages', array(__('Email changed successfully. Proceed to Log in')));
-			}
 			else
 			{
-				$session->set('system_errors', $errors);
+				$errors = array(__('Error'));
 			}
-		}           
-		
-		// Redirect to login page
-		$this->request->redirect('login');
-		echo $template;   
+		}
+        
+		if (empty($errors))
+		{
+			// Email change was validated, make the change to the user object
+			$user->email = $user->username = $new_email;
+			$user->save();
+			
+			// Auto login
+			Auth::instance()->force_login($user);
+        
+			$this->template->content->messages = array(__('Email changed successfully.'));
+		}
+		else
+		{
+			$this->template->content->errors = $errors;
+		}		
 	}
 
 	/**

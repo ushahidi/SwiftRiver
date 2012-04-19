@@ -127,7 +127,10 @@ Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
 /**
  * Swiftriver Password Reset Route
  */	
-Route::set('login_reset', 'login/reset/<id>/<token>')
+Route::set('login_reset', 'login/reset/<email>/<token>',
+    array(
+        'email' => '[^/]++'
+    ))
 	->defaults(array(
 		'controller' => 'login',
 		'action'     => 'reset',
@@ -142,15 +145,16 @@ Route::set('login_create', 'login/create/<email>/<token>',
     ))
 	->defaults(array(
 		'controller' => 'login',
-		'action'     => 'reset',
+		'action'     => 'create',
 	));
 
 /**
  * Swiftriver Change Email Route
  */	
-Route::set('login_changeemail', 'login/changeemail/<id>/<email>/<token>',
+Route::set('login_changeemail', 'login/changeemail/<old_email>/<new_email>/<token>',
     array(
-        'email' => '[^/]++'
+		'old_email' => '[^/]++',
+        'new_email' => '[^/]++'
     ))
 	->defaults(array(
 		'controller' => 'login',
