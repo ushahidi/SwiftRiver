@@ -20,9 +20,9 @@ class Chartsfx_Init {
 	public function __construct()
 	{
 		$this->charts = array(
-				'bubble' => __('Bubble Chart'),
-				'sunburst' => __('Sunburst Chart'),
-				'cluster' => __('Cluster Chart')
+				'bubble' => __('Bubbles'),
+				'sunburst' => __('Sunburst'),
+				'cluster' => __('Cluster')
 			);
 
 		// Create Menu Items

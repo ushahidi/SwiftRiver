@@ -15,20 +15,12 @@
  */
 
 class MediaExtractor_Init {
+
+	private $links = array();
+	private $images = array();
 	
 	public function __construct()
 	{	
-		// Hook into routing
-		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'filter'));
-	}
-
-	/**
-	 * Event callback for the swiftriver.droplet.extract_metadata event
-	 *
-	 * @return void
-	 */
-	public function filter()
-	{
 		// Load Simple_HTML_DOM
 		$path = Kohana::find_file( 'vendor', 'simple_html_dom/simple_html_dom' );
 		if( false === $path ) {
@@ -36,6 +28,21 @@ class MediaExtractor_Init {
 		}
 		require_once( $path );
 
+
+		// Hook into routing
+		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'parse_media'));
+	}
+
+	/**
+	 * Event callback for the swiftriver.droplet.extract_metadata event
+	 *
+	 * @return void
+	 */
+	public function parse_media()
+	{
+		$this->links = array();
+		$this->images = array();
+		
 		try
 		{
 			// Get the droplet content
@@ -43,20 +50,32 @@ class MediaExtractor_Init {
 			
 			$droplet = ORM::factory('droplet', $droplet_arr['id']);
 			
-			// Get all the image anchors in the droplet
+			// 1. Get the links in the droplet
+			$this->links = Swiftriver_Links::extract_links($droplet->droplet_content);
+			// Remove regular image links
+			$this->_remove_images();
+			// Remove service image links
+			$this->_remove_service_images();
+			// Save the links
+			Model_Droplet::add_links($droplet, $this->links);
+
+
+
+			// 2. Get all the image anchors in the droplet
 			$html = str_get_html($droplet->droplet_content);
-			$images = array();
 			foreach($html->find('img') as $element)
 			{
 				// We'll start using absolute urls to images soon :)
 				//$images[] = url_to_absolute($url, $element->src);
-				$images[] = $element->src;
+				$this->images[] = $element->src;
 			}
 			
 			// Remove Images we don't need
-			$images = Mediaextractor_Filter::dejunk($images);
-
-			Model_Droplet::add_media($droplet, $images, 'image');
+			$this->images = Mediaextractor_Filter::dejunk($this->images);
+			// Remove dupes
+			$this->images = array_unique($this->images);
+			// Save the Images
+			Model_Droplet::add_media($droplet, $this->images, 'image');
 		}
 		catch (Exception $e) //FIXME: Catch specific exceptions...
 		{
@@ -65,6 +84,102 @@ class MediaExtractor_Init {
 		}
 	}
 
+	/**
+	 * Remove image links
+	 * 
+	 * @return void
+	 */
+	private function _remove_images()
+	{
+		if($this->links)
+		{		
+			foreach ($this->links as $key => $value)
+			{
+				if( preg_match('/\.(jpg|jpeg|png|gif)(?:[\?\#].*)?$/i', $value, $matches) )
+				{
+					// Remove from links
+					unset($this->links[$key]);
+
+					// Add to images array
+					$this->images[] = $value;
+				}
+			}
+		}
+	}
+
+
+	private function _remove_service_images()
+	{
+		if($this->links)
+		{
+			foreach($this->links as $key => $value)
+			{
+				if(stristr($value,'yfrog.com'))
+				{
+					unset($this->links[$key]);
+					$this->images[] = $this->_extractyfrog($value);
+				}
+				else if(stristr($value,'plixi.com'))
+				{
+					unset($this->links[$key]);
+					$this->images[] = $this->_extractplixi($value);
+				}
+				else if(stristr($value,'instagr.am'))
+				{
+					unset($this->links[$key]);
+					$this->images[] = $this->_extractinstagram($value);
+				}
+				else if(stristr($value,'twitpic.com'))
+				{
+					unset($this->links[$key]);
+					$this->images[] = $this->_extracttwitpic($value);
+				}
+				else if(stristr($value,'flic.kr'))
+				{
+					unset($this->links[$key]);
+					$this->images[] = $this->_extractflickr($value);
+				}
+			}
+		}		
+	}
+
+	private function _extractyfrog($link)
+	{
+		return trim($link,'”."').':iphone';
+	}
+
+	private function _extracttwitpic($link)
+	{
+		$linkparts = explode('/',$link);
+		return 'http://twitpic.com/show/large/'.$linkparts[3];
+	}
+
+	private function _extractflickr($link)
+	{
+		$html = file_get_html($link);
+		foreach($html->find('img.photo') as $element)
+		{
+			return $element->src;
+		}
+	}
+
+	private function _extractinstagram($link)
+	{
+		$html = file_get_html($link);
+		foreach($html->find('img.photo') as $element)
+		{
+			return $element->src;
+		}
+	}
+
+	private function _extractplixi($link)
+	{
+		$html = file_get_html($link);
+		foreach($html->find('img[id=photo]') as $element)
+		{
+			return $element->src;
+		}
+	}
 }
 
 new MediaExtractor_Init;
