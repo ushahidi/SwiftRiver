@@ -16,17 +16,6 @@
 class Controller_Login extends Controller_Swiftriver {
 	
 	/**
-	 * @var Kohana_View
-	 */
-	private $sub_content;
-
-	/**
-	 * Stores the status of public registration (on|off)
-	 * @var int
-	 */
-	private $public_registration_enabled;
-
-	/**
 	 * The before() method is called before main controller action.
 	 * In our template controller we override this method so that we can
 	 * set up default values. These variables are then available to our
@@ -44,12 +33,8 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->riverid_auth = TRUE;
 		}
 
-		$this->template->content = View::factory('pages/login/layout')
-		    ->bind('sub_content', $this->sub_content)
-		    ->bind('public_registration_enabled', $this->public_registration_enabled);
-
-		$this->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
-		$this->template->content->active = 'login';
+		$this->template->content = View::factory('pages/login/layout');
+		$this->template->content->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
 	}
 	
 	/**
@@ -59,8 +44,10 @@ class Controller_Login extends Controller_Swiftriver {
 	 */	
 	public function action_index()
 	{
-		$this->sub_content = View::factory('pages/login/main')
+		$this->template->content->active = 'login';
+		$this->template->content->sub_content = View::factory('pages/login/main')
 		    ->bind('messages', $this->messages)
+		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
 
 		if ($this->user)
@@ -84,31 +71,9 @@ class Controller_Login extends Controller_Swiftriver {
 		$errors = $session->get_once('system_errors');
 		if ($errors)
 		{
-			$this->template->content->set('errors', $errors);
+			$this->errors = $errors;
 		}
-		
-		
-		// New user registration
-		if
-		(
-			$this->request->post('new_email') AND 
-			CSRF::valid($this->request->post('form_auth_id'))
-		)
-		{
-			$messages = $this->_new_user($this->request->post('new_email'));
-			
-			// Display the messages
-			if (isset($messages['errors']))
-			{
-				$this->template->content->set('errors', $messages['errors']);
-			}
-			if (isset($messages['messages']))
-			{
-				$this->template->content->set('messages', $messages['messages']);
-			}					
-		}
-		
-		
+				
 		// Password reset request
 		if ($this->request->post('recover_email'))
 		{
@@ -117,8 +82,7 @@ class Controller_Login extends Controller_Swiftriver {
 			
 			if ( ! Valid::email($email) OR ! CSRF::valid($csrf_token))
 			{
-				$this->template->content->set('errors', 
-					array(__('The email address you have provided is invalid')));
+				$this->errors = array(__('The email address you have provided is invalid'));
 			}
 			else 
 			{
@@ -128,8 +92,7 @@ class Controller_Login extends Controller_Swiftriver {
 
 				if ( ! $user->loaded())
 				{
-					$this->template->content->set('errors', 
-						array(__('The provided email address is not registered')));
+					$this->errors = array(__('The provided email address is not registered'));
 				} 
 				else
 				{
@@ -189,7 +152,7 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$validation->error('password', 'invalid');
 					}
-					$this->template->content->set('errors', $validation->errors('login'));
+					$this->errors = $validation->errors('login');
 				}
 			}
 			else
@@ -200,6 +163,31 @@ class Controller_Login extends Controller_Swiftriver {
 			}
 		}
 	}
+	
+	public function action_register()
+	{
+		$this->template->content->active = 'create';
+		$this->template->content->sub_content = View::factory('pages/login/register')
+		                          ->bind('messages', $this->messages)
+		                          ->bind('errors', $this->errors);
+		
+		// New user registration
+		if ($this->request->post('new_email'))
+		{
+			$messages = $this->_new_user($this->request->post('new_email'));
+			
+			// Display the messages
+			if (isset($messages['errors']))
+			{
+				$this->errors = $messages['errors'];
+			}
+			if (isset($messages['messages']))
+			{
+				$this->messages = $messages['messages'];
+			}					
+		}
+	}
+	
 	
 	public function action_register_ajax()
 	{
@@ -408,7 +396,7 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 		else
 		{
-			$this->$messages = array(__('error'));
+			$this->$errors = array(__('Error'));
 		}
 	}
 	
@@ -676,24 +664,6 @@ class Controller_Login extends Controller_Swiftriver {
 		{
 			$this->template->content->errors = $errors;
 		}		
-	}
-
-	/**
-	 * Create account page
-	 */
-	public function action_create_account()
-	{
-		// Check if public registration if enabled
-		if ($this->public_registration_enabled)
-		{
-			$this->template->content->active = 'create';
-			$this->sub_content = View::factory('pages/login/create_account');
-		}
-		else
-		{
-			// Redirect to the login page
-			$this->request->redirect('login');
-		}
 	}
 
 	/**

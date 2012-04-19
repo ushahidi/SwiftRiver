@@ -194,10 +194,10 @@ $(document).ready(function() {
 
 	// DISPLAY SAVE TOOLBAR
 	$('input, textarea').live('keypress', function () {
-		$('.save-toolbar').addClass('visible');
+		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
 	$('select').on('change', function () {
-		$('.save-toolbar').addClass('visible');
+		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
 	
 

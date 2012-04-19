@@ -13,7 +13,7 @@
 			<a href="<?php echo URL::site('login'); ?>"><?php echo __("Log in"); ?></a>
 		</li>
 		<li <?php if ($active == 'create') echo 'class="active"'; ?>>
-			<a href="<?php echo URL::site('login/create_account'); ?>">
+			<a href="<?php echo URL::site('login/register'); ?>">
 				<?php echo __("Create an account"); ?>
 			</a>
 		</li>
