@@ -96,11 +96,11 @@
 			</div>
 		</section>
 	</article>
-	<div class="save-toolbar" id="save1">
+	<div class="save-toolbar">
 		<p class="button-blue"><a href="#"><?php echo __("Save Changes"); ?></a></p>
 	</div>
 	<?php echo Form::hidden("current_password"); ?>
-	<?php Form::close(); ?>
+	<?php echo Form::close(); ?>
 </div>
 
 <article class="modal" style="display: none;" id="password_prompt">
@@ -117,7 +117,7 @@
 			</h2>
 		</div>
 	</hgroup>
-
+	
 	<div class="modal-body">
 		
 		<div class="alert-message red" style="display:none">
@@ -128,10 +128,11 @@
 			<p><strong>Success</strong> <span class="message"></span></p>
 		</div>
 		
+		<?php echo Form::open() ?>
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="river_name">
+					<label for="current_password_prompt">
 						<p class="field">Current Password</p>
 						<?php echo Form::password("current_password_prompt"); ?>
 					</label>
@@ -139,8 +140,9 @@
 			</section>
 		</article>
 
-		<div class="save-toolbar" id="save2">
+		<div class="save-toolbar">
 			<p class="button-blue"><a href="#"><?php echo __("Save"); ?></a></p>
 		</div>
+		<?php echo Form::close(); ?>
 	</div>
 </article>
