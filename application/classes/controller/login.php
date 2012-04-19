@@ -16,6 +16,17 @@
 class Controller_Login extends Controller_Swiftriver {
 	
 	/**
+	 * @var Kohana_View
+	 */
+	private $sub_content;
+
+	/**
+	 * Stores the status of public registration (on|off)
+	 * @var int
+	 */
+	private $public_registration_enabled;
+
+	/**
 	 * The before() method is called before main controller action.
 	 * In our template controller we override this method so that we can
 	 * set up default values. These variables are then available to our
@@ -32,6 +43,13 @@ class Controller_Login extends Controller_Swiftriver {
 		{
 			$this->riverid_auth = TRUE;
 		}
+
+		$this->template->content = View::factory('pages/login/layout')
+		    ->bind('sub_content', $this->sub_content)
+		    ->bind('public_registration_enabled', $this->public_registration_enabled);
+
+		$this->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
+		$this->template->content->active = 'login';
 	}
 	
 	/**
@@ -41,8 +59,10 @@ class Controller_Login extends Controller_Swiftriver {
 	 */	
 	public function action_index()
 	{
-		$this->template->content = View::factory('pages/login/main')
-		                                 ->bind('messages', $this->messages);
+		$this->sub_content = View::factory('pages/login/main')
+		    ->bind('messages', $this->messages)
+		    ->bind('referrer', $referrer);
+
 		if ($this->user)
 		{
 			$this->request->redirect($this->dashboard_url);
@@ -53,12 +73,6 @@ class Controller_Login extends Controller_Swiftriver {
 		    ? $this->request->query('redirect_to') 
 		    : NULL;
 
-		// For template to hide/show registration fields
-		$this->template->content->set(array(
-			'public_registration_enabled' => (bool) Model_Setting::get_setting('public_registration_enabled'),
-			'referrer' => $referrer
-		));
-		
 		//Check for system messages
 		$session = Session::instance();
 		$messages = $session->get_once('system_messages');
@@ -75,7 +89,11 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		
 		// New user registration
-		if ($this->request->post('new_email'))
+		if
+		(
+			$this->request->post('new_email') AND 
+			CSRF::valid($this->request->post('form_auth_id'))
+		)
 		{
 			$messages = $this->_new_user($this->request->post('new_email'));
 			
@@ -96,6 +114,7 @@ class Controller_Login extends Controller_Swiftriver {
 		{
 			$email = $this->request->post('recover_email');
 			$csrf_token = $this->request->post('form_auth_id');
+			
 			if ( ! Valid::email($email) OR ! CSRF::valid($csrf_token))
 			{
 				$this->template->content->set('errors', 
@@ -117,11 +136,11 @@ class Controller_Login extends Controller_Swiftriver {
 					// Do the password reset depending on the auth driver we are using.
 					if ($this->riverid_auth) 
 					{
-						$this->__password_reset_riverid($email, $user);
+						$this->_password_reset_riverid($email, $user);
 					}
 					else
 					{
-						$this->__password_reset_orm($email, $user);
+						$this->_password_reset_orm($email, $user);
 					}
 				}
 			}
@@ -232,11 +251,11 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				if ($this->riverid_auth)
 				{
-					$messages = $this->__new_user_riverid($this->request->post('new_email'), $invite);
+					$messages = $this->_new_user_riverid($this->request->post('new_email'), $invite);
 				}
 				else
 				{
-					$messages = $this->__new_user_orm($this->request->post('new_email'), $invite);
+					$messages = $this->_new_user_orm($this->request->post('new_email'), $invite);
 				}
 			}
 		}		  
@@ -248,7 +267,7 @@ class Controller_Login extends Controller_Swiftriver {
 	* Send a river id registration request
 	*
 	*/
-	private function __new_user_riverid($email, $invite = FALSE) 
+	private function _new_user_riverid($email, $invite = FALSE) 
 	{
 		$ret = array();
 		$riverid_api = RiverID_API::instance();
@@ -295,7 +314,7 @@ class Controller_Login extends Controller_Swiftriver {
 	* New user registration for ORM auth
 	*
 	*/
-	private function __new_user_orm($email, $invite = FALSE)
+	private function _new_user_orm($email, $invite = FALSE)
 	{
 		$ret = array();
 		
@@ -347,7 +366,7 @@ class Controller_Login extends Controller_Swiftriver {
 	* Send a river id password reset request
 	*
 	*/	
-	private function __password_reset_riverid($email, $user)
+	private function _password_reset_riverid($email, $user)
 	{
 		$riverid_api = RiverID_API::instance();		            
 		$mail_body = View::factory('emails/resetpassword')
@@ -371,7 +390,7 @@ class Controller_Login extends Controller_Swiftriver {
 	* Password reset for ORM auth.
 	*
 	*/	
-	private function __password_reset_orm($email, $user)
+	private function _password_reset_orm($email, $user)
 	{
 		$auth_token = Model_Auth_Token::create_token($email, 'password_reset');        
 		if ($auth_token->loaded())
@@ -529,6 +548,24 @@ class Controller_Login extends Controller_Swiftriver {
 		// Redirect to login page
 		$this->request->redirect('login');
 		echo $template;   
+	}
+
+	/**
+	 * Create account page
+	 */
+	public function action_create_account()
+	{
+		// Check if public registration if enabled
+		if ($this->public_registration_enabled)
+		{
+			$this->template->content->active = 'create';
+			$this->sub_content = View::factory('pages/login/create_account');
+		}
+		else
+		{
+			// Redirect to the login page
+			$this->request->redirect('login');
+		}
 	}
 
 	/**

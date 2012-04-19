@@ -259,9 +259,17 @@ function flashMessage(el, text) {
 }
 
 function showConfirmationMessage(message) {
-	$('#confirmation-container div.modal-window').replaceWith("<div class='modal-window'><article class='modal base'><p>" + message + "</p></article></div>");
-	$('#confirmation-container').fadeIn('fast').addClass('visible');
-	$('#confirmation-container').delay(1000).fadeOut('fast').removeClass('visible');
+	var container = $("#confirmation-container");
+
+	// HTML with the message
+	var replaceHTML = "<div class=\"modal-window\">" +
+	    "<article class=\"modal base\">" + 
+	    "<p>" + message + "</p>" +
+	    "</article></div>";
+
+	$('div.modal-window', container).replaceWith(replaceHTML);
+	container.fadeIn('fast').addClass('visible');
+	container.delay(1000).fadeOut('fast').removeClass('visible');
 }
 
 function showDefaultAvatar(source) {
