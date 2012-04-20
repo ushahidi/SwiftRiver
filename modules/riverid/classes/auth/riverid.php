@@ -49,17 +49,17 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 				// User does not exist locally but authenticates via RiverID, create user
 				if ( ! $user->loaded())
 				{
-					// Only auto register if the site allows it
-					if ( ! (bool) Model_Setting::get_setting('public_registration_enabled'))
-					{
-						return FALSE;
-					}
-					
 					// Check if the email is already registered locally
 					// If so, this will simply append a riverid
 					$user = ORM::factory('user')
 								 ->where('email', '=', $email)
 								 ->find();
+								
+					// Only auto register if the site allows it
+					if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $user->loaded())
+					{
+						return FALSE;
+					}
 					
 					$user->username = $user->email = $email;
 					$user->riverid = $login_response['user_id'];
