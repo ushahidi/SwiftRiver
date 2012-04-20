@@ -172,7 +172,7 @@ class Controller_Swiftriver extends Controller_Template {
 		if ($api_key)
 		{
 			$user_orm = ORM::factory('user', array('api_key' => $api_key));
-			if ($user_orm->loaded()) 
+			if ($user_orm->loaded() AND $user_orm->username != 'public') 
 			{
 				Auth::instance()->force_login($user_orm);
 			}
