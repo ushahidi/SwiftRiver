@@ -253,6 +253,9 @@ $(function() {
 			if (options.layout == "list") {
 				el = this.make("article", {"class": "drop base cf"})
 				this.template = _.template($("#drop-list-view-template").html());
+			} else 	if (options.layout == "photos") {
+				el = this.make("article", {"class": "drop col_3 base"})
+				this.template = _.template($("#drop-photos-view-template").html());	
 			} else {
 				el = this.make("article", {"class": "drop col_3 base"})
 				this.template = _.template($("#drop-drops-view-template").html());
@@ -615,7 +618,7 @@ $(function() {
 		
 		masonry: function() {
 			// Do masonry
-			if (this.options.layout == "drops") {
+			if (this.options.layout == "drops" || this.options.layout == "photos") {
 				// MASONRY: DROPS
 				if ((window.innerWidth >= 615) && (window.innerWidth <= 960)) {
 					this.$('#drops-view').masonry({
@@ -684,6 +687,7 @@ $(function() {
 			this.$("article.alert-message").fadeOut("slow").remove();
 		}
 	});
+
 	
 	// Edit Metadata List Item
 	var EditMetadataListItemView = Backbone.View.extend({
@@ -1214,6 +1218,7 @@ $(function() {
 		initialize: function() {
 			this.route(/^drops(\?.+)?$/, "dropsView");
 			this.route(/^list(\?.+)?$/, "listView");
+			this.route(/^photos(\?.+)?$/, "photosView");
 		},
 		
 		listingDone: false,
@@ -1242,6 +1247,7 @@ $(function() {
 		dropsView: function() {
 			$("#drops-navigation-link").addClass("active");
 			$("#list-navigation-link").removeClass("active");
+			$("#photos-navigation-link").removeClass("active");
 			this.resetView();		
 			$("#content").append(this.getView("drops"));
 			this.view.masonry();
@@ -1256,6 +1262,7 @@ $(function() {
 		listView: function() {
 			$("#list-navigation-link").addClass("active");
 			$("#drops-navigation-link").removeClass("active");
+			$("#photos-navigation-link").removeClass("active");
 			this.resetView();
 			$("#content").append(this.getView("list"));
 			this.listingDone = true;
@@ -1265,6 +1272,21 @@ $(function() {
 				this.setFilter(filters.getString(), true);
 			}
 		},
+
+		photosView: function() {
+			$("#list-navigation-link").removeClass("active");
+			$("#drops-navigation-link").removeClass("active");
+			$("#photos-navigation-link").addClass("active");
+			this.resetView();		
+			$("#content").append(this.getView("photos"));
+			this.view.masonry();
+			this.listingDone = true;
+			
+			// Apply filter parameters to the navigation if any
+			if (!filters.isEmpty()) {
+				this.setFilter(filters.getString(), true);
+			}
+		},		
 		
 		dropFullView: function (id) {
 			this.resetView();
@@ -1338,5 +1360,9 @@ $(function() {
 		appRouter.navigate('/list', {trigger: true});
 		return false;
 	});
+	$("#photos-navigation-link a").click(function() {
+		appRouter.navigate('/photos', {trigger: true});
+		return false;
+	});	
 });
 </script>

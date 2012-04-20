@@ -109,6 +109,53 @@
 	</div>
 </script>
 
+<script type="text/template" id="drop-photos-view-template">
+	<% _.each(media, function(item) { if (typeof(item.media) != "undefined") { %>
+	<div class="drop-content">
+		<div class="drop-body">
+			<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+			<div class="drop-actions cf">
+				<?php if ( ! $anonymous): ?>
+					<ul class="dual-buttons move-drop">
+						<li class="button-blue share">
+							<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+							    <span class="icon"></span>
+							</a>
+						</li>
+						<?php if ( ! $anonymous): ?>
+							<li class="button-blue bucket">
+								<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+								    <span class="icon"></span>
+								</a>
+							</li>
+						<?php endif; ?>
+					</ul>
+					<ul class="dual-buttons score-drop">
+						<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
+							<a href="#"><span class="icon"></span></a>
+						</li>
+						<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
+							<a href="#"><span class="icon"></span></a>
+						</li>
+					</ul>
+				<?php endif; ?>
+			</div>
+		</div>
+		<section class="drop-source cf">
+			<% if ( identity_avatar) { %>
+				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+			<% } %>
+			<div class="byline">
+				<h2><%= identity_name %></h2>
+				<p class="drop-source-channel <%= channel %>">
+					<a href="#"><span class="icon"></span>via <%= channel %></a>
+				</p>
+			</div>
+		</section>
+	</div>
+	<% }; }); %>
+</script>
+
 <script type="text/template" id="drop-full-view-template">
 	<article class="drop drop-full cf">
 		<div class="center">

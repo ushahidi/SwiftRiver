@@ -186,6 +186,11 @@ class Controller_River extends Controller_Swiftriver {
 		$this->action_index();
 	}
 
+	public function action_photos()
+	{
+		$this->action_index();
+	}	
+
 	public function action_drop()
 	{
 		$this->action_index();

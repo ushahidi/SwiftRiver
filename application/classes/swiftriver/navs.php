@@ -42,6 +42,14 @@ class Swiftriver_Navs {
 				'url' => '/list',
 				'label' => __('List')
 			);
+
+			// Photos
+			$nav[] = array(
+				'id' => 'photos-navigation-link',
+				'active' => ($active == 'photos') ? 'active' : '',
+				'url' => '/photos',
+				'label' => __('Photos')
+			);			
 		}
 
 		// SwiftRiver Plugin Hook -- Add Nav Items
