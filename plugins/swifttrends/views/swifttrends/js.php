@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 	var graph = new Rickshaw.Graph( {
 		element: document.getElementById("chart"),
-		width: 800,
+		width: 650,
 		height: 500,
 		renderer: 'area',
 		stroke: true,
@@ -78,6 +78,6 @@ $(document).ready(function () {
 		graph: graph
 	} );
 
-	
+
 
 });	
