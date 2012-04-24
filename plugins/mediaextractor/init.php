@@ -54,6 +54,9 @@ class MediaExtractor_Init {
 	{
 		try
 		{
+			$this->links = array();
+			$this->images = array();
+
 			// Get the droplet content
 			$droplet_arr = Swiftriver_Event::$data;
 			

@@ -125,6 +125,9 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 					->bind('drops_url', $drops_url)
 					->bind('active', self::$active)
 					->bind('trend', $this->trend);
+
+				// Set the base url for this specific bucket
+				$this->bucket_base_url = $this->bucket->get_base_url();					
 				
 				$drops_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url;
 				$this->more_url = url::site().$this->account->account_path.'/bucket/'.$this->bucket->bucket_name_url.'/more';
