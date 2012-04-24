@@ -23,6 +23,33 @@ class Model_Channel_Filter_Option extends ORM {
 		'channel_filter' => array()
 		);
 	
+	/**
+	 * Overload saving to perform additional functions on the channel_filter
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		$ret = parent::save();
+		
+		// Run post_save events
+		Swiftriver_Event::run('swiftriver.channel.option.post_save', $this);
+		
+		return $ret;
+	}
+	
+	/**
+	 * Overrides the default behaviour to perform
+	 * extra tasks before removing the channel filter
+	 * entry 
+	 */
+	public function delete()
+	{
+		Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $this);
+
+		// Default
+		parent::delete();
+	}
+	
+	
 	
 	/**
 	 * Parses the "value" column of the channel filter option and returns it 

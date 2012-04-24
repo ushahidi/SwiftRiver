@@ -197,7 +197,7 @@ $(function() {
 				
 				channels.create({channel: this.model.get("channel")}, {
 					wait: true,
-					success: function() {
+					complete: function() {
 						clearTimeout(t);
 						loading_msg.replaceWith(button);
 					}
