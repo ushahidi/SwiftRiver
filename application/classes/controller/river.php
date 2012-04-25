@@ -147,7 +147,7 @@ class Controller_River extends Controller_Swiftriver {
 		// Bootstrap the droplet list
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->droplet_list = json_encode($droplets);
+		$droplet_js->droplet_list = @json_encode($droplets);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
 		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());

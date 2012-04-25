@@ -113,7 +113,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets = $droplets_array['droplets'];
 				
 		// Bootstrap the droplet list
-		$droplet_list = json_encode($droplets);
+		$droplet_list = @json_encode($droplets);
 		$droplet_js = View::factory('pages/drop/js/drops')
 		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
