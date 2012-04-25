@@ -11,8 +11,8 @@
 			<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
 				<div class="actions">
 					<ul class="dual-buttons">
-						<li class="button-white"><a href="#"><?php echo __('Accept'); ?></a></li>
-						<li class="button-white"><a href="#"><?php echo __('Ignore'); ?></a></li>
+						<li class="button-white confirm"><a href="#"><?php echo __('Accept'); ?></a></li>
+						<li class="button-white ignore"><a href="#"><?php echo __('Ignore'); ?></a></li>
 					</ul>
 				</div>
 			<% } %>
@@ -33,14 +33,14 @@
 			<% } %>
 
 			<% if (action_name == "create") { %>
-				created the <a href="<%= action_on_url %>"><%= action_on %> "<%= user_data.action_on_name %>"</a>
+				created the <a href="<%= action_on_url %>"><%= action_on %> "<%= action_on_name %>"</a>
 			<% } %>
 
 			<?php if ($owner): ?>
 				<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
 					<p>
 					<?php echo __("By accepting this invitation, you will be able to view and edit the settings for the "); ?>
-					<a href="<%= action_on_url %>">"<%= user_data.action_on_name %>"</a> 
+					<a href="<%= action_on_url %>">"<%= action_on_name %>"</a> 
 					<%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.
 					</p>
 				<% } %>
@@ -91,8 +91,14 @@ $(function() {
 	// Activity model, collection and view
 	var Activity = Backbone.Model.extend({
 		
+		urlRoot: fetch_url,
+		
 		confirm: function() {
 			this.save({confirmed: 1}, {wait: true});
+		},
+		
+		ignore: function() {
+			this.save({ignored: 1}, {wait: true});
 		}
 	
 	});
@@ -111,7 +117,8 @@ $(function() {
 		template: _.template($("#activity_template").html()),
 		
 		events: {
-			"click section.actions .confirm a": "confirm"
+			"click .actions .confirm a": "confirm",
+			"click .actions .ignore a": "ignore"
 		},
 		
 		initialize: function() {
@@ -121,6 +128,13 @@ $(function() {
 		
 		confirm: function() {
 			this.model.confirm();
+			return false;
+		},
+
+		ignore: function() {
+			this.model.ignore();
+			this.$el.fadeOut('slow');
+			return false;
 		},
 		
 		render: function() {

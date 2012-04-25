@@ -693,45 +693,56 @@ class Controller_User extends Controller_Swiftriver {
 		
 		switch ($this->request->method())
 		{			
-			case "PUT":
-				$action_id = intval($this->request->param('id', 0));
-				$action_orm = ORM::factory('user_action', $action_id);
+			case "POST":
 				$action_array = json_decode($this->request->body(), TRUE);
+				$action_id = intval($action_array['action_id']);
+				$action_orm = ORM::factory('user_action', $action_id);
+				
+				if ( ! $action_orm->loaded())
+					return;
+				
+				
+				// Get the collaboration being saved
+				$collaborator_orm = NULL;
+				switch ($action_orm->action_on)
+				{
+					case "account":
+						$collaborator_orm = ORM::factory('account_collaborator')
+						                       ->where('account_id', '=', $action_orm->action_on_id)
+						                       ->where('user_id', '=', $action_orm->action_to_id)
+						                       ->find();
+					break;
+					case "river":
+						$collaborator_orm = ORM::factory('river_collaborator')
+						                       ->where('river_id', '=', $action_orm->action_on_id)
+						                       ->where('user_id', '=', $action_orm->action_to_id)
+						                       ->find();
+					break;
+					case "bucket":
+						$collaborator_orm = ORM::factory('bucket_collaborator')
+						                       ->where('bucket_id', '=', $action_orm->action_on_id)
+						                       ->where('user_id', '=', $action_orm->action_to_id)
+						                       ->find();
+					break;
+				}
 				
 				// Are we confirming?
 				if ($action_array['confirmed'])
 				{
 					$action_orm->confirmed = $action_array['confirmed'];
-					// Get the collaboration being saved
-					$collaborator_orm = NULL;
-					switch ($action_orm->action_on)
-					{
-						case "account":
-							$collaborator_orm = ORM::factory('account_collaborator')
-							                       ->where('account_id', '=', $action_orm->action_on_id)
-							                       ->where('user_id', '=', $action_orm->action_to_id)
-							                       ->find();
-						break;
-						case "river":
-							$collaborator_orm = ORM::factory('river_collaborator')
-							                       ->where('river_id', '=', $action_orm->action_on_id)
-							                       ->where('user_id', '=', $action_orm->action_to_id)
-							                       ->find();
-						break;
-						case "bucket":
-							$collaborator_orm = ORM::factory('bucket_collaborator')
-							                       ->where('bucket_id', '=', $action_orm->action_on_id)
-							                       ->where('user_id', '=', $action_orm->action_to_id)
-							                       ->find();
-						break;
-					}
+					
 					if ($collaborator_orm and $collaborator_orm->loaded())
 					{
 						$collaborator_orm->collaborator_active = $action_array['confirmed'];
 						$collaborator_orm->save();
 						$action_orm->save();
-					}						
-				}				
+					}
+				}
+				else
+				{
+					$action_orm->delete();
+					$collaborator_orm->delete();
+				}
 			break;
 		}
 			
