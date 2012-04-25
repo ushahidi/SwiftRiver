@@ -20,12 +20,12 @@
 					<?php echo __("River"); ?>
 				</a>
 			</li>
-			<li>
+			<!--li>
 				<a href="<?php echo URL::site().$account->account_path.'/bucket/create'; ?>">
 					<?php echo __("Bucket"); ?>
 				</a>
 			</li>
-			<li><a href="#"><?php echo __("Drop"); ?></a></li>
+			<li><a href="#"><?php echo __("Drop"); ?></a></li-->
 		</ul>
 	</div>
 </article>

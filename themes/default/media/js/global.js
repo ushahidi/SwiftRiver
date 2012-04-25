@@ -196,7 +196,7 @@ $(document).ready(function() {
 	$('input, textarea').live('keypress', function () {
 		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
-	$('select').on('change', function () {
+	$('select').live('change', function () {
 		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
 	

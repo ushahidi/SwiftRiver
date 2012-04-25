@@ -26,12 +26,12 @@
 					<?php echo __("Bucket settings"); ?>
 				</a>
 			</h2>
-			<h2 class="discussion">
+			<!--h2 class="discussion">
 				<a href="<?php echo $discussion_url; ?>">
 					<span class="icon"></span>
 					<?php echo __("Discussion"); ?>
 				</a>
-			</h2>
+			</h2-->
 		</div>
 		<?php else: ?>
 		<div class="follow-summary col_3">
