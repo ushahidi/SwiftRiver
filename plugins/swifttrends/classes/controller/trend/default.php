@@ -24,11 +24,11 @@ class Controller_Trend_Default extends Controller_Trend_Main {
 
 		if ($this->context == 'bucket')
 		{
-			$this->context_base_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url;
+			$this->context_base_url = $this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url;
 		}
 		else
 		{
-			$this->context_base_url = URL::site().$this->river->account->account_path.'/river/'.$this->river->river_name_url;
+			$this->context_base_url = $this->river->account->account_path.'/river/'.$this->river->river_name_url;
 		}		
 	}
 
