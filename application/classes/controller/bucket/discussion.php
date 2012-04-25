@@ -39,8 +39,11 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			->bind('bucket_url', $this->bucket_base_url)
 			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner)
-			->bind('user', $this->user);
+			->bind('user', $this->user)
+			->bind('user_avatar', $user_avatar);
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
+
+		$user_avatar = Swiftriver_Users::gravatar($this->user->email, 80);
 
 		// Links to ajax rendered menus
 		$settings_url = $this->bucket_base_url.'/settings';
