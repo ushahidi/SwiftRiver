@@ -162,7 +162,7 @@ $(document).ready(function() {
 			}
 
 			// Container for the confirmatino messages
-			container = $('#confirmation-container')
+			container = $('#confirmation-container');
 
 			// Build out the HTML
 			var replaceHTML = "<div class=\"modal-window\">" +

@@ -133,6 +133,24 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+
+
+		if ( ! $this->owner)
+		{
+			$bucket_item = json_encode(array(
+				'id' => $this->bucket->id, 
+				'type' => 'river',
+				'subscribed' => $this->bucket->is_subscriber($this->user->id)
+			));
+
+			// Action URL - To handle the follow/unfollow actions on the river
+			$action_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
+
+			$this->template->content->bucket_name = $this->page_title;
+			$this->template->content->bucket_item = $bucket_item;
+			$this->template->content->action_url = $action_url;
+
+		}
 		
 		// Nothing to display message
 		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')

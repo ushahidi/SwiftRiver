@@ -22,12 +22,12 @@
 			<a href="<%= user_url %>"><%= user_name %></a>
 			<% if (action_name == "invite" && parseInt(action_to_self)) { %>
 				<?php echo __("invited you to collaborate on "); ?>
-				<% var determiner = (action_on == "account") ? "an" : "the"; %>
+				<% var determiner = (action_on == "account") ? "an " : "the "; %>
 				<%= determiner %><a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
 			<% } %>
 			
 			<% if (action_name == "invite" && !parseInt(action_to_self)) { %>
-				<% var determiner = (action_on == "account") ? "an" : "the"; %>
+				<% var determiner = (action_on == "account") ? "an " : "the "; %>
 				invited <%= action_to_name %> to collaborate on <%= determiner %> 
 				<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
 			<% } %>
