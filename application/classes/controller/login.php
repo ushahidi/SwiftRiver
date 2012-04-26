@@ -277,7 +277,8 @@ class Controller_Login extends Controller_Swiftriver {
 		{
 			$mail_body = View::factory('emails/createuser')
 						 ->bind('secret_url', $secret_url);
-			$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
+			$mail_subject = __(':sitename: Please confirm your email address', 
+				array(':sitename' => Model_Setting::get_setting('site_name')));
 		}
 		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
 		$site_email = Kohana::$config->load('useradmin.email_address');
@@ -324,13 +325,15 @@ class Controller_Login extends Controller_Swiftriver {
 					$mail_body = View::factory('emails/invite')
 								 ->bind('secret_url', $secret_url);
 					$mail_body->site_name = Model_Setting::get_setting('site_name');
-					$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
+					$mail_subject = __(':sitename Invite!', 
+						array(':sitename' => Model_Setting::get_setting('site_name')));
 				}
 				else
 				{
 					$mail_body = View::factory('emails/createuser')
 								 ->bind('secret_url', $secret_url);
-					$mail_subject = __(':sitename: Please confirm your email address', array(':sitename' => Model_Setting::get_setting('site_name')));
+					$mail_subject = __(':sitename: Please confirm your email address', 
+						array(':sitename' => Model_Setting::get_setting('site_name')));
 				}
 				
 				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
@@ -443,7 +446,8 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$data = json_decode($token->data);
 						$token->delete();
-						if ($email != $data->email) {
+						if ($email != $data->email)
+						{
 							// The email in the request does not match
 							// the email in the token
 							$errors = array(__('Invalid email'));
@@ -482,9 +486,10 @@ class Controller_Login extends Controller_Swiftriver {
 	public function action_create()
 	{
 		$this->template->content = View::factory('pages/login/create')
-		                                 ->bind('form_name', $form_name)
-		                                 ->bind('form_nickname', $form_nickname)
-		                                 ->bind('errors', $errors);
+		    ->bind('form_name', $form_name)
+		    ->bind('form_nickname', $form_nickname)
+		    ->bind('errors', $errors);
+		
 		$email = $this->request->param('email');
 		$token = $this->request->param('token');
 		
@@ -496,7 +501,9 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->template->content->errors = array(__('Email is already registered'));
 			$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
 			return;
-		} else {
+		}
+		else
+		{
 			// To retun user entered values in case of errors
 			$form_name = $this->request->post('name');
 			$form_nickname = $this->request->post('nickname');

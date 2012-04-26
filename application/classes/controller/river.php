@@ -107,7 +107,11 @@ class Controller_River extends Controller_Swiftriver {
 		// Get the id of the current river
 		$river_id = $this->river->id;
 		
-		if ($this->river->account->user->id == $this->user->id OR $this->river->account->user->username == 'public')
+		if
+		(
+			$this->river->account->user->id == $this->user->id OR 
+			$this->river->account->user->username == 'public'
+		)
 		{
 			$this->template->header->title = $this->river->river_name;
 		}

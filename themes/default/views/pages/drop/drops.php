@@ -448,16 +448,6 @@
 			<section class="property-parameters">
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __("From:"); ?></p>
-						<?php echo Form::input('sender', $user->username, array('readonly')); ?>
-					</label>
-				</div>
-			</section>
-		</article>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label>
 						<p class="field"><?php echo __("To:"); ?></p>
 						<?php echo Form::input('recipient', ''); ?>
 					</label>
