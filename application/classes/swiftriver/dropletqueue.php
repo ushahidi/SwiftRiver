@@ -132,7 +132,6 @@ class Swiftriver_Dropletqueue {
 			if (array_key_exists('links', $droplet))
 			{
 				Model_Droplet::add_links($droplet_orm, $droplet['links']);
-				Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $droplet);
 			}			
 			
 			if (array_key_exists('places', $droplet))
