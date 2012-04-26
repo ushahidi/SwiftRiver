@@ -94,7 +94,7 @@ CREATE TABLE `rivers` (
   `river_active` tinyint(4) NOT NULL DEFAULT '1',
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
-  `default_layout` varchar(10) DEFAULT 'drops',
+  `default_layout` varchar(10) DEFAULT 'list',
   `river_date_add` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),

@@ -1327,17 +1327,17 @@ $(function() {
 		},
 				
 		defaultRoute: function(actions){
-			if (default_view == 'list') {
-				this.navigate("/list", {trigger: true});
-			} else {
+			if (default_view == 'drops') {
 				this.navigate("/drops", {trigger: true});
+			} else {
+				this.navigate("/list", {trigger: true});
 			}
 		},
 		
 		setFilter: function(query, repl) {
-			var fragment = "drops";
-			if (this.view.options.layout == "list") {
-				fragment = "list";
+			var fragment = "list";
+			if (this.view.options.layout == "drops") {
+				fragment = "drops";
 			} 
 			if (query) {
 				fragment += '?' + query;
