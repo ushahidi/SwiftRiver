@@ -843,7 +843,7 @@ class Controller_User extends Controller_Swiftriver {
 			{
 				// Modify the mail body to include the email address of the
 				// use sharing content
-				$mail_body = __(':sender has shared an item with you."\r\n":body',
+				$mail_body = __(':sender has shared an item with you. :body',
 					array(':sender' => $this->user->username, ':body' => $post['body']));
 
 				// Send the email
