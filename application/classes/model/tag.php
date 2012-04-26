@@ -143,10 +143,17 @@ class Model_Tag extends ORM
 		$tags_subquery = NULL;
 		foreach ($tags as & $tag)
 		{
+			// Fetch the name of the tag before converting to lowercase
+			$tag_name = $tag['tag_name'];
+
 			$tag['tag_name'] = strtolower($tag['tag_name']);
 			$tag['tag_type'] = strtolower($tag['tag_type']);
-			$tag['tag_hash'] = md5($tag['tag_name'].$tag['tag_type']);
-			$union_query = DB::select(array(DB::expr("'".addslashes($tag['tag_name'])."'"), 'tag'), array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'), array(DB::expr("'".$tag['tag_hash']."'"), 'tag_hash'));
+			$tag['tag_hash'] = md5(strtolower($tag['tag_name'].$tag['tag_type']);
+
+			$union_query = DB::select(array(DB::expr("'".addslashes($tag_name)."'"), 'tag'), 
+				array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'), 
+				array(DB::expr("'".$tag['tag_hash']."'"), 'tag_hash'));
+			
 			if ( ! $tags_subquery)
 			{
 				$tags_subquery = $union_query;
@@ -156,12 +163,14 @@ class Model_Tag extends ORM
 				$tags_subquery = $union_query->union($tags_subquery, TRUE);
 			}
 		}
+
 		if ($tags_subquery)
 		{
 			$query->from(array($tags_subquery,'a'));
-			$sub = DB::select('tag', 'tag_type', 'tag_hash')
+			$sub = DB::select(array(DB::expr('LOWER(tag)'), 'tag'), 'tag_type', 'tag_hash')
 			           ->from('tags')
 			           ->where(DB::expr('(tag, tag_type, tag_hash)'), 'IN', $tags);
+			
 			$query->where(DB::expr('(tag, tag_type, tag_hash)'), 'NOT IN', $sub);
 			DB::insert('tags', array('tag', 'tag_type', 'tag_hash'))->select($query)->execute();
 		}
