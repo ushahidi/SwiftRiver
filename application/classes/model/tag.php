@@ -148,7 +148,7 @@ class Model_Tag extends ORM
 
 			$tag['tag_name'] = strtolower($tag['tag_name']);
 			$tag['tag_type'] = strtolower($tag['tag_type']);
-			$tag['tag_hash'] = md5(strtolower($tag['tag_name'].$tag['tag_type']);
+			$tag['tag_hash'] = md5($tag['tag_name'].$tag['tag_type']);
 
 			$union_query = DB::select(array(DB::expr("'".addslashes($tag_name)."'"), 'tag'), 
 				array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'), 
