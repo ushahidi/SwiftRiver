@@ -29,6 +29,11 @@
 				</a>
 				<ul class="popover-window base header-toolbar">
 					<li>
+						<a href="<?php echo URL::site().$user->account->account_path; ?>">
+							<?php echo __('Dashboard');?>
+						</a>
+					</li>
+					<li>
 						<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>">
 							<?php echo __("Rivers"); ?>
 						</a>
@@ -39,11 +44,6 @@
 						</a>
 					</li>
 					<li class="group">
-						<a href="<?php echo URL::site().$user->account->account_path; ?>">
-							<?php echo __('Profile');?>
-						</a>
-					</li>
-					<li>
 						<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
 							<?php echo __("Account settings"); ?>
 						</a>
