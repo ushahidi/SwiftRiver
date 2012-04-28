@@ -80,8 +80,8 @@ class Swiftcore_Init {
 			$semantics = $semantics['results'];
 			
 			// Add Geo-political entries
-			$place_items =  (array_key_exists('gpe', $semantics))
-			    ? $semantics['gpe']
+			$place_items =  (array_key_exists('location', $semantics))
+			    ? $semantics['location']
 			    : array();
 			
 			$places = array();
@@ -98,7 +98,7 @@ class Swiftcore_Init {
 			$droplet['places'] = $places;
 			
 			// Remove the 'gpe' items
-			unset ($semantics['gpe']);
+			unset ($semantics['location']);
 			
 			// Get the other semantics and generalize them as "tags"
 			$tags = array();

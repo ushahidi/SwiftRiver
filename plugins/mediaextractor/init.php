@@ -75,11 +75,14 @@ class MediaExtractor_Init {
 
 			// 2. Get all the image anchors in the droplet
 			$html = str_get_html($droplet->droplet_content);
-			foreach ($html->find('img') as $element)
+			if ($html)
 			{
-				// We'll start using absolute urls to images soon :)
-				//$images[] = url_to_absolute($url, $element->src);
-				$this->images[] = $element->src;
+				foreach ($html->find('img') as $element)
+				{
+					// We'll start using absolute urls to images soon :)
+					//$images[] = url_to_absolute($url, $element->src);
+					$this->images[] = $element->src;
+				}
 			}
 			
 			// Remove Images we don't need

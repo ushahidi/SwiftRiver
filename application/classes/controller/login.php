@@ -131,9 +131,12 @@ class Controller_Login extends Controller_Swiftriver {
 					$redirect_to = $this->request->post('referrer');
 					$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
 					
-					if ( ! $redirect_to 
+					if
+					( 
+						! $redirect_to 
 						OR strpos($redirect_to, URL::base($this->request)) === FALSE
-						OR strpos($redirect_to, URL::base($this->request)) != 0)
+						OR strpos($redirect_to, URL::base($this->request)) != 0
+					)
 					{
 						$user = Auth::instance()->get_user();
 						$redirect_to = URL::site().$user->account->account_path;

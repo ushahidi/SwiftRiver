@@ -266,7 +266,7 @@ class Controller_River extends Controller_Swiftriver {
 				}
 				
 
-				echo json_encode($droplets);
+				echo @json_encode($droplets);
 
 			break;
 			

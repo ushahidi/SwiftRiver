@@ -172,7 +172,18 @@ class Model_Tag extends ORM
 			           ->where(DB::expr('(tag, tag_type, tag_hash)'), 'IN', $tags);
 			
 			$query->where(DB::expr('(tag, tag_type, tag_hash)'), 'NOT IN', $sub);
-			DB::insert('tags', array('tag', 'tag_type', 'tag_hash'))->select($query)->execute();
+
+			try
+			{
+				DB::insert('tags', array('tag', 'tag_type', 'tag_hash'))->select($query)->execute();
+			}
+			catch (DatabaseException $e)
+			{
+				// Log the DB error
+				Kohana::$log->add(Log::ERROR, 
+					'The database returned an error while adding the tags. '.$e->getMessage());
+			}
+			
 		}
 		
 		// Get the tag IDs
