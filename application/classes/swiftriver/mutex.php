@@ -36,7 +36,7 @@ class Swiftriver_Mutex {
 	public static function obtain($name, $timeout = 1)
 	{
 		if (self::$lock_exists)
-			return FALSE;
+			throw new SwiftRiver_Exception_Mutex(__('Another lock already exists'));
 			
 		$query = DB::query(Database::SELECT, 'SELECT GET_LOCK(:name,:timeout) ret;');
 		$query->parameters(array(
@@ -50,8 +50,10 @@ class Swiftriver_Mutex {
 			self::$lock_exists = TRUE;
 			return TRUE;
 		}
-		
-		return FALSE;
+		else
+		{
+			throw new SwiftRiver_Exception_Mutex(__('Unable to obtain lock'));
+		}
 	}
 
 	/**
@@ -74,7 +76,7 @@ class Swiftriver_Mutex {
 			return TRUE;			
 		}
 		
-		return FALSE;
+		throw new SwiftRiver_Exception_Mutex(__('Unable to release lock'));
 	}
 }
 ?>

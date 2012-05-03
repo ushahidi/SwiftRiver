@@ -60,6 +60,87 @@ class Model_Identity extends ORM
 	}
 	
 	/**
+	 * Given an array of droplets information, populate identities from the
+	 * DB creating those that do not exist.
+	 *
+	 * @param array $identities Array containing the identity information
+	 */
+	public static function get_identities(array & $droplets)
+	{
+		if (empty($droplets))
+			return;
+			
+		// Generate the identity hashes and create a hash array of the given identites
+		$identities_idx = array();
+		foreach ($droplets as $key => $droplet)
+		{
+			if ( ! isset($droplet['identity_id']))
+			{
+				$hash = md5($droplet['channel'].$droplet['identity_orig_id']);
+				if (empty($identities_idx[$hash]))
+				{
+					$identities_idx[$hash] = array();
+				}
+				$identities_idx[$hash][] = $key;
+			}
+		}
+		
+		if (empty($identities_idx))
+			return;
+				
+		Swiftriver_Mutex::obtain(get_class(), 3600);
+		
+		// Create the missing entries			
+		// Find those that exist
+		$found = DB::select('hash', 'id')
+					->from('identities')
+					->where('hash', 'IN', array_keys($identities_idx))
+					->execute()
+					->as_array();
+		
+		// Update the found entries
+		$new_identity_count = count($identities_idx);
+		foreach ($found as $hash)
+		{
+			foreach ($identities_idx[$hash['hash']] as $key)
+			{
+				$droplets[$key]['identity_id'] = $hash['id'];
+			}
+			$new_identity_count--;
+			unset($identities_idx[$hash['hash']]);
+		}
+		
+		if ( ! empty($identities_idx))
+		{
+			// Get a range of IDs to be used in inserting the new drops
+			$base_id = self::get_ids($new_identity_count);
+			
+			$query = DB::insert('identities', array('id', 'hash', 'channel', 'identity_orig_id', 'identity_name', 'identity_username', 'identity_avatar'));
+			foreach ($identities_idx as $hash => $keys)
+			{
+				$droplet = NULL;
+				foreach ($keys as $key)
+				{
+					$droplet = $droplets[$key];
+					$droplets[$key]['identity_id'] = $base_id;
+				}
+				$query->values(array(
+					'id' => $base_id++,
+					'hash' => $hash,
+					'channel' => $droplet['channel'],
+					'identity_orig_id' => $droplet['identity_orig_id'],
+					'identity_name' => $droplet['identity_name'],
+					'identity_username' => $droplet['identity_username'],
+					'identity_avatar' => $droplet['identity_avatar']
+				));
+			}
+			$query->execute();
+		}
+		
+		Swiftriver_Mutex::release(get_class());
+	}
+	
+	/**
 	 * Creates an identity record from a droplet
 	 *
 	 * @param array $droplet Array containing the identity information
@@ -112,6 +193,20 @@ class Model_Identity extends ORM
 				->where('identity_orig_id', '=', $origin_id)
 				->where('channel', '=', $channel)
 				->find();
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting identities
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr("NEXTVAL('identities',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
 	}
 	
 }

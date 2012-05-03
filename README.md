@@ -76,11 +76,4 @@ Add the following entries to your crontab to schedule crawling every 30
 minutes and post processing every 15 minutes respectively:
 
         0,30 * * * * cd <app home>; php5 index.php --uri=crawler >> application/logs/crawl.log 2>&1
-        0,15,30,45 * * * * cd <app home>; php5 index.php --uri=process >> application/logs/process.log 2>&1
-         
-Alternatively, subscribe to the following URL in your feed reader to trigger
-a crawl every time your reader checks the feed for update:
-
-        http://[SITE_URL]/crawler?rss=1
-
-        
+        0,15,30,45 * * * * cd <app home>; php5 index.php --uri=process >> application/logs/process.log 2>&1        

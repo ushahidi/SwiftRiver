@@ -15,8 +15,6 @@
 
 class Swiftriver_Crawlers {
 
-	protected static $crawl_mutex = 'SwiftRiver_Crawler';	
-
 	/**
 	 * Registry for channel crawlers and their respective callbacks
 	 * @var array
@@ -47,7 +45,8 @@ class Swiftriver_Crawlers {
 	{
 	    Kohana::$log->add(Log::INFO, "Crawl requested for river with id :id and channel :channel",
 	                                 array(':id' => $river_id, ':channel' => $channel));
-	    
+	    Kohana::$log->write();
+	
 		$ret = call_user_func(self::$_crawlers[$channel], $river_id);
 		
 		// Update the schedule for the channel
@@ -57,44 +56,20 @@ class Swiftriver_Crawlers {
 	/**
 	 * Run the crawlers
 	 */
-	public static function do_crawl($river_id, $channel)
+	public static function do_crawl()
 	{	
-		
-		// Only one instance of the crawler is allowed
-		// to run at any time system wide
-		if ( ! Swiftriver_Mutex::obtain(self::$crawl_mutex)) 
-		{
-			Kohana::$log->add(Log::ERROR, "Crawler unable to obtain lock");			
-			return;
-		}
-		
 		Kohana::$log->add(Log::INFO, "Crawler started");								
-				
-		// If a river_id or plugin is provided then only do a run for that
-		// selection
-		if ($river_id AND $channel) 
-		{
-			Swiftriver_Crawlers::run($river_id, $channel);			
-		}
-		else if ($river_id)
-		{
-			self::do_crawl_river($river_id);
-		}
-		else
-		{
-			// We create and run a schedule
-			self::do_schedule();
-		}
-				
-		Swiftriver_Mutex::release(self::$crawl_mutex);
+		Kohana::$log->write();		
+		self::do_schedule();
 		
 		// If we got some drops, process them
 		if ( ! Swiftriver_Dropletqueue::isempty()) {
 			Kohana::$log->add(Log::INFO, "Crawler post processing");	
+			Kohana::$log->write();
 			Swiftriver_Dropletqueue::process();	  
 		}		
 		
-		Kohana::$log->add(Log::INFO, "Crawler completed");	
+		Kohana::$log->add(Log::INFO, "Crawler completed");
 	}
 	
 	/**

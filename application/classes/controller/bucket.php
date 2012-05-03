@@ -336,15 +336,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 				// Set the river id
 				$droplet['bucket_id'] = $this->bucket->id;
 				// Add the droplet to the queue
-				$droplet_orm = Swiftriver_Dropletqueue::add($droplet);
-				echo json_encode(array(
-					'id' => $droplet_orm->id,
-					'channel' => $droplet['channel'],
-					'identity_avatar' => $droplet['identity_avatar'],
-					'identity_name' => $droplet['identity_name'],
-					'droplet_date_pub' => $droplet['droplet_date_pub'],
-					'droplet_content' => $droplet['droplet_content']
-				));
+				$droplet = Swiftriver_Dropletqueue::add($droplet);
+				echo json_encode($droplet);
 			break;
 		}
 	}

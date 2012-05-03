@@ -520,18 +520,11 @@ class Controller_River extends Controller_Swiftriver {
 				// Set the river id
 				$droplet['river_id'] = $this->river->id;
 				// Add the droplet to the queue
-				$droplet_orm = Swiftriver_Dropletqueue::add($droplet);
+				$droplet = Swiftriver_Dropletqueue::add($droplet);
 				
-				if ($droplet_orm) 
+				if ($droplet) 
 				{
-					echo json_encode(array(
-						'id' => $droplet_orm->id,
-						'channel' => $droplet['channel'],
-						'identity_avatar' => $droplet['identity_avatar'],
-						'identity_name' => $droplet['identity_name'],
-						'droplet_date_pub' => gmdate('M d, Y H:i:s', time()).' UTC',
-						'droplet_content' => $droplet['droplet_content']
-					));
+					echo json_encode($droplet);
 				}
 				else
 				{
@@ -548,7 +541,7 @@ class Controller_River extends Controller_Swiftriver {
 	private function _get_filters()
 	{
 		$filters = array();
-		$parameters = array('tags', 'channel', 'start_date', 'end_date');
+		$parameters = array('tags', 'places', 'channel', 'start_date', 'end_date');
 		
 		foreach ($parameters as $parameter)
 		{
@@ -561,7 +554,7 @@ class Controller_River extends Controller_Swiftriver {
 				// value
 				foreach (explode(',', urldecode($values)) as $value)
 				{
-					$filters[$parameter][] = trim($value);
+					$filters[$parameter][] = strtolower(trim($value));
 				}
 			}
 		}

@@ -33,6 +33,16 @@ class Model_Link extends ORM
 
 	
 	/**
+	 * Overload saving to perform additional functions on the tag
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		$this->id = self::get_ids(1);
+		$this->hash = md5($this->url);
+		return parent::save();
+	}
+	
+	/**
 	 * Retrives a Model_Link item from the DB and optionally creates the 
 	 * save if the retrieval is unsuccessful
 	 *
@@ -54,9 +64,7 @@ class Model_Link extends ORM
 		{
 			// Get the full URL
 			$orm_link->url = $url;
-			$orm_link->url_hash = hash('sha256', $url);
-			$orm_link->domain = parse_url($url, PHP_URL_HOST);
-			
+
 			// Save and return
 			return $orm_link->save();
 		}
@@ -67,70 +75,101 @@ class Model_Link extends ORM
 	}
 	
 	/**
-	 * Checks if a given link already exists. 
-	 * The parameter $links is an array of hashes containing the 
-	 * link, link_full and domain as below
-	 * E.g: $link = array('link' => 'http://t.co/mg9yqyFp', 'link_full' => 'http://ushahidi.com', 'link_domain' => 'ushahidi.com');
+	 * Populate IDs into the droplets' links arrays creating those that are missing
+	 * The links array is an array of urls
 	 *
 	 * @param string $links Array of hashes described above
 	 * @return mixed array of links ids if the links exists, FALSE otherwise
 	 */
-	public static function get_links($links)
+	public static function get_links(& $drops)
 	{
-		// First try to add any links missing from the db
-		// The below generates the below query to find missing links and insert them all at once:
-		/*
-		 *    INSERT INTO `links` (`url`, `url_hash`, `domain`) 
-		 *    SELECT DISTINCT * FROM (
-		 *    	SELECT 'http://goat.com/mg9yqyFpXXXXX' AS `url`, '7d645adf5695a8b15dd5779c2b58e48185a729eb7ab5a01702dc7586a2e5a149' AS `url_hash`, 'goat.com' AS `domain` UNION ALL
-		 *    	SELECT 'http://t.co/mg9yqyFp' AS `url`, '99edeb38bcddeb0450557a38782d16bf84d438b91ed6231e448b3ff696fc9820' AS `url_hash`, 't.co' AS `domain`
-		 *    ) AS `a` 
-		 *    WHERE (url, url_hash, domain) NOT IN (
-		 *    	SELECT `url`, `url_hash`, `domain` 
-		 *    	FROM `links` 
-		 *    	WHERE (url, url_hash, domain) IN (
-		 *    		('http://t.co/mg9yqyFp', '7d645adf5695a8b15dd5779c2b58e48185a729eb7ab5a01702dc7586a2e5a149', 't.co'), 
-		 *    		('http://goat.com/mg9yqyFpXXXXX', '99edeb38bcddeb0450557a38782d16bf84d438b91ed6231e448b3ff696fc9820', 'goat.com')
-		 *    	)
-		 *    )		
-		 */
-		$query = DB::select()->distinct(TRUE);
-		$link_subquery = NULL;
-		foreach ($links as $link)
+		if (empty($drops))
+			return;
+			
+		// Generate the url hashes and create a index hash array of the given link
+		// linking a drop to a link
+		$links_idx = array();
+		foreach ($drops as $drop_key => & $drop)
 		{
-			$union_query = DB::select(
-							array(DB::expr("'".addslashes($link['url'])."'"), 'url'), 		
-							array(DB::expr("'".addslashes($link['url_hash'])."'"), 'url_hash'),
-							array(DB::expr("'".addslashes($link['domain'])."'"), 'domain'));
-			if ( ! $link_subquery)
+			if (isset($drop['links']))
 			{
-				$link_subquery = $union_query;
+				foreach ($drop['links'] as $link_key => $link)
+				{
+					if ( ! isset($link['id']) )
+					{
+						$hash = md5($link['url']);
+						if (empty($links_idx[$hash]))
+						{
+							$links_idx[$hash]['url'] = $link['url'];
+							$links_idx[$hash]['keys'] = array();
+						}
+						$links_idx[$hash]['keys'][] = array($drop_key, $link_key);
+					}
+				}
 			}
-			else
-			{
-				$link_subquery = $union_query->union($link_subquery, TRUE);
-			}
-		}
-		if ($link_subquery)
-		{
-			$query->from(array($link_subquery,'a'));
-			$sub = DB::select('url', 'url_hash', 'domain')
-			           ->from('links')
-			           ->where(DB::expr('(url, url_hash, domain)'), 'IN', $links);
-			$query->where(DB::expr('(url, url_hash, domain)'), 'NOT IN', $sub);
-			DB::insert('links', array('url', 'url_hash', 'domain'))->select($query)->execute();
 		}
 		
-		// Get the link IDs
-		if ($links)
+		if (empty($links_idx))
+			return;
+		
+		Swiftriver_Mutex::obtain(get_class(), 3600);
+		
+		// Find those that exist
+		$found = DB::select('hash', 'id')
+					->from('links')
+					->where('hash', 'IN', array_keys($links_idx))
+					->execute()
+					->as_array();
+					
+		// Update the found entries
+		$new_link_count = count($links_idx);
+		foreach ($found as $hash)
 		{
-			$query = DB::select('id')
-			           ->from('links')
-			           ->where(DB::expr('(url, url_hash, domain)'), 'IN', $links);
+			foreach ($links_idx[$hash['hash']]['keys'] as $keys)
+			{
+				list($drop_key, $link_key) = $keys;
+				$drops[$drop_key]['links'][$link_key]['id'] = $hash['id'];
+			}
+			$new_link_count--;
+			unset($links_idx[$hash['hash']]);
+		}
+		
+		if ( ! empty($links_idx))
+		{
+			// Get a range of IDs to be used in inserting the new links
+			$base_id = self::get_ids($new_link_count);
+			
+			$query = DB::insert('links', array('id', 'hash', 'url'));
+			foreach ($links_idx as $hash => $value)
+			{
+				foreach ($value['keys'] as $key)
+				{
+					list($drop_key, $link_key) = $key;
+					$drops[$drop_key]['links'][$link_key]['id'] = $base_id;
 
-			return $query->execute()->as_array();
+				}
+				$query->values(array(
+					'id' => $base_id++,
+					'hash' => $hash,
+					'url' => $value['url']
+				));
+			}
+			$query->execute();
 		}
-		
-		return FALSE;
+		Swiftriver_Mutex::release(get_class());
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting drops
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr("NEXTVAL('links',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
 	}	
 }

@@ -14,6 +14,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 class Model_Droplet extends ORM {
+	
+	/**
+	 * Processing status flags
+	 */
+	const PROCESSING_STATUS_COMPLETE = 255;
+	
+	const PROCESSING_STATUS_NEW = 252;
+	
+	const PROCESSING_FLAG_SEMANTICS = 1;
+	
+	const PROCESSING_FLAG_LINKS = 2;
 
 	/**
 	 * A droplet has and belongs to many links, places, tags and attachments
@@ -100,7 +111,7 @@ class Model_Droplet extends ORM {
 	 * unique for every droplet.
 	 *
 	 * @param string $droplet_hash Has value of the droplet to retrieve
-	 * @return Model_Droplet
+	 * @return array Array of new droplets
 	 */
 	public static function get_droplet_by_hash($droplet_hash)
 	{
@@ -110,222 +121,231 @@ class Model_Droplet extends ORM {
 	}
 	
 	/**
-	 * Creates a droplet from an array. 
-	 * The array keys should correspond to the column names of the droplet 
-	 * table. The method also checks for 3 other keys namely: links, tags 
-	 * and places - These keys are populated when the droplet is taken through 
-	 * the extraction phase
+	 * Creates a droplets from the given array
 	 *
 	 * @param array $droplet
-	 * @return bool
+	 * @return array
 	 */
-	public static function create_from_array(array & $droplet)
+	public static function create_from_array($droplets)
 	{
-		if ( ! array_key_exists('id', $droplet))
+		if ( ! count($droplets))
+			return;
+			
+	    // Populate identities
+		Model_Identity::get_identities($droplets);
+		
+		// Hash array with droplet_hash as key and index in droplets array that contain that hash
+		$droplets_idx = array();
+		foreach ($droplets as $key => & $droplet)
 		{
-			try 
+			if ( ! isset($droplet['id']))
 			{
-				// Create the droplet
-				$orm_droplet = new Model_Droplet;
-				$orm_droplet->channel = $droplet['channel'];
-				$orm_droplet->identity_id = $droplet['identity_id'];
-				$orm_droplet->droplet_hash = $droplet['droplet_hash'];
-				$orm_droplet->droplet_orig_id = $droplet['droplet_orig_id'];
-				$orm_droplet->droplet_type = $droplet['droplet_type'];
-				$orm_droplet->droplet_title = $droplet['droplet_title'];
-				$orm_droplet->droplet_content = $droplet['droplet_content'];
-				$orm_droplet->droplet_raw = $droplet['droplet_raw'];
-				$orm_droplet->droplet_locale = $droplet['droplet_locale'];
-				$orm_droplet->droplet_date_pub = $droplet['droplet_date_pub'];
-				$orm_droplet->droplet_processed = 0;
-			
-				// Check if the parent id has been set
-				if (isset($droplet['parent_id']))
+				$hash = md5($droplet['identity_orig_id'].$droplet['channel'].$droplet['droplet_orig_id']);
+				$droplet['droplet_hash'] = $hash;
+				if (empty($droplets_idx[$hash]))
 				{
-					$orm_droplet->parent_id = $droplet['parent_id'];
+					$droplets_idx[$hash] = array();
 				}
+				$droplets_idx[$hash][] = $key;
+			}
+		}
+		
+		// Insert new drops
+		$new_droplets = array();
+		if ( ! empty($droplets_idx))
+		{		
+			Swiftriver_Mutex::obtain(get_class(), 3600);
 			
-				// Save the droplet
-				$orm_droplet->save();
+			// Find the drops that already exist by their droplet_hash
+			$found_query = DB::select('droplet_hash', 'id')
+						->from('droplets')
+						->where('droplet_hash', 'IN', array_keys($droplets_idx));
+			$found = $found_query->execute()->as_array();
 			
-				// Check if the 'river_id' OR 'bucket_id' key is set
-				if (isset($droplet['river_id']))
+			// Update the ids of existing drops found in the db and 
+			// remove them from droplets_idx to leave new drops
+			$new_droplet_count = count($droplets_idx);
+			foreach ($found as $hash)
+			{
+				foreach ($droplets_idx[$hash['droplet_hash']] as $key)
 				{
-					// Add the droplet to the river(s)
-					if (is_array($droplet['river_id']))
+					$droplets[$key]['id'] = $hash['id'];
+				}
+				$new_droplet_count--;
+				unset($droplets_idx[$hash['droplet_hash']]);
+			}
+			
+			if ( ! empty($droplets_idx))
+			{
+				// Get a range of IDs to be used in inserting the new drops
+				$base_id = Model_Droplet::get_ids($new_droplet_count);
+
+				// Insert into the droplets table
+				$query = DB::insert('droplets', array('id', 'channel', 'droplet_hash', 'droplet_orig_id', 'droplet_type', 'droplet_title', 'droplet_content', 'droplet_date_pub', 'droplet_date_add', 'identity_id', 'processing_status'));
+
+				foreach ($droplets_idx as $hash => $keys) 
+				{
+					foreach ($keys as $key)
 					{
-						foreach ($droplet['river_id'] as $river_id)
-						{
-							Model_River::add_droplet($river_id, $orm_droplet);
-						}
+						$droplets[$key]['id'] = $base_id;
 					}
-					else
-					{						
-						Model_River::add_droplet($droplet['river_id'], $orm_droplet);
-					}
+					// PHP has reference issues with array so 
+					// we cannot copy the element we have but
+					// refeference it in place as below $droplets[$keys[0]]
+					// otherwise the element will be overwriten if we use a
+					// copy. Sigh.
+					$new_droplets[] = $droplets[$keys[0]];
+					$query->values(array(
+						'id' => $base_id++,
+						'channel' => $droplets[$keys[0]]['channel'],
+						'droplet_hash' => $droplets[$keys[0]]['droplet_hash'],
+						'droplet_orig_id' => $droplets[$keys[0]]['droplet_orig_id'],
+						'droplet_type' => $droplets[$keys[0]]['droplet_type'],
+						'droplet_title' => $droplets[$keys[0]]['droplet_title'],
+						'droplet_content' => $droplets[$keys[0]]['droplet_content'],
+						'droplet_date_pub' => $droplets[$keys[0]]['droplet_date_pub'],
+						'droplet_date_add' => gmdate("Y-m-d H:i:s", time()),
+						'identity_id' => $droplets[$keys[0]]['identity_id'],
+						'processing_status' => self::PROCESSING_STATUS_NEW
+					));
 				}
-				elseif (isset($droplet['bucket_id']))
-				{
-					Model_Bucket::add_droplet($droplet['bucket_id'], $orm_droplet);
-				}
-				
-				// Set the 'id' key to the newly saved droplet
-				$droplet['id'] = $orm_droplet->id;
-
-				// If the droplet has a parent id, set the droplet_orig_id
-				// to the ID of the droplet
-				if ($orm_droplet->parent_id != 0)
-				{
-					$orm_droplet->droplet_orig_id = $orm_droplet->id;
-					$orm_droplet->save();
-				}
-				
-				return $orm_droplet;
-			}
-			catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, "Database Error creating droplet".$e->getMessage());
-				return NULL;
-			}
-		}
-		else
-		{
-			try
-			{
-				// Get the droplet id
-				$droplet_id = $droplet['id'];
-			
-				// Get the droplet ORM reference
-				$orm_droplet = ORM::factory('droplet', $droplet_id);
-			
-				// Save the tags, links and places
-				self::add_tags($orm_droplet, $droplet['tags']);
-				self::add_links($orm_droplet, $droplet['links']);
-				self::add_places($orm_droplet, $droplet['places']);
-			
-				// Mark the droplet as processed
-				$orm_droplet->droplet_processed = 1;
-				$orm_droplet->save();
-				
-				return TRUE;
-				
-			} catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, "Database error updating droplet".$e->getMessage());
-				return FALSE;
+				$query->execute();
 			}
 			
+			Swiftriver_Mutex::release(get_class());
 		}
 		
-		return FALSE;
+		// Populate metadata IDs into the drops array
+		Model_Tag::get_tags($droplets);
+		Model_Link::get_links($droplets);
+		Model_Place::get_places($droplets);
+		
+		// Populate the drop's metadata tables
+		self::add_metadata($droplets);
+		
+		return $new_droplets;
 	}
 	
 	/**
-	 * Adds tags to a droplet
+	 * Populate the droplet metadata tables.
 	 *
-	 * @param Model_Droplet $orm_droplet Droplet ORM reference
-	 * @param Mixed $tags Tag/list of tags to be linked to the droplet
+	 * @param array $drops Drop array
 	 */
-	public static function add_tags($orm_droplet, $tags)
+	public static function add_metadata(& $drops)
 	{
-		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
-		// since php array comparison is a bit limited
-		$tag_merge = function($tag)
+		// Build queries for creating entries in the meta tables droplet_tags, droplet_links and so on
+		$river_values = NULL;
+		$tag_values = NULL;
+		$semantics_complete = array();
+		$link_values = NULL;
+		$links_complete = array();
+		$place_values = NULL;
+		foreach ($drops as $drop)
 		{
-			if (is_array($tag))
+			// Place drops into rivers
+			if (isset($drop['river_id']))
 			{
-				return $tag['tag_name'].'!!>--<!!'.$tag['tag_type'];
+				foreach ($drop['river_id'] as $river_id)
+				{
+					if ($river_values)
+					{
+						$river_values .= ',';
+					}
+					$river_values .= '('.$drop['id'].','.$river_id.')';
+				}
 			}
-			else
+			
+			// Create a query to insert tags into droplets_tags
+			if (isset($drop['tags']))
 			{
-				return $tag->tag.'!!>--<!!'.$tag->tag_type;
-			}
-		};
-		
-		// Determine the new tags
-		$current_tags = array_map($tag_merge, $orm_droplet->tags->find_all()->as_array());
-		$change_tags = array_map($tag_merge, $tags);
-		
-		// Function to split the  tag!!>--<!!tag_type from above into a tag and tag_type
-		$tag_split = function($tag)
-		{
-			$tag_parts = explode('!!>--<!!', $tag);
-			return array(
-				'tag_name' => $tag_parts[0], 
-				'tag_type' => $tag_parts[1]);
-		};
-		$new_tags = array_map($tag_split, array_diff($change_tags, $current_tags));
-		
-		//Get the tag IDs en batch
-		$tag_ids = Model_Tag::get_tags($new_tags);
-		
-		// Add the tags in one big batch
-		if ($tag_ids)
-		{
-			$query = DB::insert('droplets_tags', array('droplet_id', 'tag_id'));
-			foreach ($tag_ids as $tag_id)
-			{
-			    $query->values(array($orm_droplet->id, $tag_id['id']));
+				foreach ($drop['tags'] as $tag)
+				{
+					if ($tag_values)
+					{
+						$tag_values .= ',';
+					}
+					$tag_values .= '('.$drop['id'].','.$tag['id'].')';
+				}
 			}
 
-			try
+			// Find drops that have complete semantic processing
+			if (isset($drop['semantics_complete']))
 			{
-			    $result = $query->execute();
+				$semantics_complete[] = $drop['id'];
 			}
-			catch (Database_Exception $e)
-			{   
-				Kohana::$log->add(Log::ERROR, 'Database error adding tags: '.$e->getMessage());
+			
+			if (isset($drop['links']))
+			{
+				foreach ($drop['links'] as $link)
+				{
+					if ($link_values)
+					{
+						$link_values .= ',';
+					}
+					$link_values .= '('.$drop['id'].','.$link['id'].')';
+				}
 			}
-		}		
-	}
-	
-	
-	/**
-	 * Adds links to a droplet
-	 *
-	 * @param Model_Droplet $orm_droplet Droplet ORM reference
-	 * @param array $links
-	 */
-	public static function add_links($orm_droplet, $links)
-	{
-		$link_reduce = function($link)
+			
+			// Find drops that have complete semantic processing
+			if (isset($drop['links_complete']))
+			{
+				$links_complete[] = $drop['id'];
+			}
+			
+			if (isset($drop['places']))
+			{
+				foreach ($drop['places'] as $place)
+				{
+					if ($place_values)
+					{
+						$place_values .= ',';
+					}
+					$place_values .= '('.$drop['id'].','.$place['id'].')';
+				}
+			}
+		}
+		
+		
+		// Execute the queries created in the last step
+		if ($river_values)
 		{
-			return $link->url;
-		};
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `rivers_droplets` (`droplet_id`, `river_id`) VALUES ".$river_values)->execute();
+		}
 		
-		$new_links = array_diff($links, array_map($link_reduce, $orm_droplet->links->find_all()->as_array()));
-		
-		$link_map = function($link)
+		// Update droplets tags
+		if ($tag_values)
 		{
-			return array (
-				'url' => $link,
-				'url_hash' => hash('md5', $link),
-				'domain' => parse_url($link, PHP_URL_HOST)
-			);
-		};
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_tags` (`droplet_id`, `tag_id`) VALUES ".$tag_values)->execute();
+		}
 		
-		$links = array_map($link_map, $new_links);
-
-		// Get the link IDs
-		$link_ids = Model_Link::get_links($links);
-		
-		// Add the links to the droplet
-		if ($link_ids)
+		// Update drops that completed semantic processing
+		if ( ! empty($semantics_complete))
 		{
-			$query = DB::insert('droplets_links', array('droplet_id', 'link_id'));
-			foreach ($link_ids as $link_id)
-			{
-			    $query->values(array($orm_droplet->id, $link_id['id']));
-			}
-
-			try
-			{
-			    $result = $query->execute();
-			}
-			catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, 'Database error adding links: '.$e->getMessage());
-			}
+			DB::update('droplets')
+			   ->set(array('processing_status' => DB::expr('processing_status | '.self::PROCESSING_FLAG_SEMANTICS)))
+			   ->where("id", "IN", $semantics_complete)
+			   ->execute();
+		}
+		
+		// Update droplet links
+		if ($link_values)
+		{
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) VALUES ".$link_values)->execute();
+		}
+		
+		// Update drops that completed link processing
+		if ( ! empty($links_complete))
+		{
+			DB::update('droplets')
+			   ->set(array('processing_status' => DB::expr('processing_status | '.self::PROCESSING_FLAG_LINKS)))
+			   ->where("id", "IN", $links_complete)
+			   ->execute();
+		}
+		
+		// Update droplet places
+		if ($place_values)
+		{
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_places` (`droplet_id`, `place_id`) VALUES ".$place_values)->execute();
 		}
 	}
 
@@ -380,62 +400,6 @@ class Model_Droplet extends ORM {
 		}
 	}	
 	
-	/**
-	 * Adds the list of place names associated with a droplet. The list of places
-	 * should be an array of place names, latitudes and longitudes.
-	 *
-	 * Eg:
-	 * $places  = array(
-	 * 		array('place_name' => 'Nairobi', 'latitude' => '-1.2857', 'longitude' => '36.820174', 'source' => 'placemaker'),
-	 *	    array('place_name' => 'Mombasa', 'latitude'=> '-4.050063', 'longitude' => '39.666653', 'source' => 'placemaker')
-	 * ));
-	 * @param Model_Droplet $orm_droplet Droplet ORM reference
-	 * @param array $places List of place names associated with the droplet
-	 */
-	public static function add_places($orm_droplet, $places)
-	{
-		// Function to map a tags array into an array of tag!!>--<!!tag_type strings
-		// since php array comparison is a bit limited
-		$place_merge = function($place)
-		{
-			return $place['place_name'].'!!>--<!!'.$place['latitude'].'!!>--<!!'.$place['longitude'];
-		};
-		
-		// Determine the new places
-		$current_places = array_map($place_merge, Model_Place::get_droplet_places($orm_droplet));
-		$change_places = array_map($place_merge, $places);
-		
-		$place_split = function($place)
-		{
-			$place_parts = explode('!!>--<!!', $place);
-			return array('place_name' => $place_parts[0], 
-						'latitude' => $place_parts[1],
-						'longitude' => $place_parts[2]);
-		};
-		$new_places = array_map($place_split, array_diff($change_places, $current_places));
-				
-		$place_ids = Model_Place::get_places($new_places);
-		
-		// Add the places in one big batch
-		if ($place_ids)
-		{
-			$query = DB::insert('droplets_places', array('droplet_id', 'place_id'));
-			foreach ($place_ids as $place_id)
-			{
-			    $query->values(array($orm_droplet->id, $place_id['id']));
-			}
-
-			try
-			{
-			    $result = $query->execute();
-			}
-			catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, 'Database error adding places: '.$e->getMessage());
-			}
-		}		
-
-	}
 	
 	/**
 	 * Gets the list of droplets that are yet to be processed. This method
@@ -461,7 +425,7 @@ class Model_Droplet extends ORM {
 		// Get the droplets ordered by pub_date in DESC order
 		// Limit to only parent items - not comments
 		$result = ORM::factory('droplet')
-					->where('droplet_processed', '=', 0)
+					->where('processing_status', '!=', self::PROCESSING_STATUS_COMPLETE)
 					->where('parent_id', '=', 0)
 					->where($predicates[0], $predicates[1], 
 						DB::expr($predicates[2].' AND EXISTS (SELECT river_id FROM channel_filters WHERE filter_enabled = 1 AND '.$predicate_str.')'))
@@ -473,11 +437,17 @@ class Model_Droplet extends ORM {
 		{
 			$droplets[] = array(
 				'id' => $droplet->id,
-				'droplet_raw' => $droplet->droplet_raw,
+				'droplet_raw' => $droplet->droplet_content,
 				'channel' => $droplet->channel,
-				'tags' => array(),
-				'links' => array(),
-				'places' => array()
+				'identity_orig_id' => $droplet->identity->identity_orig_id,
+				'identity_username' => $droplet->identity->identity_username,
+				'identity_name' => $droplet->identity->identity_name,
+				'droplet_orig_id' => $droplet->droplet_orig_id,
+				'droplet_type' => $droplet->droplet_type,
+				'droplet_title' => $droplet->droplet_title,
+				'droplet_content' => $droplet->droplet_content,
+				'droplet_locale' => $droplet->droplet_locale,
+				'droplet_date_pub' => $droplet->droplet_locale,
 			);
 		}
 		// Return items
@@ -1224,7 +1194,7 @@ class Model_Droplet extends ORM {
 				->on('droplets_tags.droplet_id', '=', 'droplets.id')
 				->join('tags', 'INNER')
 				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where('tag', 'IN', $filters['tags']);
+				->where('tag_canonical', 'IN', $filters['tags']);
 		}
 
 		if ( ! empty($filters['places']))
@@ -1233,7 +1203,7 @@ class Model_Droplet extends ORM {
 				->on('droplets_places.droplet_id', '=', 'droplets.id')
 				->join('places', 'INNER')
 				->on('droplets_places.place_id', '=', 'places.id')
-				->where('place_name', 'IN', $filters['places']);
+				->where('place_name_canonical', 'IN', $filters['places']);
 		}
 		
 		if ( ! empty($filters['start_date']))
@@ -1249,6 +1219,20 @@ class Model_Droplet extends ORM {
 			$end_date = new DateTime($end_date);
 			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d'));
 		}
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting drops
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr("NEXTVAL('droplets',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
 	}
 }
 

@@ -36,20 +36,11 @@ class Model_Tag extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Ensure Tag Goes In as Lower Case
-		$this->tag = strtolower($this->tag);
-
-		// Ensure Tag Type Goes In as Lower Case
-		$this->tag_type = strtolower($this->tag_type);
-		
-		$this->tag_hash = md5($this->tag.$this->tag_type);
-
-		// Do this for first time items only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the tag was first added
-			$this->tag_date_add = date("Y-m-d H:i:s", time());
-		}
+		$this->id = self::get_ids(1);
+		$this->tag = trim($this->tag);
+		$this->tag_canonical = strtolower($this->tag);
+		$this->tag_type = strtolower(trim($this->tag_type));
+		$this->hash = md5($this->tag.$this->tag_type);
 
 		return parent::save();
 	}
@@ -82,7 +73,6 @@ class Model_Tag extends ORM
 				$orm_tag = new Model_Tag;
 				$orm_tag->tag  = $tag['tag_name'];
 				$orm_tag->tag_type = $tag['tag_type'];
-				$orm_tag->tag_date_add = date('Y-m-d H:i:s', time());
 			
 				return $orm_tag->save();
 			}
@@ -99,88 +89,107 @@ class Model_Tag extends ORM
 	}
 	
 	/**
-	 * Checks if a given tag already exists. 
-	 * The parameter $tags is an array of hashes containing the 
+	 * Populate IDs into the droplets' tags' arrays creating those that are missing
+	 * The tags array is an array of hashes containing the 
 	 * tag name and type as below
 	 * E.g: $tag = array('tag_name' => 'bubba', tag_type => 'junk');
 	 *
 	 * @param string $tags Array of hashes described above
-	 * @return mixed array of tag ids if the tags exists, FALSE otherwise
 	 */
-	public static function get_tags($tags)
+	public static function get_tags(& $drops)
 	{
-		// First try to add any tags missing from the db
-		// The below generates the below query to find missing tags and insert them all at once:
-		/*
-		 *		INSERT INTO `tags` (`tag`, `tag_type`) 
-		 *		SELECT distinct * FROM 
-		 *		(
-		 *			SELECT 'PaidContent' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'TechCrunch' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'TechMeme' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'Roberts' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'TC' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'AOL' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'Techmeme' AS `tag`, 'organization' AS `tag_type` UNION ALL
-		 *			SELECT 'ComScore' AS `tag`, 'organization' AS `tag_type`
-		 *		) AS `a` 
-		 *		WHERE (tag, tag_type) NOT IN (
-		 *			SELECT `tag`, `tag_type` 
-		 *			FROM `tags` 
-		 *			WHERE (tag, tag_type) IN (
-		 *				('ComScore', 'organization'), 
-		 *				('Techmeme', 'organization'), 
-		 *				('AOL', 'organization'), 
-		 *				('TC', 'organization'), 
-		 *				('Roberts', 'organization'), 
-		 *				('TechMeme', 'organization'), 
-		 *				('TechCrunch', 'organization'), 
-		 *				('PaidContent', 'organization')
-		 *			)
-		 *		);
-		 */
-		$query = DB::select()->distinct(TRUE);
-		$tags_subquery = NULL;
-		foreach ($tags as & $tag)
+		if (empty($drops))
+			return;
+			
+		// Generate the tag hashes and create a index hash array of the given tag
+		// linking a drop to a tag
+		$tags_idx = array();
+		foreach ($drops as $drop_key => & $drop)
 		{
-			$tag['tag_name'] = strtolower($tag['tag_name']);
-			$tag['tag_type'] = strtolower($tag['tag_type']);
-			$tag['tag_hash'] = md5($tag['tag_name'].$tag['tag_type']);
-			$union_query = DB::select(array(DB::expr("'".addslashes($tag['tag_name'])."'"), 'tag'), array(DB::expr("'".addslashes($tag['tag_type'])."'"), 'tag_type'), array(DB::expr("'".$tag['tag_hash']."'"), 'tag_hash'));
-			if ( ! $tags_subquery)
+			if (isset($drop['tags']))
 			{
-				$tags_subquery = $union_query;
+				foreach ($drop['tags'] as $tag_key => & $tag)
+				{
+					if ( ! isset($tag['id']) )
+					{
+						$tag['tag_name'] = trim($tag['tag_name']);
+						$tag['tag_type'] = strtolower(trim($tag['tag_type']));
+						$hash = md5($tag['tag_name'].$tag['tag_type']);
+						if (empty($tags_idx[$hash]))
+						{
+							$tags_idx[$hash]['tag_name'] = $tag['tag_name'];
+							$tags_idx[$hash]['tag_type'] = $tag['tag_type'];
+							$tags_idx[$hash]['keys'] = array();
+						}
+						$tags_idx[$hash]['keys'][] = array($drop_key, $tag_key);
+					}
+				}
 			}
-			else
-			{
-				$tags_subquery = $union_query->union($tags_subquery, TRUE);
-			}
-		}
-		if ($tags_subquery)
-		{
-			$query->from(array($tags_subquery,'a'));
-			$sub = DB::select('tag', 'tag_type', 'tag_hash')
-			           ->from('tags')
-			           ->where(DB::expr('(tag, tag_type, tag_hash)'), 'IN', $tags);
-			$query->where(DB::expr('(tag, tag_type, tag_hash)'), 'NOT IN', $sub);
-			DB::insert('tags', array('tag', 'tag_type', 'tag_hash'))->select($query)->execute();
 		}
 		
-		// Get the tag IDs
-		if ($tags)
+		if (empty($tags_idx))
+			return;
+		
+		Swiftriver_Mutex::obtain(get_class(), 3600);
+		
+		// Find those that exist
+		$found = DB::select('hash', 'id')
+					->from('tags')
+					->where('hash', 'IN', array_keys($tags_idx))
+					->execute()
+					->as_array();
+					
+		// Update the found entries
+		$new_tag_count = count($tags_idx);
+		foreach ($found as $hash)
 		{
-			$tag_hashes = array();
-			foreach ($tags as $tag)
+			foreach ($tags_idx[$hash['hash']]['keys'] as $keys)
 			{
-				$tag_hashes[] = $tag['tag_hash'];
+				list($drop_key, $tag_key) = $keys;
+				$drops[$drop_key]['tags'][$tag_key]['id'] = $hash['id'];
 			}
-			$query = DB::select('id')
-			           ->from('tags')
-			           ->where('tag_hash', 'IN', $tag_hashes);
-
-			return $query->execute()->as_array();
+			$new_tag_count--;
+			unset($tags_idx[$hash['hash']]);
 		}
 		
-		return FALSE;
+		if ( ! empty($tags_idx))
+		{
+			// Get a range of IDs to be used in inserting the new tags
+			$base_id = self::get_ids($new_tag_count);
+			
+			$query = DB::insert('tags', array('id', 'hash', 'tag', 'tag_canonical', 'tag_type'));
+			foreach ($tags_idx as $hash => $value)
+			{
+				foreach ($value['keys'] as $key)
+				{
+					list($drop_key, $tag_key) = $key;
+					$drops[$drop_key]['tags'][$tag_key]['id'] = $base_id;
+				}
+				$query->values(array(
+					'id' => $base_id++,
+					'hash' => $hash,
+					'tag' => $value['tag_name'],
+					'tag_canonical' => strtolower($value['tag_name']),
+					'tag_type' => $value['tag_type']
+				));
+			}
+			$query->execute();
+		}
+		
+		Swiftriver_Mutex::release(get_class());
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting drops
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr("NEXTVAL('tags',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
 	}
 }

@@ -41,6 +41,9 @@ class Swiftriver_Dropletqueue {
 	 */
 	public static function process($channel = NULL)
 	{
+		Kohana::$log->add(Log::INFO, "Post processing started");
+		Kohana::$log->write();
+		
 		// If the queue is empty, fetch the unprocessed items from the DB
 		self::$_queue = empty(self::$_queue)
 			? Model_Droplet::get_unprocessed_droplets(1000, $channel)
@@ -60,129 +63,33 @@ class Swiftriver_Dropletqueue {
 			self::$_processed[] =  $droplet;
 
 			// Mark the droplet as processed
-			Model_Droplet::create_from_array($droplet);
+			Model_Droplet::create_from_array(array($droplet));
 		}
 		
-		Kohana::$log->write();
+		Kohana::$log->add(Log::INFO, "Post processing completed");
 	}
 	
 	/**
-	 * Adds a droplet to the processing queue.
-	 * Crawlers that siphon content from the various channels should call
-	 * this method once the content has been "atomized" i.e. converted into a droplet
-	 * The template for the droplets may be obtained by invoking get_droplet_template
-	 * from within the crawler.
+	 * Adds drops to the processing queue.
 	 *
-	 * @param array $droplet Droplet to be queued for processing
+	 * @param array $droplet Array of Droplets to be queued for processing
 	 * @param bool $queue_droplet When TRUE, adds the droplet to self::$_queue
 	 */
-	public static function add(array & $droplet, $queue_droplet = TRUE)
+	public static function add($droplet, $queue_droplet = TRUE)
 	{
-		// Set the SHA-256 hash value for the droplet
-		$droplet['droplet_hash'] = hash('sha256', $droplet['droplet_content']);
-		
-		// Strip the tags from to get droplet_raw
-		$droplet['droplet_raw'] = $droplet['droplet_content'];
-		
-		// Get the droplet ORM based on the hash
-		$droplet_orm = Model_Droplet::get_droplet_by_hash($droplet['droplet_hash']);
-		
-		// Check if the droplet has already been added to the queue
-		if ($droplet_orm->loaded())
+		if ($new_drops = Model_Droplet::create_from_array(array($droplet)))
 		{
-			
-			// Add the droplet to the current river
-			if (isset($droplet['river_id']))
-			{
-				// Add the droplet to the river(s)
-				if (is_array($droplet['river_id']))
-				{
-					foreach ($droplet['river_id'] as $river_id)
-					{
-						Model_River::add_droplet($river_id, $droplet_orm);
-					}
-				}
-				else
-				{						
-					Model_River::add_droplet($droplet['river_id'], $droplet_orm);
-				}
-			}
-			
-			if (array_key_exists('links_complete', $droplet))
-			{
-				$droplet_orm->links_complete = 1;
-			}
-			
-			if (array_key_exists('semantics_complete', $droplet))
-			{
-				$droplet_orm->semantics_complete = 1;
-			}
-			
-			if ($droplet_orm->semantics_complete AND $droplet_orm->links_complete)
-			{
-				$droplet_orm->droplet_processed = 1;
-			}
-			
-			// Update droplet meta if it is provided
-			if (array_key_exists('tags', $droplet))
-			{
-				Model_Droplet::add_tags($droplet_orm, $droplet['tags']);
-			}
-			
-			if (array_key_exists('links', $droplet))
-			{
-				Model_Droplet::add_links($droplet_orm, $droplet['links']);
-			}			
-			
-			if (array_key_exists('places', $droplet))
-			{
-				Model_Droplet::add_places($droplet_orm, $droplet['places']);
-			}
-				
-			$droplet_orm->save();
-				
-			return NULL;
-		}
-		
-		// Validate the droplet
-		$validation = Validation::factory($droplet)
-					->rule('channel', 'not_empty')
-					->rule('droplet_content', 'not_empty')
-					->rule('droplet_raw', 'not_empty')
-					->rule('droplet_date_pub', 'not_empty')
-					->rule('identity_orig_id', 'not_empty')
-					->rule('identity_username', 'not_empty');
-		
-		if ($validation->check())
-		{
-			// Create the identity
-			Model_Identity::create_from_droplet($droplet);
-		
-			// Create droplet from the array
-			$orm_droplet = Model_Droplet::create_from_array($droplet);
-		
-			// Check if queueing mode is enabled
+			$drop = array_pop($new_drops);
+
 			if ($queue_droplet)
 			{
-				// Add new proprties to the droplet
-				$droplet['tags'] = array();
-				$droplet['links'] = array();
-				$droplet['places'] = array();
-	
-				// Add the droplet to the queue
-				self::$_queue[] = $droplet;
+				self::$_queue[] = $drop;
 			}
 			
-			return $orm_droplet;
+			return $drop;
 		}
-		else
-		{
-			foreach ($validation->errors("validation") as $error)
-			{
-				Kohana::$log->add(Log::DEBUG, $error);
-			}
-			return NULL;
-		}
+		
+		return NULL;
 	}
 	
 	/**

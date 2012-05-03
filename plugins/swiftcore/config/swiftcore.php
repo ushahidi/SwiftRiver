@@ -15,5 +15,5 @@
  */
  
 return array(
-    'api_url' => 'http://api.swiftriver.dev/entities.json',
+    'api_url' => 'http://semantics.api.ushahididev.com/entities.json',
 );

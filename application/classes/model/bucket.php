@@ -165,7 +165,7 @@ class Model_Bucket extends ORM {
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.droplet_processed', '=', 1);
+				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
 				
 			if ($drop_id)
 			{
@@ -243,7 +243,7 @@ class Model_Bucket extends ORM {
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.droplet_processed', '=', 1)
+				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 				->where('buckets_droplets.id', '>', $since_id)
 				->group_by('buckets_droplets.id')
 				->order_by('buckets_droplets.id', 'ASC');

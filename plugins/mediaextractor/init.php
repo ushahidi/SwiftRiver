@@ -87,6 +87,8 @@ class MediaExtractor_Init {
 
 			// Save the Images
 			Model_Droplet::add_media($droplet, $this->images, 'image');
+			
+			$droplet_arr['links_complete'] = TRUE;
 		}
 		catch (Exception $e) //FIXME: Catch specific exceptions...
 		{

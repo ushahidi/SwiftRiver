@@ -207,8 +207,8 @@ class TwitterSearch {
         
         do
         {
-            //Kohana::$log->add(Log::DEBUG, 'REQUEST: '.$request);
-            //Kohana::$log->write();
+            Kohana::$log->add(Log::DEBUG, 'REQUEST: '.$request);
+            Kohana::$log->write();
             $response = $this->objectify($this->process($request));
             //Kohana::$log->add(Log::DEBUG, var_export($response, true));
 

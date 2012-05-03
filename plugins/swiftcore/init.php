@@ -26,6 +26,9 @@ class Swiftcore_Init {
 		// Get the droplet
 		$droplet = & Swiftriver_Event::$data;
 		
+		Kohana::$log->add(Log::DEBUG, "Semantic processing for drop with id :id", array(':id' => $droplet['id']));
+		Kohana::$log->write();		
+		
 		// URL for extracting semantics
 		$api_url = Kohana::$config->load('swiftcore.api_url');
 		
@@ -71,47 +74,51 @@ class Swiftcore_Init {
 			// Convert the JSON response to an array
 			$semantics = json_decode($response, TRUE);
 			
-			if ($semantics['status'] != 'OK')
+			if ($semantics['status'] == 'OK')
 			{
-				curl_close($ch);
-				return;
-			}
-			
-			$semantics = $semantics['results'];
-			
-			// Add Geo-political entries
-			$place_items =  (array_key_exists('gpe', $semantics))
-			    ? $semantics['gpe']
-			    : array();
-			
-			$places = array();
-			foreach ($place_items as $place)
-			{
-				$places[] = array(
-					'place_name' => $place['place_name'],
-					'latitude' => $place['coordinates']['latitude'],
-					'longitude' => $place['coordinates']['longitude'],
-					'source' => 'gisgraphy'
-				);
-			}
-			
-			$droplet['places'] = $places;
-			
-			// Remove the 'gpe' items
-			unset ($semantics['gpe']);
-			
-			// Get the other semantics and generalize them as "tags"
-			$tags = array();
-			foreach ($semantics as $key => $entities)
-			{
-				foreach ($entities as $entity)
+				$semantics = $semantics['results'];
+
+				// Add Geo-political entries
+				$place_items =  (array_key_exists('location', $semantics))
+				    ? $semantics['location']
+				    : array();
+
+				$places = array();
+				foreach ($place_items as $place)
 				{
-					$tags[] = array('tag_name' => $entity, 'tag_type' => $key);
+					$places[] = array(
+						'place_name' => $place['place_name'],
+						'latitude' => $place['coordinates']['latitude'],
+						'longitude' => $place['coordinates']['longitude'],
+						'source' => 'gisgraphy'
+					);
+				}
+				
+				if ( ! empty($places))
+				{
+					$droplet['places'] = $places;
+				}
+
+				// Remove the 'location' items
+				unset ($semantics['location']);
+
+				// Get the other semantics and generalize them as "tags"
+				$tags = array();
+				foreach ($semantics as $key => $entities)
+				{
+					foreach ($entities as $entity)
+					{
+						$tags[] = array('tag_name' => $entity, 'tag_type' => $key);
+					}
+				}
+
+				// Set the tags
+				if ( ! empty($tags))
+				{
+					$droplet['tags'] = $tags;
 				}
 			}
-			
-			// Set the tags
-			$droplet['tags'] = $tags;
+			$droplet['semantics_complete'] = TRUE;
 		}
 		else
 		{

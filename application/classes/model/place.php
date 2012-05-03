@@ -36,13 +36,10 @@ class Model_Place extends ORM
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time places only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the place was first added
-			$this->place_date_add = date("Y-m-d H:i:s", time());
-		}
-
+		$this->id = self::get_ids(1);
+		$this->place_name = trim($this->place_name);
+		$this->place_name_canonical = strtolower($this->place_name);
+		$this->hash = md5($this->place_name.$this->longitude.$this->latitude);
 		return parent::save();
 	}
 	
@@ -65,51 +62,6 @@ class Model_Place extends ORM
 		return $query->execute()->as_array();
 	}
 	
-	/**
-	 * Retrives a place using its latitude and longitude values
-	 *
-	 * @param array $coords Array with the place data; latitude and longitude
-	 * @param bool $save Optionally saves the place record if no match is found
-	 * @return mixed Model_Place if a record is found, FALSE otherwise
-	 */
-	public static function get_place_by_lat_lon($data, $save = FALSE)
-	{
-		if (! is_array($data) OR empty($data))
-			return FALSE;
-		
-		// Latitude and longitude must be specified
-		if (empty($data['latitude']) OR empty($data['longitude']))
-			return FALSE;
-			
-		// Retrieve record using lon, lat
-		$orm_place = ORM::factory('place')
-				->where(DB::expr('X(place_point)'), '=', $data['longitude'])
-				->where(DB::expr('Y(place_point)'), '=', $data['latitude'])
-				->find();
-		
-		if ($orm_place->loaded())
-		{
-			return $orm_place;
-		}
-		
-		// Check if $place_data has the place_name and place_source array keys
-		if (array_key_exists('place_name', $data) AND array_key_exists('source', $data))
-		{
-			if ( ! $orm_place->loaded() AND $save)
-			{
-				// Create the place record
-				$orm_place->place_name = $data['place_name'];
-				$orm_place->place_point = DB::expr("GeomFromText('POINT(".$data['longitude']." ".$data['latitude'].")')");
-				$orm_place->place_source = $data['source'];
-			
-				return $orm_place->save();
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
 	
 	/**
 	 * Retrives a place using its name
@@ -134,7 +86,8 @@ class Model_Place extends ORM
 		if ( ! $orm_place->loaded() AND $save)
 		{
 			// Create the place record
-			$orm_place->place_name = $place_name;		
+			$orm_place->place_name = $place_name;
+			// FIXME: Geocode the place name
 			return $orm_place->save();
 		}
 		
@@ -150,64 +103,100 @@ class Model_Place extends ORM
 	 * @param array $place Array of hashes described above
 	 * @return mixed array of place ids if the place exists, FALSE otherwise
 	 */
-	public static function get_places($places)
+	public static function get_places(& $drops)
 	{
-		// First try to add any links missing from the db
-		// The below generates the below query to find missing links and insert them all at once:
-		/*
-		 *   	insert into places (place_name, place_point)
-		 *   	SELECT DISTINCT * 
-		 *   	FROM (
-		 *   		SELECT 'Mombasa' AS `place_name`, GeomFromText('POINT(39.666653 -4.050063)') AS `place_point` UNION ALL 
-		 *   		SELECT 'Nairobi' AS `place_name`, GeomFromText('POINT(36.820174 -1.2857)') AS `place_point`
-		 *   	) AS `a` 
-		 *   	WHERE (place_name, place_point) NOT IN (
-		 *   		SELECT `place_name`, `place_point` 
-		 *   		FROM `places` 
-		 *   		WHERE (place_name, X(place_point), Y(place_point)) IN (
-		 *   			('Nairobi', '-1.2857', '36.820174'), 
-		 *   			('Mombasa', '-4.050063', '39.666653')
-		 *   		)
-		 *   	);
-         *   	
-         *   	
-		 */
-		$query = DB::select()->distinct(TRUE);
-		$place_subquery = NULL;
-		foreach ($places as $place)
+		if (empty($drops))
+			return;
+			
+		// Generate the place hashes and create a index hash array of the given places
+		// linking a drop to a place
+		$places_idx = array();
+		foreach ($drops as $drop_key => & $drop)
 		{
-			$union_query = DB::select(
-							array(DB::expr("'".addslashes($place['place_name'])."'"), 'place_name'), 		
-							array(DB::expr("GeomFromText('POINT(".$place['longitude']." ".$place['latitude'].")')"), 'place_point'));
-			if ( ! $place_subquery)
+			if (isset($drop['places']))
 			{
-				$place_subquery = $union_query;
-			}
-			else
-			{
-				$place_subquery = $union_query->union($place_subquery, TRUE);
+				foreach ($drop['places'] as $place_key => $place)
+				{
+					if ( ! isset($place['id']) )
+					{
+						$place['place_name'] = trim($place['place_name']);
+						$hash = md5($place['place_name'].$place['longitude'].$place['latitude']);
+						if (empty($places_idx[$hash]))
+						{
+							$places_idx[$hash]['place_name'] = $place['place_name'];
+							$places_idx[$hash]['longitude'] = $place['longitude'];
+							$places_idx[$hash]['latitude'] = $place['latitude'];
+							$places_idx[$hash]['keys'] = array();
+						}
+						$places_idx[$hash]['keys'][] = array($drop_key, $place_key);
+					}
+				}
 			}
 		}
-		if ($place_subquery)
+		
+		if (empty($places_idx))
+			return;
+		
+		Swiftriver_Mutex::obtain(get_class(), 3600);
+		
+		// Find those that exist
+		$found = DB::select('hash', 'id')
+					->from('places')
+					->where('hash', 'IN', array_keys($places_idx))
+					->execute()
+					->as_array();
+					
+		// Update the found entries
+		$new_place_count = count($places_idx);
+		foreach ($found as $hash)
 		{
-			$query->from(array($place_subquery,'a'));
-			$sub = DB::select('place_name', 'place_point')
-			           ->from('places')
-			           ->where(DB::expr('(place_name, Y(place_point), X(place_point))'), 'IN', $places);
-			$query->where(DB::expr('(place_name, place_point)'), 'NOT IN', $sub);
-			DB::insert('places', array('place_name', 'place_point'))->select($query)->execute();
+			foreach ($places_idx[$hash['hash']]['keys'] as $keys)
+			{
+				list($drop_key, $place_key) = $keys;
+				$drops[$drop_key]['places'][$place_key]['id'] = $hash['id'];
+			}
+			$new_place_count--;
+			unset($places_idx[$hash['hash']]);
 		}
 		
-		// Get the tag IDs
-		if ($places)
+		if ( ! empty($places_idx))
 		{
-			$query = DB::select('id')
-			           ->from('places')
-			           ->where(DB::expr('(place_name, Y(place_point), X(place_point))'), 'IN', $places);
-
-			return $query->execute()->as_array();
+			// Get a range of IDs to be used in inserting the new places
+			$base_id = self::get_ids($new_place_count);
+			
+			$query = DB::insert('places', array('id', 'hash', 'place_name', 'place_name_canonical', 'longitude', 'latitude'));
+			foreach ($places_idx as $hash => $value)
+			{
+				foreach ($value['keys'] as $key)
+				{
+					list($drop_key, $place_key) = $key;
+					$drops[$drop_key]['places'][$place_key]['id'] = $base_id;
+				}
+				$query->values(array(
+					'id' => $base_id++,
+					'hash' => $hash,
+					'place_name' => $value['place_name'],
+					'place_name_canonical' => strtolower($value['place_name']),
+					'longitude' => $value['longitude'],
+					'latitude' => $value['latitude']
+				));
+			}
+			$query->execute();
 		}
-		
-		return FALSE;
+		Swiftriver_Mutex::release(get_class());
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting drops
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+	    // Build River Query
+		$query = DB::select(array(DB::expr("NEXTVAL('places',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
 	}
 }

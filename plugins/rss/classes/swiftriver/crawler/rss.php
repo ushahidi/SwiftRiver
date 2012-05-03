@@ -94,7 +94,7 @@ class Swiftriver_Crawler_Rss  {
 				{					
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
-					$droplet['river_id'] = $river_id;
+					$droplet['river_id'] = array($river_id);
 					$droplet['identity_orig_id'] = $options['url'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();
@@ -102,7 +102,7 @@ class Swiftriver_Crawler_Rss  {
 					$droplet['droplet_orig_id'] = trim((string) $feed_item->get_link());
 					$droplet['droplet_type'] = 'original';
 					$droplet['droplet_title'] = trim(strip_tags(str_replace('<', ' <', $feed_item->get_title())));
-					$droplet['droplet_content'] = $feed_item->get_content();
+					$droplet['droplet_raw'] = $droplet['droplet_content'] = $feed_item->get_content();
 					$locales = explode('-', $feed->get_language());
 					$droplet['droplet_locale'] = $locales[0];
 					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($feed_item->get_date()));

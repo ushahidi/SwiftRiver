@@ -106,7 +106,7 @@ class Swiftriver_Crawler_Twitter  {
 
 				// Populate the droplet
 				$droplet['channel'] = 'twitter';
-				$droplet['river_id'] = $river_id;
+				$droplet['river_id'] = array($river_id);
 				$droplet['identity_orig_id'] = $tweet->from_user_id;
 				$droplet['identity_username'] = $tweet->from_user;
 				$droplet['identity_name'] = $tweet->from_user_name;
@@ -114,7 +114,7 @@ class Swiftriver_Crawler_Twitter  {
 				$droplet['droplet_orig_id'] = $tweet->id;
 				$droplet['droplet_type'] = 'original';
 				$droplet['droplet_title'] = $tweet->text;
-				$droplet['droplet_content'] = $tweet->text;
+				$droplet['droplet_raw'] = $droplet['droplet_content'] = $tweet->text;
 				$droplet['droplet_locale'] = $tweet->iso_language_code;
 				$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($tweet->created_at));
 
