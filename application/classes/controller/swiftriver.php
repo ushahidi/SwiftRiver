@@ -337,6 +337,12 @@ class Controller_Swiftriver extends Controller_Template {
 
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
+
+			if ( ! in_array($this->request->controller(), array('river', 'bucket', 'search')))
+			{
+				// Reset cookies
+				Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'all');
+			}
 		}
 
 	}

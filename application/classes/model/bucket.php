@@ -508,20 +508,36 @@ class Model_Bucket extends ORM {
 		$user_orm = ORM::factory('user', $user_id);
 		if ($user_orm->loaded())
 		{
-			// Buckets owned by the user in $user_id
+			// Get the bucketst the user is collaborating on
+			$collaborating = DB::select('bucket_id')
+			    ->from('bucket_collaborators')
+			    ->where('user_id', '=', $user_id)
+			    ->where('collaborator_active', '=', 1)
+			    ->execute()
+			    ->as_array();
+
+			// Buckets owned by the user in $user_id - includes the buckets
+			// the user is collaborating on
 			$owner_buckets = DB::select('buckets.id', 'buckets.bucket_name', 
 				    'buckets.bucket_name_url', 'accounts.account_path')
+			    ->distinct(TRUE)
 			    ->from('buckets')
 			    ->join('accounts', 'INNER')
 			    ->on('buckets.account_id', '=', 'accounts.id')
-			    ->where_open()
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('bucket_name', 'LIKE', $search_expr)
-			    ->or_where('bucket_name_url', 'LIKE', $search_expr)
-			    ->where_close();
+			    ->or_where_open()
+			    ->where('bucket_name_url', 'LIKE', $search_expr);
+			
+			if (count($collaborating) > 0)
+			{
+				$owner_buckets->where('buckets.id', 'IN', $collaborating);
+			}
+			$owner_buckets->or_where_close();
 
 
-			// All public buckets not owned by the user
+			// All public buckets not owned by the user - excludes all buckets
+			// that the user is collaborating on
 			$all_buckets = DB::select('buckets.id', 'buckets.bucket_name', 
 				    'buckets.bucket_name_url', 'accounts.account_path')
 			    ->union($owner_buckets)
@@ -529,11 +545,25 @@ class Model_Bucket extends ORM {
 			    ->join('accounts', 'INNER')
 			    ->on('buckets.account_id', '=', 'accounts.id')
 			    ->where('bucket_publish', '=', 1)
-			    ->and_where_open()
 			    ->where('account_id', '<>', $user_orm->account->id)
-			    ->where('bucket_name', 'LIKE', $search_expr)
-			    ->or_where('bucket_name_url', 'LIKE', $search_expr)
-			    ->and_where_close();
+			    ->where('bucket_name', 'LIKE', $search_expr);
+
+			if (count($collaborating) > 0)
+			{
+				$all_buckets->where('buckets.id', 'NOT IN', $collaborating);
+			}
+
+			// Build the predicates for the OR clause
+			$all_buckets->or_where_open()
+			    ->where('bucket_name_url', 'LIKE', $search_expr)
+			    ->where('account_id', '<>', $user_orm->account->id);
+			
+			if (count($collaborating) > 0)
+			{
+				$all_buckets->where('buckets.id', 'NOT IN', $collaborating);
+			}
+
+			$all_buckets->or_where_close();
 
 			$buckets = $all_buckets->execute()->as_array();
 		}

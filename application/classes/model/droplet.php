@@ -258,7 +258,7 @@ class Model_Droplet extends ORM {
 		
 		//Get the tag IDs en batch
 		$tag_ids = Model_Tag::get_tags($new_tags);
-		
+
 		// Add the tags in one big batch
 		if ($tag_ids)
 		{
@@ -1185,7 +1185,7 @@ class Model_Droplet extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
 			    ->where('droplets.droplet_processed', '=', 1);
 
-			self::apply_droplets_filter($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters);
 
 			$query->group_by('droplets.id')
 			    ->order_by('droplets.droplet_date_add', 'DESC')
@@ -1224,7 +1224,18 @@ class Model_Droplet extends ORM {
 				->on('droplets_tags.droplet_id', '=', 'droplets.id')
 				->join('tags', 'INNER')
 				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where('tag', 'IN', $filters['tags']);
+				->where_open();
+
+			foreach ($filters['tags'] as $tag)
+			{
+				$query->or_where('tags.tag', 'LIKE', DB::expr("'%$tag%'"));
+			}
+
+			// Places not set, close the brackets
+			if (empty($filters['places']))
+			{
+				$query->where_close();
+			}
 		}
 
 		if ( ! empty($filters['places']))
@@ -1232,10 +1243,23 @@ class Model_Droplet extends ORM {
 			$query->join('droplets_places', 'INNER')
 				->on('droplets_places.droplet_id', '=', 'droplets.id')
 				->join('places', 'INNER')
-				->on('droplets_places.place_id', '=', 'places.id')
-				->where('place_name', 'IN', $filters['places']);
+				->on('droplets_places.place_id', '=', 'places.id');
+
+			// No tags specified - open the brackets
+			if (empty($filters['tags']))
+			{
+				$query->where_open();
+			}
+			
+			foreach ($filters['places'] as $place)
+			{
+				$query->or_where('places.place_name', 'LIKE', DB::expr("'%$place%'"));
+			}
+
+			// Close the brackets
+			$query->where_close();
 		}
-		
+
 		if ( ! empty($filters['start_date']))
 		{
 			$start_date = array_shift($filters['start_date']);

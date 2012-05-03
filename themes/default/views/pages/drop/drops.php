@@ -14,7 +14,9 @@
 
 <script type="text/template" id="drop-drops-view-template">
 	<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
-		<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
+		<a href="#" class="drop-image-wrap zoom-trigger">
+			<img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" />
+		</a>
 	<% i++; }; return i > 1; }); %>
 	<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 	<div class="drop-actions cf">

@@ -1318,9 +1318,9 @@ $(function() {
 			zoomShow(detailView.render().el);
 			$("#zoom-container div.modal-window").bind("clickoutside", function(event){
 				if(!appRouter.listingDone) {
-					appRouter.navigate("/drops", {trigger: true});
+					appRouter.navigate("/list", {trigger: true});
 				} else {
-					appRouter.navigate("/drops");
+					appRouter.navigate("/list");
 				}
 			});
 			return false;

@@ -99,13 +99,12 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
-		// Session data for search - only stored when the river
-		// is in view
-		$this->session->set('search_river_id', $this->river->id);
-		$this->session->set('search_scope', 'river');
-
 		// Get the id of the current river
 		$river_id = $this->river->id;
+
+		// Cookies to help determine the search options to display
+		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'river');
+		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 		
 		if
 		(

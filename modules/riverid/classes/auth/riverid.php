@@ -57,7 +57,11 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 								 ->find();
 								
 					// Only auto register if the site allows it
-					if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $user->loaded())
+					if
+					( 
+						! (bool) Model_Setting::get_setting('public_registration_enabled')
+						AND ! $user->loaded()
+					)
 					{
 						return FALSE;
 					}

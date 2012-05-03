@@ -13,8 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_Tag extends ORM
-{
+class Model_Tag extends ORM {
 	/**
 	 * A tag has and belongs to many droplets and accounts
 	 *
@@ -194,6 +193,7 @@ class Model_Tag extends ORM
 			{
 				$tag_hashes[] = $tag['tag_hash'];
 			}
+
 			$query = DB::select('id')
 			           ->from('tags')
 			           ->where('tag_hash', 'IN', $tag_hashes);

@@ -84,9 +84,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
-		// Session data for search - only stored when the bucket is in view
-		$this->session->set('search_bucket_id', $this->bucket->id);
-		$this->session->set('search_scope', 'bucket');
+		// Cookies to help determine the search options to display
+		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'bucket');
+		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $this->bucket->id);
 
 		$this->template->header->title = $this->page_title;
 		
