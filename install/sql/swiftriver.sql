@@ -102,17 +102,27 @@ CREATE TABLE IF NOT EXISTS `rivers` (
 -- Table `media`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `media` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `media` VARCHAR(255) NOT NULL DEFAULT '',
-  `media_hash` VARCHAR(32) NOT NULL DEFAULT '',
-  `media_type` VARCHAR(50) NOT NULL DEFAULT 'image',
-  `media_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `id` bigint(20) unsigned NOT NULL,
+  `hash` char(32) NOT NULL,
+  `url` text NOT NULL,
+  `type` varchar(10) NOT NULL DEFAULT 'image',
   PRIMARY KEY (`id`),
-  INDEX `media_date_add_idx` (`media_date_add` ASC),
-  INDEX `media_hash_idx` (`media_hash` ASC),
-  INDEX `media_type_idx` (`media_type` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  UNIQUE KEY `media_un_hash` (`hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- -----------------------------------------------------
+-- Table `media_thumbnails`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `media_thumbnails` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `media_id` bigint(20) NOT NULL,
+  `size` int(4) NOT NULL,
+  `url` text NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `media_un_thumbnail` (`media_id`,`size`),
+  KEY `media_id` (`media_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -449,6 +459,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `droplet_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
   `droplet_content` text COMMENT 'The content of the feed item (if available)',
   `droplet_locale` varchar(10) DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))',
+  `droplet_image` bigint(20) DEFAULT NULL,
   `droplet_date_pub` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Original publish date of the feed item',
   `droplet_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
   `processing_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Bitwise flags indicating the status of drop post processing',
@@ -458,7 +469,8 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   KEY `droplet_date_pub_idx` (`droplet_date_pub`),
   KEY `droplet_date_add_idx` (`droplet_date_add`),
   KEY `droplet_processed_idx` (`processing_status`),
-  KEY `parent_id` (`parent_id`)
+  KEY `parent_id` (`parent_id`),
+  KEY `droplet_image` (`droplet_image`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Items are generated from feeds and are attached to a specifi';
 
 -- -----------------------------------------------------
@@ -734,13 +746,6 @@ CREATE TABLE IF NOT EXISTS `seq` (
   `id` bigint(20) unsigned NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `seq` (`name`, `id`) VALUES 
-('droplets', 1),
-('tags', 1),
-('places', 1),
-('links', 1),
-('identities', 1);
-
 DELIMITER //
 CREATE FUNCTION `NEXTVAL`(v_seq_name varchar(30), v_increment BIGINT) 
 RETURNS INT 
@@ -759,6 +764,14 @@ START TRANSACTION;
 -- -----------------------------------------------------
 -- Data for table `roles`
 -- -----------------------------------------------------
+INSERT INTO `seq` (`name`, `id`) VALUES 
+('droplets', 1),
+('tags', 1),
+('places', 1),
+('links', 1),
+('identities', 1),
+('media', 1);
+
 INSERT INTO `roles` (`id`, `name`, `description`, `permissions`) VALUES 
 (1, 'login', 'Login privileges, granted after account confirmation', NULL),
 (2, 'admin', 'Super Administrator', NULL);

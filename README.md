@@ -25,6 +25,7 @@ enabled in your PHP configuration file:
   * mcrypt (http://php.net/mcrypt) for cryptography services
   * PCNTL (http://php.net/pcntl) for process control
   * APC (http://php.net/apc) for in memory caching
+  * GD (http://php.net/gd) for image processing
 
 
 Installation of Required Extensions
@@ -41,11 +42,8 @@ Run the following commands from the terminal:
         $ sudo port install php5-pcntl
         $ sudo port install php5-openssl
         $ sudo port install php5-apc
-    
-Alternatively, you can specify all the extensions to be installed on one line as follows:
-    
-        $ sudo port install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc
-        
+		$ sudo port install php5-gd
+            
 Restart Apache:
     
         sudo <path-to-apachectl> restart
@@ -53,7 +51,7 @@ Restart Apache:
 Debian/Ubuntu/Linux Mint Installation
 -------------------------------------
 
-        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php-apc
+        $ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc php5-gd
 
 Restart Apache:
 
@@ -62,7 +60,7 @@ Restart Apache:
 Fedora/CentOS Installation
 --------------------------
 
-        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc
+        $ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc php5-gd
 
 Restart Apache:
 

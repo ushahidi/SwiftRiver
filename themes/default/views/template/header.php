@@ -43,6 +43,7 @@
 	
 	// Masonry plugin
 	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
+	echo(Html::script("themes/default/media/js/jquery.imagesloaded.min.js"));
 	echo(Html::script("themes/default/media/js/modernizr.custom.01220.js"));
 	
 	// Fileupload jQuery plugin
@@ -51,7 +52,7 @@
 	echo(Html::script("themes/default/media/js/jquery.fileupload.js"));
 
 	// Touch Plugin
-	echo(Html::script("themes/default/media/js/jquery.touch.min.js"));
+	// echo(Html::script("themes/default/media/js/jquery.touch.min.js"));
 
 	// Backbone
 	echo(Html::script("themes/default/media/js/underscore-min.js"));

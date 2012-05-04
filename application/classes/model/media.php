@@ -27,7 +27,10 @@ class Model_Media extends ORM {
 		'accounts' => array(
 			'model' => 'account',
 			'through' => 'droplets_media'
-			),				
+			),
+		'thumbnails' => array(
+			'model' => 'media_thumbnail'
+			),			
 		);
 		
 	/**
@@ -54,45 +57,96 @@ class Model_Media extends ORM {
 	 * @param string $media Array of hashes described above
 	 * @return mixed array of media ids if the media exists, FALSE otherwise
 	 */
-	public static function get_media($media)
+	public static function get_media(& $drops)
 	{
-		$query = DB::select()->distinct(TRUE);
-		$media_subquery = NULL;
-		foreach ($media as $link)
+		if (empty($drops))
+			return;
+			
+		// Generate the media hashes and create a index hash array of the given media
+		// linking a drop to a media
+		$media_idx = array();
+		foreach ($drops as $drop_key => & $drop)
 		{
-			$union_query = DB::select(
-							array(DB::expr("'".addslashes($link['media'])."'"), 'media'), 		
-							array(DB::expr("'".addslashes($link['media_hash'])."'"), 'media_hash'),
-							array(DB::expr("'".addslashes($link['media_type'])."'"), 'media_type'));
-			if ( ! $media_subquery)
+			if (isset($drop['media']))
 			{
-				$media_subquery = $union_query;
+				foreach ($drop['media'] as $media_key => & $media)
+				{
+					if ( ! isset($media['id']) )
+					{
+						$hash = md5($media['url']);
+						if (empty($media_idx[$hash]))
+						{
+							$media_idx[$hash]['url'] = $media['url'];
+							$media_idx[$hash]['type'] = $media['type'];
+							$media_idx[$hash]['keys'] = array();
+						}
+						$media_idx[$hash]['keys'][] = array($drop_key, $media_key);
+					}
+				}
 			}
-			else
-			{
-				$media_subquery = $union_query->union($media_subquery, TRUE);
-			}
-		}
-		if ($media_subquery)
-		{
-			$query->from(array($media_subquery,'a'));
-			$sub = DB::select('media', 'media_hash', 'media_type')
-			           ->from('media')
-			           ->where(DB::expr('(media, media_hash, media_type)'), 'IN', $media);
-			$query->where(DB::expr('(media, media_hash, media_type)'), 'NOT IN', $sub);
-			DB::insert('media', array('media', 'media_hash', 'media_type'))->select($query)->execute();
 		}
 		
-		// Get the media IDs
-		if ($media)
+		if (empty($media_idx))
+			return;
+		
+		Swiftriver_Mutex::obtain(get_class(), 3600);
+		
+		// Find those that exist
+		$found = DB::select('hash', 'id')
+					->from('media')
+					->where('hash', 'IN', array_keys($media_idx))
+					->execute()
+					->as_array();
+					
+		// Update the found entries
+		$new_media_count = count($media_idx);
+		foreach ($found as $hash)
 		{
-			$query = DB::select('id')
-			           ->from('media')
-			           ->where(DB::expr('(media, media_hash, media_type)'), 'IN', $media);
-
-			return $query->execute()->as_array();
+			foreach ($media_idx[$hash['hash']]['keys'] as $keys)
+			{
+				list($drop_key, $media_key) = $keys;
+				$drops[$drop_key]['media'][$media_key]['id'] = $hash['id'];
+			}
+			$new_media_count--;
+			unset($media_idx[$hash['hash']]);
 		}
 		
-		return FALSE;
-	}	
+		if ( ! empty($media_idx))
+		{
+			// Get a range of IDs to be used in inserting the new media
+			$base_id = self::get_ids($new_media_count);
+			
+			$query = DB::insert('media', array('id', 'hash', 'url', 'type'));
+			foreach ($media_idx as $hash => $value)
+			{
+				foreach ($value['keys'] as $key)
+				{
+					list($drop_key, $media_key) = $key;
+					$drops[$drop_key]['media'][$media_key]['id'] = $base_id;
+				}
+				$query->values(array(
+					'id' => $base_id++,
+					'hash' => $hash,
+					'url' => $value['url'],
+					'type' => $value['type']
+				));
+			}
+			$query->execute();
+		}
+		
+		Swiftriver_Mutex::release(get_class());
+	}
+	
+	/**
+	 * Get a range of IDs to be used for inserting drops
+	 *
+	 * @param int $num Number of IDs to be generated.
+	 * @return int The lowe limit of the range requested
+	 */
+	public static function get_ids($num)
+	{
+		$query = DB::select(array(DB::expr("NEXTVAL('media',$num)"), 'id'));
+		    
+		return intval($query->execute()->get('id', 0));
+	}
 }

@@ -16,19 +16,6 @@
  */
 
 class MediaExtractor_Init {
-
-	/**
-	 * Array of links extracted from a droplet
-	 * @var array
-	 */
-	private $links = array();
-
-	/**
-	 * Array of images extracted from a droplet
-	 * @var array
-	 */
-	private $images = array();
-
 	
 	public function __construct()
 	{	
@@ -41,7 +28,7 @@ class MediaExtractor_Init {
 
 		require_once($path);
 
-		// Hook into routing
+		// Hook into drop post processing
 		Swiftriver_Event::add('swiftriver.droplet.extract_metadata', array($this, 'parse_media'));
 	}
 
@@ -55,105 +42,157 @@ class MediaExtractor_Init {
 		try
 		{
 			// Get the droplet content
-			$droplet_arr = Swiftriver_Event::$data;
+			$droplet = & Swiftriver_Event::$data;
 			
-			$droplet = ORM::factory('droplet', $droplet_arr['id']);
+			Kohana::$log->add(Log::DEBUG, "Media extraction started for drop with id :id", array(':id' => $droplet['id']));
+			Kohana::$log->write();
 			
-			// 1. Get the links in the droplet
-			$this->links = Swiftriver_Links::extract_links($droplet->droplet_content);
-
-			// Remove regular image links
-			$this->_remove_images();
-			// Remove service image links
-			$this->_remove_service_images();
-			// Save the links
-			Model_Droplet::add_links($droplet, $this->links);
-
-
-			// 2. Get all the image anchors in the droplet
-			$html = str_get_html($droplet->droplet_content);
-			foreach ($html->find('img') as $element)
+			$links = array();
+			$images = array();
+						
+			//Get the urls from the anchor and image tags in the drop 
+			if (preg_match_all('/<\s*(a|img)\s*[^>]*(?:(?:href|src)\s*=\s*"([^"]+))"[^>]*>/i', $droplet['droplet_raw'], $tag_matches))
 			{
-				// We'll start using absolute urls to images soon :)
-				//$images[] = url_to_absolute($url, $element->src);
-				$this->images[] = $element->src;
+				foreach ($tag_matches[2] as $key => $url)
+				{
+					if ($tag_matches[1][$key] == 'img')
+					{
+						$images[] = $url;
+					}
+					else
+					{
+						$url = $this->full($url);						
+						$this->parse_link($url, $images, $links);
+					}
+				}
 			}
 			
+			// Get links that from the html text
+			// http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+			$pattern = "(?i)\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]"
+			    . "{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(("
+			    . "[^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+			if (preg_match_all("/".$pattern."/is", strip_tags($droplet['droplet_raw']), $text_matches))
+			{
+				foreach ($text_matches[0] as $key => $url)
+				{
+					$url = $this->full($url);						
+					$this->parse_link($url, $images, $links);
+				}
+			}
+						            
+			// Save the links
+			if ( ! empty($links))
+			{
+				$droplet['links'] = $links;
+			}
+            
+            
 			// Remove Images we don't need
-			$this->images = Mediaextractor_Filter::dejunk($this->images);
-			
+			$images = Mediaextractor_Filter::dejunk($images);
+            
 			// Remove dupes
-			$this->images = array_unique($this->images);
-
-			// Save the Images
-			Model_Droplet::add_media($droplet, $this->images, 'image');
+			$images = array_unique($images);
 			
-			$droplet_arr['links_complete'] = TRUE;
+			// Get a droplet image and remove tiny images.
+			$selected_images = array();
+			$droplet_image = NULL;
+			$cur_max = 0;
+			foreach ($images as $key => $image)
+			{
+				 list($width, $height) = getimagesize($image);
+				
+				// We only want images larger than 1000 square pixels
+				$area = $width * $height;
+				if ($area >= 1000)
+				{
+					$selected_images[] = $image;
+					
+					// The drop image is the largest image
+					if ($area > $cur_max)
+					{
+						$cur_max = $area;
+						$droplet_image = $image;
+					}
+				}
+			}
+            
+			// Save the Images
+			if ( ! empty($selected_images))
+			{
+				$droplet['media'] = array();
+				foreach ($selected_images as $image)
+				{
+					$droplet['media'][] = array(
+						'url' => $image,
+						'type' => 'image',
+						'droplet_image' => $image == $droplet_image
+					);
+				}
+			}
+			
+			$droplet['media_complete'] = TRUE;
 		}
-		catch (Exception $e) //FIXME: Catch specific exceptions...
+		catch (Exception $e)
 		{
 			// Some kind of error occurred
 			Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
 		}
 	}
-
+	
 	/**
-	 * Remove image links
-	 * 
-	 * @return void
-	 */
-	private function _remove_images()
+	*
+	* Given a URL, determine if it points to an image or not.
+	*
+	*/
+	private function parse_link($url, & $images_arr, & $links_arr)
 	{
-		if ($this->links)
-		{		
-			foreach ($this->links as $key => $value)
-			{
-				if (preg_match('/\.(jpg|jpeg|png|gif)(?:[\?\#].*)?$/i', $value, $matches))
-				{
-					// Remove from links
-					unset($this->links[$key]);
-
-					// Add to images array
-					$this->images[] = $value;
-				}
-			}
+		if (preg_match('/\.(jpg|jpeg|png|gif)(?:[?#].*)?$/i', $url))
+		{
+			// Link to an image
+			$images_arr[] = $url;
+		}
+		else if ($image_service_url = $this->extract_service_image($url))
+		{
+			$images_arr[] = $image_service_url;
+		}
+		else
+		{
+			$links_arr[] = array('url' => $url);
 		}
 	}
 
-
-	private function _remove_service_images()
+	/**
+	 * Given a url, return the photo url from an image service or null
+	 * if the url does not point to an image server
+	 *
+	 * @param   string $url 
+	 * @return  mixed
+	 */
+	private function extract_service_image($url)
 	{
-		if ($this->links)
+		$ret = NULL;
+		
+		switch (parse_url($url, PHP_URL_HOST))
 		{
-			foreach ($this->links as $key => $value)
-			{
-				if (stristr($value,'yfrog.com'))
-				{
-					unset($this->links[$key]);
-					$this->images[] = $this->_extractyfrog($value);
-				}
-				elseif (stristr($value,'plixi.com'))
-				{
-					unset($this->links[$key]);
-					$this->images[] = $this->_extractplixi($value);
-				}
-				elseif (stristr($value,'instagr.am'))
-				{
-					unset($this->links[$key]);
-					$this->images[] = $this->_extractinstagram($value);
-				}
-				elseif (stristr($value,'twitpic.com'))
-				{
-					unset($this->links[$key]);
-					$this->images[] = $this->_extracttwitpic($value);
-				}
-				elseif (stristr($value,'flic.kr'))
-				{
-					unset($this->links[$key]);
-					$this->images[] = $this->_extractflickr($value);
-				}
-			}
-		}		
+			case 'yfrog.com':
+				$ret = $this->_extractyfrog($url);
+			break;
+			case 'plixi.com':
+				$ret = $this->_extractplixi($url);
+			break;
+			case 'instagr.am':
+				$ret = $this->_extractinstagram($url);
+			break;
+			case 'twitpic.com':
+				$ret = $this->_extracttwitpic($url);
+			break;
+			case 'flic.kr':
+				$ret = $this->_extractflickr($url);
+			break;
+		}
+		
+		return $ret;
 	}
 
 	private function _extractyfrog($link)
@@ -192,6 +231,48 @@ class MediaExtractor_Init {
 		{
 			return $element->src;
 		}
+	}
+	
+	/**
+	 * Take short url's and determine full urls using cURL
+	 *
+	 * @param   string $url Short URL
+	 * @return  string $url Full/Expanded URL
+	 */
+	private function full($url = NULL)
+	{
+		// Expand shortened URLs only
+		if ($url AND strlen($url < 25) AND strlen(parse_url($url, PHP_URL_HOST)) < 10)
+		{
+			try
+			{
+				$headers = get_headers($url,1);
+			}
+			catch (Exception $e)
+			{
+				// Some kind of error
+				// Abandon and return original url
+				Kohana::$log->add(Log::ERROR, Kohana_Exception::text($e));
+				return $url;
+			}
+
+			if (empty($headers) )
+			{
+				return $url;
+			}
+
+			if ( ! isset($headers['Location']))
+			{
+				return $url;
+			}
+			$url = $headers['Location'];
+			
+			// If an Array is returned for redirects
+			// Return the last item in the array
+			return is_array($url)? end($url) :  $url;
+		}
+
+		return $url;
 	}
 }
 

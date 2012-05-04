@@ -139,7 +139,7 @@ class Model_Bucket extends ORM {
 	 * @return array $droplets Total and Array of Droplets
 	 */
 	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, 
-		$max_id = PHP_INT_MAX, $filters = array())
+		$max_id = PHP_INT_MAX, $photos = FALSE, $filters = array())
 	{
 		$droplets = array(
 			'total' => 0,
@@ -176,6 +176,11 @@ class Model_Bucket extends ORM {
 			{
 				// Return all drops
 				$query->where('buckets_droplets.id', '<=', $max_id);
+			}
+			
+			if ($photos)
+			{
+				$query->where('droplets.droplet_image', '>', 0);
 			}
 
 			// Apply filters
@@ -217,7 +222,7 @@ class Model_Bucket extends ORM {
 	 * @param int $since_id
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets_since_id($user_id, $bucket_id, $since_id)
+	public static function get_droplets_since_id($user_id, $bucket_id, $since_id, $photos = FALSE)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -247,6 +252,11 @@ class Model_Bucket extends ORM {
 				->where('buckets_droplets.id', '>', $since_id)
 				->group_by('buckets_droplets.id')
 				->order_by('buckets_droplets.id', 'ASC');
+				
+			if ($photos)
+			{
+				$query->where('droplets.droplet_image', '>', 0);
+			}
 				
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();

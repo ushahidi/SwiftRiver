@@ -42,6 +42,11 @@ class Controller_River extends Controller_Swiftriver {
 	 * Base URL for this river.
 	 */
 	protected $river_base_url = NULL;
+	
+	/**
+	 * Whether photo drops only are selected.
+	 */
+	protected $photos = FALSE;
 
 	/**
 	 * @return	void
@@ -133,7 +138,7 @@ class Controller_River extends Controller_Swiftriver {
 				
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
-			$max_droplet_id, NULL, $filters);
+			$max_droplet_id, NULL, $filters, $this->photos);
 		
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -154,6 +159,7 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->channels = json_encode($this->river->get_channels());
 		$droplet_js->polling_enabled = TRUE;
 		$droplet_js->default_view = $this->river->default_layout;
+		$droplet_js->photos = $this->photos ? 1 : 0;
 		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
@@ -188,6 +194,7 @@ class Controller_River extends Controller_Swiftriver {
 
 	public function action_photos()
 	{
+		$this->photos = TRUE;
 		$this->action_index();
 	}	
 
@@ -223,17 +230,18 @@ class Controller_River extends Controller_Swiftriver {
 					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
 					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					$filters = $this->_get_filters();
 
 					if ($since_id)
 					{
 					    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
-					    	$this->river->id, $since_id, $filters);
+					    	$this->river->id, $since_id, $filters, $photos == 1);
 					}
 					else
 					{
 					    $droplets_array = Model_River::get_droplets($this->user->id, 
-					    	$this->river->id, 0, $page, $max_id, NULL, $filters);
+					    	$this->river->id, 0, $page, $max_id, NULL, $filters, $photos == 1);
 					}
 					$droplets = $droplets_array['droplets'];
 				}				

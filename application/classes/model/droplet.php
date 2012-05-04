@@ -24,7 +24,7 @@ class Model_Droplet extends ORM {
 	
 	const PROCESSING_FLAG_SEMANTICS = 1;
 	
-	const PROCESSING_FLAG_LINKS = 2;
+	const PROCESSING_FLAG_MEDIA = 2;
 
 	/**
 	 * A droplet has and belongs to many links, places, tags and attachments
@@ -219,6 +219,7 @@ class Model_Droplet extends ORM {
 		Model_Tag::get_tags($droplets);
 		Model_Link::get_links($droplets);
 		Model_Place::get_places($droplets);
+		Model_Media::get_media($droplets);
 		
 		// Populate the drop's metadata tables
 		self::add_metadata($droplets);
@@ -238,7 +239,10 @@ class Model_Droplet extends ORM {
 		$tag_values = NULL;
 		$semantics_complete = array();
 		$link_values = NULL;
-		$links_complete = array();
+		$media_values = NULL;
+		$drop_images = NULL;
+		$media_thumbnail_values = NULL;
+		$media_complete = array();
 		$place_values = NULL;
 		foreach ($drops as $drop)
 		{
@@ -286,10 +290,46 @@ class Model_Droplet extends ORM {
 				}
 			}
 			
-			// Find drops that have complete semantic processing
-			if (isset($drop['links_complete']))
+			if (isset($drop['media']))
 			{
-				$links_complete[] = $drop['id'];
+				foreach ($drop['media'] as $media)
+				{
+					if ($media_values)
+					{
+						$media_values .= ',';
+					}
+					$media_values .= '('.$drop['id'].','.$media['id'].')';
+					
+					if ($media['droplet_image'])
+					{
+						if ($drop_images)
+						{
+							$drop_images .= ' union all ';
+						}
+						$drop_images .= 'select '.$media['id'].' droplet_image, '.$drop['id'].' id';
+					}
+					
+					if (isset($media['thumbnails']))
+					{
+						foreach ($media['thumbnails'] as $thumbnail)
+						{
+							if ($media_thumbnail_values)
+							{
+								$media_thumbnail_values .= ',';
+							}
+							$media_thumbnail_values .= '('.$media['id']
+													   .','.$thumbnail['size']
+													   .",'".addslashes($thumbnail['url'])
+													   ."')";
+						}
+					}
+				}
+			}
+			
+			// Find drops that have complete semantic processing
+			if (isset($drop['media_complete']))
+			{
+				$media_complete[] = $drop['id'];
 			}
 			
 			if (isset($drop['places']))
@@ -333,12 +373,30 @@ class Model_Droplet extends ORM {
 			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) VALUES ".$link_values)->execute();
 		}
 		
-		// Update drops that completed link processing
-		if ( ! empty($links_complete))
+		// Update droplet media
+		if ($media_values)
+		{
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_media` (`droplet_id`, `media_id`) VALUES ".$media_values)->execute();
+		}
+		
+		// Insert thumbnails
+		if ($media_thumbnail_values)
+		{
+			DB::query(Database::INSERT, "INSERT IGNORE INTO `media_thumbnails` (`media_id`, `size`, `url`) VALUES ".$media_thumbnail_values)->execute();
+		}
+		
+		// Set drop image
+		if ($drop_images)
+		{
+			DB::query(Database::UPDATE, "UPDATE `droplets` JOIN (".$drop_images.") a USING (`id`) SET `droplets`.`droplet_image` = `a`.`droplet_image`")->execute();
+		}
+		
+		// Update drops that completed media processing
+		if ( ! empty($media_complete))
 		{
 			DB::update('droplets')
-			   ->set(array('processing_status' => DB::expr('processing_status | '.self::PROCESSING_FLAG_LINKS)))
-			   ->where("id", "IN", $links_complete)
+			   ->set(array('processing_status' => DB::expr('processing_status | '.self::PROCESSING_FLAG_MEDIA)))
+			   ->where("id", "IN", $media_complete)
 			   ->execute();
 		}
 		
@@ -348,58 +406,7 @@ class Model_Droplet extends ORM {
 			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_places` (`droplet_id`, `place_id`) VALUES ".$place_values)->execute();
 		}
 	}
-
-
-	/**
-	 * Adds media to a droplet
-	 *
-	 * @param Model_Droplet $orm_droplet Droplet ORM reference
-	 * @param array $media
-	 * @param string $type media type
-	 */
-	public static function add_media($orm_droplet, $media, $type = 'image')
-	{
-		$media_reduce = function($media)
-		{
-			return $media->media;
-		};
 		
-		$new_media = array_diff($media, array_map($media_reduce, $orm_droplet->media->find_all()->as_array()));
-		
-		$media_map = function($media) use($type)
-		{
-			return array (
-				'media' => $media,
-				'media_hash' => hash('md5', $media),
-				'media_type' => $type
-			);
-		};
-		
-		$media = array_map($media_map, $new_media);
-
-		// Get the media IDs
-		$media_ids = Model_Media::get_media($media);
-		
-		// Add the media to the droplet
-		if ($media_ids)
-		{
-			$query = DB::insert('droplets_media', array('droplet_id', 'media_id'));
-			foreach ($media_ids as $media_id)
-			{
-			    $query->values(array($orm_droplet->id, $media_id['id']));
-			}
-
-			try
-			{
-			    $result = $query->execute();
-			}
-			catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, 'Database error adding media: '.$e->getMessage());
-			}
-		}
-	}	
-	
 	
 	/**
 	 * Gets the list of droplets that are yet to be processed. This method
@@ -706,10 +713,16 @@ class Model_Droplet extends ORM {
 		}
 		
 		//Query account media belonging to the selected droplet IDs
-		$query_account = DB::select('droplet_id', array('media_id', 'id'), 'media')		            
+		$query_account = DB::select('droplet_id', array('media.id', 'id'), 
+										array('media.url', 'url'), 'type',
+										array('media_thumbnails.size', 'thumbnail_size'), 
+										array('media_thumbnails.url', 'thumbnail_url')
+									)
 					->from('account_droplet_media')
 					->join('media', 'INNER')
 					->on('media.id', '=', 'media_id')
+					->join('media_thumbnails', 'LEFT')
+					->on('media_thumbnails.media_id', '=', 'media.id')
 					->where('droplet_id', 'IN', $droplet_ids)
 					->where('account_id', '=', $account_id)
 					->where('deleted', '=', 0);
@@ -722,25 +735,81 @@ class Model_Droplet extends ORM {
 		    ->where('deleted', '=', 1);
 		
 		//Query all media belonging to the selected droplet IDs
-		$query_media = DB::select('droplet_id', array('media_id', 'id'), 'media')
+		$query_media = DB::select('droplet_id', array('media.id', 'id'), 
+										array('media.url', 'url'), 'type',
+										array('media_thumbnails.size', 'thumbnail_size'), 
+										array('media_thumbnails.url', 'thumbnail_url')
+								)
 					->union($query_account, TRUE)
 					->from('droplets_media')
 					->join('media', 'INNER')
 					->on('media.id', '=', 'media_id')
+					->join('media_thumbnails', 'LEFT')
+					->on('media_thumbnails.media_id', '=', 'media.id')
 					->where('droplet_id', 'IN', $droplet_ids)
 					->where('media.id', 'NOT IN', $query_deleted_media);
 				
+		// Group the thumbnails per url
+		$media = array();
+		foreach ($query_media->execute()->as_array() as $m)
+		{
+			if ( ! isset($media[$m['url']]))
+			{
+				// Media can belong to multiple drops
+				$media[$m['url']]['droplet_ids'] = array();
+			}
+			$media[$m['url']]['droplet_ids'][] = $m['droplet_id'];
+			$media[$m['url']]['id'] = $m['id'];
+			$media[$m['url']]['url'] = $m['url'];
+			$media[$m['url']]['type'] = $m['type'];
+			if ( ! empty($m['thumbnail_url']))
+			{
+				$media[$m['url']]['thumbnails'][$m['thumbnail_size']] = $m['thumbnail_url'];
+			}
+			unset($m['thumbnail_size']);
+			unset($m['thumbnail_url']);
+		}
+		
 		// Group the media per droplet
 		$droplet_media = array();
-		foreach ($query_media->execute()->as_array() as $media)
+		foreach ($media as $m)
 		{
-			$droplet_id = $media['droplet_id'];
-			if ( ! isset($droplet_media[$droplet_id]))
+			
+			$ids = $m['droplet_ids'];
+			unset($m['droplet_ids']);
+			foreach ($ids as $droplet_id)
 			{
-				$droplet_media[$droplet_id] = array();
+				if ( ! isset($droplet_media[$droplet_id]))
+				{
+					$droplet_media[$droplet_id]['media'] = array();
+				}
+				$droplet_media[$droplet_id]['media'][] = $m;
 			}
-			unset($media['droplet_id']);
-			$droplet_media[$droplet_id][] = $media;
+		}
+		
+		// Get the droplet image
+		//Query account media belonging to the selected droplet IDs
+		$query_drop_image = DB::select(array('droplets.id', 'droplet_id'), array('media.id', 'id'), 
+										array('media.url', 'url'),
+										array('media_thumbnails.size', 'thumbnail_size'), 
+										array('media_thumbnails.url', 'thumbnail_url')
+										)		            
+					->from('droplets')
+					->join('media', 'INNER')
+					->on('droplets.droplet_image', '=', 'media.id')
+					->join('media_thumbnails', 'LEFT')
+					->on('media_thumbnails.media_id', '=', 'media.id')
+					->where('droplets.id', 'IN', $droplet_ids);
+					
+		foreach ($query_drop_image->execute()->as_array() as $drop_image)
+		{
+			$droplet_id = $drop_image['droplet_id'];
+			$droplet_media[$droplet_id]['drop_image']['id'] = $drop_image['id'];
+			$droplet_media[$droplet_id]['drop_image']['url'] = $drop_image['url'];
+			if ( ! empty($drop_image['thumbnail_url']))
+			{
+				$droplet_media[$droplet_id]['drop_image']['thumbnails'][$drop_image['thumbnail_size']] = $drop_image['thumbnail_url'];
+			}
 		}
 		
 		// Assign the media to the droplets
@@ -749,7 +818,11 @@ class Model_Droplet extends ORM {
 			$droplet_id = $droplet['id'];
 			if (isset($droplet_media[$droplet_id]))
 			{
-				$droplet['media'] = $droplet_media[$droplet_id];
+				if (isset($droplet_media[$droplet_id]['drop_image']))
+				{
+					$droplet['droplet_image'] =  $droplet_media[$droplet_id]['drop_image'];
+				}
+				$droplet['media'] = $droplet_media[$droplet_id]['media'];
 			}
 		}    
 	}	

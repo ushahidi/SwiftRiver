@@ -28,6 +28,11 @@ class Controller_Bucket extends Controller_Swiftriver {
 	 */
 	protected $owner = FALSE; 
 	
+	/**
+	 * Whether photo drops only are selected.
+	 */
+	protected $photos = FALSE;
+	
 	
 	/**
 	 * @return	void
@@ -104,7 +109,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 		//Get Droplets
 		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
-			$this->bucket->id, 0, 1, $max_droplet_id);
+			$this->bucket->id, 0, 1, $max_droplet_id, $this->photos);
 
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
@@ -123,6 +128,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplet_js->channels = json_encode(array());
 	    $droplet_js->polling_enabled = TRUE;
 		$droplet_js->default_view = $this->bucket->default_layout;
+		$droplet_js->photos = $this->photos ? 1 : 0;
 		
 		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;
@@ -165,6 +171,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 	{
 		$this->action_index();
 	}
+	
+	public function action_photos()
+	{
+		$this->photos = TRUE;
+		$this->action_index();
+	}
 
 	public function action_drop()
 	{
@@ -197,16 +209,16 @@ class Controller_Bucket extends Controller_Swiftriver {
 					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
 					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-					
+					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					
 					$droplets_array = array();
 					if ($since_id)
 					{
-					    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id);
+					    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id, $photos == 1);
 					}
 					else
 					{
-					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id);
+					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id, $photos == 1);
 					}
         			
 					$droplets = $droplets_array['droplets'];

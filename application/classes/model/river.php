@@ -233,7 +233,7 @@ class Model_River extends ORM {
 	 * @return array
 	 */
 	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, 
-		$max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array())
+		$max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array(), $photos = FALSE)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -270,6 +270,11 @@ class Model_River extends ORM {
 			{
 				// Return all drops
 				$query->where('rivers_droplets.id', '<=', $max_id);
+			}
+			
+			if ($photos)
+			{
+				$query->where('droplets.droplet_image', '>', 0);
 			}
 
 			// Apply the river filters
@@ -315,7 +320,7 @@ class Model_River extends ORM {
 	 * @param int $since_id Lower limit of the droplet id
 	 * @return array
 	 */
-	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array())
+	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array(), $photos = FALSE)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -337,7 +342,12 @@ class Model_River extends ORM {
 			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('rivers_droplets.id', '>', $since_id);
-
+			
+			if ($photos)
+			{
+				$query->where('droplets.droplet_image', '>', 0);
+			}
+			
 			// Apply the river filters
 			Model_Droplet::apply_droplets_filter($query, $filters);
 			

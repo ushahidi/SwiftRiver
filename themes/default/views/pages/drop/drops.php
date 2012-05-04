@@ -13,9 +13,9 @@
 </script>
 
 <script type="text/template" id="drop-drops-view-template">
-	<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
-		<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
-	<% i++; }; return i > 1; }); %>
+	<% if (typeof(droplet_image_url) != "undefined") { %>
+		<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= droplet_image_url %>" class="drop-image" /></a>
+	<% } %>
 	<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 	<div class="drop-actions cf">
 		<?php if ( ! $anonymous): ?>
@@ -59,9 +59,9 @@
 <script type="text/template" id="drop-list-view-template">
 	<div class="drop-content">
 		<div class="drop-body">
-			<% i=0; _.all(media, function(item) { if (typeof(item.media) != "undefined") { %>
-				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
-			<% i++; }; return i > 1; }); %>		
+			<% if (typeof(droplet_image_url) != "undefined") { %>
+				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= droplet_image_url %>" class="drop-image" /></a>
+			<% } %>		
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
@@ -110,50 +110,49 @@
 </script>
 
 <script type="text/template" id="drop-photos-view-template">
-	<% _.each(media, function(item) { if (typeof(item.media) != "undefined") { %>
-	<div class="drop-content">
-		<div class="drop-body">
-			<a href="#" class="drop-image-wrap zoom-trigger"><img src="<?php echo URL::base(); ?>media/thumb/?src=<%= item.media %>&w=200" class="drop-image" /></a>
-			<div class="drop-actions cf">
-				<?php if ( ! $anonymous): ?>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share">
-							<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-							    <span class="icon"></span>
-							</a>
-						</li>
-						<?php if ( ! $anonymous): ?>
-							<li class="button-blue bucket">
-								<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-								    <span class="icon"></span>
+	<% if (typeof(droplet_image_url) != "undefined") { %>
+		<div class="drop-content">
+			<div class="drop-body">
+				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= droplet_image_url %>" class="drop-image" /></a>
+				<h1 class="drop"><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
+				<div class="drop-actions cf">
+					<?php if ( ! $anonymous): ?>
+						<ul class="dual-buttons move-drop">
+							<li class="button-blue share">
+								<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+									<span class="icon"></span>
 								</a>
 							</li>
-						<?php endif; ?>
-					</ul>
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-							<a href="#"><span class="icon"></span></a>
-						</li>
-						<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-							<a href="#"><span class="icon"></span></a>
-						</li>
-					</ul>
-				<?php endif; ?>
+							<li class="button-blue bucket">
+								<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+									<span class="icon"></span>
+								</a>
+							</li>
+						</ul>
+						<ul class="dual-buttons score-drop">
+							<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>" >
+								<a href="#"><span class="icon"></span></a>
+							</li>
+							<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
+								<a href="#"><span class="icon"></span></a>
+							</li>
+						</ul>
+					<?php endif; ?>
+				</div>
 			</div>
+			<section class="drop-source cf">
+				<% if ( identity_avatar) { %>
+					<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+				<% } %>
+				<div class="byline">
+					<h2><%= identity_name %></h2>
+					<p class="drop-source-channel <%= channel %>">
+						<a href="#"><span class="icon"></span>via <%= channel %></a>
+					</p>
+				</div>
+			</section>
 		</div>
-		<section class="drop-source cf">
-			<% if ( identity_avatar) { %>
-				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
-			<% } %>
-			<div class="byline">
-				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel <%= channel %>">
-					<a href="#"><span class="icon"></span>via <%= channel %></a>
-				</p>
-			</div>
-		</section>
-	</div>
-	<% }; }); %>
+	<% } %>
 </script>
 
 <script type="text/template" id="drop-full-view-template">

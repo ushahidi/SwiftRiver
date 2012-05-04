@@ -791,6 +791,9 @@ p.metadata span.icon {
   margin-right: 5px;
   padding: 0;
 }
+.drop-fullstory img {
+  max-width: 100%;
+}
 /* ---- DROP: BUOY */
 #buoy {
   -moz-box-shadow: 0 1px 10px rgba(54, 183, 206, 0.5);
