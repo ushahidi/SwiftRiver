@@ -681,6 +681,7 @@ class Model_River extends ORM {
 			// rivers that the user is collaborating on
 			$all_rivers = DB::select('rivers.id', 'rivers.river_name', 
 				'rivers.river_name_url', 'accounts.account_path')
+			    ->distinct(TRUE)
 			    ->union($owner_rivers)
 			    ->from('rivers')
 			    ->join('accounts', 'INNER')

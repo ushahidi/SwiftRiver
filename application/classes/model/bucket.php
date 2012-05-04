@@ -540,6 +540,7 @@ class Model_Bucket extends ORM {
 			// that the user is collaborating on
 			$all_buckets = DB::select('buckets.id', 'buckets.bucket_name', 
 				    'buckets.bucket_name_url', 'accounts.account_path')
+			    ->distinct(TRUE)
 			    ->union($owner_buckets)
 			    ->from('buckets')
 			    ->join('accounts', 'INNER')

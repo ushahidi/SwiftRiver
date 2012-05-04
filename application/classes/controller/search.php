@@ -26,6 +26,11 @@ class Controller_Search extends Controller_Swiftriver {
 	private $search_term;
 
 	/**
+	 * @var string
+	 */
+	private $search_scope;
+
+	/**
 	 * View for the content below the navigation section
 	 * @var Kohana_View
 	 */
@@ -86,16 +91,15 @@ class Controller_Search extends Controller_Swiftriver {
 
 			// Bootstrap the droplet list
 			$droplet_js = View::factory('pages/drop/js/drops')
-			    ->bind('user', $this->user)
-			    ->bind('filters', $filters);
+			    ->bind('user', $this->user);
 
 			// Store the current search scope before overwriting it
 			Cookie::set(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE, 
 				Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE));
 
-			$filters = json_encode(array(
-				'q' => Cookie::get(Swiftriver::COOKIE_SEARCH_TERM),
-				'scope' => Cookie::get(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE)
+			$droplet_js->filters = json_encode(array(
+				'q' => $this->search_term,
+				'scope' => $this->search_scope
 			));
 
 			$droplet_js->fetch_base_url = URL::site().'search';
@@ -114,6 +118,8 @@ class Controller_Search extends Controller_Swiftriver {
 		}
 		else
 		{
+			Kohana::$log->add(Log::INFO, "Something went wrong! Deleting search cookies");
+
 			// No search data - clean out any existing data
 			Cookie::delete(Swiftriver::COOKIE_SEARCH_TERM);
 			Cookie::delete(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
@@ -137,6 +143,10 @@ class Controller_Search extends Controller_Swiftriver {
 			$this->template = View::factory('pages/search/main');
 			$search_scope = Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE);
 			$this->template->search_scope = $search_scope;
+		}
+		else
+		{
+			$this->request->redirect($this->dashboard_url);
 		}
 	}
 
@@ -247,6 +257,7 @@ class Controller_Search extends Controller_Swiftriver {
 		// Reset the search scope - for cases where the value
 		// in $parameters is different from the one in cookie data
 		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, $search_scope);
+		$this->search_scope = $search_scope;
 
 		// Get the page number for the request
 		$page = (isset($parmaters['page']) AND intval($parameters['page']) > 0) 
@@ -270,7 +281,7 @@ class Controller_Search extends Controller_Swiftriver {
 		// a stale copy of the search term
 		$this->template->content->search_term = $this->search_term;
 		$this->template->content->url_params = $this->url_params;
-		
+
 		$user_id = $this->user->id;
 
 		// Query filters for the droplet fetch
