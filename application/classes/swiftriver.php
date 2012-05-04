@@ -21,7 +21,6 @@ class Swiftriver {
 	const DEFAULT_COOKIE_SALT = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
 
 	// Cookie name constants
-	const COOKIE_SEARCH_TERM = "search_term";
 	const COOKIE_SEARCH_SCOPE = "search_scope";
 	const COOKIE_PREVIOUS_SEARCH_SCOPE = "previous_search_scope";
 	const COOKIE_SEARCH_ITEM_ID = "search_item_id";

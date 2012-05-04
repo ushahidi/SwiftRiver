@@ -16,8 +16,7 @@
 					<a href="<?php echo URL::site('search/drops'.$url_params); ?>"><?php echo __("Drops"); ?></a>
 				</li>
 
-				<?php $search_scope = Cookie::get(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE); ?>
-				<?php if ($search_scope == 'all'): ?>
+				<?php if ($search_scope === 'all') : ?>
 				<li class="touchcarousel-item <?php if ($active == 'rivers') echo 'active'; ?>">
 					<a href="<?php echo URL::site('search/rivers'.$url_params); ?>">
 						<?php echo __("Rivers"); ?>
