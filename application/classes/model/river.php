@@ -668,6 +668,7 @@ class Model_River extends ORM {
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('river_name', 'LIKE', $search_expr)
 			    ->or_where_open()
+			    ->where('rivers.account_id', '=', $user_orm->account_id)
 			    ->where('river_name_url', 'LIKE', $search_expr);
 			
 			if (count($collaborating) > 0)
