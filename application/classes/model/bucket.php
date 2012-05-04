@@ -557,7 +557,8 @@ class Model_Bucket extends ORM {
 			// Build the predicates for the OR clause
 			$all_buckets->or_where_open()
 			    ->where('bucket_name_url', 'LIKE', $search_expr)
-			    ->where('account_id', '<>', $user_orm->account->id);
+			    ->where('account_id', '<>', $user_orm->account->id)
+			    ->where('buckets.bucket_publish', '=', 1);
 			
 			if (count($collaborating) > 0)
 			{

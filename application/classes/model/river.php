@@ -698,7 +698,8 @@ class Model_River extends ORM {
 			// Build the predicates for the OR clause
 			$all_rivers->or_where_open()
 			    ->where('river_name_url', 'LIKE', $search_expr)
-			    ->where('account_id', '<>', $user_orm->account->id);
+			    ->where('account_id', '<>', $user_orm->account->id)
+			    ->where('rivers.river_public', '=', 1);
 
 			if (count($collaborating) > 0)
 			{
