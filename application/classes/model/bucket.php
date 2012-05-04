@@ -527,7 +527,7 @@ class Model_Bucket extends ORM {
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('bucket_name', 'LIKE', $search_expr)
 			    ->or_where_open()
-			    ->where('buckets.account_id', '=', $user_orm->account_id)
+			    ->where('buckets.account_id', '=', $user_orm->account->id)
 			    ->where('bucket_name_url', 'LIKE', $search_expr);
 			
 			if (count($collaborating) > 0)
