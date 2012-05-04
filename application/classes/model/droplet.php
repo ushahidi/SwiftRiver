@@ -1194,6 +1194,12 @@ class Model_Droplet extends ORM {
 
 			$droplets = $query->execute()->as_array();
 
+			// Encode content and title as utf8 in case they arent
+			foreach ($droplets as & $droplet) 
+			{
+				Model_Droplet::utf8_encode($droplet);
+			}
+
 			Model_Droplet::populate_metadata($droplets, $user_orm->account->id);
 		}
 
