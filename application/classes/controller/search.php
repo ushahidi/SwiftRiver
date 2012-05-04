@@ -84,10 +84,6 @@ class Controller_Search extends Controller_Swiftriver {
 			// Get the search results
 			$results = $this->_handle_drops_search($_GET);
 
-			// Reset the search term - for cases where parent() uses
-			// a stale copy of the search term
-			$this->template->content->search_term = $this->search_term;
-
 			// Bootstrap the droplet list
 			$droplet_js = View::factory('pages/drop/js/drops')
 			    ->bind('user', $this->user)
@@ -248,12 +244,6 @@ class Controller_Search extends Controller_Swiftriver {
 			$search_scope = "all";
 		}
 
-		// Reset 'previous_search_scope' to all
-		if ($search_scope == "all")
-		{
-			Cookie::set(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE, 'all');
-		}
-
 		// Reset the search scope - for cases where the value
 		// in $parameters is different from the one in cookie data
 		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, $search_scope);
@@ -276,6 +266,11 @@ class Controller_Search extends Controller_Swiftriver {
 		$this->url_params = http_build_query(array('q'=>$this->search_term));
 		Cookie::set('url_params', $this->url_params);
 
+		// Reset the search term - for cases where parent() uses
+		// a stale copy of the search term
+		$this->template->content->search_term = $this->search_term;
+		$this->template->content->url_params = $this->url_params;
+		
 		$user_id = $this->user->id;
 
 		// Query filters for the droplet fetch
