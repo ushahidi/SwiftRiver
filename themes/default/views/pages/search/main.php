@@ -28,8 +28,10 @@
 					</a>
 				</li>
 				<?php endif; ?>
-				<li class="button-blue">
-					<a href="#" onClick="submitForm(this)"><?php echo __("Search everything"); ?></a>
+
+				<li class="button-blue" id="all_search">
+					<?php $submit_js = ($search_scope !== 'all') ? '' : 'onClick="submitForm(this)"'; ?>
+					<a href="#" <?php echo $submit_js; ?>><?php echo __("Search everything"); ?></a>
 				</li>
 			</ul>
 		</div>
@@ -49,8 +51,14 @@
 
 			$(element).appendTo(searchForm);
 
-			// Event bindings for the "Search Everything" button
-			$("#specific_search > a", searchForm).live('click', function(){
+			// Event bindings for the "Search this xxxx" button
+			$("#specific_search > a", searchForm).click(function(){
+				searchForm.submit();
+			});
+
+			// Event binding for the "Search Everything" button
+			$("#all_search > a", searchForm).click(function(){
+				$(element).val('all');
 				searchForm.submit();
 			});
 		});
