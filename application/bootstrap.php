@@ -102,27 +102,10 @@ Kohana::modules(array(
 
 
 /**
- * Activate Enabled Plugins
+ * Initialize the SwiftRiver runtime environment
+ * Load plugins, themes and set the Cookie properties
  */
-Swiftriver_Plugins::load();
-
-// Add the current default theme to the list of modules
-$theme = ORM::factory('setting')->where('key', '=', 'site_theme')->find();
-
-if ($theme->loaded() AND !empty($theme->value) AND $theme->value != "default")
-{
-	Kohana::modules(array_merge(
-		array('themes/'.$theme->value => THEMEPATH.$theme->value),
-		Kohana::modules()
-	));
-}
-
-// Clean up
-unset($active_plugins, $theme);
-	
-
-Cookie::$salt = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
-
+Swiftriver::init();
 
 /**
  * Swiftriver Password Reset Route

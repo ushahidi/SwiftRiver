@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * Config for Sweeper Database
+ * Config for the SwiftRivevr Database
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 

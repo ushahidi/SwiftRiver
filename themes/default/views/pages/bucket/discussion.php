@@ -80,9 +80,9 @@
 					<textarea id="comment_content"></textarea>
 				</div>
 				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" /></a>
+					<a href="#" class="avatar-wrap"><img src="<?php echo $user_avatar; ?>" /></a>
 					<div class="byline">
-						<h2>Brandon Rosage</h2>
+						<h2><?php echo $user->name; ?></h2>
 					</div>
 				</section>
 			</div>
@@ -245,7 +245,7 @@
 				newComment.set({
 					comment_content:$('#comment_content').val(),
 					name:'<?php echo $user->name; ?>',
-					date:now.format("yyyy-mm-dd HH:MM:ss"),
+					date:now.toString("yyyy-mm-dd HH:MM:ss"),
 					avatar:'<?php echo Swiftriver_Users::gravatar($user->email); ?>',
 					score:0
 				});

@@ -27,20 +27,20 @@ class Swiftriver_Navs {
 
 		if ($river)
 		{
-			// Drops
-			$nav[] = array(
-				'id' => 'drops-navigation-link',
-				'active' => ($active == 'drops') ? 'active' : '',
-				'url' => '/drops',
-				'label' => __('Drops')
-			);
-
 			// List
 			$nav[] = array(
 				'id' => 'list-navigation-link',
 				'active' => ($active == 'list') ? 'active' : '',
 				'url' => '/list',
 				'label' => __('List')
+			);
+
+			// Drops
+			$nav[] = array(
+				'id' => 'drops-navigation-link',
+				'active' => ($active == 'drops') ? 'active' : '',
+				'url' => '/drops',
+				'label' => __('Drops')
 			);
 
 			// Photos

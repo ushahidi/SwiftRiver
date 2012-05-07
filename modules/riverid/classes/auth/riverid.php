@@ -38,7 +38,8 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 			// Success! Proceed to sign in into RiverID
 			$login_response = $riverid_api->signin($email, $password);
 			
-			if ($login_response and $login_response['status']) {
+			if ($login_response AND $login_response['status'])
+			{
 			
 				// Get the user object that matches the provided email and RiverID
 				$user = ORM::factory('user')
@@ -56,7 +57,11 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 								 ->find();
 								
 					// Only auto register if the site allows it
-					if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $user->loaded())
+					if
+					( 
+						! (bool) Model_Setting::get_setting('public_registration_enabled')
+						AND ! $user->loaded()
+					)
 					{
 						return FALSE;
 					}
@@ -68,7 +73,8 @@ class Auth_RiverID extends Kohana_Auth_ORM {
 					// Allow the user be able to login immediately
 					$login_role = ORM::factory('role',array('name'=>'login'));
 					
-					if ( ! $user->has('roles', $login_role)) {
+					if ( ! $user->has('roles', $login_role))
+					{
 						$user->add('roles', $login_role);
 					}
 				} 

@@ -89,9 +89,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 	public function action_index()
 	{
-		// Session data for search - only stored when the bucket is in view
-		$this->session->set('search_bucket_id', $this->bucket->id);
-		$this->session->set('search_scope', 'bucket');
+		// Cookies to help determine the search options to display
+		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'bucket');
+		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $this->bucket->id);
 
 		$this->template->header->title = $this->page_title;
 		
@@ -118,7 +118,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 		$droplets = $droplets_array['droplets'];
 				
 		// Bootstrap the droplet list
-		$droplet_list = json_encode($droplets);
+		$droplet_list = @json_encode($droplets);
 		$droplet_js = View::factory('pages/drop/js/drops')
 		        ->bind('fetch_base_url', $fetch_base_url)
 		        ->bind('droplet_list', $droplet_list)
@@ -139,6 +139,24 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+
+
+		if ( ! $this->owner)
+		{
+			$bucket_item = json_encode(array(
+				'id' => $this->bucket->id, 
+				'type' => 'river',
+				'subscribed' => $this->bucket->is_subscriber($this->user->id)
+			));
+
+			// Action URL - To handle the follow/unfollow actions on the river
+			$action_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
+
+			$this->template->content->bucket_name = $this->page_title;
+			$this->template->content->bucket_item = $bucket_item;
+			$this->template->content->action_url = $action_url;
+
+		}
 		
 		// Nothing to display message
 		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')

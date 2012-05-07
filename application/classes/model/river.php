@@ -659,32 +659,65 @@ class Model_River extends ORM {
 		$user_orm = ORM::factory('user', $user_id);
 		if ($user_orm->loaded())
 		{
-			// Rivers owned by the user in $user_id
+			// Get the rivers collaborating on
+			$collaborating = DB::select('river_id')
+			    ->from('river_collaborators')
+			    ->where('user_id', '=', $user_id)
+			    ->where('collaborator_active', '=', 1)
+			    ->execute()
+			    ->as_array();
+
+			// Rivers owned by the user in $user_id - includes the rivers the
+			// user is collaborating on
 			$owner_rivers = DB::select('rivers.id', 'rivers.river_name', 
 				'rivers.river_name_url', 'accounts.account_path')
+			    ->distinct(TRUE)
 			    ->from('rivers')
 			    ->join('accounts', 'INNER')
 			    ->on('rivers.account_id', '=', 'accounts.id')
-			    ->where_open()
 			    ->where('account_id', '=', $user_orm->account->id)
 			    ->where('river_name', 'LIKE', $search_expr)
-			    ->or_where('river_name_url', 'LIKE', $search_expr)
-			    ->where_close();
+			    ->or_where_open()
+			    ->where('rivers.account_id', '=', $user_orm->account->id)
+			    ->where('river_name_url', 'LIKE', $search_expr);
+			
+			if (count($collaborating) > 0)
+			{
+				$owner_rivers->where('rivers.id', 'IN', $collaborating);
+			}
+			$owner_rivers->or_where_close();
 
 
-			// All public rivers not owned by the user
+			// All public rivers not owned by the user - excludes all the
+			// rivers that the user is collaborating on
 			$all_rivers = DB::select('rivers.id', 'rivers.river_name', 
 				'rivers.river_name_url', 'accounts.account_path')
+			    ->distinct(TRUE)
 			    ->union($owner_rivers)
 			    ->from('rivers')
 			    ->join('accounts', 'INNER')
 			    ->on('rivers.account_id', '=', 'accounts.id')
-			    ->where('river_public', '=', 1)
-			    ->and_where_open()
 			    ->where('account_id', '<>', $user_orm->account->id)
-			    ->where('river_name', 'LIKE', $search_expr)
-			    ->or_where('river_name_url', 'LIKE', $search_expr)
-			    ->and_where_close();
+			    ->where('river_public', '=', 1)
+			    ->where('river_name', 'LIKE', $search_expr);
+
+			if (count($collaborating) > 0)
+			{
+				$all_rivers->where('rivers.id', 'NOT IN', $collaborating);
+			}
+
+			// Build the predicates for the OR clause
+			$all_rivers->or_where_open()
+			    ->where('river_name_url', 'LIKE', $search_expr)
+			    ->where('account_id', '<>', $user_orm->account->id)
+			    ->where('rivers.river_public', '=', 1);
+
+			if (count($collaborating) > 0)
+			{
+				$all_rivers->where('rivers.id', 'NOT IN', $collaborating);
+			}
+
+			$all_rivers->or_where_close();
 
 			$rivers = $all_rivers->execute()->as_array();
 		}

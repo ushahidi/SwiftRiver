@@ -18,12 +18,17 @@ class Controller_Search extends Controller_Swiftriver {
 	 * Search filters
 	 * @var array
 	 */
-	private $filters;
+	private $url_params;
 
 	/**
 	 * @var string
 	 */
 	private $search_term;
+
+	/**
+	 * @var string
+	 */
+	private $search_scope;
 
 	/**
 	 * View for the content below the navigation section
@@ -36,27 +41,44 @@ class Controller_Search extends Controller_Swiftriver {
 	{
 		parent::before();
 
-		// Check for search filters
-		$this->filters = $this->session->get('search_filters');
-		if (empty($this->filters))
+		// Check fo URL parameters
+		if ( ! empty($_GET['q']))
 		{
-			$this->session->bind('search_filters', $this->filters);
+			// Sanitize the search term - strip all HTML
+			// Layout for the seach page
+			$this->template->content = View::factory('pages/search/layout')
+			    ->bind('sub_content', $this->sub_content)
+			    ->bind('search_term', $this->search_term)
+			    ->bind('url_params', $this->url_params);
+
+			$this->search_term = strip_tags($_GET['q']);
+
+			// Set the search scope
+			$this->search_scope = (isset($_GET['search_scope'])) 
+			    ? $_GET['search_scope'] 
+			    : Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE);
+
+			// Defaults the scope to 'all' if no scope exists
+			if (empty($this->search_scope))
+			{
+				$this->search_scope = "all";
+			}
+
+			Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, $this->search_scope);
+
+			// URL Parameters
+			$this->url_params = http_build_query(array('q'=>$this->search_term));
+
+			// If previous scope if empty, set to the current search scope
+			$previous_scope = Cookie::get(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+			if (empty($previous_scope))
+			{
+				$this->template->content->search_scope = $this->search_scope;
+			}
+
 		}
 
-		$this->search_term = $this->session->get('search_term');
-		if (empty($this->search_term))
-		{
-			$this->session->bind('search_term', $this->search_term);
-		}
-		
-		// Layout for the seach page
-		$this->template->content = View::factory('pages/search/layout')
-		    ->bind('sub_content', $this->sub_content);
-		
-		$this->template->content->search_term = $this->session->get('search_term');
-		$this->template->content->search_filters = $this->session->get('query_string');
 	}
-	
 
 	/**
 	 * Landing page
@@ -76,16 +98,19 @@ class Controller_Search extends Controller_Swiftriver {
 		        ->bind('anonymous', $this->anonymous);
 
 			// Get the search results
-			$results = $this->_handle_search($_GET);
-
+			$results = $this->_handle_drops_search($_GET);
 
 			// Bootstrap the droplet list
 			$droplet_js = View::factory('pages/drop/js/drops')
-			    ->bind('user', $this->user)
-			    ->bind('filters', $this->filters);
+			    ->bind('user', $this->user);
+
+			$droplet_js->filters = json_encode(array(
+				'q' => $this->search_term,
+				'scope' => $this->search_scope
+			));
 
 			$droplet_js->fetch_base_url = URL::site().'search';
-			$droplet_js->droplet_list = json_encode($results['droplets']);
+			$droplet_js->droplet_list = @json_encode($results['droplets']);
 			$droplet_js->max_droplet_id = PHP_INT_MAX;
 			$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 			$droplet_js->polling_enabled = FALSE;
@@ -93,8 +118,25 @@ class Controller_Search extends Controller_Swiftriver {
 			$droplet_js->default_view = "drops";
 
 			$this->sub_content->nothing_to_display = View::factory('pages/search/nothing_to_display');
-			$this->sub_content->nothing_to_display->search_term = $this->session->get('search_term');
-			$this->session->set('search_scope', 'all');
+			$this->sub_content->nothing_to_display->search_term = $this->search_term;
+
+			// Set the current search scope as the previous one
+			$this->template->content->search_scope = $this->search_scope;
+			Cookie::set(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE, $this->search_scope);
+
+			// Reset the search scope
+			Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'all');
+		}
+		else
+		{
+			Kohana::$log->add(Log::INFO, "Something went wrong! Deleting search cookies");
+
+			// No search data - clean out any existing data
+			Cookie::delete(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+			Cookie::delete(Swiftriver::COOKIE_SEARCH_ITEM_ID);
+
+			// Redirect to the dashboard
+			$this->request->redirect($this->dashboard_url);
 		}
 
 	}
@@ -108,7 +150,12 @@ class Controller_Search extends Controller_Swiftriver {
 		if ($this->request->is_ajax())
 		{
 			$this->template = View::factory('pages/search/main');
-			$this->template->search_scope = $this->session->get('search_scope');
+			$search_scope = Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE);
+			$this->template->search_scope = $search_scope;
+		}
+		else
+		{
+			$this->request->redirect($this->dashboard_url);
 		}
 	}
 
@@ -141,7 +188,7 @@ class Controller_Search extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "GET":
-				$results = $this->_handle_search($_GET);
+				$results = $this->_handle_drops_search($_GET);
 				
 				//Throw a 404 if a non existent page is requested
 				if (empty($results['droplets']))
@@ -188,6 +235,7 @@ class Controller_Search extends Controller_Swiftriver {
 				}
 				
 				ORM::factory('bucket', $this->bucket->id)->remove('droplets', $droplet_orm);
+			break;
 		}
 	}
 
@@ -198,32 +246,8 @@ class Controller_Search extends Controller_Swiftriver {
 	 * @param array $parameters An array of search parameters
 	 * @return array
 	 */
-	private function _handle_search($parameters)
+	private function _handle_drops_search($parameters)
 	{
-		// Bind the variables to session data
-		$this->session
-		    ->bind('search_users', $search_users)
-		    ->bind('search_buckets', $search_buckets)
-		    ->bind('search_rivers', $search_rivers);
-
-		// Sanitize the search term - strip all HTML
-		$this->search_term = strip_tags($parameters['q']);
-
-		// Get the scope of the search
-		$search_scope = (isset($parameters['search_scope'])) 
-		    ? $parameters['search_scope'] 
-		    : $this->session->get('search_scope');
-
-		// Defaults the scope to 'all' if no scope exists
-		if (empty($search_scope))
-		{
-			$search_scope = "all";
-		}
-
-		// Reset the search scope - for cases where the value
-		// in $parameters is different from the one in session data
-		$this->session->set('search_scope', $search_scope);
-
 		// Get the page number for the request
 		$page = (isset($parmaters['page']) AND intval($parameters['page']) > 0) 
 		    ? intval($parameters['page']) 
@@ -238,13 +262,6 @@ class Controller_Search extends Controller_Swiftriver {
 			'page' => $page
 		);
 
-		// Build the search filters as HTTP query parameters
-		$this->filters = array(
-			'q'=>$this->search_term
-		);
-
-		$this->session->set('query_string', http_build_query($this->filters));
-
 		$user_id = $this->user->id;
 
 		// Query filters for the droplet fetch
@@ -254,19 +271,10 @@ class Controller_Search extends Controller_Swiftriver {
 		);
 
 		// Check the search scope
-		switch ($search_scope)
+		switch ($this->search_scope)
 		{
 			// Global search
 			case 'all':
-				// Get users
-				$search_users = Model_User::get_like($this->search_term);
-
-				// Get buckets - public, owned and those collaborating on
-				$search_buckets = Model_Bucket::get_like($this->search_term, $user_id);
-
-				// Get rivers - public, owned and those collaborating on
-				$search_rivers = Model_River::get_like($this->search_term, $user_id);
-
 				// Get the droplets
 				$results['droplets'] = Model_Droplet::search($query_filters, $user_id, $page);
 
@@ -275,7 +283,7 @@ class Controller_Search extends Controller_Swiftriver {
 			// River search
 			case 'river':
 				// Get the river id
-				$river_id = $this->session->get('search_river_id');
+				$river_id = Cookie::get('search_item_id');
 
 				$data = Model_River::get_droplets($user_id, $river_id, 0, $page, 
 					PHP_INT_MAX, 'DESC', $query_filters);
@@ -286,7 +294,7 @@ class Controller_Search extends Controller_Swiftriver {
 			// Bucket search
 			case 'bucket':
 				// Get the bucket id
-				$bucket_id = $this->session->get('search_bucket_id');
+				$bucket_id = Cookie::get('search_item_id');
 
 				// Get the droplets
 				$data = Model_Bucket::get_droplets($user_id, $bucket_id, 0, $page, 
@@ -301,33 +309,56 @@ class Controller_Search extends Controller_Swiftriver {
 		return $results;
 	}
 
+	/**
+	 * Searches and display the buckets
+	 */
 	public function action_buckets()
 	{
 		$this->template->content->active = 'buckets';
 
-		$this->sub_content = View::factory('pages/search/buckets');
-		$this->sub_content->search_term = $this->session->get('search_term');
-		$this->sub_content->buckets = $this->session->get('search_buckets');
+		$this->sub_content = View::factory('pages/search/buckets')
+		    ->bind('search_term', $this->search_term)
+		    ->bind('buckets', $buckets);
+		
+		$this->template->content->search_scope = Cookie::get(
+			Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
 
+		// Get buckets - public, owned and those collaborating on
+		$buckets = Model_Bucket::get_like($this->search_term, $this->user->id);
 	}
 
+
+	/**
+	 * Searches and displays the users
+	 */
 	public function action_rivers()
 	{
 		$this->template->content->active = 'rivers';
 
-		$this->sub_content = View::factory('pages/search/rivers');
-		$this->sub_content->search_term = $this->session->get('search_term');
-		$this->sub_content->rivers = $this->session->get('search_rivers');
+		$this->sub_content = View::factory('pages/search/rivers')
+		    ->bind('search_term', $this->search_term)
+		    ->bind('rivers', $rivers);
+
+		$this->template->content->search_scope = Cookie::get(
+			Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+
+		// Get rivers - public, owned and those collaborating on
+		$rivers = Model_River::get_like($this->search_term, $this->user->id);
 	}
 
 	public function action_users()
 	{
 		$this->template->content->active = 'users';
 
-		$this->sub_content = View::factory('pages/search/users');
-		$this->sub_content->search_term = $this->session->get('search_term');
-		$this->sub_content->users =  $this->session->get('search_users');
+		$this->sub_content = View::factory('pages/search/users')
+		    ->bind('search_term', $this->search_term)
+		    ->bind('users', $users);
 
+		$this->template->content->search_scope = Cookie::get(
+			Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+
+		// Get users
+		$users = Model_User::get_like($this->search_term);
 	}
 }
 ?>

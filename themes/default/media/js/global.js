@@ -162,7 +162,7 @@ $(document).ready(function() {
 			}
 
 			// Container for the confirmatino messages
-			container = $('#confirmation-container')
+			container = $('#confirmation-container');
 
 			// Build out the HTML
 			var replaceHTML = "<div class=\"modal-window\">" +
@@ -196,7 +196,7 @@ $(document).ready(function() {
 	$('input, textarea').live('keypress', function () {
 		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
-	$('select').on('change', function () {
+	$('select').live('change', function () {
 		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
 	

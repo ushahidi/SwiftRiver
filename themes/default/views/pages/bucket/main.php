@@ -48,16 +48,16 @@
 
 <nav class="page-navigation cf">
 	<ul class="center">
-		<li id="drops-navigation-link">
-			<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
-				<?php echo __("Drops"); ?>
-			</a>
-		</li>
 		<li id="list-navigation-link">
 			<a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">
 				<?php echo __("List"); ?>
 			</a>
 		</li>
+		<li id="drops-navigation-link">
+			<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
+				<?php echo __("Drops"); ?>
+			</a>
+		</li>		
 		<li id="photos-navigation-link">
 			<a onclick="appRouter.navigate('/photos', {trigger: true}); return false;" href="#">
 				<?php echo __("Photos"); ?>

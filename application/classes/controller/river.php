@@ -104,15 +104,18 @@ class Controller_River extends Controller_Swiftriver {
 	 */
 	public function action_index()
 	{
-		// Session data for search - only stored when the river
-		// is in view
-		$this->session->set('search_river_id', $this->river->id);
-		$this->session->set('search_scope', 'river');
-
 		// Get the id of the current river
 		$river_id = $this->river->id;
+
+		// Cookies to help determine the search options to display
+		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'river');
+		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 		
-		if ($this->river->account->user->id == $this->user->id OR $this->river->account->user->username == 'public')
+		if
+		(
+			$this->river->account->user->id == $this->user->id OR 
+			$this->river->account->user->username == 'public'
+		)
 		{
 			$this->template->header->title = $this->river->river_name;
 		}
@@ -123,12 +126,27 @@ class Controller_River extends Controller_Swiftriver {
 				
 		$this->template->content = View::factory('pages/river/layout')
 			->bind('river', $this->river)
-			->bind('sub_content', $droplets_view)
+			->bind('droplets_view', $droplets_view)
 			->bind('river_base_url', $this->river_base_url)
 			->bind('settings_url', $this->settings_url)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user)
 			->bind('nav', $this->nav);
+
+		if ( ! $this->owner)
+		{
+			$river_item = json_encode(array(
+				'id' => $this->river->id, 
+				'type' => 'river',
+				'subscribed' => $this->river->is_subscriber($this->user->id)
+			));
+
+			// Action URL - To handle the follow/unfollow actions on the river
+			$action_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
+
+			$this->template->content->river_item = $river_item;
+			$this->template->content->action_url = $action_url;
+		}
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
@@ -152,7 +170,7 @@ class Controller_River extends Controller_Swiftriver {
 		// Bootstrap the droplet list
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->droplet_list = json_encode($droplets);
+		$droplet_js->droplet_list = @json_encode($droplets);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
 		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
@@ -174,6 +192,7 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+		
 		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
 		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
@@ -254,7 +273,7 @@ class Controller_River extends Controller_Swiftriver {
 				}
 				
 
-				echo json_encode($droplets);
+				echo @json_encode($droplets);
 
 			break;
 			

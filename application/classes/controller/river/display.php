@@ -46,7 +46,10 @@ class Controller_River_Display extends Controller_River_Settings {
 			}
 			catch (Database_Exception $e)
 			{
-				$this->settings_content->errors = array(__("A river with the name ':name' name already exists", array(":name" => $this->request->post('river_name'))));
+				$this->settings_content->errors = array(
+					__("A river with the name ':name' name already exists", 
+						array(":name" => $this->request->post('river_name'))
+					));
 			}
 		}
 		
