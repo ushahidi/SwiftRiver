@@ -16,27 +16,34 @@
 <body> 
 	<header class="toolbar">
 		<div class="center">
-			<h1 class="logo"><a href="/markup/"><span class="nodisplay">SwiftRiver</span></a></h1>
-			<ul class="toolbar-menu">
-				<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon"></span><span class="label">Search</span></a></li>
-				<li class="create"><a href="/markup/modal-create.php" class="modal-trigger"><span class="icon"></span><span class="label">Create</span></a></li>
-				<!--li class="login"><a href="/login" class="modal-trigger"><span class="label">Log in</span></a></li-->
-				<li class="user popover">
-					<a href="#" class="popover-trigger">
-						<span class="dropdown-arrow"></span>
-						<span class="avatar-wrap"><span class="notification">3</span>
-<img src="/markup/images/content/avatar4.jpg" /></span>
-						<span class="nodisplay">Brandon Rosage</span>
-					</a>
-					<ul class="popover-window base header-toolbar">
-						<li><a href="#">Rivers</a></li>
-						<li><a href="#">Buckets</a></li>
-						<li class="group"><a href="/markup/user">Profile</a></li>
-						<li><a href="/markup/user/settings.php">Account settings</a></li>
-						<li><a href="/markup/settings.php">Website settings</a></li>
-						<li><a href="#"><em>Log out</em></a></li>
-					</ul>
-				</li>
-			</ul>
+			<div class="col_4">
+				<h1 class="logo"><a href="/markup/"><span class="nodisplay">SwiftRiver</span></a></h1>
+				<ul class="global-menu">
+					<li class="home"><a href="/"><span class="icon"></span></a></li>
+					<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon"></span></a></li>
+				</ul>
+			</div>
+
+			<div class="col_8">
+				<ul class="user-menu">
+					<li class="rivers"><a href="/markup/modal-rivers.php" class="modal-trigger"><span class="icon"></span><span class="label">Rivers</span></a></li>
+					<li class="bucket"><a href="/markup/modal-buckets.php" class="modal-trigger"><span class="icon"></span><span class="label">Buckets</span></a></li>
+					<li class="user popover">
+						<a href="#" class="popover-trigger">
+							<span class="dropdown-arrow"></span>
+							<span class="avatar-wrap"><span class="notification">3</span>
+	<img src="/markup/images/content/avatar4.jpg" /></span>
+							<span class="nodisplay">Brandon Rosage</span>
+						</a>
+						<ul class="popover-window base header-toolbar">
+							<li><a href="/">Dashboard</a></li>
+							<li class="group"><a href="/markup/user">Profile</a></li>
+							<li><a href="/markup/user/settings.php">Account settings</a></li>
+							<li><a href="/markup/settings.php">Website settings</a></li>
+							<li><a href="#"><em>Log out</em></a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
 		</div>
 	</header>

@@ -55,7 +55,9 @@ body {
 }
 .col_3,
 .col_4,
+.col_8,
 .col_9,
+.col_10,
 .col_12 {
   margin: 0 3.125%;
 }
@@ -289,7 +291,17 @@ span.icon {
 .follow.selected span.icon {
   background-position: center -625px;
 }
+.rivers span.icon {
+  background-position: center -650px;
+}
+.home span.icon {
+  background-position: center -725px;
+}
+.no-content {
+  padding: 20px 0;
+}
 .alert-message {
+  text-align: left;
   text-shadow: 0 1px 1px #fff;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -420,14 +432,21 @@ header.toolbar .logo a {
   padding: 2.5px 0;
   margin: 0 8px;
 }
-header.toolbar ul.toolbar-menu {
-  float: right;
-  margin-right: 10px;
+header.toolbar ul.global-menu {
+  float: left;
+  margin-top: 6px;
 }
-header.toolbar ul.toolbar-menu > li {
+header.toolbar ul.user-menu {
+  float: right;
+}
+header.toolbar ul.global-menu > li,
+header.toolbar ul.user-menu > li {
   float: left;
 }
-header.toolbar ul.toolbar-menu > li > a {
+header.toolbar ul.global-menu li.home {
+  display: none;
+}
+header.toolbar ul.user-menu > li > a {
   display: block;
   width: 40px;
   height: 40px;
@@ -439,30 +458,33 @@ header.toolbar ul.toolbar-menu > li > a {
   border-left: 1px solid rgba(256, 256, 256, 0.17);
   padding: 0 7px;
 }
-header.toolbar ul.toolbar-menu > li a:hover {
+header.toolbar ul.user-menu > li a:hover {
   text-decoration: none;
 }
-header.toolbar ul.toolbar-menu > li span.icon {
+header.toolbar ul.global-menu > li span.icon {
+  margin: 0 6px;
+}
+header.toolbar ul.user-menu > li span.icon {
   display: inline-block;
   margin: 6px auto;
 }
-header.toolbar ul.toolbar-menu > li span.label {
+header.toolbar ul.user-menu > li span.label {
   line-height: 40px;
 }
-header.toolbar ul.toolbar-menu li.search a {
+header.toolbar ul.user-menu li.rivers a {
   border-left: none;
 }
-header.toolbar ul.toolbar-menu li.user > a {
+header.toolbar ul.user-menu li.user > a {
   border-right: none;
   padding: 4px 0 0 5px;
 }
-header.toolbar ul.toolbar-menu li.login > a {
+header.toolbar ul.user-menu li.login > a {
   border-right: none;
 }
-header.toolbar ul.toolbar-menu li.login > a span.label {
+header.toolbar ul.user-menu li.login > a span.label {
   display: block;
 }
-header.toolbar ul.toolbar-menu li.user > a span.notification {
+header.toolbar ul.user-menu li.user > a span.notification {
   position: absolute;
   z-index: 100;
   top: -4px;
@@ -485,14 +507,14 @@ header.toolbar ul.toolbar-menu li.user > a span.notification {
   filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#c1585b', EndColorStr='#9b0008');
   padding: 2px 6px;
 }
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
+header.toolbar ul.user-menu li.user span.avatar-wrap {
   position: relative;
   display: inline-block;
   vertical-align: bottom;
   width: 30px;
   height: 30px;
 }
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap:after {
+header.toolbar ul.user-menu li.user span.avatar-wrap:after {
   content: ' ';
   width: 100%;
   height: 100%;
@@ -506,7 +528,7 @@ header.toolbar ul.toolbar-menu li.user span.avatar-wrap:after {
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap img {
+header.toolbar ul.user-menu li.user span.avatar-wrap img {
   float: left;
   width: 100%;
   -webkit-border-radius: 3px;
@@ -514,9 +536,12 @@ header.toolbar ul.toolbar-menu li.user span.avatar-wrap img {
   border-radius: 3px;
 }
 header.toolbar .logo a:hover,
-header.toolbar ul.toolbar-menu li.search a:hover,
-header.toolbar ul.toolbar-menu li.create a:hover {
+header.toolbar ul.global-menu > li a:hover,
+header.toolbar ul.user-menu > li a:hover {
   opacity: 0.7;
+}
+header.toolbar ul.user-menu > li.user a:hover {
+  opacity: 1;
 }
 /* --------------------------- PAGE TITLE */
 hgroup.page-title {
@@ -631,7 +656,7 @@ hgroup.user-title div.follow-summary p.button-white a {
   display: inline-block;
 }
 hgroup.user-title div.follow-summary p.follow.selected a:after {
-  /*content: 'ing';*/
+  content: 'ing';
 }
 /* --------------------------- PAGE NAVIGATION */
 nav.page-navigation {
@@ -751,9 +776,16 @@ p.metadata span.icon {
   padding: 0;
 }
 .drop ul.score-drop li.scored a {
+  font-size: 0.9em;
+  line-height: 25px;
   background-color: #eaf3f5;
+  padding-right: 5px;
+}
+.drop ul.score-drop li.scored a span.icon {
+  float: left;
 }
 .drop ul.score-drop li.like.scored a {
+  color: #81c279;
   border: 1px solid #81c279;
 }
 .drop ul.score-drop li.dislike.scored a {
@@ -765,6 +797,20 @@ p.metadata span.icon {
   font-size: 0.8em;
   top: -7px;
   right: 5px;
+}
+.drop ul.move-drop li.bucket a span.icon {
+  background-position: center -675px;
+}
+.drop ul.move-drop li.bucket.added a span.icon {
+  background-position: center -700px;
+}
+.drop ul.move-drop li.bucket.added a span.icon strong {
+  position: relative;
+  top: -8px;
+  left: 5px;
+  color: #3eb7d0;
+  font-size: 9px;
+  text-shadow: none;
 }
 /* ---- DROP: SOURCE */
 .drop section.drop-source {
@@ -991,30 +1037,26 @@ section.meta-data img.media-image {
 .drops article.drop div.drop-actions > ul li {
   float: left;
 }
-
 /**** Transitions ****/
 .masonry,
 .masonry .masonry-brick {
   -webkit-transition-duration: 0.7s;
-     -moz-transition-duration: 0.7s;
-       -o-transition-duration: 0.7s;
-          transition-duration: 0.7s;
+  -moz-transition-duration: 0.7s;
+  -o-transition-duration: 0.7s;
+  transition-duration: 0.7s;
 }
-
 .masonry {
   -webkit-transition-property: height, width;
-     -moz-transition-property: height, width;
-       -o-transition-property: height, width;
-          transition-property: height, width;
+  -moz-transition-property: height, width;
+  -o-transition-property: height, width;
+  transition-property: height, width;
 }
-
 .masonry .masonry-brick {
   -webkit-transition-property: left, right, top;
-     -moz-transition-property: left, right, top;
-       -o-transition-property: left, right, top;
-          transition-property: left, right, top;
+  -moz-transition-property: left, right, top;
+  -o-transition-property: left, right, top;
+  transition-property: left, right, top;
 }
-
 /* ---- DROP: VIEW LIST */
 .list article.drop .drop-content {
   float: left;
@@ -1143,6 +1185,11 @@ article.container div.property-title h1 {
   line-height: 2.5em;
   padding: 0 10px;
 }
+article.container div.property-title h1 em {
+  color: #777777;
+  font-style: normal;
+  font-weight: normal;
+}
 article.container div.property-title h1 a {
   color: #444444;
 }
@@ -1238,8 +1285,8 @@ article.container div.parameter .button-blue a {
   padding: 5px;
 }
 article.container div.parameter img.loading_image {
-  max-height: 20px;
-  max-width: 20px;
+  max-height: 30px;
+  max-width: 30px;
   vertical-align: middle;
 }
 article.container div.parameter img.loading_image,
@@ -1326,7 +1373,7 @@ select.boolean-operator {
 }
 #content.settings div.alert-message p {
   text-align: left;
-  margin: 20px;
+  padding: 20px;
 }
 #content.settings div.alert-message ul {
   text-align: left;
@@ -1449,6 +1496,12 @@ div.modal-window {
   background: #fff;
   margin: 3.125%;
 }
+.visible div.modal-window {
+  -moz-animation-duration: .2s;
+  -moz-animation-name: modalPop;
+  -webkit-animation-duration: .2s;
+  -webkit-animation-name: modalPop;
+}
 div#modal-container article.modal {
   -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
   -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
@@ -1545,6 +1598,21 @@ article.modal form.filters label.selected:after {
   content: 'in use';
 }
 /* ---- MODAL: LINK LIST */
+article.modal div.link-list {
+  max-height: 250px;
+  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+article.modal div.link-list p.category {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #c6c6c6;
+  margin: 15px 0 0 0;
+}
+article.modal div.link-list ul {
+  padding-bottom: 5px;
+}
 article.modal div.link-list ul li {
   clear: both;
   font-weight: bold;
@@ -1732,6 +1800,7 @@ article.modal div.search ul.dual-buttons {
   .col_6,
   .col_8,
   .col_9,
+  .col_10,
   .col_12 {
     margin: 0 1.041666667%;
   }
@@ -1763,6 +1832,10 @@ article.modal div.search ul.dual-buttons {
     float: left;
     width: 72.91666667%;
   }
+  .col_10 {
+    float: left;
+    width: 81.25%;
+  }
   .col_12 {
     width: 97.916666667%;
   }
@@ -1773,32 +1846,42 @@ article.modal div.search ul.dual-buttons {
     height: 55px;
   }
   header.toolbar .logo {
-    margin: 0 1.041666667%;
+    margin: 0 15px 0 1.041666667%;
   }
   header.toolbar .logo a {
     background-size: 100%;
     padding: 8px 0;
     margin: 0;
   }
-  header.toolbar ul.toolbar-menu {
+  header.toolbar ul.global-menu {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.25) inset;
+    -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.25) inset;
+    box-shadow: 0 1px 1px rgba(256, 256, 256, 0.25) inset;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 13px;
+  }
+  header.toolbar ul.user-menu {
     margin-right: 1.041666667%;
   }
-  header.toolbar ul.toolbar-menu > li > a {
+  header.toolbar ul.user-menu > li > a {
     width: auto;
     padding: 0 10px;
     margin: 7px 0;
   }
-  header.toolbar ul.toolbar-menu > li span.icon,
-  header.toolbar ul.toolbar-menu > li span.label {
+  header.toolbar ul.user-menu > li span.icon,
+  header.toolbar ul.user-menu > li span.label {
     display: block;
     float: left;
   }
-  header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
+  header.toolbar ul.user-menu li.user span.avatar-wrap {
     width: 30px;
     height: 30px;
     margin: 2px 0 0 7px;
   }
-  header.toolbar ul.toolbar-menu li.user > a span.dropdown-arrow {
+  header.toolbar ul.user-menu li.user > a span.dropdown-arrow {
     display: block;
     float: right;
     width: 18px;
@@ -1890,7 +1973,6 @@ article.modal div.search ul.dual-buttons {
     float: left;
     width: 17.72151899%;
     padding: 1.041666667%;
-    min-height: 85px;
   }
   .list article.drop section.drop-source a.avatar-wrap,
   .list article.drop section.drop-source div.byline {
@@ -2045,6 +2127,15 @@ article.modal div.search ul.dual-buttons {
   .center {
     width: 80%;
     max-width: 1250px;
+  }
+  header.toolbar ul.global-menu li.home {
+    display: block;
+  }
+  header.toolbar ul.global-menu > li:first-child {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  header.toolbar ul.global-menu > li:last-child {
+    border-left: 1px solid rgba(256, 256, 256, 0.17);
   }
   hgroup.page-title h1 {
     width: 81.25%;

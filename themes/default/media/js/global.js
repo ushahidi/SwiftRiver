@@ -81,7 +81,7 @@ $(document).ready(function() {
 	// Show the window
 	Dialog.prototype.show = function() {
 		this.dialogBox.html(this.contents);
-		this.container.fadeIn('slow');
+		this.container.fadeIn('350').addClass('visible');
 		$('body').addClass('noscroll');
 		this._registerHide(); 
 		

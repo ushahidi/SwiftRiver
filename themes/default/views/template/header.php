@@ -74,9 +74,11 @@
 <body> 
 	<header class="toolbar">
 		<div class="center">
-			<h1 class="logo">
-				<a href="<?php echo URL::site(); ?>">
-					<span class="nodisplay">SwiftRiver</span></a>
+			<div class="col_4">
+				<h1 class="logo">
+					<a href="<?php echo URL::site(); ?>">
+					<span class="nodisplay">SwiftRiver</span>
+					</a>
 				</h1>
 			<?php echo $nav_header;?>
 		</div>

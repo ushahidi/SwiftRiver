@@ -47,16 +47,14 @@
 </script>
 
 <script type="text/template" id="channel-option-template">
-	<div class="parameter">
-		<label>
-			<p class="field"><%= config.label %></p>
-			<% if (typeof title !== 'undefined') { %>
-				<p class="title"><%= title.substring(0, 19) + (title.length > 20 ? "..." : "") %></p>
-			<% } %>
-			<%= input %>
-			<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
-		</label>
-	</div>
+	<label>
+		<p class="field"><%= config.label %></p>
+		<% if (typeof title !== 'undefined') { %>
+			<p class="title"><%= title.substring(0, 19) + (title.length > 20 ? "..." : "") %></p>
+		<% } %>
+		<%= input %>
+		<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
+	</label>
 </script>
 
 <script type="text/template" id="channel-template">
@@ -66,7 +64,7 @@
 			<a href="#" class="avatar-wrap"><img onerror="showDefaultAvatar(this)" src="<?php echo URL::site('media/img'); ?>/channel-<%= channel %>.gif" /></a>
 			<h1><%= name %></h1>
 			<div class="popover add-parameter">
-				<p class="button-white add"><a href="#" class="popover-trigger"><span class="icon"></span>Add parameter</a></p>
+				<p class="button-white has-icon add"><a href="#" class="popover-trigger"><span class="icon"></span>Add parameter</a></p>
 				<ul class="popover-window base">
 				</ul>
 			</div>
@@ -169,7 +167,7 @@ $(function() {
 	var AddChannelsViewItem = Backbone.View.extend({
 		
 		tagName: "label",
-		
+
 		template: _.template($("#channels-modal-channel-item-template").html()),
 		
 		events: {
@@ -290,9 +288,9 @@ $(function() {
 	// Single channel option view
 	var ChannelOptionView = Backbone.View.extend({
 		
-		tagName: "section",
+		tagName: "div",
 		
-		className: "property-parameters",
+		className: "parameter",
 		
 		template: _.template($("#channel-option-template").html()),
 		
