@@ -12,19 +12,19 @@
 				<article class="container base">
 					<header class="cf">
 						<div class="property-title">
-							<h1><?php echo __('Name'); ?></h1>
+							<h1><?php echo __('What\'s your river about'); ?> <em><?php echo __('and who can see it?'); ?></em></h1>
 						</div>
 					</header>
 					<section class="property-parameters">
 						<div class="parameter">
 							<label for="river_name">
-								<p class="field"><?php echo __('Display name'); ?></p>
+								<p class="field"><?php echo __('Name'); ?></p>
 								<input type="text" value="" name="river_name" />
 							</label>
 						</div>
 						<div class="parameter">
 							<label for="river_url">
-								<p class="field"><?php echo __('Permissions'); ?></p>
+								<p class="field"><?php echo __('Who can see it'); ?></p>
 								<select name="river_public">
 									<option value="1"><?php echo __('Public (Anyone)'); ?></option>
 									<option value="0"><?php echo __('Private (Collaborators only)'); ?></option>

@@ -60,7 +60,7 @@ body {
    background: #fff;
 }
 
-.col_3, .col_4, .col_9, .col_12 {
+.col_3, .col_4, .col_8, .col_9, .col_10, .col_12 {
    margin: 0 3.125%;
 }
 
@@ -342,7 +342,18 @@ span.icon {
    background-position: center -625px;
 }
 
+.rivers span.icon {
+   background-position: center -650px;
+}
+
+.home span.icon {
+   background-position: center -725px;
+}
+
+.no-content {padding: 20px 0;}
+
 .alert-message {
+   text-align: left;
    text-shadow: 0 1px 1px #fff;
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
@@ -500,16 +511,25 @@ header.toolbar .logo a {
    margin: 0 8px;
 }
 
-header.toolbar ul.toolbar-menu {
-   float: right;
-   margin-right: 10px;
+header.toolbar ul.global-menu {
+   float: left;
+   margin-top: 6px;
 }
 
-header.toolbar ul.toolbar-menu > li {
+header.toolbar ul.user-menu {
+   float: right;
+}
+
+header.toolbar ul.global-menu > li ,
+header.toolbar ul.user-menu > li {
    float: left;
 }
 
-header.toolbar ul.toolbar-menu > li > a {
+header.toolbar ul.global-menu li.home {
+   display: none;
+}
+
+header.toolbar ul.user-menu > li > a {
    display: block;
    width: 40px;
    height: 40px;
@@ -522,37 +542,41 @@ header.toolbar ul.toolbar-menu > li > a {
    padding: 0 7px;
 }
 
-header.toolbar ul.toolbar-menu > li a:hover {
+header.toolbar ul.user-menu > li a:hover {
    text-decoration: none;
 }
 
-header.toolbar ul.toolbar-menu > li span.icon {
+header.toolbar ul.global-menu > li span.icon {
+   margin: 0 6px;
+}
+
+header.toolbar ul.user-menu > li span.icon {
    display: inline-block;
    margin: 6px auto;
 }
 
-header.toolbar ul.toolbar-menu > li span.label {
+header.toolbar ul.user-menu > li span.label {
    line-height: 40px;
 }
 
-header.toolbar ul.toolbar-menu li.search a {
+header.toolbar ul.user-menu li.rivers a {
    border-left: none;
 }
 
-header.toolbar ul.toolbar-menu li.user > a {
+header.toolbar ul.user-menu li.user > a {
    border-right: none;
    padding: 4px 0 0 5px;
 }
 
-header.toolbar ul.toolbar-menu li.login > a {
+header.toolbar ul.user-menu li.login > a {
   border-right: none;
 }
 
-header.toolbar ul.toolbar-menu li.login > a span.label {
+header.toolbar ul.user-menu li.login > a span.label {
   display: block;
 }
 
-header.toolbar ul.toolbar-menu li.user > a span.notification {
+header.toolbar ul.user-menu li.user > a span.notification {
    position: absolute;
    z-index: 100;
    top: -4px;
@@ -576,7 +600,7 @@ header.toolbar ul.toolbar-menu li.user > a span.notification {
   padding: 2px 6px;
 }
 
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
+header.toolbar ul.user-menu li.user span.avatar-wrap {
    position: relative;
    display: inline-block;
    vertical-align: bottom;
@@ -584,7 +608,7 @@ header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
    height: 30px;
 }
 
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap:after {
+header.toolbar ul.user-menu li.user span.avatar-wrap:after {
    content: ' ';
    width: 100%;
    height: 100%;
@@ -602,7 +626,7 @@ header.toolbar ul.toolbar-menu li.user span.avatar-wrap:after {
    border-radius: 3px;
 }
 
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap img {
+header.toolbar ul.user-menu li.user span.avatar-wrap img {
    float: left;
    width: 100%;
    -webkit-border-radius: 3px;
@@ -611,9 +635,13 @@ header.toolbar ul.toolbar-menu li.user span.avatar-wrap img {
 }
 
 header.toolbar .logo a:hover,
-header.toolbar ul.toolbar-menu li.search a:hover,
-header.toolbar ul.toolbar-menu li.create a:hover {
+header.toolbar ul.global-menu > li a:hover,
+header.toolbar ul.user-menu > li a:hover {
    opacity: 0.7;
+}
+
+header.toolbar ul.user-menu > li.user a:hover {
+   opacity: 1;
 }
 
 /* --------------------------- PAGE TITLE */
@@ -891,13 +919,23 @@ p.metadata span.icon {
 
 /* ---- DROP: ACTIONS */	
 
-.drop .drop-actions ul li a {padding:0;}
+.drop .drop-actions ul li a {
+   padding:0;
+}
 
 .drop ul.score-drop li.scored a {
+   font-size: 0.9em;
+   line-height: 25px;
    background-color: #eaf3f5;
+   padding-right: 5px;
+}
+
+.drop ul.score-drop li.scored a span.icon {
+   float: left;
 }
 
 .drop ul.score-drop li.like.scored a {
+   color: #81c279;
    border: 1px solid #81c279;
 }
 
@@ -911,6 +949,23 @@ p.metadata span.icon {
    font-size: 0.8em;
    top: -7px;
    right: 5px;
+}
+
+.drop ul.move-drop li.bucket a span.icon {
+   background-position: center -675px;
+}
+
+.drop ul.move-drop li.bucket.added a span.icon {
+   background-position: center -700px;
+}
+
+.drop ul.move-drop li.bucket.added a span.icon strong {
+   position: relative;
+   top: -8px;
+   left: 5px;
+   color: #3eb7d0;
+   font-size: 9px;
+   text-shadow: none;
 }
 	
 /* ---- DROP: SOURCE */
@@ -1378,6 +1433,12 @@ article.container div.property-title h1 {
    padding: 0 10px;
 }
 
+article.container div.property-title h1 em {
+   color: #777777;
+   font-style: normal;
+   font-weight: normal;
+}
+
 article.container div.property-title h1 a {
    color: #444444;
 }
@@ -1734,7 +1795,6 @@ div#confirmation-container {
    background-color: rgba(0,0,0,.25);
 }
 
-
 div#zoom-container {
    background-color: rgba(0,0,0,.9);
 }
@@ -1749,6 +1809,13 @@ div.modal-window {
    border-radius: 3px;
    background: #fff;
    margin: 3.125%;
+}
+
+.visible div.modal-window {
+    -moz-animation-duration: .2s;
+    -moz-animation-name: modalPop;
+    -webkit-animation-duration: .2s;
+    -webkit-animation-name: modalPop;
 }
 
 div#modal-container article.modal {
@@ -1865,6 +1932,24 @@ article.modal form.filters label.selected:after {
 }
 
 /* ---- MODAL: LINK LIST */
+
+article.modal div.link-list {
+   max-height: 250px;
+   overflow: scroll;
+   overflow-x: auto;
+   overflow-y: scroll;
+}
+
+article.modal div.link-list p.category {
+   font-size: 0.75em;
+   text-transform: uppercase;
+   border-bottom: 1px solid #c6c6c6;
+   margin: 15px 0 0 0;
+}
+
+article.modal div.link-list ul {
+   padding-bottom: 5px;
+}
 
 article.modal div.link-list ul li {
    clear: both;
@@ -2086,7 +2171,7 @@ article.modal hgroup.page-title .page-actions {
    margin: 0 auto;
 }
 
-.col_1, .col_2, .col_3, .col_4, .col_6, .col_8, .col_9, .col_12 {
+.col_1, .col_2, .col_3, .col_4, .col_6, .col_8, .col_9, .col_10, .col_12 {
    margin: 0 1.041666667%;
 }
 
@@ -2125,6 +2210,11 @@ article.modal hgroup.page-title .page-actions {
    width: 72.91666667%;
 }
 
+.col_10 {
+   float: left;
+   width: 81.25%;
+}
+
 .col_12 {
    width: 97.916666667%;
 }
@@ -2136,7 +2226,7 @@ header.toolbar {
 }
 
 header.toolbar .logo {
-   margin: 0 1.041666667%;
+   margin: 0 15px 0 1.041666667%;
 }
 
 header.toolbar .logo a {
@@ -2145,29 +2235,40 @@ header.toolbar .logo a {
    margin: 0;
 }
 
-header.toolbar ul.toolbar-menu {
+header.toolbar ul.global-menu {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   border: 1px solid rgba(0,0,0,0.1);
+   margin-top: 13px;
+}
+
+header.toolbar ul.user-menu {
    margin-right: 1.041666667%;
 }
 
-header.toolbar ul.toolbar-menu > li > a {
+header.toolbar ul.user-menu > li > a {
    width: auto;
    padding: 0 10px;
    margin: 7px 0;
 }
 
-header.toolbar ul.toolbar-menu > li span.icon,
-header.toolbar ul.toolbar-menu > li span.label {
+header.toolbar ul.user-menu > li span.icon,
+header.toolbar ul.user-menu > li span.label {
    display: block;
    float: left;
 }
 
-header.toolbar ul.toolbar-menu li.user span.avatar-wrap {
+header.toolbar ul.user-menu li.user span.avatar-wrap {
    width: 30px;
    height: 30px;
    margin: 2px 0 0 7px;
 }
 
-header.toolbar ul.toolbar-menu li.user > a span.dropdown-arrow {
+header.toolbar ul.user-menu li.user > a span.dropdown-arrow {
    display: block;
    float: right;
    width: 18px;
@@ -2479,6 +2580,18 @@ div.modal-window .modal.col_9 {width: auto;}
 .center {
    width: 80%;
    max-width: 1250px;
+}
+
+header.toolbar ul.global-menu li.home {
+   display: block;
+}
+
+header.toolbar ul.global-menu > li:first-child {
+   border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+header.toolbar ul.global-menu > li:last-child {
+   border-left: 1px solid rgba(256,256,256,0.17);
 }
 
 hgroup.page-title h1 {
