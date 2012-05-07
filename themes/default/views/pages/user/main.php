@@ -1,19 +1,23 @@
 <div class="col_9">
-	<div id="primer" class="base cf">
-		<div class="primer-item learn">
-			<h3 class="button-blue"><a href="#">Learn how SwiftRiver works</a></h3>
-			<a href="#" class="primer-image"><img src="/markup/images/content/primer-learn.gif" /></a>
-		</div>
-		<div class="primer-item create">
-			<h3 class="button-blue"><a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>">Create a river</a></h3>
-			<a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>" class="primer-image"><img src="/markup/images/content/primer-create.gif" /></a>
-		</div>
-		<div class="primer-item search">
-			<h3 class="button-blue"><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
-			<a href="/markup/modal-search.php" class="primer-image modal-trigger"><img src="/markup/images/content/primer-search.gif" /></a>
-		</div>
-	</div>
-	<p class="remove"><a href="#primer">Hide these options</a></p>
+	<article id="primer" class="container base">
+		<header class="cf">
+			<a href="/markup/modal-prompt.php" class="remove-large modal-trigger"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+			<div class="property-title">
+				<h1>Get started</h1>
+			</div>
+		</header>
+		<section class="property-parameters cf">
+			<div class="parameter primer-item learn">
+				<h3><a href="#">Learn how SwiftRiver works</a></h3>
+			</div>
+			<div class="parameter primer-item create">
+				<h3><a href="/markup/river/new.php">Create a river</a></h3>
+			</div>
+			<div class="parameter primer-item search">
+				<h3><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
+			</div>
+		</section>
+	</article>
 
 	<article class="container base">
 		<?php if ($has_activity): ?>

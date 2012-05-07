@@ -1676,6 +1676,10 @@ select.boolean-operator {
    padding: 5px 0;
 }
 
+#content.user article.container a.remove-large {
+   margin: 13px 10px 13px 0;
+}
+
 #content.user section.property-parameters div.activity-item span.icon {
    float: left;
    padding: 0;
@@ -1689,39 +1693,25 @@ select.boolean-operator {
 
 /* --------------------------- DASHBOARD */
 
-#content.dashboard div#primer {
+#content.dashboard #primer {
    margin-top: 15px;
 }
 
-#content.dashboard div#primer .primer-item h3 a {
-   display: block;
-   font-size: 0.9em;
-   -webkit-border-radius: 0px;
-   -moz-border-radius: 0px;
-   border-radius: 0px;
+#content.dashboard #primer .primer-item {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
 }
 
-#content.dashboard div#primer .primer-item img {display: none;}
+#content.dashboard #primer .primer-item h3 a {
+   display: block;
+   font-size: 0.9em;
+}
 
 #content.dashboard p.remove {
    font-size: 0.8em;
    text-align: right;
    margin: 7px 0;
-}
-
-#content.dashboard p.remove a:before {
-   font-weight: bold;
-   content: 'x ';
-   padding-right: 3px;
-}
-
-#content.dashboard p.remove a {
-   opacity: .7;
-}
-
-#content.dashboard p.remove a:hover {
-   opacity: 1;
-   text-decoration: none;
 }
 
 #content.dashboard section.property-parameters div.activity-item a.avatar-wrap {
@@ -2486,63 +2476,47 @@ article.container section.property-parameters p.title {
 
 /* --------------------------- DASHBOARD */
 
-#content.dashboard div#primer .primer-item {
+#content.dashboard #primer section.property-parameters {
+   padding: 1.428571429%;
+}
+
+#content.dashboard #primer .primer-item {
    float: left;
-   width: 33.33333329%;
-   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.75) inset;
-   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.75) inset;
-   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.75) inset;
-   background: #EAF3F5;
+   width: 31.864%;
+   -webkit-box-shadow: 0 1px 0 rgba(256,256,256,.5) inset;
+   -moz-box-shadow: 0 1px 0 rgba(256,256,256,.5) inset;
+   box-shadow: 0 1px 0 rgba(256,256,256,.5) inset;
+   border: 1px solid rgba(0,0,0,.18);
+   -o-background-size: cover;
+   -moz-background-size: cover;
+   -webkit-background-size: cover;
+   background-size: cover;
+   background-position: center top;
+   background-repeat: no-repeat;
+   padding: 100px 0 0 0;
 }
 
-#content.dashboard div#primer .primer-item h3 a {
-   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.25) inset;
-   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.25) inset;
-   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset,
-      1px 0 0 rgba(256,256,256,.25) inset;
+#content.dashboard #primer .primer-item.learn {
+   background-image: url(../img/content/primer-learn.gif);
 }
 
-#content.dashboard div#primer .primer-item.learn,
-#content.dashboard div#primer .primer-item.learn h3 a {
-   -moz-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
-   -webkit-box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
-   box-shadow: -1px 0 0 rgba(0,0,0,.15) inset;
+#content.dashboard #primer .primer-item.create {
+   background-image: url(../img/content/primer-create.gif);
+   margin: 0 1.428571429%;
 }
 
-#content.dashboard div#primer .primer-item.search,
-#content.dashboard div#primer .primer-item.search h3 a {
-   -moz-box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
-   -webkit-box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
-   box-shadow: 1px 0 0 rgba(256,256,256,.25) inset;
+#content.dashboard #primer .primer-item.search {
+   background-image: url(../img/content/primer-search.gif);
 }
 
-#content.dashboard div#primer .primer-item h3 a {
-   font-size: 0.8em;
-   padding: 0 5px;
+#content.dashboard #primer .primer-item h3 a {
+   color: #fff;
+   font-size: 0.9em;
+   text-shadow: 0 1px 0 rgba(0,0,0,.5);
+   border-top: 1px solid rgba(0,0,0,.3);
+   background: rgba(0,0,0,.7);
+   padding: 10px;
 }
-
-#content.dashboard div#primer .primer-item.learn h3 a {
-   -webkit-border-top-left-radius: 3px;
-   -moz-border-radius-topleft: 3px;
-   border-top-left-radius: 3px;
-}
-
-#content.dashboard div#primer .primer-item.search h3 a {
-   -webkit-border-top-right-radius: 3px;
-   -moz-border-radius-topright: 3px;
-   border-top-right-radius: 3px;
-}
-
-#content.dashboard div#primer .primer-item a.primer-image {
-   display: block;
-}
-
-#content.dashboard div#primer .primer-item img {display: block;width:100%;}
 
 #content.dashboard section.property-parameters div.activity-item div.item-body {
    width: 89%;
