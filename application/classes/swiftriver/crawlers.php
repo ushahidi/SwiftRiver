@@ -63,7 +63,8 @@ class Swiftriver_Crawlers {
 		self::do_schedule();
 		
 		// If we got some drops, process them
-		if ( ! Swiftriver_Dropletqueue::isempty()) {
+		if ( ! Swiftriver_Dropletqueue::isempty())
+		{
 			Kohana::$log->add(Log::INFO, "Crawler post processing");	
 			Kohana::$log->write();
 			Swiftriver_Dropletqueue::process();	  

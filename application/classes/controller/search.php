@@ -36,6 +36,12 @@ class Controller_Search extends Controller_Swiftriver {
 	 */
 	private $sub_content;
 
+	/**
+	 * Whether to display photos
+	 * @var bool
+	 */
+	private $photos = FALSE;
+
 
 	public function before()
 	{
@@ -51,12 +57,30 @@ class Controller_Search extends Controller_Swiftriver {
 			    ->bind('search_term', $this->search_term)
 			    ->bind('url_params', $this->url_params);
 
+			// Set the active tab
+			$this->template->content->active = $this->request->action();
+
+			// Get the search term
 			$this->search_term = strip_tags($_GET['q']);
 
-			// Set the search scope
-			$this->search_scope = (isset($_GET['search_scope'])) 
-			    ? $_GET['search_scope'] 
-			    : Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE);
+			if (in_array($this->request->action(), array('photos', 'list')))
+			{
+				// Set the search scope to the previous search scope
+				// Necessary when the user the search is on a river/bucket
+				// so that the user doesn't get presented with extra tabs
+				$search_scope = Cookie::get(Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+				if ($search_scope != 'all')
+				{
+					$this->search_scope = $search_scope;
+				}
+			}
+			else
+			{
+				// Set the search scope
+				$this->search_scope = (isset($_GET['search_scope'])) 
+				    ? $_GET['search_scope'] 
+				    : Cookie::get(Swiftriver::COOKIE_SEARCH_SCOPE);
+			}
 
 			// Defaults the scope to 'all' if no scope exists
 			if (empty($this->search_scope))
@@ -64,6 +88,7 @@ class Controller_Search extends Controller_Swiftriver {
 				$this->search_scope = "all";
 			}
 
+			// Set the search scope
 			Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, $this->search_scope);
 
 			// URL Parameters
@@ -75,7 +100,6 @@ class Controller_Search extends Controller_Swiftriver {
 			{
 				$this->template->content->search_scope = $this->search_scope;
 			}
-
 		}
 
 	}
@@ -86,7 +110,6 @@ class Controller_Search extends Controller_Swiftriver {
 	public function action_index()
 	{
 		$this->template->header->title = __("Search");
-		$this->template->content->active = 'drops';
 
 		// Check for seach query
 		if ( ! empty($_GET['q']))
@@ -115,7 +138,8 @@ class Controller_Search extends Controller_Swiftriver {
 			$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 			$droplet_js->polling_enabled = FALSE;
 			$droplet_js->channels = json_encode(array());
-			$droplet_js->default_view = "drops";
+			$droplet_js->default_view = "list";
+			$droplet_js->photos = $this->photos ? 1 : 0;
 
 			$this->sub_content->nothing_to_display = View::factory('pages/search/nothing_to_display');
 			$this->sub_content->nothing_to_display->search_term = $this->search_term;
@@ -138,7 +162,6 @@ class Controller_Search extends Controller_Swiftriver {
 			// Redirect to the dashboard
 			$this->request->redirect($this->dashboard_url);
 		}
-
 	}
 
 	/**
@@ -175,6 +198,12 @@ class Controller_Search extends Controller_Swiftriver {
 		$this->action_index();
 	}
 
+	public function action_photos()
+	{
+		$this->photos = TRUE;
+		$this->action_index();
+	}
+
 	/**
 	 * Gets the droplets for the specified bucket and page no. contained
 	 * in the URL variable "page"
@@ -198,7 +227,7 @@ class Controller_Search extends Controller_Swiftriver {
 				        array(':page' => $results['page'])
 				        );
 				}
-				
+
 				echo json_encode($results['droplets']);
 			break;
 			
@@ -208,7 +237,7 @@ class Controller_Search extends Controller_Swiftriver {
 				{
 					throw new HTTP_Exception_403();
 				}
-			
+
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
@@ -249,7 +278,7 @@ class Controller_Search extends Controller_Swiftriver {
 	private function _handle_drops_search($parameters)
 	{
 		// Get the page number for the request
-		$page = (isset($parmaters['page']) AND intval($parameters['page']) > 0) 
+		$page = (isset($parameters['page']) AND intval($parameters['page']) > 0) 
 		    ? intval($parameters['page']) 
 		    : 1;
 
@@ -276,7 +305,8 @@ class Controller_Search extends Controller_Swiftriver {
 			// Global search
 			case 'all':
 				// Get the droplets
-				$results['droplets'] = Model_Droplet::search($query_filters, $user_id, $page);
+				$results['droplets'] = Model_Droplet::search($query_filters,
+				    $user_id, $page, $this->photos);
 
 			break;
 
@@ -286,7 +316,7 @@ class Controller_Search extends Controller_Swiftriver {
 				$river_id = Cookie::get('search_item_id');
 
 				$data = Model_River::get_droplets($user_id, $river_id, 0, $page, 
-					PHP_INT_MAX, 'DESC', $query_filters);
+					PHP_INT_MAX, 'DESC', $query_filters, $this->photos);
 
 				$results['droplets'] = $data['droplets'];
 			break;
@@ -298,7 +328,7 @@ class Controller_Search extends Controller_Swiftriver {
 
 				// Get the droplets
 				$data = Model_Bucket::get_droplets($user_id, $bucket_id, 0, $page, 
-					PHP_INT_MAX, $query_filters);
+					PHP_INT_MAX, $this->photos, $query_filters);
 
 				$results['droplets'] = $data['droplets'];
 			break;
@@ -314,8 +344,6 @@ class Controller_Search extends Controller_Swiftriver {
 	 */
 	public function action_buckets()
 	{
-		$this->template->content->active = 'buckets';
-
 		$this->sub_content = View::factory('pages/search/buckets')
 		    ->bind('search_term', $this->search_term)
 		    ->bind('buckets', $buckets);
@@ -333,8 +361,6 @@ class Controller_Search extends Controller_Swiftriver {
 	 */
 	public function action_rivers()
 	{
-		$this->template->content->active = 'rivers';
-
 		$this->sub_content = View::factory('pages/search/rivers')
 		    ->bind('search_term', $this->search_term)
 		    ->bind('rivers', $rivers);
@@ -348,8 +374,6 @@ class Controller_Search extends Controller_Swiftriver {
 
 	public function action_users()
 	{
-		$this->template->content->active = 'users';
-
 		$this->sub_content = View::factory('pages/search/users')
 		    ->bind('search_term', $this->search_term)
 		    ->bind('users', $users);

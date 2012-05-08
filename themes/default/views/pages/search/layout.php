@@ -12,8 +12,11 @@
 		<div id="page-views" class="river touchcarousel col_12">
 			<?php $url_params = (empty($url_params)) ? '' : '?'.$url_params; ?>
 			<ul class="touchcarousel-container">
-				<li class="touchcarousel-item <?php if ($active == 'drops') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/drops'.$url_params); ?>"><?php echo __("Drops"); ?></a>
+				<li id="list-navigation-link" class="touchcarousel-item <?php if ($active == 'list') echo 'active'; ?>">
+					<a href="<?php echo URL::site('search/list'.$url_params); ?>"><?php echo __("List"); ?></a>
+				</li>
+				<li id="photos-navigation-link" class="touchcarousel-item <?php if ($active == 'photos') echo 'active'; ?>">
+					<a href="<?php echo URL::site('search/photos'.$url_params); ?>"><?php echo __("Photos"); ?></a>
 				</li>
 
 				<?php if ($search_scope === 'all') : ?>

@@ -181,7 +181,12 @@ class Model_Droplet extends ORM {
 				$base_id = Model_Droplet::get_ids($new_droplet_count);
 
 				// Insert into the droplets table
-				$query = DB::insert('droplets', array('id', 'channel', 'droplet_hash', 'droplet_orig_id', 'droplet_type', 'droplet_title', 'droplet_content', 'droplet_date_pub', 'droplet_date_add', 'identity_id', 'processing_status'));
+				$query = DB::insert('droplets', 
+					array('id', 'channel', 'droplet_hash', 'droplet_orig_id',
+					    'droplet_type', 'droplet_title', 'droplet_content',
+					    'droplet_date_pub', 'droplet_date_add', 'identity_id',
+					    'processing_status'
+					));
 
 				foreach ($droplets_idx as $hash => $keys) 
 				{
@@ -349,13 +354,21 @@ class Model_Droplet extends ORM {
 		// Execute the queries created in the last step
 		if ($river_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `rivers_droplets` (`droplet_id`, `river_id`) VALUES ".$river_values)->execute();
+			$insert_drops_sql = "INSERT IGNORE INTO `rivers_droplets` (`droplet_id`, `river_id`) "
+			    ."VALUES ".$river_values;
+
+			DB::query(Database::INSERT, $insert_drops_sql)
+			    ->execute();
 		}
 		
 		// Update droplets tags
 		if ($tag_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_tags` (`droplet_id`, `tag_id`) VALUES ".$tag_values)->execute();
+			$insert_tags_sql = "INSERT IGNORE INTO `droplets_tags` (`droplet_id`, `tag_id`) "
+			    ."VALUES ".$tag_values;
+
+			DB::query(Database::INSERT, $insert_tags_sql)
+			    ->execute();
 		}
 		
 		// Update drops that completed semantic processing
@@ -370,25 +383,38 @@ class Model_Droplet extends ORM {
 		// Update droplet links
 		if ($link_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) VALUES ".$link_values)->execute();
+			$insert_sql = "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) "
+			    . "VALUES ".$link_values;
+
+			DB::query(Database::INSERT, $insert_sql)
+			    ->execute();
 		}
 		
 		// Update droplet media
 		if ($media_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_media` (`droplet_id`, `media_id`) VALUES ".$media_values)->execute();
+			$insert_media_sql = "INSERT IGNORE INTO `droplets_media` (`droplet_id`, `media_id`) "
+			    ."VALUES ".$media_values;
+
+			DB::query(Database::INSERT, $insert_media_sql)->execute();
 		}
 		
 		// Insert thumbnails
 		if ($media_thumbnail_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `media_thumbnails` (`media_id`, `size`, `url`) VALUES ".$media_thumbnail_values)->execute();
+			$insert_thumbnail_sql = "INSERT IGNORE INTO `media_thumbnails` (`media_id`, `size`, `url`) "
+			    ."VALUES ".$media_thumbnail_values;
+
+			DB::query(Database::INSERT, $insert_thumbnail_sql)->execute();
 		}
 		
 		// Set drop image
 		if ($drop_images)
 		{
-			DB::query(Database::UPDATE, "UPDATE `droplets` JOIN (".$drop_images.") a USING (`id`) SET `droplets`.`droplet_image` = `a`.`droplet_image`")->execute();
+			$update_images_sql = "UPDATE `droplets` JOIN (".$drop_images.") a "
+			    ."USING (`id`) SET `droplets`.`droplet_image` = `a`.`droplet_image`";
+
+			DB::query(Database::UPDATE, $update_images_sql)->execute();
 		}
 		
 		// Update drops that completed media processing
@@ -403,7 +429,11 @@ class Model_Droplet extends ORM {
 		// Update droplet places
 		if ($place_values)
 		{
-			DB::query(Database::INSERT, "INSERT IGNORE INTO `droplets_places` (`droplet_id`, `place_id`) VALUES ".$place_values)->execute();
+			$insert_places_sql = "INSERT IGNORE INTO `droplets_places` (`droplet_id`, `place_id`) "
+			    ."VALUES ".$place_values;
+
+			DB::query(Database::INSERT, $insert_places_sql)
+			    ->execute();
 		}
 	}
 		
@@ -1200,9 +1230,10 @@ class Model_Droplet extends ORM {
 	 *
 	 * @param array $filters Set of filters to apply to the droplets list
 	 * @param int $user_id ID of the user initiating the search
-	 * @param int $page Page number - for calculating the offset of the resultest
+	 * @param int $page Page number - for calculating the offset of the resultset
+	 * @param bool $photos - When TRUE, filter out only those droplets with photos
 	 */
-	public static function search($filters, $user_id, $page = 1)
+	public static function search($filters, $user_id, $page = 1, $photos = FALSE)
 	{
 		$user_orm = ORM::factory('user', $user_id);
 		$droplets = array();
@@ -1226,9 +1257,14 @@ class Model_Droplet extends ORM {
 			    ->on('all_scores.droplet_id', '=', 'droplets.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-			    ->where('droplets.droplet_processed', '=', 1);
+			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
 
 			self::apply_droplets_filter($query, $filters);
+
+			if ($photos)
+			{
+				$query->where('droplets.droplet_image', '>', 0);
+			}
 
 			$query->group_by('droplets.id')
 			    ->order_by('droplets.droplet_date_add', 'DESC')
@@ -1247,7 +1283,8 @@ class Model_Droplet extends ORM {
 	/**
 	 * Applies a set of filters to the specified Database_Query_Select object
 	 *
-	 * @param Database_Query_Select $query Object to which the filtering predicates shall be added
+	 * @param Database_Query_Select $query Object to which the filtering 
+	 *        predicates shall be added
 	 * @param array $filters Set of filters to apply
 	 */
 	public static function apply_droplets_filter(& $query, $filters)
@@ -1267,7 +1304,18 @@ class Model_Droplet extends ORM {
 				->on('droplets_tags.droplet_id', '=', 'droplets.id')
 				->join('tags', 'INNER')
 				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where('tag_canonical', 'IN', $filters['tags']);
+				->where_open();
+
+			foreach ($filters['tags'] as $tag)
+			{
+				$query->or_where('tags.tag_canonical', 'LIKE', DB::expr("'%$tag%'"));
+			}
+
+			// Places not set, close parathesss
+			if (empty($filters['places']))
+			{
+				$query->where_close();
+			}
 		}
 
 		if ( ! empty($filters['places']))
@@ -1275,8 +1323,21 @@ class Model_Droplet extends ORM {
 			$query->join('droplets_places', 'INNER')
 				->on('droplets_places.droplet_id', '=', 'droplets.id')
 				->join('places', 'INNER')
-				->on('droplets_places.place_id', '=', 'places.id')
-				->where('place_name_canonical', 'IN', $filters['places']);
+				->on('droplets_places.place_id', '=', 'places.id');
+
+			// No tags specified, open parantheses
+			if (empty($filters['tags']))
+			{
+				$query->where_open();
+			}
+
+			foreach ($filters['places'] as $place)
+			{
+				$query->where('places.place_name_canonical', 'LIKE', DB::expr("'%$place%'"));
+			}
+
+			// Close the parathensis
+			$query->where_close();
 		}
 		
 		if ( ! empty($filters['start_date']))

@@ -1332,7 +1332,7 @@ $(function() {
 			}
 		},		
 		
-		dropFullView: function (id) {
+		dropFullView: function(id) {
 			this.resetView();
 			var drop = dropsList.get(id);
 			if (!drop) {
@@ -1380,8 +1380,8 @@ $(function() {
 		
 		setFilter: function(query, repl) {
 			var fragment = "list";
-			if (this.view.options.layout == "drops") {
-				fragment = "drops";
+			if (this.view.options.layout !=  undefined) {
+				fragment = this.view.options.layout;
 			} 
 			if (query) {
 				fragment += '?' + query;

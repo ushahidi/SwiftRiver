@@ -262,7 +262,6 @@ class Model_River extends ORM {
 			
 			if ($drop_id)
 			{
-				Kohana::$log->add(Log::DEBUG, $drop_id);
 				// Return a specific drop
 				$query->where('droplets.id', '=', $drop_id);
 			}

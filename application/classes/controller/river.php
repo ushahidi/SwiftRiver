@@ -82,7 +82,7 @@ class Controller_River extends Controller_Swiftriver {
 			}
 			
 			// If this river is not public and no ownership...
-			if( ! $this->river->river_public AND ! $this->owner)
+			if ( ! $this->river->river_public AND ! $this->owner)
 			{
 				$this->request->redirect($this->dashboard_url);			
 			}
@@ -150,23 +150,23 @@ class Controller_River extends Controller_Swiftriver {
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
-		
+
 		// River filters
 		$filters = $this->_get_filters();
-				
+
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
 			$max_droplet_id, NULL, $filters, $this->photos);
-		
+
 		// Total Droplets Before Filtering
 		$total = $droplets_array['total'];
-		
+
 		// The Droplets
 		$droplets = $droplets_array['droplets'];
-		
+
 		// Total Droplets After Filtering
 		$filtered_total = count($droplets);
-				
+
 		// Bootstrap the droplet list
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
@@ -185,7 +185,7 @@ class Controller_River extends Controller_Swiftriver {
 		{
 			$droplet_js->filters = json_encode($filters);
 		}
-		
+
 		// Select droplet list view with drops view as the default if list not specified
 		$droplets_view = View::factory('pages/drop/drops')
 		    ->bind('droplet_js', $droplet_js)
@@ -271,7 +271,6 @@ class Controller_River extends Controller_Swiftriver {
 				{
 				    throw new HTTP_Exception_404('The requested page was not found on this server.');
 				}
-				
 
 				echo @json_encode($droplets);
 
@@ -448,7 +447,7 @@ class Controller_River extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "POST":
-				$link_array = json_decode($this->request->body(), true);
+				$link_array = json_decode($this->request->body(), TRUE);
 				$url = $link_array['url'];
 				if ( ! Valid::url($url))
 				{

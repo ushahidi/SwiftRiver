@@ -48,13 +48,14 @@ class Controller_Crawler_Main extends Controller {
 	private function do_fork($callback)
 	{
 		// The signals used below require cli mode
-		if (php_sapi_name() != 'cli') {
+		if (php_sapi_name() != 'cli')
+		{
 		    Kohana::$log->add(Log::ERROR, "CLI mode is required");
 			return;
 		}
 		
 		// Fork process to do the crawl if pcntl is installed
-		if (! function_exists('pcntl_fork'))
+		if ( ! function_exists('pcntl_fork'))
 		{
 			Kohana::$log->add(Log::ERROR, "PCNTL is required");
 			return;
@@ -72,7 +73,7 @@ class Controller_Crawler_Main extends Controller {
 			// so that child processes can other locks
 			
 			// Install signal handlers
-			declare(ticks = 1); // how often to check for signals
+			declare(ticks = 1); // How often to check for signals
 			// Run callable where OK received from parent
 			pcntl_signal(SIGUSR1, $callback);
 			// Exit when NACK received from parent.
