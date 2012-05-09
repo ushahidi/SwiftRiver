@@ -77,7 +77,8 @@ class Swiftriver_Crawler_Rss  {
 			// Run SimplePie.
 			$success = $feed->init();
 
-			// This makes sure that the content is sent to the browser as text/html and the UTF-8 character set (since we didn't change it).
+			// This makes sure that the content is sent to the browser as text/html
+			// and the UTF-8 character set (since we didn't change it).
 			$feed->handle_content_type();
 
 			if ($success)

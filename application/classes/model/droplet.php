@@ -383,10 +383,10 @@ class Model_Droplet extends ORM {
 		// Update droplet links
 		if ($link_values)
 		{
-			$insert_sql = "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) "
+			$insert_links_sql = "INSERT IGNORE INTO `droplets_links` (`droplet_id`, `link_id`) "
 			    . "VALUES ".$link_values;
 
-			DB::query(Database::INSERT, $insert_sql)
+			DB::query(Database::INSERT, $insert_links_sql)
 			    ->execute();
 		}
 		
@@ -1257,7 +1257,8 @@ class Model_Droplet extends ORM {
 			    ->on('all_scores.droplet_id', '=', 'droplets.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
+			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
+			    ->where('droplets.parent_id', '=', 0);
 
 			self::apply_droplets_filter($query, $filters);
 
@@ -1333,7 +1334,7 @@ class Model_Droplet extends ORM {
 
 			foreach ($filters['places'] as $place)
 			{
-				$query->where('places.place_name_canonical', 'LIKE', DB::expr("'%$place%'"));
+				$query->or_where('places.place_name_canonical', 'LIKE', DB::expr("'%$place%'"));
 			}
 
 			// Close the parathensis
@@ -1367,6 +1368,51 @@ class Model_Droplet extends ORM {
 		$query = DB::select(array(DB::expr("NEXTVAL('droplets',$num)"), 'id'));
 		    
 		return intval($query->execute()->get('id', 0));
+	}
+
+	/**
+	 * Given an array with the properties of a droplet, creates a single droplet
+	 * @param array $droplet Array with all the propeties of a droplet
+	 *
+	 * @return array An array representation of the drop with the 'id' field populated
+	 */
+	public static function create_single(& $droplet)
+	{
+		Model_Identity::create_from_droplet($droplet);
+
+		// Generate and set the droplet id
+		$droplet['id'] = Model_Droplet::get_ids(1);
+
+		$droplet_orm = ORM::factory('droplet');
+
+		$droplet_orm->id = $droplet['id'];
+		$droplet_orm->parent_id = $droplet['parent_id'];
+		$droplet_orm->droplet_type = $droplet['droplet_type'];
+		$droplet_orm->channel = $droplet['channel'];
+		$droplet_orm->droplet_title = $droplet['droplet_title'];
+		$droplet_orm->droplet_content = $droplet['droplet_content'];
+		$droplet_orm->droplet_orig_id = $droplet['id'];
+		$droplet_orm->droplet_locale = $droplet['droplet_locale'];
+		$droplet_orm->identity_id = $droplet['identity_id'];
+		$droplet_orm->droplet_hash = md5($droplet['identity_orig_id'].$droplet['channel'].$droplet['id']);
+		$droplet_orm->droplet_date_pub = $droplet['droplet_date_pub'];
+		$droplet_orm->processing_status = Model_Droplet::PROCESSING_STATUS_COMPLETE;
+
+		// Save
+		$droplet_orm->save();
+
+		// Add the droplet to the river/bucket
+		if (isset($droplet['river_id']))
+		{
+			ORM::factory('river', $droplet['river_id'])->add('droplets', $droplet_orm->id);
+		}
+
+		if (isset($droplet['bucket_id']))
+		{
+			ORM::factory('bucket', $droplet['bucket_id'])->add('droplets', $droplet_orm->id);
+		}
+
+		return $droplet;
 	}
 }
 

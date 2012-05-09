@@ -688,7 +688,10 @@ $(function() {
 		
 		checkEmpty: function() {
 			if (!dropsList.length) {
-				this.$(".no-content").show();
+				var noContentEl = this.$(".no-content");
+				this.$el.remove();
+				$("#content").removeClass("river").addClass("cf").append(noContentEl);
+				noContentEl.show();
 				this.noContentElHidden = false;
 				return true;
 			}
