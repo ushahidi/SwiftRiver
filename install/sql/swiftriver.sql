@@ -375,6 +375,7 @@ CREATE TABLE IF NOT EXISTS `channel_filters` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `riverid` char(128) NOT NULL DEFAULT '',
   `email` varchar(127) NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
@@ -750,6 +751,7 @@ DELIMITER //
 CREATE FUNCTION `NEXTVAL`(v_seq_name varchar(30), v_increment BIGINT) 
 RETURNS INT 
 NOT DETERMINISTIC 
+MODIFIES SQL DATA
 SQL SECURITY DEFINER 
 COMMENT 'Generate a range of ids from a sequence' 
 BEGIN    

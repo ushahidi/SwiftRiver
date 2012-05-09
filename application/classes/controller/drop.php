@@ -30,7 +30,7 @@ class Controller_Drop extends Controller_Swiftriver {
 		
 		if ( ! $this->admin)
 		{
-			//throw new HTTP_Exception_403();
+			throw new HTTP_Exception_403();
 		}
 
 		switch ($this->request->method())
