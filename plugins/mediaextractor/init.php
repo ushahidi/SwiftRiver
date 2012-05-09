@@ -104,7 +104,7 @@ class MediaExtractor_Init {
 				
 				// We only want images larger than 1000 square pixels
 				$area = $width * $height;
-				if ($area >= 1000)
+				if ($area >= 5000)
 				{
 					$selected_images[] = $image;
 					
