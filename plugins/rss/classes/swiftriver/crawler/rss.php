@@ -36,7 +36,8 @@ class Swiftriver_Crawler_Rss  {
 		$filter_options = Model_Channel_Filter::get_channel_filter_options('rss', $river_id);
 		foreach ($filter_options as $option)
 		{
-			if($option['key'] == 'url') {
+			if ($option['key'] == 'url')
+			{
 			    $url = $option['data']['value'];
     			$this->_parse_url(array('url' => $url), $river_id);
 			}
@@ -58,21 +59,29 @@ class Swiftriver_Crawler_Rss  {
 		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
 
-		if (isset($options['url']) AND $this->_is_url($options['url']))
+		if
+		(
+			isset($options['url']) AND
+			($feed_url = Rss_Util::validate_feed_url($options['url']))
+		)
 		{
-			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $options['url']));
+			// Log file writes have to be immediate because of fork()
+			// otherwise the log shall be written when process exits
+			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url",
+			    array(':url' => $feed_url['value']));
 			Kohana::$log->write();
 		    
 			$feed = new SimplePie();
 			
-			// Set which feed to process.
-			$feed->set_feed_url($options['url']);
+			// Set which feed to process - use the feed URL returned
+			// by the feed validation
+			$feed->set_feed_url($feed_url['value']);
 			
 			// Allow us to choose to not re-order the items by date.
 			$feed->enable_order_by_date(TRUE);
 
 			// Set Simplepie Cache Location
-			$feed->set_cache_location( Kohana::$cache_dir );
+			$feed->set_cache_location(Kohana::$cache_dir);
 			
 			// Run SimplePie.
 			$success = $feed->init();
@@ -96,7 +105,7 @@ class Swiftriver_Crawler_Rss  {
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
 					$droplet['river_id'] = array($river_id);
-					$droplet['identity_orig_id'] = $options['url'];
+					$droplet['identity_orig_id'] = $feed_url['value'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();
 					$droplet['identity_avatar'] = $feed->get_image_url();
@@ -108,17 +117,10 @@ class Swiftriver_Crawler_Rss  {
 					$droplet['droplet_locale'] = $locales[0];
 					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($feed_item->get_date()));
 					
-					//Kohana::$log->add(Log::DEBUG, var_export($droplet, true));
-					
 					// Add droplet to the queue
 					Swiftriver_Dropletqueue::add($droplet);
 				}		
 			}
 		}		
-	}
-
-	private function _is_url($url = NULL)
-	{
-		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 }
