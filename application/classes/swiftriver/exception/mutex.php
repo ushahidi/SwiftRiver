@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Channel Option Exception
+ * Mutex exception
  *
  * PHP version 5
  * LICENSE: This source file is subject to GPLv3 license 
@@ -13,5 +13,5 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
 
-class Swiftriver_Exception_ChannelOption extends Kohana_Exception {
+class Swiftriver_Exception_Mutex extends Kohana_Exception {
 }

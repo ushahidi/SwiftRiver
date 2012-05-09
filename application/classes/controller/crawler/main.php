@@ -25,9 +25,9 @@ class Controller_Crawler_Main extends Controller {
 		$this->do_fork(function() {
 			Swiftriver_Dropletqueue::process();
 			exit;
-		}); 
+		});
 	}
-	
+
 	// Run crawling scheduler
 	public function action_index()
 	{
@@ -36,7 +36,7 @@ class Controller_Crawler_Main extends Controller {
 			exit;
 		});
 	}
-	
+
 	/**
 	 * Forks of the callback into a separate process.
 	 * The parent process exits immediately completing the HTTP request.
@@ -60,7 +60,7 @@ class Controller_Crawler_Main extends Controller {
 			Kohana::$log->add(Log::ERROR, "PCNTL is required");
 			return;
 		}
-		
+
 		$pid = pcntl_fork();		
 		if ($pid == -1)
 		{
@@ -71,7 +71,7 @@ class Controller_Crawler_Main extends Controller {
 			// Fork again
 			// This second parent will hold the crawl mutex
 			// so that child processes can other locks
-			
+
 			// Install signal handlers
 			declare(ticks = 1); // How often to check for signals
 			// Run callable where OK received from parent
@@ -114,7 +114,7 @@ class Controller_Crawler_Main extends Controller {
 					Kohana::$log->add(Log::ERROR, "Unable to obtain mutex");
 					posix_kill($pid, SIGUSR2);
 					exit;
-				}				
+				}
 				pcntl_wait($status);
 				Swiftriver_Mutex::release(get_class());
 			}
