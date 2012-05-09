@@ -36,8 +36,7 @@ class Swiftriver_Crawler_Rss  {
 		$filter_options = Model_Channel_Filter::get_channel_filter_options('rss', $river_id);
 		foreach ($filter_options as $option)
 		{
-			if ($option['key'] == 'url')
-			{
+			if($option['key'] == 'url') {
 			    $url = $option['data']['value'];
     			$this->_parse_url(array('url' => $url), $river_id);
 			}
@@ -59,7 +58,7 @@ class Swiftriver_Crawler_Rss  {
 		include_once Kohana::find_file('vendor', 'simplepie/SimplePie.compiled');
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
 
-		if (isset($options['url']) AND Swiftriver_Rss_Util::validate_feed_url($options['url']))
+		if (isset($options['url']) AND $this->_is_url($options['url']))
 		{
 			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url", array(':url' => $options['url']));
 			Kohana::$log->write();
@@ -73,13 +72,12 @@ class Swiftriver_Crawler_Rss  {
 			$feed->enable_order_by_date(TRUE);
 
 			// Set Simplepie Cache Location
-			$feed->set_cache_location(Kohana::$cache_dir);
+			$feed->set_cache_location( Kohana::$cache_dir );
 			
 			// Run SimplePie.
 			$success = $feed->init();
 
-			// This makes sure that the content is sent to the browser as text/html
-			// and the UTF-8 character set (since we didn't change it).
+			// This makes sure that the content is sent to the browser as text/html and the UTF-8 character set (since we didn't change it).
 			$feed->handle_content_type();
 
 			if ($success)
@@ -116,5 +114,10 @@ class Swiftriver_Crawler_Rss  {
 				}		
 			}
 		}		
+	}
+
+	private function _is_url($url = NULL)
+	{
+		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 }
