@@ -718,7 +718,7 @@ $(function() {
 		isPageFetching: false,
 		
 		saveNewMetadata: function() {
-			var name = this.$(".create-new input[name=new_metadata]").val();
+			var name = $.trim(this.$(".create-new input[name=new_metadata]").val());
 			
 			if (!name.length || this.isPageFetching)
 				return false;
@@ -726,11 +726,11 @@ $(function() {
 			// First check if the metadata already exists in the drop
 			var metadata = this.collection.find(function(metadata) { 
 				if(metadata instanceof Tag) {
-					return metadata.get('tag') == name;
+					return metadata.get('tag_canonical') == name.toLowerCase();
 				} else if(metadata instanceof Link) {
 					return metadata.get('url') == name;
 				} else if(metadata instanceof Place) {
-					return metadata.get('place_name') == name;
+					return metadata.get('place_name_canonical') == name.toLowerCase();
 				}
 			});
 			
