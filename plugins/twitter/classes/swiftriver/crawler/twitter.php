@@ -101,24 +101,28 @@ class Swiftriver_Crawler_Twitter  {
 			// Add droplets
 			foreach ($results['tweets'] as $tweet)
 			{
-				// Get the droplet template
-				$droplet = Swiftriver_Dropletqueue::get_droplet_template();
+				// Filter out tweets starting with "RT" - possible retweets
+				if ( ! preg_match('/^RT\:?\s/i', trim($tweet->text)))
+				{
+					// Get the droplet template
+					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 
-				// Populate the droplet
-				$droplet['channel'] = 'twitter';
-				$droplet['river_id'] = array($river_id);
-				$droplet['identity_orig_id'] = $tweet->from_user_id;
-				$droplet['identity_username'] = $tweet->from_user;
-				$droplet['identity_name'] = $tweet->from_user_name;
-				$droplet['identity_avatar'] = $tweet->profile_image_url;
-				$droplet['droplet_orig_id'] = $tweet->id;
-				$droplet['droplet_type'] = 'original';
-				$droplet['droplet_title'] = $tweet->text;
-				$droplet['droplet_raw'] = $droplet['droplet_content'] = $tweet->text;
-				$droplet['droplet_locale'] = $tweet->iso_language_code;
-				$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($tweet->created_at));
+					// Populate the droplet
+					$droplet['channel'] = 'twitter';
+					$droplet['river_id'] = array($river_id);
+					$droplet['identity_orig_id'] = $tweet->from_user_id;
+					$droplet['identity_username'] = $tweet->from_user;
+					$droplet['identity_name'] = $tweet->from_user_name;
+					$droplet['identity_avatar'] = $tweet->profile_image_url;
+					$droplet['droplet_orig_id'] = $tweet->id;
+					$droplet['droplet_type'] = 'original';
+					$droplet['droplet_title'] = $tweet->text;
+					$droplet['droplet_raw'] = $droplet['droplet_content'] = $tweet->text;
+					$droplet['droplet_locale'] = $tweet->iso_language_code;
+					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($tweet->created_at));
 
-				Swiftriver_Dropletqueue::add($droplet);
+					Swiftriver_Dropletqueue::add($droplet);
+				}
 			}
 			
 			// Save refresh_url if provided
