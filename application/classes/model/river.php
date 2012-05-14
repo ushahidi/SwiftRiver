@@ -282,7 +282,8 @@ class Model_River extends ORM {
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
+			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
+			    ->where('droplets.parent_id', '=', 0);
 			
 			if ($drop_id)
 			{
@@ -364,7 +365,8 @@ class Model_River extends ORM {
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('rivers_droplets.id', '>', $since_id);
+			    ->where('rivers_droplets.id', '>', $since_id)
+			    ->where('droplets.parent_id', '=', 0);
 			
 			if ($photos)
 			{

@@ -328,7 +328,7 @@ $(function() {
 		
 		showSaveButton: function() {
 			this.$("span.error-message").remove();
-			this.$("div.parameter .button-blue").fadeIn("slow");
+			this.$(".button-blue").fadeIn("slow");
 		},
 		
 		hideSaveButton: function() {
@@ -343,7 +343,7 @@ $(function() {
 				this.save();
 				return false;
 			} else {
-				var newValue = this.$("div.parameter input[type=text]").val();
+				var newValue = this.$("input[type=text]").val();
 				if(newValue && newValue != this.model.get("value") && newValue != "" ) {
 					this.showSaveButton();
 				} else {
@@ -399,10 +399,10 @@ $(function() {
 			// Disable the inputs and show the loading icon
 			this.$("input, select").attr("disabled", "disabled").blur();
 			var loading_msg = window.loading_image.clone();
-			this.$("div.parameter .button-blue").hide().after(loading_msg);
+			this.$(".button-blue").hide().after(loading_msg);
 			
 			// Get the user's inputs and do grouping for group options
-			var inputs = this.$("div.parameter input, div.parameter select");
+			var inputs = this.$("input, select");
 			if (inputs.length == 1) {
 				value = inputs[0].value;
 			} else {

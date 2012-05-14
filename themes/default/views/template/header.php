@@ -2,7 +2,7 @@
 <html> 
  
 <head> 
-	<meta charset="utf-8"> 
+	<meta charset="utf-8" /> 
 	<title><?php echo (isset($title) ? $title.' ~ ' : '').$site_name; ?></title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 

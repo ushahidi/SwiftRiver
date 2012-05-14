@@ -359,10 +359,13 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$droplet['identity_username'] = $this->user->username;
 				$droplet['identity_name'] = $this->user->name;
 				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
+
 				// Set the river id
 				$droplet['bucket_id'] = $this->bucket->id;
-				// Add the droplet to the queue
-				$droplet = Swiftriver_Dropletqueue::add($droplet);
+				
+				// Create a single droplet item
+				$droplet = Model_Droplet::create_single($droplet);
+
 				echo json_encode($droplet);
 			break;
 		}

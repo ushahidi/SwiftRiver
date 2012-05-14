@@ -590,7 +590,10 @@ $(function() {
 		
 		checkEmpty: function() {
 			if (!dropsList.length) {
-				this.$(".no-content").show();
+				var noContentEl = this.$(".no-content");
+				this.$el.remove();
+				$("#content").removeClass("river").addClass("cf").append(noContentEl);
+				noContentEl.show();
 				this.noContentElHidden = false;
 				return true;
 			}
@@ -600,9 +603,21 @@ $(function() {
 		alertNewDrops: function() {
 			var count = newDropsList.size();
 			if (count > 0) {
-				var message = "<p><a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") + "</a></p>";
+				// Alert message to show
+				var message = "<p style=\"text-align:center\">" +
+				    "<a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") +". "+
+				    "Click here to refresh the view</a></p>";
+
 				if (this.$("article.alert-message").length == 0) {
-					this.$el.prepend("<article class=\"alert-message blue col_12 drop\">" + message + "</article>");
+
+					// Construct the HTML for the DOM containing the alert message
+					var alertContainer = "<div class=\"center cf\">" +
+					    "<article class=\"container base alert-message\">" + message +
+					    "</article>" +
+					    "</div>";
+					
+					// Attach to the drops view
+					this.$el.prepend(alertContainer).fadeIn(350);
 				} else {
 					this.$("article.alert-message").html(message);
 				}
