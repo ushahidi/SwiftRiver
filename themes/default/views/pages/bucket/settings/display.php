@@ -59,8 +59,8 @@
 				<section class="property-parameters">
 					<div class="parameter">
 						<select name="bucket_publish">
-							<option value="1" <?php echo $bucket->bucket_publish ? 'selected' : ''; ?>>Anyone</option>
-							<option value="0" <?php echo $bucket->bucket_publish ? '' : 'selected'; ?>>Collaborators only</option>
+							<option value="1" <?php echo $bucket->bucket_publish ? 'selected' : ''; ?>>Public (Anyone)</option>
+							<option value="0" <?php echo $bucket->bucket_publish ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
 				</section>

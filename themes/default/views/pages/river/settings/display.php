@@ -59,8 +59,8 @@
 				<section class="property-parameters">
 					<div class="parameter">
 						<select name="river_public">
-							<option value="1" <?php echo $river->river_public ? 'selected' : ''; ?>>Anyone</option>
-							<option value="0" <?php echo $river->river_public ? '' : 'selected'; ?>>Collaborators only</option>
+							<option value="1" <?php echo $river->river_public ? 'selected' : ''; ?>>Public (Anyone)</option>
+							<option value="0" <?php echo $river->river_public ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
 				</section>
