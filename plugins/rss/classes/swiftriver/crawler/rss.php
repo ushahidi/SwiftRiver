@@ -60,22 +60,19 @@ class Swiftriver_Crawler_Rss {
 		include_once Kohana::find_file('vendor', 'simplepie/idn/idna_convert.class');
 
 		if
-		(
-			isset($options['url']) AND
-			($feed_url = Rss_Util::validate_feed_url($options['url']))
-		)
+		(isset($options['url']) AND $this->_is_url($options['url']))
 		{
 			// Log file writes have to be immediate because of fork()
 			// otherwise the log shall be written when process exits
 			Kohana::$log->add(Log::INFO, "RSS Crawler fetching :url",
-			    array(':url' => $feed_url['value']));
+			    array(':url' => $options['url']));
 			Kohana::$log->write();
 		    
 			$feed = new SimplePie();
 			
 			// Set which feed to process - use the feed URL returned
 			// by the feed validation
-			$feed->set_feed_url($feed_url['value']);
+			$feed->set_feed_url($options['url']);
 			
 			// Allow us to choose to not re-order the items by date.
 			$feed->enable_order_by_date(TRUE);
@@ -105,7 +102,7 @@ class Swiftriver_Crawler_Rss {
 					$droplet = Swiftriver_Dropletqueue::get_droplet_template();
 					$droplet['channel'] = 'rss';
 					$droplet['river_id'] = array($river_id);
-					$droplet['identity_orig_id'] = $feed_url['value'];
+					$droplet['identity_orig_id'] = $options['url'];
 					$droplet['identity_username'] = $feed->get_link();
 					$droplet['identity_name'] = $feed->get_title();
 					$droplet['identity_avatar'] = $feed->get_image_url();
@@ -122,5 +119,10 @@ class Swiftriver_Crawler_Rss {
 				}		
 			}
 		}		
+	}
+	
+	private function _is_url($url = NULL)
+	{
+		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 }
