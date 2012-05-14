@@ -156,10 +156,12 @@
 
 			// Regsiter events
 			this.btnSubscribeRivers = $("p#subscribe_all_rivers > a");
-			this.btnSubscribeRivers.on("click", this.riverViews, this.handleSubscription);
+			this.btnSubscribeRivers.on("click", {type: 'rivers', views:this.riverViews},
+				this.handleSubscription);
 
 			this.btnSubscribeBuckets = $("p#subscribe_all_buckets > a");
-			this.btnSubscribeBuckets.on("click", this.bucketViews, this.handleSubscription);
+			this.btnSubscribeBuckets.on("click", {type:'buckets', views: this.bucketViews},
+				this.handleSubscription);
 		},
 
 		// Renders a single river
@@ -212,14 +214,26 @@
 		 * Event handler for the "subscribe to all" action
 		 */
 		handleSubscription: function(e) {
-			views = e.data;
+			views = e.data.views;
 			z = views.length;
+
+			var subscribed = 0;
 
 			for (var i=0; i<z; i++) {
 				if (!views[i].model.get("subscribed") && !views[i].model.get("is_owner")) {
-					$("p.button-white > a", views[i].$el).trigger("click");
+					var view = views[i];
+					var targetEl = $("p.button-white", view.$el);
+					view.model.toggleSubscribe(targetEl, view);
+					subscribed++;
 				}
 			}
+
+			// Confirmation message to show
+			var message = (subscribed > 0) 
+			    ? "You have successfully subscribed to " + subscribed + " " + e.data.type
+			    : "No " + e.data.type + "were added to your list of subscriptions";
+
+			showConfirmationMessage(message);
 		}
 	});
 

@@ -1,24 +1,28 @@
-<div class="no-content" style="display: none;">
+<div class="center no-content" style="display:none;">
 	<div class="col_12">
-		<div class="alert-message blue">
-			<p>
-				<strong><?php echo __('Nothing to display yet.') ?></strong>
-				<?php echo __('The river will start flowing as soon as there is content '
-				    .'and this page will update automatically or you can refresh manually', 
-				    array('refresh manually' => HTML::anchor($river_url, __('refresh manually'))));
-				?>
-			</p>
-			<p>
-				<?php echo __('Taking too long? Save this link and come back later') ?>
-				<?php echo HTML::anchor($river_url, $river_url); ?>
-			</p>
-			<?php if ($anonymous): ?>
+		<article class="container base">
+			<div class="alert-message blue">
 				<p>
-					<strong><?php echo __('Already have an account?') ?></strong> 
-					<a href="<?php echo URL::site('login') ?>" class="previous"><?php echo __('Log in here') ?></a>.
+					<strong><?php echo __('Nothing to display yet.') ?></strong>
+					<?php echo __('The river will start flowing as soon as there is content '
+					    .'and this page will update automatically or you can refresh manually', 
+					    array('refresh manually' => HTML::anchor($river_url, __('refresh manually'))));
+					?>
 				</p>
-			<?php endif; ?>
-		</div>
+				<p>
+					<?php echo __('Taking too long? Save this link and come back later') ?>
+					<?php echo HTML::anchor($river_url, $river_url); ?>
+				</p>
+				<?php if ($anonymous): ?>
+					<p>
+						<strong><?php echo __('Already have an account?') ?></strong> 
+						<a href="<?php echo URL::site('login') ?>" class="previous">
+							<?php echo __('Log in here') ?>
+						</a>.
+					</p>
+				<?php endif; ?>
+			</div>
+		</article>
 			
 		<?php if ($anonymous): ?>
 			<h3 class="push-up"><span><?php echo __('In the mean time...') ?></h3>

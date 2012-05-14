@@ -536,6 +536,7 @@ class Controller_River extends Controller_Swiftriver {
 				$droplet['droplet_type'] = 'reply';
 				$droplet['channel'] = 'swiftriver';
 				$droplet['droplet_title'] = $droplet['droplet_content'];
+				$droplet['droplet_raw'] = $droplet['droplet_content'];
 				$droplet['droplet_date_pub'] = gmdate('Y-m-d H:i:s', time());
 				$droplet['droplet_orig_id'] = 0;
 				$droplet['droplet_locale'] = 'en';
@@ -545,8 +546,9 @@ class Controller_River extends Controller_Swiftriver {
 				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
 				// Set the river id
 				$droplet['river_id'] = $this->river->id;
+
 				// Add the droplet to the queue
-				$droplet = Swiftriver_Dropletqueue::add($droplet);
+				$droplet = Model_Droplet::create_single($droplet);
 				
 				if ($droplet) 
 				{
