@@ -385,7 +385,7 @@ class Controller_Search extends Controller_Swiftriver {
 
 		// Get the ids of users with private accounts
 		$private_user_ids = DB::select('user_id')
-		    ->from('account')
+		    ->from('accounts')
 		    ->where('account_private', '=', 1)
 		    ->execute()
 		    ->as_array();
