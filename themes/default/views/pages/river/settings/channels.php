@@ -332,9 +332,9 @@ $(function() {
 		},
 		
 		hideSaveButton: function() {
-			var newValue = this.$("div.parameter input[type=text]").val();
+			var newValue = this.$("input[type=text]").val();
 			if( ! newValue || newValue == this.model.get("value")  ) {
-				this.$("div.parameter .button-blue").fadeOut();
+				this.$(".button-blue").fadeOut();
 			}
 		},
 		
@@ -366,13 +366,13 @@ $(function() {
 					// Disable the inputs and show the loading icon
 					view.$("span.error-message").remove();
 					view.$("input").attr("disabled", "disabled").blur();
-					view.$("div.parameter .button-blue").hide().after(loading_msg);
+					view.$(".button-blue").hide().after(loading_msg);
 				},
 				done: function (e, data) {
 					if (!data.result.length) {
 						var error_msg = $('<span class="error-message">No parameters were found in the file</span>');
 						loading_msg.replaceWith(error_msg).remove();
-						view.$("div.parameter .button-blue").fadeIn()
+						view.$(".button-blue").fadeIn()
 						view.$("input").removeAttr("disabled");
 						return;
 					} else {
@@ -388,7 +388,7 @@ $(function() {
 					} 
 					var error_msg = $('<span class="error-message">' + message + '</span>');
 					loading_msg.replaceWith(error_msg).remove();
-					view.$("div.parameter .button-blue").fadeIn()
+					view.$(".button-blue").fadeIn()
 					view.$("input").removeAttr("disabled");
 				}
 			});

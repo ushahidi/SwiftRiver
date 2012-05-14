@@ -1,1 +1,0 @@
-<!-- template for the channel listing -->
