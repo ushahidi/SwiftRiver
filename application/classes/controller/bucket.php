@@ -311,7 +311,9 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$tag_name = $tag_array['tag'];
 				$account_id = $this->visited_account->id;
 				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
-				echo json_encode(array('id' => $tag_orm->tag->id, 'tag' => $tag_orm->tag->tag));
+				echo json_encode(array('id' => $tag_orm->tag->id, 
+										'tag' => $tag_orm->tag->tag,
+										'tag_canonical' => $tag_orm->tag->tag_canonical));
 			break;
 			case "DELETE":
 				// Is the logged in user an owner?
@@ -321,6 +323,91 @@ class Controller_Bucket extends Controller_Swiftriver {
 				}
 				
 				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_links()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$link_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$link_array = json_decode($this->request->body(), TRUE);
+				$url = $link_array['url'];
+				if ( ! Valid::url($url))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid url"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$link_orm = Model_Account_Droplet_Link::get_link($url, $droplet_id, $account_id);
+				echo json_encode(array('id' => $link_orm->link->id, 'tag' => $link_orm->link->url));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_link($droplet_id, $link_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_places()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$place_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$places_array = json_decode($this->request->body(), true);
+				$place_name = $places_array['place_name'];
+				if ( ! Valid::not_empty($place_name))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid location"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$place_orm = Model_Account_Droplet_Place::get_place($place_name, $droplet_id, $account_id);
+				echo json_encode(array(
+					'id' => $place_orm->place->id, 
+					'place_name' => $place_orm->place->place_name,
+					'place_name_canonical' => $place_orm->place->place_name_canonical));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_place($droplet_id, $place_id, $this->visited_account->id);
 			break;
 		}
 	}
