@@ -1,4 +1,4 @@
-cronSwiftRiver
+SwiftRiver
 ==========
 SwiftRiver is a tool that helps people curate and make sense of large amounts of
 data in a short amount of time. The data originates from various channels such as
