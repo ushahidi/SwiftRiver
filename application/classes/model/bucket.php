@@ -116,6 +116,29 @@ class Model_Bucket extends ORM {
 
 		parent::delete();
 	}
+	
+	/**
+	 * Get bucket as an array with subscription and collaboration
+	 * status populated for $visiting_user
+	 *
+	 */
+	public function get_array($user, $visiting_user) {
+		$collaborator = $visiting_user->has('bucket_collaborators', $this);
+		return array(
+			"id" => $this->id, 
+			"name" => $this->bucket_name,
+			"url" => URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url,
+			"account_id" => $this->account->id,
+			"user_id" => $this->account->user->id,
+			"account_path" => $this->account->account_path,
+			"subscriber_count" => $this->get_subscriber_count(),
+			"is_owner" => $this->is_owner($user->id),
+			"collaborator" => $collaborator,
+			// A collaborator is also a subscriber
+			"subscribed" => $visiting_user->has('bucket_subscriptions', $this) || $collaborator,
+			"public" => (bool) $this->bucket_publish
+		);
+	}
 
 	/**
 	 * Gets the base URL of this bucket
@@ -286,7 +309,7 @@ class Model_Bucket extends ORM {
 		$bucket_orm = ORM::factory('bucket');
 		$bucket_orm->account_id = $bucket_array['account_id'];
 		$bucket_orm->user_id = $bucket_array['user_id'];
-		$bucket_orm->bucket_name = $bucket_array['bucket_name'];
+		$bucket_orm->bucket_name = $bucket_array['name'];
 		$bucket_orm->save();
 		return $bucket_orm;
 	}
@@ -401,6 +424,17 @@ class Model_Bucket extends ORM {
 	}
 	
 	/**
+	 * Checks if the given user created the bucket.
+	 *
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_creator($user_id)
+	{
+		return $user_id == $this->user_id;
+	}
+	
+	/**
 	 * Checks if the given user owns the bucket, is an account collaborator
 	 * or a bucket collaborator.
 	 *
@@ -498,6 +532,7 @@ class Model_Bucket extends ORM {
 		    ->find()
 		    ->loaded();
 	}
+
 
 	/**
 	 * Given a search term, finds all buckets whose name or url

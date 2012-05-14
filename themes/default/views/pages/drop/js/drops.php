@@ -29,30 +29,6 @@ $(function() {
 	
 	var filters = new Filter(<?php echo $filters; ?>);
 	
-	// Bucket list
-	var Bucket = Backbone.Model.extend({
-		defaults: {
-			account_id: logged_in_account
-		},
-		initialize: function() {
-			// Namespace bucket name if the logged in user is not the owner
-			if (parseInt(this.get("account_id")) != logged_in_account) {
-				this.set('bucket_name', this.get("account_path") + " / " + this.get("bucket_name"));
-			}
-		}
-	});
-
-	// Collection for all the buckets accessible to the current user
-	var BucketList = Backbone.Collection.extend({
-		model: Bucket,
-		
-		url: "<?php echo URL::site().$user->account->account_path.'/bucket/buckets/manage'; ?>"
-	});
-	
-	var bucketList = new BucketList();
-	
-	// Bootstrap the bucket list
-	bucketList.reset(<?php echo $bucket_list; ?>);
 	
 	// Discussion model
 	var Discussion = Backbone.Model.extend();
@@ -204,7 +180,7 @@ $(function() {
 	// Common between drop list and full view.
 	var DropBaseView = Backbone.View.extend({	
 		showAddToBucketModal: function() {
-			var addToBucketView = new AddToBucketView({model: this.model});
+			var addToBucketView = new AddToBucketView({collection: window.bucketList, model: this.model});
 			modalShow(addToBucketView.render().el);
 			return false;
 		},
@@ -411,7 +387,7 @@ $(function() {
 	
 	
 	// Buckets modal
-	var AddToBucketView = Backbone.View.extend({
+	var AddToBucketView = BaseModalAssetListView.extend({
 	
 		tagName: "article",
 	
@@ -419,103 +395,29 @@ $(function() {
 	
 		template: _.template($("#add-to-bucket-template").html()),
 		
-		events: {
-			"click .create-new a": "saveNewBucket",
-			"submit": "saveNewBucket"
+		listSelector: '.select-list',
+
+		listItemSelector: '.select-list label',
+		
+		initialize: function(options) {
+			this.$el.html(this.template(this.model.toJSON()));
+			BaseAssetListView.prototype.initialize.call(this, options);
+		},
+				
+		getView: function(bucket) {
+			return new BucketView({model: bucket, drop: this.model});
+		},
+		
+		// Override default determination for assets to be rendered
+		renderAsset: function(bucket) {
+			return bucket.get("is_owner");
 		},
 						
-		initialize: function() {
-			bucketList.on("add", this.addBucket, this);
-		},
-		
-		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
-			
-			// Create the bucket list
-			bucketList.each(function(bucket) {
-				this.addBucket(bucket, true);
-			}, this);
-									
-			return this;
-		},
-		
-		addBucket: function(bucket, existing) {			
-			bucketView = new BucketView({model: bucket, drop: this.model, isNew: existing !== true});
-			bucket.view = bucketView;
-			this.$el.find(".select-list form").append(bucketView.render().el);
-		},
-		
-		isPageFetching: false,
-		
-		saveNewBucket: function() {
-			var bucketName = this.$(".create-new input[name=new_bucket]").val();
-			
-			if (!bucketName.length || this.isPageFetching)
-				return false;
-			
-			this.isPageFetching = true;
-			
-			// First check if the bucket exists
-			var bucket = bucketList.find(function(bucket) { return bucket.get('bucket_name') == bucketName });
-			if (bucket) {
-				// Found the bucket, simply add the drop to the bucket and exit
-				// if the drop is not already in the bucket
-				if (!this.model.isInBucket(bucket)) {
-					this.model.setBucket(bucket);
-				}
-				
-				// Scroll to the bucket in the list
-				var scrollOffset = bucket.view.$el.offset().top - this.$(".select-list").offset().top;
-				// Scroll only if the bucket is outside the view
-				if (scrollOffset < 0 || scrollOffset > this.$(".select-list").height()) {
-					this.$(".select-list").animate({
-						scrollTop: this.$(".select-list").scrollTop() + scrollOffset
-					}, 600);
-				}
-				
-				bucket.view.setSelected();
-				this.$(".create-new input[name=new_bucket]").val("");
-				this.isPageFetching = false;				
-				
-				return false;
+		onSaveNewBucket: function(bucket) {
+			// if the drop is not already in the bucket
+			if (!this.model.isInBucket(bucket)) {
+				this.model.setBucket(bucket);
 			}
-			
-			var loading_msg = window.loading_message.clone();
-			var create_el = this.$(".create-new .field").clone();
-			this.$(".create-new .field").replaceWith(loading_msg);
-			
-			bucket = new Bucket({bucket_name: bucketName});
-			var drop = this.model;
-			var view = this;
-			bucketList.create(bucket, {
-				wait: true,
-				complete: function() {
-					view.isPageFetching = false;
-					loading_msg.replaceWith(create_el);
-				},
-				error: function(model, response) {
-					var message = "";
-					if (response.status == 400) {
-						errors = JSON.parse(response.responseText)["errors"];
-						_.each(errors, function(error) { message += "<li>" + error + "</li>"; });
-					} else {
-						message = "<?php echo __('An error occurred while saving the bucket. Try again later.'); ?>";
-					}
-					flashMessage(view.$(".system_error"), message);
-				},
-				success: function() {
-					drop.setBucket(bucket);
-					
-					// Scroll to the new bucket in the list
-					view.$(".select-list").animate({
-						scrollTop: view.$(".select-list").scrollTop() + (view.$(".select-list label").last().offset().top - view.$(".select-list").offset().top)
-					}, 600);
-					bucket.view.setSelected();
-					view.$(".create-new input[name=new_bucket]").val("");
-				}
-			});
-			
-			return false;
 		}		
 	});
 		

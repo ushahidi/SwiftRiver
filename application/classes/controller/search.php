@@ -135,7 +135,7 @@ class Controller_Search extends Controller_Swiftriver {
 			$droplet_js->fetch_base_url = URL::site().'search';
 			$droplet_js->droplet_list = @json_encode($results['droplets']);
 			$droplet_js->max_droplet_id = PHP_INT_MAX;
-			$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
+			$droplet_js->bucket_list = json_encode($this->user->get_buckets_array($this->user));
 			$droplet_js->polling_enabled = FALSE;
 			$droplet_js->channels = json_encode(array());
 			$droplet_js->default_view = "list";

@@ -1,4 +1,4 @@
-<hgroup class="user-title dashboard cf">
+<hgroup class="user-title <?php if ($owner) { echo 'dashboard'; }  ?> cf">
 	<div class="center">
 		<div class="user-summary col_9">
 			<a class="avatar-wrap" href="<?php echo URL::site().$account->account_path; ?>">

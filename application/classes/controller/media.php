@@ -61,10 +61,9 @@ class Controller_Media extends Controller {
 	 */
 	public function action_js()
 	{
-		echo View::factory('common/js/header')
-			->bind('base_url', $base_url);
-
-		$base_url = URL::site();
+		$header_js = View::factory('common/js/header');
+		$header_js->base_url = URL::site();
+		echo $header_js;
 
 		// SwiftRiver Plugin Hook -- Add Custom JS
 		Swiftriver_Event::run('swiftriver.header.js');

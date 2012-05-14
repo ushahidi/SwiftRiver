@@ -58,6 +58,7 @@ class Controller_River extends Controller_Swiftriver {
 		
 		// Get the river name from the url
 		$river_name_url = $this->request->param('name');
+		$action = $this->request->action();
 		
 		// This check should be made when this controller is accessed
 		// and the database id of the rive is non-zero
@@ -65,16 +66,15 @@ class Controller_River extends Controller_Swiftriver {
 			->where('river_name_url', '=', $river_name_url)
 			->where('account_id', '=', $this->visited_account->id)
 			->find();
+			
+		if ($river_name_url AND ! $this->river->loaded() AND $action != 'manage')
+		{
+			$this->request->redirect($this->dashboard_url);
+		}
 		
 		// Action involves a specific river, check permissions
-		if ($river_name_url)
-		{
-			if ( ! $this->river->loaded())
-			{
-				// Redirect to the dashboard
-				$this->request->redirect($this->dashboard_url);
-			}
-					
+		if ($this->river->loaded())
+		{					
 			// Is the logged in user an owner
 			if ($this->river->is_owner($this->user->id)) 
 			{
@@ -87,15 +87,11 @@ class Controller_River extends Controller_Swiftriver {
 				$this->request->redirect($this->dashboard_url);			
 			}
 
-			// Set the base url for this specific river
 			$this->river_base_url = $this->river->get_base_url();
-
-			// Settings url
 			$this->settings_url = $this->river_base_url.'/settings';
 
 			// Navigation Items
 			$this->nav = Swiftriver_Navs::river($this->river);
-
 		}
 	}
 
@@ -130,6 +126,7 @@ class Controller_River extends Controller_Swiftriver {
 			->bind('river_base_url', $this->river_base_url)
 			->bind('settings_url', $this->settings_url)
 			->bind('owner', $this->owner)
+			->bind('anonymous', $this->anonymous)
 			->bind('user', $this->user)
 			->bind('nav', $this->nav);
 
@@ -173,7 +170,6 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->droplet_list = @json_encode($droplets);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
-		$droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js->channels = json_encode($this->river->get_channels());
 		$droplet_js->polling_enabled = TRUE;
 		$droplet_js->default_view = $this->river->default_layout;
@@ -286,7 +282,7 @@ class Controller_River extends Controller_Swiftriver {
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
-				$droplet_orm->update_from_array($droplet_array);
+				$droplet_orm->update_from_array($droplet_array, $this->user->id);
 			break;
 			
 			case "DELETE":
@@ -555,6 +551,82 @@ class Controller_River extends Controller_Swiftriver {
 				else
 				{
 					$this->response->status(400);
+				}
+			break;
+		}
+	}
+	
+	/**
+	 * River management
+	 * 
+	 */
+	public function action_manage()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+				
+		switch ($this->request->method())
+		{
+			case "PUT":
+				// No anonymous
+				if ($this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+				$river_array = json_decode($this->request->body(), TRUE);
+				$river_orm = ORM::factory('river', $river_array['id']);
+				
+				if ( ! $river_orm->loaded())
+				{
+					throw new HTTP_Exception_404();
+				}
+				
+				if (!$river_array['subscribed']) {
+					// Unsubscribing
+					
+					// Unfollow
+					if ($this->user->has('river_subscriptions', $river_orm)) {
+						$this->user->remove('river_subscriptions', $river_orm);
+					}
+					
+					// Stop collaborating
+					$collaborator_orm = $river_orm->river_collaborators
+													->where('user_id', '=', $this->user->id)
+													->where('collaborator_active', '=', 1)
+													->find();
+					if ($collaborator_orm->loaded())
+					{
+						$collaborator_orm->delete();
+						$river_array['is_owner'] = FALSE;
+						$river_array['collaborator'] = FALSE;
+					}
+				} else {
+					// Subscribing
+					
+					if (!$this->user->has('river_subscriptions', $river_orm)) {
+						$this->user->add('river_subscriptions', $river_orm);
+					}
+				}
+				// Return updated bucket
+				echo json_encode($river_array);
+			break;
+			case "DELETE":
+				$river_id = intval($this->request->param('id', 0));
+				$river_orm = ORM::factory('river', $river_id);
+				
+				if ($river_orm->loaded())
+				{
+					if ( ! $river_orm->is_creator($this->user->id))
+					{
+						// Only creator can delete
+						throw new HTTP_Exception_403();
+					}
+					
+					$river_orm->delete();
+				}
+				else
+				{
+					throw new HTTP_Exception_404();
 				}
 			break;
 		}

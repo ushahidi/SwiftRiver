@@ -987,9 +987,9 @@ class Model_Droplet extends ORM {
 	 * @param array
 	 * @return void
 	 */
-	public function update_from_array($droplet_array) 
+	public function update_from_array($droplet_array, $logged_in_user_id) 
 	{
-		$this->_update_buckets($droplet_array);
+		$this->_update_buckets($droplet_array, $logged_in_user_id);
 		$this->_update_score($droplet_array);
 	}
 	
@@ -1024,7 +1024,7 @@ class Model_Droplet extends ORM {
 	 * @param array
 	 * @return void
 	 */	
-	private function _update_buckets($droplet_array)
+	private function _update_buckets($droplet_array, $logged_in_user_id)
 	{
 
 		// Function to xxtract the bucket ids from the array
@@ -1045,6 +1045,11 @@ class Model_Droplet extends ORM {
 		{
 			$bucket_orm = ORM::factory('bucket', $new_bucket_id);
 			
+			if ( ! $bucket_orm->is_owner($logged_in_user_id))
+			{
+				throw new HTTP_Exception_403();
+			}
+			
 			if ($bucket_orm->loaded())
 			{
 				$this->add('buckets', $bucket_orm);
@@ -1055,6 +1060,11 @@ class Model_Droplet extends ORM {
 		foreach ($delete_buckets as $delete_bucket_id)
 		{
 			$bucket_orm = ORM::factory('bucket', $delete_bucket_id);
+			
+			if ( ! $bucket_orm->is_owner($logged_in_user_id))
+			{
+				throw new HTTP_Exception_403();
+			}
 			
 			if ($this->has('buckets', $bucket_orm))
 			{

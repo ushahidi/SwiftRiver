@@ -74,29 +74,6 @@
 	</section>
 </script>
 
-<script type="text/template" id="confirm-window-template">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1>Remove this channel?</h1>
-		</div>
-		<div class="page-actions col_3">
-			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					Close
-				</a>
-			</h2>
-		</div>
-	</hgroup>
-
-	<div class="modal-body">
-		<div class="settings-toolbar">
-			<p class="button-blue"><a href="#">Yes</a></p>
-			<p class="button-blank close"><a href="#">Nope, nevermind</a></p>
-		</div>
-	</div>
-</script>
-
 <script type="text/javascript">
 
 $(function() {
@@ -231,33 +208,6 @@ $(function() {
 		},
 	});
 	
-	// The delete channel confirmation modal window
-	var ConfirmationWindow = Backbone.View.extend({
-		tagName: "article",
-		
-		className: "modal",
-		
-		template: _.template($("#confirm-window-template").html()),
-		
-		events: {
-			"click .button-blue a": "confirm"
-		},
-		
-		show: function() {
-			modalShow(this.render().el);
-		},
-		
-		render: function() {
-			this.$el.html(this.template());
-			return this;	
-		},
-		
-		confirm: function() {
-			modalHide();
-			this.options.callback.call(this.options.context);
-			return false;
-		}
-	});
 	
 	// Single parameter in the "Add parameter" drop down.
 	var ParameterView = Backbone.View.extend({
@@ -551,7 +501,7 @@ $(function() {
 		},
 		
 		confirmDeleteChannel: function() {
-			new ConfirmationWindow({callback: this.deleteChannel, context: this}).show();
+			new ConfirmationWindow("Remove this channel?", this.deleteChannel, this).show();
 			return false;
 		},
 		

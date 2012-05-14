@@ -53,7 +53,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 
 		if ($bucket_name_url AND ! $this->bucket->loaded() AND $action != 'manage')
 		{
-			// It doesn't -- redirect back to dashboard
 			$this->request->redirect($this->dashboard_url);
 		}
 		
@@ -99,10 +98,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
 			->bind('discussion_url', $discussion_url)
-			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner);
 
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
+		$this->template->content->anonymous = $this->anonymous;
+		$this->template->content->bucket = $this->bucket;
+		$this->template->content->user = $this->user;
 			
         // The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
@@ -124,7 +125,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 		        ->bind('droplet_list', $droplet_list)
 		        ->bind('max_droplet_id', $max_droplet_id)
 		        ->bind('user', $this->user);
-	    $droplet_js->bucket_list = json_encode($this->user->get_buckets_array());
 		$droplet_js->channels = json_encode(array());
 	    $droplet_js->polling_enabled = TRUE;
 		$droplet_js->default_view = $this->bucket->default_layout;
@@ -167,10 +167,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 			$nothing_to_display_message .= __(' Add some from your :rivers', 
 			                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
 		}		
-
-		$buckets = ORM::factory('bucket')
-			->where('account_id', '=', $this->account->id)
-			->find_all();
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -265,7 +261,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 				$droplet_array = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
 				$droplet_orm = ORM::factory('droplet', $droplet_id);
-				$droplet_orm->update_from_array($droplet_array);
+				$droplet_orm->update_from_array($droplet_array, $this->user->id);
 			break;
 			
 			case "DELETE":
@@ -440,121 +436,6 @@ class Controller_Bucket extends Controller_Swiftriver {
 	}
 
 	/**
-	 * Ajax Title Editing Inline
-	 *
-	 * Edit Bucket Name
-	 * 
-	 * @return	void
-	 */
-	public function action_ajax_title()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		// check, has the form been submitted, if so, setup validation
-		if (
-			$_REQUEST AND
-			isset($_REQUEST['edit_id'], $_REQUEST['edit_value']) AND
-			! empty($_REQUEST['edit_id']) AND ! empty($_REQUEST['edit_value'])
-			)
-		{
-
-			$bucket = ORM::factory('bucket')
-				->where('id', '=', $_REQUEST['edit_id'])
-				->where('account_id', '=', $this->account->id)
-				->find();
-
-			if ($bucket->loaded())
-			{
-				$bucket->bucket_name = $_REQUEST['edit_value'];
-				$bucket->save();
-			}
-		}
-	}	
-
-	/**
-	 * XHR endpoint for bucket operations. Returns a JSON object containing 
-	 * the status of the operation and any redirect URLs, to the client
-	 * 
-	 * @return void
-	 */
-	public function action_save_settings()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		// Check for permissions
-		if ( ! $this->owner)
-		{
-			throw new HTTP_Exception_403();
-		}
-		
-		// Check for the request method
-		switch ($this->request->method())
-		{
-			// Update an existing bucket
-			case "PUT":
-				if ($this->bucket->loaded())
-				{
-					$post = json_decode($this->request->body(), TRUE);
-
-					if (isset($post['name_only']) AND $post['name_only'])
-					{
-						$this->bucket->bucket_name = $post['bucket_name'];
-						$this->bucket->bucket_name_url = URL::title($post['bucket_name']);
-						$this->bucket->save();
-
-						// Modify the bucket base URL
-						$this->bucket_base_url = $this->base_url.'/'.$this->bucket->bucket_name_url;
-
-						// Response to be pushed back to the client
-						$this->response->body(json_encode(
-							array(
-								'redirect_url' => $this->bucket_base_url
-							)
-						));
-					}
-					elseif (isset($post['privacy_only']) AND $post['privacy_only'])
-					{
-						$this->bucket->bucket_publish = $post['bucket_publish'];
-						$this->bucket->save();
-					}
-					else
-					{
-						// Bad request
-						$this->response->status(400);
-					}
-				}
-				else
-				{
-					// Bad request
-					$this->response->status(400);
-				}
-
-			break;
-
-			// Delets a bucket from the database
-			case "DELETE":
-				if ($this->bucket->loaded())
-				{
-					$this->bucket->delete();
-					$this->response->body(json_encode(
-						array(
-							"redirect_url" => URL::site($this->bucket_base_url)
-						)
-					));
-				}
-				else
-				{
-					// Bad request
-					$this->response->status(400);
-				}
-			break;
-		}
-		
-	}
-	
-	/**
 	 * Bucket management restful API
 	 * 
 	 */
@@ -566,9 +447,51 @@ class Controller_Bucket extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "GET":
-				echo json_encode($this->user->get_buckets_array());
+				echo json_encode($this->user->get_buckets_array($this->user));
 			break;
-
+			case "PUT":
+				// No anonymous buckets
+				if ($this->anonymous)
+				{
+					throw new HTTP_Exception_403();
+				}
+				$bucket_array = json_decode($this->request->body(), TRUE);
+				$bucket_orm = ORM::factory('bucket', $bucket_array['id']);
+				
+				if ( ! $bucket_orm->loaded())
+				{
+					throw new HTTP_Exception_404();
+				}
+				
+				if (!$bucket_array['subscribed']) {
+					// Unsubscribing
+					
+					// Unfollow
+					if ($this->user->has('bucket_subscriptions', $bucket_orm)) {
+						$this->user->remove('bucket_subscriptions', $bucket_orm);
+					}
+					
+					// Stop collaborating
+					$collaborator_orm = $bucket_orm->bucket_collaborators
+													->where('user_id', '=', $this->user->id)
+													->where('collaborator_active', '=', 1)
+													->find();
+					if ($collaborator_orm->loaded())
+					{
+						$collaborator_orm->delete();
+						$bucket_array['is_owner'] = FALSE;
+						$bucket_array['collaborator'] = FALSE;
+					}
+				} else {
+					// Subscribing
+					
+					if (!$this->user->has('bucket_subscriptions', $bucket_orm)) {
+						$this->user->add('bucket_subscriptions', $bucket_orm);
+					}
+				}
+				// Return updated bucket
+				echo json_encode($bucket_array);
+			break;
 			case "POST":
 			
 				// No anonymous buckets
@@ -583,15 +506,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 					$bucket_array['user_id'] = $this->user->id;
 					$bucket_array['account_id'] = $this->account->id;
 					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
-					echo json_encode(array(
-						"id" => $bucket_orm->id, 
-						"bucket_name" => $bucket_orm->bucket_name,
-						"bucket_url" => URL::site().$bucket_orm->account->account_path.'/bucket/'.$bucket_orm->bucket_name_url,
-						"account_id" => $bucket_orm->account->id,
-						"user_id" => $bucket_orm->account->user->id,
-						"account_path" => $bucket_orm->account->account_path,
-						"subscriber_count" => $bucket_orm->get_subscriber_count()
-					));
+					echo json_encode($bucket_orm->get_array($this->user, $this->user));
 				}
 				catch (ORM_Validation_Exception $e)
 				{
@@ -611,6 +526,25 @@ class Controller_Bucket extends Controller_Swiftriver {
 					                                array(':name' => $bucket_array['bucket_name']
 					)));
 					echo json_encode(array('errors' => $errors));
+				}
+			break;
+			case "DELETE":
+				$bucket_id = intval($this->request->param('id', 0));
+				$bucket_orm = ORM::factory('bucket', $bucket_id);
+				
+				if ($bucket_orm->loaded())
+				{
+					if ( ! $bucket_orm->is_creator($this->user->id))
+					{
+						// Only creator can delete
+						throw new HTTP_Exception_403();
+					}
+					
+					$bucket_orm->delete();
+				}
+				else
+				{
+					throw new HTTP_Exception_404();
 				}
 			break;
 		}

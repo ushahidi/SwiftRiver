@@ -279,7 +279,7 @@
 
 <script type="text/template" id="bucket-template">
 	<input type="checkbox" <% if (containsDrop) { %> checked <% } %>/>
-	<%= bucket_name %>
+	<%= display_name %>
 </script>
 
 <script type="text/template" id="add-to-bucket-template">
@@ -298,8 +298,17 @@
 		</div>
 	</hgroup>
 
-	<div class="modal-body select-list" style="overflow: auto; max-height: 150px">
-		<form>
+	<div class="modal-body select-list">
+		<p class="category own-title" style="display:none">Your buckets</p>
+		<form class="own">
+		</form>
+
+		<p class="category collaborating-title" style="display:none">Buckets you collaborate on</p>
+		<form class="collaborating">
+		</form>
+
+		<p class="category following-title" style="display:none">Buckets you follow</p>
+		<form class="following">
 		</form>
 	</div>
 	<div class="modal-body create-new">

@@ -101,6 +101,14 @@ class Controller_User extends Controller_Swiftriver {
 		if($this->owner)
 		{
 			$this->template->header->title = __('Dashboard');
+			$this->template->header->js = View::factory('pages/user/js/main');
+			
+			$this->active = 'main';
+			
+			$this->sub_content = View::factory('pages/user/main')
+				->bind('owner', $this->owner)
+				->bind('account', $this->visited_account);
+			$gravatar_view = TRUE;
 		}
 		else
 		{
@@ -108,31 +116,21 @@ class Controller_User extends Controller_Swiftriver {
 				':name' =>  Text::limit_chars($this->visited_account->user->name)
 				)
 			);
-		}
-		
-		if ($this->owner)
-		{
-			$this->active = 'main';
-
-			$this->sub_content = View::factory('pages/user/main')
-				->bind('activity_stream', $activity_stream)
-				->bind('owner', $this->owner)
-				->bind('account', $this->visited_account)
-				->bind('has_activity', $has_activity)
-				->bind('profile_js', $profile_js);
-
-			$profile_js = $this->_get_profile_js(TRUE);
-			$gravatar_view = TRUE;
-		}
-		else
-		{
-			$this->_prepare_user_profile_view($activity_stream);
+			$this->template->header->js = View::factory('pages/user/js/profile');
+			$this->template->header->js->visited_account = $this->visited_account;
+			$this->template->header->js->bucket_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
+			$this->template->header->js->river_list = json_encode($this->visited_account->user->get_rivers_array($this->user));
+			
+			$this->sub_content = View::factory('pages/user/profile');
+			$this->sub_content->account = $this->visited_account;
+			$this->sub_content->anonymous = $this->anonymous;
+			
 			$gravatar_view = FALSE;
 			$this->template->content->view_type = "user";
-		}
-		
+		}		
+				
 		// Activity stream
-		$activity_stream = View::factory('template/activities')
+		$this->sub_content->activity_stream = View::factory('template/activities')
 		    ->bind('activities', $activities)
 		    ->bind('fetch_url', $fetch_url)
 		    ->bind('owner', $this->owner)
@@ -143,7 +141,7 @@ class Controller_User extends Controller_Swiftriver {
 		$activity_list = Model_User_Action::get_activity_stream(
 			$this->visited_account->user->id, ! $this->owner);
 
-		$has_activity = count($activity_list) > 0;
+		$this->sub_content->has_activity = count($activity_list) > 0;
 		$activities = json_encode($activity_list);
 
 	}
@@ -155,35 +153,20 @@ class Controller_User extends Controller_Swiftriver {
 	public function action_rivers()
 	{
 		$this->template->content->view_type = "";
-
-		$this->sub_content = View::factory('pages/user/rivers_buckets')
-		    ->bind('list_items', $list_items)
-		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner)
-		    ->bind('item_type', $item_type)
-		    ->bind('item_owner', $item_owner);
+		$this->sub_content = View::factory('pages/user/assets');
+		$this->sub_content->owner = $this->owner;
+		$this->sub_content->asset = 'river';
+		$this->sub_content->visited_account = $this->visited_account;
+		$this->sub_content->anonymous = $this->anonymous;
+		$this->template->header->js = View::factory('pages/user/js/assets');
+		$this->template->header->js->owner = $this->owner;
+		$this->template->header->js->visited_account = $this->visited_account;
+		$this->template->header->js->asset = 'river';
 		
-		$item_type = "rivers";
-		$item_owner = $this->visited_account->user->name;
-
-		// Page title
-		if ($this->owner)
+		if ( ! $this->owner)
 		{
-			$this->template->header->title = __("My Rivers");
-
-			$this->sub_content->subscriber_header = __("Rivers you follow");
+			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_rivers_array($this->user));
 		}
-		else
-		{
-			$this->template->header->title = __(':name\'s Rivers', array(
-				':name' => Text::limit_chars($this->visited_account->user->name)
-		    ));
-
-		}
-
-		$this->sub_content->owner_header = $this->template->header->title;
-		$list_items = json_encode($this->_get_rivers_list());
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
 	}
 
 	/**
@@ -192,182 +175,20 @@ class Controller_User extends Controller_Swiftriver {
 	public function action_buckets()
 	{
 		$this->template->content->view_type = "";
-
-		$this->sub_content = View::factory('pages/user/rivers_buckets')
-		    ->bind('list_items', $list_items)
-		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner)
-		    ->bind('item_type', $item_type)
-		    ->bind('item_owner', $item_owner);
-
-		$item_type = "buckets";
-		$item_owner = $this->visited_account->user->name;
+		$this->sub_content = View::factory('pages/user/assets');
+		$this->sub_content->owner = $this->owner;
+		$this->sub_content->asset = 'bucket';
+		$this->sub_content->visited_account = $this->visited_account;
+		$this->sub_content->anonymous = $this->anonymous;
+		$this->template->header->js = View::factory('pages/user/js/assets');
+		$this->template->header->js->owner = $this->owner;
+		$this->template->header->js->visited_account = $this->visited_account;
+		$this->template->header->js->asset = 'bucket';
 		
-		// Page title
-		if ($this->owner)
+		if ( ! $this->owner)
 		{
-			$this->template->header->title = __("My Buckets");
-			$this->sub_content->subscriber_header = __("Buckets you follow");
+			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
 		}
-		else
-		{
-			$this->template->header->title = __(':name\'s Buckets', array(
-				':name' => Text::limit_chars($this->visited_account->user->name)
-		    ));
-		}
-
-		$this->sub_content->owner_header = $this->template->header->title;
-		$list_items = json_encode($this->_get_buckets_list());
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
-	}
-
-
-	/**
-	 * Prepares profile page of the current user with all the 
-	 * necessary data
-	 */
-	private function _prepare_user_profile_view(& $activity_stream)
-	{
-		$this->sub_content = View::factory('pages/user/profile')
-		    ->bind('activity_stream', $activity_stream)
-		    ->bind('owner', $this->owner)
-		    ->bind('profile_js', $profile_js)
-		    ->bind('account', $this->visited_account)
-		    ->bind('buckets', $this->buckets)
-		    ->bind('rivers', $this->rivers);
-
-		// Get the javascript
-		$profile_js = $this->_get_profile_js();
-	}
-
-	/**
-	 * Loads and returns the JS snippet for populating the river and bucket 
-	 * views in the main and profile view dashboard pages
-	 * @return string
-	 */
-	private function _get_profile_js($dashboard_view = FALSE)
-	{
-		$profile_js = View::factory('pages/user/js/profile')
-		    ->bind('rivers_list', $rivers_list)
-		    ->bind('buckets_list', $buckets_list)
-		    ->bind('river_fetch_url', $river_fetch_url)
-		    ->bind('bucket_fetch_url', $bucket_fetch_url)
-		    ->bind('dashboard_view', $dashboard_view)
-		    ->bind('owner', $this->owner);
-		
-		$base_path = URL::site().$this->visited_account->account_path.'/user/';
-		
-
-		$river_fetch_url = $base_path.'river/manage';
-		$bucket_fetch_url = $base_path.'bucket/manage';
-
-		$this->rivers =  $this->_get_rivers_list(FALSE);
-		$this->buckets = $this->_get_buckets_list(FALSE);
-
-		$buckets_list = json_encode($this->buckets);
-		$rivers_list = json_encode($this->rivers);
-
-		return $profile_js;
-	}
-
-	/**
-	 * Generates the list of rivers available to the current user
-	 *
-	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
-	 * @return array
-	 */
-	private function _get_rivers_list($standardize = TRUE)
-	{
-		$visited_user_id = $this->visited_account->user->id;
-
-		$rivers = ($this->owner)
-		    ? $this->user->get_rivers()
-		    : $this->user->get_other_user_visible_rivers($visited_user_id);
-
-		$items = array();
-		foreach ($rivers as & $river)
-		{
-			$river_url = URL::site().$river['river_url'];
-
-			$is_owner = is_string($river['is_owner']) 
-			    ? (($river['is_owner'] == 'FALSE') ? FALSE : TRUE)
-			    : $river['is_owner'];
-
-			$subscribed = is_string($river['subscribed']) 
-			    ? (($river['subscribed'] == 'FALSE') ? FALSE: TRUE)
-			    : $river['subscribed'];
-
-			if ( ! $standardize)
-			{
-				$river['river_url'] = $river_url;
-				$river['is_owner'] = $is_owner;
-				$river['subscribed'] = $subscribed;
-			}
-			else
-			{
-				$items[] = array(
-					'id' => $river['id'],
-					'type' => $river['type'],
-					'item_name' => $river['river_name'],
-					'item_url' => $river_url,
-					'subscribed' => $subscribed,
-					'is_owner' => $is_owner,
-					'subscriber_count' => $river['subscriber_count']
-				);
-			}
-		}
-
-		return  ($standardize) ? $items : $rivers;
-	}
-
-	/**
-	 * Generates the list of buckets available/accessible to the current user
-	 *
-	 * @param bool $standardize When TRUE, uses the "item_" prefix for the keys
-	 * @return array
-	 */
-	private function _get_buckets_list($standardize = TRUE)
-	{
-		$visited_user_id = $this->visited_account->user->id;
-
-		$buckets = ($this->owner)
-		    ? $this->user->get_buckets()
-		    : $this->user->get_other_user_visible_buckets($visited_user_id);
-
-		$items = array();
-		foreach ($buckets as & $bucket)
-		{
-			
-			$bucket_url = URL::site().$bucket['bucket_url'];
-			$is_owner = is_string($bucket['is_owner']) 
-			    ? (($bucket['is_owner'] == 'FALSE') ? FALSE : TRUE)
-			    : $bucket['is_owner'];
-
-			$subscribed = is_string($bucket['subscribed']) 
-			    ? (($bucket['subscribed'] == 'FALSE') ? FALSE: TRUE)
-			    : $bucket['subscribed'];
-			    
-			if ( ! $standardize)
-			{
-				$bucket['bucket_url'] = $bucket_url;
-				$bucket['subscribed'] = $subscribed;
-				$bucket['is_owner'] = $is_owner;
-			}
-			else
-			{
-				$items[] = array(
-					'id' => $bucket['id'],
-					'type' => $bucket['type'],
-					'item_name' => $bucket['bucket_name'],
-					'item_url' => $bucket_url,
-					'subscribed' => $subscribed,
-					'is_owner' => $is_owner,
-					'subscriber_count' => $bucket['subscriber_count']
-				);
-			}
-		}
-
-		return ($standardize) ? $items : $buckets;
 	}
 
 	

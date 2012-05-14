@@ -26,7 +26,8 @@
 		// Globals
 		<?php if ( ! empty($user)): ?>
 			<?php if ($user->account->id): ?>
-			window.logged_in_account = <?php echo $user->account->id; ?>;
+				window.logged_in_account = <?php echo $user->account->id; ?>;
+				window.logged_in_account_path = "<?php echo $user->account->account_path; ?>";
 			<?php endif; ?>
 			
 			window.logged_in_user = <?php echo $user->id; ?>;
@@ -70,6 +71,18 @@
     // SwiftRiver Plugin Hook
     Swiftriver_Event::run('swiftriver.template.head');
 	?>
+	
+	<?php if (isset($bucket_list)): ?>
+		<script type="text/javascript">
+			$(function() {
+				// Bootstrap the global bucket list		
+				bucketList.reset(<?php echo $bucket_list; ?>);
+				
+				// Bootstrap the global bucket list		
+				riverList.reset(<?php echo $river_list; ?>);
+			});
+		</script>
+	<?php endif; ?>
 </head> 
  
 <body> 

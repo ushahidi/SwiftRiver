@@ -150,11 +150,35 @@ class Model_River extends ORM {
 		parent::delete();
 	}
 	
+	
 	/**
-	 * Creat a river
+	 * Get bucket as an array with subscription and collaboration
+	 * status populated for $visiting_user
 	 *
-	 * @return Model_River
 	 */
+	public function get_array($user, $visiting_user) {
+		$collaborator = $visiting_user->has('river_collaborators', $this);
+		return array(
+			"id" => $this->id, 
+			"name" => $this->river_name,
+			"url" => URL::site().$this->account->account_path.'/river/'.$this->river_name_url,
+			"account_id" => $this->account->id,
+			"user_id" => $this->account->user->id,
+			"account_path" => $this->account->account_path,
+			"subscriber_count" => $this->get_subscriber_count(),
+			"is_owner" => $this->is_owner($user->id),
+			"collaborator" => $collaborator,
+			// A collaborator is also a subscriber
+			"subscribed" => $visiting_user->has('river_subscriptions', $this) || $collaborator,
+			"public" => (bool) $this->river_public
+		);
+	}
+	
+	/**
+	* Creat a river
+	*
+	* @return Model_River
+	*/
 	public static function create_new($river_name, $public, $account, $river_name_url = NULL)
 	{
 		$river = ORM::factory('river');
@@ -166,7 +190,7 @@ class Model_River extends ORM {
 		$river->river_public = $public;
 		$river->account_id = $account->id;
 		$river->save();
-		
+        
 		return $river;
 	}
 	
@@ -392,6 +416,17 @@ class Model_River extends ORM {
 		    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
 		    
 		return $query->execute()->get('id', 0);
+	}
+	
+	/**
+	 * Checks if the given user created the river.
+	 *
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_creator($user_id)
+	{
+		return $user_id == $this->account->user_id;
 	}
 	
 	/**

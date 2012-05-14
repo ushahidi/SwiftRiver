@@ -21,7 +21,7 @@
 				</a>
 			</h2>
 		</div>
-		<?php else: ?>
+		<?php elseif ( ! $anonymous): ?>
 		<div class="follow-summary col_3" id="section_follow_river">
 		</div>
 		<?php endif; ?>

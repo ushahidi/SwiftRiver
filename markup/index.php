@@ -126,6 +126,7 @@
 							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
+						
 						<div class="parameter">
 							<div class="actions">
 								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>

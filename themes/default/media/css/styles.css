@@ -1550,6 +1550,12 @@ div.modal-window .modal.col_9 {
   display: none;
 }
 /* ---- MODAL: FORM SELECT LIST */
+article.modal div.select-list {
+  max-height: 150px;
+  overflow: scroll;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
 article.modal div.select-list label {
   display: block;
   font-weight: bold;
@@ -1558,6 +1564,12 @@ article.modal div.select-list label {
   border-radius: 3px;
   padding: 10px 3px;
   margin: 5px 0;
+}
+article.modal div.select-list p.category {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #c6c6c6;
+  margin: 15px 0 0 0;
 }
 article.modal form {
   display: block;

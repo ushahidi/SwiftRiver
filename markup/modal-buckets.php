@@ -22,6 +22,14 @@
 			<li><a href="#">Bucket 4</a></li>
 		</ul>
 
+		<p class="category">Buckets you collaborate on</p>
+		<ul>
+			<li><a href="#">user / Bucket 1</a></li>
+			<li><a href="#">user / Bucket 2</a></li>
+			<li><a href="#">user / Bucket 3</a></li>
+			<li><a href="#">user / Bucket 4</a></li>
+		</ul>
+
 		<p class="category">Buckets you follow</p>
 		<ul>
 			<li><a href="#">Bucket 1</a></li>

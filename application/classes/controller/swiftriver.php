@@ -333,6 +333,8 @@ class Controller_Swiftriver extends Controller_Template {
 			if ($this->user)
 			{
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
+				$this->template->header->bucket_list = json_encode($this->user->get_buckets_array($this->user));
+				$this->template->header->river_list = json_encode($this->user->get_rivers_array($this->user));
 			}
 
 			$this->template->content = '';
