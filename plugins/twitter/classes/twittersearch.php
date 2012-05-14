@@ -244,7 +244,7 @@ class TwitterSearch {
     private function _build_query() 
     {
         $request  = 'http://search.twitter.com/search.'.$this->type;
-        $request .= '?q='.urlencode($this->query);
+        $request .= '?q='.urlencode($this->query).'-filter:retweets';
 
         if(isset($this->rpp)) {
             $request .= '&rpp='.$this->rpp;

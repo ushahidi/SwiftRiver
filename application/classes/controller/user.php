@@ -682,7 +682,7 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_followers()
 	{
-		$this->template->header->title = __("Followers");
+		$this->template->header->title = __("ui.user.followers");
 
 		$this->sub_content = View::factory('pages/user/followers')
 		    ->bind('owner', $this->owner)
@@ -691,7 +691,7 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('account_owner', $account_owner)
 		    ->bind('user', $this->user);
 
-		$this->sub_content->header_title = __("Followers");
+		$this->sub_content->header_title = __('ui.user.followers');
 		$this->sub_content->following_mode = FALSE;
 		$account_owner = $this->visited_account->user->name;
 
@@ -723,7 +723,7 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_following()
 	{
-		$this->template->header->title = __("Following");
+		$this->template->header->title = __("ui.user.following");
 		$this->sub_content = View::factory('pages/user/followers')
 		    ->bind('owner', $this->owner)
 		    ->bind('follower_list', $follower_list)
@@ -731,7 +731,7 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('account_owner', $account_owner)
 		    ->bind('user', $this->user);
 
-		$this->sub_content->header_title = __("Following");
+		$this->sub_content->header_title = __("ui.user.following");
 		$this->sub_content->following_mode = TRUE;
 		$account_owner = $this->visited_account->user->name;
 

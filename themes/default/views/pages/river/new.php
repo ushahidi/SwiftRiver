@@ -32,7 +32,7 @@
 
 				<?php echo Form::open(); ?>
 				<div class="row cf">
-					<h2><?php echo __("Create a new River"); ?></h2>
+					<h2><?php echo __("ui.river.create"); ?></h2>
 					<div class="input new-river">
 						<?php echo Form::input('river_name', $post['river_name'], array('placeholder' => __('Name your River'))); ?>
 					</div>

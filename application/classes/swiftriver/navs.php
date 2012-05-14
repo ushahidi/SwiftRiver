@@ -32,7 +32,7 @@ class Swiftriver_Navs {
 				'id' => 'list-navigation-link',
 				'active' => ($active == 'list') ? 'active' : '',
 				'url' => '/list',
-				'label' => __('List')
+				'label' => __('ui.nav.list')
 			);
 
 			// Drops
@@ -40,7 +40,7 @@ class Swiftriver_Navs {
 				'id' => 'drops-navigation-link',
 				'active' => ($active == 'drops') ? 'active' : '',
 				'url' => '/drops',
-				'label' => __('Drops')
+				'label' => __('ui.nav.drops')
 			);
 
 			// Photos
@@ -48,7 +48,7 @@ class Swiftriver_Navs {
 				'id' => 'photos-navigation-link',
 				'active' => ($active == 'photos') ? 'active' : '',
 				'url' => '/photos',
-				'label' => __('Photos')
+				'label' => __('ui.nav.photos')
 			);			
 		}
 

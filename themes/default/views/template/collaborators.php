@@ -2,7 +2,12 @@
 	<div class="center">
 		<div class="col_12">
 			<div class="settings-toolbar">
-				<p class="button-blue button-small create"><a href="#" class="modal-trigger"><span class="icon"></span>Add collaborator</a></p>
+				<p class="button-blue button-small create">
+					<a href="#" class="modal-trigger">
+						<span class="icon"></span>
+						<?php echo __('ui.button.add.collaborator'); ?>
+					</a>
+				</p>
 			</div>
 			
 			<div class="alert-message blue" style="display:none;">
@@ -34,7 +39,7 @@
 <script type="text/template" id="collaborator-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Add collaborator</h1>
+			<h1><?php echo __('ui.button.add.collaborator'); ?></h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
@@ -59,7 +64,7 @@
 	</div>
 
 	<div class="modal-body link-list">
-		<h2 style="display:none">Added collaborators</h2>
+		<h2 style="display:none"><?php echo __('ui.button.add.collaborators'); ?></h2>
 		<ul>
 		</ul>
 	</div>

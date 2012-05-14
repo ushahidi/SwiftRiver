@@ -26,7 +26,7 @@
 			<section class="property-parameters">
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __('Email') ?></p>
+						<p class="field"><?php echo __('ui.account.settings.email') ?></p>
 						<?php echo Form::input("new_email", "", array('placeholder' => __("Enter your email address"))); ?>
 					</label>
 				</div>
@@ -34,7 +34,7 @@
 		</article>
 		<div class="save-toolbar">
 			<p class="button-blue" onclick="submitForm(this)">
-				<a><?php echo __("Create your account"); ?></a>
+				<a><?php echo __("ui.button.account.create"); ?></a>
 			</p>
 		</div>
 	<?php echo Form::close(); ?>

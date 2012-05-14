@@ -10,10 +10,10 @@
 		<div id="follow_section" class="follow-summary col_3">
 			<p class="follow-count">
 				<a id="follower_count" href="<?php echo URL::site().$account->account_path.'/followers'; ?>">
-					<strong><?php echo count($followers); ?></strong> <?php echo __("followers"); ?>
+					<strong><?php echo count($followers); ?></strong> <?php echo __("ui.user.followers"); ?>
 				</a>, 
 				<a id="following_count" href="<?php echo URL::site().$account->account_path.'/following'; ?>">
-					<strong><?php echo count($following); ?></strong> <?php echo __("following"); ?>
+					<strong><?php echo count($following); ?></strong> <?php echo __("ui.user.following"); ?>
 				</a>
 			</p>
 		</div>
@@ -25,12 +25,12 @@
 	<ul class="center">
 		<li <?php if ($active == 'main') echo 'class="active"'; ?>>
 			<a href="<?php echo URL::site().$account->account_path; ?>">
-				<?php echo __("Dashboard"); ?>
+				<?php echo __("ui.nav.dashboard"); ?>
 			</a>
 		</li>
 		<li <?php if ($active == 'settings') echo 'class="active"'; ?>>
 			<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
-				<?php echo __("Account Settings"); ?>
+				<?php echo __("ui.nav.settings.account"); ?>
 			</a>
 		</li>
 
@@ -53,7 +53,7 @@
 				<a href="#" title="<?php echo __("Unfollow ".$full_name) ?>" 
 				    data-title="<?php echo __("no longer following ".$full_name); ?>">
 					<span class="icon"></span>
-					<?php echo __("Following"); ?>
+					<?php echo __("ui.button.following"); ?>
 				</a>
 			</p>
 		<% } else { %>
@@ -61,7 +61,7 @@
 				<a href="#" title="<?php echo __("Follow ".$full_name)?>" 
 				    data-title="<?php echo __("now following ".$full_name); ?>">
 					<span class="icon"></span>
-					<?php echo __("Follow"); ?>
+					<?php echo __("ui.button.follow"); ?>
 				</a>
 			</p>
 		<% } %>

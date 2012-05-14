@@ -61,6 +61,9 @@ class Swiftriver {
 		Cookie::$domain = $cookie_config->get('domain') OR '';
 		Cookie::$secure = $cookie_config->get('secure') OR FALSE;
 		Cookie::$expiration = $cookie_config->get('expiration') OR 0;
+
+		// Set the default site locale
+		I18n::$lang = Model_Setting::get_setting('site_locale');
 	}
 
 }

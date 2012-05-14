@@ -46,19 +46,19 @@
 			<article class="container base">
 				<header class="cf">
 					<div class="property-title">
-						<h1>Account information</h1>
+						<h1><?php echo __('ui.section.account.info'); ?></h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Full Name'); ?></p>
+							<p class="field"><?php echo __('ui.account.settings.fullname'); ?></p>
 							<?php echo Form::input("name", $form_name); ?>
 						</label>
 					</div>
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Nickname'); ?></p>
+							<p class="field"><?php echo __('ui.account.settings.nickname'); ?></p>
 							<?php echo Form::input("nickname", $form_nickname); ?>
 						</label>
 					</div>
@@ -74,13 +74,13 @@
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Password'); ?></p>
+							<p class="field"><?php echo __('ui.account.settings.password'); ?></p>
 							<?php echo Form::password("password", ""); ?>
 						</label>
 					</div>
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Verify Password'); ?></p>
+							<p class="field"><?php echo __('ui.account.settings.password.confirm'); ?></p>
 							<?php echo Form::password("password_confirm", ""); ?>
 						</label>
 					</div>
@@ -88,7 +88,9 @@
 			</article>
 
 			<div class="save-toolbar">
-				<p class="button-blue" onclick="submitForm(this)"><a>Create your account</a></p>
+				<p class="button-blue" onclick="submitForm(this)">
+					<a><?php echo __('ui.button.account.create'); ?></a>
+				</p>
 			</div>
 			<?php echo Form::close(); ?>
 		</div>

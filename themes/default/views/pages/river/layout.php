@@ -17,7 +17,7 @@
 			<h2 class="settings">
 				<a href="<?php echo $settings_url; ?>">
 					<span class="icon"></span>
-					<?php echo __("River settings"); ?>
+					<?php echo __("ui.river.settings"); ?>
 				</a>
 			</h2>
 		</div>
@@ -42,7 +42,7 @@
 			</ul>
 		</div>
 		<div class="filter-actions col_3">
-			<p class="button-blue button-small"><a href="#" class="modal-trigger">Filters</a></p>
+			<p class="button-blue button-small"><a href="#" class="modal-trigger"><?php echo __('ui.river.filters'); ?></a></p>
 		</div>
 	</div>
 </nav>

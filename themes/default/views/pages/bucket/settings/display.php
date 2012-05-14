@@ -21,13 +21,13 @@
 			<article class="container base">
 				<header class="cf">
 					<div class="property-title">
-						<h1>Name</h1>
+						<h1><?php echo __("ui.section.name"); ?></h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="bucket_name">
-							<p class="field">Display name</p>
+							<p class="field"><?php echo  __("ui.field.display.name"); ?></p>
 							<input type="text" value="<?php echo $bucket->bucket_name ?>" name="bucket_name" />
 						</label>
 					</div>
@@ -37,7 +37,7 @@
 			<article class="container base">
 				<header class="cf">
 					<div class="property-title">
-						<h1>Default view</h1>
+						<h1><?php echo __("ui.section.defaultview"); ?></h1>
 					</div>
 				</header>
 				<section class="property-parameters">
@@ -53,7 +53,7 @@
 			<article class="container base">
 				<header class="cf">
 					<div class="property-title">
-						<h1>Who can view this bucket</h1>
+						<h1><?php echo __("ui.section.privacy.bucket"); ?></h1>
 					</div>
 				</header>
 				<section class="property-parameters">
@@ -67,8 +67,12 @@
 			</article>
 			
 			<div class="save-toolbar">
-				<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-				<p class="button-blank"><a href="#">Cancel</a></p>
+				<p class="button-blue">
+					<a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">
+						<?php echo __("ui.button.save.changes"); ?>
+					</a>
+				</p>
+				<p class="button-blank"><a href="#"><?php echo __("ui.button.cancel"); ?></a></p>
 			</div>
 			<?php echo Form::close(); ?>
 		</div>

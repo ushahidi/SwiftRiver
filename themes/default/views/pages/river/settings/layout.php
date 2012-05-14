@@ -7,7 +7,7 @@
 			<h2 class="back">
 				<a href="<?php echo $river_base_url; ?>">
 					<span class="icon"></span>
-					Return to river
+					<?php echo __('ui.river.return'); ?>
 				</a>
 			</h2>
 		</div>
@@ -19,13 +19,13 @@
 		<div id="page-views" class="settings touchcarousel col_12">
 			<ul class="touchcarousel-container">
 				<li class="touchcarousel-item <?php if ($active == 'channels' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/channels'; ?>">Channels</a>
+					<a href="<?php echo $river_base_url.'/settings/channels'; ?>"><?php echo __('ui.nav.channels'); ?></a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'collaborators' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/collaborators'; ?>">Collaborators</a>
+					<a href="<?php echo $river_base_url.'/settings/collaborators'; ?>"><?php echo __('ui.nav.collaborators'); ?></a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Display</a>
+					<a href="<?php echo $river_base_url.'/settings/display'; ?>"><?php echo __('ui.nav.display'); ?></a>
 				</li>
 			</ul>
 		</div>

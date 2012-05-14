@@ -436,7 +436,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 				
 				// Set the remaining properties
 				$droplet['parent_id'] = intval($this->request->param('id', 0));
-				$droplet['droplet_type'] = 'reply';
+				$droplet['droplet_type'] = 'comment';
 				$droplet['channel'] = 'swiftriver';
 				$droplet['droplet_title'] = $droplet['droplet_content'];
 				$droplet['droplet_date_pub'] = date('Y-m-d H:i:s', time());
