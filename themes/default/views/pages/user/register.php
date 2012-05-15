@@ -37,7 +37,7 @@
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('Nickname'); ?></p>
+							<p class="field"><?php echo __('Nickname (what others see)'); ?></p>
 							<?php echo Form::input("nickname", $user->account->account_path); ?>
 						</label>
 					</div>
