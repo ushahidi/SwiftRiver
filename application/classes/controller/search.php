@@ -61,7 +61,7 @@ class Controller_Search extends Controller_Swiftriver {
 			$this->template->content->active = $this->request->action();
 
 			// Get the search term
-			$this->search_term = strip_tags($_GET['q']);
+			$this->search_term = trim(strip_tags($_GET['q']));
 
 			if (in_array($this->request->action(), array('photos', 'list')))
 			{
