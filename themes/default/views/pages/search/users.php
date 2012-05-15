@@ -9,8 +9,8 @@
 					</div>
 					<div class="property-title">
 						<h1>
-							<a href="<?php echo URL::site().$user->account->account_path; ?>">
-								<?php echo $user->name; ?>
+							<a href="<?php echo URL::site().$user['account_path']; ?>">
+								<?php echo $user['name']; ?>
 							</a>
 						</h1>
 					</div>
