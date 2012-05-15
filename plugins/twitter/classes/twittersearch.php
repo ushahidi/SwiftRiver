@@ -244,7 +244,7 @@ class TwitterSearch {
     private function _build_query() 
     {
         $request  = 'http://search.twitter.com/search.'.$this->type;
-        $request .= '?q='.urlencode($this->query).'-filter:retweets';
+        $request .= '?q='.urlencode($this->query);
 
         if(isset($this->rpp)) {
             $request .= '&rpp='.$this->rpp;
@@ -270,7 +270,7 @@ class TwitterSearch {
             $request .= '&geocode='.$this->geocode;
         }
 
-		$request .= urlencode(' filter:retweets');
+		$request .= urlencode('-filter:retweets');
         
         return $request;        
     }    
