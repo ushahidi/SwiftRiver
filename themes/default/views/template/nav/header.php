@@ -31,24 +31,24 @@
 					<ul class="popover-window base header-toolbar">
 						<li>
 							<a href="<?php echo URL::site().$user->account->account_path; ?>">
-								<?php echo __('ui.nav.dashboard');?>
+								<?php echo __('Dashboard');?>
 							</a>
 						</li>
 						<li class="group">
 							<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
-								<?php echo __("ui.nav.settings.account"); ?>
+								<?php echo __("Account settings"); ?>
 							</a>
 						</li>
 						<?php if ($admin): ?>
 							<li>
 								<a href="<?php echo URL::site().'settings/main'; ?>">
-									<?php echo __("ui.nav.settings.website"); ?>
+									<?php echo __("Website Settings"); ?>
 								</a>
 							</li>
 						<?php endif; ?>
 						<li>
 							<a href="<?php echo URL::site().'login/done'; ?>">
-								<em><?php echo __('ui.nav.logout');?></em>
+								<em><?php echo __('Log out');?></em>
 							</a>
 						</li>
 					</ul>
@@ -57,7 +57,7 @@
 		<?php elseif ($controller != 'login'): ?>
 			<li class="login">
 				<a href="<?php echo URL::site('login'); ?>" class="modal-trigger">
-					<span class="label"><?php echo __("ui.nav.login"); ?></span>
+					<span class="label"><?php echo __("Log in"); ?></span>
 				</a>
 			</li>
 		<?php endif; ?>
@@ -68,79 +68,69 @@
 <script type="text/template" id="header-rivers-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __("ui.nav.rivers"); ?></h1>
+			<h1>Rivers</h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
 					<span class="icon"></span>
-					<?php echo __('ui.button.close'); ?>
+					Close
 				</a>
 			</h2>
 		</div>
 	</hgroup>
 
 	<div class="modal-body link-list" style="display:none">
-		<p class="category own-title" style="display:none">
-			<?php echo __('ui.user.rivers.mine'); ?>
-		</p>
-		<ul class="own"></ul>
+		<p class="category own-title" style="display:none">Your rivers</p>
+		<ul class="own">
+		</ul>
 
-		<p class="category collaborating-title" style="display:none">
-			<?php echo __('ui.user.rivers.collaborate'); ?>
-		</p>
-		<ul class="collaborating"></ul>
+		<p class="category collaborating-title" style="display:none">Rivers you collaborate on</p>
+		<ul class="collaborating">
+		</ul>
 
-		<p class="category following-title" style="display:none">
-			<?php echo __('ui.user.rivers.follow'); ?>
-		</p>
-		<ul class="following"></ul>
+		<p class="category following-title" style="display:none">Rivers you follow</p>
+		<ul class="following">
+		</ul>
 	</div>
 
 	<div class="modal-body create-new">
-		<p class="button-blue">
-			<a href="<?php echo URL::site().$user->account->account_path.'/river/create'; ?>">
-				<?php echo __('ui.river.create'); ?>
-			</a>
-		</p>
+		<p class="button-blue"><a href="<?php echo URL::site().$user->account->account_path.'/river/create'; ?>">Create a new river</a></p>
 	</div>
 </script>
 
 <script type="text/template" id="header-buckets-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __("ui.nav.buckets"); ?></h1>
+			<h1>Buckets</h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
 					<span class="icon"></span>
-					<?php echo __('ui.button.close'); ?>
+					Close
 				</a>
 			</h2>
 		</div>
 	</hgroup>
 
 	<div class="modal-body link-list" style="display:none">
-		<p class="category own-title" style="display:none">
-			<?php echo __('ui.user.buckets.mine'); ?>
-		</p>
-		<ul class="own"></ul>
+		<p class="category own-title" style="display:none">Your buckets</p>
+		<ul class="own">
+		</ul>
 
-		<p class="category collaborating-title" style="display:none">
-			<?php echo __('ui.user.buckets.collaborate'); ?>
-		</p>
-		<ul class="collaborating"></ul>
+		<p class="category collaborating-title" style="display:none">Buckets you collaborate on</p>
+		<ul class="collaborating">
+		</ul>
 
-		<p class="category following-title" style="display:none">
-			<?php echo __('ui.user.buckets.follow'); ?>
-		</p>
-		<ul class="following"></ul>
+		<p class="category following-title" style="display:none">Buckets you follow</p>
+		<ul class="following">
+		</ul>
 	</div>
 
 	<div class="modal-body create-new">
 		<form>
-			<h2><?php echo __('ui.bucket.create'); ?></h2>
+			<h2>Create a new bucket</h2>
 			<div class="field">
 				<input type="text" placeholder="Name your new bucket" class="name" name="new_bucket" />
 				<p class="button-blue"><a href="#">Save</a></p>
@@ -163,7 +153,7 @@
 			<h2 class="close">
 				<a href="#">
 					<span class="icon"></span>
-					<?php echo __('ui.button.close'); ?>
+					Close
 				</a>
 			</h2>
 		</div>

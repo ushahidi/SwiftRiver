@@ -34,9 +34,9 @@ class Twitter_Init {
 		// Add a twitter channel
 		$channel_filter = $river->create_channel_filter('twitter', $user->id, TRUE);
 		$channel_filter->add_option('keyword', array(
-			'label' => 'Keyword',
-			'type' => 'text',
-			'value' => trim($keywords)
+			                                'label' => 'Keyword',
+			                                'type' => 'text',
+			                                'value' => trim($keywords)
 		));
 	}
 
@@ -51,7 +51,7 @@ class Twitter_Init {
 		// Apply validation rules to the options
 		if (isset($option_data['channel']) AND $option_data['channel'] == 'twitter')
 		{
-			
+			// TODO: Sanity checks for the values
 		}
 	}
 

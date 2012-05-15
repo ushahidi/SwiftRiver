@@ -2,7 +2,7 @@
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __("ui.user.activity"); ?></h1>
+				<h1><?php echo __("Activity"); ?></h1>
 			</div>
 		</header>
 		<section id="activity_stream" class="property-parameters">
@@ -23,24 +23,18 @@
 		<header class="cf">
 			<div class="property-title">
 				<h1>
-					<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>"><?php echo __("ui.nav.buckets"); ?></a>
+					<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>"><?php echo __("Buckets"); ?></a>
 				</h1>
 			</div>
 		</header>
 		<section class="property-parameters asset-list" style="display:none;">
-			<p class="category own-title" style="display:none;">
-				<?php echo __(":name's Buckets", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category own-title" style="display:none;"><?php echo __(":name's Buckets", array(':name' => $account->user->name)); ?></p>
 			<!-- Users's buckets go here -->
 			
-			<p class="category collaborating-title" style="display:none;">
-				<?php echo __("Buckets :name Collaborates On", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category collaborating-title" style="display:none;"><?php echo __("Buckets :name Collaborates On", array(':name' => $account->user->name)); ?></p>
 			<!-- Bucket's user is collaborating on go here -->
 			
-			<p class="category following-title" style="display:none;">
-				<?php echo __("Buckets :name Follows", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category following-title" style="display:none;"><?php echo __("Buckets :name Follows", array(':name' => $account->user->name)); ?></p>
 			<!-- Buckets user is subscribed to go here -->
 		</section>
 		<section class="property-parameters empty-message" style="display:none">
@@ -54,24 +48,18 @@
 		<header class="cf">
 			<div class="property-title">
 				<h1>
-					<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>"><?php echo __("ui.nav.rivers"); ?></a>
+					<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>"><?php echo __("Rivers"); ?></a>
 				</h1>
 			</div>
 		</header>
 		<section class="property-parameters asset-list" style="display:none;">
-			<p class="category own-title" style="display:none;">
-				<?php echo __(":name's Rivers", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category own-title" style="display:none;"><?php echo __(":name's Rivers", array(':name' => $account->user->name)); ?></p>
 			<!-- Users's rivers go here -->
 			
-			<p class="category collaborating-title" style="display:none;">
-				<?php echo __("Rivers :name Collaborates On", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category collaborating-title" style="display:none;"><?php echo __("Rivers :name Collaborates On", array(':name' => $account->user->name)); ?></p>
 			<!-- Rivers's user is collaborating on go here -->
 			
-			<p class="category following-title" style="display:none;">
-				<?php echo __("Rivers :name Follows", array(':name' => $account->user->name)); ?>
-			</p>
+			<p class="category following-title" style="display:none;"><?php echo __("Rivers :name Follows", array(':name' => $account->user->name)); ?></p>
 			<!-- Rivers user is subscribed to go here -->
 		</section>
 		<section class="property-parameters empty-message" style="display:none">
@@ -87,9 +75,7 @@
     	<% if (parseInt(account_id) != logged_in_account) { %>
 		<% var selected = (subscribed||collaborator) ? "selected" : ""; %>
 		<div class="actions">
-			<p class="button-white follow only-icon has-icon <%= selected %>">
-				<a href="#"><span class="icon"></span><span class="nodisplay"></span></a>
-			</p>
+			<p class="button-white follow only-icon has-icon <%= selected %>"><a href="#"><span class="icon"></span><span class="nodisplay"></span></a></p>
 		</div>
 		<% } %>
 	<?php endif; ?>

@@ -141,9 +141,7 @@ class Controller_Search extends Controller_Swiftriver {
 			$droplet_js->default_view = "list";
 			$droplet_js->photos = $this->photos ? 1 : 0;
 
-			$result_text = ($this->photos) ? __("photos") : __("results");
 			$this->sub_content->nothing_to_display = View::factory('pages/search/nothing_to_display');
-			$this->sub_content->nothing_to_display->result_text = $result_text;
 			$this->sub_content->nothing_to_display->search_term = $this->search_term;
 
 			// Set the current search scope as the previous one
@@ -383,15 +381,8 @@ class Controller_Search extends Controller_Swiftriver {
 		$this->template->content->search_scope = Cookie::get(
 			Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
 
-		// Get the ids of users with private accounts
-		$private_user_ids = DB::select('user_id')
-		    ->from('accounts')
-		    ->where('account_private', '=', 1)
-		    ->execute()
-		    ->as_array();
-
 		// Get users
-		$users = Model_User::get_like($this->search_term, $private_user_ids);
+		$users = Model_User::get_like($this->search_term);
 	}
 }
 ?>
