@@ -380,9 +380,16 @@ class Controller_Search extends Controller_Swiftriver {
 
 		$this->template->content->search_scope = Cookie::get(
 			Swiftriver::COOKIE_PREVIOUS_SEARCH_SCOPE);
+			
+		// Get the ids of users with private accounts
+		$private_user_ids = DB::select('user_id')
+				->from('accounts')
+				->where('account_private', '=', 1)
+				->execute()
+				->as_array();
 
 		// Get users
-		$users = Model_User::get_like($this->search_term);
+		$users = Model_User::get_like($this->search_term, $private_user_ids);
 	}
 }
 ?>
