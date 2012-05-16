@@ -16,8 +16,6 @@
 	// Inline css
 	echo $css; 
 	
-	// System and Other CSS
-	echo(Html::script('media/css'));
 	?>
 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
@@ -62,15 +60,26 @@
 	// SwiftRiver global JS
 	echo(Html::script("themes/default/media/js/global.js"));
 
-	// Dynamic JS Files
-	echo(Html::script('media/js'));
-
 	// Dynamic inline JS
 	echo $js; 
 	
     // SwiftRiver Plugin Hook
     Swiftriver_Event::run('swiftriver.template.head');
 	?>
+	
+	<script type="text/javascript">
+		// Loading image
+		var loading_image_html = '<?php echo HTML::image("themes/default/media/img/loading.gif", array("class"=>"loading_image")); ?>';
+		window.loading_image = $(loading_image_html);
+		window.loading_message = $('<div class="loading"></div>').append(loading_image);
+		// Preload loading_image
+		(new Image()).src = window.loading_image.attr('src');
+
+		//Preload default avatar
+		var default_avatar_html = '<?php echo HTML::image("themes/default/media/img/avatar_default.gif"); ?>';
+		window.default_avatar = $(default_avatar_html);
+		(new Image()).src = window.default_avatar.attr('src');
+	</script>
 	
 	<?php if (isset($bucket_list)): ?>
 		<script type="text/javascript">
