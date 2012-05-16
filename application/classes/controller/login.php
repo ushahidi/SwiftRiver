@@ -82,7 +82,7 @@ class Controller_Login extends Controller_Swiftriver {
 			
 			if ( ! Valid::email($email) OR ! CSRF::valid($csrf_token))
 			{
-				$this->errors = array(__('ui.error.email.invalid'));
+				$this->errors = array(__('The email address you have provided is invalid'));
 			}
 			else 
 			{
@@ -92,7 +92,7 @@ class Controller_Login extends Controller_Swiftriver {
 
 				if ( ! $user->loaded())
 				{
-					$this->errors = array(__('ui.error.email.unregistered'));
+					$this->errors = array(__('The provided email address is not registered'));
 				} 
 				else
 				{
@@ -147,7 +147,15 @@ class Controller_Login extends Controller_Swiftriver {
 				{
 					$this->template->content->set('username', $username);
 
-					$this->errors = array(__('ui.error.login'));
+					// Get errors for display in view
+					$validation = Validation::factory($this->request->post())
+						->rule('username', 'not_empty')
+						->rule('password', 'not_empty');
+					if ($validation->check())
+					{
+						$validation->error('password', 'invalid');
+					}
+					$this->errors = $validation->errors('login');
 				}
 			}
 			else
@@ -222,13 +230,13 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
 		{
-			$messages['errors'] = array(__('ui.error.registration.closed'));
+			$messages['errors'] = array(__('This site is not open to public registration'));
 		}
 		else
 		{
 			if ( ! Valid::email($email))
 			{
-				$messages['errors'] = array(__('ui.error.email.invalid'));
+				$messages['errors'] = array(__('The email address provided is invalid'));
 			} 
 			else
 			{
@@ -256,7 +264,7 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ( $riverid_api->is_registered($email) AND ! $invite) 
 		{
-			return array('errors' => array(__('ui.error.email.registered')));
+			return array('errors' => array(__('The email address provided is already registered.')));
 		}
 		
 		$ret = array();
@@ -282,7 +290,7 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ($response['status']) 
 		{
-			$ret['messages'] = array(__('ui.notification.register.complete'));
+			$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
 		} 
 		else 
 		{
@@ -305,7 +313,7 @@ class Controller_Login extends Controller_Swiftriver {
 
 		if ($user->loaded())
 		{
-			$ret['errors'] = array(__('ui.error.email.registered'));
+			$ret['errors'] = array(__('The email address provided is already registered.'));
 		}
 		else
 		{
@@ -335,7 +343,7 @@ class Controller_Login extends Controller_Swiftriver {
 				Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
 
 
-				$ret['messages'] = array(__('ui.notification.register.complete'));
+				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
 			}
 			else
 			{
@@ -362,7 +370,7 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ($response['status']) 
 		{
-			$this->messages = array(__('ui.notification.password.reset'));
+			$this->messages = array(__('An email has been sent with instructions to complete the password reset process.'));
 		} 
 		else 
 		{
@@ -387,7 +395,8 @@ class Controller_Login extends Controller_Swiftriver {
 			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 			
 			
-			$this->messages = array(__('ui.notification.password.reset'));
+			$this->messages = array(
+				__('An email has been sent with instructions to complete the password reset process.'));
 		}
 		else
 		{
@@ -492,7 +501,7 @@ class Controller_Login extends Controller_Swiftriver {
 		if ($user->loaded())
 		{
 			$this->template->content = View::factory('pages/login/landing');
-			$this->template->content->errors = array(__('ui.error.email.registered'));
+			$this->template->content->errors = array(__('Email is already registered'));
 			$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
 			return;
 		}
@@ -544,7 +553,7 @@ class Controller_Login extends Controller_Swiftriver {
 						if ($email != $data->email) {
 							// The email in the request does not match
 							// the email in the token
-							$errors = array(__('ui.error.email.invalid'));
+							$errors = array(__('Invalid email'));
 						}
 					}
 				}
@@ -554,7 +563,7 @@ class Controller_Login extends Controller_Swiftriver {
 				$account = ORM::factory('account',array('account_path' => $nickname));
 				if ($account->loaded())
 				{
-					$errors = array(__('ui.error.nickname.registered'));
+					$errors = array(__('Nickname is already taken'));
 				}
 			}
 			

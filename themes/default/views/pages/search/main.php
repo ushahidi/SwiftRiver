@@ -1,13 +1,13 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __("ui.section.search"); ?></h1>
+			<h1><?php echo __("Search"); ?></h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
 					<span class="icon"></span>
-					<?php echo __("ui.button.close"); ?>
+					<?php echo __("Close"); ?>
 				</a>
 			</h2>
 		</div>
@@ -22,8 +22,8 @@
 				<li class="button-blue" id="specific_search">
 					<a href="#">
 					<?php 
-						echo __("ui.button.search.context", 
-							array(':context' => $search_scope)); 
+						echo __("Search this :search_scope", 
+							array(':search_scope' => $search_scope)); 
 					?>
 					</a>
 				</li>
@@ -31,7 +31,7 @@
 
 				<li class="button-blue" id="all_search">
 					<?php $submit_js = ($search_scope !== 'all') ? '' : 'onClick="submitForm(this)"'; ?>
-					<a href="#" <?php echo $submit_js; ?>><?php echo __("ui.button.search.all"); ?></a>
+					<a href="#" <?php echo $submit_js; ?>><?php echo __("Search everything"); ?></a>
 				</li>
 			</ul>
 		</div>

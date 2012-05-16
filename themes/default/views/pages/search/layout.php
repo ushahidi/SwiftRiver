@@ -13,26 +13,26 @@
 			<?php $url_params = (empty($url_params)) ? '' : '?'.$url_params; ?>
 			<ul class="touchcarousel-container">
 				<li id="list-navigation-link" class="touchcarousel-item <?php if ($active == 'list') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/list'.$url_params); ?>"><?php echo __("ui.nav.list"); ?></a>
+					<a href="<?php echo URL::site('search/list'.$url_params); ?>"><?php echo __("List"); ?></a>
 				</li>
 				<li id="photos-navigation-link" class="touchcarousel-item <?php if ($active == 'photos') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/photos'.$url_params); ?>"><?php echo __("ui.nav.photos"); ?></a>
+					<a href="<?php echo URL::site('search/photos'.$url_params); ?>"><?php echo __("Photos"); ?></a>
 				</li>
 
 				<?php if ($search_scope === 'all') : ?>
 				<li class="touchcarousel-item <?php if ($active == 'rivers') echo 'active'; ?>">
 					<a href="<?php echo URL::site('search/rivers'.$url_params); ?>">
-						<?php echo __("ui.nav.rivers"); ?>
+						<?php echo __("Rivers"); ?>
 					</a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'buckets') echo 'active'; ?>">
 					<a href="<?php echo URL::site('search/buckets'.$url_params); ?>">
-						<?php echo __("ui.nav.buckets"); ?>
+						<?php echo __("Buckets"); ?>
 					</a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'users') echo 'active'; ?>">
 					<a href="<?php echo URL::site('search/users'.$url_params); ?>">
-						<?php echo __("ui.nav.users"); ?>
+						<?php echo __("Users"); ?>
 					</a>
 				</li>
 				<?php endif; ?>

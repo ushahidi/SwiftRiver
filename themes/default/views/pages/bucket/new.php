@@ -12,7 +12,7 @@
 			<nav class="cf">
 				<ul class="views">
 					<li <?php if ($active == 'buckets') echo 'class="active"'; ?>>
-						<a><?php echo __('ui.nav.buckets'); ?></a>
+						<a><?php echo __('Buckets'); ?></a>
 					</li>
 				</ul>
 			</nav>
@@ -35,7 +35,7 @@
 			<div class="controls">
 				<?php echo Form::open(); ?>
 				<div class="row cf">
-					<h2><?php echo __("ui.bucket.create"); ?></h2>
+					<h2><?php echo __("Create a new Bucket"); ?></h2>
 					<div class="input new-bucket">
 						<?php echo Form::input('bucket_name', $post['bucket_name'], array('placeholder' => __('Name your Bucket'))); ?>
 					</div>
@@ -48,7 +48,7 @@
 					<div class="controls edit-advanced">
 						<div class="row controls-buttons cf">
 							<p class="button-go create-new" onclick="submitForm(this)">
-								<a><?php echo __("ui.button.create.bucket"); ?></a>
+								<a><?php echo __("Create Bucket"); ?></a>
 							</p>
 						</div>
 					</div>

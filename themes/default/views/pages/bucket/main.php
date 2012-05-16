@@ -13,7 +13,7 @@
 			</h1>
 			<?php if ( ! empty($collaborators)): ?>
 				<div class="rundown-people">
-					<h2><?php echo __("ui.bucket.collaborators"); ?></h2>
+					<h2><?php echo __("Collaborators on this bucket"); ?></h2>
 					<ul>
 						<?php foreach ($collaborators as $collaborator): ?>
 							<li>
@@ -32,13 +32,13 @@
 			<h2 class="settings">
 				<a href="<?php echo $settings_url; ?>">
 					<span class="icon"></span>
-					<?php echo __("ui.bucket.settings"); ?>
+					<?php echo __("Bucket settings"); ?>
 				</a>
 			</h2>
 			<h2 class="discussion">
 				<a href="<?php echo $discussion_url; ?>">
 					<span class="icon"></span>
-					<?php echo __("ui.bucket.discussion"); ?>
+					<?php echo __("Discussion"); ?>
 				</a>
 			</h2>
 		</div>
@@ -47,7 +47,7 @@
 			<p class="button-score button-white follow">
 				<a href="#" title="now following">
 					<span class="icon"></span>
-					<?php echo __("ui.button.follow"); ?>
+					<?php echo __("Follow"); ?>
 				</a>
 			</p>
 		</div>
@@ -59,17 +59,17 @@
 	<ul class="center">
 		<li id="list-navigation-link">
 			<a onclick="appRouter.navigate('/list', {trigger: true}); return false;" href="#">
-				<?php echo __("ui.nav.list"); ?>
+				<?php echo __("List"); ?>
 			</a>
 		</li>
 		<li id="drops-navigation-link">
 			<a onclick="appRouter.navigate('/drops', {trigger: true}); return false;" href="#">
-				<?php echo __("ui.nav.drops"); ?>
+				<?php echo __("Drops"); ?>
 			</a>
 		</li>		
 		<li id="photos-navigation-link">
 			<a onclick="appRouter.navigate('/photos', {trigger: true}); return false;" href="#">
-				<?php echo __("ui.nav.photos"); ?>
+				<?php echo __("Photos"); ?>
 			</a>
 		</li>
 	</ul>

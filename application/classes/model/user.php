@@ -230,8 +230,7 @@ class Model_User extends Model_Auth_User {
 		                ->or_where(DB::expr('lower(name)'),'like', "% $search_string%")
 		                ->where_close();
 		
-		if ( ! empty($exclude_ids))
-		{
+		if (! empty($exclude_ids)) {
 			$users_query->and_where('id', 'not in', $exclude_ids);
 		}
 		

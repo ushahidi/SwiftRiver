@@ -5,8 +5,8 @@
 				<p>
 					<strong><?php echo __('No results found.') ?></strong>
 					<?php 
-					echo __('Your search for ":search_term" did not return any :result_text', 
-						array(':result_text' => $result_text, ':search_term' => $search_term));
+					echo __('Your search for ":search_term" did not return any results', 
+						array(':search_term' => $search_term)); 
 					?>
 				</p>
 			</div>

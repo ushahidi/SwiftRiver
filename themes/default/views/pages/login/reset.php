@@ -37,13 +37,13 @@
 				<section class="property-parameters">
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('ui.account.settings.password'); ?></p>
+							<p class="field"><?php echo __('Password'); ?></p>
 							<?php echo Form::password("password", ""); ?>
 						</label>
 					</div>
 					<div class="parameter">
 						<label for="password">
-							<p class="field"><?php echo __('ui.account.settings.password.confirm'); ?></p>
+							<p class="field"><?php echo __('Verify Password'); ?></p>
 							<?php echo Form::password("password_confirm", ""); ?>
 						</label>
 					</div>

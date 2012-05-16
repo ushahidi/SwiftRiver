@@ -2,11 +2,7 @@
 	<div class="center">
 		<div class="col_12">
 			<div class="settings-toolbar">
-				<p class="button-blue button-small create">
-					<a href="/markup/modal-channels.php" class="modal-trigger">
-						<span class="icon"></span><?php echo __('ui.button.add.channels'); ?>
-					</a>
-				</p>
+				<p class="button-blue button-small create"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon"></span>Add channels</a></p>
 			</div>
 
 			<div class="alert-message blue" style="display:none;">
@@ -27,7 +23,7 @@
 <script type="text/template" id="add-channels-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __('ui.button.add.channel'); ?></h1>
+			<h1>Add Channel</h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
@@ -65,16 +61,10 @@
 	<header class="cf">
 		<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
 		<div class="property-title">
-			<a href="#" class="avatar-wrap">
-				<img onerror="showDefaultAvatar(this)" src="<?php echo URL::site('media/img'); ?>/channel-<%= channel %>.gif" />
-			</a>
+			<a href="#" class="avatar-wrap"><img onerror="showDefaultAvatar(this)" src="<?php echo URL::site('media/img'); ?>/channel-<%= channel %>.gif" /></a>
 			<h1><%= name %></h1>
 			<div class="popover add-parameter">
-				<p class="button-white has-icon add">
-					<a href="#" class="popover-trigger">
-						<span class="icon"></span><?php echo __('ui.button.add.parameter'); ?>
-					</a>
-				</p>
+				<p class="button-white has-icon add"><a href="#" class="popover-trigger"><span class="icon"></span>Add parameter</a></p>
 				<ul class="popover-window base">
 				</ul>
 			</div>

@@ -33,25 +33,25 @@
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __("ui.section.user.about"); ?></h1>
+				<h1><?php echo __("About You"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('ui.account.settings.fullname'); ?></p>
+					<p class="field"><?php echo __('Full name'); ?></p>
 					<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
 				</label>
 			</div>
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('ui.account.settings.nickname'); ?></p>
+					<p class="field"><?php echo __('Nickname'); ?></p>
 					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
 				</label>
 			</div>
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('ui.account.settings.email'); ?></p>
+					<p class="field"><?php echo __('Email address'); ?></p>
 					<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
 					<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
 				</label>
@@ -62,19 +62,19 @@
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __("ui.section.password"); ?></h1>
+				<h1><?php echo __("Password"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('ui.account.settings.password'); ?></p>
+					<p class="field"><?php echo __('Password'); ?></p>
 					<?php echo Form::password("password", "", array('id' => 'password')); ?>
 				</label>
 			</div>
 			<div class="parameter">
 				<label>
-					<p class="field"><?php echo __('ui.account.settings.password.confirm'); ?></p>
+					<p class="field"><?php echo __('Confirm password'); ?></p>
 					<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
 				</label>
 			</div>
@@ -84,20 +84,20 @@
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __('ui.section.photo'); ?></h1>
+				<h1><?php echo __('Photo'); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter cf">
 				<a class="avatar-wrap"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></a>
 				<p class="button-blue button-small no-icon">
-					<a href="http://www.gravatar.com" target="_blank"><?php echo __('ui.button.photo.change'); ?></a>
+					<a href="http://www.gravatar.com" target="_blank"><?php echo __('Use a differrent photo'); ?></a>
 				</p>
 			</div>
 		</section>
 	</article>
 	<div class="save-toolbar">
-		<p class="button-blue"><a href="#"><?php echo __("ui.button.save.changes"); ?></a></p>
+		<p class="button-blue"><a href="#"><?php echo __("Save Changes"); ?></a></p>
 	</div>
 	<?php echo Form::hidden("current_password"); ?>
 	<?php echo Form::close(); ?>
@@ -133,7 +133,7 @@
 			<section class="property-parameters">
 				<div class="parameter">
 					<label for="current_password_prompt">
-						<p class="field"><?php echo __('ui.account.settings.password.current'); ?></p>
+						<p class="field">Current Password</p>
 						<?php echo Form::password("current_password_prompt"); ?>
 					</label>
 				</div>

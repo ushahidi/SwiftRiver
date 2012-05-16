@@ -7,7 +7,7 @@
 			<h2 class="back">
 				<a href="<?php echo $bucket_base_url; ?>">
 					<span class="icon"></span>
-					<?php echo __("ui.bucket.return"); ?>
+					<?php echo __("Return to bucket"); ?>
 				</a>
 			</h2>
 		</div>
@@ -19,10 +19,10 @@
 		<div id="page-views" class="settings touchcarousel col_12">
 			<ul class="touchcarousel-container">
 				<li class="touchcarousel-item <?php if ($active == 'collaborators' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $bucket_base_url.'/settings/collaborators'; ?>"><?php echo __("ui.nav.collaborators"); ?></a>
+					<a href="<?php echo $bucket_base_url.'/settings/collaborators'; ?>"><?php echo __("Collaborators"); ?></a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $bucket_base_url.'/settings/display'; ?>"><?php echo __("ui.nav.display"); ?></a>
+					<a href="<?php echo $bucket_base_url.'/settings/display'; ?>"><?php echo __("Display"); ?></a>
 				</li>
 			</ul>
 		</div>

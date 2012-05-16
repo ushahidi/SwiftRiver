@@ -4,7 +4,7 @@
 				<h1><?php print $page_title; ?></h1>
 				<?php if ( ! empty($collaborators)): ?>
 				<div class="rundown-people">
-					<h2><?php __('ui.bucket.collaborators'); ?></h2>
+					<h2>Collaborators on this bucket</h2>
 					<ul>
 						<?php foreach ($collaborators as $collaborator): ?>
 							<li><a href="<?php echo URL::site().$collaborator['account_path'] ?>" class="avatar-wrap" title="<?php echo $collaborator['name']; ?>"><img src="<?php echo $collaborator['avatar']; ?>" /></a></li>
@@ -18,24 +18,19 @@
 				<h2 class="settings">
 					<a href="<?php echo $settings_url; ?>">
 						<span class="icon"></span>
-						<?php echo __("ui.bucket.settings"); ?>
+						<?php echo __("Bucket settings"); ?>
 					</a>
 				</h2>
 				<h2 class="back">
 					<a href="<?php echo $bucket_url; ?>">
 						<span class="icon"></span>
-						<?php echo __('ui.bucket.return'); ?>
+						<?php echo __('Return to bucket'); ?>
 					</a>
 				</h2>
 			</div>
 			<?php else: ?>
 			<div class="follow-summary col_3">
-				<p class="button-score button-white follow">
-					<a href="#" title="now following">
-						<span class="icon"></span>
-						<?php echo __('ui.button.follow'); ?>
-					</a>
-				</p>
+				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -92,7 +87,7 @@
 				</section>
 			</div>
 			<div class="drop-actions cf">
-				<p class="button-blue"><a href="#"><?php echo __('ui.button.publish'); ?></a></p>
+				<p class="button-blue"><a href="#">Publish</a></p>
 			</div>
 		</article>	
 	</script>
