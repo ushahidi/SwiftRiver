@@ -27,13 +27,13 @@ return array(
 				'label' => __('Keyword'),
 				'type' => 'text',
 				'values' => array(),
-				'placeholder' => 'E.g. Ushahidi, "African Tech"'
+				'placeholder' => 'E.g. Ushahidi, "African Tech" For multiple keywords, separate each keyword with a ","'
 			),
 			'user' => array(
 				'label' => __('User'),
 				'type' => 'text',
 				'values' => array(),
-				'placeholder' => 'E.g. @ushahidi, @dkobia'
+				'placeholder' => 'E.g. @ushahidi To add multiple users, seperate each user with a "," e.g. @ushahidi, @crowdmap'
 			)
 		),
 		'dependencies'	=> array(

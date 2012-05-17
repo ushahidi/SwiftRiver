@@ -184,6 +184,10 @@ class Model_Channel_Filter extends ORM {
 	public  function update_option($value, $id = 0)
 	{
 		$filter_option = ORM::factory('channel_filter_option', $id);
+		if ($filter_option->loaded())
+		{
+			Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $filter_option);
+		}
 		$filter_option->channel_filter_id = $this->id;
 		$filter_option->key = $value['key'];		
 		unset($value['key']);

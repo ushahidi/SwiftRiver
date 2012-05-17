@@ -10,6 +10,11 @@
  */
 class Twitter_Init {
 
+	/**
+	 * Twitter API endpoint for looking up screen names
+	 */
+	const LOOKUP_URL  = "https://api.twitter.com/1/users/show.json?screen_name=%s";
+
 	public function __construct()
 	{
 	    // Register as a crawler
@@ -51,7 +56,36 @@ class Twitter_Init {
 		// Apply validation rules to the options
 		if (isset($option_data['channel']) AND $option_data['channel'] == 'twitter')
 		{
-			// TODO: Sanity checks for the values
+			// Validate user ids - Verify that they exist on twitter
+			if ($option_data['key'] == 'user')
+			{
+				$screen_names = explode(",", str_replace('"', '', $option_data['value']));
+				
+				foreach ($screen_names as $screen_name)
+				{
+					// Strip the '@' off the screen name
+					if ('@' === substr($screen_name, 0, 1))
+					{
+						$screen_name = substr($screen_name, 1, strlen($screen_name) - 1);
+					}
+
+					$user_lookup_url = sprintf(Twitter_Init::LOOKUP_URL, $screen_name);
+					$request =  Request::factory($user_lookup_url);
+
+					// Execute the response
+					$response = Request_Client_Curl::factory()
+								    ->execute($request);
+
+					$response_array =  json_decode($response->body(), TRUE);
+					if (array_key_exists('error', $response_array))
+					{
+						$exception_message = __('Invalid twitter user - @:screen_name',
+							array(':screen_name' => $screen_name));
+						throw new Swiftriver_Exception_Channel_Option($exception_message);
+					}
+
+				}
+			}
 		}
 	}
 

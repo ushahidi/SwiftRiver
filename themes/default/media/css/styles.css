@@ -1272,6 +1272,7 @@ article.container div.parameter input[type="text"],
 article.container div.parameter input[type="email"],
 article.container div.parameter input[type="password"] {
   width: 50%;
+  margin-left: 30px;
 }
 article.container div.parameter div.actions {
   float: right;
@@ -2045,6 +2046,12 @@ article.modal div.search ul.dual-buttons {
     float: left;
     width: 90px;
     padding: 6px 5px 6px 0;
+  }
+  article.container section.property-parameters p.field-text {
+    float: left;
+    width: 50%;
+    padding: 6px 5px 6px 30px;
+    display: inline-block;
   }
   /* --------------------------- USER */
   #content.user section.property-parameters div.activity-item span.icon {

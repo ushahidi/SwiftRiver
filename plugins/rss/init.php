@@ -98,7 +98,7 @@ class Rss_Init {
 			$url = $option_data['value'];
 
 			if ( ! ($feed = RSS_Util::validate_feed_url($url)))
-				throw new SwiftRiver_Exception_ChannelOption('Invalid URL');
+				throw new Swiftriver_Exception_Channel_Option('Invalid URL');
 
 			$option_data['value'] = $feed['value'];
 			$option_data['title'] = $feed['title'];
@@ -116,7 +116,7 @@ class Rss_Init {
 			return;
 			
 		if ( ! Upload::type($file, array('xml')))
-			throw new SwiftRiver_Exception_ChannelOption('Invalid file type');
+			throw new Swiftriver_Exception_Channel_Option('Invalid file type');
 			
 		// Begin processing the feed
 		$importer = new Swiftriver_OPML_Import();
