@@ -135,7 +135,7 @@ class Model_Bucket extends ORM {
 			"is_owner" => $this->is_owner($user->id),
 			"collaborator" => $collaborator,
 			// A collaborator is also a subscriber
-			"subscribed" => $visiting_user->has('bucket_subscriptions', $this) || $collaborator,
+			"subscribed" => $visiting_user->has('bucket_subscriptions', $this) OR $collaborator,
 			"public" => (bool) $this->bucket_publish
 		);
 	}

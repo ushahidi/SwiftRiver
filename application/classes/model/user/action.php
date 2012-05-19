@@ -13,8 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
  */
-class Model_User_Action extends ORM
-{
+class Model_User_Action extends ORM {
 	/**
 	 * An belongs to a user
 	 *
@@ -40,11 +39,12 @@ class Model_User_Action extends ORM
 	/**
 	 * Gets actions and notification for the user's follows or the user's activities
 	 *
-	 * @param int $user_id Visited user ID
-	 * @param boolean $self If TRUE, only get the specified user_id's actions otherwise that of his following
-	 * @return array
+	 * @param    int $user_id Visited user ID
+	 * @param    int $visitor_id ID of the user viewing the profile
+	 * @param    boolean $self If TRUE, only get the specified user_id's actions otherwise that of his following
+	 * @return   array
 	 */
-	public static function get_activity_stream($user_id, $self = FALSE)
+	public static function get_activity_stream($user_id, $visitor_id = NULL, $self = FALSE)
 	{
 		
 		// Notifications
@@ -65,8 +65,8 @@ class Model_User_Action extends ORM
 		{
 			// Get the actions of the users user_id is following
 			$query->where('user_id', 'IN', 
-				DB::expr("(select user_id from user_followers where follower_id = $user_id)"))
-			    ->or_where('action_to_id','=',$user_id);
+				DB::expr("(SELECT user_id FROM user_followers WHERE follower_id = $user_id)"))
+			        ->or_where('action_to_id','=',$user_id);
 		}
 
 		$query->order_by('action_date_add', 'DESC');
@@ -87,23 +87,46 @@ class Model_User_Action extends ORM
 			$action_on = $result['action_on'];
 			$action_on_id = $result["action_on_id"];
 
+			// Whether to leave out the current activity feed item
+			// from the final result
+			// An item is left out when:
+			//    action_on item is private
+			//    visitor does not own action_on item and action_to_self = 0
+			$skip_activity_item = FALSE;
+
 			if ($action_on == "account")
 			{
 				$action_on_url = URL::site().$result["action_on_name"]; 
 			}
-			if ($action_on == "river")
+			elseif ($action_on == "river")
 			{
 				$river_orm = ORM::factory("river", $action_on_id);
+				
+				if ( ! $river_orm->river_public)
+				{
+					$skip_activity_item = ! $river_orm->is_owner($visitor_id) AND $result['action_to_self'] == 0;
+				}
+
 				$action_on_name = $river_orm->river_name;
 				$action_on_url = URL::site().$river_orm->account->account_path.'/river/'.$river_orm->river_name_url; 
 			}
-			if ($action_on == "bucket")
+			elseif ($action_on == "bucket")
 			{
 				$bucket_orm = ORM::factory("bucket", $action_on_id);
+
+				if ( ! $bucket_orm->bucket_publish)
+				{
+					$skip_activity_item = ! $bucket_orm->is_owner($visitor_id) AND $result['action_to_self'] == 0;
+				}
+
 				$action_on_name = $bucket_orm->bucket_name;
 				$action_on_url = URL::site().$bucket_orm->account->account_path
 												.'/bucket/'.$bucket_orm->bucket_name_url; 
 			}
+
+			// Leave out current activity feed item?
+			if ($skip_activity_item)
+				continue;
 
 
 			// Condense the activity stream data
@@ -118,7 +141,7 @@ class Model_User_Action extends ORM
 
 				// Populate the initiators array
 				$initiators[$user_id] = array(
-					'name' => $result["user_name"], 
+					'name' => ($user_id === $visitor_id) ? __('You') : $result["user_name"], 
 					'avatar' => Swiftriver_Users::gravatar($result["user_email"]),
 					'url' => $result["user_url"] = URL::site().$user_orm->account->account_path);
 			}
@@ -129,8 +152,15 @@ class Model_User_Action extends ORM
 				$actions[$user_id][$action_name] = array();
 			}
 
+			// Timestamp for the action date
 			$action_timestamp = strtotime(strftime("%a %b %e, %Y", 
 				strtotime($result['action_date'])));
+
+			if ($result['action_to_self'] == 1 AND $result['confirmed'] == 0)
+			{
+				// Modify the timestamp of the action
+				$action_timestamp = strtotime($result['action_date']);
+			}
 
 			if ( ! array_key_exists($action_timestamp, $actions[$user_id][$action_name]))
 			{
@@ -142,7 +172,7 @@ class Model_User_Action extends ORM
 			// key to the mod'd value
 			$action_key = & $actions[$user_id][$action_name][$action_timestamp];
 
-			// Object of the action
+			// Target of the action
 			if ( ! array_key_exists($action_on, $action_key))
 			{
 				$action_key[$action_on] = array('targets' => array());
@@ -164,7 +194,7 @@ class Model_User_Action extends ORM
 				'action_to_self' => $result['action_to_self'],
 				'confirmed' => $result['confirmed'],
 				'action_to_id' => $result['action_to_id'], 
-				'action_to_name' => $result['action_to_name']
+				'action_to_name' => ($result['action_to_self'] ==  1) ? __('you') : $result['action_to_name']
 			);
 
 			// Grouping step - Add to the targeted user id to the action target
@@ -175,7 +205,7 @@ class Model_User_Action extends ORM
 		// Garbage collection
 		unset ($result);
 
-		// Pack the data for convenient JSON traveral
+		// Pack the data for convenient JSON traversal
 		$packed = array();
 		foreach ($actions as $user_id => $data)
 		{

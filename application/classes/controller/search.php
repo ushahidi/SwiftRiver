@@ -228,7 +228,8 @@ class Controller_Search extends Controller_Swiftriver {
 				        );
 				}
 
-				echo json_encode($results['droplets']);
+				// Suppress encoding errors - Temporary measure for now
+				echo @json_encode($results['droplets']);
 			break;
 			
 			case "PUT":

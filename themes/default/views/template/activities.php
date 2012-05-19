@@ -74,10 +74,7 @@
 				<% } %>
 			<% } %>
 		</h2>
-
-		<?php 
-			/* <p class="metadata"><%= new Date(action_date).toLocaleString() %></p> */ 
-		?>
+		<p class="metadata"><%= new Date(action_date).toLocaleString() %></p>
 	</div>
 </script>
 
@@ -92,10 +89,6 @@ $(function() {
 	var Activity = Backbone.Model.extend({
 		
 		urlRoot: fetch_url,
-		
-		confirm: function() {
-			this.save({confirmed: 1}, {wait: true});
-		},
 		
 		ignore: function() {
 			this.save({ignored: 1}, {wait: true});
@@ -127,7 +120,24 @@ $(function() {
 		},
 		
 		confirm: function() {
-			this.model.confirm();
+			this.model.save({confirmed: 1}, {
+			    	wait: true,
+			    	success: function(model, response) {
+						// Show notification message of the acceptance
+						var message = "You have accepted " + model.get("user_name") + "'s " +
+						    "invitation to collaborate on the " + model.get("action_on_name") +
+						    " " + model.get("action_on");
+
+						showConfirmationMessage(message);
+
+			    	},
+			    	error: function(model, response) {
+						// The server threw an error
+						var message = "Oops! Something went wrong...";
+						showConfirmationMessage(message);
+			    	}
+			});
+
 			return false;
 		},
 
