@@ -81,6 +81,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				// Default template for river content
 				$this->template->content = View::factory('pages/river/layout')
 					->bind('river', $this->river)
+					->bind('droplets_view', $droplets_view)
 					->bind('river_base_url', $this->river_base_url)
 					->bind('settings_url', $this->settings_url)
 					->bind('owner', $this->owner)
@@ -89,7 +90,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 					->bind('nav', $this->nav);
 
 				// Trend template
-				$this->template->content->sub_content = View::factory('pages/trend/river')
+				$droplets_view = View::factory('pages/trend/river')
 					->bind('trend', $this->trend);
 
 				// Set the base url for this specific river

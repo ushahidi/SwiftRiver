@@ -457,11 +457,11 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `droplet_hash` char(32) NOT NULL DEFAULT '',
   `droplet_orig_id` varchar(255) NOT NULL,
   `droplet_type` varchar(10) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision',
-  `droplet_title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'Title of the feed item if available',
-  `droplet_content` text CHARACTER SET utf8 COLLATE utf8_general_ci COMMENT 'The content of the feed item (if available)',
+  `droplet_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
+  `droplet_content` text COMMENT 'The content of the feed item (if available)',
   `droplet_locale` varchar(10) DEFAULT NULL COMMENT 'Local of the feed item (e.g. en (English), fr (French))',
   `droplet_image` bigint(20) DEFAULT NULL,
-  `droplet_date_pub` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Original publish date of the feed item',
+  `droplet_date_pub` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Original publish date of the feed item',
   `droplet_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
   `processing_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Bitwise flags indicating the status of drop post processing',
   PRIMARY KEY (`id`),
@@ -727,6 +727,24 @@ CREATE TABLE IF NOT EXISTS `droplet_scores` (
 
 
 -- ----------------------------------------
+-- TABLE 'trends'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `river_tag_trends` (
+  `id` bigint(20) NOT NULL,
+  `hash` char(32) NOT NULL DEFAULT '',
+  `river_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `date_pub` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `tag` varchar(50) NOT NULL DEFAULT '',
+  `tag_type` varchar(20) NOT NULL DEFAULT '',
+  `count` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hash` (`hash`),
+  KEY `river_id` (`river_id`),
+  KEY `tag_type` (`tag_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
 -- TABLE 'comment_scores'
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `comment_scores` (
@@ -772,7 +790,8 @@ INSERT INTO `seq` (`name`, `id`) VALUES
 ('places', 1),
 ('links', 1),
 ('identities', 1),
-('media', 1);
+('media', 1),
+('river_tag_trends', 1);
 
 INSERT INTO `roles` (`id`, `name`, `description`, `permissions`) VALUES 
 (1, 'login', 'Login privileges, granted after account confirmation', NULL),

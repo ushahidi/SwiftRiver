@@ -32,6 +32,10 @@ class Model_Droplet extends ORM {
 	 * @var array Relationships
 	 */
 	protected $_has_many = array(
+		'rivers' => array(
+			'model' => 'river',
+			'through' => 'rivers_droplets'
+			),
 		'buckets' => array(
 			'model' => 'bucket',
 			'through' => 'buckets_droplets'
@@ -130,7 +134,9 @@ class Model_Droplet extends ORM {
 	{
 		if ( ! count($droplets))
 			return;
-			
+		
+		Database::instance()->query(NULL, 'START TRANSACTION');
+		
 	    // Populate identities
 		Model_Identity::get_identities($droplets);
 		
@@ -229,7 +235,8 @@ class Model_Droplet extends ORM {
 		// Populate the drop's metadata tables
 		self::add_metadata($droplets);
 		
-		return $new_droplets;
+		Database::instance()->query(NULL, 'COMMIT');
+		return $new_droplets; 
 	}
 	
 	/**
@@ -240,8 +247,12 @@ class Model_Droplet extends ORM {
 	public static function add_metadata(& $drops)
 	{
 		// Build queries for creating entries in the meta tables droplet_tags, droplet_links and so on
+		$drops_idx = array();
 		$river_values = NULL;
+		$river_check_query = NULL;
+		$tags_ref = array();
 		$tag_values = NULL;
+		$tag_check_query = NULL;
 		$semantics_complete = array();
 		$link_values = NULL;
 		$media_values = NULL;
@@ -249,8 +260,12 @@ class Model_Droplet extends ORM {
 		$media_thumbnail_values = NULL;
 		$media_complete = array();
 		$place_values = NULL;
-		foreach ($drops as $drop)
+		$place_check_query = NULL;
+		foreach ($drops as $key => $drop)
 		{
+			// Create an in memory drop reference
+			$drops_idx[$drop['id']] = $key;
+			
 			// Place drops into rivers
 			if (isset($drop['river_id']))
 			{
@@ -262,6 +277,18 @@ class Model_Droplet extends ORM {
 					}
 					$river_values .= '('.$drop['id'].','.$river_id.')';
 				}
+				
+				// Subquery to find new river drops
+				$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
+									   array(DB::expr($river_id), 'river_id'));
+				if ( ! $river_check_query)
+				{
+					$river_check_query = $subquery;
+				}
+				else
+				{
+					$river_check_query = $subquery->union($river_check_query, TRUE);
+				}
 			}
 			
 			// Create a query to insert tags into droplets_tags
@@ -269,11 +296,30 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['tags'] as $tag)
 				{
+					// Create an in memory tag id -> tag detail reference
+					$tags_ref[$tag['id']] = array(
+						'tag_name' => $tag['tag_name'],
+						'tag_type' => $tag['tag_type']
+					);
+					
+					// Values for the drop tags insert query
 					if ($tag_values)
 					{
 						$tag_values .= ',';
 					}
 					$tag_values .= '('.$drop['id'].','.$tag['id'].')';
+					
+					// Subquery to find new tags
+					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
+										   array(DB::expr($tag['id']), 'tag_id'));
+					if ( ! $tag_check_query)
+					{
+						$tag_check_query = $subquery;
+					}
+					else
+					{
+						$tag_check_query = $subquery->union($tag_check_query, TRUE);
+					}
 				}
 			}
 
@@ -331,7 +377,7 @@ class Model_Droplet extends ORM {
 				}
 			}
 			
-			// Find drops that have complete semantic processing
+			// Find drops that have completed media processing
 			if (isset($drop['media_complete']))
 			{
 				$media_complete[] = $drop['id'];
@@ -341,13 +387,51 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['places'] as $place)
 				{
+					// Create an in memory tag id -> tag detail reference
+					$places_ref[$place['id']] = array(
+						'place_name' => $place['place_name']
+					);
+					
 					if ($place_values)
 					{
 						$place_values .= ',';
 					}
 					$place_values .= '('.$drop['id'].','.$place['id'].')';
+					
+					// Subquery to find new places
+					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
+										   array(DB::expr($place['id']), 'place_id'));
+					if ( ! $place_check_query)
+					{
+						$place_check_query = $subquery;
+					}
+					else
+					{
+						$place_check_query = $subquery->union($place_check_query, TRUE);
+					}
 				}
 			}
+		}
+		
+		// Find river drops already in the DB
+		$existing_river_drops = DB::select('droplet_id', 'river_id')
+									->from('rivers_droplets')
+									->where('droplet_id', 'IN', array_keys($drops_idx))
+									->execute()
+									->as_array();
+		
+		// Find the new river drops we are just about to add
+		$new_river_drops = NULL;
+		if ($river_check_query)
+		{
+			$sub = DB::select('droplet_id', 'river_id')
+						->from('rivers_droplets')
+						->where('droplet_id', 'IN', array_keys($drops_idx));
+			$new_river_drops = DB::select('droplet_id', 'river_id')
+						->from(array($river_check_query, 'a'))
+						->where(DB::expr('(`droplet_id`, `river_id`)'), 'NOT IN', $sub)
+						->execute()
+						->as_array();
 		}
 		
 		
@@ -361,7 +445,34 @@ class Model_Droplet extends ORM {
 			    ->execute();
 		}
 		
+		// Find the new drop tags
+		$new_drop_tags = array();
+		if ($tag_check_query)
+		{
+			$sub = DB::select('droplet_id', 'tag_id')
+						->from('droplets_tags')
+						->where('droplet_id', 'IN', array_keys($drops_idx));
+			$new_tags = DB::select('droplet_id', 'tag_id')
+						->from(array($tag_check_query, 'a'))
+						->where(DB::expr('(`droplet_id`, `tag_id`)'), 'NOT IN', $sub)
+						->execute()
+						->as_array();
+			foreach ($new_tags as $new_tag) {
+				if ( ! isset($new_drop_tags[$new_tag['droplet_id']]))
+				{
+					$new_drop_tags[$new_tag['droplet_id']] = array();
+				}
+				$new_drop_tags[$new_tag['droplet_id']][] = array(
+					'id' => $new_tag['tag_id'],
+					'tag' => $tags_ref[$new_tag['tag_id']]['tag_name'],
+					'tag_type' => $tags_ref[$new_tag['tag_id']]['tag_type']
+				);;
+			}
+		}
+		
+		
 		// Update droplets tags
+		$all_drop_tags = array();
 		if ($tag_values)
 		{
 			$insert_tags_sql = "INSERT IGNORE INTO `droplets_tags` (`droplet_id`, `tag_id`) "
@@ -369,6 +480,29 @@ class Model_Droplet extends ORM {
 
 			DB::query(Database::INSERT, $insert_tags_sql)
 			    ->execute();
+			
+			// Get all tags(new + existing) for drops that have just been added
+			// to a river
+			if ($new_river_drops)
+			{
+				$drop_tags = DB::select('droplet_id', 'tags.id', 'tag', 'tag_type')
+											->from('droplets_tags')
+											->join('tags', 'INNER')
+										    ->on('droplets_tags.tag_id', '=', 'tags.id')
+											->where('droplet_id', 'IN', array_keys($drops_idx))
+											->execute()
+											->as_array();
+				foreach ($drop_tags as $drop_tag) {
+					if ( ! isset($all_drop_tags[$drop_tag['droplet_id']])) {
+						$all_drop_tags[$drop_tag['droplet_id']] = array();
+					}
+					$all_drop_tags[$drop_tag['droplet_id']][] = array(
+						'id' => $drop_tag['id'],
+						'tag' => $drop_tag['tag'],
+						'tag_type' => $drop_tag['tag_type']
+					);
+				}
+			}
 		}
 		
 		// Update drops that completed semantic processing
@@ -426,7 +560,33 @@ class Model_Droplet extends ORM {
 			   ->execute();
 		}
 		
+		// Find the new drop places
+		$new_drop_places = array();
+		if ($place_check_query)
+		{
+			$sub = DB::select('droplet_id', 'place_id')
+						->from('droplets_places')
+						->where('droplet_id', 'IN', array_keys($drops_idx));
+			$new_places = DB::select('droplet_id', 'place_id')
+						->from(array($place_check_query, 'a'))
+						->where(DB::expr('(`droplet_id`, `place_id`)'), 'NOT IN', $sub)
+						->execute()
+						->as_array();
+			foreach ($new_places as $new_place) {
+				if ( ! isset($new_drop_places[$new_place['droplet_id']]))
+				{
+					$new_drop_places[$new_place['droplet_id']] = array();
+				}
+				$new_drop_places[$new_place['droplet_id']][] = array(
+					'id' => $new_place['place_id'],
+					'tag' => $places_ref[$new_place['place_id']]['place_name'],
+					'tag_type' =>'place'
+				);;
+			}
+		}
+		
 		// Update droplet places
+		$all_drop_places = array();
 		if ($place_values)
 		{
 			$insert_places_sql = "INSERT IGNORE INTO `droplets_places` (`droplet_id`, `place_id`) "
@@ -434,7 +594,110 @@ class Model_Droplet extends ORM {
 
 			DB::query(Database::INSERT, $insert_places_sql)
 			    ->execute();
+			
+			// Get all places(new + existing) for drops that have just been added
+			// to a river
+			if ($new_river_drops)
+			{
+				$drop_places = DB::select('droplet_id', 'places.id', 'place_name')
+											->from('droplets_places')
+											->join('places', 'INNER')
+										    ->on('droplets_places.place_id', '=', 'places.id')
+											->where('droplet_id', 'IN', array_keys($drops_idx))
+											->execute()
+											->as_array();
+				foreach ($drop_places as $drop_place) {
+					if ( ! isset($all_drop_places[$drop_place['droplet_id']])) {
+						$all_drop_places[$drop_place['droplet_id']] = array();
+					}
+					$all_drop_places[$drop_place['droplet_id']][] = array(
+						'id' => $drop_place['id'],
+						'tag' => $drop_place['place_name'],
+						'tag_type' => 'place'
+					);
+				}
+			}
 		}
+		
+		// Update trends
+		$trends = array();		
+		// Update for drops already in the DB but we are adding new tags
+		if ($existing_river_drops)
+		{
+			$trends = array_merge($trends, 
+								  self::get_tag_trends($existing_river_drops, 
+													   $new_drop_tags, 
+													   $drops,
+													   $drops_idx));
+													
+			$trends = array_merge($trends, 
+								  self::get_tag_trends($existing_river_drops, 
+													   $new_drop_places, 
+													   $drops,
+													   $drops_idx));
+		}
+		
+		// Update for drops that already exist in the DB with tags but we are adding
+		// the drop into a new river
+		if ($new_river_drops)
+		{
+			$trends = array_merge($trends, 
+								  self::get_tag_trends($new_river_drops, 
+													   $all_drop_tags, 
+													   $drops,
+													   $drops_idx));
+													
+
+			$trends = array_merge($trends, 
+								  self::get_tag_trends($new_river_drops, 
+													   $all_drop_places, 
+													   $drops,
+													   $drops_idx));
+		}
+		
+		if ( ! empty($trends))
+		{
+			Model_River_Tag_Trend::create_from_array($trends);
+		}
+	}
+	
+	/**
+	 * Return a trend array for the given tags and river_drops
+	 *
+	 */
+	private static function get_tag_trends($river_drops, $tags, $drops, $drops_idx)
+	{
+		$trends = array();
+		foreach($river_drops as $river_drop) {
+			if (isset($tags[$river_drop['droplet_id']]))
+			{
+				foreach ($tags[$river_drop['droplet_id']] as $tag)
+				{
+					$drops_key = $drops_idx[$river_drop['droplet_id']];
+					$date_pub = $drops[$drops_key]['droplet_date_pub'];
+					$date_pub = date_format(date_create($date_pub), 'Y-m-d H:00:00');						
+					$hash = md5($river_drop['river_id'].
+								$date_pub.
+								$tag['tag'].
+								$tag['tag_type']);
+					if ( ! isset($trends[$hash]))
+					{
+						$trends[$hash] = array(
+							'river_id' => $river_drop['river_id'],
+							'date_pub' => $date_pub,
+							'tag' => $tag['tag'],
+							'tag_type' => $tag['tag_type'],
+							'count' => 1
+						);
+					}
+					else
+					{
+						$trends[$hash]['count'] = $trends[$hash]['count'] + 1;
+					}
+				}
+			}
+		}
+		return $trends;
 	}
 		
 	
@@ -484,7 +747,10 @@ class Model_Droplet extends ORM {
 				'droplet_title' => $droplet->droplet_title,
 				'droplet_content' => $droplet->droplet_content,
 				'droplet_locale' => $droplet->droplet_locale,
-				'droplet_date_pub' => $droplet->droplet_locale,
+				'droplet_date_pub' => $droplet->droplet_date_pub,
+				'river_id' => array_map (function($river) {
+					return $river->id;
+				} , $droplet->rivers->find_all()->as_array())
 			);
 		}
 		// Return items
@@ -1315,18 +1581,7 @@ class Model_Droplet extends ORM {
 				->on('droplets_tags.droplet_id', '=', 'droplets.id')
 				->join('tags', 'INNER')
 				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where_open();
-
-			foreach ($filters['tags'] as $tag)
-			{
-				$query->or_where('tags.tag_canonical', 'LIKE', DB::expr("'%$tag%'"));
-			}
-
-			// Places not set, close parathesss
-			if (empty($filters['places']))
-			{
-				$query->where_close();
-			}
+				->where('tags.tag_canonical', 'IN', $filters['tags']);
 		}
 
 		if ( ! empty($filters['places']))
@@ -1334,35 +1589,22 @@ class Model_Droplet extends ORM {
 			$query->join('droplets_places', 'INNER')
 				->on('droplets_places.droplet_id', '=', 'droplets.id')
 				->join('places', 'INNER')
-				->on('droplets_places.place_id', '=', 'places.id');
-
-			// No tags specified, open parantheses
-			if (empty($filters['tags']))
-			{
-				$query->where_open();
-			}
-
-			foreach ($filters['places'] as $place)
-			{
-				$query->or_where('places.place_name_canonical', 'LIKE', DB::expr("'%$place%'"));
-			}
-
-			// Close the parathensis
-			$query->where_close();
+				->on('droplets_places.place_id', '=', 'places.id')
+				->where('places.place_name_canonical', 'IN', $filters['places']);
 		}
 		
 		if ( ! empty($filters['start_date']))
 		{
 			$start_date = array_shift($filters['start_date']);
 			$start_date = new DateTime($start_date);
-			$query->where('droplets.droplet_date_pub', '>=', $start_date->format('Y-m-d'));
+			$query->where('droplets.droplet_date_pub', '>=', $start_date->format('Y-m-d %H:%i:%s'));
 		}
 
 		if ( ! empty($filters['end_date']))
 		{
 			$end_date = array_shift($filters['end_date']);
 			$end_date = new DateTime($end_date);
-			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d'));
+			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d %H:%i:%s'));
 		}
 	}
 	

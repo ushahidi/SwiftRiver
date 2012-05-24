@@ -33,7 +33,7 @@
 		<div id="page-views" class="river touchcarousel col_9">
 			<ul class="touchcarousel-container">
 				<?php foreach ($nav as $item): ?>
-				<li id="<?php echo $item['id']; ?>" class="touchcarousel-item <?php echo $item['active']; ?>">
+				<li id="<?php echo $item['id']; ?>" class="touchcarousel-item <?php echo $item['active'] == $active ? 'active' : ''; ?>">
 					<a href="<?php echo $river_base_url.$item['url']; ?>">
 						<?php echo $item['label'];?>
 					</a>

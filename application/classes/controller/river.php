@@ -92,6 +92,42 @@ class Controller_River extends Controller_Swiftriver {
 
 			// Navigation Items
 			$this->nav = Swiftriver_Navs::river($this->river);
+			
+			if ($this->river->account->user->id == $this->user->id OR 
+				$this->river->account->user->username == 'public')
+			{
+				$this->template->header->title = $this->river->river_name;
+			}
+			else
+			{
+				$this->template->header->title = $this->river->account->account_path.' / '.$this->river->river_name;
+			}
+
+			$this->template->content = View::factory('pages/river/layout')
+				->bind('river', $this->river)
+				->bind('droplets_view', $this->droplets_view)
+				->bind('river_base_url', $this->river_base_url)
+				->bind('settings_url', $this->settings_url)
+				->bind('owner', $this->owner)
+				->bind('anonymous', $this->anonymous)
+				->bind('user', $this->user)
+				->bind('nav', $this->nav)
+				->bind('active', $this->active);
+				
+			if ( ! $this->owner)
+			{
+				$river_item = json_encode(array(
+					'id' => $this->river->id, 
+					'type' => 'river',
+					'subscribed' => $this->river->is_subscriber($this->user->id)
+				));
+
+				// Action URL - To handle the follow/unfollow actions on the river
+				$action_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
+
+				$this->template->content->river_item = $river_item;
+				$this->template->content->action_url = $action_url;
+			}
 		}
 	}
 
@@ -106,44 +142,6 @@ class Controller_River extends Controller_Swiftriver {
 		// Cookies to help determine the search options to display
 		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'river');
 		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
-		
-		if
-		(
-			$this->river->account->user->id == $this->user->id OR 
-			$this->river->account->user->username == 'public'
-		)
-		{
-			$this->template->header->title = $this->river->river_name;
-		}
-		else
-		{
-			$this->template->header->title = $this->river->account->account_path.' / '.$this->river->river_name;
-		}
-				
-		$this->template->content = View::factory('pages/river/layout')
-			->bind('river', $this->river)
-			->bind('droplets_view', $droplets_view)
-			->bind('river_base_url', $this->river_base_url)
-			->bind('settings_url', $this->settings_url)
-			->bind('owner', $this->owner)
-			->bind('anonymous', $this->anonymous)
-			->bind('user', $this->user)
-			->bind('nav', $this->nav);
-
-		if ( ! $this->owner)
-		{
-			$river_item = json_encode(array(
-				'id' => $this->river->id, 
-				'type' => 'river',
-				'subscribed' => $this->river->is_subscriber($this->user->id)
-			));
-
-			// Action URL - To handle the follow/unfollow actions on the river
-			$action_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
-
-			$this->template->content->river_item = $river_item;
-			$this->template->content->action_url = $action_url;
-		}
 				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
@@ -183,15 +181,15 @@ class Controller_River extends Controller_Swiftriver {
 		}
 
 		// Select droplet list view with drops view as the default if list not specified
-		$droplets_view = View::factory('pages/drop/drops')
+		$this->droplets_view = View::factory('pages/drop/drops')
 		    ->bind('droplet_js', $droplet_js)
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 		
-		$droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
+		$this->droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 		    ->bind('anonymous', $this->anonymous);
-		$droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
+		$this->droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
 	}
 	
 	/**
@@ -665,5 +663,82 @@ class Controller_River extends Controller_Swiftriver {
 		}
 		
 		return $filters;
+	}
+	
+	/**
+	 * @return	void
+	 */
+	public function action_trends()
+	{
+		$this->droplets_view = View::factory('pages/river/trend');
+		$this->droplets_view->river_base_url = $this->river_base_url;
+		$this->active = 'trends';
+		
+		$this->droplets_view->trends = array();
+		$cur_date = new DateTime(null, new DateTimeZone('UTC'));
+		$tag_types =  array('person' => 'People', 
+							'place' => 'Places', 
+							'organization' => 'Organizations');
+		$periods = array('hour' => 'This Hour',
+		 				 'day' => 'Today',
+						 'week' => 'This Week', 
+						 'month' => 'This Month',
+						 'all' => 'All Time');
+		foreach($tag_types as $type_key => $type_title)
+		{
+			$has_data = FALSE;
+			foreach($periods as $period_key => $period_value)
+			{
+				$start_time = $this->get_period_start_time($period_key, $cur_date);
+				$data = Model_River_Tag_Trend::get_trend($this->river->id, $start_time, $type_key);
+				foreach ($data as & $trend)
+				{
+					$trend['url'] = $this->river_base_url.
+									'?'.($type_key == 'place' ? 'places' : 'tags').'='.
+									urlencode($trend['tag']);
+					if ($start_time)
+					{
+						$trend['url'] .= '&start_date='.urlencode($start_time);
+					}
+				}
+				$this->droplets_view->trends[$type_title]['data'][$period_value] = $data;
+				if (! empty($data))
+				{
+					$has_data = TRUE;
+				}
+			}
+			$this->droplets_view->trends[$type_title]['has_data'] = $has_data;
+		}
+	}
+	
+	/**
+	 * Given a current time, return the star date for the requested period.
+	 *
+	 * @param string $period 'hour', 'day', 'week', 'month' or all
+	 * @param DateTime $cur_date current date
+	 * @return string
+	 */
+	private function get_period_start_time($period, $cur_date)
+	{
+		switch ($period)
+		{
+			case 'hour':
+				return date_format($cur_date, 'Y-m-d H:00:00');
+				break;
+			case 'day':
+				return date_format($cur_date, 'Y-m-d 00:00:00');
+				break;
+			case 'week':
+				$ts = date_timestamp_get($cur_date);
+				$start = (date('w', $ts) == 0) ? $ts : strtotime('last sunday', $ts);
+				return date('Y-m-d', $start);
+				break;
+			case 'month':
+				return date_format($cur_date, 'Y-m-01 00:00:00');
+				break;				
+			case 'all':
+				return NULL;
+				break;
+		}
 	}
 }

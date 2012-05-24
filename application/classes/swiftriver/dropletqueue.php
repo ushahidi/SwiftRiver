@@ -69,6 +69,7 @@ class Swiftriver_Dropletqueue {
 		Kohana::$log->add(Log::INFO, "Post processing completed");
 	}
 	
+	
 	/**
 	 * Adds drops to the processing queue.
 	 *

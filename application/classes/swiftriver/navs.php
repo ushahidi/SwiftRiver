@@ -30,7 +30,7 @@ class Swiftriver_Navs {
 			// List
 			$nav[] = array(
 				'id' => 'list-navigation-link',
-				'active' => ($active == 'list') ? 'active' : '',
+				'active' => 'list',
 				'url' => '/list',
 				'label' => __('List')
 			);
@@ -38,7 +38,7 @@ class Swiftriver_Navs {
 			// Drops
 			$nav[] = array(
 				'id' => 'drops-navigation-link',
-				'active' => ($active == 'drops') ? 'active' : '',
+				'active' => 'drops',
 				'url' => '/drops',
 				'label' => __('Drops')
 			);
@@ -46,9 +46,17 @@ class Swiftriver_Navs {
 			// Photos
 			$nav[] = array(
 				'id' => 'photos-navigation-link',
-				'active' => ($active == 'photos') ? 'active' : '',
+				'active' => 'photos',
 				'url' => '/photos',
 				'label' => __('Photos')
+			);
+			
+			// Photos
+			$nav[] = array(
+				'id' => 'trends-navigation-link',
+				'active' => 'trends',
+				'url' => '/trends',
+				'label' => __('Trends')
 			);			
 		}
 

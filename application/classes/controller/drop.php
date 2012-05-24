@@ -26,7 +26,6 @@ class Controller_Drop extends Controller_Swiftriver {
 	 public function action_api()
 	 {
 		$this->template = "";
-		$this->auto_render = FALSE;
 		
 		if ( ! $this->admin)
 		{
