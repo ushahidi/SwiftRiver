@@ -367,10 +367,10 @@ class Model_User extends Model_Auth_User {
 	}
 	
 	/**
-	* Get all a user's bucekts that are visible to $visiting_user
-	*
-	* @return array
-	*/
+	 * Get all a user's bucekts that are visible to $visiting_user
+	 *
+	 * @return array
+	 */
 	public function get_buckets_array($visiting_user)
 	{
 		$ret = array();

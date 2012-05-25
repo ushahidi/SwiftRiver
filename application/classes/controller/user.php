@@ -139,7 +139,7 @@ class Controller_User extends Controller_Swiftriver {
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
 
 		$activity_list = Model_User_Action::get_activity_stream(
-			$this->visited_account->user->id, ! $this->owner);
+			$this->visited_account->user->id, $this->user->id, ! $this->owner);
 
 		$this->sub_content->has_activity = count($activity_list) > 0;
 		$activities = json_encode($activity_list);
@@ -240,7 +240,6 @@ class Controller_User extends Controller_Swiftriver {
 				
 				if ($item_array['type'] == 'bucket') 
 				{
-					
 					$bucket_orm = ORM::factory('bucket', $item_array['id']);
 					if ( ! $bucket_orm->loaded())
 					{
@@ -268,7 +267,6 @@ class Controller_User extends Controller_Swiftriver {
 				// Stalking!
 				if ($item_array['type'] == 'user') 
 				{
-					
 					$user_orm = ORM::factory('user', $item_array['id']);
 					if ( ! $user_orm->loaded())
 					{
@@ -421,7 +419,8 @@ class Controller_User extends Controller_Swiftriver {
 				$site_email = Kohana::$config->load('useradmin.email_address');
 				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 				$resp = RiverID_API::instance()
-					->change_email($this->user->email, $new_email, $current_password, $mail_body, $mail_subject, $site_email);
+						    ->change_email($this->user->email, $new_email, $current_password,
+						    	$mail_body, $mail_subject, $site_email);
         
 				if ( ! $resp['status'])
 				{

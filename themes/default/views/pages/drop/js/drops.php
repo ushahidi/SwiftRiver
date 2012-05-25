@@ -6,6 +6,7 @@ $(function() {
 	var base_url = "<?php echo $fetch_base_url; ?>";
 	var default_view = "<?php echo $default_view; ?>";
 	var photos = <?php echo $photos; ?>;
+	var sharingEnabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>
 	
 	// Filters
 	var Filter = Backbone.Model.extend({
@@ -215,8 +216,13 @@ $(function() {
 		},
 
 		shareDrop: function() {
-			shareView = new ShareDropView({model: this.model});
-			modalShow(shareView.render().el);
+			if (!sharingEnabled) {
+				// Public registration not allowed, show message
+				showConfirmationMessage("Drop sharing is not allowed in this deployment");
+			} else {
+				shareView = new ShareDropView({model: this.model});
+				modalShow(shareView.render().el);
+			}
 		    return false;
 		}
 	})

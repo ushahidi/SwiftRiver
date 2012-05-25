@@ -169,7 +169,7 @@ class Model_River extends ORM {
 			"is_owner" => $this->is_owner($user->id),
 			"collaborator" => $collaborator,
 			// A collaborator is also a subscriber
-			"subscribed" => $visiting_user->has('river_subscriptions', $this) || $collaborator,
+			"subscribed" => $visiting_user->has('river_subscriptions', $this) OR $collaborator,
 			"public" => (bool) $this->river_public
 		);
 	}
