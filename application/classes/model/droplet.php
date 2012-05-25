@@ -135,8 +135,6 @@ class Model_Droplet extends ORM {
 		if ( ! count($droplets))
 			return;
 		
-		Database::instance()->query(NULL, 'START TRANSACTION');
-		
 	    // Populate identities
 		Model_Identity::get_identities($droplets);
 		
@@ -235,7 +233,6 @@ class Model_Droplet extends ORM {
 		// Populate the drop's metadata tables
 		self::add_metadata($droplets);
 		
-		Database::instance()->query(NULL, 'COMMIT');
 		return $new_droplets; 
 	}
 	
