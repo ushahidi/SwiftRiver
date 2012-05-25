@@ -120,7 +120,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 					$option_array = $this->river->get_channel_options($channel, $channel_option->id);
 					echo(json_encode($option_array[0]));
 				}
-				catch (SwiftRiver_Exception_ChannelOption $e)
+				catch (Swiftriver_Exception_Channel_Option $e)
 				{
 					$this->response->status(400);
 					$this->response->headers('Content-Type', 'application/json');

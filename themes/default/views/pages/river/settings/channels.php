@@ -53,8 +53,12 @@
 			<p class="title"><%= title.substring(0, 19) + (title.length > 20 ? "..." : "") %></p>
 		<% } %>
 		<%= input %>
-		<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
+		<p class="remove-small actions">
+			<span class="icon"></span><span class="nodisplay">Remove</span>
+		</p>
 	</label>
+	<div style="clear: both"></div>
+
 </script>
 
 <script type="text/template" id="channel-template">
@@ -247,12 +251,17 @@ $(function() {
 		events: {
 			"click .remove-small": "remove",
 			"focusout input": "hideSaveButton",
-			"click .button-blue a": "save",
+			"click .button-blue a.save": "save",
 			"keyup input": "keypressSave",
+			"click .button-blue a.edit": "edit",
+			"click .button-blue a.cancel": "cancel",
 		},
 		
 		initialize: function(options) {
 			this.config = channelsConfig.getChannelOptionConfig(options.channel.get("channel"), this.model.get('key'));
+			this.renderMode = "view";
+			this.savingMode = false;
+			this.actionsHTML = null;
 		},
 		
 		// Depending on the option type, return a <input>, <select> or group of these
@@ -266,7 +275,8 @@ $(function() {
 				value = ""
 			}
 			
-			var input = "";			
+			var input = "";
+			this.actionsHTML = "";
 			if (config.type == "select") {
 				input = '<select name="' + config.key + '">'
 				input += '<option value="">Select one</option>';
@@ -279,17 +289,26 @@ $(function() {
 					input += '<label><p class="field">' + conf.label + '</p>'
 					input += this.createInputHtml(conf, "", true);
 					input += '</label>';
-				}, this)
-				input += '<span class="button-blue"><a href="#">Save</a></span>';
+				}, this);
+				input += '<span class="button-blue"><a class="save" href="#">Save</a></span>';
 			} else if (config.type == "file") {
 				input = '<span class="button-blue has_file"><a href="#">Select file</a><input type="file" name="file"></span>';
 			} else {
-				input = '<input type="text" name="' + config.key + '" placeholder="' + placeholder + '" value="' + value + '" />';
+				if (value != "" && this.renderMode == "view") {
+					input = '<p class="field-text">'+value+'</p>';
+					this.actionsHTML += '<p class="actions"><span class="button-blue"><a class="edit" href="#">Edit</a></span></p>';
+				} else {
+					input = '<input type="text" name="' + config.key + '" placeholder="' + placeholder + '" value="' + value + '" />';
+					if (value != "" && !group) {
+						this.actionsHTML += '<p class="actions"><span class="button-blue"><a class="cancel"href="#">Cancel</a></span></p>';
+					}
+				}
+
 				if (!group) {
-					input += '<span class="button-blue" style="display:none"><a href="#">Save</a></span>';
+					this.actionsHTML += '<p class="actions" style="display:none"><span class="button-blue"><a class="save" href="#">Save</a></span></p>';
 				}
 			}
-			return input
+			return input;
 		},
 		
 		getInputField: function() {
@@ -301,6 +320,9 @@ $(function() {
 			data.input = this.getInputField();
 			data.config = this.config;
 			this.$el.html(this.template(data));
+			if (this.actionsHTML != null && this.actionsHTML != "") {
+				this.$("p.remove-small").after(this.actionsHTML);
+			}
 			
 			// Attach the file upload handler
 			if (this.config.type == 'file')
@@ -328,13 +350,13 @@ $(function() {
 		
 		showSaveButton: function() {
 			this.$("span.error-message").remove();
-			this.$(".button-blue").fadeIn("slow");
+			this.$("a.save").parents("p.actions").fadeIn("slow");
 		},
 		
 		hideSaveButton: function() {
 			var newValue = this.$("input[type=text]").val();
 			if( ! newValue || newValue == this.model.get("value")  ) {
-				this.$(".button-blue").fadeOut();
+				this.$("a.save").parents("p.actions").fadeOut();
 			}
 		},
 		
@@ -343,8 +365,8 @@ $(function() {
 				this.save();
 				return false;
 			} else {
-				var newValue = this.$("input[type=text]").val();
-				if(newValue && newValue != this.model.get("value") && newValue != "" ) {
+				var newValue = $.trim(this.$("input[type=text]").val());
+				if(newValue != "" && newValue && newValue != this.model.get("value")) {
 					this.showSaveButton();
 				} else {
 					this.hideSaveButton();
@@ -366,13 +388,13 @@ $(function() {
 					// Disable the inputs and show the loading icon
 					view.$("span.error-message").remove();
 					view.$("input").attr("disabled", "disabled").blur();
-					view.$(".button-blue").hide().after(loading_msg);
+					view.$("a.save").parents("p.actions").hide().after(loading_msg);
 				},
 				done: function (e, data) {
 					if (!data.result.length) {
 						var error_msg = $('<span class="error-message">No parameters were found in the file</span>');
 						loading_msg.replaceWith(error_msg).remove();
-						view.$(".button-blue").fadeIn()
+						view.$("a.save").parents("p.actions").fadeIn();
 						view.$("input").removeAttr("disabled");
 						return;
 					} else {
@@ -388,7 +410,7 @@ $(function() {
 					} 
 					var error_msg = $('<span class="error-message">' + message + '</span>');
 					loading_msg.replaceWith(error_msg).remove();
-					view.$(".button-blue").fadeIn()
+					view.$("a.save").parents("p.actions").fadeIn()
 					view.$("input").removeAttr("disabled");
 				}
 			});
@@ -399,7 +421,7 @@ $(function() {
 			// Disable the inputs and show the loading icon
 			this.$("input, select").attr("disabled", "disabled").blur();
 			var loading_msg = window.loading_image.clone();
-			this.$(".button-blue").hide().after(loading_msg);
+			this.$("a.save").parents("p.actions").hide().after(loading_msg);
 			
 			// Get the user's inputs and do grouping for group options
 			var inputs = this.$("input, select");
@@ -414,6 +436,7 @@ $(function() {
 			}
 			
 			// Do the save showing a sucess/error message
+			this.savingMode = true;
 			var view = this;
 			this.model.save({'value': value}, {
 				wait: true,
@@ -425,6 +448,7 @@ $(function() {
 					loading_msg.replaceWith(success_msg).remove();					
 					success_msg.fadeOut(4000, function() {
 						$(this).remove();
+						view.renderMode = "view";
 						view.render();
 					});
 				},
@@ -439,6 +463,24 @@ $(function() {
 				}
 			});
 			
+			this.savingMode = false;
+			return false;
+		},
+
+		// Create edit fields for the channel option
+		edit: function() {
+			this.renderMode = "edit";
+			this.render();
+			return false;
+		},
+
+		// When the edit operation is cancelled
+		cancel: function() {
+			// Only process cancel action when not in saving mode
+			if (!this.savingMode) {
+				this.renderMode = "view";
+				this.render();
+			}
 			return false;
 		}
 	});
