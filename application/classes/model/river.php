@@ -309,8 +309,7 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
 
 			// Ordering and grouping
-			$query->order_by('droplets.droplet_date_pub', $sort)
-			    ->group_by('rivers_droplets.id');	   
+			$query->order_by('droplets.droplet_date_pub', $sort);	   
 
 			// Pagination offset
 			if ($page > 0)
@@ -382,7 +381,6 @@ class Model_River extends ORM {
 
 			// Group, order and limit
 			$query->order_by('rivers_droplets.id', 'ASC')
-			    ->group_by('rivers_droplets.id')
 			    ->limit(self::DROPLETS_PER_PAGE)
 			    ->offset(0);
 			
