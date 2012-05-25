@@ -22,6 +22,13 @@ body > nav {
    padding: 0 1.046666667%;
 }
 
+body > nav li {
+   font-size: 1.1em;
+   list-style-type: disc;
+   padding: 3px 0;
+   margin-left: 20px;
+}
+
 .sample {
    padding: 20px 0;
 }
@@ -61,6 +68,7 @@ body > nav {
 		<li><a href="#container">Container</a></li>
 		<li><a href="#settings-toolbar">Generic toolbar</a></li>
 		<li><a href="#save-toolbar">Save toolbar</a></li>
+		<li><a href="#pagination">Pagination</a></li>
 		<li><a href="#drops-drop">Drop: In 'drops' view</a></li>
 		<li><a href="#list-drop">Drop: In 'list' view</a></li>
 		<li><a href="#photos-drop">Drop: In 'photos' view</a></li>
@@ -253,6 +261,21 @@ body > nav {
 			<p class="button-blue"><a href="#">Save changes</a></p>
 			<p class="button-blank"><a href="#">Cancel</a></p>
 		</div>
+	</div>
+</div>
+
+<div class="sample">
+	<a name="pagination"></a>
+	<h2>Pagination: <em>Used at the bottom of a list of articles</em></h2>
+	<div class="pagination col_12 cf">
+		<p class="button-blue arrow-left"><a href="#"><span class="label">Previous</span><span class="icon"></span></a></p>
+		<ul>
+			<li class="current"><a href="#">1</a></li>
+			<li><a href="#">2</a></li>
+			<li><a href="#">3</a></li>
+			<li><a href="#">4</a></li>
+		</ul>
+		<p class="button-blue arrow-right"><a href="#"><span class="label">Next</span><span class="icon"></span></a></p>
 	</div>
 </div>
 

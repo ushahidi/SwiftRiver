@@ -273,6 +273,12 @@ span.icon {
 .add span.icon {
   background-position: center -400px;
 }
+.arrow-right span.icon {
+  background-position: center -449px;
+}
+.arrow-left span.icon {
+  background-position: center -449px;
+}
 .remove-large span.icon {
   background-position: center -475px;
 }
@@ -694,6 +700,38 @@ nav.page-navigation .filter-actions p {
 }
 nav.page-navigation .filter-actions p.button-blue a {
   line-height: 15px;
+}
+/* --------------------------- PAGINATION */
+.pagination .button-blue {
+  float: left;
+  width: 22.91666667%;
+}
+.pagination > ul {
+  float: left;
+  width: 47.91666667%;
+}
+.pagination > ul li {
+  display: inline-block;
+  margin: 10px 3px;
+}
+.pagination > ul li a {
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
+  padding: 5px 8px;
+}
+.pagination > ul li.current a {
+  font-weight: bold;
+  text-shadow: 0 1px 0 rgba(256, 256, 256, 0.9);
+  background: #EAF3F5;
+}
+.pagination .button-blue a {
+  padding-right: 0;
 }
 /* --------------------------- CONTENT */
 #content.river {
@@ -1943,6 +1981,18 @@ article.modal div.search ul.dual-buttons {
   }
   nav.page-navigation .settings ul.touchcarousel-container li a {
     width: 70px;
+  }
+  .pagination .button-blue a .label {
+    display: inline-block;
+  }
+  .pagination .button-blue a {
+    padding-right: 15px;
+  }
+  .pagination .button-blue.arrow-right a {
+    padding: 5px 0 5px 15px;
+  }
+  .pagination .button-blue.arrow-right a span.icon {
+    float: right;
   }
   #content.drops,
   #content.photos {
