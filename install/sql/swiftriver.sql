@@ -765,7 +765,8 @@ CREATE TABLE IF NOT EXISTS `comment_scores` (
 -- ----------------------------------------
 CREATE TABLE IF NOT EXISTS `seq` (
   `name` varchar(30) NOT NULL DEFAULT '',
-  `id` bigint(20) unsigned NOT NULL
+  `id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DELIMITER //
