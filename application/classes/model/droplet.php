@@ -421,6 +421,7 @@ class Model_Droplet extends ORM {
 						->from('rivers_droplets')
 						->where('droplet_id', 'IN', array_keys($drops_idx));
 			$new_river_drops = DB::select('droplet_id', 'river_id')
+						->distinct(TRUE)
 						->from(array($river_check_query, 'a'))
 						->where(DB::expr('(`droplet_id`, `river_id`)'), 'NOT IN', $sub)
 						->execute()
