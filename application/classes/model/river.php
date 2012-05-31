@@ -274,16 +274,16 @@ class Model_River extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'),
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			                    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
 			                    array('user_scores.score','user_score'))
-			    ->from('droplets')
-			    ->join('rivers_droplets', 'INNER')
+			    ->from('rivers_droplets')
+			    ->join('droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
+				->where('rivers_droplets.droplet_date_pub', '>', '0000-00-00 00:00:00')
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
-			    ->where('droplets.parent_id', '=', 0);
+			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
 			
 			if ($drop_id)
 			{
@@ -309,7 +309,7 @@ class Model_River extends ORM {
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
 
 			// Ordering and grouping
-			$query->order_by('droplets.droplet_date_pub', $sort);	   
+			$query->order_by('rivers_droplets.droplet_date_pub', $sort);	   
 
 			// Pagination offset
 			if ($page > 0)
@@ -355,7 +355,7 @@ class Model_River extends ORM {
 		{
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
 			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
 			    array('user_scores.score','user_score'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
@@ -364,8 +364,7 @@ class Model_River extends ORM {
 			    ->on('droplets.identity_id', '=', 'identities.id')
 			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('rivers_droplets.id', '>', $since_id)
-			    ->where('droplets.parent_id', '=', 0);
+			    ->where('rivers_droplets.id', '>', $since_id);
 			
 			if ($photos)
 			{
@@ -408,12 +407,9 @@ class Model_River extends ORM {
 	public static function get_max_droplet_id($river_id)
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr('MAX(rivers_droplets.id)'), 'id'))
-		    ->from('droplets')
-		    ->join('rivers_droplets', 'INNER')
-		    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-		    ->where('rivers_droplets.river_id', '=', $river_id)
-		    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
+		$query = DB::select(array('max_drop_id', 'id'))
+		    ->from('rivers')
+		    ->where('id', '=', $river_id);
 		    
 		return $query->execute()->get('id', 0);
 	}
