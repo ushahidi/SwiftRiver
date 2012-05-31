@@ -245,7 +245,6 @@ class Model_Droplet extends ORM {
 	{
 		// Build queries for creating entries in the meta tables droplet_tags, droplet_links and so on
 		$drops_idx = array();
-		$river_values = NULL;
 		$river_check_query = NULL;
 		$tags_ref = array();
 		$tag_values = NULL;
@@ -268,23 +267,17 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['river_id'] as $river_id)
 				{
-					if ($river_values)
+					// Subquery to find new river drops
+					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
+										   array(DB::expr($river_id), 'river_id'));
+					if ( ! $river_check_query)
 					{
-						$river_values .= ',';
+						$river_check_query = $subquery;
 					}
-					$river_values .= '('.$drop['id'].','.$river_id.')';
-				}
-				
-				// Subquery to find new river drops
-				$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
-									   array(DB::expr($river_id), 'river_id'));
-				if ( ! $river_check_query)
-				{
-					$river_check_query = $subquery;
-				}
-				else
-				{
-					$river_check_query = $subquery->union($river_check_query, TRUE);
+					else
+					{
+						$river_check_query = $subquery->union($river_check_query, TRUE);
+					}
 				}
 			}
 			
@@ -419,8 +412,11 @@ class Model_Droplet extends ORM {
 		
 		// Find the new river drops we are just about to add
 		$new_river_drops = NULL;
+		$max_river_drop_ids = array();
 		if ($river_check_query)
 		{
+			Swiftriver_Mutex::obtain('rivers_droplets', 3600);
+			
 			$sub = DB::select('droplet_id', 'river_id')
 						->from('rivers_droplets')
 						->where('droplet_id', 'IN', array_keys($drops_idx));
@@ -429,19 +425,72 @@ class Model_Droplet extends ORM {
 						->where(DB::expr('(`droplet_id`, `river_id`)'), 'NOT IN', $sub)
 						->execute()
 						->as_array();
-		}
-		
-		
-		// Execute the queries created in the last step
-		if ($river_values)
-		{
-			$insert_drops_sql = "INSERT IGNORE INTO `rivers_droplets` (`droplet_id`, `river_id`) "
-			    ."VALUES ".$river_values;
+			
+			if ( ! empty($new_river_drops))
+			{
+				$base_id = Model_Droplet::get_ids(count($new_river_drops), 'rivers_droplets');
+				
+				// Insert into the rivers_droplets table
+				$query = DB::insert('rivers_droplets', 
+					array('id', 'river_id', 'droplet_id', 'droplet_date_pub'));
 
-			DB::query(Database::INSERT, $insert_drops_sql)
-			    ->execute();
+				foreach ($new_river_drops as $new_river_drop)
+				{
+					$drops_key = $drops_idx[$new_river_drop['droplet_id']];
+					$date_pub = $drops[$drops_key]['droplet_date_pub'];
+					$river_id = $new_river_drop['river_id'];
+					$id = $base_id++;
+					$query->values(array(
+						'id' => $id,
+						'river_id' => $river_id,
+						'droplet_id' => $new_river_drop['droplet_id'],
+						'droplet_date_pub' => $date_pub
+					));
+					
+					if ( ! isset($max_river_drop_ids[$river_id]))
+					{
+						$max_river_drop_ids[$river_id] = array(
+							'max_id' => $id,
+							'count' => 1
+						);
+					}
+					else
+					{
+						$max_river_drop_ids[$river_id]['count'] += 1;
+						if ( $id > $max_river_drop_ids[$river_id]['max_id'])
+						{
+							$max_river_drop_ids[$river_id]['max_id'] = $id;
+						}
+					}
+				}
+
+				$query->execute();
+								
+				$max_river_drops_query = NULL;
+				foreach ($max_river_drop_ids as $key => $value)
+				{
+					if ($max_river_drops_query)
+					{
+						$max_river_drops_query .= ' union all ';
+					}
+					$max_river_drops_query .= 'select '.$key.' id, '.$value['max_id'].' max_id, '.$value['count'].' cnt';
+				}
+				
+				// Update river max_drop_id
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$max_river_drops_query.") a "
+				    ."USING (`id`) SET `rivers`.`max_drop_id` = `a`.`max_id` "
+					."WHERE `rivers`.`max_drop_id` < `a`.`max_id`";
+				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
+				
+				// Update drop count
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$max_river_drops_query.") a "
+				    ."USING (`id`) SET `rivers`.`drop_count` = `rivers`.`drop_count` + `a`.`cnt` ";
+				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
+			}
+			
+			Swiftriver_Mutex::release('rivers_droplets');
 		}
-		
+				
 		// Find the new drop tags
 		$new_drop_tags = array();
 		if ($tag_check_query)
@@ -1611,10 +1660,10 @@ class Model_Droplet extends ORM {
 	 * @param int $num Number of IDs to be generated.
 	 * @return int The lowe limit of the range requested
 	 */
-	public static function get_ids($num)
+	public static function get_ids($num, $table="droplets")
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('droplets',$num)"), 'id'));
+		$query = DB::select(array(DB::expr("NEXTVAL('".$table."',$num)"), 'id'));
 		    
 		return intval($query->execute()->get('id', 0));
 	}

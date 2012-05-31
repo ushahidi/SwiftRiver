@@ -90,7 +90,9 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
   `default_layout` varchar(10) DEFAULT 'list',
-  `river_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `max_drop_id` bigint(20) NOT NULL DEFAULT '0',
+  `drop_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `river_name_url` (`river_name_url`),
@@ -156,15 +158,17 @@ CREATE TABLE IF NOT EXISTS  `account_droplet_media` (
 -- -----------------------------------------------------
 -- Table `rivers_droplets`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  `rivers_droplets` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `rivers_droplets` (
+  `id` bigint(20) unsigned NOT NULL,
   `river_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `droplet_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `droplet_date_pub` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `rivers_droplet_un_river_droplet` (`river_id`,`droplet_id`),
   KEY `river_id_idx` (`river_id`),
-  KEY `droplet_id_idx` (`droplet_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+  KEY `droplet_id_idx` (`droplet_id`),
+  KEY `droplet_date_pub` (`droplet_date_pub`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -510,14 +514,13 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT 'Owner of this account. Transferable.',
   `account_path` varchar(100) DEFAULT NULL,
   `account_private` tinyint(4) NOT NULL DEFAULT '0',
-  `account_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `account_date_modified` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `account_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `account_date_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `account_active` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `account_path` (`account_path`),
-  KEY `account_path_idx` (`account_path`)
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- -----------------------------------------------------
 -- Table `sources_identities`
@@ -791,7 +794,8 @@ INSERT INTO `seq` (`name`, `id`) VALUES
 ('links', 1),
 ('identities', 1),
 ('media', 1),
-('river_tag_trends', 1);
+('river_tag_trends', 1),
+('rivers_droplets', 1);
 
 INSERT INTO `roles` (`id`, `name`, `description`, `permissions`) VALUES 
 (1, 'login', 'Login privileges, granted after account confirmation', NULL),
