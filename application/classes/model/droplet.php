@@ -267,6 +267,11 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['river_id'] as $river_id)
 				{
+					// Check if the river has expired
+					$river = ORM::factory('river', $river_id);
+					if ($river->is_expired())
+						continue;
+
 					// Subquery to find new river drops
 					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
 										   array(DB::expr($river_id), 'river_id'));
@@ -458,7 +463,7 @@ class Model_Droplet extends ORM {
 					else
 					{
 						$max_river_drop_ids[$river_id]['count'] += 1;
-						if ( $id > $max_river_drop_ids[$river_id]['max_id'])
+						if ($id > $max_river_drop_ids[$river_id]['max_id'])
 						{
 							$max_river_drop_ids[$river_id]['max_id'] = $id;
 						}
@@ -504,7 +509,8 @@ class Model_Droplet extends ORM {
 						->where(DB::expr('(`droplet_id`, `tag_id`)'), 'NOT IN', $sub)
 						->execute()
 						->as_array();
-			foreach ($new_tags as $new_tag) {
+			foreach ($new_tags as $new_tag)
+			{
 				if ( ! isset($new_drop_tags[$new_tag['droplet_id']]))
 				{
 					$new_drop_tags[$new_tag['droplet_id']] = array();
@@ -539,8 +545,10 @@ class Model_Droplet extends ORM {
 											->where('droplet_id', 'IN', array_keys($drops_idx))
 											->execute()
 											->as_array();
-				foreach ($drop_tags as $drop_tag) {
-					if ( ! isset($all_drop_tags[$drop_tag['droplet_id']])) {
+				foreach ($drop_tags as $drop_tag)
+				{
+					if ( ! isset($all_drop_tags[$drop_tag['droplet_id']]))
+					{
 						$all_drop_tags[$drop_tag['droplet_id']] = array();
 					}
 					$all_drop_tags[$drop_tag['droplet_id']][] = array(
@@ -619,7 +627,8 @@ class Model_Droplet extends ORM {
 						->where(DB::expr('(`droplet_id`, `place_id`)'), 'NOT IN', $sub)
 						->execute()
 						->as_array();
-			foreach ($new_places as $new_place) {
+			foreach ($new_places as $new_place)
+			{
 				if ( ! isset($new_drop_places[$new_place['droplet_id']]))
 				{
 					$new_drop_places[$new_place['droplet_id']] = array();
@@ -715,7 +724,8 @@ class Model_Droplet extends ORM {
 	private static function get_tag_trends($river_drops, $tags, $drops, $drops_idx)
 	{
 		$trends = array();
-		foreach($river_drops as $river_drop) {
+		foreach($river_drops as $river_drop)
+		{
 			if (isset($tags[$river_drop['droplet_id']]))
 			{
 				foreach ($tags[$river_drop['droplet_id']] as $tag)

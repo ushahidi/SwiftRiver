@@ -1195,7 +1195,12 @@ $(function() {
 		view: null,
 				
 		resetView: function() {
+			var noticeContent = $("#system_notification", "#content");
+			
 			$("#content").empty();
+			if (noticeContent !== null) {
+				$("#content").append(noticeContent);
+			}
 			modalHide();
 			zoomHide();
 			dropsList.off(null, null, this.view);

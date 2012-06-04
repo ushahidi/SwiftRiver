@@ -140,6 +140,8 @@ class Controller_Bucket extends Controller_Swiftriver {
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 
+		// Suppress expiry notices
+		$droplets_view->expiry_notice = "";
 
 		if ( ! $this->owner)
 		{

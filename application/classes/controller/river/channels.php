@@ -89,6 +89,12 @@ class Controller_River_Channels extends Controller_River_Settings {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
+
+		if ($this->river->is_expired())
+		{
+			throw new HTTP_Exception_400(__("Your river has already expired and is no longer 
+				receiving drops from your channels"));
+		}
 	
 		$channel_id = intval($this->request->param('id', 0));
 		$option_id = intval($this->request->param('id2', 0));

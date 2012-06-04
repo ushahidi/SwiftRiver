@@ -120,6 +120,9 @@ class Controller_Search extends Controller_Swiftriver {
 			    ->bind('owner', $this->owner)
 		        ->bind('anonymous', $this->anonymous);
 
+		    // Suppress expiry notices
+		    $this->sub_content->expiry_notice = "";
+
 			// Get the search results
 			$results = $this->_handle_drops_search($_GET);
 

@@ -54,7 +54,10 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		{
 			$validation = Validation::factory($this->request->post())
 				->rule('site_name', 'not_empty')
-				->rule('site_locale', 'not_empty');
+				->rule('site_locale', 'not_empty')
+				->rule('river_lifetime', 'not_empty')
+				->rule('river_lifetime', 'digit')
+				->rule('form_auth_token', array('CSRF', 'valid'));
 			
 			if ($validation->check())
 			{
@@ -64,9 +67,11 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 					$this->request->post('public_registration_enabled') == 1);
 				Model_Setting::update_setting('anonymous_access_enabled', 
 					$this->request->post('anonymous_access_enabled') == 1);
+
+				Model_Setting::update_setting('river_lifetime', $this->request->post('river_lifetime'));
 				
 				$this->settings_content->set('messages', 
-					array(__('Settings saved successfully.')));
+					array(__('The site settings have been updated.')));
 			}
 			else
 			{
@@ -75,43 +80,9 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		}
 		
 		$setting_keys = array('site_name', 'site_locale', 'public_registration_enabled', 
-			'anonymous_access_enabled');
+			'anonymous_access_enabled', 'river_lifetime');
 
 		$this->settings_content->settings = Model_Setting::get_settings($setting_keys);
-	}
-
-	/**
-	 * REST endpoint for saving the site settings
-	 */
-	public function action_manage()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		if ($_POST AND isset($_POST['auth_token']) AND CSRF::valid($_POST['auth_token']))
-		{
-			// Load the current settings item
-			$settings_orm = ORM::factory('setting')
-			    ->where('key', '=',$_POST['key'])
-			    ->find();
-
-			if ( ! $settings_orm->loaded())
-			{
-				throw new HTTP_Exception_404("The requested settings item :key does not exist", 
-					array(":key" => $_POST['key']));
-			}
-
-			// Save
-			$settings_orm->value = $_POST['value'];
-			$settings_orm->save();
-
-			// Generate and return a new token to authenticate the next request
-			echo json_encode(array("token" => CSRF::token()));
-		}
-		else
-		{
-			throw new HTTP_Exception_403("The request could not be validated");
-		}
 	}
 
 }
