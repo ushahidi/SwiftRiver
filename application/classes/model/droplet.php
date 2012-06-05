@@ -267,11 +267,6 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['river_id'] as $river_id)
 				{
-					// Check if the river has expired
-					$river = ORM::factory('river', $river_id);
-					if ($river->is_expired())
-						continue;
-
 					// Subquery to find new river drops
 					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
 										   array(DB::expr($river_id), 'river_id'));
