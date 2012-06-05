@@ -1282,12 +1282,13 @@ $(function() {
 		dropZoomView: function(id) {
 			var drop = dropsList.get(id);
 			var detailView = new DropDetailView({model: drop});
+			var layout = this.view.options.layout;
 			zoomShow(detailView.render().el);
 			$("#zoom-container div.modal-window").bind("clickoutside", function(event){
 				if(!appRouter.listingDone) {
-					appRouter.navigate("/list", {trigger: true});
+					appRouter.navigate(layout, {trigger: true});
 				} else {
-					appRouter.navigate("/list");
+					appRouter.navigate(layout);
 				}
 			});
 			return false;
@@ -1295,9 +1296,9 @@ $(function() {
 				
 		defaultRoute: function(actions){
 			if (default_view == 'drops') {
-				this.navigate("/drops", {trigger: true});
+				this.navigate("drops", {trigger: true, replace: true});
 			} else {
-				this.navigate("/list", {trigger: true});
+				this.navigate("list", {trigger: true, replace: true});
 			}
 		},
 		
