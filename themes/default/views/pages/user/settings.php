@@ -91,7 +91,7 @@
 			<div class="parameter cf">
 				<a class="avatar-wrap"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></a>
 				<p class="button-blue button-small no-icon">
-					<a href="http://www.gravatar.com" target="_blank"><?php echo __('Use a differrent photo'); ?></a>
+					<a href="http://www.gravatar.com" target="_blank"><?php echo __('Use a different photo'); ?></a>
 				</p>
 			</div>
 		</section>
