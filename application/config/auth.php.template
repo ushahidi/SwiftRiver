@@ -17,6 +17,7 @@
 return array(
 	'driver'       => 'ORM',
 	'api_endpoint' => '', // RiverID api endpoint
+	'api_secret' => '', // RiverID api secret
 	'hash_method'  => 'sha256',
 	'hash_key'     => '#&wicm`(wT6m&0f}UT*o9*V01@:?fF#D', // replace with random string
 	'lifetime'     => 1209600,
