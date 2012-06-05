@@ -292,7 +292,7 @@ class Model_River extends ORM {
 			}
 
 			// Apply the river filters
-			Model_Droplet::apply_droplets_filter($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters, $user_id, $river_orm);
 			
 			// Left join for user scores
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
@@ -362,7 +362,7 @@ class Model_River extends ORM {
 			}
 			
 			// Apply the river filters
-			Model_Droplet::apply_droplets_filter($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters, $user_id, $river_orm);
 			
 			// Left join for user scores
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')

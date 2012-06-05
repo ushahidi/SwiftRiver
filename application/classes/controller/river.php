@@ -169,7 +169,10 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->user = $this->user;
 		$droplet_js->channels = json_encode($this->river->get_channels());
-		$droplet_js->polling_enabled = TRUE;
+
+		// Polling is only active when the river has not expired
+		$droplet_js->polling_enabled = ( ! $this->river->is_expired());
+		
 		$droplet_js->default_view = $this->river->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
 		

@@ -1588,7 +1588,7 @@ class Model_Droplet extends ORM {
 			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 			    ->where('droplets.parent_id', '=', 0);
 
-			self::apply_droplets_filter($query, $filters);
+			self::apply_droplets_filter($query, $filters, $user_id);
 
 			if ($photos)
 			{
@@ -1615,8 +1615,13 @@ class Model_Droplet extends ORM {
 	 * @param Database_Query_Select $query Object to which the filtering 
 	 *        predicates shall be added
 	 * @param array $filters Set of filters to apply
+	 * @param int $user_id ID of the user. When specified, applies the user defined places and tags
+	 *        as additional filters
+	 * @param ORM $orm_instance When specified, filters the user defined places and tags
+	 *        at the bucket/river level. This parameter is only used when the user_id parameter has
+	 *        been specified
 	 */
-	public static function apply_droplets_filter(& $query, $filters)
+	public static function apply_droplets_filter(& $query, $filters, $user_id = NULL, $orm_instance = NULL)
 	{
 		 // Check if the filter are empty
 		if (empty($filters))
@@ -1627,23 +1632,94 @@ class Model_Droplet extends ORM {
 			$query->where('droplets.channel', 'IN', $filters['channel']);
 		}
 		
+		// Create a user object
+		$user = ( ! empty($user_id)) ? ORM::factory('user', $user_id) : NULL;
+
+		// Get drops manually tagged by the user
+		$user_tagged_drops = array();
 		if ( ! empty($filters['tags']))
 		{
-			$query->join('droplets_tags', 'INNER')
-				->on('droplets_tags.droplet_id', '=', 'droplets.id')
-				->join('tags', 'INNER')
-				->on('droplets_tags.tag_id', '=', 'tags.id')
-				->where('tags.tag_canonical', 'IN', $filters['tags']);
+			$user_tags_query = NULL;
+			if ( ! empty($user) AND $user->loaded())
+			{
+				$user_tags_query = DB::select('account_droplet_tags.droplet_id')
+				    ->from('account_droplet_tags')
+				    ->join('tags', 'INNER')
+				    ->on('account_droplet_tags.tag_id', '=', 'tags.id')
+				    ->join('droplets', 'INNER')
+				    ->on('account_droplet_tags.droplet_id', '=', 'droplets.id');
+				
+				// ORM instance specified?
+				if ($orm_instance instanceof Model_River AND $orm_instance->loaded())
+				{
+					$user_tags_query->join('rivers_droplets', 'INNER')
+					    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+					    ->where('rivers_droplets.river_id', '=', $orm_instance->id);
+				}
+				elseif ($orm_instance instanceof Model_Bucket AND $orm_instance->loaded())
+				{
+					$user_tags_query->join('buckets_droplets', 'INNER')
+					    ->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+					    ->where('buckets_droplets.bucket_id', '=', $orm_instance->id);
+				}
+
+				$user_tags_query->where('account_droplet_tags.account_id', '=', $user->account->id)
+				    ->where('account_droplet_tags.deleted', '=', 0)
+				    ->where('tags.tag_canonical', 'IN', $filters['tags']);
+
+			}
+
+			// Generate the final query
+			$final_query = self::_build_final_filter_query($orm_instance, $user_tags_query, $filters, 'tags');
+			$user_tagged_drops = $final_query->execute()->as_array();
 		}
 
+
+		// Places filter
 		if ( ! empty($filters['places']))
 		{
-			$query->join('droplets_places', 'INNER')
-				->on('droplets_places.droplet_id', '=', 'droplets.id')
-				->join('places', 'INNER')
-				->on('droplets_places.place_id', '=', 'places.id')
-				->where('places.place_name_canonical', 'IN', $filters['places']);
+			$user_places_query = NULL;
+			if ( ! empty($user) AND $user->loaded())
+			{
+				$user_places_query = DB::select('account_droplet_places.droplet_id')
+				    ->from('account_droplet_places')
+				    ->join('places', 'INNER')
+				    ->on('account_droplet_places.place_id', '=', 'places.id')
+				    ->join('droplets', 'INNER')
+				    ->on('account_droplet_places.droplet_id', '=', 'droplets.id');
+
+				// ORM instance specified?
+				if ($orm_instance instanceof Model_River AND $orm_instance->loaded())
+				{
+					$user_places_query->join('rivers_droplets', 'INNER')
+					    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+					    ->where('rivers_droplets.river_id', '=', $orm_instance->id);
+				}
+				elseif ($orm_instance instanceof Model_Bucket AND $orm_instance->loaded())
+				{
+					$user_tags_query->join('buckets_droplets', 'INNER')
+					    ->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+					    ->where('buckets_droplets.bucket_id', '=', $orm_instance->id);
+				}
+
+				$user_places_query->where('account_droplet_places.account_id', '=', $user->account->id)
+				    ->where('account_droplet_places.deleted', '=', 0)
+				    ->where('places.place_name_canonical', 'IN', $filters['places']);
+			}
+
+			$final_query = self::_build_final_filter_query($orm_instance, $user_places_query, $filters, 'places');
+			$user_tagged_drops = array_merge(
+				$user_tagged_drops,
+				$final_query->execute()->as_array()
+			);
 		}
+
+		// Apply the drops filter
+		if (count($user_tagged_drops) > 0)
+		{
+			$query->where('droplets.id', 'IN', $user_tagged_drops);
+		}
+
 		
 		if ( ! empty($filters['start_date']))
 		{
@@ -1658,6 +1734,71 @@ class Model_Droplet extends ORM {
 			$end_date = new DateTime($end_date);
 			$query->where('droplets.droplet_date_pub', '<=', $end_date->format('Y-m-d %H:%i:%s'));
 		}
+	}
+
+
+	/**
+	 * Internal helper function for generating the final filtering query
+	 *
+	 * @param ORM                   $orm_instance
+	 * @param Database_Query_Select $sub_query
+	 * @param array                 $filters
+	 * @param string                $filter_type
+	 *
+	 * @return Database_Query_Select
+	 */
+	private static function _build_final_filter_query($orm_instance, $sub_query, $filters, $filter_type)
+	{
+		$final_query = DB::select(array('droplets.id', 'droplet_id'));
+		if ($sub_query)
+		{
+			$final_query->union($sub_query, TRUE);
+		}
+
+		$final_query->from('droplets');
+
+		// Check the filter type
+		if ($filter_type === 'tags')
+		{
+		    $final_query->join('droplets_tags', 'INNER')
+		        ->on('droplets_tags.droplet_id', '=', 'droplets.id')
+			    ->join('tags', 'INNER')
+			    ->on('droplets_tags.tag_id', '=', 'tags.id');
+		}
+		elseif ($filter_type === 'places')
+		{
+			$final_query->join('droplets_places', 'INNER')
+			    ->on('droplets_places.droplet_id', '=', 'droplets.id')
+			    ->join('places', 'INNER')
+			    ->on('droplets_places.place_id', '=', 'places.id');
+		}
+
+
+		// Check the ORM instance class
+		if ($orm_instance instanceof Model_River AND $orm_instance->loaded())
+		{
+			$final_query->join('rivers_droplets', 'INNER')
+			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+			    ->where('rivers_droplets.river_id', '=', $orm_instance->id);
+		}
+		elseif ($orm_instance instanceof Model_Bucket AND $orm_instance->loaded())
+		{
+			$final_query->join('buckets_droplets', 'INNER')
+			    ->on('buckets_droplets.droplet_id', '=', 'droplets.id')
+			    ->where('buckets_droplets.bucket_id', '=', $orm_instance->id);
+		}
+
+		if ($filter_type === 'tags')
+		{
+			$final_query->where('tags.tag_canonical', 'IN', $filters['tags']);
+		}
+		elseif ($filter_type === 'places')
+		{
+			$final_query->where('places.place_name_canonical', 'IN', $filters['places']);
+		}
+
+		return $final_query;
+
 	}
 	
 	/**

@@ -206,7 +206,7 @@ class Model_Bucket extends ORM {
 			}
 
 			// Apply filters
-			Model_Droplet::apply_droplets_filter($query, $filters);
+			Model_Droplet::apply_droplets_filter($query, $filters, $user_id, $bucket_orm);
 				
 			// Order & Pagination offset
 			$query->order_by('buckets_droplets.droplet_date_added', 'DESC');
