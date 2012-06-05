@@ -199,6 +199,9 @@ $(document).ready(function() {
 	$('select').live('change', function () {
 		$(this).closest("form").find('.save-toolbar').addClass('visible');
 	});
+	$(':radio, :checkbox').click(function(){
+		$(this).closest("form").find(".save-toolbar").addClass("visible");
+	});
 	
 
 	// ACCORDION MENU

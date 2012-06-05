@@ -1,4 +1,34 @@
-<?php echo Form::open(NULL, array('id' => 'form_site_settings')); ?>
+<?php if (isset($errors)): ?>
+<div class="alert-message red">
+	<p><strong><?php echo __("Error"); ?></strong></p>
+	<ul>
+		<?php if (is_array($errors)): ?>
+			<?php foreach ($errors as $error): ?>
+				<li><?php echo $error; ?></li>
+			<?php endforeach; ?>
+		<?php else: ?>
+			<li><?php echo $errors; ?></li>
+		<?php endif; ?>
+	</ul>
+</div>
+<?php endif; ?>
+
+<?php if (isset($messages)): ?>
+	<div class="alert-message blue">
+	<p><strong><?php echo __("Success"); ?></strong></p>
+	<ul>
+		<?php if (is_array($messages)): ?>
+			<?php foreach ($messages as $message): ?>
+				<li><?php echo $message; ?></li>
+			<?php endforeach; ?>
+		<?php else: ?>
+			<li><?php echo $messages; ?></li>
+		<?php endif; ?>
+	</ul>
+	</div>
+<?php endif; ?>
+
+<?php echo Form::open(); ?>
 	<article class="container base" id="alert_messages" style="display:none">
 		<div class="alert-message red">
 			<p><?php echo __("Oops! Something went wrong while processing your request"); ?></p>
@@ -30,7 +60,7 @@
 
 		<section class="property-parameters">
 			<div class="parameter">
-				<label for="site_locake">
+				<label for="site_locale">
 					<p class="field"><?php echo __("Site Locale"); ?></p>
 					<?php echo Form::input("site_locale", $settings['site_locale']); ?>
 				</label>
@@ -58,46 +88,22 @@
 			</div>
 		</section>
 	</article>
+	<article class="container base">
+		<header class="container cf">
+			<div class="property-title">
+				<h1><?php echo __("River Lifetime"); ?></h1>
+			</div>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter">
+				<label for="river_lifetime">
+					<p class="field"><?php echo __('River Lifetime (days)'); ?></p>
+					<?php echo Form::input('river_lifetime', $settings['river_lifetime']); ?>
+				</label>
+			</div>
+		</section>
+	</article>
+	<div class="save-toolbar">
+		<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+	</div>
 <?php echo Form::close(); ?>
-
-<script type="text/javascript">
-$(function() {
-	var authToken;
-	handleSettingsParam = function(e) {
-		var field = e.data;
-		if (typeof authToken == 'undefined') {
-			authToken = "<?php echo CSRF::token(); ?>";
-		}
-
-		var fieldVal = $(field).val();
-		if ($(field).attr("type") == 'checkbox') {
-			fieldVal = $(field).attr("checked") ? 1 : 0;
-		}
-
-		$.ajax({
-			type: "POST",
-			url: "<?php echo $action_url ?>",
-			async: false,
-			data: {
-				auth_token: authToken,
-				key: $(field).attr("name"),
-				value: fieldVal
-			},
-			dataType: "json",
-			success: function(response) {
-				$("#alert_messages").fadeOut();
-				authToken = response.token;
-			},
-			error: function() {
-				$("#alert_messages").fadeIn();
-			}
-		});
-	}
-
-	var inputFields = $("#form_site_settings input[type!= \"hidden\"]");
-	$(inputFields).each(function(i, field) {
-		$(field).change(field, handleSettingsParam);
-	});
-
-});
-</script>

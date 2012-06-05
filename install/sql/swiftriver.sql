@@ -93,6 +93,9 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `max_drop_id` bigint(20) NOT NULL DEFAULT '0',
   `drop_count` int(11) NOT NULL DEFAULT '0',
+  `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
+  `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
+  `lifetime_extension_token` varchar(64),
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `river_name_url` (`river_name_url`),
@@ -811,7 +814,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (2, 'site_theme', 'default'),
 (3, 'site_locale', 'en'),
 (4, 'public_registration_enabled', '0'),
-(5, 'anonymous_access_enabled', '0');
+(5, 'anonymous_access_enabled', '0'),
+(6, 'river_lifetime', '14');
 
 -- -----------------------------------------------------
 -- Data for table `users`

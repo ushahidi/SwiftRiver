@@ -113,7 +113,7 @@ class Controller_River extends Controller_Swiftriver {
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
 				->bind('active', $this->active);
-				
+
 			if ( ! $this->owner)
 			{
 				$river_item = json_encode(array(
@@ -186,10 +186,28 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
-		
-		$this->droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
-		    ->bind('anonymous', $this->anonymous);
-		$this->droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
+
+		// Check for expiry
+		if ($this->river->is_expired())
+		{
+			$this->droplets_view->nothing_to_display = "";
+
+			$expiry_notice = View::factory('pages/river/expiry_notice');
+			$expiry_notice->river_base_url = $this->river_base_url;
+			$expiry_notice->lifetime_extension_token = $this->river->lifetime_extension_token;
+			$expiry_notice->extension_period = Model_Setting::get_setting('river_lifetime');
+
+			$this->droplets_view->expiry_notice = $expiry_notice;
+
+		}
+		else
+		{
+			$this->droplets_view->expiry_notice = '';
+			$this->droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
+			    ->bind('anonymous', $this->anonymous);
+			$this->droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
+		}
+
 	}
 	
 	/**
@@ -511,7 +529,7 @@ class Controller_River extends Controller_Swiftriver {
 	 /**
 	  * Replies restful api
 	  */ 
-	 public function action_reply()
+	public function action_reply()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
@@ -740,5 +758,26 @@ class Controller_River extends Controller_Swiftriver {
 				return NULL;
 				break;
 		}
+	}
+
+	/**
+	 * Endpoint for extending the lifetime of the river
+	 */
+	public function action_extend()
+	{
+		$this->auto_render = FALSE;
+		$this->template = "";
+
+		// Get the token
+		if (isset($_GET['token']) AND ($extension_token = $_GET['token']) !== NULL)
+		{
+			if ($this->river->lifetime_extension_token === $extension_token)
+			{
+				$this->river->extend_lifetime();
+			}
+		}
+
+		// Redirect to the landing page
+		$this->request->redirect($this->river_base_url);
 	}
 }

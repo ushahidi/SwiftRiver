@@ -5,7 +5,7 @@
 				<p>
 					<strong><?php echo __('Nothing to display yet.') ?></strong>
 					<?php echo __('The river will start flowing as soon as there is content '
-					    .'and this page will update automatically or you can refresh manually', 
+					    .'and this page will update automatically or you can refresh manually',
 					    array('refresh manually' => HTML::anchor($river_url, __('refresh manually'))));
 					?>
 				</p>

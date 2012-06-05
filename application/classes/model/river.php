@@ -84,6 +84,11 @@ class Model_River extends ORM {
 		{
 			// Save the date this river was first added
 			$this->river_date_add = date("Y-m-d H:i:s", time());
+
+			// Set the expiry date
+			$river_lifetime = Model_Setting::get_setting('river_lifetime');
+			$expiry_date = strtotime(sprintf("+%s day", $river_lifetime), strtotime($this->river_date_add));
+			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 		}
 		
 		// Set river_name_url to the sanitized version of river_name sanitized
@@ -104,23 +109,8 @@ class Model_River extends ORM {
 	 */
 	public function delete()
 	{
-		// Get all the channel filter options
-		$channel_options = ORM::factory('channel_filter_option')
-		    ->where('channel_filter_id', 'IN', 
-		        DB::select('id')
-		            ->from('channel_filters')
-		            ->where('river_id', '=', $this->id)
-		        )
-		    ->find_all();
-
-		foreach ($channel_options as $option)
-		{
-			// Execute pre-delete events
-			Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $option);
-		}
-
-		// Free the result from memory
-		unset ($channel_options);
+		// Remove the river's channel options from the crawling schedule
+		$this->_toggle_channel_option_status(FALSE);
 
 		// Delete the channel filter options
 		DB::delete('channel_filter_options')
@@ -537,7 +527,7 @@ class Model_River extends ORM {
 			$option->id = $channel_option->id;
 			$option->key = $channel_option->key;
 			
-			if (! isset($channel_config['options'][$channel_option->key]))
+			if ( ! isset($channel_config['options'][$channel_option->key]))
 				continue;
 			$options[] = $option;
 		}
@@ -610,51 +600,6 @@ class Model_River extends ORM {
 		}
 		
 		return $collaborators;
-	}
-
-	/**
-	 * Gets the number of drops added to the river in the last x days.
-	 * The drops are grouped per date
-	 *
-	 * @param int $interval How far back (in days) to get the activity
-	 * @return array
-	 */
-	public function get_droplet_activity($interval = 30)
-	{
-		// Get the interval
-		$interval = (empty($interval) AND intval($interval) > 0) 
-		    ? 30 
-		    : intval($interval);
-
-		// Date arithmetic
-		$minus_str = sprintf('-%d day', $interval);
-		$start_date = date('Y-m-d H:i:s', strtotime($minus_str, time()));
-
-		// Query to fetch the data
-		$query = DB::select(array(DB::expr('DATE_FORMAT(d.droplet_date_add, "%Y-%m-%d")'), 'droplet_date'),
-			array(DB::expr('COUNT(rd.droplet_id)'), 'droplet_count'))
-		    ->from(array('droplets', 'd'))
-		    ->join(array('rivers_droplets', 'rd'), 'INNER')
-		    ->on('rd.droplet_id', '=', 'd.id')
-		    ->join(array('rivers', 'r'), 'INNER')
-		    ->on('rd.river_id', '=', 'r.id')
-		    ->where('rd.river_id', '=', $this->id)
-		    ->where('d.droplet_date_add', '>=', $start_date)
-		    ->group_by('droplet_date')
-		    ->order_by('droplet_date', 'ASC');
-
-		// Execute the query and return a row of data
-		$rows = $query->execute()->as_array();
-
-		$activity = array();
-		foreach ($rows as $row)
-		{
-			$activity[] = $row['droplet_count'];
-		}
-
-		// Return
-		return $activity;
-
 	}
 
 	/**
@@ -754,6 +699,141 @@ class Model_River extends ORM {
 
 		return $rivers;
 	}
+
+	/**
+	 * Checks if the current river has expired. If the river has expired
+	 * and the expiry flag has not been set, all the channel filters for
+	 * the river are disabled and the associated channel filter options
+	 * purged from the crawling schedule
+	 *
+	 * @return bool
+	 */
+	public function is_expired()
+	{
+		if ($this->river_expired)
+			return TRUE;
+
+		// Compare the creation and expiry timestamps
+		$expiry_date = strtotime($this->river_date_expiry);
+		$current_date = time();
+
+		if (($current_date >= $expiry_date) AND ! $this->river_expired)
+		{
+			$this->river_expired = 1;
+			$this->lifetime_extension_token = hash_hmac("sha256", Text::random('alumn', 32), $this->river_name_url);
+			parent::save();
+
+			// Remove the channel filter options from the crawling schedule
+			$this->_toggle_channel_option_status(FALSE);
+
+			// Disable the channel filters for the river
+			DB::update('channel_filters')
+			    ->set(array('filter_enabled' => 0))
+			    ->where('river_id', '=', $this->id)
+			    ->execute();
+
+			// TODO: Send notification to river owner that the river has expired
+
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/**
+	 * Gets the amount of time (years, months, days or hours) left 
+	 * before the current river expires.
+	 *
+	 * @return string
+	 */
+	public function get_duration_to_expiry()
+	{
+		if ($this->is_expired())
+			return "0";
+
+		$current_date = new DateTime(date('Y-m-d H:i:s', time()));
+		$expiry_date = new DateTime($this->river_date_expiry);
+
+		$interval = $expiry_date->diff($current_date);
+
+		if ($interval->y > 0)
+		{
+			return $interval->format("%y years");
+		}
+		elseif ($interval->m > 0)
+		{
+			return $interval->format("%m months");
+		}
+		elseif ($interval->d > 0)
+		{
+			return $interval->format("%d days");
+		}
+		elseif ($interval->h > 0)
+		{
+			return $interval->format("%h hours");
+		}
+
+	}
+
+	/**
+	 * Extends the lifetime of the river by pushing forward
+	 * the expiry date of the river - by the no. of days that
+	 * a river is active
+	 */
+	public function extend_lifetime()
+	{
+		if ($this->is_expired())
+		{
+			// TODO: Log this event i.e. extension of the lifetime
+			$lifetime = Model_Setting::get_setting('river_lifetime');
+			$expiry_date = strtotime(sprintf("+%s day", $lifetime), strtotime($this->river_date_expiry));
+
+			$this->river_expired = 0;
+			$this->lifetime_extension_token = NULL;
+			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
+			parent::save();
+
+			// Disable the channel filters for the river
+			DB::update('channel_filters')
+			    ->set(array('filter_enabled' => 1))
+			    ->where('river_id', '=', $this->id)
+			    ->execute();
+
+			$this->_toggle_channel_option_status(TRUE);
+		}
+	}
+
+	/**
+	 * Toggles the status of the channel options for the current river
+	 *
+	 * @param bool $activate When TRUE, activates the channel options for
+	 * the river. When FALSE, removes the channel options from the crawling
+	 * schedule
+	 */
+	private function _toggle_channel_option_status($activate)
+	{
+		// Get all the channel filter options
+		$channel_options = ORM::factory('channel_filter_option')
+		    ->where('channel_filter_id', 'IN', 
+		        DB::select('id')
+		            ->from('channel_filters')
+		            ->where('river_id', '=', $this->id)
+		        )
+		    ->find_all();
+
+		// Status - determines the action to be taken on the channel options
+		$new_status = $activate ? "activate" : "deactivate";
+
+		foreach ($channel_options as $option)
+		{
+			// Run deactivation events for each option
+			Swiftriver_Event::run('swiftriver.channel.option.'.$new_status, $option);
+		}
+
+		// Garbage collection
+		unset ($channel_options);
+	}
+
 }
 
 ?>

@@ -21,6 +21,15 @@ class SwiftMQ_Init {
 		// Before the channel option is deleted from the DB
 		Swiftriver_Event::add('swiftriver.channel.option.pre_delete',
 		    array($this, 'publish_delete_channel_option'));
+
+		// When a channel option is deactivated - send delete message
+		// to the MQ
+		Swiftriver_Event::add('swiftriver.channel.option.deactivate',
+			array($this, 'publish_delete_channel_option'));
+
+		// When a channel options is re-activated
+		Swiftriver_Event::add('swiftriver.channel.option.activate', 
+		    array($this, 'publish_new_channel_option'));
 		
 		$this->mq_host = Kohana::$config->load('mq.mq_host');
 	}
