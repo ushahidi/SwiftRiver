@@ -50,25 +50,42 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		$this->active = 'main';	
 		$action_url = URL::site('settings/main/manage');
 		
+		// Setting items
+		$settings = array(
+			'site_name' => '',
+			'site_locale' => '',
+			'public_registration_enabled' => '',
+			'anonymous_access_enabled' => '',
+			'river_active_duration' => '',
+			'river_expiry_notice_period' => ''
+		);
+
 		if ($this->request->post())
 		{
+			// Setup validation for the application settings
 			$validation = Validation::factory($this->request->post())
 				->rule('site_name', 'not_empty')
 				->rule('site_locale', 'not_empty')
-				->rule('river_lifetime', 'not_empty')
-				->rule('river_lifetime', 'digit')
+				->rule('river_active_duration', 'not_empty')
+				->rule('river_active_duration', 'digit')
+				->rule('river_expiry_notice_period', 'not_empty')
+				->rule('river_expiry_notice_period', 'digit')
 				->rule('form_auth_token', array('CSRF', 'valid'));
 			
 			if ($validation->check())
 			{
-				Model_Setting::update_setting('site_name', $this->request->post('site_name'));
-				Model_Setting::update_setting('site_locale', $this->request->post('site_locale'));
-				Model_Setting::update_setting('public_registration_enabled', 
-					$this->request->post('public_registration_enabled') == 1);
-				Model_Setting::update_setting('anonymous_access_enabled', 
-					$this->request->post('anonymous_access_enabled') == 1);
+				// Set the setting key values
+				$settings = array(
+					'site_name' => $this->request->post('site_name'),
+					'site_locale' => $this->request->post('site_locale'),
+					'public_registration_enabled' => $this->request->post('public_registration_enabled') == 1,
+					'anonymous_access_enabled' => $this->request->post('anonymous_access_enabled') == 1,
+					'river_active_duration' => $this->request->post('river_active_duration'),
+					'river_expiry_notice_period' => $this->request->post('river_expiry_notice_period')
+				);
 
-				Model_Setting::update_setting('river_lifetime', $this->request->post('river_lifetime'));
+				// Update the settings
+				Model_Setting::update_settings($settings);
 				
 				$this->settings_content->set('messages', 
 					array(__('The site settings have been updated.')));
@@ -79,10 +96,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			}
 		}
 		
-		$setting_keys = array('site_name', 'site_locale', 'public_registration_enabled', 
-			'anonymous_access_enabled', 'river_lifetime');
-
-		$this->settings_content->settings = Model_Setting::get_settings($setting_keys);
+		$this->settings_content->settings = Model_Setting::get_settings(array_keys($settings));
 	}
 
 }

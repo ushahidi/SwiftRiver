@@ -171,7 +171,7 @@ class Controller_River extends Controller_Swiftriver {
 		$droplet_js->channels = json_encode($this->river->get_channels());
 
 		// Polling is only active when the river has not expired
-		$droplet_js->polling_enabled = ( ! $this->river->is_expired());
+		$droplet_js->polling_enabled = ( ! $this->river->is_expired($this->owner));
 		
 		$droplet_js->default_view = $this->river->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
@@ -190,15 +190,15 @@ class Controller_River extends Controller_Swiftriver {
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 
-		// Check for expiry
-		if ($this->river->is_expired())
+		// Show expiry notice to owners only
+		if ($this->owner AND $this->river->is_expired($this->owner))
 		{
 			$this->droplets_view->nothing_to_display = "";
 
 			$expiry_notice = View::factory('pages/river/expiry_notice');
 			$expiry_notice->river_base_url = $this->river_base_url;
-			$expiry_notice->lifetime_extension_token = $this->river->lifetime_extension_token;
-			$expiry_notice->extension_period = Model_Setting::get_setting('river_lifetime');
+			$expiry_notice->expiry_extension_token = $this->river->expiry_extension_token;
+			$expiry_notice->extension_period = Model_Setting::get_setting('river_active_duration');
 
 			$this->droplets_view->expiry_notice = $expiry_notice;
 
@@ -765,16 +765,23 @@ class Controller_River extends Controller_Swiftriver {
 
 	/**
 	 * Endpoint for extending the lifetime of the river
+	 * If the current user is not an owner of the river, they are redirected
+	 * the the river's main page
 	 */
 	public function action_extend()
 	{
+		if ( ! $this->owner)
+		{
+			$this->request->redirect($this->river_base_url);
+		}
+
 		$this->auto_render = FALSE;
 		$this->template = "";
 
 		// Get the token
 		if (isset($_GET['token']) AND ($extension_token = $_GET['token']) !== NULL)
 		{
-			if ($this->river->lifetime_extension_token === $extension_token)
+			if ($this->river->expiry_extension_token === $extension_token)
 			{
 				$this->river->extend_lifetime();
 			}

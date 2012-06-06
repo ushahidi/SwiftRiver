@@ -339,7 +339,7 @@ class Controller_Login extends Controller_Swiftriver {
 						array(':sitename' => Model_Setting::get_setting('site_name')));
 				}
 				
-				$secret_url = url::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
+				$secret_url = URL::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
 				Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
 
 

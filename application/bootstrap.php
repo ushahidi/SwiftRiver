@@ -144,7 +144,6 @@ Route::set('login_changeemail', 'login/changeemail/<old_email>/<new_email>/<toke
 		'action'     => 'changeemail',
 	));
 
-
 /**
  * Swiftriver Login Route
  */	
@@ -251,6 +250,15 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
     	'action' => 'index'
     ));
 
+/**
+ * Swiftriver River maintenance route
+ */
+Route::set('river_maintenance', 'maintenance')
+    ->defaults(array(
+    	'controller' => 'maintenance',
+    	'action' => 'run',
+    	'directory' => 'river'
+    ));
 	
 /**
  * Account Route

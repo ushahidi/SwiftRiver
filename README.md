@@ -75,3 +75,12 @@ minutes and post processing every 15 minutes respectively:
 
         0,30 * * * * cd <app home>; php5 index.php --uri=crawler >> application/logs/crawl.log 2>&1
         0,15,30,45 * * * * cd <app home>; php5 index.php --uri=process >> application/logs/process.log 2>&1
+
+
+Configuring river maintenance
+=============================
+River maintenance involves checking which rivers have expired and are about to expire and sending 
+out notifications to their owners. To schedule maintenance to run every day at midnight, add the
+following entries to your crontab:
+
+        * 0 * * * cd <app home>; php5 index.php --uri=maintenance >> application/logs/maintenance.log 2&1

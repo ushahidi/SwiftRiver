@@ -55,7 +55,6 @@ class Model_Setting extends ORM
 	 *
 	 * @param string $key Setting key
 	 * @param string $new_value New value for the key
-	 * @return Array hash of the key value pairs from the db
 	 */
 	public static function update_setting($key, $new_value)
 	{
@@ -68,5 +67,18 @@ class Model_Setting extends ORM
 		}
 		$setting->value = $new_value;
 		$setting->save();
+	}
+
+	/**
+	 * Updates one or more settings parameters
+	 * @param array $settings A key-value array of the settings key
+	 * and its corresponding value
+	 */
+	public static function update_settings($settings)
+	{
+		foreach ($settings as $key => $value)
+		{
+			self::update_setting($key, $value);
+		}
 	}
 }

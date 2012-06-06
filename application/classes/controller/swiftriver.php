@@ -141,6 +141,18 @@ class Controller_Swiftriver extends Controller_Template {
 		// Execute parent::before first
 		parent::before();
 		
+		// Setup the base URL
+		$site_url = Model_Setting::get_setting('site_url');
+		if (empty($site_url))
+		{
+			$site_url = URL::base(TRUE, FALSE);
+			$site_url = (substr($site_url, -1) === '/')
+			    ? substr($site_url, 0, -1)
+			    : $site_url;
+
+			Model_Setting::update_setting('site_url', $site_url);
+		}
+
 		try
 		{
 			$this->session = Session::instance();

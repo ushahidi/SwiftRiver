@@ -444,7 +444,14 @@ class Model_River extends ORM {
 		}
 		
 		// Is the user id a river collaborator?
-		if ($this->river_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		if
+		(
+			$this->river_collaborators
+			    ->where('user_id', '=', $user_orm->id)
+			    ->where('collaborator_active', '=', 1)
+			    ->find()
+			    ->loaded()
+		)
 		{
 			return TRUE;
 		}
@@ -588,7 +595,7 @@ class Model_River extends ORM {
 	{
 		$collaborators = array();
 		
-		foreach ($this->river_collaborators->find_all() as $collaborator)
+		foreach ($this->river_collaborators->where('collaborator_active', '=', 1)->find_all() as $collaborator)
 		{
 			$collaborators[] = array(
 				'id' => $collaborator->user->id, 
@@ -704,95 +711,82 @@ class Model_River extends ORM {
 	 * Checks if the current river has expired. If the river has expired
 	 * and the expiry flag has not been set, all the channel filters for
 	 * the river are disabled and the associated channel filter options
-	 * purged from the crawling schedule
+	 * purged from the crawling schedule.
 	 *
+	 * @param bool $is_owner Whether the user accessing the river is an owner
 	 * @return bool
 	 */
-	public function is_expired()
+	public function is_expired($is_owner)
 	{
 		if ($this->river_expired)
 			return TRUE;
 
-		// Compare the creation and expiry timestamps
-		$expiry_date = strtotime($this->river_date_expiry);
-		$current_date = time();
-
-		if (($current_date >= $expiry_date) AND ! $this->river_expired)
+		// River hasn't yet expired, extend the lifetime
+		if ($is_owner AND $this->expiry_candidate)
 		{
-			$this->river_expired = 1;
-			$this->lifetime_extension_token = hash_hmac("sha256", Text::random('alumn', 32), $this->river_name_url);
-			parent::save();
+			$notice_expiry_period = Model_Setting::get_setting('river_expiry_notice_period');
 
-			// Remove the channel filter options from the crawling schedule
-			$this->_toggle_channel_option_status(FALSE);
-
-			// Disable the channel filters for the river
-			DB::update('channel_filters')
-			    ->set(array('filter_enabled' => 0))
-			    ->where('river_id', '=', $this->id)
-			    ->execute();
-
-			// TODO: Send notification to river owner that the river has expired
-
-			return TRUE;
-		}
+			// Extend the expiry date of the river if accessed within the
+			// period allocated for extending its lifetime
+			if (intval($notice_expiry_period) >= $this->get_days_to_expiry())
+			{
+				$this->extend_lifetime(FALSE);
+			}
+		}		
 
 		return FALSE;
 	}
 
 	/**
-	 * Gets the amount of time (years, months, days or hours) left 
-	 * before the current river expires.
+	 * Gets the number of days remaining before a river expires.
 	 *
-	 * @return string
+	 * @return int
 	 */
-	public function get_duration_to_expiry()
+	public function get_days_to_expiry()
 	{
-		if ($this->is_expired())
-			return "0";
+		if ($this->river_expired)
+			return 0;
 
 		$current_date = new DateTime(date('Y-m-d H:i:s', time()));
 		$expiry_date = new DateTime($this->river_date_expiry);
 
+		if ($current_date > $expiry_date)
+			return 0;
+
 		$interval = $expiry_date->diff($current_date);
 
-		if ($interval->y > 0)
-		{
-			return $interval->format("%y years");
-		}
-		elseif ($interval->m > 0)
-		{
-			return $interval->format("%m months");
-		}
-		elseif ($interval->d > 0)
-		{
-			return $interval->format("%d days");
-		}
-		elseif ($interval->h > 0)
-		{
-			return $interval->format("%h hours");
-		}
-
+		return $interval->d;
 	}
 
 	/**
-	 * Extends the lifetime of the river by pushing forward
-	 * the expiry date of the river - by the no. of days that
-	 * a river is active
+	 * Extends the lifetime of the river by pushing forward the expiry date 
+	 * of the river - by the no. of days that a river is active. This SHOULD only 
+	 * be triggered by an owner of the river. The extension counter is incremented
+	 * each time the expiry date is incremented
+	 *
+	 * @param bool $reactivate_channels When TRUE, reactivates the channels for the 
+	 * current river so that the crawlers can resume fetching content from them
 	 */
-	public function extend_lifetime()
+	public function extend_lifetime($reactivate_channels = TRUE)
 	{
-		if ($this->is_expired())
+		$lifetime = Model_Setting::get_setting('river_active_duration');
+		
+		$expiry_start_date = strtotime($this->river_date_expiry);
+		if ($this->get_days_to_expiry() == 0)
 		{
-			// TODO: Log this event i.e. extension of the lifetime
-			$lifetime = Model_Setting::get_setting('river_lifetime');
-			$expiry_date = strtotime(sprintf("+%s day", $lifetime), strtotime($this->river_date_expiry));
+			$expiry_start_date = time();
+		}
+		$expiry_date = strtotime(sprintf("+%s day", $lifetime), $expiry_start_date);
 
-			$this->river_expired = 0;
-			$this->lifetime_extension_token = NULL;
-			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
-			parent::save();
+		$this->river_expired = 0;
+		$this->expiry_extension_token = NULL;
+		$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
+		$this->extension_count += 1;
+		$this->expiry_candidate = 0;
+		parent::save();
 
+		if ($reactivate_channels)
+		{
 			// Disable the channel filters for the river
 			DB::update('channel_filters')
 			    ->set(array('filter_enabled' => 1))
@@ -832,6 +826,16 @@ class Model_River extends ORM {
 
 		// Garbage collection
 		unset ($channel_options);
+	}
+
+	/**
+	 * Gets the owners of the river
+	 * @return array
+	 */
+	public function get_owners()
+	{
+		return $this->river_collaborators
+		           ->where('collaborator_active', '=', 1);
 	}
 
 }
