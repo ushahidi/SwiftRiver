@@ -90,7 +90,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 		$this->template = "";
 		$this->auto_render = FALSE;
 
-		if ($this->river->is_expired())
+		if ($this->river->is_expired($this->owner))
 		{
 			$this->response->status(400);
 			$this->response->headers('Content-Type', 'application/json');
