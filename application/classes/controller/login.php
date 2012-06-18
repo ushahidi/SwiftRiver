@@ -382,7 +382,7 @@ class Controller_Login extends Controller_Swiftriver {
 	* Password reset for ORM auth.
 	*
 	*/	
-	private function _password_reset_orm($email, $user)
+	private function _password_reset_orm($email)
 	{
 		$auth_token = Model_Auth_Token::create_token('password_reset', array('email' => $email));
 		if ($auth_token->loaded())
