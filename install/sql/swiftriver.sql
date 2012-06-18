@@ -818,8 +818,7 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
 (6, 'river_active_duration', '14'),
-(7, 'river_expiry_notice_period', '3'),
-(8, 'site_url', '');
+(7, 'river_expiry_notice_period', '3');
 
 -- -----------------------------------------------------
 -- Data for table `users`

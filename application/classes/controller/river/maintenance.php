@@ -59,7 +59,7 @@ class Controller_River_Maintenance extends Controller {
 		$expiry_notice = View::factory('emails/expiry_notice');
 
 		// Base URL for the links
-		$base_url = Model_Setting::get_setting('site_url');
+		$base_url = substr(URL::base(TRUE, TRUE), 0, -1)
 
 		foreach ($expiry_candidates as $candidate)
 		{
