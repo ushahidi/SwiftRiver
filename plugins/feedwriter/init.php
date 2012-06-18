@@ -19,4 +19,3 @@ Route::set('feeds', '<account>/bucket/<name>/<action>',
     ));
 
 ?>
-

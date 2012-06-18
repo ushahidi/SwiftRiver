@@ -36,11 +36,12 @@ class Controller_Feedwriter extends Controller_Swiftriver
 
     public function action_rss()
     {
-        $feed = new Feedwriter_Rss(
-            ($this->bucket->account->account_path != 'default') ?
-                $this->bucket->account->account_path.' / '.
-                $this->bucket->bucket_name : $this->bucket->bucket_name,
-            'http://'.$_SERVER['SERVER_NAME'].$this->bucket->get_base_url());
+        $account = $this->bucket->account->account_path;
+        $name = $this->bucket->bucket_name;
+
+        $feed = new Feedwriter_Rss;
+        $feed->setTitle(($account != 'default') ? $account.' / '.$name : $name);
+        $feed->setLink(URL::site($this->bucket->get_base_url(), true));
         $feed->setDescription('Drops from '.$this->bucket->bucket_name.
             ' on Swiftriver');
         $feed->setLanguage(Kohana::$config->load('feedwriter')->get('language'));
@@ -52,16 +53,15 @@ class Controller_Feedwriter extends Controller_Swiftriver
                 date_create($this->droplets[0]['droplet_date_pub']), DATE_RSS));
             foreach ($this->droplets as $k => $v)
             {
-                $url = 'http://'.$_SERVER['SERVER_NAME'].'/'.
-                    $this->request->param('account').'/bucket/'.
-                    $this->request->param('name').'/drop/'.$v['id'];
+                $url = URL::site($this->request->param('account').'/bucket/'.
+                    $this->request->param('name').'/drop/'.$v['id'], true);
                 $feed->addItem(array(
                     'title' => $v['droplet_title'],
                     'guid' => $url,
                     'link' => $url,
-                    //'author' => $v['identity_name'], -- Requires email for valid
                     'description' => $v['droplet_content'],
-                    'time' => date_format(date_create($v['droplet_date_pub']), DATE_RSS)
+                    'time' => date_format(
+                        date_create($v['droplet_date_pub']), DATE_RSS)
                 ));
             }
         }
@@ -80,8 +80,8 @@ class Feedwriter_Rss
     {
         $this->meta = array(
             'title'         => ($title) ? $title : "RSS2 Feed",
-            'link'          => ($link) ? $link : 'http://'.
-                $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"],
+            'link'          => ($link) ? $link :
+                URL::site($_SERVER["REQUEST_URI"], true),
             'description'   => "A generic RSS2 feed.",
             'language'      => 'en-us',
             'copyright'     => "Copyright (c) 2008-2012 Ushahidi Inc ".
@@ -136,9 +136,8 @@ class Feedwriter_Rss
     {
         $rss  = '<?xml version="1.0" encoding="utf-8"?>'."\n";
         $rss .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'.
-            '<channel><atom:link href="'.'http://'.$_SERVER["SERVER_NAME"].
-            $_SERVER["REQUEST_URI"].'" rel="self" '.
-            'type="application/rss+xml" />';
+            '<channel><atom:link href="'.URL::site($_SERVER["REQUEST_URI"],
+            true).'" rel="self" type="application/rss+xml" />';
 
         foreach ($this->meta as $key => $value)
             $rss .= '<'.$key.'>'.htmlentities($value).'</'.$key.'>';
@@ -157,4 +156,3 @@ class Feedwriter_Rss
 }
 
 ?>
-
