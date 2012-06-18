@@ -465,6 +465,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `channel` varchar(20) NOT NULL DEFAULT '',
   `droplet_hash` char(32) NOT NULL DEFAULT '',
   `droplet_orig_id` varchar(255) NOT NULL,
+  `original_url` bigint(20) DEFAULT NULL,
   `droplet_type` varchar(10) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision',
   `droplet_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
   `droplet_content` text COMMENT 'The content of the feed item (if available)',

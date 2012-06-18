@@ -113,6 +113,12 @@ class Swiftriver_Crawler_Rss {
 					$locales = explode('-', $feed->get_language());
 					$droplet['droplet_locale'] = $locales[0];
 					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($feed_item->get_date()));
+					$droplet['links'] = array(
+											array(
+												'url' => trim((string) $feed_item->get_link()),
+												'original_url' => TRUE
+											)
+										);
 					
 					// Add droplet to the queue
 					Swiftriver_Dropletqueue::add($droplet);

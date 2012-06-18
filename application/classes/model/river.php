@@ -265,7 +265,7 @@ class Model_River extends ORM {
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
 			                    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			                    array('user_scores.score','user_score'))
+			                    array('user_scores.score','user_score'), array('links.url','original_url'))
 			    ->from('rivers_droplets')
 			    ->join('droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -294,9 +294,11 @@ class Model_River extends ORM {
 			// Apply the river filters
 			Model_Droplet::apply_droplets_filter($query, $filters, $user_id, $river_orm);
 			
-			// Left join for user scores
+			// Left joins
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
-			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
+			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+				->join('links', 'LEFT')
+			    ->on('links.id', '=', 'droplets.original_url');
 
 			// Ordering and grouping
 			$query->order_by('rivers_droplets.droplet_date_pub', $sort);	   
@@ -346,7 +348,7 @@ class Model_River extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
 			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
 			    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			    array('user_scores.score','user_score'))
+			    array('user_scores.score','user_score'), array('links.url','original_url'))
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -366,7 +368,9 @@ class Model_River extends ORM {
 			
 			// Left join for user scores
 			$query->join(array('droplet_scores', 'user_scores'), 'LEFT')
-				->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id));
+				->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+				->join('links', 'LEFT')
+			    ->on('links.id', '=', 'droplets.original_url');
 
 			// Group, order and limit
 			$query->order_by('rivers_droplets.id', 'ASC')

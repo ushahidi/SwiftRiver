@@ -231,7 +231,11 @@
 		<% if (droplet_content != droplet_title) { %>
 		<section class="drop-fullstory drop-sub">
 			<h2><?php echo __("Full story"); ?></h2>
-			<h3><%= droplet_title %></h3>
+			<% if (original_url) { %>
+				<h3><a href="<%= original_url %>" target="_blank"><%= droplet_title %></a></h3>
+			<% } else { %>
+				<h3><%= droplet_title %></h3>
+			<% } %>
 			<%= droplet_content %>
 		</section>
 		<% } %>

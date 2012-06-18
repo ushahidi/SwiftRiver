@@ -177,7 +177,7 @@ class Model_Bucket extends ORM {
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
 								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-								array('user_scores.score','user_score'))
+								array('user_scores.score','user_score'), array('links.url','original_url'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
@@ -185,6 +185,8 @@ class Model_Bucket extends ORM {
 				->on('droplets.identity_id', '=', 'identities.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+				->join('links', 'LEFT')
+			    ->on('links.id', '=', 'droplets.original_url')
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 				->where('droplets.parent_id', '=', 0);
@@ -258,7 +260,7 @@ class Model_Bucket extends ORM {
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
 								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			                    array('user_scores.score','user_score'))
+			                    array('user_scores.score','user_score'), array('links.url','original_url'))
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
 				->on('buckets_droplets.droplet_id', '=', 'droplets.id')
@@ -266,6 +268,8 @@ class Model_Bucket extends ORM {
 				->on('droplets.identity_id', '=', 'identities.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
+				->join('links', 'LEFT')
+			    ->on('links.id', '=', 'droplets.original_url')
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 				->where('droplets.parent_id', '=', 0)

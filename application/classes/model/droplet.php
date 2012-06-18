@@ -251,6 +251,7 @@ class Model_Droplet extends ORM {
 		$tag_check_query = NULL;
 		$semantics_complete = array();
 		$link_values = NULL;
+		$drop_links = NULL;
 		$media_values = NULL;
 		$drop_images = NULL;
 		$media_thumbnail_values = NULL;
@@ -328,6 +329,16 @@ class Model_Droplet extends ORM {
 						$link_values .= ',';
 					}
 					$link_values .= '('.$drop['id'].','.$link['id'].')';
+					
+					// Store drop original link for updating the droplets table
+					if (isset($link['id']) AND isset($link['original_url']) AND $link['original_url'])
+					{
+						if ($drop_links)
+						{
+							$drop_links .= ' union all ';
+						}
+						$drop_links .= 'select '.$link['id'].' drop_link, '.$drop['id'].' id';
+					}
 				}
 			}
 			
@@ -572,6 +583,15 @@ class Model_Droplet extends ORM {
 
 			DB::query(Database::INSERT, $insert_links_sql)
 			    ->execute();
+		}
+		
+		// Set the drop's original url
+		if ($drop_links)
+		{
+			$update_orig_url_sql = "UPDATE `droplets` JOIN (".$drop_links.") a "
+			    ."USING (`id`) SET `droplets`.`original_url` = `a`.`drop_link`";
+
+			DB::query(Database::UPDATE, $update_orig_url_sql)->execute();
 		}
 		
 		// Update droplet media

@@ -120,6 +120,13 @@ class Swiftriver_Crawler_Twitter  {
 					$droplet['droplet_raw'] = $droplet['droplet_content'] = $tweet->text;
 					$droplet['droplet_locale'] = $tweet->iso_language_code;
 					$droplet['droplet_date_pub'] = gmdate("Y-m-d H:i:s", strtotime($tweet->created_at));
+					$droplet['links'] = array(
+											array(
+												'url' => 'https://twitter.com/'.$tweet->from_user.'/status/'.$tweet->id,
+												'original_url' => TRUE
+											)
+										);
+
 
 					Swiftriver_Dropletqueue::add($droplet);
 				}

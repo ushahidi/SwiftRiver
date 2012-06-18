@@ -84,7 +84,14 @@ class MediaExtractor_Init {
 			// Save the links
 			if ( ! empty($links))
 			{
-				$droplet['links'] = $links;
+				if ( ! isset($droplet['links']))
+				{
+					$droplet['links'] = $links;
+				}
+				else
+				{
+					$droplet['links'] = array_merge($droplet['links'], $links);
+				}
 			}
             
             
