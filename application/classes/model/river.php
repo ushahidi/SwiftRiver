@@ -744,14 +744,21 @@ class Model_River extends ORM {
 	/**
 	 * Gets the number of days remaining before a river expires.
 	 *
+	 * @param $current_date DateTime Current date
 	 * @return int
 	 */
-	public function get_days_to_expiry()
+	public function get_days_to_expiry($current_date = NULL)
 	{
 		if ($this->river_expired)
 			return 0;
 
-		$current_date = new DateTime(date('Y-m-d H:i:s', time()));
+		// Has the current date been specified?
+		if ( ! $current_date instanceof DateTime)
+		{
+			Kohana::$log->add(Log::INFO, 
+			    __("Current date not specified. Setting to current date"));
+			$current_date = new DateTime(date('Y-m-d H:i:s', time()));
+		}
 		$expiry_date = new DateTime($this->river_date_expiry);
 
 		if ($current_date > $expiry_date)
