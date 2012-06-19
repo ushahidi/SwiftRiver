@@ -49,8 +49,8 @@ class Controller_Feedwriter extends Controller_Swiftriver
 
         if (count($this->droplets) > 0)
         {
-            $feed->setUpdated(date_format(
-                date_create($this->droplets[0]['droplet_date_pub']), DATE_RSS));
+            $feed->setUpdated(date(DATE_RSS,strtotime($this->
+                droplets[0]['droplet_date_pub'])));
             foreach ($this->droplets as $k => $v)
             {
                 $url = URL::site($this->request->param('account').'/bucket/'.
@@ -60,8 +60,7 @@ class Controller_Feedwriter extends Controller_Swiftriver
                     'guid' => $url,
                     'link' => $url,
                     'description' => $v['droplet_content'],
-                    'time' => date_format(
-                        date_create($v['droplet_date_pub']), DATE_RSS)
+                    'time' => date(DATE_RSS, strtotime($v['droplet_date_pub']))
                 ));
             }
         }
