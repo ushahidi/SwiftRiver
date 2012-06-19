@@ -27,7 +27,7 @@ new Feedwriter_Init;
 // Bind the plugin to valid URLs
 Route::set('feeds', '<account>/bucket/<name>/<action>',
     array(
-        'action' => '(rss|atom)' // atom NYI
+        'action' => '(rss|atom)'
     ))
     ->defaults(array(
         'controller' => 'feedwriter',
