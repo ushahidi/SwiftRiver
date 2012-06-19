@@ -49,8 +49,7 @@ class Controller_Feedwriter extends Controller_Swiftriver
 
         if (count($this->droplets) > 0)
         {
-            $feed->setUpdated(date(DATE_RSS,strtotime($this->
-                droplets[0]['droplet_date_pub'])));
+            $feed->setUpdated($this->droplets[0]['droplet_date_pub']);
             foreach ($this->droplets as $k => $v)
             {
                 $url = URL::site($this->request->param('account').'/bucket/'.
@@ -60,7 +59,7 @@ class Controller_Feedwriter extends Controller_Swiftriver
                     'guid' => $url,
                     'link' => $url,
                     'description' => $v['droplet_content'],
-                    'time' => date(DATE_RSS, strtotime($v['droplet_date_pub']))
+                    'time' => $v['droplet_date_pub']
                 ));
             }
         }
@@ -117,7 +116,7 @@ class Feedwriter_Rss
 
     public function setUpdated($lastBuildDate)
     {
-        $this->meta['lastBuildDate'] = $lastBuildDate;
+        $this->meta['lastBuildDate'] = date(DATE_RSS, strtotime($lastBuildDate));
     }
 
     public function addItem($params)
@@ -127,7 +126,7 @@ class Feedwriter_Rss
             'guid'        => $params['guid'],
             'link'        => $params['link'],
             'description' => $params['description'],
-            'pubDate'     => $params['time']
+            'pubDate'     => date(DATE_RSS, strtotime($params['time']))
         );
     }
 
