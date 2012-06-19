@@ -43,21 +43,21 @@ class Controller_Feedwriter extends Controller_Swiftriver
         $name = $this->bucket->bucket_name;
 
         $feed = new Feedwriter_Rss;
-        $feed->setTitle($account.' / '.$name);
-        $feed->setLink(URL::site($this->bucket->get_base_url(), true));
-        $feed->setDescription('Drops from '.$this->bucket->bucket_name.
+        $feed->set_title($account.' / '.$name);
+        $feed->set_link(URL::site($this->bucket->get_base_url(), true));
+        $feed->set_description('Drops from '.$this->bucket->bucket_name.
             ' on Swiftriver');
-        $feed->setLanguage(Kohana::$config->load('feedwriter')->get('language'));
-        $feed->setCopyright(Kohana::$config->load('feedwriter')->get('copyright'));
+        $feed->set_language(Kohana::$config->load('feedwriter')->get('language'));
+        $feed->set_copyright(Kohana::$config->load('feedwriter')->get('copyright'));
 
         if (count($this->droplets) > 0)
         {
-            $feed->setUpdated($this->droplets[0]['droplet_date_pub']);
+            $feed->set_updated($this->droplets[0]['droplet_date_pub']);
             foreach ($this->droplets as $k => $v)
             {
                 $url = URL::site($this->request->param('account').'/bucket/'.
                     $this->request->param('name').'/drop/'.$v['id'], true);
-                $feed->addItem(array(
+                $feed->add_item(array(
                     'title'       => $v['droplet_title'],
                     'guid'        => $url,
                     'link'        => $url,
@@ -77,21 +77,21 @@ class Controller_Feedwriter extends Controller_Swiftriver
         $name = $this->bucket->bucket_name;
 
         $feed = new Feedwriter_Atom;
-        $feed->setTitle($account.' / '.$name);
-        $feed->setLink(URL::site($this->bucket->get_base_url(), true));
-        $feed->setAuthor('SwiftRiver / '.$account, URL::site($account, true));
-        $feed->setDescription('Drops from '.$this->bucket->bucket_name.
+        $feed->set_title($account.' / '.$name);
+        $feed->set_link(URL::site($this->bucket->get_base_url(), true));
+        $feed->set_author('SwiftRiver / '.$account, URL::site($account, true));
+        $feed->set_description('Drops from '.$this->bucket->bucket_name.
             ' on Swiftriver');
-        $feed->setCopyright(Kohana::$config->load('feedwriter')->get('copyright'));
+        $feed->set_copyright(Kohana::$config->load('feedwriter')->get('copyright'));
 
         if (count($this->droplets) > 0)
         {
-            $feed->setUpdated($this->droplets[0]['droplet_date_pub']);
+            $feed->set_updated($this->droplets[0]['droplet_date_pub']);
             foreach ($this->droplets as $k => $v)
             {
                 $url = URL::site($this->request->param('account').'/bucket/'.
                     $this->request->param('name').'/drop/'.$v['id'], true);
-                $feed->addItem(array(
+                $feed->add_item(array(
                     'title'   => $v['droplet_title'],
                     'id'      => $url,
                     'link'    => $url,

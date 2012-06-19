@@ -29,37 +29,37 @@ class Feedwriter_Rss
         );
     }
 
-    public function setTitle($title)
+    public function set_title($title)
     {
         $this->meta['title'] = $title;
     }
 
-    public function setLink($link)
+    public function set_link($link)
     {
         $this->meta['link'] = $link;
     }
 
-    public function setDescription($description)
+    public function set_description($description)
     {
         $this->meta['description'] = $description;
     }
 
-    public function setLanguage($language)
+    public function set_language($language)
     {
         $this->meta['language'] = $language;
     }
 
-    public function setCopyright($copyright)
+    public function set_copyright($copyright)
     {
         $this->meta['copyright'] = $copyright;
     }
 
-    public function setUpdated($lastBuildDate)
+    public function set_updated($lastBuildDate)
     {
         $this->meta['lastBuildDate'] = date(DATE_RSS, strtotime($lastBuildDate));
     }
 
-    public function addItem($params)
+    public function add_item($params)
     {
         $this->items[] = array(
             'title'       => $params['title'],

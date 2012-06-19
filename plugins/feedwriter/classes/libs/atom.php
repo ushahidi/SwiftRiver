@@ -37,39 +37,39 @@ class Feedwriter_Atom
         );
     }
 
-    public function setTitle($title)
+    public function set_title($title)
     {
         $this->meta['title'] = $title;
     }
 
-    public function setLink($link)
+    public function set_link($link)
     {
         $this->meta['link'] = $link;
         $this->meta['id'] = $link;
     }
 
-    public function setDescription($description)
+    public function set_description($description)
     {
         $this->meta['subtitle'] = $description;
     }
 
-    public function setCopyright($copyright)
+    public function set_copyright($copyright)
     {
         $this->meta['rights'] = $copyright;
     }
 
-    public function setUpdated($updated)
+    public function set_updated($updated)
     {
         $this->meta['updated'] = date(DATE_ATOM, strtotime($updated));
     }
     
-    public function setAuthor($author, $uri)
+    public function set_author($author, $uri)
     {
         $this->author['name'] = $author;
         $this->author['uri'] = $uri;
     }
 
-    public function addItem($params)
+    public function add_item($params)
     {
         $this->items[] = array(
             'title'   => $params['title'],
