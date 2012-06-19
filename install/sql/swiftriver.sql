@@ -285,6 +285,8 @@ CREATE TABLE IF NOT EXISTS `identities` (
   `identity_username` varchar(255) DEFAULT NULL,
   `identity_name` varchar(255) DEFAULT NULL,
   `identity_avatar` varchar(255) DEFAULT NULL,
+  `identity_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `identity_date_modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `identity_hash` (`hash`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Sources are individual People, Organizations or Websites tha';
