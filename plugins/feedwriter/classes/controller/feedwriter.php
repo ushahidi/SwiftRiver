@@ -55,11 +55,11 @@ class Controller_Feedwriter extends Controller_Swiftriver
                 $url = URL::site($this->request->param('account').'/bucket/'.
                     $this->request->param('name').'/drop/'.$v['id'], true);
                 $feed->addItem(array(
-                    'title' => $v['droplet_title'],
-                    'guid' => $url,
-                    'link' => $url,
+                    'title'       => $v['droplet_title'],
+                    'guid'        => $url,
+                    'link'        => $url,
                     'description' => $v['droplet_content'],
-                    'time' => $v['droplet_date_pub']
+                    'time'        => $v['droplet_date_pub']
                 ));
             }
         }
@@ -89,12 +89,12 @@ class Controller_Feedwriter extends Controller_Swiftriver
                 $url = URL::site($this->request->param('account').'/bucket/'.
                     $this->request->param('name').'/drop/'.$v['id'], true);
                 $feed->addItem(array(
-                    'title' => $v['droplet_title'],
-                    'id' => $url,
-                    'link' => $url,
-                    'content' => $v['droplet_content'],
-                    'time' => $v['droplet_date_pub'],
-                    'author' => $v['identity_name'],
+                    'title'   => $v['droplet_title'],
+                    'id'      => $url,
+                    'link'    => $url,
+                    'summary' => $v['droplet_content'],
+                    'time'    => $v['droplet_date_pub'],
+                    'author'  => $v['identity_name'],
                 ));
             }
         }
@@ -197,17 +197,17 @@ class Feedwriter_Atom
     public function __construct($title = NULL, $link = NULL)
     {
         $this->meta = array(
-            'link'          => ($link) ? $link :
+            'link'      => ($link) ? $link :
                 URL::site($_SERVER["REQUEST_URI"], true),
-            'title'         => ($title) ? $title : "Atom Feed",
-            'subtitle'      => "A generic Atom feed.",
-            'id'            => ($link) ? $link :
+            'title'     => ($title) ? $title : "Atom Feed",
+            'subtitle'  => "A generic Atom feed.",
+            'id'        => ($link) ? $link :
                 URL::site($_SERVER["REQUEST_URI"], true),
-            'rights'     => "Copyright (c) 2008-2012 Ushahidi Inc ".
+            'rights'    => "Copyright (c) 2008-2012 Ushahidi Inc ".
                 "<http://ushahidi.com>",
-            'updated'       => "Thu, 01 Jan 1970 00:00:00 +0000",
-            'generator'     => "SwiftRiver FeedWriter",
-            'logo'          => URL::site('media/img/logo-swiftriver.png', true)
+            'updated'   => "Thu, 01 Jan 1970 00:00:00 +0000",
+            'generator' => "SwiftRiver FeedWriter",
+            'logo'      => URL::site('media/img/logo-swiftriver.png', true)
         );
 
         $this->author = array(
@@ -254,7 +254,7 @@ class Feedwriter_Atom
             'title'   => $params['title'],
             'id'      => $params['id'],
             'link'    => $params['link'],
-            'summary' => $params['content'],
+            'summary' => $params['summary'],
             'updated' => date(DATE_ATOM, strtotime($params['time'])),
             'author'  => $params['author']
         );
@@ -273,7 +273,7 @@ class Feedwriter_Atom
             else
                 $atom .= '<'.$key.' href="'.$value.'" />';
         }
-        
+
         $atom .= '<author>';
         foreach ($this->author as $key => $value)
             $atom .= '<'.$key.'>'.htmlentities($value).'</'.$key.'>';
@@ -295,11 +295,6 @@ class Feedwriter_Atom
                     default:
                         $atom .= '<'.$k.'>'.htmlentities($v).'</'.$k.'>';
                 }
-                
-                /*if ($k != 'author')
-                    $atom .= '<'.$k.'>'.htmlentities($v).'</'.$k.'>';
-                else
-                    $atom .= '<'.$k.'><name>'.htmlentities($v).'</name></'.$k.'>';*/
             }
             $atom .= '</entry>';
         }
