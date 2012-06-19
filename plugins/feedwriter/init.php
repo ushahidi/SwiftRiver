@@ -11,18 +11,13 @@
 
 class Feedwriter_Init
 {
-    public function __construct()
-    {
-        Swiftriver_Event::add('swiftriver.template.head', array('Feedwriter_Init', 'Inject'));
-    }
-
     public static function Inject()
     {
-        echo '<script type="text/javascript">$(document).ready(function(){$(".page-title.bucket-title.cf div h1 span").after(\'<span class="rss-feed" style="margin-left: 20px; display: none;"><a href="rss" target="_blank"><img src="/themes/default/media/img/channel-rss.gif" alt="RSS" title="RSS" height="12" style="margin-bottom: 4px;" /></a></span>\');$("span.rss-feed").fadeIn()})</script>';
+        echo Html::script("plugins/feedwriter/media/js/icon.js");
     }
 }
 
-new Feedwriter_Init;
+Swiftriver_Event::add('swiftriver.template.head', array('Feedwriter_Init', 'Inject'));
 
 // Bind the plugin to valid URLs
 Route::set('feeds', '<account>/bucket/<name>/<action>',
