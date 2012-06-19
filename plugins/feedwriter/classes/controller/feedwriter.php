@@ -40,7 +40,7 @@ class Controller_Feedwriter extends Controller_Swiftriver
         $name = $this->bucket->bucket_name;
 
         $feed = new Feedwriter_Rss;
-        $feed->setTitle(($account != 'default') ? $account.' / '.$name : $name);
+        $feed->setTitle($account.' / '.$name);
         $feed->setLink(URL::site($this->bucket->get_base_url(), true));
         $feed->setDescription('Drops from '.$this->bucket->bucket_name.
             ' on Swiftriver');
