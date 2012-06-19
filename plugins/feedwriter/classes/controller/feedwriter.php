@@ -92,7 +92,7 @@ class Controller_Feedwriter extends Controller_Swiftriver
                     'title'   => $v['droplet_title'],
                     'id'      => $url,
                     'link'    => $url,
-                    'summary' => $v['droplet_content'],
+                    'content' => $v['droplet_content'],
                     'time'    => $v['droplet_date_pub'],
                     'author'  => $v['identity_name'],
                 ));
@@ -254,7 +254,7 @@ class Feedwriter_Atom
             'title'   => $params['title'],
             'id'      => $params['id'],
             'link'    => $params['link'],
-            'summary' => $params['summary'],
+            'content' => $params['content'],
             'updated' => date(DATE_ATOM, strtotime($params['time'])),
             'author'  => $params['author']
         );
@@ -291,6 +291,9 @@ class Feedwriter_Atom
                         break;
                     case 'link':
                         $atom .= '<'.$k.' href="'.$v.'" />';
+                        break;
+                    case 'content':
+                        $atom .= '<'.$k.' type="html">'.htmlentities($v).'</'.$k.'>';
                         break;
                     default:
                         $atom .= '<'.$k.'>'.htmlentities($v).'</'.$k.'>';
