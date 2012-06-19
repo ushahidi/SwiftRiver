@@ -5,7 +5,8 @@
 	<meta charset="utf-8" /> 
 	<title><?php echo (isset($title) ? $title.' ~ ' : '').$site_name; ?></title> 
 	<meta name="description" content="SwiftRiver" /> 
-	<meta name="keywords" content="SwiftRiver"> 
+	<meta name="keywords" content="SwiftRiver">
+	<?php Swiftriver_Event::run('swiftriver.template.meta'); ?>
 	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
 	<link rel="icon" href="<?php echo url::base(); ?>themes/default/media/img/favicon.png" type="image/png">
 	<?php
