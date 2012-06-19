@@ -67,8 +67,10 @@ class Controller_Feedwriter extends Controller_Swiftriver
             }
         }
 
+        $gen = $feed->generate();
         $this->response->headers('Content-Type', 'text/xml');
-        echo $feed->generate();
+        $this->response->headers('ETag', md5($gen));
+        echo $gen;
     }
     
     public function action_atom()
@@ -102,8 +104,10 @@ class Controller_Feedwriter extends Controller_Swiftriver
             }
         }
 
+        $gen = $feed->generate();
         $this->response->headers('Content-Type', 'text/xml');
-        echo $feed->generate();
+        $this->response->headers('ETag', md5($gen));
+        echo $gen;
     }
 }
 
