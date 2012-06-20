@@ -90,14 +90,14 @@ class Feedwriter_Atom
         foreach ($this->meta as $key => $value)
         {
             if ($key != 'link')
-                $atom .= '<'.$key.'>'.htmlentities($value).'</'.$key.'>';
+                $atom .= '<'.$key.'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</'.$key.'>';
             else
                 $atom .= '<'.$key.' href="'.$value.'" />';
         }
 
         $atom .= '<author>';
         foreach ($this->author as $key => $value)
-            $atom .= '<'.$key.'>'.htmlentities($value).'</'.$key.'>';
+            $atom .= '<'.$key.'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</'.$key.'>';
         $atom .= '</author>';
 
         foreach ($this->items as $key => $value)
@@ -108,16 +108,16 @@ class Feedwriter_Atom
                 switch ($k)
                 {
                     case 'author':
-                        $atom .= '<'.$k.'><name>'.htmlentities($v).'</name></'.$k.'>';
+                        $atom .= '<'.$k.'><name>'.htmlspecialchars($v, ENT_QUOTES, 'UTF-8').'</name></'.$k.'>';
                         break;
                     case 'link':
                         $atom .= '<'.$k.' href="'.$v.'" />';
                         break;
                     case 'content':
-                        $atom .= '<'.$k.' type="html">'.htmlentities($v).'</'.$k.'>';
+                        $atom .= '<'.$k.' type="html">'.htmlspecialchars($v, ENT_QUOTES, 'UTF-8').'</'.$k.'>';
                         break;
                     default:
-                        $atom .= '<'.$k.'>'.htmlentities($v).'</'.$k.'>';
+                        $atom .= '<'.$k.'>'.htmlspecialchars($v, ENT_QUOTES, 'UTF-8').'</'.$k.'>';
                 }
             }
             $atom .= '</entry>';

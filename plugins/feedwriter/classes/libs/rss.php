@@ -78,13 +78,13 @@ class Feedwriter_Rss
             true).'" rel="self" type="application/rss+xml" />';
 
         foreach ($this->meta as $key => $value)
-            $rss .= '<'.$key.'>'.htmlentities($value).'</'.$key.'>';
+            $rss .= '<'.$key.'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</'.$key.'>';
 
         foreach ($this->items as $key => $value)
         {
             $rss .= '<item>';
             foreach ($value as $k => $v)
-                $rss .= '<'.$k.'>'.htmlentities($v).'</'.$k.'>';
+                $rss .= '<'.$k.'>'.htmlspecialchars($v, ENT_QUOTES, 'UTF-8').'</'.$k.'>';
             $rss .= '</item>';
         }
 
