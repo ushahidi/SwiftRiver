@@ -6,7 +6,7 @@
 	<title><?php echo (isset($title) ? $title.' ~ ' : '').$site_name; ?></title> 
 	<meta name="description" content="SwiftRiver" /> 
 	<meta name="keywords" content="SwiftRiver"> 
-	<link rel='index' title='SwiftRiver' href='http://swiftriver.com/' /> 
+	<link rel="index" title="SwiftRiver" href="<?php echo URL::base(TRUE,TRUE); ?>" /> 
 	<link rel="icon" href="<?php echo url::base(); ?>themes/default/media/img/favicon.png" type="image/png">
 	<?php
 	echo $meta; 
