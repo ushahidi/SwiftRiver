@@ -35,27 +35,17 @@ class Model_Channel_Filter extends ORM {
 		'river' => array()
 		);
 
-	
 	/**
-	 * Overload saving to perform additional functions on the channel_filter
+	 * Auto-update columns for updates
+	 * @var string
 	 */
-	public function save(Validation $validation = NULL)
-	{
+	protected $_updated_column = array('column' => 'filter_date_add', 'format' => 'Y-m-d H:i:s');
 
-		// Do this for first time channel_filters only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the channel_filter was first added
-			$this->filter_date_add = date("Y-m-d H:i:s", time());
-		}
-		else
-		{
-			// Set the date modified
-			$this->filter_date_modified = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}
+	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+	protected $_created_column = array('column' => 'filter_date_modified', 'format' => 'Y-m-d H:i:s');
 
 	/**
 	 * Overrides the default behaviour to perform
