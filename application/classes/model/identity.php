@@ -37,28 +37,18 @@ class Model_Identity extends ORM
 		'droplets' => array()
 	);
 
-	/**
-	 * Overload saving to perform additional functions on the identity
+    /**
+	 * Auto-update columns for creation
+	 * @var string
 	 */
-	public function save(Validation $validation = NULL)
-	{
-		// Swiftriver Plugin Hook
-		Swiftriver_Event::run('swiftriver.identity.pre_save', $this);
+    protected $_created_column = array('column' => 'account_date_add', 'format' => 'Y-m-d H:i:s');
 
-		// Do this for first time identities only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the identity was first added
-			$this->identity_date_add = date("Y-m-d H:i:s", time());
-		}
-		else
-		{
-			$this->identity_date_modified = date("Y-m-d H:i:s", time());
-		}		
+    /**
+	 * Auto-update columns for updates
+	 * @var string
+	 */
+    protected $_updated_column = array('column' => 'account_date_modified', 'format' => 'Y-m-d H:i:s');
 
-		return parent::save();
-	}
-	
 	/**
 	 * Given an array of droplets information, populate identities from the
 	 * DB creating those that do not exist.
