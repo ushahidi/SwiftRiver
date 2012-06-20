@@ -161,8 +161,9 @@ class Model_Bucket extends ORM {
 	 * @param array $filters Set of predicates to filter the desired result
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets($user_id, $bucket_id = NULL, $drop_id = 0, $page = NULL, 
-		$max_id = PHP_INT_MAX, $photos = FALSE, $filters = array())
+	public static function get_droplets($user_id, $bucket_id = NULL,
+	    $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX, $photos = FALSE,
+	    $filters = array(), $limit = 0)
 	{
 		$droplets = array(
 			'total' => 0,
@@ -218,6 +219,10 @@ class Model_Bucket extends ORM {
 				$query->limit(self::DROPLETS_PER_PAGE); 
 				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
 			}
+			
+			// Limit on max results if defined and not using pagination
+			if ( ! $page && $limit > 0)
+			    $query->limit($limit);
 			
 			// Get our droplets as an Array		
 			$droplets['droplets'] = $query->execute()->as_array();
