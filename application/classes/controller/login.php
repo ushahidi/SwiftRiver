@@ -96,15 +96,17 @@ class Controller_Login extends Controller_Swiftriver {
 				} 
 				else
 				{
-					// Do the password reset depending on the auth driver we are using.
-					if ($this->riverid_auth) 
+					$messages = Model_User::password_reset($email, $this->riverid_auth);
+					
+					// Display the messages
+					if (isset($messages['errors']))
 					{
-						$this->_password_reset_riverid($email);
+						$this->errors = $messages['errors'];
 					}
-					else
+					if (isset($messages['messages']))
 					{
-						$this->_password_reset_orm($email);
-					}
+						$this->messages = $messages['messages'];
+					}					
 				}
 			}
 
@@ -177,7 +179,7 @@ class Controller_Login extends Controller_Swiftriver {
 		// New user registration
 		if ($this->request->post('new_email'))
 		{
-			$messages = $this->_new_user($this->request->post('new_email'));
+			$messages = Model_User::new_user($this->request->post('new_email'), $this->riverid_auth);
 			
 			// Display the messages
 			if (isset($messages['errors']))
@@ -198,7 +200,7 @@ class Controller_Login extends Controller_Swiftriver {
 
 		if ($this->request->post('new_email'))
 		{
-			$messages = $this->_new_user($this->request->post('new_email'), (bool) $this->request->post('invite'));
+			$messages = Model_User::new_user($this->request->post('new_email'), $this->riverid_auth, (bool) $this->request->post('invite'));
 			$ret = array();
         
 			if (isset($messages['errors']))
@@ -215,194 +217,7 @@ class Controller_Login extends Controller_Swiftriver {
 			echo json_encode($ret);
 		}
 	}
-	
-	private function _new_user($email, $invite = FALSE)
-	{
-		$messages = array();
 		
-		// Check if an admin user is logged in
-		$admin = FALSE;
-		if (Auth::instance()->logged_in())
-		{
-			$admin = Auth::instance()->get_user()->has('roles', 
-				ORM::factory('role',array('name'=>'admin')));
-		}
-		
-		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
-		{
-			$messages['errors'] = array(__('This site is not open to public registration'));
-		}
-		else
-		{
-			if ( ! Valid::email($email))
-			{
-				$messages['errors'] = array(__('The email address provided is invalid'));
-			} 
-			else
-			{
-				if ($this->riverid_auth)
-				{
-					$messages = $this->_new_user_riverid($this->request->post('new_email'), $invite);
-				}
-				else
-				{
-					$messages = $this->_new_user_orm($this->request->post('new_email'), $invite);
-				}
-			}
-		}		  
-		
-		return $messages;
-	}
-	
-	/**
-	* Send a river id registration request
-	*
-	*/
-	private function _new_user_riverid($email, $invite = FALSE) 
-	{
-		$riverid_api = RiverID_API::instance();
-		
-		if ( $riverid_api->is_registered($email) AND ! $invite) 
-		{
-			return array('errors' => array(__('The email address provided is already registered.')));
-		}
-		
-		$ret = array();
-		$mail_body = NULL;
-		if ($invite)
-		{
-			$mail_body = View::factory('emails/invite')
-						 ->bind('secret_url', $secret_url);
-			$mail_body->site_name = Model_Setting::get_setting('site_name');
-			$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
-		}
-		else
-		{
-			$mail_body = View::factory('emails/createuser')
-						 ->bind('secret_url', $secret_url);
-			$mail_subject = __(':sitename: Please confirm your email address', 
-				array(':sitename' => Model_Setting::get_setting('site_name')));
-		}
-		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('useradmin.email_address');
-		
-		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
-		
-		if ($response['status']) 
-		{
-			$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
-		} 
-		else 
-		{
-			$ret['errors'] = array($response['error']);
-		}
-		
-		return $ret;
-	}
-
-	/**
-	* New user registration for ORM auth
-	*
-	*/
-	private function _new_user_orm($email, $invite = FALSE)
-	{
-		$ret = array();
-		
-		// Is the email registed in this site?
-		$user = ORM::factory('user',array('email'=>$email));
-
-		if ($user->loaded())
-		{
-			$ret['errors'] = array(__('The email address provided is already registered.'));
-		}
-		else
-		{
-			$auth_token = Model_Auth_Token::create_token('new_registration', array('email' => $email));
-			if ($auth_token->loaded())
-			{
-				//Send an email with a secret token URL
-				$mail_body = NULL;
-				$mail_subject = NULL;
-				if ($invite)
-				{
-					$mail_body = View::factory('emails/invite')
-								 ->bind('secret_url', $secret_url);
-					$mail_body->site_name = Model_Setting::get_setting('site_name');
-					$mail_subject = __(':sitename Invite!', 
-						array(':sitename' => Model_Setting::get_setting('site_name')));
-				}
-				else
-				{
-					$mail_body = View::factory('emails/createuser')
-								 ->bind('secret_url', $secret_url);
-					$mail_subject = __(':sitename: Please confirm your email address', 
-						array(':sitename' => Model_Setting::get_setting('site_name')));
-				}
-				
-				$secret_url = URL::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
-				Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
-
-
-				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
-			}
-			else
-			{
-				$ret['errors'] = array($response['error']);
-			}
-		}
-		
-		return $ret;
-	}	
-
-	/**
-	* Send a river id password reset request
-	*
-	*/	
-	private function _password_reset_riverid($email)
-	{
-		$riverid_api = RiverID_API::instance();		            
-		$mail_body = View::factory('emails/resetpassword')
-					 ->bind('secret_url', $secret_url);		            
-		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('useradmin.email_address');
-		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
-		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
-		
-		if ($response['status']) 
-		{
-			$this->messages = array(__('An email has been sent with instructions to complete the password reset process.'));
-		} 
-		else 
-		{
-			$this->$errors = array($response['error']);
-		}
-	}
-
-	/**
-	* Password reset for ORM auth.
-	*
-	*/	
-	private function _password_reset_orm($email)
-	{
-		$auth_token = Model_Auth_Token::create_token('password_reset', array('email' => $email));
-		if ($auth_token->loaded())
-		{
-			//Send an email with a secret token URL
-			$mail_body = View::factory('emails/resetpassword')
-						 ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
-			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
-			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
-			
-			
-			$this->messages = array(
-				__('An email has been sent with instructions to complete the password reset process.'));
-		}
-		else
-		{
-			$this->$errors = array(__('Error'));
-		}
-	}
 	
 	/**
 	* Reset password

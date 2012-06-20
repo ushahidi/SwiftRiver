@@ -431,5 +431,217 @@ class Model_User extends Model_Auth_User {
 		return $query->execute()->as_array();
 
 	}
+	
+	public static function new_user($email, $riverid_auth, $invite = FALSE)
+	{
+		$messages = array();
+		
+		// Check if an admin user is logged in
+		$admin = FALSE;
+		if (Auth::instance()->logged_in())
+		{
+			$admin = Auth::instance()->get_user()->has('roles', 
+				ORM::factory('role',array('name'=>'admin')));
+		}
+		
+		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
+		{
+			$messages['errors'] = array(__('This site is not open to public registration'));
+		}
+		else
+		{
+			if ( ! Valid::email($email))
+			{
+				$messages['errors'] = array(__('The email address provided is invalid'));
+			} 
+			else
+			{
+				if ($riverid_auth)
+				{
+					$messages = self::new_user_riverid($email, $invite);
+				}
+				else
+				{
+					$messages = self::new_user_orm($email, $invite);
+				}
+			}
+		}		  
+		
+		return $messages;
+	}
+	
+	/**
+	* Send a river id registration request
+	*
+	*/
+	private static function new_user_riverid($email, $invite = FALSE) 
+	{
+		$riverid_api = RiverID_API::instance();
+		
+		if ( $riverid_api->is_registered($email) AND ! $invite) 
+		{
+			return array('errors' => array(__('The email address provided is already registered.')));
+		}
+		
+		$ret = array();
+		$mail_body = NULL;
+		if ($invite)
+		{
+			$mail_body = View::factory('emails/invite')
+						 ->bind('secret_url', $secret_url);
+			$mail_body->site_name = Model_Setting::get_setting('site_name');
+			$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
+		}
+		else
+		{
+			$mail_body = View::factory('emails/createuser')
+						 ->bind('secret_url', $secret_url);
+			$mail_subject = __(':sitename: Please confirm your email address', 
+				array(':sitename' => Model_Setting::get_setting('site_name')));
+		}
+		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
+		$site_email = Kohana::$config->load('useradmin.email_address');
+		
+		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
+		
+		if ($response['status']) 
+		{
+			$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
+		} 
+		else 
+		{
+			$ret['errors'] = array($response['error']);
+		}
+		
+		return $ret;
+	}
+
+	/**
+	* New user registration for ORM auth
+	*
+	*/
+	private static function new_user_orm($email, $invite = FALSE)
+	{
+		$ret = array();
+		
+		// Is the email registed in this site?
+		$user = ORM::factory('user',array('email'=>$email));
+
+		if ($user->loaded())
+		{
+			$ret['errors'] = array(__('The email address provided is already registered.'));
+		}
+		else
+		{
+			$auth_token = Model_Auth_Token::create_token('new_registration', array('email' => $email));
+			if ($auth_token->loaded())
+			{
+				//Send an email with a secret token URL
+				$mail_body = NULL;
+				$mail_subject = NULL;
+				if ($invite)
+				{
+					$mail_body = View::factory('emails/invite')
+								 ->bind('secret_url', $secret_url);
+					$mail_body->site_name = Model_Setting::get_setting('site_name');
+					$mail_subject = __(':sitename Invite!', 
+						array(':sitename' => Model_Setting::get_setting('site_name')));
+				}
+				else
+				{
+					$mail_body = View::factory('emails/createuser')
+								 ->bind('secret_url', $secret_url);
+					$mail_subject = __(':sitename: Please confirm your email address', 
+						array(':sitename' => Model_Setting::get_setting('site_name')));
+				}
+				
+				$secret_url = URL::site('login/create/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
+				Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
+
+
+				$ret['messages'] = array(__('An email has been sent with instructions to complete the registration process.'));
+			}
+			else
+			{
+				$ret['errors'] = array($response['error']);
+			}
+		}
+		
+		return $ret;
+	}
+	
+	
+	public static function password_reset($email, $riverid_auth)
+	{
+		$messages = array();
+		
+		// Do the password reset depending on the auth driver we are using.
+		if ($riverid_auth) 
+		{
+			$messages = self::password_reset_riverid($email);
+		}
+		else
+		{
+			$messages = self::password_reset_orm($email);
+		}		  
+		
+		return $messages;
+	}
+	
+	/**
+	* Send a river id password reset request
+	*
+	*/	
+	private static function password_reset_riverid($email)
+	{
+		$riverid_api = RiverID_API::instance();		            
+		$mail_body = View::factory('emails/resetpassword')
+					 ->bind('secret_url', $secret_url);		            
+		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
+		$site_email = Kohana::$config->load('useradmin.email_address');
+		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
+		
+		$ret = array();
+		if ($response['status']) 
+		{
+			$ret['messages'] = array(__('An email has been sent with instructions to complete the password reset process.'));
+		} 
+		else 
+		{
+			$ret['errors'] = array($response['error']);
+		}
+		
+		return $ret;
+	}
+
+	/**
+	* Password reset for ORM auth.
+	*
+	*/	
+	private static function password_reset_orm($email)
+	{
+		$ret = array();
+		$auth_token = Model_Auth_Token::create_token('password_reset', array('email' => $email));
+		if ($auth_token->loaded())
+		{
+			//Send an email with a secret token URL
+			$mail_body = View::factory('emails/resetpassword')
+						 ->bind('secret_url', $secret_url);		            
+			$secret_url = url::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
+			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
+			
+			
+			$ret['messages'] = array(
+				__('An email has been sent with instructions to complete the password reset process.'));
+		}
+		else
+		{
+			$ret['errors'] = array(__('Error'));
+		}
+		
+		return $ret;
+	}
 
 }
