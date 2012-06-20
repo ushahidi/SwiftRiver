@@ -26,8 +26,8 @@ class Feedwriter_Init
                 'name'    => Request::current()->param('name'),
                 'action'  => 'atom'
             )), true);
-            echo '<meta rel="self" type="application/rss+xml" href="'.$rss_url.
-                '" /><meta rel="self" type="application/atom+xml" href="'.
+            echo '<link rel="alternate" title="RSS" type="application/rss+xml" href="'.$rss_url.
+                '" /><link rel="alternate" title="Atom" type="application/atom+xml" href="'.
                 $atom_url.'" />';
         }
     }
