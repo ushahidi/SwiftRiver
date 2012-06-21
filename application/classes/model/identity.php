@@ -41,13 +41,13 @@ class Model_Identity extends ORM
 	 * Auto-update columns for creation
 	 * @var string
 	 */
-    protected $_created_column = array('column' => 'account_date_add', 'format' => 'Y-m-d H:i:s');
+    protected $_created_column = array('column' => 'identity_date_add', 'format' => 'Y-m-d H:i:s');
 
     /**
 	 * Auto-update columns for updates
 	 * @var string
 	 */
-    protected $_updated_column = array('column' => 'account_date_modified', 'format' => 'Y-m-d H:i:s');
+    protected $_updated_column = array('column' => 'identity_date_modified', 'format' => 'Y-m-d H:i:s');
 
 	/**
 	 * Given an array of droplets information, populate identities from the
