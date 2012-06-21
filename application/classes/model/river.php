@@ -136,6 +136,11 @@ class Model_River extends ORM {
 		    ->where('river_id', '=', $this->id)
 		    ->execute();
 
+		// Delete collaborators
+		DB::delete('river_collaborators')
+		    ->where('river_id', '=', $this->id)
+		    ->execute();
+
 		// Proceed with default behaviour
 		parent::delete();
 	}

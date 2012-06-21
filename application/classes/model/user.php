@@ -644,4 +644,85 @@ class Model_User extends Model_Auth_User {
 		return $ret;
 	}
 
+	/**
+	 * Overrides the default delete behaviour
+	 * Removes all the data associated with the user from
+	 * the system. This data includes buckets, rivers, tags,
+	 * collaborations, subscriptions and auth tokens
+	 */
+	public function delete()
+	{
+		// Does this user have an account space?
+		$account = ORM::factory('account')
+		    ->where('user_id', '=', $this->id)
+		    ->find();
+
+		if ($account->loaded())
+		{
+			// Delete buckets - droplets, subscriptions and collaborations
+			$buckets = ORM::factory('bucket')
+			    ->where('account_id', '=', $account->id)
+			    ->find_all();
+			foreach ($buckets as $bucket)
+			{
+				$bucket->delete();
+			}
+
+			// Delete rivers - droplets, subscriptions and collaborations
+			$rivers = ORM::factory('river')
+			    ->where('account_id', '=', $account->id)
+			    ->find_all();
+			foreach ($rivers as $river)
+			{
+				$river->delete();
+			}
+
+			// User created tags
+			DB::delete('account_droplet_tags')
+			    ->where('account_id', '=', $account->id)
+			    ->execute();
+
+			// User created places
+			DB::delete('account_droplet_places')
+			    ->where('account_id', '=', $account->id)
+			    ->execute();
+
+			// User created links
+			DB::delete('account_droplet_links')
+			    ->where('account_id', '=', $account->id)
+			    ->execute();
+
+			// User created media
+			DB::delete('account_droplet_media')
+			    ->where('account_id', '=', $account->id)
+			    ->execute();
+		}
+
+		// Remove follows and list of followers
+		DB::delete('user_followers')
+		    ->where('user_id', '=', $this->id)
+		    ->or_where('follower_id', '=', $this->id)
+		    ->execute();
+
+		// Accounts associated with the user
+		DB::delete('accounts')
+		    ->where('user_id', '=', $this->id)
+		    ->execute();
+
+		// User tokens
+		DB::delete('user_tokens')
+		    ->where('user_id', '=', $this->id)
+		    ->execute();
+
+		// Purge the logs - where the user has initiated an action
+		// or an action has been performed on them
+		DB::delete('user_actions')
+		    ->where('user_id', '=', $this->id)
+		    ->or_where('action_to_id', '=', $this->id)
+		    ->execute();
+
+		// Default
+		parent::delete();
+	}
+
 }
