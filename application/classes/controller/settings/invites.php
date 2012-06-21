@@ -45,7 +45,7 @@ class Controller_Settings_Invites extends Controller_Settings_Main {
 			$errors = array();
 			foreach (preg_split("/(\r?\n)/", $file_contents) as $line) {
 				$email = trim($line);
-				$messages = Model_User::new_user($email, $this->riverid_auth);
+				$messages = Model_User::new_user($email, $this->riverid_auth, TRUE);
 
 				// Display the messages
 				if (isset($messages['errors']))
