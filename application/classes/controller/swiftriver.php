@@ -315,7 +315,8 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			$this->template->header = View::factory('template/header')
 			    ->bind('user', $this->user)
-			    ->bind('site_name', $site_name);
+			    ->bind('site_name', $site_name)
+				->bind('dashboard_url', $this->dashboard_url);
 
 			$this->template->header->js = ''; // Dynamic Javascript
 			$this->template->header->css = ''; // Dynamic CSS

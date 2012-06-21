@@ -30,7 +30,7 @@ $(function(){
 			success: function(data) {
 				if(data.status == 'OK') {
 					$(".alert-message.blue").find("span.message").html(data.messages[0]).parents(".alert-message").show();
-					$("#invites input[name=new_email]").val("");
+					$("input[name=new_email]").val("");
 				} else {
 					$(".alert-message.red").find("span.message").html(data.errors[0]).parents(".alert-message").show();
 				}
@@ -54,23 +54,80 @@ $(function(){
 	
 	// Focus the search box
 	$("input[name=new_email]").focus();
+	
+	// File upload handler
+	var loading_msg = window.loading_image.clone();
+	var file_input = $("span.has_file").clone(true);
+	var t;
+	function setFileHandler() {
+		$("#email_list").fileupload({
+			dataType: 'json',
+			add: function(e, data) {
+				data.submit();
+			},
+			start: function (e) {
+				$(".alert-message").hide();
+				// Show the loading message if syncing takes longer than 500ms			
+				t = setTimeout(function() { $("span.has_file").replaceWith(loading_msg); }, 500);
+			},
+			done: function (e, data) {
+				clearTimeout(t);
+				loading_msg.replaceWith(file_input);
+				setFileHandler();
+				response = data.result;
+				if (!response.status_ok) {
+					var error_msg = "<ul>";
+					for (key in response.errors) {
+						error_msg += "<li>" + response.errors[key] + "</li>";
+					}
+					error_msg += "</ul>";
+					$(".alert-message.red").find("span.message").html(error_msg).parents(".alert-message").show();
+				} else {
+					$(".alert-message.blue").find("span.message").html("All invites sent successfully.").parents(".alert-message").show();
+				}
+			},
+			fail: function (e, data) {
+				clearTimeout(t);
+				loading_msg.replaceWith(file_input);
+				setFileHandler();
+				$(".alert-message.red").find("span.message").html("<?php echo __('Unable to send invite. Try again later.'); ?>").parents(".alert-message").show();
+			}
+		});
+	}
+	setFileHandler();
 });
 
 </script>
 
 <div class="alert-message red" style="display:none">
-	<p><strong>Uh oh.</strong> <span class="message"></span></p>
+	<p><span class="message"></span></p>
 </div>
 
 <div class="alert-message blue" style="display:none">
-	<p><strong>Success</strong> <span class="message"></span></p>
+	<p><span class="message"></span></p>
 </div>
 
 <?php echo Form::open(); ?>
 <article class="container base">
 	<header class="cf">
 		<div class="property-title">
-			<h1>Enter an email address</h1>
+			<h1>Select a file</h1>
+		</div>
+	</header>
+	<section class="property-parameters">
+		<div class="parameter">
+			<label for="river_name">
+				<p class="field">File</p>
+				<span class="button-blue has_file"><a href="#">Select file</a><input type="file" name="file" id="email_list"></span>
+			</label>
+		</div>
+	</section>
+</article>
+
+<article class="container base">
+	<header class="cf">
+		<div class="property-title">
+			<h1>Or enter an email address</h1>
 		</div>
 	</header>
 	<section class="property-parameters">
@@ -82,7 +139,6 @@ $(function(){
 		</div>
 	</section>
 </article>
-
 <div class="save-toolbar">
 	<p class="button-blue"><a href="#">Send invite</a></p>
 </div>

@@ -114,6 +114,11 @@ class Model_Bucket extends ORM {
 		    ->where('bucket_id', '=', $this->id)
 		    ->execute();
 
+		// Remove collaborators
+		DB::delete('bucket_collaborators')
+		    ->where('bucket_id', '=', $this->id)
+		    ->execute();
+
 		parent::delete();
 	}
 	

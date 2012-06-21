@@ -100,7 +100,7 @@
 		<div class="center">
 			<div class="col_4">
 				<h1 class="logo">
-					<a href="<?php echo URL::site(); ?>">
+					<a href="<?php echo $dashboard_url; ?>">
 					<span class="nodisplay">SwiftRiver</span>
 					</a>
 				</h1>
