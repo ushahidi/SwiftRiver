@@ -149,20 +149,9 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			session_destroy();
 		}
-				
-
-		if ( ! $this->cache)
-		{
-			try
-			{
-				// Load the default Cache engine
-				$this->cache = Cache::instance('default');
-			}
-			catch (Cache_Exception $e)
-			{
-				// Do nothing, just log it
-			}
-		}
+		
+		// Load the default Cache engine
+		$this->cache = Cache::instance();
 		
 		// Open session
 		$this->session = Session::instance();
@@ -348,6 +337,26 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 
+	}
+	
+	
+	/**
+	 * @return	void
+	 */
+	public function after()
+	{
+		// Set a GC probability of 10%
+		$gc = 10;
+		
+		// If the GC probability is a hit
+		if (rand(0,99) <= $gc and $this->cache instanceof Cache_GarbageCollect)
+		{
+		     // Garbage Collect
+		     $this->cache->garbage_collect();
+		}
+		
+		// Execute parent::before first
+		parent::after();
 	}
 	
 

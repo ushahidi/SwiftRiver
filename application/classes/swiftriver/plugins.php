@@ -27,23 +27,30 @@ class Swiftriver_Plugins {
 	 */
 	public static function load()
 	{
-		$active_plugins = ORM::factory("plugin")
-			->where("plugin_enabled", "=", 1)
-			->find_all();
-		
 		$plugin_entries = array();
-		foreach ($active_plugins as $plugin)
+		if ( ! ($plugin_entries = Cache::instance()->get('site_plugin_entries', FALSE)))
 		{
-			$plugin_path = PLUGINPATH.$plugin->plugin_path;
-			if ( ! is_dir(realpath($plugin_path.DIRECTORY_SEPARATOR)))
+			$active_plugins = ORM::factory("plugin")
+				->where("plugin_enabled", "=", 1)
+				->find_all();
+
+			foreach ($active_plugins as $plugin)
 			{
-				// Plugin no longer exists. Delete.
-				$plugin->delete();
-				continue;
+				$plugin_path = PLUGINPATH.$plugin->plugin_path;
+				if ( ! is_dir(realpath($plugin_path.DIRECTORY_SEPARATOR)))
+				{
+					// Plugin no longer exists. Delete.
+					$plugin->delete();
+					continue;
+				}
+
+				$plugin_entries[$plugin->plugin_path] = $plugin_path;
 			}
 			
-			$plugin_entries[$plugin->plugin_path] = $plugin_path;
+			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
 		}
+		
+		
 		
 		// Add the plugin entries to the list of Kohana modules
 		Kohana::modules(Kohana::modules() + $plugin_entries);
