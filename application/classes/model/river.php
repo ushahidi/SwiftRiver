@@ -185,7 +185,10 @@ class Model_River extends ORM {
 		$river->river_public = $public;
 		$river->account_id = $account->id;
 		$river->save();
-        
+		
+		// Force refresh of cached rivers
+        Cache::instance()->delete('user_rivers_'.$account->user->id);
+
 		return $river;
 	}
 	

@@ -257,9 +257,14 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 
 			// Does this user have an account space?
-			$this->account = ORM::factory('account')
-				->where('user_id', '=', $this->user->id)
-				->find();
+			if ( ! ($this->account = $this->cache->get('user_account_'.$this->user->id, FALSE)))
+			{
+				$this->account = ORM::factory('account')
+					->where('user_id', '=', $this->user->id)
+					->find();
+				$this->cache->set('user_account_'.$this->user->id, $this->account, 60 + rand(0,60));
+			}
+			
 				
 			if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
 			{
@@ -274,7 +279,7 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			else
 			{
-				$this->dashboard_url = URL::site().$this->user->account->account_path;
+				$this->dashboard_url = URL::site().$this->account->account_path;
 			}
 			
 			// Build the base URL
@@ -323,8 +328,18 @@ class Controller_Swiftriver extends Controller_Template {
 			if ($this->user)
 			{
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
-				$this->template->header->bucket_list = json_encode($this->user->get_buckets_array($this->user));
-				$this->template->header->river_list = json_encode($this->user->get_rivers_array($this->user));
+				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user->id, FALSE)))
+				{
+					$buckets = json_encode($this->user->get_buckets_array($this->user));
+					Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
+				}
+				$this->template->header->bucket_list = $buckets;
+				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user->id, FALSE)))
+				{
+					$rivers = json_encode($this->user->get_rivers_array($this->user));
+					Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
+				}
+				$this->template->header->river_list = $rivers;
 			}
 
 			$this->template->content = '';

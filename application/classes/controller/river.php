@@ -662,6 +662,12 @@ class Controller_River extends Controller_Swiftriver {
 				}
 			break;
 		}
+		
+		// Force refresh of cached rivers
+		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
+		{
+			Cache::instance()->delete('user_rivers_'.$this->user->id);
+		}
 	}
 	
 	
