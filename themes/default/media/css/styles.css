@@ -1312,6 +1312,9 @@ article.container div.parameter input[type="password"] {
   width: 50%;
   margin-left: 30px;
 }
+article.container div.parameter textarea {
+  margin-left: 30px;
+}
 article.container div.parameter div.actions {
   float: right;
   font-size: 0.8em;
