@@ -270,8 +270,13 @@
 <script type="text/template" id="discussion-template">
 	<div class="drop-content">
 		<div class="drop-body">
-			<h1><%= droplet_content %></h1>
-			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %></span></a></p>
+			<% if (!deleted && (identity_user_id == logged_in_user)) { %>
+				<p class="remove-small actions" title="Delete this comment">
+					<span class="icon"></span><span class="nodisplay">Remove</span>
+				</p>
+			<% } %>
+			<h1><%= comment_text %></h1>
+			<p class="metadata discussion"><%= new Date(date_added).toLocaleString() %></span></a></p>
 		</div>
 		<section class="drop-source cf">
 			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>

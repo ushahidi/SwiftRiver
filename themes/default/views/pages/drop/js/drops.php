@@ -47,10 +47,32 @@ $(function() {
 	
 		template: _.template($("#discussion-template").html()),
 		
+		events: {
+			// Show/Hide the edit button
+			"mouseover .drop-body": function() { this.$(".drop-body p.remove-small").show(); },
+			"mouseout .drop-body": function() { this.$(".drop-body p.remove-small").hide(); },
+			"click p.remove-small": "delete",
+		},
+		
+		initialize: function(options) {
+			this.model.on("destroy", this.onDelete, this);
+		},
+		
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
 		},
+		
+		delete: function() {
+			this.model.destroy();
+		},
+		
+		onDelete: function() {
+			console.log("woiye");
+			this.model.set("comment_text", "This comment has been removed");
+			this.model.set("deleted", true);
+			this.render();
+		}
 	});
 	
 	// Tag model
@@ -326,7 +348,7 @@ $(function() {
             
 			//var error_el = this.$("section.discussion div.system_error");
 			var drop = this.model;
-			this.discussions.create({droplet_content: $(textarea).val()}, {
+			this.discussions.create({comment_text: $(textarea).val()}, {
 				wait: true,
 				complete: function() {
 					loading_msg.replaceWith(publishButton);

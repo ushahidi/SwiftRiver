@@ -549,35 +549,46 @@ class Controller_River extends Controller_Swiftriver {
 				}
 				
 				// Get the POST data
-				$droplet = json_decode($this->request->body(), TRUE);
+				$body = json_decode($this->request->body(), TRUE);
 				
-				// Set the remaining properties
-				$droplet['parent_id'] = intval($this->request->param('id', 0));
-				$droplet['droplet_type'] = 'reply';
-				$droplet['channel'] = 'swiftriver';
-				$droplet['droplet_title'] = $droplet['droplet_content'];
-				$droplet['droplet_raw'] = $droplet['droplet_content'];
-				$droplet['droplet_date_pub'] = gmdate('Y-m-d H:i:s', time());
-				$droplet['droplet_orig_id'] = 0;
-				$droplet['droplet_locale'] = 'en';
-				$droplet['identity_orig_id'] = $this->user->id;
-				$droplet['identity_username'] = $this->user->username;
-				$droplet['identity_name'] = $this->user->name;
-				$droplet['identity_avatar'] = Swiftriver_Users::gravatar($this->user->email, 80);
-				// Set the river id
-				$droplet['river_id'] = $this->river->id;
-
-				// Add the droplet to the queue
-				$droplet = Model_Droplet::create_single($droplet);
-				
-				if ($droplet) 
+				$comment = ORM::factory('droplet_comment');
+				$comment->comment_text = $body['comment_text'];
+				$comment->droplet_id = intval($this->request->param('id', 0));
+				$comment->user_id = $this->user->id;
+				$comment->save();
+								
+				if ($comment->loaded()) 
 				{
-					echo json_encode($droplet);
+					echo json_encode(array(
+						'id' => $comment->id,
+						'droplet_id' => $comment->droplet_id,
+						'comment_text' => $comment->comment_text,
+						'identity_user_id' => $this->user->id,
+						'identity_name' => $this->user->name,
+						'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
+						'deleted' => FALSE,
+						'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
+					));
 				}
 				else
 				{
 					$this->response->status(400);
 				}
+			break;
+			case "DELETE":
+				$comment_id = intval($this->request->param('id2', 0));
+				$comment = ORM::factory('droplet_comment', $comment_id);
+				
+				// Does the comment exist?
+				if ( ! $comment->loaded())
+					throw new HTTP_Exception_404();
+					
+				// Is owner of the comment logged in?
+				if ($comment->user->id != $this->user->id)
+					throw new HTTP_Exception_403();
+				
+				$comment->deleted = TRUE;
+				$comment->save();
 			break;
 		}
 	}
