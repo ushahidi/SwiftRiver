@@ -658,9 +658,7 @@ div.follow-summary p.follow-count a strong {
 hgroup.user-title div.follow-summary p.button-white a {
   display: inline-block;
 }
-hgroup.user-title div.follow-summary p.follow.selected a:after {
-  content: 'ing';
-}
+
 /* --------------------------- PAGE NAVIGATION */
 nav.page-navigation {
   -wekbit-box-shadow: 0 1px 0 rgba(256, 256, 256, 0.5) inset;
