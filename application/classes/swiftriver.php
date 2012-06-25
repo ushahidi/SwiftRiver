@@ -32,18 +32,27 @@ class Swiftriver {
 	 */
 	public static function init()
 	{
+		// Set defaule cache configuration
+		Cache::$default = Kohana::$config->load('site')->get('default_cache');
+		
+		try
+		{
+			$cache = Cache::instance()->get('dummy'.rand(0,99));
+		}
+		catch (Exception $e)
+		{
+			// Use the dummy driver
+			Cache::$default = 'dummy';
+		}
+		
+		
 		// Load the plugins
 		Swiftriver_Plugins::load();
 
 		// Add the current default theme to the list of modules
-		$theme = ORM::factory('setting')->where('key', '=', 'site_theme')
-		    ->find();
+		$theme = Model_Setting::get_setting('site_theme');
 
-		if
-		(
-			$theme->loaded() AND ! empty($theme->value) AND
-			$theme->value != "default"
-		)
+		if ($theme != "default")
 		{
 			Kohana::modules(array_merge(
 				array('themes/'.$theme->value => THEMEPATH.$theme->value),

@@ -144,7 +144,13 @@ class Controller_River extends Controller_Swiftriver {
 		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 				
 		// The maximum droplet id for pagination and polling
-		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
+		$max_droplet_id = 0;
+		if ( ! ($max_droplet_id = $this->cache->get('river_max_id_'.$river_id, FALSE)))
+		{
+			$max_droplet_id = Model_River::get_max_droplet_id($river_id);
+			// Cache for 90s
+			$this->cache->set('river_max_id_'.$river_id, $max_droplet_id, 90);
+		}
 
 		// River filters
 		$filters = $this->_get_filters();
@@ -655,6 +661,12 @@ class Controller_River extends Controller_Swiftriver {
 					throw new HTTP_Exception_404();
 				}
 			break;
+		}
+		
+		// Force refresh of cached rivers
+		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
+		{
+			Cache::instance()->delete('user_rivers_'.$this->user->id);
 		}
 	}
 	

@@ -92,6 +92,7 @@ Kohana::modules(array(
 	'orm'          => MODPATH.'orm',        // Object Relationship Mapping
 	'riverid'      => MODPATH.'riverid',
 	'cache'        => MODPATH.'cache',      // Caching with multiple backends
+	'dummy'        => MODPATH.'dummy_cache',// Blackhole cache driver
 	'database'     => MODPATH.'database',   // Database access
 	'image'        => MODPATH.'image',      // Image manipulation
 	'pagination'   => MODPATH.'pagination', // Pagination
