@@ -36,6 +36,9 @@ class Controller_Bucket_Display extends Controller_Bucket_Settings {
 				$this->bucket->default_layout = $this->request->post('default_layout');
 				$this->bucket->save();
 				
+				// Force refresh of cached buckets
+				Cache::instance()->delete('user_buckets_'.$this->user->id);
+				
 				// Redirect to the new URL with a success messsage
 				$session->set("messages", array(__("Display settings were saved successfully.")));
 				$this->request->redirect($this->bucket->get_base_url($this->bucket).'/settings/display');

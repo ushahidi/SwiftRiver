@@ -105,10 +105,15 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->request->controller() != 'login'
 		)
 		{
-			$user_orm = ORM::factory('user', array('username' => 'public'));
-			if ($user_orm->loaded()) 
+			if ( ! ($public_user = Cache::instance()->get('site_public_user', FALSE)))
 			{
-				Auth::instance()->force_login($user_orm);
+				$public_user = ORM::factory('user', array('username' => 'public'));
+				Cache::instance()->set('site_public_user', $public_user, 86400 + rand(0,86400));
+			}
+
+			if ($public_user->loaded()) 
+			{
+				Auth::instance()->force_login($public_user);
 				return;
 			}
 		}
@@ -149,24 +154,13 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 			session_destroy();
 		}
-				
-
-		if ( ! $this->cache)
-		{
-			try
-			{
-				// Load the default Cache engine
-				$this->cache = Cache::instance('default');
-			}
-			catch (Cache_Exception $e)
-			{
-				// Do nothing, just log it
-			}
-		}
+		
+		// Load the default Cache engine
+		$this->cache = Cache::instance();
 		
 		// Open session
 		$this->session = Session::instance();
-		
+
 		// If an api key has been provided, login that user
 		$api_key = $this->request->query('api_key');
 		if ($api_key)
@@ -258,8 +252,7 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			
 			// Is this user an admin?
-			$this->admin = $this->user->has('roles', 
-				ORM::factory('role',array('name'=>'admin')));
+			$this->admin = $this->user->is_admin();
 			
 			if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' AND
 	                      ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
@@ -268,9 +261,14 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 
 			// Does this user have an account space?
-			$this->account = ORM::factory('account')
-				->where('user_id', '=', $this->user->id)
-				->find();
+			if ( ! ($this->account = $this->cache->get('user_account_'.$this->user->id, FALSE)))
+			{
+				$this->account = ORM::factory('account')
+					->where('user_id', '=', $this->user->id)
+					->find();
+				$this->cache->set('user_account_'.$this->user->id, $this->account, 3600 + rand(0,3600));
+			}
+			
 				
 			if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
 			{
@@ -285,7 +283,7 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			else
 			{
-				$this->dashboard_url = URL::site().$this->user->account->account_path;
+				$this->dashboard_url = URL::site().$this->account->account_path;
 			}
 			
 			// Build the base URL
@@ -334,8 +332,18 @@ class Controller_Swiftriver extends Controller_Template {
 			if ($this->user)
 			{
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
-				$this->template->header->bucket_list = json_encode($this->user->get_buckets_array($this->user));
-				$this->template->header->river_list = json_encode($this->user->get_rivers_array($this->user));
+				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user->id, FALSE)))
+				{
+					$buckets = json_encode($this->user->get_buckets_array($this->user));
+					Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
+				}
+				$this->template->header->bucket_list = $buckets;
+				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user->id, FALSE)))
+				{
+					$rivers = json_encode($this->user->get_rivers_array($this->user));
+					Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
+				}
+				$this->template->header->river_list = $rivers;
 			}
 
 			$this->template->content = '';
@@ -348,6 +356,26 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 
+	}
+	
+	
+	/**
+	 * @return	void
+	 */
+	public function after()
+	{
+		// Set a GC probability of 10%
+		$gc = 10;
+		
+		// If the GC probability is a hit
+		if (rand(0,99) <= $gc and $this->cache instanceof Cache_GarbageCollect)
+		{
+		     // Garbage Collect
+		     $this->cache->garbage_collect();
+		}
+		
+		// Execute parent::before first
+		parent::after();
 	}
 	
 

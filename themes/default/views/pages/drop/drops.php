@@ -399,6 +399,7 @@
 		<ul>
 			<li class="twitter">
 				<a href="https://twitter.com/share?url=<%= encodeURIComponent(drop_url) %>&text=<%= encodeURIComponent(droplet_title) %>" 
+				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" 
 				    target="_blank">
 					<span class="icon"></span><?php echo __("Twitter"); ?>
 				</a>
@@ -406,6 +407,7 @@
 			<li class="facebook">
 				<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(droplet_title); %>
 				<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %>" 
+				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
 				    target="_blank">
 				    <span class="icon"></span><?php echo __("Facebook"); ?>
 			    <a/>
@@ -457,16 +459,6 @@
 		<!-- /notitications -->
 
 		<?php echo Form::open(); ?>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("From:"); ?></p>
-						<?php echo Form::input('sender', $user->username, array('readonly')); ?>
-					</label>
-				</div>
-			</section>
-		</article>
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">

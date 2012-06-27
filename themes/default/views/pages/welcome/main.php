@@ -8,7 +8,7 @@
 					<p class="button-blue button-darkblue button-video close"><a href="#">Close</a></p>
 				</div>
 				<p class="button-blue button-darkblue button-video"><a href="#"><span class="icon"></span>See how it works</a></p>
-				<img src="/markup/images/content/home-masthead-graphic.png" />
+				<img src="/themes/default/media/img/content/home-masthead-graphic.png" />
 			</div>
 		</div>
 	</div>
@@ -49,10 +49,10 @@
 			<h2 class="collaboration">Collaboration</h2>
 			<ul>
 				<li>
-					<a href="/markup/images/content/home-screen-collab1.png" class="modal-trigger img"><img src="/markup/images/content/home-screen-collab1.png" /></a>
+					<a href="/themes/default/media/img/content/home-screen-collab1.png" class="modal-trigger img"><img src="/themes/default/media/img/content/home-screen-collab1.png" /></a>
 					<span class="description">Simultaneously manage a river or bucket with your peers.</span>
 				<li>
-					<a href="/markup/images/content/home-screen-collab2.png" class="modal-trigger img"><img src="/markup/images/content/home-screen-collab2.png" /></a>
+					<a href="/themes/default/media/img/content/home-screen-collab2.png" class="modal-trigger img"><img src="/themes/default/media/img/content/home-screen-collab2.png" /></a>
 					<span class="description">Get instant feedback from the crowd about what you find.</span>
 				</li>
 			</ul>
@@ -61,10 +61,10 @@
 			<h2 class="views">Insightful views</h2>
 			<ul>
 				<li>
-					<a href="/markup/images/content/home-views1.png" class="modal-trigger"><img src="/markup/images/content/home-screen-views1.png" /></a>
+					<a href="/themes/default/media/img/content/home-views1.png" class="modal-trigger"><img src="/themes/default/media/img/content/home-screen-views1.png" /></a>
 					<span class="description">See the your information in a list, photo gallery, timeline or more.</span>
 				<li>
-					<a href="/markup/images/content/home-screen-views2.png" class="modal-trigger"><img src="/markup/images/content/home-screen-views2.png" /></a>
+					<a href="/themes/default/media/img/content/home-screen-views2.png" class="modal-trigger"><img src="/themes/default/media/img/content/home-screen-views2.png" /></a>
 					<span class="description">Apply new views to your information, or build your own.</span>
 				</li>
 			</ul>
@@ -73,10 +73,10 @@
 			<h2 class="configuration">Configuration</h2>
 			<ul>
 				<li>
-					<a href="/markup/images/content/home-screen-config1.png" class="modal-trigger"><img src="/markup/images/content/home-screen-config1.png" /></a>
+					<a href="/themes/default/media/img/content/home-screen-config1.png" class="modal-trigger"><img src="/themes/default/media/img/content/home-screen-config1.png" /></a>
 					<span class="description">Control who can see your river or bucket.</span>
 				<li>
-					<a href="/markup/images/content/home-screen-config1.png" class="modal-trigger"><img src="/markup/images/content/home-screen-config2.png" /></a>
+					<a href="/themes/default/media/img/content/home-screen-config1.png" class="modal-trigger"><img src="/themes/default/media/img/content/home-screen-config2.png" /></a>
 					<span class="description">Run SwiftRiver’s open source software on your own server.</span>
 				</li>
 			</ul>

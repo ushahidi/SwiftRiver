@@ -936,7 +936,7 @@ $(function() {
 		template: _.template($("#share-drop-template").html()),
 
 		events: {
-			"click li.email > a": "showEmailDialog"
+			"click li.email > a": "showEmailDialog",
 		},
 
 		showEmailDialog: function() {

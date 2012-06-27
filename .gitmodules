@@ -7,21 +7,21 @@
 [submodule "system"]
 	path = system
 	url = https://github.com/kohana/core.git
-[submodule "modules/auth"]
-	path = modules/auth
-	url = https://github.com/kohana/auth.git
-[submodule "modules/cache"]
-	path = modules/cache
-	url = https://github.com/kohana/cache.git
 [submodule "modules/database"]
 	path = modules/database
-	url = https://github.com/kohana/database.git
+	url = git://github.com/kohana/database.git
+[submodule "modules/auth"]
+	path = modules/auth
+	url = git://github.com/kohana/auth.git
+[submodule "modules/cache"]
+	path = modules/cache
+	url = git://github.com/kohana/cache.git
 [submodule "modules/image"]
 	path = modules/image
-	url = https://github.com/kohana/image.git
+	url = git://github.com/kohana/image.git
 [submodule "modules/orm"]
 	path = modules/orm
-	url = https://github.com/kohana/orm.git
+	url = git://github.com/kohana/orm.git
 [submodule "modules/pagination"]
 	path = modules/pagination
-	url = https://github.com/kohana/pagination.git
+	url = git://github.com/kohana/pagination.git

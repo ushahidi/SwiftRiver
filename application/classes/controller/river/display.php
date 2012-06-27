@@ -36,6 +36,9 @@ class Controller_River_Display extends Controller_River_Settings {
 				$this->river->default_layout = $this->request->post('default_layout');
 				$this->river->save();
 				
+				// Force refresh of cached rivers
+		        Cache::instance()->delete('user_rivers_'.$this->user->id);
+				
 				// Redirect to the new URL with a success messsage
 				$session->set("messages", array(__("Display settings were saved successfully.")));
 				$this->request->redirect($this->river->get_base_url().'/settings/display');

@@ -185,7 +185,10 @@ class Model_River extends ORM {
 		$river->river_public = $public;
 		$river->account_id = $account->id;
 		$river->save();
-        
+		
+		// Force refresh of cached rivers
+        Cache::instance()->delete('user_rivers_'.$account->user->id);
+
 		return $river;
 	}
 	
@@ -254,6 +257,23 @@ class Model_River extends ORM {
 	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, 
 		$max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array(), $photos = FALSE)
 	{
+		// Check the cache
+		$request_hash = hash('sha256', $user_id.
+						$river_id.
+						$drop_id.
+						$page.
+						$max_id.
+						$sort.
+						var_export($filters,TRUE).
+						($photos ? 1 : 0));
+		$cache_key = 'river_drops_'.$request_hash;
+		
+		// If the cache key is available (with default value set to FALSE)
+		if ($droplets = Cache::instance()->get($cache_key, FALSE))
+		{
+			return $droplets;
+		}
+		
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
@@ -328,6 +348,12 @@ class Model_River extends ORM {
 			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
 
 		}
+		
+		// Cache the drops
+		if ( ! empty($droplets['droplets']))
+		{
+			Cache::instance()->set($cache_key, $droplets);
+		}
 
 		return $droplets;
 	}
@@ -342,6 +368,20 @@ class Model_River extends ORM {
 	 */
 	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array(), $photos = FALSE)
 	{
+		// Check the cache
+		$request_hash = hash('sha256', $user_id.
+						$river_id.
+						$since_id.
+						var_export($filters,TRUE).
+						($photos ? 1 : 0));
+		$cache_key = 'river_drops_since_'.$request_hash;
+		
+		// If the cache key is available (with default value set to FALSE)
+		if ($droplets = Cache::instance()->get($cache_key, FALSE))
+		{
+			return $droplets;
+		}
+		
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
@@ -392,6 +432,13 @@ class Model_River extends ORM {
 
 			// Populate the metadata
 			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
+		}
+		
+		
+		// Cache the drops
+		if ( ! empty($droplets['droplets']))
+		{
+			Cache::instance()->set($cache_key, $droplets);
 		}
 				
 		return $droplets;

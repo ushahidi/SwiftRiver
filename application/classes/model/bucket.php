@@ -170,6 +170,23 @@ class Model_Bucket extends ORM {
 	    $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX, $photos = FALSE,
 	    $filters = array(), $limit = 0)
 	{
+		// Check the cache
+		$request_hash = hash('sha256', $user_id.
+						$bucket_id.
+						$drop_id.
+						$page.
+						$max_id.
+						$limit.
+						var_export($filters,TRUE).
+						($photos ? 1 : 0));
+		$cache_key = 'bucket_drops_'.$request_hash;
+		
+		// If the cache key is available (with default value set to FALSE)
+		if ($droplets = Cache::instance()->get($cache_key, FALSE))
+		{
+			return $droplets;
+		}
+		
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
@@ -243,6 +260,12 @@ class Model_Bucket extends ORM {
 			
 			$droplets['total'] = count($droplets['droplets']);
 		}
+		
+		// Cache the drops
+		if ( ! empty($droplets['droplets']))
+		{
+			Cache::instance()->set($cache_key, $droplets);
+		}
 
 		return $droplets;
 	}
@@ -257,6 +280,19 @@ class Model_Bucket extends ORM {
 	 */
 	public static function get_droplets_since_id($user_id, $bucket_id, $since_id, $photos = FALSE)
 	{
+		// Check the cache
+		$request_hash = hash('sha256', $user_id.
+						$bucket_id.
+						$since_id.
+						($photos ? 1 : 0));
+		$cache_key = 'bucket_drops_since_'.$request_hash;
+		
+		// If the cache key is available (with default value set to FALSE)
+		if ($droplets = Cache::instance()->get($cache_key, FALSE))
+		{
+			return $droplets;
+		}
+		
 		$droplets = array(
 			'total' => 0,
 			'droplets' => array()
@@ -303,6 +339,12 @@ class Model_Bucket extends ORM {
 			
 			// Populate buckets array			
 			Model_Droplet::populate_metadata($droplets['droplets'], $bucket_orm->account_id);
+		}
+		
+		// Cache the drops
+		if ( ! empty($droplets['droplets']))
+		{
+			Cache::instance()->set($cache_key, $droplets);
 		}
 
 		return $droplets;

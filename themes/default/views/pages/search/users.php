@@ -8,9 +8,13 @@
 					<div class="actions">
 					</div>
 					<div class="property-title">
+						<a href="<?php echo URL::site().$user['account_path']; ?>" class="avatar-wrap">
+							<img src="<?php echo $user['avatar']; ?>"/>
+						</a>
 						<h1>
 							<a href="<?php echo URL::site().$user['account_path']; ?>">
-								<?php echo $user['name']; ?>
+								<?php echo $user['account_path']; ?> 
+								<em>(<?php echo $user['name']; ?>)</em>
 							</a>
 						</h1>
 					</div>
