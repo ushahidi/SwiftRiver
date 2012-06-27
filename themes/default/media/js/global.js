@@ -513,7 +513,7 @@ $(document).ready(function() {
 				if (!(this.collection instanceof window.BucketList))
 					return;
 				
-				var bucketName = $.trim(this.$(".create-new input[name=new_bucket]").val()).toLowerCase();
+				var bucketName = $.trim(this.$(".create-new input[name=new_bucket]").val());
 
 				if (!bucketName.length || this.isPageFetching)
 					return false;
@@ -521,7 +521,9 @@ $(document).ready(function() {
 				this.isPageFetching = true;
 
 				// First check if the bucket exists
-				var bucket = this.collection.find(function(bucket) { return bucket.get('name').toLowerCase() == bucketName });
+				var bucket = this.collection.find(function(bucket) { 
+					return bucket.get('name').toLowerCase() == bucketName.toLowerCase() 
+				});
 				if (bucket) {
 					this.onSaveNewBucket(bucket);
 					bucket.getView(this).setSelected();
@@ -544,7 +546,6 @@ $(document).ready(function() {
 				var loading_msg = window.loading_message.clone();
 				var create_el = this.$(".create-new .field").clone();
 				this.$(".create-new .field").replaceWith(loading_msg);
-
 				bucket = new Bucket({name: bucketName});
 				var view = this;
 				this.collection.create(bucket, {
