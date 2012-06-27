@@ -104,7 +104,16 @@ class Model_User_Action extends ORM {
 				
 				if ( ! $river_orm->river_public)
 				{
-					$skip_activity_item = ! $river_orm->is_owner($visitor_id) AND $result['action_to_self'] == 0;
+					$is_owner = $river_orm->is_owner($visitor_id);
+					if (( ! $is_owner AND $result['action_to_self'] == 1) OR $is_owner)
+					{
+						$skip_activity_item = FALSE;
+					}
+					else
+					{
+						$skip_activity_item = TRUE;
+					}
+
 				}
 
 				$action_on_name = $river_orm->river_name;
@@ -116,7 +125,15 @@ class Model_User_Action extends ORM {
 
 				if ( ! $bucket_orm->bucket_publish)
 				{
-					$skip_activity_item = ! $bucket_orm->is_owner($visitor_id) AND $result['action_to_self'] == 0;
+					$is_owner = $bucket_orm->is_owner($visitor_id);
+					if (( ! $is_owner AND $result['action_to_self'] == 1) OR $is_owner)
+					{
+						$skip_activity_item = FALSE;
+					}
+					else
+					{
+						$skip_activity_item = TRUE;
+					}
 				}
 
 				$action_on_name = $bucket_orm->bucket_name;
