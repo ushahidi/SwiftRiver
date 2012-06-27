@@ -60,33 +60,11 @@
 			<div class="masthead">
 				<h2>Curate real-time information with the power of the crowd.</h2>
 				<div id="message-container">
-					<div id="video-container">
-						<iframe src="http://player.vimeo.com/video/38711746" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
-						<p class="button-blue button-darkblue button-video close"><a href="#">Close</a></p>
-					</div>
-					<p class="button-blue button-darkblue button-video"><a href="#"><span class="icon"></span>See how it works</a></p>
 					<img src="/markup/images/content/home-masthead-graphic.png" />
 				</div>
 			</div>
 		</div>
 	</header>
-
-	<section class="sign-up cf">
-		<div class="center">
-			<div class="col_3">
-				<input type="text" placeholder="Name" />
-			</div>
-			<div class="col_3">
-				<input type="email" placeholder="Email address" />
-			</div>
-			<div class="col_3">
-				<input type="password" placeholder="Password" />
-			</div>
-			<div class="col_3">
-				<p class="button-blue button-darkblue"><a href="#">Get started</a></p>
-			</div>
-		</div>
-	</section>
 
 	<article class="basics">
 		<div class="center">
@@ -110,9 +88,6 @@
 					<li>
 						<a href="/markup/images/content/home-screen-collab1FULL.png"><img src="/markup/images/content/home-screen-collab1.png" /></a>
 						<span class="description">Simultaneously manage a river or bucket with your peers.</span>
-					<li>
-						<a href="#"><img src="/markup/images/content/home-screen-collab2.png" /></a>
-						<span class="description">Get instant feedback from the crowd about what you find.</span>
 					</li>
 				</ul>
 			</div>
@@ -122,9 +97,6 @@
 					<li>
 						<a href="/markup/images/content/home-screen-views1FULL.png"><img src="/markup/images/content/home-screen-views1.png" /></a>
 						<span class="description">See the your information in a list, photo gallery, timeline or more.</span>
-					<li>
-						<a href="#"><img src="/markup/images/content/home-screen-views2.png" /></a>
-						<span class="description">Apply new views to your information, or build your own.</span>
 					</li>
 				</ul>
 			</div>
@@ -134,51 +106,18 @@
 					<li>
 						<a href="/markup/images/content/home-screen-config1FULL.png"><img src="/markup/images/content/home-screen-config1.png" /></a>
 						<span class="description">Control who can see your river or bucket.</span>
-					<li>
-						<a href="#"><img src="/markup/images/content/home-screen-config2.png" /></a>
-						<span class="description">Run SwiftRiver’s open source software on your own server.</span>
 					</li>
 				</ul>
 			</div>
 		</div>
 	</article>
 
-	<section class="sign-up white cf">
-		<div class="center">
-			<h1>Create an account and get started in seconds.</h1>
-			<div class="col_3">
-				<input type="text" placeholder="Name" />
-			</div>
-			<div class="col_3">
-				<input type="email" placeholder="Email address" />
-			</div>
-			<div class="col_3">
-				<input type="password" placeholder="Password" />
-			</div>
-			<div class="col_3">
-				<p class="button-blue button-darkblue"><a href="#">Get started</a></p>
-			</div>
-		</div>
-	</section>
-
 	<footer>
 		<div class="center">
 			<h1 class="logo"><a href="/markup/"><span class="nodisplay">SwiftRiver</span></a></h1>
 			<h2>Made by Ushahidi in <strong>Nairobi, Kenya</strong></h2>
-			<ul>
-				<li><a href="#">Support</a></li>
-				<li><a href="#">Contact</a></li>
-			</ul>
 		</div>
 	</footer>
-
-<div id="zoom-container">
-	<div class="modal-window"></div>
-</div>
-
-<div id="modal-container">
-	<div class="modal-window"></div>
-</div>
 
 </body>
 </html>
