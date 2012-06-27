@@ -7,7 +7,7 @@
  * @version 0.2
  * @package PHPTwitterSearch
  */
-class TwitterSearch {
+class Twitter_Search {
     /**
      * Can be set to JSON (requires PHP 5.2 or the json pecl module) or XML - json|xml
      * @var string
@@ -76,7 +76,7 @@ class TwitterSearch {
     /**
     * @param string $query optional
     */
-    function TwitterSearch($query=false) {
+    function Twitter_Search($query=false) {
         $this->query = $query;
     }
     

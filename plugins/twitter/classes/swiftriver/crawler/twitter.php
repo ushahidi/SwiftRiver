@@ -36,7 +36,7 @@ class Swiftriver_Crawler_Twitter  {
 		
 		if ( ! empty($filter_options))
 		{
-			$search = new TwitterSearch();
+			$search = new Twitter_Search();
 			$search->user_agent = 'phptwittersearch:team@ushahidi.com';
 												
 			// Build the query
