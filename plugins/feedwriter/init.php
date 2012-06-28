@@ -34,9 +34,17 @@ class Feedwriter_Init
 
     public static function InjectIcon()
     {
+		$visited_account = ORM::factory('account',
+			array('account_path' => Request::current()->param('account')));
+		
+		$bucket = ORM::factory('bucket')
+			->where('bucket_name_url', '=', Request::current()->param('name'))
+			->where('account_id', '=', $visited_account->id)
+			->find();
+        
         if (Request::current()->controller() == 'bucket' &&
             strlen(Request::current()->param('name')) > 0)
-            echo HTML::script("plugins/feedwriter/media/js/icon.js");
+            echo HTML::script("plugins/feedwriter/media/js/icon.php?t=".$bucket->public_token);
     }
 }
 
