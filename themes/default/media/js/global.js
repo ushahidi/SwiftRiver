@@ -639,7 +639,6 @@ $(document).ready(function() {
 	
 	// Confirmation window
 	window.ConfirmationWindow = Backbone.View.extend({
-		tagName: "article",
 		
 		className: "modal",
 		
@@ -670,6 +669,35 @@ $(document).ready(function() {
 			this.callback.call(this.context);
 			return false;
 		}
+	});
+
+	// Feedback window
+	window.FeedbackWindow = Backbone.View.extend({
+		
+		className: "modal",
+		
+		template: _.template($("#feedback-modal-template").html()),
+
+		events: {
+			"click .close a": "close"
+		},
+		
+		show: function() {
+			modalShow(this.render().el);
+		},
+		
+		render: function() {
+			this.$el.html(this.template({message: this.message}));
+			return this;	
+		},
+
+		close: function() {
+			modalWindow.hide();
+		}
+	});
+	$('footer a.btn-feedback').live('click', function () {
+		modalShow(new FeedbackWindow().render().el);
+		return false;
 	});
 });
 
