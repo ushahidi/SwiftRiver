@@ -77,8 +77,8 @@
 						<label for="public_token">
 							<p class="field">Public Token</p>
 							<input type="text" value="<?php echo $bucket->public_token ?>" name="public_token" id="public_token" disabled="disabled" />
-							<p class="button-blue button-small generate" title="Generate a new public token. WARNING: The old token will no longer be usable." style="float: right;">
-								<a href="#">Generate</a>
+							<p class="button-blue button-small generate" style="float: right;">
+								<a href="#" title="Generate a new public token. WARNING: The old token will no longer be usable." >Generate</a>
 							</p>
 						</label>
 					</div>
