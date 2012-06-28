@@ -10,8 +10,8 @@
  */
 
 return array(
-    'language' => 'en-us',
-    'copyright' => 'Copyright (c) 2008-2012 Ushahidi Inc <http://ushahidi.com>'
+	'language' => 'en-us',
+	'copyright' => 'Copyright (c) 2008-2012 Ushahidi Inc <http://ushahidi.com>'
 );
 
 ?>

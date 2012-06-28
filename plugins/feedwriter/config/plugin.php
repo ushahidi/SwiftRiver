@@ -10,17 +10,17 @@
  */
 
 return array(
-    'feedwriter' => array(
-        'name' => 'FeedWriter',
-        'description' => 'Create RSS2 and Atom feeds from buckets.',
-        'author' => 'Nick Lewis',
-        'email' => 'nick@ushahidi.com',
-        'version' => '0.1',
-        'settings' => true,
-        'channel' => false,
-        'dependencies' => false,
-        'service' => true
-    )
+	'feedwriter' => array(
+		'name' => 'FeedWriter',
+		'description' => 'Create RSS2 and Atom feeds from buckets.',
+		'author' => 'Nick Lewis',
+		'email' => 'nick@ushahidi.com',
+		'version' => '0.1',
+		'settings' => true,
+		'channel' => false,
+		'dependencies' => false,
+		'service' => true
+	)
 );
 
 ?>
