@@ -153,6 +153,17 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 		
 		switch ($this->request->method())
 		{
+			case "GET":
+				$last_id = $this->request->query('last_id') ? intval($this->request->query('last_id')) : PHP_INT_MAX;
+				$comments = Model_Droplet::get_comments($droplet_id, $last_id);
+				
+				if (empty($comments))
+				{
+				    throw new HTTP_Exception_404('The requested page was not found on this server.');
+				}
+				
+				echo json_encode($comments);
+			break;
 			case "POST":
 				// Is the logged in user an owner?
 				if ( ! $this->owner)

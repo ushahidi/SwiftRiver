@@ -49,8 +49,8 @@ $(function() {
 		
 		events: {
 			// Show/Hide the edit button
-			"mouseover .drop-body": function() { this.$(".drop-body p.remove-small").show(); },
-			"mouseout .drop-body": function() { this.$(".drop-body p.remove-small").hide(); },
+			"mouseover": function() { this.$(".drop-body p.remove-small").show(); },
+			"mouseout": function() { this.$(".drop-body p.remove-small").hide(); },
 			"click p.remove-small": "delete",
 		},
 				
@@ -309,13 +309,20 @@ $(function() {
 	
 		template: _.template($("#drop-detail-template").html()),
 		
+		isFetching: false,
+		
+		lastId: 0,
+		
+		maxId: 0,
+		
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click .settings-toolbar .button-big a": "showFullDrop",
 			"click ul.score-drop > li.like a": "likeDrop",
 			"click ul.score-drop > li.dislike a": "dislikeDrop",
-			"click li.share > a": "shareDrop"
+			"click li.share > a": "shareDrop",
+			"click #discussions_next_page": "showNextDiscussionPage"
 		},
 		
 		initialize: function() {
@@ -327,6 +334,7 @@ $(function() {
 				this.discussions.url = base_url+"/reply/"+this.model.get("id");
 				this.discussions.reset(this.model.get('discussions'));
 				this.model.set("discussion_collection", this.discussions);
+				this.isAtLastPage = false;
 			}
 			this.discussions.on('add', this.addDiscussion, this);
 			
@@ -335,13 +343,32 @@ $(function() {
 						
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
-			this.discussions.each(this.addDiscussion, this);
+			
+			if (this.discussions.length) {
+				this.discussions.each(this.addDiscussion, this);
+			} else {
+				// Hide the show more drops button
+				console.log(this.$("section.drop-discussion p.button-white"));
+				this.$("section.drop-discussion p.button-white").hide();
+			}
 			return this;
 		},
 		
 		addDiscussion: function(discussion) {
+			if (discussion.get("id") < this.lastId || !this.lastId) {
+				this.lastId = discussion.get("id");
+			}
+			
 			var view = new DiscussionView({model: discussion});
-			this.$("section.drop-discussion article.add-comment").before(view.render().el);
+			if (discussion.get("id") > this.maxId) {				
+				this.maxId = discussion.get("id");
+				
+				// Newer comments get shown at the top of the list
+				this.$("section.drop-discussion article.add-comment").after(view.render().el);
+			} else {
+				// Add to bottom of list
+				this.$("section.drop-discussion p.button-white").before(view.render().el);
+			}
 		},
 				
 		// When add reply is clicked
@@ -374,6 +401,35 @@ $(function() {
 				}
 			});
 			
+			return false;
+		},
+		
+		showNextDiscussionPage: function() {
+			
+			if (this.isFetching || this.isAtLastPage)
+				return false;
+			
+			this.isFetching = true;
+			
+			view = this;
+			this.discussions.fetch({
+				data: {
+					last_id: view.lastId
+				}, 
+				add: true,
+				complete: function(model, response) {
+					// Re-enable scrolling after a delay
+					setTimeout(function(){ view.isFetching = false; }, 700);
+					loading_msg.fadeOut('normal');
+				},
+				error: function(model, response) {
+					if (response.status == 404) {
+						view.isAtLastPage = true;
+						var message = view.$("article.alert-message");
+						view.$("section.drop-discussion p.button-white").replaceWith(message.show());
+					}
+				}
+			});
 			return false;
 		},
 		

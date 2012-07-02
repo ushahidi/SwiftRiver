@@ -264,6 +264,12 @@
 					</div>
 				<?php endif; ?>
 			</article>
+			
+			<p class="button-white" id="discussions_next_page"><a href="#">Show more comments</a></p>
+			
+			<article class="alert-message blue col_12 drop nodisplay">
+				<p style="text-align: center;">No more comments</p>
+			</article>
 	</section>	
 </script>
 

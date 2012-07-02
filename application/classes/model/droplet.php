@@ -1292,7 +1292,7 @@ class Model_Droplet extends ORM {
 		    ->join('users', 'INNER')
 		    ->on('droplet_comments.user_id', '=', 'users.id')
 		    ->where('droplet_comments.droplet_id', 'IN', $droplet_ids)
-		    ->order_by('date_added', 'ASC');
+		    ->order_by('date_added', 'DESC');
 		 
 
 		 // Group the comments per droplet
@@ -1826,6 +1826,45 @@ class Model_Droplet extends ORM {
 
 		return $final_query;
 
+	}
+	
+	/**
+	 *
+	 * @param int $droplet_id Database ID of the drop
+	 * @param int $page Offset to use for fetching the droplets
+	 * @param int $max_id Pagination reference point
+	 * @return array
+	 */
+	public static function get_comments($drop_id, $last_id = PHP_INT_MAX)
+	{
+		$query = DB::select(array('droplet_comments.id', 'id'), 
+		        array('droplet_comments.droplet_id', 'droplet_id'), 'comment_text', 'deleted',
+		        array('users.id', 'identity_user_id'),
+		        array('users.name', 'identity_name'), array('users.email', 'identity_email'), 
+		        array(DB::expr('DATE_FORMAT(date_added, "%b %e, %Y %H:%i UTC")'),'date_added')
+		    )
+		    ->from('droplet_comments')
+		    ->join('users', 'INNER')
+		    ->on('droplet_comments.user_id', '=', 'users.id')
+		    ->where('droplet_comments.droplet_id', '=', $drop_id)
+		    ->where('droplet_comments.id', '<', $last_id)
+		    ->order_by('droplet_comments.id', 'DESC')
+			->limit(20);
+		
+		// Group the comments per droplet
+		$comments = $query->execute()->as_array();
+		foreach ($comments as & $comment)
+		{
+		   $comment['identity_avatar'] = Swiftriver_Users::gravatar($comment['identity_email'], 80);
+		   $comment['deleted'] = (bool) $comment['deleted'];
+		   
+		   if ($comment['deleted'])
+		   {
+		   	$comment['comment_text'] = __('This comment has been removed.');
+		   }
+		}
+		
+		return $comments;
 	}
 	
 	/**
