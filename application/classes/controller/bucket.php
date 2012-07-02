@@ -460,7 +460,7 @@ class Controller_Bucket extends Controller_Swiftriver {
 					$this->response->status(400);
 				}
 			break;
-			case "DELETE":
+			case "PUT":
 				$comment_id = intval($this->request->param('id2', 0));
 				$comment = ORM::factory('droplet_comment', $comment_id);
 				

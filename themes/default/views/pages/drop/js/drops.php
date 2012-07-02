@@ -63,10 +63,13 @@ $(function() {
 			new ConfirmationWindow("Delete this comment?", function() {
 				model = this.model;
 				view = this;
-				model.destroy({
+				model.save({
+					comment_text: "This comment has been removed",
+					deleted: true
+				},
+				{
+					wait: true,
 					success: function() {
-						model.set("comment_text", "This comment has been removed");
-						model.set("deleted", true);
 						view.render();
 						showConfirmationMessage("The comment has been deleted.");
 					},
@@ -316,9 +319,15 @@ $(function() {
 		},
 		
 		initialize: function() {
-			this.discussions = new Discussions();
-			this.discussions.url = base_url+"/reply/"+this.model.get("id");
-			this.discussions.on('reset', this.addDiscussions, this);
+			// Create a single discussion collection per drop
+			if (this.model.has("discussion_collection")) {
+				this.discussions = this.model.get("discussion_collection");
+			} else {
+				this.discussions = new Discussions();
+				this.discussions.url = base_url+"/reply/"+this.model.get("id");
+				this.discussions.reset(this.model.get('discussions'));
+				this.model.set("discussion_collection", this.discussions);
+			}
 			this.discussions.on('add', this.addDiscussion, this);
 			
 			this.model.on("change:user_score", this.updateDropScore, this);
@@ -326,7 +335,7 @@ $(function() {
 						
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
-			this.discussions.reset(this.model.get('discussions'));
+			this.discussions.each(this.addDiscussion, this);
 			return this;
 		},
 		
@@ -334,11 +343,7 @@ $(function() {
 			var view = new DiscussionView({model: discussion});
 			this.$("section.drop-discussion article.add-comment").before(view.render().el);
 		},
-		
-		addDiscussions: function() {
-			this.discussions.each(this.addDiscussion, this);
-		},
-		
+				
 		// When add reply is clicked
 		addReply: function(e) {
 			var textarea = this.$(".add-comment textarea");
