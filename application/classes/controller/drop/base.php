@@ -1,0 +1,207 @@
+<?php defined('SYSPATH') OR die('No direct access allowed.');
+
+/**
+ * Drops Base Controller
+ *
+ * PHP version 5
+ * LICENSE: This source file is subject to GPLv3 license 
+ * that is available through the world-wide-web at the following URI:
+ * http://www.gnu.org/copyleft/gpl.html
+ * @author	   Ushahidi Team <team@ushahidi.com> 
+ * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @subpackage Controllers
+ * @copyright  Ushahidi - http://www.ushahidi.com
+ * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ */
+class Controller_Drop_Base extends Controller_Swiftriver {
+	
+	 /**
+	  * Tags restful api
+	  */ 
+	 public function action_tags()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$tag_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				$tag_array = json_decode($this->request->body(), true);
+				$tag_name = $tag_array['tag'];
+				$account_id = $this->visited_account->id;
+				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
+				echo json_encode(array('id' => $tag_orm->tag->id, 
+										'tag' => $tag_orm->tag->tag, 
+										'tag_canonical' => $tag_orm->tag->tag_canonical));
+			break;
+
+			case "DELETE":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_links()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$link_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$link_array = json_decode($this->request->body(), TRUE);
+				$url = $link_array['url'];
+				if ( ! Valid::url($url))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid url"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$link_orm = Model_Account_Droplet_Link::get_link($url, $droplet_id, $account_id);
+				echo json_encode(array('id' => $link_orm->link->id, 'tag' => $link_orm->link->url));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_link($droplet_id, $link_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	/**
+	  * Links restful api
+	  */ 
+	 public function action_places()
+	{
+		// Is the logged in user an owner?
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		$place_id = intval($this->request->param('id2', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$places_array = json_decode($this->request->body(), true);
+				$place_name = $places_array['place_name'];
+				if ( ! Valid::not_empty($place_name))
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					$errors = array(__("Invalid location"));
+					echo json_encode(array('errors' => $errors));
+					return;
+				}
+				$account_id = $this->visited_account->id;
+				$place_orm = Model_Account_Droplet_Place::get_place($place_name, $droplet_id, $account_id);
+				echo json_encode(array(
+					'id' => $place_orm->place->id, 
+					'place_name' => $place_orm->place->place_name,
+					'place_name_canonical' => $place_orm->place->place_name_canonical));
+			break;
+
+			case "DELETE":
+				Model_Droplet::delete_place($droplet_id, $place_id, $this->visited_account->id);
+			break;
+		}
+	}
+	
+	 /**
+	  * Replies restful api
+	  */ 
+	public function action_reply()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		$droplet_id = intval($this->request->param('id', 0));
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				// Is the logged in user an owner?
+				if ( ! $this->owner)
+				{
+					throw new HTTP_Exception_403();
+				}
+				
+				// Get the POST data
+				$body = json_decode($this->request->body(), TRUE);
+				
+				$comment = ORM::factory('droplet_comment');
+				$comment->comment_text = $body['comment_text'];
+				$comment->droplet_id = intval($this->request->param('id', 0));
+				$comment->user_id = $this->user->id;
+				$comment->save();
+								
+				if ($comment->loaded()) 
+				{
+					echo json_encode(array(
+						'id' => $comment->id,
+						'droplet_id' => $comment->droplet_id,
+						'comment_text' => $comment->comment_text,
+						'identity_user_id' => $this->user->id,
+						'identity_name' => $this->user->name,
+						'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
+						'deleted' => FALSE,
+						'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
+					));
+				}
+				else
+				{
+					$this->response->status(400);
+				}
+			break;
+			case "PUT":
+				$comment_id = intval($this->request->param('id2', 0));
+				$comment = ORM::factory('droplet_comment', $comment_id);
+				
+				// Does the comment exist?
+				if ( ! $comment->loaded())
+					throw new HTTP_Exception_404();
+					
+				// Is owner of the comment logged in?
+				if ($comment->user->id != $this->user->id)
+					throw new HTTP_Exception_403();
+				
+				$comment->deleted = TRUE;
+				$comment->save();
+			break;
+		}
+	}
+}
