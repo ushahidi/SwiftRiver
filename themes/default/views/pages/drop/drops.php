@@ -206,7 +206,14 @@
 			</div>
 		</section>
 		<div class="drop-body">
+		<% if (typeof(droplet_image_url) != "undefined") { %>
+			<a href="<%= droplet_image.url %>" class="drop-image-wrap" target="_blank">
+				<img src="<%= droplet_image.url %>" class="drop-image" />
+			</a>
 			<%= droplet_title %>
+		<% } else { %>
+			<%= droplet_title %>
+		<% } %>
 		</div>
 		<div class="drop-actions cf">
 			<?php if ( ! $anonymous): ?>
