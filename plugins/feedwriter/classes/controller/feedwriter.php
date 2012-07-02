@@ -31,7 +31,8 @@ class Controller_Feedwriter extends Controller_Swiftriver
 			// Bucket isn't published and logged in user isn't owner
 			if ( ! $this->bucket->bucket_publish AND
 				! $this->bucket->is_owner($this->user->id) AND
-				Arr::get($_GET, 't', '') != $this->bucket->public_token)
+				( ! $this->bucket->public_token OR
+				Arr::get($_GET, 't', '') != $this->bucket->public_token) )
 				throw new HTTP_Exception_404();
 
 			$droplets = Model_Bucket::get_droplets($this->user->id,
