@@ -20,6 +20,12 @@
 					<?php echo __("River settings"); ?>
 				</a>
 			</h2>
+			<h2 class="settings">
+				<a href="<?php echo $settings_url.'/collaborators'; ?>">
+					<span class="icon"></span>
+					<?php echo __("Collaborators"); ?>
+				</a>
+			</h2>
 		</div>
 		<?php elseif ( ! $anonymous): ?>
 		<div class="follow-summary col_3" id="section_follow_river">
