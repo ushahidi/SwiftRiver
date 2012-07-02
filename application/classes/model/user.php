@@ -440,8 +440,7 @@ class Model_User extends Model_Auth_User {
 		$admin = FALSE;
 		if (Auth::instance()->logged_in())
 		{
-			$admin = Auth::instance()->get_user()->has('roles', 
-				ORM::factory('role',array('name'=>'admin')));
+			$admin = Auth::instance()->get_user()->is_admin();
 		}
 		
 		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
@@ -723,6 +722,28 @@ class Model_User extends Model_Auth_User {
 
 		// Default
 		parent::delete();
+	}
+	
+	/**
+	 * 
+	 * @return boolean
+	 */
+	public function is_admin()
+	{
+		if ( ! ($admin_role = Cache::instance()->get('site_admin_role', FALSE)))
+		{
+			$admin_role = ORM::factory('role',array('name'=>'admin'));
+			Cache::instance()->set('site_admin_role', $admin_role, 86400 + rand(0,86400));
+		}
+		
+		$cache_key = 'user_is_admin_'.$this->id;
+		if ( ! ($is_admin = Cache::instance()->get($cache_key, FALSE)))
+		{
+			$is_admin = $this->has('roles', $admin_role);
+			Cache::instance()->set($cache_key, $is_admin, 3600 + rand(0,3600));
+		}
+		
+		return $is_admin;
 	}
 
 }

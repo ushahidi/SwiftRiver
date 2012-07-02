@@ -72,7 +72,7 @@ header.toolbar .masthead h2 {
    font-weight: normal;
    font-size: 1.7em;
    text-shadow: 0 1px 1px rgba(0,0,0,.5);
-   padding: 20px 0;
+   padding: 20px 3.125%;
 }
 
 header.toolbar .masthead p.button-video {
@@ -165,6 +165,43 @@ section.sign-up .col_3 .button-blue a {
    padding: 7px 10px;
 }
 
+/* --------------------------- BASICS */
+
+article.basics {
+   -o-background-size: contain;
+   -moz-background-size: contain;
+   -webkit-background-size: contain;
+   background-size: contain;
+   background-position: 170px center;
+   background-repeat: no-repeat;
+   background-image: url(/markup/images/content/home-basics-graphic.gif);
+}
+
+article.basics .message {
+   text-align: left;
+   background: rgba(256,256,256,.6);
+   padding: 20px 0;
+   padding-right: 20%;
+}
+
+article.basics .message.filter {
+   text-align: right;
+   padding-right: 0;
+   padding-left: 20%;
+}
+
+article.basics .message p {
+   font-size: 1.1em;
+   text-shadow: 1px 2px 0 rgba(256,256,256,.95),
+      -1px 2px 0 rgba(256,256,256,.95);
+   padding: 5px 3.125%;
+}
+
+article.basics .message p strong {
+   color: #444444;
+   font-size: 1.3em;
+}
+
 /* --------------------------- FEATURES */
 
 article.features {
@@ -175,6 +212,10 @@ article.features {
    border-top: 1px solid #e4e4e4;
    border-bottom: 1px solid #e4e4e4;
    background: #f7f7f7;
+}
+
+article.features .col_4 {
+   padding-bottom: 3.125%;
 }
 
 article.features h2 {
@@ -206,7 +247,7 @@ article.features ul li {
    padding: 10px 0;
 }
 
-article.features ul li a.modal-trigger {
+article.features ul li a {
    display: block;
    float: left;
    margin-right: 10px;
@@ -215,6 +256,34 @@ article.features ul li a.modal-trigger {
 article.features ul li span.description {
    display: block;
    padding: 5px;
+}
+
+article.features ul li a.zoom {
+   position: fixed;
+   z-index: 99999;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   float: none;
+   overflow-x: auto;
+   overflow-y: scroll;
+   background-color: rgba(0,0,0,.8);
+   margin: 0;
+}
+
+article.features ul li a.zoom img {
+   display: block;
+   width: 80%;
+   -moz-box-shadow: 0 1px 5px rgba(0,0,0,.4);
+   -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.4);
+   box-shadow: 0 1px 5px rgba(0,0,0,.4);   
+   background: #fff;
+   margin: 3.125% auto;
+    -moz-animation-duration: .2s;
+    -moz-animation-name: modalPop;
+    -webkit-animation-duration: .2s;
+    -webkit-animation-name: modalPop;
 }
 
 /* --------------------------- FOOTER */
@@ -266,6 +335,7 @@ section.sign-up .col_3 {
 
 header.toolbar .masthead h2 {
    font-size: 2.5em;
+   padding: 20px 1.0416667%;
 }
 
 header.toolbar .masthead #video-container {
@@ -286,17 +356,17 @@ article.basics {
    -moz-background-size: cover;
    -webkit-background-size: cover;
    background-size: cover;
+   background-position: 0% 0%;
    background-repeat: no-repeat;
    background-image: url(/markup/images/content/home-basics-graphic.gif);
 }
 
 article.basics .message {
-   text-align: left;
+   background: none;
    padding: 20px 0;
 }
 
 article.basics .message.filter {
-   text-align: right;
    padding: 60px 0;
 }
 
@@ -308,15 +378,11 @@ article.basics .message.bucket {
 article.basics .message p {
    display: inline-block;
    font-size: 1.4em;
-   text-shadow: 1px 2px 0 rgba(256,256,256,.95),
-      -1px 2px 0 rgba(256,256,256,.95);
    padding: 20px 1.041666667%;
 }
 
 article.basics .message p strong {
    display: block;
-   color: #444444;
-   font-size: 1.3em;
 }
 
 /* --------------------------- FEATURES */
@@ -342,7 +408,7 @@ article.features ul li {
    text-align: center;
 }
 
-article.features ul li a.modal-trigger {
+article.features ul li a {
    float: none;
    text-align: center;
    margin: 0;
@@ -392,7 +458,7 @@ article.features ul li {
    text-align: left;
 }
 
-article.features ul li a.modal-trigger {
+article.features ul li a {
    display: block;
    float: left;
    text-align: left;

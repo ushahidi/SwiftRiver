@@ -644,18 +644,21 @@ class Controller_User extends Controller_Swiftriver {
 		if ($_POST)
 		{
 			// Extract the input data
-			$post = Arr::extract($_POST, array('form_auth_id', 'recipient', 
+			$post = Arr::extract($_POST, array('recipient', 
 				'subject', 'body'));
+			
+			$csrf_token = $this->request->headers('x-csrf-token');
 
 			// Setup validation
 			$validation = Validation::factory($post)
 			    ->rule('recipient', 'not_empty')
 			    ->rule('recipient', 'email')
 			    ->rule('subject', 'not_empty')
-			    ->rule('body', 'not_empty');
+			    ->rule('body', 'not_empty')
+			    ->rule('body', 'max_length', array(':value', 300));
 
 			// Validate
-			if ( ! $validation->check())
+			if ( ! CSRF::valid($csrf_token) AND ! $validation->check())
 			{
 				$this->response->status(400);
 			}
@@ -663,8 +666,8 @@ class Controller_User extends Controller_Swiftriver {
 			{
 				// Modify the mail body to include the email address of the
 				// use sharing content
-				$mail_body = __(':sender has shared an item with you. :body',
-					array(':sender' => $this->user->username, ':body' => $post['body']));
+				$mail_body = __(":body \n\nShared by :sender",
+				    array(':body' => $post['body'], ':sender' => $this->user->username));
 
 				// Send the email
 				Swiftriver_Mail::send($post['recipient'], $post['subject'], $mail_body);

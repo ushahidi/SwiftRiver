@@ -71,7 +71,9 @@ Kohana::init(array(
 	'base_url'   => '/',
 	'index_file' => '',
 	'cache_dir' => APPPATH.'/cache',
-	'caching' => FALSE,
+	'caching' => Kohana::$environment === Kohana::PRODUCTION,
+	'profiling' => Kohana::$environment !== Kohana::PRODUCTION,
+	'errors' => TRUE
 ));
 
 /**
@@ -92,6 +94,7 @@ Kohana::modules(array(
 	'orm'          => MODPATH.'orm',        // Object Relationship Mapping
 	'riverid'      => MODPATH.'riverid',
 	'cache'        => MODPATH.'cache',      // Caching with multiple backends
+	'dummy'        => MODPATH.'dummy_cache',// Blackhole cache driver
 	'database'     => MODPATH.'database',   // Database access
 	'image'        => MODPATH.'image',      // Image manipulation
 	'pagination'   => MODPATH.'pagination', // Pagination
@@ -352,3 +355,12 @@ Route::set('default', '(/<controller>(/<action>(/<id>)))')
 		'action'     => 'index',
 		'id' => '\d+'
 	));
+
+	
+/**
+ * Error handler
+ */	
+Route::set('error', 'error/<action>(/<message>)', array('action' => '[0-9]++', 'message' => '.+'))
+->defaults(array(
+    'controller' => 'error_handler'
+));

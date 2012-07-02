@@ -56,39 +56,85 @@ class Twitter_Init {
 		// Apply validation rules to the options
 		if (isset($option_data['channel']) AND $option_data['channel'] == 'twitter')
 		{
-			// Validate user ids - Verify that they exist on twitter
-			if ($option_data['key'] == 'user')
+			$this->_validate_user($option_data);
+			$this->_validate_keyword($option_data);
+		}
+	}
+
+	/**
+	 * Validate Twitter User
+	 * 
+	 * @param array $option_data
+	 * @return void
+	 */
+	private function _validate_user($option_data)
+	{
+		// Validate user ids - Verify that they exist on twitter
+		if ($option_data['key'] == 'user')
+		{
+			$screen_names = explode(",", str_replace('"', '', $option_data['value']));
+			
+			foreach ($screen_names as $screen_name)
 			{
-				$screen_names = explode(",", str_replace('"', '', $option_data['value']));
-				
-				foreach ($screen_names as $screen_name)
+				// Strip the '@' off the screen name
+				if ('@' === substr($screen_name, 0, 1))
 				{
-					// Strip the '@' off the screen name
-					if ('@' === substr($screen_name, 0, 1))
-					{
-						$screen_name = substr($screen_name, 1, strlen($screen_name) - 1);
-					}
-
-					$user_lookup_url = sprintf(Twitter_Init::LOOKUP_URL, $screen_name);
-					$request =  Request::factory($user_lookup_url);
-
-					// Execute the response
-					$response = Request_Client_Curl::factory()
-								    ->execute($request);
-
-					$response_array =  json_decode($response->body(), TRUE);
-					if (array_key_exists('error', $response_array))
-					{
-						$exception_message = __('Invalid twitter user - @:screen_name',
-							array(':screen_name' => $screen_name));
-						throw new Swiftriver_Exception_Channel_Option($exception_message);
-					}
-
+					$screen_name = substr($screen_name, 1, strlen($screen_name) - 1);
 				}
+
+				$user_lookup_url = sprintf(Twitter_Init::LOOKUP_URL, urlencode($screen_name));
+				$request =  Request::factory($user_lookup_url);
+
+				// Execute the response
+				$response = Request_Client_Curl::factory()
+							    ->execute($request);
+
+				$response_array =  json_decode($response->body(), TRUE);
+				if (array_key_exists('errors', $response_array))
+				{
+					$exception_message = __('Invalid twitter user - @:screen_name',
+						array(':screen_name' => $screen_name));
+					throw new Swiftriver_Exception_Channel_Option($exception_message);
+				}
+
 			}
 		}
 	}
 
+	/**
+	 * Validate Twitter Keyword - Removes Stop Words
+	 * 
+	 * @param array $option_data
+	 * @return void
+	 */
+	private function _validate_keyword($option_data)
+	{
+		if ($option_data['key'] == 'keyword')
+		{
+			// Explode value, and group quoted items
+			//preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/',  $option_data['value'], $keywords);
+			$keywords = str_getcsv($option_data['value']);
+			$keywords = array_map('trim', $keywords);
+
+			$found = array();
+			$stops = Twitter_Functions::stop_words();
+
+			foreach ($keywords as $key => $value)
+			{
+				if (in_array($value, $stops))
+				{
+					$found[] = $value;
+				}
+			}
+
+			if (count($found))
+			{
+				$exception_message = __('Invalid twitter keywords - :keywords',
+						array(':keywords' => implode(', ', $found)));
+				throw new Swiftriver_Exception_Channel_Option($exception_message);
+			}
+		}
+	}
 }
 
 // Initialize the plugin

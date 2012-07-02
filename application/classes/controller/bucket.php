@@ -658,6 +658,12 @@ class Controller_Bucket extends Controller_Swiftriver {
 				}
 			break;
 		}
+		
+		// Force refresh of cached buckets
+		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
+		{
+			Cache::instance()->delete('user_buckets_'.$this->user->id);
+		}
 	}
 	
 }

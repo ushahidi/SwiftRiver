@@ -23,10 +23,19 @@ class Model_Setting extends ORM
 	 */
 	public static function get_setting($key)
 	{
-		$setting = ORM::factory('setting')
-		               ->where('key', '=', $key)
-		               ->find();
-		return $setting->value;		
+		$value = NULL;
+		$cache_key = 'site_setting_'.$key;
+		if ( ! ($value = Cache::instance()->get($cache_key, FALSE)))
+		{
+			$setting = ORM::factory('setting')
+			               ->where('key', '=', $key)
+			               ->find();
+			$value = $setting->value;
+			
+			Cache::instance()->set($cache_key, $value, 86400 + rand(0,86400));
+		}
+			
+		return $value;
 	}
 
 	/**
@@ -67,6 +76,7 @@ class Model_Setting extends ORM
 		}
 		$setting->value = $new_value;
 		$setting->save();
+		Cache::instance()->set('site_setting_'.$key, $new_value, 86400 + rand(0,86400));
 	}
 
 	/**

@@ -41,7 +41,7 @@ body {
 
 header.toolbar {
    height: auto;
-   background: url(/markup/images/home-header-toolbarBG.gif) bottom repeat-x;
+   background: url(/themes/default/media/img/home-header-toolbarBG.gif) bottom repeat-x;
 }
 
 .logo {
@@ -52,7 +52,7 @@ header.toolbar {
    display: block;
    width: 118px;
    height: 35px;
-   background: url(/markup/images/logo-swiftriver.png) center left no-repeat;
+   background: url(/themes/default/media/img/logo-swiftriver.png) center left no-repeat;
    background-size: 90%;
    padding: 2.5px 0;
    margin: 0 8px;
@@ -185,15 +185,15 @@ article.features h2 {
 }
 
 article.features h2.collaboration {
-   background-image: url(/markup/images/content/home-features-collaboration.png);
+   background-image: url(/themes/default/media/img/content/home-features-collaboration.png);
 }
 
 article.features h2.views {
-   background-image: url(/markup/images/content/home-features-views.png);
+   background-image: url(/themes/default/media/img/content/home-features-views.png);
 }
 
 article.features h2.configuration {
-   background-image: url(/markup/images/content/home-features-configuration.png);
+   background-image: url(/themes/default/media/img/content/home-features-configuration.png);
 }
 
 article.features ul {
@@ -287,7 +287,7 @@ article.basics {
    -webkit-background-size: cover;
    background-size: cover;
    background-repeat: no-repeat;
-   background-image: url(/markup/images/content/home-basics-graphic.gif);
+   background-image: url(/themes/default/media/img/content/home-basics-graphic.gif);
 }
 
 article.basics .message {
@@ -380,7 +380,7 @@ article.basics {
 article.basics .center {
    background-repeat: no-repeat;
    background-position: right center;
-   background-image: url(/markup/images/content/home-basics-graphic.gif);
+   background-image: url(/themes/default/media/img/content/home-basics-graphic.gif);
 }
 
 article.basics .message p {
