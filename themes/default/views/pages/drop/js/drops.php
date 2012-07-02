@@ -53,26 +53,30 @@ $(function() {
 			"mouseout .drop-body": function() { this.$(".drop-body p.remove-small").hide(); },
 			"click p.remove-small": "delete",
 		},
-		
-		initialize: function(options) {
-			this.model.on("destroy", this.onDelete, this);
-		},
-		
+				
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
 		},
 		
 		delete: function() {
-			this.model.destroy();
-		},
-		
-		onDelete: function() {
-			console.log("woiye");
-			this.model.set("comment_text", "This comment has been removed");
-			this.model.set("deleted", true);
-			this.render();
-		}
+			new ConfirmationWindow("Delete this comment?", function() {
+				model = this.model;
+				view = this;
+				model.destroy({
+					success: function() {
+						model.set("comment_text", "This comment has been removed");
+						model.set("deleted", true);
+						view.render();
+						showConfirmationMessage("The comment has been deleted.");
+					},
+					error: function() {
+						showConfirmationMessage("Unable to delete comment. Try again later.");
+					}
+				});
+			}, this).show();
+			return false;
+		}		
 	});
 	
 	// Tag model
