@@ -31,7 +31,7 @@
 					<ul class="popover-window base header-toolbar">
 						<li>
 							<a href="<?php echo URL::site().$user->account->account_path; ?>">
-								<?php echo __('Dashboard');?>
+								<?php echo __('Dashboard');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
 							</a>
 						</li>
 						<li class="group">
