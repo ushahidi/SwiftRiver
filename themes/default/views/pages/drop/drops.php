@@ -196,7 +196,7 @@
 
 	<div class="base">
 		<section class="drop-source cf">
-			<p class="metadata"><%= new Date(droplet_date_pub).toLocaleString() %> <a href="#" class="button-prev">Prev</a> <a href="#" class="button-next">Next</a></p>
+			<p class="metadata"><%= new Date(droplet_date_pub).toLocaleString() %><% if ($('#content > .river').length > 0) { %> <a href="#" class="button-prev">Prev</a> <a href="#" class="button-next">Next</a><% } %></p>
 			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
