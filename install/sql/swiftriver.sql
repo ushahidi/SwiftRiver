@@ -252,6 +252,7 @@ CREATE TABLE IF NOT EXISTS `buckets` (
   `bucket_publish` tinyint(4) NOT NULL DEFAULT '0',
   `default_layout` varchar(10) DEFAULT 'drops',
   `bucket_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `public_token` varchar(32),
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_bucket_name` (`account_id`,`bucket_name`),
   UNIQUE KEY `un_bucket_name_url` (`account_id`,`bucket_name_url`),

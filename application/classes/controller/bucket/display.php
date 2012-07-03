@@ -60,5 +60,16 @@ class Controller_Bucket_Display extends Controller_Bucket_Settings {
 		$this->settings_content->messages = $session->get('messages');
 		$session->delete('messages');
 	}
-	
+
+	/**
+	 * Create, save, and echo a new key for this bucket in JSON
+	 */
+	public function action_create_token()
+	{
+		$this->auto_render = false;
+		$this->bucket->public_token = md5(uniqid(mt_rand().$this->bucket->account->account_path.'/'.$this->request->param('name'), true));
+		$this->bucket->save();
+		$this->response->headers('Content-Type', 'application/json');
+		echo json_encode($this->bucket->public_token);
+	}
 }
