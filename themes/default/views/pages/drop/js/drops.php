@@ -71,7 +71,6 @@ $(function() {
 					wait: true,
 					success: function() {
 						view.render();
-						showConfirmationMessage("The comment has been deleted.");
 					},
 					error: function() {
 						showConfirmationMessage("Unable to delete comment. Try again later.");
@@ -311,9 +310,13 @@ $(function() {
 		
 		isFetching: false,
 		
-		lastId: 0,
+		lastId: Math.pow(2,32) - 1,
+		
+		isAtLastPage: false,
 		
 		maxId: 0,
+		
+		renderDiscussionCollection: false,
 		
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
@@ -322,19 +325,19 @@ $(function() {
 			"click ul.score-drop > li.like a": "likeDrop",
 			"click ul.score-drop > li.dislike a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
-			"click #discussions_next_page": "showNextDiscussionPage"
+			"click #discussions_next_page": "loadComments"
 		},
 		
 		initialize: function() {
 			// Create a single discussion collection per drop
 			if (this.model.has("discussion_collection")) {
 				this.discussions = this.model.get("discussion_collection");
+				this.renderDiscussionCollection = true;
 			} else {
 				this.discussions = new Discussions();
 				this.discussions.url = base_url+"/reply/"+this.model.get("id");
-				this.discussions.reset(this.model.get('discussions'));
 				this.model.set("discussion_collection", this.discussions);
-				this.isAtLastPage = false;
+				this.loadComments();
 			}
 			this.discussions.on('add', this.addDiscussion, this);
 			
@@ -344,31 +347,27 @@ $(function() {
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			
-			if (this.discussions.length) {
-				this.discussions.each(this.addDiscussion, this);
-			} else {
-				// Hide the show more drops button
-				console.log(this.$("section.drop-discussion p.button-white"));
-				this.$("section.drop-discussion p.button-white").hide();
+			if (this.renderDiscussionCollection) {
+				// Pre-existing so no add event therefore
+				// we need to render the list manually
+				this.discussions.each(this.addDiscussion, this);	
 			}
 			return this;
 		},
 		
 		addDiscussion: function(discussion) {
-			if (discussion.get("id") < this.lastId || !this.lastId) {
-				this.lastId = discussion.get("id");
+			if (parseInt(discussion.get("id")) < this.lastId || !this.lastId) {
+				this.lastId = parseInt(discussion.get("id"));
+			}
+			
+			if (this.discussions.length < 20) {
+				// Hide the show more drops button since there cant be 
+				// more drops if we are below the minimum page size
+				this.$("section.drop-discussion p.button-white").hide();
 			}
 			
 			var view = new DiscussionView({model: discussion});
-			if (discussion.get("id") > this.maxId) {				
-				this.maxId = discussion.get("id");
-				
-				// Newer comments get shown at the top of the list
-				this.$("section.drop-discussion article.add-comment").after(view.render().el);
-			} else {
-				// Add to bottom of list
-				this.$("section.drop-discussion p.button-white").before(view.render().el);
-			}
+			this.$("section.drop-discussion p.button-white").before(view.render().el);
 		},
 				
 		// When add reply is clicked
@@ -391,20 +390,16 @@ $(function() {
 				},
 				success: function(model, response) {
 					textarea.val("");
-					dropDiscussions = drop.get('discussions');
-					dropDiscussions.push(model.toJSON());
-					drop.set('discussions', dropDiscussions);
 				},
 				error: function(model, response) {
-					var message = "<?php echo __('Uh oh. An error occurred while adding the comment.'); ?>";
-					//error_el.html(message).fadeIn("fast").fadeOut(4000).html();
+					showConfirmationMessage("Unable to add comment. Try again later.");
 				}
 			});
 			
 			return false;
 		},
 		
-		showNextDiscussionPage: function() {
+		loadComments: function() {
 			
 			if (this.isFetching || this.isAtLastPage)
 				return false;
@@ -426,7 +421,12 @@ $(function() {
 					if (response.status == 404) {
 						view.isAtLastPage = true;
 						var message = view.$("article.alert-message");
-						view.$("section.drop-discussion p.button-white").replaceWith(message.show());
+						if (view.discussions.length) {
+							view.$("section.drop-discussion p.button-white").replaceWith(message.show());
+						} else {
+							// Hide the show more drops button
+							this.$("section.drop-discussion p.button-white").hide();
+						}
 					}
 				}
 			});

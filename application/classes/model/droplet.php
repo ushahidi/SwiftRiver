@@ -868,9 +868,6 @@ class Model_Droplet extends ORM {
     	
 		// Populate places array			
 		Model_Droplet::populate_places($droplets, $account_id);
-		
-		// Populate the discussions array
-		Model_Droplet::populate_discussions($droplets);
 	}
 
 	/**
@@ -1263,68 +1260,6 @@ class Model_Droplet extends ORM {
 		}    
 	}
 	
-	/**
-	 * Given an array of droplets, populates the discussions
-	 *
-	 * @param array $droplets Droplets to be populated with comments/discussions
-	 */
-	public static function populate_discussions(& $droplets)
-	{
-		if (empty($droplets))
-			return;
-		
-		$droplet_ids = array();
-		foreach ($droplets as & $droplet)
-		{
-			$droplet['discussions'] = array();
-			$droplet_ids[] = $droplet['id'];
-		}
-
-
-		// Query to fetch the comments
-		$query = DB::select(array('droplet_comments.id', 'id'), 
-		        array('droplet_comments.droplet_id', 'droplet_id'), 'comment_text', 'deleted',
-		        array('users.id', 'identity_user_id'),
-		        array('users.name', 'identity_name'), array('users.email', 'identity_email'), 
-		        array(DB::expr('DATE_FORMAT(date_added, "%b %e, %Y %H:%i UTC")'),'date_added')
-		    )
-		    ->from('droplet_comments')
-		    ->join('users', 'INNER')
-		    ->on('droplet_comments.user_id', '=', 'users.id')
-		    ->where('droplet_comments.droplet_id', 'IN', $droplet_ids)
-		    ->order_by('date_added', 'DESC');
-		 
-
-		 // Group the comments per droplet
-		 $comments = array();
-		 foreach ($query->execute()->as_array() as $comment)
-		 {
-		 	$droplet_id = $comment['droplet_id'];
-		 	if ( ! isset($discussions[$droplet_id]))
-		 	{
-		 		$discussions[$droplet_id] = array();
-		 	}
-			$comment['identity_avatar'] = Swiftriver_Users::gravatar($comment['identity_email'], 80);
-			$comment['deleted'] = (bool) $comment['deleted'];
-			
-			if ($comment['deleted'])
-			{
-				$comment['comment_text'] = __('This comment has been removed.');
-			}
-		 	$comments[$droplet_id][] = $comment;
-		 }
-
-		 // Assign the comments to the droplets
-		 foreach ($droplets as & $droplet)
-		 {
-		 	$droplet_id = $droplet['id'];
-		 	if (isset($comments[$droplet_id]))
-		 	{
-		 		$droplet['discussions'] = $comments[$droplet_id];
-		 	}
-		 }
-
-	}
     
 	/**
 	 * Updates a droplet from an array. 

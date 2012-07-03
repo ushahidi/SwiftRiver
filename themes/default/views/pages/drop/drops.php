@@ -242,9 +242,7 @@
 	</div>
 
 	<section class="drop-discussion list">
-		<% if (discussions.length) { %>
 			<h3>Related discussion</h3>
-		<% } %>
 				
 			<article class="add-comment drop base cf">
 				<?php if ( ! $anonymous): ?>
@@ -265,7 +263,9 @@
 				<?php endif; ?>
 			</article>
 			
-			<p class="button-white" id="discussions_next_page"><a href="#">Show more comments</a></p>
+			<article class="drop cf">
+				<p class="button-white" id="discussions_next_page"><a href="#">Show more comments</a></p>
+			</article>
 			
 			<article class="alert-message blue col_12 drop nodisplay">
 				<p style="text-align: center;">No more comments</p>
