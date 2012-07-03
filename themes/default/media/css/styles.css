@@ -955,6 +955,21 @@ p.metadata span.icon {
   max-width: 40%;
   margin: 10px 0 10px 10px;
 }
+/* VIEW FULL > MEDIA */
+.drop-full section.drop-media div {
+  margin: 5px 0 0;
+}
+.drop-full section.drop-media a {
+  margin: 1px;
+}
+.drop-full section.drop-media img {
+  max-height: 100px;
+}
+.drop-full section.drop-media img:hover {
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
 /* VIEW FULL > RELATED DISCUSSION */
 #zoom-container section.drop-discussion {
   padding: 0 2.08333333%;

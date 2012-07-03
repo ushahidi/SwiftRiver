@@ -206,14 +206,7 @@
 			</div>
 		</section>
 		<div class="drop-body">
-		<% if (typeof(droplet_image_url) != "undefined") { %>
-			<a href="<%= droplet_image.url %>" class="drop-image-wrap" target="_blank">
-				<img src="<%= droplet_image.url %>" class="drop-image" />
-			</a>
 			<%= droplet_title %>
-		<% } else { %>
-			<%= droplet_title %>
-		<% } %>
 		</div>
 		<div class="drop-actions cf">
 			<?php if ( ! $anonymous): ?>
@@ -244,6 +237,18 @@
 				<h3><%= droplet_title %></h3>
 			<% } %>
 			<%= droplet_content %>
+		</section>
+		<% } %>
+		<% if (media.length > 0) { %>
+		<section class="drop-media drop-sub">
+			<h2><?php echo __("Media"); ?></h2>
+			<div>
+			<% for (v in media) { %>
+				<a href="<%= media[v].url %>" target="_blank">
+					<img src="<%= media[v].url %>" />
+				</a>
+			<% } %>
+			</div>
 		</section>
 		<% } %>
 	</div>
