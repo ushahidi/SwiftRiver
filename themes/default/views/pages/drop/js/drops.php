@@ -286,7 +286,9 @@ $(function() {
 			"click .settings-toolbar .button-big a": "showFullDrop",
 			"click ul.score-drop > li.like a": "likeDrop",
 			"click ul.score-drop > li.dislike a": "dislikeDrop",
-			"click li.share > a": "shareDrop"
+			"click li.share > a": "shareDrop",
+			"click a.button-prev": "showPrevDrop",
+			"click a.button-next": "showNextDrop"
 		},
 		
 		initialize: function() {
@@ -349,7 +351,27 @@ $(function() {
 		showFullDrop: function() {
 			appRouter.navigate("/drop/" + this.model.get("id"), {trigger: true});
 			return false;
-		}	
+		},
+
+		showPrevDrop: function() {
+			var index = dropsList.indexOf(this.model)
+			if (index === dropsList.length - 1) {
+				return false;
+			}
+			var m = dropsList.at(index + 1);
+			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
+			return false;
+		},
+
+		showNextDrop: function() {
+			var index = dropsList.indexOf(this.model)
+			if (index === 0) {
+				return false;
+			}
+			var m = dropsList.at(index - 1);
+			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
+			return false;
+		}
 	});
 	
 	// Bucket in modal view

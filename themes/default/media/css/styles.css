@@ -2083,6 +2083,24 @@ article.modal div.search ul.dual-buttons {
      left: 10px; */
   
   }
+  .button-prev div {
+    float: left;
+    width: 0;
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-right: 30px solid #EAF3F5;
+    margin: 0 5px;
+  }
+  .button-next div {
+    float: right;
+    width: 0;
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 30px solid #EAF3F5;
+    margin: 0 5px;
+  }
   /* --------------------------- BUCKET */
   section.rundown {
     display: block;
