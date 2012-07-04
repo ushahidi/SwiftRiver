@@ -26,5 +26,21 @@ class Model_Droplet_Comment extends ORM {
 	 */
     protected $_created_column = array('column' => 'date_added', 'format' => 'Y-m-d H:i:s');
 
+
+
+	/**
+	 * Overload saving to perform additional functions on the comment
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		$ret = parent::save();
+		
+		DB::update('droplets')
+		   ->set(array('comment_count' => DB::expr('comment_count + 1')))
+		   ->where("id", "=", $this->droplet_id)
+		   ->execute();
+		
+		return $ret;
+	}
 }
 ?>

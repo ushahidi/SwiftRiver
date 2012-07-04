@@ -67,7 +67,7 @@
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
 					<span class="icon"></span>
-					<strong><%= discussions.length %></strong> 
+					<strong><%= comment_count ? comment_count : 0 %></strong> 
 					<?php echo __("comments"); ?>
 				</a>
 			</p>

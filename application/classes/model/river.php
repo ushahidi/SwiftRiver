@@ -290,7 +290,7 @@ class Model_River extends ORM {
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
 			                    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			                    array('user_scores.score','user_score'), array('links.url','original_url'))
+			                    array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 			    ->from('rivers_droplets')
 			    ->join('droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
@@ -393,7 +393,7 @@ class Model_River extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
 			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
 			    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
-			    array('user_scores.score','user_score'), array('links.url','original_url'))
+			    array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')

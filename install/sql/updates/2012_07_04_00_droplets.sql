@@ -1,0 +1,1 @@
+ALTER TABLE DROPLETS ADD `comment_count` int(11) DEFAULT '0';

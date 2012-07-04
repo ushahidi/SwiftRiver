@@ -289,6 +289,7 @@ $(function() {
 			this.setElement(el);
 			
 			this.model.on("change:user_score", this.updateDropScore, this)
+			this.model.on("change:comment_count", this.render, this)
 		},
 				
 		render: function(eventName) {
@@ -415,6 +416,7 @@ $(function() {
 				},
 				success: function(model, response) {
 					textarea.val("");
+					drop.set("comment_count", parseInt(drop.get("comment_count")) + 1);
 				},
 				error: function(model, response) {
 					showConfirmationMessage("Unable to add comment. Try again later.");
