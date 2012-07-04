@@ -45,6 +45,7 @@
 						<select name="default_layout">
 							<option value="list" <?php echo ($river->default_layout == "list") ? 'selected' : ''; ?>>List</option>
 							<option value="drops" <?php echo ($river->default_layout == "drops") ? 'selected' : ''; ?>>Drops</option>
+							<option value="photos" <?php echo ($river->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
 				</section>

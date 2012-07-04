@@ -68,7 +68,7 @@ class Model_River extends ORM {
 				array('in_array', array(':value', array('0', '1')))
 			),
 			'default_layout' => array(
-				array('in_array', array(':value', array('drops', 'list')))
+				array('in_array', array(':value', array('drops', 'list', 'photos')))
 			)
 		);
 	}
