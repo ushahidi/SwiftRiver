@@ -1330,7 +1330,7 @@ $(function() {
 					this.navigate("list", {trigger: true, replace: true});
 					break;
 				case 'drops':
-				case 'default':
+				default:
 					this.navigate("drops", {trigger: true, replace: true});
 					break;
 			}
