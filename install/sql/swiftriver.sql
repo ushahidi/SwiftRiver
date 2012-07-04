@@ -468,7 +468,6 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `channel` varchar(20) NOT NULL DEFAULT '',
   `droplet_hash` char(32) NOT NULL DEFAULT '',
   `droplet_orig_id` varchar(255) NOT NULL,
-  `original_url` bigint(20) DEFAULT NULL,
   `droplet_type` varchar(10) NOT NULL DEFAULT 'original' COMMENT 'original, retweet, comment, revision',
   `droplet_title` varchar(255) DEFAULT NULL COMMENT 'Title of the feed item if available',
   `droplet_content` text COMMENT 'The content of the feed item (if available)',
@@ -477,9 +476,10 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `droplet_date_pub` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Original publish date of the feed item',
   `droplet_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date the feed item was added to this database',
   `processing_status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT 'Bitwise flags indicating the status of drop post processing',
+  `original_url` bigint(20) DEFAULT NULL,
+  `comment_count` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`),
-  KEY `droplet_type_idx` (`droplet_type`),
+  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`) USING HASH,
   KEY `droplet_date_pub_idx` (`droplet_date_pub`),
   KEY `droplet_date_add_idx` (`droplet_date_add`),
   KEY `droplet_processed_idx` (`processing_status`),
@@ -766,6 +766,21 @@ CREATE TABLE IF NOT EXISTS `comment_scores` (
   `score` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `comment_id` (`comment_id`,`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------------------
+-- TABLE 'droplet_comments'
+-- ----------------------------------------
+CREATE TABLE IF NOT EXISTS `droplet_comments` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `droplet_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `comment_text` varchar(1024) NOT NULL DEFAULT '',
+  `date_added` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deleted` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `droplet_id` (`droplet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

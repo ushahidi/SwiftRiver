@@ -988,6 +988,10 @@ article.add-comment div.drop-body textarea {
 #zoom-container section.drop-discussion div.drop-actions ul li a {
   padding: 5px;
 }
+section.drop-discussion div.drop-body p.remove-small {
+  float: right;
+  display: none;
+}
 /* VIEW FULL > META COLUMN */
 section.meta-data {
   text-align: left;

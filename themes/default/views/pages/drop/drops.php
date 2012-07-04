@@ -67,7 +67,7 @@
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
 					<span class="icon"></span>
-					<strong><%= discussions.length %></strong> 
+					<strong><%= comment_count ? comment_count : 0 %></strong> 
 					<?php echo __("comments"); ?>
 				</a>
 			</p>
@@ -262,9 +262,7 @@
 	</div>
 
 	<section class="drop-discussion list">
-		<% if (discussions.length) { %>
 			<h3>Related discussion</h3>
-		<% } %>
 				
 			<article class="add-comment drop base cf">
 				<?php if ( ! $anonymous): ?>
@@ -284,14 +282,31 @@
 					</div>
 				<?php endif; ?>
 			</article>
+			
+			<article class="alert-message blue col_12 drop nodisplay" id="new_comments_alert">
+				<p style="text-align: center;"><a href="#">Click here to display <span class="message"></span>.</a></p>
+			</article>
+			
+			<article class="drop cf nodisplay">
+				<p class="button-white" id="discussions_next_page"><a href="#">Show more comments</a></p>
+			</article>
+			
+			<article class="alert-message blue col_12 drop nodisplay" id="no_comments_alert">
+				<p style="text-align: center;">No more comments</p>
+			</article>
 	</section>	
 </script>
 
 <script type="text/template" id="discussion-template">
 	<div class="drop-content">
 		<div class="drop-body">
-			<h1><%= droplet_content %></h1>
-			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %></span></a></p>
+			<% if (!deleted && (identity_user_id == logged_in_user)) { %>
+				<p class="remove-small actions" title="Delete this comment">
+					<span class="icon"></span><span class="nodisplay">Remove</span>
+				</p>
+			<% } %>
+			<h1><%= comment_text %></h1>
+			<p class="metadata discussion"><%= new Date(date_added).toLocaleString() %></span></a></p>
 		</div>
 		<section class="drop-source cf">
 			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>

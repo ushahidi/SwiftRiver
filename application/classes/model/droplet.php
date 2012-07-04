@@ -68,7 +68,8 @@ class Model_Droplet extends ORM {
 		'account_droplet_places' => array(
  			'model' => 'account_droplet_place'
 			),	
-		'droplet_scores' => array()
+		'droplet_scores' => array(),
+		'droplet_comments' => array()
 		);
 		
 	/**
@@ -867,9 +868,6 @@ class Model_Droplet extends ORM {
     	
 		// Populate places array			
 		Model_Droplet::populate_places($droplets, $account_id);
-		
-		// Populate the discussions array
-		Model_Droplet::populate_discussions($droplets);
 	}
 
 	/**
@@ -1262,62 +1260,6 @@ class Model_Droplet extends ORM {
 		}    
 	}
 	
-	/**
-	 * Given an array of droplets, populates the discussions
-	 *
-	 * @param array $droplets Droplets to be populated with comments/discussions
-	 */
-	public static function populate_discussions(& $droplets)
-	{
-		if (empty($droplets))
-			return;
-		
-		$droplet_ids = array();
-		foreach ($droplets as & $droplet)
-		{
-			$droplet['discussions'] = array();
-			$droplet_ids[] = $droplet['id'];
-		}
-
-
-		// Query to fetch the comments
-		$query = DB::select(array('droplets.id', 'id'), 'droplet_title', 
-		        array('droplets.parent_id', 'parent_id'), 
-		        array('droplets.channel', 'channel'), 'droplet_content', 
-		        'identity_name', 'identity_avatar', 
-				array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub')
-		    )
-		    ->from('droplets')
-		    ->join('identities', 'INNER')
-		    ->on('droplets.identity_id', '=', 'identities.id')
-		    ->where('droplets.parent_id', 'IN', $droplet_ids)
-		    ->order_by('droplet_date_pub', 'ASC');
-		 
-
-		 // Group the comments per droplet
-		 $comments = array();
-		 foreach ($query->execute()->as_array() as $comment)
-		 {
-		 	$parent_id = $comment['parent_id'];
-		 	if ( ! isset($discussions[$parent_id]))
-		 	{
-		 		$discussions[$parent_id] = array();
-		 	}
-
-		 	$comments[$parent_id][] = $comment;
-		 }
-
-		 // Assign the comments to the droplets
-		 foreach ($droplets as & $droplet)
-		 {
-		 	$droplet_id = $droplet['id'];
-		 	if (isset($comments[$droplet_id]))
-		 	{
-		 		$droplet['discussions'] = $comments[$droplet_id];
-		 	}
-		 }
-
-	}
     
 	/**
 	 * Updates a droplet from an array. 
@@ -1822,6 +1764,55 @@ class Model_Droplet extends ORM {
 	}
 	
 	/**
+	 *
+	 * @param int $droplet_id Database ID of the drop
+	 * @param int $last_id Pagination reference point
+	 * @param boolean $newer Flag to get newer drops than last_id when true
+	 * @return array
+	 */
+	public static function get_comments($drop_id, $last_id = PHP_INT_MAX, $newer = FALSE)
+	{
+		$query = DB::select(array('droplet_comments.id', 'id'), 
+		        array('droplet_comments.droplet_id', 'droplet_id'), 'comment_text', 'deleted',
+		        array('users.id', 'identity_user_id'),
+		        array('users.name', 'identity_name'), array('users.email', 'identity_email'), 
+		        array(DB::expr('DATE_FORMAT(date_added, "%b %e, %Y %H:%i UTC")'),'date_added')
+		    )
+		    ->from('droplet_comments')
+		    ->join('users', 'INNER')
+		    ->on('droplet_comments.user_id', '=', 'users.id')
+		    ->where('droplet_comments.droplet_id', '=', $drop_id)
+			->limit(20);
+		
+		if ($newer)
+		{
+			$query->where('droplet_comments.id', '>', $last_id);
+			$query->order_by('droplet_comments.id', 'ASC');
+		}
+		else
+		{
+			$query->where('droplet_comments.id', '<', $last_id);
+			$query->order_by('droplet_comments.id', 'DESC');
+		}
+		
+		// Group the comments per droplet
+		$comments = $query->execute()->as_array();
+		foreach ($comments as & $comment)
+		{
+		   $comment['identity_avatar'] = Swiftriver_Users::gravatar($comment['identity_email'], 80);
+		   $comment['deleted'] = (bool) $comment['deleted'];
+		   
+		   if ($comment['deleted'])
+		   {
+		   	$comment['comment_text'] = __('This comment has been removed.');
+		   }
+		}
+		
+		return $comments;
+	}
+
+	
+	/**
 	 * Get a range of IDs to be used for inserting drops
 	 *
 	 * @param int $num Number of IDs to be generated.
@@ -1833,51 +1824,6 @@ class Model_Droplet extends ORM {
 		$query = DB::select(array(DB::expr("NEXTVAL('".$table."',$num)"), 'id'));
 		    
 		return intval($query->execute()->get('id', 0));
-	}
-
-	/**
-	 * Given an array with the properties of a droplet, creates a single droplet
-	 * @param array $droplet Array with all the propeties of a droplet
-	 *
-	 * @return array An array representation of the drop with the 'id' field populated
-	 */
-	public static function create_single(& $droplet)
-	{
-		Model_Identity::create_from_droplet($droplet);
-
-		// Generate and set the droplet id
-		$droplet['id'] = Model_Droplet::get_ids(1);
-
-		$droplet_orm = ORM::factory('droplet');
-
-		$droplet_orm->id = $droplet['id'];
-		$droplet_orm->parent_id = $droplet['parent_id'];
-		$droplet_orm->droplet_type = $droplet['droplet_type'];
-		$droplet_orm->channel = $droplet['channel'];
-		$droplet_orm->droplet_title = $droplet['droplet_title'];
-		$droplet_orm->droplet_content = $droplet['droplet_content'];
-		$droplet_orm->droplet_orig_id = $droplet['id'];
-		$droplet_orm->droplet_locale = $droplet['droplet_locale'];
-		$droplet_orm->identity_id = $droplet['identity_id'];
-		$droplet_orm->droplet_hash = md5($droplet['identity_orig_id'].$droplet['channel'].$droplet['id']);
-		$droplet_orm->droplet_date_pub = $droplet['droplet_date_pub'];
-		$droplet_orm->processing_status = Model_Droplet::PROCESSING_STATUS_COMPLETE;
-
-		// Save
-		$droplet_orm->save();
-
-		// Add the droplet to the river/bucket
-		if (isset($droplet['river_id']))
-		{
-			ORM::factory('river', $droplet['river_id'])->add('droplets', $droplet_orm->id);
-		}
-
-		if (isset($droplet['bucket_id']))
-		{
-			ORM::factory('bucket', $droplet['bucket_id'])->add('droplets', $droplet_orm->id);
-		}
-
-		return $droplet;
 	}
 }
 

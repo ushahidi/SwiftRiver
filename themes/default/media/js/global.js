@@ -639,6 +639,7 @@ $(document).ready(function() {
 	
 	// Confirmation window
 	window.ConfirmationWindow = Backbone.View.extend({
+		tagName: "article",
 		
 		className: "modal",
 		

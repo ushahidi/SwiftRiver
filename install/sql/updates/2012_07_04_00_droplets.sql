@@ -1,0 +1,1 @@
+ALTER TABLE `droplets` ADD `comment_count` int(11) DEFAULT '0';
