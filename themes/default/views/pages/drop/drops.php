@@ -209,6 +209,9 @@
 			<%= droplet_title %>
 		</div>
 		<div class="drop-actions cf">
+			<% if ($('#content > .river').length > 0) { %>
+			<a href="#" class="button-prev"><div></div></a>
+			<% } %>
 			<?php if ( ! $anonymous): ?>
 				<ul class="dual-buttons score-drop">
 					<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
@@ -218,6 +221,11 @@
 						<a href="#"><span class="icon"></span></a>
 					</li>
 				</ul>
+			<?php endif; ?>
+				<% if ($('#content > .river').length > 0) { %>
+				<a href="#" class="button-next"><div></div></a>
+				<% } %>
+			<?php if ( ! $anonymous): ?>
 				<ul class="dual-buttons move-drop">
 					<li class="button-blue share">
 						<a href="#" class="modal-trigger"><span class="icon"></span></a>
@@ -237,6 +245,18 @@
 				<h3><%= droplet_title %></h3>
 			<% } %>
 			<%= droplet_content %>
+		</section>
+		<% } %>
+		<% if (media.length > 0) { %>
+		<section class="drop-media drop-sub">
+			<h2><?php echo __("Media"); ?></h2>
+			<div>
+			<% for (v in media) { %>
+				<a href="<%= media[v].url %>" target="_blank">
+					<img src="<%= media[v].url %>" />
+				</a>
+			<% } %>
+			</div>
 		</section>
 		<% } %>
 	</div>

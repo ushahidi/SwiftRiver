@@ -814,9 +814,6 @@ p.metadata span.icon {
   background-color: #eaf3f5;
   padding-right: 5px;
 }
-.drop ul.score-drop li.scored a span.icon {
-  float: left;
-}
 .drop ul.score-drop li.like.scored a {
   color: #81c279;
   border: 1px solid #81c279;
@@ -957,6 +954,21 @@ p.metadata span.icon {
   float: right;
   max-width: 40%;
   margin: 10px 0 10px 10px;
+}
+/* VIEW FULL > MEDIA */
+.drop-full section.drop-media div {
+  margin: 5px 0 0;
+}
+.drop-full section.drop-media a {
+  margin: 1px;
+}
+.drop-full section.drop-media img {
+  max-height: 100px;
+}
+.drop-full section.drop-media img:hover {
+  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 /* VIEW FULL > RELATED DISCUSSION */
 #zoom-container section.drop-discussion {
@@ -2075,6 +2087,24 @@ article.modal div.search ul.dual-buttons {
      left: 10px; */
   
   }
+  .button-prev div {
+    float: left;
+    width: 0;
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-right: 30px solid #EAF3F5;
+    margin: 0 5px;
+  }
+  .button-next div {
+    float: right;
+    width: 0;
+    height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 30px solid #EAF3F5;
+    margin: 0 5px;
+  }
   /* --------------------------- BUCKET */
   section.rundown {
     display: block;
@@ -2242,6 +2272,14 @@ article.modal div.search ul.dual-buttons {
 .loading img {
   margin: 0 auto;
   display: block;
+}
+/* --------------------------- FOOTER */
+footer a.btn-feedback {
+  display:block; height:156px; width:36px; position:fixed; top:210px; left:0; z-index:99; overflow:hidden; text-indent:-24234px;
+  background:transparent url('../img/btn-feedback.png') top left no-repeat;
+}
+footer a.btn-feedback:hover {
+  background:transparent url('../img/btn-feedback.png') bottom left no-repeat;
 }
 /******************************************************\
 *

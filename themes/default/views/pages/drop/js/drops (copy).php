@@ -6,7 +6,7 @@ $(function() {
 	var base_url = "<?php echo $fetch_base_url; ?>";
 	var default_view = "<?php echo $default_view; ?>";
 	var photos = <?php echo $photos; ?>;
-	var sharingEnabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>
+	var sharingEnabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>;
 	
 	// Filters
 	var Filter = Backbone.Model.extend({
@@ -36,11 +36,7 @@ $(function() {
 	
 	// Discussion list
 	var Discussions = Backbone.Collection.extend({
-		model: Discussion,
-		
-		comparator: function (discussion) {
-			return parseInt(discussion.get('id'));
-		},
+		model: Discussion
 	});
 	
 	// Discussion view
@@ -51,38 +47,10 @@ $(function() {
 	
 		template: _.template($("#discussion-template").html()),
 		
-		events: {
-			// Show/Hide the edit button
-			"mouseover": function() { this.$(".drop-body p.remove-small").show(); },
-			"mouseout": function() { this.$(".drop-body p.remove-small").hide(); },
-			"click p.remove-small": "delete",
-		},
-				
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
 		},
-		
-		delete: function() {
-			new ConfirmationWindow("Delete this comment?", function() {
-				model = this.model;
-				view = this;
-				model.save({
-					comment_text: "This comment has been removed",
-					deleted: true
-				},
-				{
-					wait: true,
-					success: function() {
-						view.render();
-					},
-					error: function() {
-						showConfirmationMessage("Unable to delete comment. Try again later.");
-					}
-				});
-			}, this).show();
-			return false;
-		}		
 	});
 	
 	// Tag model
@@ -312,89 +280,39 @@ $(function() {
 	
 		template: _.template($("#drop-detail-template").html()),
 		
-		isFetching: false,
-		
-		lastId: Math.pow(2,32) - 1,
-		
-		isAtLastPage: false,
-		
-		maxId: 0,
-		
-		renderDiscussionCollection: false,
-		
-		isPollingStarted: false,
-		
-		isSyncing: false,
-		
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click .settings-toolbar .button-big a": "showFullDrop",
 			"click ul.score-drop > li.like a": "likeDrop",
 			"click ul.score-drop > li.dislike a": "dislikeDrop",
-			"click li.share > a": "shareDrop",
-			"click #discussions_next_page": "loadComments",
-			"click #new_comments_alert a": "showNewComments",
-			"click a.button-prev": "showPrevDrop",
-			"click a.button-next": "showNextDrop"
+			"click li.share > a": "shareDrop"
 		},
 		
 		initialize: function() {
-			// Create a single discussion collection per drop
-			if (this.model.has("discussion_collection")) {
-				this.discussions = this.model.get("discussion_collection");
-				this.renderDiscussionCollection = true;
-			} else {
-				this.discussions = new Discussions();
-				this.discussions.url = base_url+"/reply/"+this.model.get("id");
-				this.model.set("discussion_collection", this.discussions);
-				this.loadComments();
-			}
-			this.discussions.on('add', this.addDiscussion, this);			
-			this.model.on("change:user_score", this.updateDropScore, this);
+			this.discussions = new Discussions();
+			this.discussions.url = base_url+"/reply/"+this.model.get("id");
+			this.discussions.on('reset', this.addDiscussions, this);
+			this.discussions.on('add', this.addDiscussion, this);
 			
-			this.newComments = new Discussions();
-			this.newComments.url = base_url + "/reply/" + this.model.get("id");
-			this.newComments.on('add', this.alertNewComments, this);
-			this.newComments.on('reset', this.resetNewCommentsAlert, this);
+			this.model.on("change:user_score", this.updateDropScore, this);
 		},
 						
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
-			
-			if (this.renderDiscussionCollection) {
-				// Pre-existing so no add event therefore
-				// we need to render the list manually
-				this.discussions.each(this.addDiscussion, this);	
-			}
+			this.discussions.reset(this.model.get('discussions'));
 			return this;
 		},
 		
 		addDiscussion: function(discussion) {
-			if (parseInt(discussion.get("id")) < this.lastId || !this.lastId) {
-				this.lastId = parseInt(discussion.get("id"));
-			}
-			
-			if (parseInt(discussion.get("id")) > this.maxId) {
-				this.maxId = parseInt(discussion.get("id"));
-			}
-			
-			if (this.discussions.length >= 20) {
-				this.$("section.drop-discussion p.button-white").parent().show();
-			}
-			
 			var view = new DiscussionView({model: discussion});
-			discussion.view = view;
-			var index = this.discussions.indexOf(discussion);
-			if (index > 0) {
-				// Newer comments added before coments they follow in the collection
-				this.discussions.at(index-1).view.$el.before(view.render().el);
-			} else {
-				// First comment is simply appended to the view
-				this.$("section.drop-discussion p.button-white").parent().before(view.render().el);
-			}
+			this.$("section.drop-discussion article.add-comment").before(view.render().el);
 		},
-				
+		
+		addDiscussions: function() {
+			this.discussions.each(this.addDiscussion, this);
+		},
+		
 		// When add reply is clicked
 		addReply: function(e) {
 			var textarea = this.$(".add-comment textarea");
@@ -408,142 +326,30 @@ $(function() {
             
 			//var error_el = this.$("section.discussion div.system_error");
 			var drop = this.model;
-			this.discussions.create({comment_text: $(textarea).val()}, {
+			this.discussions.create({droplet_content: $(textarea).val()}, {
 				wait: true,
 				complete: function() {
 					loading_msg.replaceWith(publishButton);
 				},
 				success: function(model, response) {
 					textarea.val("");
+					dropDiscussions = drop.get('discussions');
+					dropDiscussions.push(model.toJSON());
+					drop.set('discussions', dropDiscussions);
 				},
 				error: function(model, response) {
-					showConfirmationMessage("Unable to add comment. Try again later.");
+					var message = "<?php echo __('Uh oh. An error occurred while adding the comment.'); ?>";
+					//error_el.html(message).fadeIn("fast").fadeOut(4000).html();
 				}
 			});
 			
-			return false;
-		},
-		
-		doPollComments: function() {
-			this.isPollingStarted = true;
-			
-			view = this;
-			var t = setTimeout(function() {
-				
-				if (view.isSyncing) {
-					// Sync in progress, try again later
-					view.doPollComments();
-				} else {
-					// Request newer comments
-					view.newComments.fetch({
-						data: {
-							since_id: view.maxId
-						}, 
-						add: true,
-						complete: function() {
-							if (view.$el.is(":visible")) {
-								// Only keep polling if the detail is in view
-								view.doPollComments();
-							}
-						}
-					});
-				}
-			}, 60000 + Math.floor((Math.random()*60000)+1));
-
-		},
-		
-		alertNewComments: function(comment) {			
-			if (parseInt(comment.get("id")) > this.maxId) {
-				this.maxId = parseInt(comment.get("id"));
-			}
-			
-			var message = this.newComments.length + " new comment" + (this.newComments.length > 1 ? "s" : "");
-			this.$("#new_comments_alert span.message").html(message);
-			this.$("#new_comments_alert").show();
-		},
-		
-		resetNewCommentsAlert: function() {
-			this.$("#new_comments_alert").fadeOut("slow", function() {
-				$(this).find("span.message").html("");
-			});
-		},
-		
-		showNewComments: function() {
-			if (this.isSyncing)
-				return;
-			
-			// Prevent further updates while in here
-			this.isSyncing = true;
-			
-			this.discussions.add(this.newComments.models);
-			this.newComments.reset();
-			
-			// Proceed
-			this.isSyncing = false;
-			
-			return false;
-		},
-		
-		loadComments: function() {
-			
-			if (this.isFetching || this.isAtLastPage)
-				return false;
-			
-			this.isFetching = true;
-			
-			view = this;
-			this.discussions.fetch({
-				data: {
-					last_id: view.lastId
-				}, 
-				add: true,
-				complete: function(model, response) {
-					// Re-enable scrolling after a delay
-					setTimeout(function(){ view.isFetching = false; }, 700);
-					loading_msg.fadeOut('normal');
-					
-					// Start polling after initial load
-					if (!view.isPollingStarted) {
-						view.doPollComments()
-					}
-				},
-				error: function(model, response) {
-					if (response.status == 404) {
-						view.isAtLastPage = true;
-						var message = view.$("#no_comments_alert");
-						if (view.discussions.length) {
-							view.$("section.drop-discussion p.button-white").parent().replaceWith(message.show());
-						}
-					}
-				}
-			});
 			return false;
 		},
 		
 		showFullDrop: function() {
 			appRouter.navigate("/drop/" + this.model.get("id"), {trigger: true});
 			return false;
-		},
-
-		showPrevDrop: function() {
-			var index = dropsList.indexOf(this.model)
-			if (index === dropsList.length - 1) {
-				return false;
-			}
-			var m = dropsList.at(index + 1);
-			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
-			return false;
-		},
-
-		showNextDrop: function() {
-			var index = dropsList.indexOf(this.model)
-			if (index === 0) {
-				return false;
-			}
-			var m = dropsList.at(index - 1);
-			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
-			return false;
-		}
+		}	
 	});
 	
 	// Bucket in modal view
@@ -764,7 +570,7 @@ $(function() {
 					if ((window.innerWidth >= 615) && (window.innerWidth <= 960)) {
 						$container.masonry({
 							itemSelector: 'article.drop',
-							isAnimated: !Modernizr.csstransitions,
+							//isAnimated: !Modernizr.csstransitions,
 							columnWidth: function( containerWidth ) {
 								return containerWidth / 3;
 							}
@@ -773,7 +579,7 @@ $(function() {
 					else if (window.innerWidth >= 960) {
 						$container.masonry({
 							itemSelector: 'article.drop',
-							isAnimated: !Modernizr.csstransitions,
+							//isAnimated: !Modernizr.csstransitions,
 							columnWidth: function( containerWidth ) {
 								return containerWidth / 4;
 							}
@@ -831,8 +637,16 @@ $(function() {
 			// Prevent further updates while in here
 			isSyncing = true;
 			
+			var element = $('article.drop:first-child')
+			var offset = $(window).scrollTop() - element.offset().top;
+			element.attr('id', 'persistentscroll');
+			
+			//alert("adding. diff: "+offset+"("+$(window).scrollTop()+"-"+element.offset().top+")");
 			dropsList.add(newDropsList.models);
+			//persistentScroll('persistentscroll', offset, 600, 5);
 			newDropsList.reset();
+			
+			//$(window).scrollTop(Element.offset().top - HeightDifference);
 			
 			// Proceed
 			isSyncing = false;
@@ -1130,7 +944,7 @@ $(function() {
 		template: _.template($("#share-drop-template").html()),
 
 		events: {
-			"click li.email > a": "showEmailDialog",
+			"click li.email > a": "showEmailDialog"
 		},
 
 		showEmailDialog: function() {
@@ -1360,7 +1174,7 @@ $(function() {
 			    }
 			});   
 		}		    
-	}, 30000);
+	}, 10000);
 	<?php endif; ?>
 			
 	// Bootstrap the droplet list
@@ -1493,18 +1307,11 @@ $(function() {
 			return false;
 		},
 				
-		defaultRoute: function(actions) {
-			switch(default_view) {
-				case 'photos':
-					this.navigate("photos", {trigger: true, replace: true});
-					break;
-				case 'list':
-					this.navigate("list", {trigger: true, replace: true});
-					break;
-				case 'drops':
-				default:
-					this.navigate("drops", {trigger: true, replace: true});
-					break;
+		defaultRoute: function(actions){
+			if (default_view == 'drops') {
+				this.navigate("drops", {trigger: true, replace: true});
+			} else {
+				this.navigate("list", {trigger: true, replace: true});
 			}
 		},
 		
@@ -1536,6 +1343,18 @@ $(function() {
 			appRouter.navigate('/list', {trigger: true});
 			return false;
 		});
+	}
+	
+	function persistentScroll(id, offset, duration, interval, count, prev) {
+		interval = interval || 100;
+		count = count || 0;
+		$(window).scrollTop($('#'+id).offset().top + offset);
+		//$('html,body').stop().animate({scrollTop: $('#'+id).offset().top + offset}, interval*1.1, 'linear');
+		if (count < duration) {
+			setTimeout(function(){persistentScroll(id, offset, duration, interval, count+interval);}, interval);
+		} else {
+			$('#'+id).removeAttr('id');
+		}
 	}
 });
 </script>

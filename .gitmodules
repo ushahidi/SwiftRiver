@@ -25,3 +25,6 @@
 [submodule "modules/pagination"]
 	path = modules/pagination
 	url = git://github.com/kohana/pagination.git
+[submodule "plugins"]
+	path = plugins
+	url = git@github.com:ushahidi/SwiftRiver-Plugins.git

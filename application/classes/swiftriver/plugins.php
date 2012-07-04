@@ -27,9 +27,10 @@ class Swiftriver_Plugins {
 	 */
 	public static function load()
 	{
-		$plugin_entries = array();
 		if ( ! ($plugin_entries = Cache::instance()->get('site_plugin_entries', FALSE)))
 		{
+			$plugin_entries = array();
+			
 			$active_plugins = ORM::factory("plugin")
 				->where("plugin_enabled", "=", 1)
 				->find_all();
@@ -49,7 +50,6 @@ class Swiftriver_Plugins {
 			
 			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
 		}
-		
 		
 		
 		// Add the plugin entries to the list of Kohana modules
