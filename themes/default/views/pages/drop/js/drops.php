@@ -36,7 +36,11 @@ $(function() {
 	
 	// Discussion list
 	var Discussions = Backbone.Collection.extend({
-		model: Discussion
+		model: Discussion,
+		
+		comparator: function (discussion) {
+			return parseInt(discussion.get('id'));
+		},
 	});
 	
 	// Discussion view
@@ -318,6 +322,10 @@ $(function() {
 		
 		renderDiscussionCollection: false,
 		
+		isPollingStarted: false,
+		
+		isSyncing: false,
+		
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
@@ -325,7 +333,8 @@ $(function() {
 			"click ul.score-drop > li.like a": "likeDrop",
 			"click ul.score-drop > li.dislike a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
-			"click #discussions_next_page": "loadComments"
+			"click #discussions_next_page": "loadComments",
+			"click #new_comments_alert a": "showNewComments"
 		},
 		
 		initialize: function() {
@@ -339,9 +348,13 @@ $(function() {
 				this.model.set("discussion_collection", this.discussions);
 				this.loadComments();
 			}
-			this.discussions.on('add', this.addDiscussion, this);
-			
+			this.discussions.on('add', this.addDiscussion, this);			
 			this.model.on("change:user_score", this.updateDropScore, this);
+			
+			this.newComments = new Discussions();
+			this.newComments.url = base_url + "/reply/" + this.model.get("id");
+			this.newComments.on('add', this.alertNewComments, this);
+			this.newComments.on('reset', this.resetNewCommentsAlert, this);
 		},
 						
 		render: function(eventName) {
@@ -360,14 +373,24 @@ $(function() {
 				this.lastId = parseInt(discussion.get("id"));
 			}
 			
-			if (this.discussions.length < 20) {
-				// Hide the show more drops button since there cant be 
-				// more drops if we are below the minimum page size
-				this.$("section.drop-discussion p.button-white").hide();
+			if (parseInt(discussion.get("id")) > this.maxId) {
+				this.maxId = parseInt(discussion.get("id"));
+			}
+			
+			if (this.discussions.length >= 20) {
+				this.$("section.drop-discussion p.button-white").parent().show();
 			}
 			
 			var view = new DiscussionView({model: discussion});
-			this.$("section.drop-discussion p.button-white").before(view.render().el);
+			discussion.view = view;
+			var index = this.discussions.indexOf(discussion);
+			if (index > 0) {
+				// Newer comments added before coments they follow in the collection
+				this.discussions.at(index-1).view.$el.before(view.render().el);
+			} else {
+				// First comment is simply appended to the view
+				this.$("section.drop-discussion p.button-white").parent().before(view.render().el);
+			}
 		},
 				
 		// When add reply is clicked
@@ -399,6 +422,66 @@ $(function() {
 			return false;
 		},
 		
+		doPollComments: function() {
+			this.isPollingStarted = true;
+			
+			view = this;
+			var t = setTimeout(function() {
+				
+				if (view.isSyncing) {
+					// Sync in progress, try again later
+					view.doPollComments();
+				} else {
+					// Request newer comments
+					view.newComments.fetch({
+						data: {
+							since_id: view.maxId
+						}, 
+						add: true,
+						complete: function() {
+							if (view.$el.is(":visible")) {
+								// Only keep polling if the detail is in view
+								view.doPollComments();
+							}
+						}
+					});
+				}
+			}, 60000 + Math.floor((Math.random()*60000)+1));
+
+		},
+		
+		alertNewComments: function(comment) {			
+			if (parseInt(comment.get("id")) > this.maxId) {
+				this.maxId = parseInt(comment.get("id"));
+			}
+			
+			var message = this.newComments.length + " new comment" + (this.newComments.length > 1 ? "s" : "");
+			this.$("#new_comments_alert span.message").html(message);
+			this.$("#new_comments_alert").show();
+		},
+		
+		resetNewCommentsAlert: function() {
+			this.$("#new_comments_alert").fadeOut("slow", function() {
+				$(this).find("span.message").html("");
+			});
+		},
+		
+		showNewComments: function() {
+			if (this.isSyncing)
+				return;
+			
+			// Prevent further updates while in here
+			this.isSyncing = true;
+			
+			this.discussions.add(this.newComments.models);
+			this.newComments.reset();
+			
+			// Proceed
+			this.isSyncing = false;
+			
+			return false;
+		},
+		
 		loadComments: function() {
 			
 			if (this.isFetching || this.isAtLastPage)
@@ -416,16 +499,18 @@ $(function() {
 					// Re-enable scrolling after a delay
 					setTimeout(function(){ view.isFetching = false; }, 700);
 					loading_msg.fadeOut('normal');
+					
+					// Start polling after initial load
+					if (!view.isPollingStarted) {
+						view.doPollComments()
+					}
 				},
 				error: function(model, response) {
 					if (response.status == 404) {
 						view.isAtLastPage = true;
-						var message = view.$("article.alert-message");
+						var message = view.$("#no_comments_alert");
 						if (view.discussions.length) {
-							view.$("section.drop-discussion p.button-white").replaceWith(message.show());
-						} else {
-							// Hide the show more drops button
-							this.$("section.drop-discussion p.button-white").hide();
+							view.$("section.drop-discussion p.button-white").parent().replaceWith(message.show());
 						}
 					}
 				}

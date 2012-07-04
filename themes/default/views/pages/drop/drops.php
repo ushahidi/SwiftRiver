@@ -263,11 +263,15 @@
 				<?php endif; ?>
 			</article>
 			
-			<article class="drop cf">
+			<article class="alert-message blue col_12 drop nodisplay" id="new_comments_alert">
+				<p style="text-align: center;"><a href="#">Click here to display <span class="message"></span>.</a></p>
+			</article>
+			
+			<article class="drop cf nodisplay">
 				<p class="button-white" id="discussions_next_page"><a href="#">Show more comments</a></p>
 			</article>
 			
-			<article class="alert-message blue col_12 drop nodisplay">
+			<article class="alert-message blue col_12 drop nodisplay" id="no_comments_alert">
 				<p style="text-align: center;">No more comments</p>
 			</article>
 	</section>	

@@ -1766,11 +1766,11 @@ class Model_Droplet extends ORM {
 	/**
 	 *
 	 * @param int $droplet_id Database ID of the drop
-	 * @param int $page Offset to use for fetching the droplets
-	 * @param int $max_id Pagination reference point
+	 * @param int $last_id Pagination reference point
+	 * @param boolean $newer Flag to get newer drops than last_id when true
 	 * @return array
 	 */
-	public static function get_comments($drop_id, $last_id = PHP_INT_MAX)
+	public static function get_comments($drop_id, $last_id = PHP_INT_MAX, $newer = FALSE)
 	{
 		$query = DB::select(array('droplet_comments.id', 'id'), 
 		        array('droplet_comments.droplet_id', 'droplet_id'), 'comment_text', 'deleted',
@@ -1782,9 +1782,18 @@ class Model_Droplet extends ORM {
 		    ->join('users', 'INNER')
 		    ->on('droplet_comments.user_id', '=', 'users.id')
 		    ->where('droplet_comments.droplet_id', '=', $drop_id)
-		    ->where('droplet_comments.id', '<', $last_id)
-		    ->order_by('droplet_comments.id', 'DESC')
 			->limit(20);
+		
+		if ($newer)
+		{
+			$query->where('droplet_comments.id', '>', $last_id);
+			$query->order_by('droplet_comments.id', 'ASC');
+		}
+		else
+		{
+			$query->where('droplet_comments.id', '<', $last_id);
+			$query->order_by('droplet_comments.id', 'DESC');
+		}
 		
 		// Group the comments per droplet
 		$comments = $query->execute()->as_array();
@@ -1801,6 +1810,7 @@ class Model_Droplet extends ORM {
 		
 		return $comments;
 	}
+
 	
 	/**
 	 * Get a range of IDs to be used for inserting drops
