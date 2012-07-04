@@ -654,9 +654,7 @@ $(function() {
 		
 		showNewDrops: function() {
 			if (isSyncing)
-			{
 				return;
-			}
 			
 			// Prevent further updates while in here
 			isSyncing = true;
