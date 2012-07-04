@@ -1,1 +1,1 @@
-ALTER TABLE DROPLETS ADD `comment_count` int(11) DEFAULT '0';
+ALTER TABLE `droplets` ADD `comment_count` int(11) DEFAULT '0';
