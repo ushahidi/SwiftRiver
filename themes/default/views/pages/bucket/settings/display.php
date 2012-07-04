@@ -45,6 +45,7 @@
 						<select name="default_layout">
 							<option value="drops" <?php echo ($bucket->default_layout == "drops") ? 'selected' : ''; ?>>Drops</option>
 							<option value="list" <?php echo ($bucket->default_layout == "list") ? 'selected' : ''; ?>>List</option>
+							<option value="photos" <?php echo ($bucket->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
 				</section>

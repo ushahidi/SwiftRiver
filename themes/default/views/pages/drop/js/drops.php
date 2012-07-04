@@ -1321,11 +1321,18 @@ $(function() {
 			return false;
 		},
 				
-		defaultRoute: function(actions){
-			if (default_view == 'drops') {
-				this.navigate("drops", {trigger: true, replace: true});
-			} else {
-				this.navigate("list", {trigger: true, replace: true});
+		defaultRoute: function(actions) {
+			switch(default_view) {
+				case 'photos':
+					this.navigate("photos", {trigger: true, replace: true});
+					break;
+				case 'list':
+					this.navigate("list", {trigger: true, replace: true});
+					break;
+				case 'drops':
+				case 'default':
+					this.navigate("drops", {trigger: true, replace: true});
+					break;
 			}
 		},
 		
