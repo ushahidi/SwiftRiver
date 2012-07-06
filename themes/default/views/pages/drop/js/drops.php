@@ -833,8 +833,17 @@ $(function() {
 			// Prevent further updates while in here
 			isSyncing = true;
 			
+			// Assign buoy to set where you left off
+			$('#buoy').removeAttr('id');
+			$('article.drop:first-child').attr('id', 'buoy');
+			
 			dropsList.add(newDropsList.models);
 			newDropsList.reset();
+			
+			// Scroll to buoy
+			if ($("#buoy").length > 0) {
+				setTimeout(function(){scrollToBuoy();}, 600);
+			}
 			
 			// Proceed
 			isSyncing = false;

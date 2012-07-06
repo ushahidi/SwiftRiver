@@ -211,10 +211,7 @@ $(document).ready(function() {
 
 	// SCROLL TO BUOY
 	if ($("#buoy").length > 0) {
-		$.getScript('/markup/js/jquery.scrollto.js');
-		$('#buoy').prepend("<div class='buoy-message base'><p>Here's where you left off.</p></div>");
-		$('#buoy .buoy-message').delay(1000).fadeIn('fast');
-		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
+		scrollToBuoy();
 	}
 
 	// Submit form when enter key hit in a password field
@@ -755,4 +752,18 @@ function showDefaultAvatar(source) {
 	source.onerror = "";
 	source.src = window.default_avatar_url;
 	return true;
+}
+
+function scrollToBuoy() {
+	$.getScript('/themes/default/media/js/jquery.scrollto.js', function() {
+		$.scrollTo($('#buoy'), {
+			duration: 300,
+			axis: 'y',
+			easing: 'linear',
+			offset: -100
+		});
+		$('#buoy').prepend("<div class='buoy-message base'><p>Here's where you left off.</p></div>");
+		$('#buoy .buoy-message').fadeIn('fast');
+		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
+	});
 }
