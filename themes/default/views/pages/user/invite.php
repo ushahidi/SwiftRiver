@@ -29,13 +29,13 @@
 	<?php endif; ?>
 
 	<?php echo Form::open(NULL, array('id' => 'invites-form')); ?>
-	<input type="hidden" name="emails" value="" />
+	<input type="hidden" name="emails" value="" /><?php if ($user->invites > 0): ?>
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
 				<h1>Email</h1>
-				<div class="popover add-parameter"><?php if ($user->invites > 0): ?>
-					<p class="button-white add has-icon"><a href="#"><span class="icon"></span>Add more (<?php echo $user->invites-1; ?>)</a></p><?php endif; ?>
+				<div class="popover add-parameter">
+					<p class="button-white add has-icon"><a href="#"><span class="icon"></span>Add more (<?php echo $user->invites-1; ?>)</a></p>
 				</div>
 			</div>
 		</header>
@@ -52,7 +52,13 @@
 	
 	<div class="save-toolbar">
 		<p class="button-blue"><a href="#" onClick="onSendInvite()"><?php echo __("Send"); ?></a></p>
-	</div>
+	</div><?php else: ?>
+	<div class="alert-message red">
+		<p><strong>Uh oh.</strong></p>
+		<ul>
+			<li>You have no invites to send!</li>
+		</ul>
+	</div><?php endif; ?>
 	<?php echo Form::close(); ?>
 
 <script type="text/javascript">
