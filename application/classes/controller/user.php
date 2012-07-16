@@ -753,7 +753,7 @@ class Controller_User extends Controller_Swiftriver {
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';
 	}
 
-	function action_invite()
+	public function action_invite()
 	{
 		if ( ! Model_Setting::get_setting('general_invites_enabled') OR ! $this->owner)
 			$this->request->redirect($this->dashboard_url);
