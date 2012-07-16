@@ -774,6 +774,9 @@ class Controller_User extends Controller_Swiftriver {
 			$emails = explode(', ', $this->request->post('emails'));
 			foreach ($emails as $k => $email)
 			{
+				if ($count == $this->user->invites)
+					break;
+				
 				$email = trim($email);
 				if ( ! Valid::email($email, TRUE))
 				{
@@ -791,9 +794,6 @@ class Controller_User extends Controller_Swiftriver {
 
 				$valid_emails[] = $email;
 				$count++;
-
-				if ($count >= $this->user->invites)
-					break;
 			}
 
 			$this->user->invites -= $count;
