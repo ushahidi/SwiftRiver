@@ -792,7 +792,7 @@ class Controller_User extends Controller_Swiftriver {
 				$valid_emails[] = $email;
 				$count++;
 
-				if ($count == $this->user->invites)
+				if ($count >= $this->user->invites)
 					break;
 			}
 
