@@ -32,8 +32,12 @@
 			<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
 				<?php echo __("Account Settings"); ?>
 			</a>
-		</li>
-
+		</li><?php if (Model_Setting::get_setting('general_invites_enabled')): ?>
+		<li <?php if ($active == 'invites') echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site().$account->account_path.'/invite'; ?>">
+				<?php echo __("Invites"); ?>
+			</a>
+		</li><?php endif; ?>
 	</ul>
 </nav>
 <?php endif; ?>

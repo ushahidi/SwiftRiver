@@ -750,6 +750,67 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$follower_list = json_encode($following);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	}
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';
+	}
 
+	function action_invite()
+	{
+		if ( ! Model_Setting::get_setting('general_invites_enabled') OR ! $this->owner)
+			$this->request->redirect($this->dashboard_url);
+
+		// Set the current page
+		$this->active = 'invites';
+		$this->template->content->view_type = 'invites';
+
+		$this->sub_content = View::factory('pages/user/invite')
+			->bind('user', $this->user);
+
+		if ($this->request->post())
+		{
+			$errors = array();
+			$messages = array();
+			$count = 0;
+			$valid_emails = array();
+			$emails = explode(', ', $this->request->post('emails'));
+			foreach ($emails as $k => $email)
+			{
+				$email = trim($email);
+				if ( ! Valid::email($email, TRUE))
+				{
+					$errors[] = 'The email address "'.$email.'" is invalid.';
+					continue;
+				}
+
+				$new = Model_User::new_user($email, $this->riverid_auth, TRUE);
+
+				if (isset($new['errors']))
+				{
+					$errors[] = $email.' - '.implode(" ",$messages['errors']);
+					continue;
+				}
+
+				$valid_emails[] = $email;
+				$count++;
+
+				if ($count == $this->user->invites)
+					break;
+			}
+
+			$this->user->invites -= $count;
+			$this->user->save();
+
+			foreach ($valid_emails as $email)
+			{
+				$messages[] = 'Invite sent to "'.$email.'" successfully!';
+			}
+			if (count($errors) > 0)
+			{
+				$this->sub_content->bind('errors', $errors);
+			}
+			if (count($messages) > 0)
+			{
+				$this->sub_content->bind('messages', $messages);
+			}
+		}
+	}
 }

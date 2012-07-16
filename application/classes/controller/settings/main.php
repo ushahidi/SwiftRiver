@@ -56,6 +56,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			'site_locale' => '',
 			'public_registration_enabled' => '',
 			'anonymous_access_enabled' => '',
+			'general_invites_enabled' => '',
 			'river_active_duration' => '',
 			'river_expiry_notice_period' => ''
 		);
@@ -80,6 +81,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 					'site_locale' => $this->request->post('site_locale'),
 					'public_registration_enabled' => $this->request->post('public_registration_enabled') == 1,
 					'anonymous_access_enabled' => $this->request->post('anonymous_access_enabled') == 1,
+					'general_invites_enabled' => $this->request->post('general_invites_enabled') == 1,
 					'river_active_duration' => $this->request->post('river_active_duration'),
 					'river_expiry_notice_period' => $this->request->post('river_expiry_notice_period')
 				);

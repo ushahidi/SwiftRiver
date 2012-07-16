@@ -440,7 +440,7 @@ class Model_User extends Model_Auth_User {
 		$admin = FALSE;
 		if (Auth::instance()->logged_in())
 		{
-			$admin = Auth::instance()->get_user()->is_admin();
+			$admin = (Auth::instance()->get_user()->is_admin() || Model_Setting::get_setting('general_invites_enabled'));
 		}
 		
 		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
