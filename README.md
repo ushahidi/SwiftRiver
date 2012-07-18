@@ -87,4 +87,4 @@ River maintenance involves checking which rivers have expired and are about to e
 out notifications to their owners. To schedule maintenance to run every day at midnight, add the
 following entries to your crontab:
 
-	* 0 * * * cd <app home>; php5 index.php --uri=maintenance >> application/logs/maintenance.log 2&1
+    * 0 * * * cd <app home>; php5 index.php --uri=maintenance >> application/logs/maintenance.log 2>&1
