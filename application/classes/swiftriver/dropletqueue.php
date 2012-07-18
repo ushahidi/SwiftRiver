@@ -134,5 +134,23 @@ class Swiftriver_Dropletqueue {
 		
 		return $result;
 	}
+	
+	
+	/**
+	 * Create a single new drop and publish new ones for meta extraction.
+	 *
+	 * @return array
+	 */
+	public static function create_drop($drop)
+	{
+		list($drops, $new_drops) = Model_Droplet::create_from_array(array($drop), FALSE);
+		
+		if ( ! empty($new_drops))
+		{
+			Swiftriver_Event::run('swiftriver.drop.new', $new_drops[0]);
+		}
+		
+		return $drops[0];
+	}
 }
 ?>

@@ -477,5 +477,4 @@ class Controller_Bucket extends Controller_Drop_Base {
 			Cache::instance()->delete('user_buckets_'.$this->user->id);
 		}
 	}
-	
 }

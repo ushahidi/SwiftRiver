@@ -750,6 +750,6 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$follower_list = json_encode($following);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	}
-
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	
+	}
 }

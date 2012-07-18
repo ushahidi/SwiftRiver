@@ -1602,6 +1602,9 @@ div.modal-window .modal.col_9 {
 #zoom-container .drop-full .settings-toolbar .close {
   display: none;
 }
+.bookmarklet {
+  background: #fff;
+}
 /* ---- MODAL: FORM SELECT LIST */
 article.modal div.select-list {
   max-height: 150px;
