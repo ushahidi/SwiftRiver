@@ -479,7 +479,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `original_url` bigint(20) DEFAULT NULL,
   `comment_count` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`) USING HASH,
+  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`),
   KEY `droplet_date_pub_idx` (`droplet_date_pub`),
   KEY `droplet_date_add_idx` (`droplet_date_add`),
   KEY `droplet_processed_idx` (`processing_status`),
