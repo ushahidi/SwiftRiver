@@ -30,6 +30,7 @@
 			<?php endif; ?>
 			
 			window.logged_in_user = <?php echo $user->id; ?>;
+			window.public_registration_enabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>;
 		<?php endif; ?>
 
 		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
