@@ -880,8 +880,10 @@ p.metadata span.icon {
   display: none;
   position: absolute;
   top: -50px;
+  left: -12%;
   width: 100%;
   border: 3px solid #259cb5;
+  z-index: 1;
 }
 #buoy .buoy-message p {
   color: #444444;
@@ -1052,7 +1054,6 @@ section.meta-data img.media-image {
 /* ---- DROP: VIEW DROPS */
 .drops article.drop {
   margin: 15px 0;
-  overflow: hidden;
 }
 .drops article.drop div.drop-actions {
   padding: 5px 10px 15px;

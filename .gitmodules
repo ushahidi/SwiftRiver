@@ -25,6 +25,21 @@
 [submodule "modules/pagination"]
 	path = modules/pagination
 	url = git://github.com/kohana/pagination.git
-[submodule "plugins"]
-	path = plugins
-	url = git@github.com:ushahidi/SwiftRiver-Plugins.git
+[submodule "plugins/feedwriter"]
+	path = plugins/feedwriter
+	url = git://github.com/ushahidi/swiftriver-plugin-feedwriter.git
+[submodule "plugins/email"]
+	path = plugins/email
+	url = git://github.com/ushahidi/swiftriver-plugin-email.git
+[submodule "plugins/mediaextractor"]
+	path = plugins/mediaextractor
+	url = git://github.com/ushahidi/swiftriver-plugin-mediaextractor.git
+[submodule "plugins/rss"]
+	path = plugins/rss
+	url = git://github.com/ushahidi/swiftriver-plugin-rss.git
+[submodule "plugins/swiftcore"]
+	path = plugins/swiftcore
+	url = git://github.com/ushahidi/swiftriver-plugin-swiftcore.git
+[submodule "plugins/twitter"]
+	path = plugins/twitter
+	url = git://github.com/ushahidi/swiftriver-plugin-twitter.git
