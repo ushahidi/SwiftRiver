@@ -88,7 +88,7 @@
 
 
 	// Droplet model
-	var Drop = Backbone.Model.extend({
+	var Drop = Drops.Drop = Backbone.Model.extend({
 		
 		initialize: function() {
 			if (this.get('droplet_image') != undefined) {
@@ -505,7 +505,7 @@
 	});
 	
 	// Bucket in modal view
-	var BucketView = Backbone.View.extend({
+	var BucketView = Drops.BucketView = Backbone.View.extend({
 	
 		tagName: "label",
 		
@@ -560,6 +560,7 @@
 		initialize: function(options) {
 			this.template =  _.template($("#add-to-bucket-template").html());
 			this.$el.html(this.template(this.model.toJSON()));
+				
 			Assets.BaseAssetListView.prototype.initialize.call(this, options);
 		},
 				
