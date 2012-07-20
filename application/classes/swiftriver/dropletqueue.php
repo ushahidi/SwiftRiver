@@ -78,7 +78,7 @@ class Swiftriver_Dropletqueue {
 	 */
 	public static function add($droplet, $queue_droplet = TRUE)
 	{
-		if ($new_drops = Model_Droplet::create_from_array(array($droplet)))
+		if (list(,$new_drops) = Model_Droplet::create_from_array(array($droplet)))
 		{
 			$drop = array_pop($new_drops);
 
