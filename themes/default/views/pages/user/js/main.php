@@ -1,20 +1,20 @@
 <script type="text/javascript">
 $(function() {
 	
-	var DashboardAssetView = BaseAssetView.extend({
+	var DashboardAssetView = Assets.BaseAssetView.extend({
 		template: _.template($("#dashboard-asset-list-item-template").html())
 	});
 	
-	var DashboardAssetListView = BaseAssetListView.extend({
+	var DashboardAssetListView = Assets.BaseAssetListView.extend({
 		
 		listSelector: '.asset-list',
 		
 		initialize: function(options) {
-			BaseAssetListView.prototype.initialize.call(this, options);
+			Assets.BaseAssetListView.prototype.initialize.call(this, options);
 						
-			if (this.collection instanceof window.BucketList) {
+			if (this.collection instanceof Assets.BucketList) {
 				this.setElement($("#buckets"));
-			} else if (this.collection instanceof window.RiverList) {
+			} else if (this.collection instanceof Assets.RiverList) {
 				this.setElement($("#rivers"));
 			}
 		},
@@ -39,7 +39,7 @@ $(function() {
 		},
 				
 		subscriptionChanged: function(model, subscribed) {
-			BaseAssetListView.prototype.subscriptionChanged.call(this, model, subscribed);
+			Assets.BaseAssetListView.prototype.subscriptionChanged.call(this, model, subscribed);
 
 			if (model.previous('subscribed') && model.previous("collaborator")) {
 				model.getView(this).$el.fadeOut("slow");
@@ -51,7 +51,7 @@ $(function() {
 		},
 	});
 	
-	new DashboardAssetListView({collection: window.bucketList});
-	new DashboardAssetListView({collection: window.riverList});
+	new DashboardAssetListView({collection: Assets.bucketList});
+	new DashboardAssetListView({collection: Assets.riverList});
 });
 </script>

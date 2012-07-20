@@ -1,33 +1,10 @@
 /**
- * Backbone.js wiring for the droplets MVC
+ * Drops module
  */
-$(function() {
-	var base_url = window.drops_base_url;
-	var default_view = window.drops_default_view;
-	var photos = window.drops_photos;
+(function (root) {
 	
-	// Filters
-	var Filter = Backbone.Model.extend({
-		
-		getString: function() {
-			var query = "";
-			var data = this.toJSON();
-			for (filter in data) {
-				if (query.length) {
-					query += "&";
-				}
-				query += filter + "=" + data[filter];
-			}
-			return query;
-		},
-		
-		isEmpty: function() {
-			return _.keys(this.attributes).length == 0;
-		}
-	});
-	
-	var filters = new Filter(window.drops_filters);
-	
+	// Init the module
+	Drops = root.Drops = {};
 	
 	// Discussion model
 	var Discussion = Backbone.Model.extend();
@@ -46,14 +23,16 @@ $(function() {
 		tagName: "article",
 	
 		className: "drop base cf",
-	
-		template: _.template($("#discussion-template").html()),
 		
 		events: {
 			// Show/Hide the edit button
 			"mouseover": function() { this.$(".drop-body p.remove-small").show(); },
 			"mouseout": function() { this.$(".drop-body p.remove-small").hide(); },
 			"click p.remove-small": "delete",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#discussion-template").html());
 		},
 				
 		render: function(eventName) {
@@ -112,7 +91,6 @@ $(function() {
 	var Drop = Backbone.Model.extend({
 		
 		initialize: function() {
-			this.set("drop_url", site_url.substring(0, site_url.length-1) + base_url + '/drop/' + this.get("id"));
 			if (this.get('droplet_image') != undefined) {
 				if (this.get('droplet_image').thumbnails != undefined) {
 					if (this.get('droplet_image').thumbnails['200'] != undefined) {
@@ -161,22 +139,11 @@ $(function() {
 		}
 	});
 		
-	function getDropletListUrl(applyFilters) {
-		var f = "";
-		
-		if (applyFilters) {
-			f = filters.getString();
-		}
-		
-		return base_url + "/droplets" + (f.length > 0 ? '?' + f : '');
-	}
 	
 	// Droplet & Bucket collection
-	var DropsList = Backbone.Collection.extend({
+	var DropsList = Drops.DropsList = Backbone.Collection.extend({
 		model: Drop,
-		
-		url: getDropletListUrl(true),
-		
+				
 		comparator: function (droplet) {
 			return Date.parse(droplet.get('droplet_date_pub'));
 		},
@@ -192,6 +159,7 @@ $(function() {
 			if (!isReset) {
 				// Get the Backbone model objects that have just been added
 				var models = [];
+				dropsList = this;
 				_.each(model, function(drop) {
 					models.push(dropsList.get(drop.id));
 				})
@@ -203,15 +171,11 @@ $(function() {
 		}
 	});
 	
-	// Create a global drop list to be shared by all views
-	var dropsList = new DropsList;
-	// New drops via polling will queue in this list
-	var newDropsList = new DropsList;
 	
 	// Common between drop list and full view.
 	var DropBaseView = Backbone.View.extend({	
 		showAddToBucketModal: function() {
-			var addToBucketView = new AddToBucketView({collection: window.bucketList, model: this.model});
+			var addToBucketView = new AddToBucketView({collection: Assets.bucketList, model: this.model});
 			modalShow(addToBucketView.render().el);
 			return false;
 		},
@@ -250,7 +214,7 @@ $(function() {
 				// Public registration not allowed, show message
 				showConfirmationMessage("Drop sharing is not allowed in this deployment");
 			} else {
-				shareView = new ShareDropView({model: this.model});
+				shareView = new ShareDropView({model: this.model, baseURL: this.options.baseURL});
 				modalShow(shareView.render().el);
 			}
 		    return false;
@@ -297,19 +261,17 @@ $(function() {
 		
 		// Show the drop in zoom view
 		showDetail: function() {
-			appRouter.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
+			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
 		}
 	});
 	
 	// Drop detail in zoom view
-	var DropDetailView = DropBaseView.extend({
+	var DropDetailView = Drops.DropDetailView = DropBaseView.extend({
 	
 		tagName: "div",
 	
 		className: "modal drop drop-full col_9",
-	
-		template: _.template($("#drop-detail-template").html()),
 		
 		isFetching: false,
 		
@@ -338,14 +300,16 @@ $(function() {
 			"click a.button-next": "showNextDrop"
 		},
 		
-		initialize: function() {
+		initialize: function(options) {
+			this.template = _.template($("#drop-detail-template").html());
+			
 			// Create a single discussion collection per drop
 			if (this.model.has("discussion_collection")) {
 				this.discussions = this.model.get("discussion_collection");
 				this.renderDiscussionCollection = true;
 			} else {
 				this.discussions = new Discussions();
-				this.discussions.url = base_url+"/reply/"+this.model.get("id");
+				this.discussions.url = options.baseURL+"/reply/"+this.model.get("id");
 				this.model.set("discussion_collection", this.discussions);
 				this.loadComments();
 			}
@@ -353,7 +317,7 @@ $(function() {
 			this.model.on("change:user_score", this.updateDropScore, this);
 			
 			this.newComments = new Discussions();
-			this.newComments.url = base_url + "/reply/" + this.model.get("id");
+			this.newComments.url = options.baseURL + "/reply/" + this.model.get("id");
 			this.newComments.on('add', this.alertNewComments, this);
 			this.newComments.on('reset', this.resetNewCommentsAlert, this);
 		},
@@ -500,7 +464,7 @@ $(function() {
 				complete: function(model, response) {
 					// Re-enable scrolling after a delay
 					setTimeout(function(){ view.isFetching = false; }, 700);
-					loading_msg.fadeOut('normal');
+					//loading_msg.fadeOut('normal');
 					
 					// Start polling after initial load
 					if (!view.isPollingStarted) {
@@ -521,27 +485,21 @@ $(function() {
 		},
 		
 		showFullDrop: function() {
-			appRouter.navigate("/drop/" + this.model.get("id"), {trigger: true});
+			this.options.router.navigate("/drop/" + this.model.get("id"), {trigger: true});
 			return false;
 		},
 
 		showPrevDrop: function() {
-			var index = dropsList.indexOf(this.model)
-			if (index === dropsList.length - 1) {
-				return false;
+			if (this.model.prev) {
+				this.options.router.navigate("/drop/" + this.model.prev.get("id")  + "/zoom", {trigger: true});
 			}
-			var m = dropsList.at(index + 1);
-			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
 			return false;
 		},
 
 		showNextDrop: function() {
-			var index = dropsList.indexOf(this.model)
-			if (index === 0) {
-				return false;
+			if (this.model.next) {
+				this.options.router.navigate("/drop/" + this.model.next.get("id")  + "/zoom", {trigger: true});
 			}
-			var m = dropsList.at(index - 1);
-			appRouter.navigate("/drop/" + m.get("id")  + "/zoom", {trigger: true});
 			return false;
 		}
 	});
@@ -550,11 +508,13 @@ $(function() {
 	var BucketView = Backbone.View.extend({
 	
 		tagName: "label",
-			
-		template: _.template($("#bucket-template").html()),
 		
 		events: {
 			"click input": "toggleBucket"
+		},
+		
+		initialize: function() {
+			this.template = _.template($("#bucket-template").html());
 		},
 		
 		render: function() {
@@ -587,21 +547,20 @@ $(function() {
 	
 	
 	// Buckets modal
-	var AddToBucketView = BaseModalAssetListView.extend({
+	var AddToBucketView = Drops.AddToBucketView = Assets.BaseModalAssetListView.extend({
 	
 		tagName: "article",
 	
 		className: "modal",
-	
-		template: _.template($("#add-to-bucket-template").html()),
 		
 		listSelector: '.select-list',
 
 		listItemSelector: '.select-list label',
 		
 		initialize: function(options) {
+			this.template =  _.template($("#add-to-bucket-template").html());
 			this.$el.html(this.template(this.model.toJSON()));
-			BaseAssetListView.prototype.initialize.call(this, options);
+			Assets.BaseAssetListView.prototype.initialize.call(this, options);
 		},
 				
 		getView: function(bucket) {
@@ -622,9 +581,7 @@ $(function() {
 	});
 		
 	// VIEW: Listing of drops
-	var DropsView = Backbone.View.extend({
-	
-		template: _.template($("#drop-listing-template").html()),
+	var DropsView = Drops.DropsView = Backbone.View.extend({
 		
 		noContentElHidden: false,
 		
@@ -633,6 +590,8 @@ $(function() {
 		},
 				
 		initialize: function(options) {
+			this.template = _.template($("#drop-listing-template").html());
+			
 			// Set this view element programatically
 			if (options.layout == "list") {
 				this.setElement(this.make("article", {"class": "river list"}));
@@ -640,20 +599,20 @@ $(function() {
 				this.setElement(this.make("article", {"class": "river drops cf", "style": "position: relative;"}));
 			}
 
-			dropsList.on('reset', this.initDrops, this); 
-			dropsList.on('destroy', this.checkEmpty, this);
+			options.dropsList.on('reset', this.initDrops, this); 
+			options.dropsList.on('destroy', this.checkEmpty, this);
 			
 			if (options.layout == "list") {
 				// For list layout we can add drops directly, no masonry required
-				dropsList.on('add', this.addDrop, this);
+				options.dropsList.on('add', this.addDrop, this);
 			} else {
 				// Masonry requires all new drops to be added at once for a smooth
 				// animation
-				dropsList.on('drops', this.addDrops, this);
+				options.dropsList.on('drops', this.addDrops, this);
 			}
 			
-			newDropsList.on('add', this.alertNewDrops, this);
-			newDropsList.on('reset', this.resetNewDropsAlert, this);
+			options.newDropsList.on('add', this.alertNewDrops, this);
+			options.newDropsList.on('reset', this.resetNewDropsAlert, this);
 		},
 		
 		render: function() {
@@ -668,11 +627,16 @@ $(function() {
 		// In drops view, add a batch of drops to the view.
 		addDrops: function(drops) {
 			// Get the views for each drop
+			var context = this;
+			
 			var views = [];
-			var id = maxId;
+			var id = this.options.maxId;
 			_.each(drops, function(drop) {
 				id = Math.max(id, drop.get("sort_id"));
-				views.push(new DropView({model: drop, layout: this.options.layout}).render().el);
+				views.push(new DropView({model: drop, 
+										layout: this.options.layout, 
+										baseURL: context.options.baseURL,
+										router: context.options.router}).render().el);
 			}, this)
 			
 			// Hide the new drops while they are loading
@@ -680,17 +644,18 @@ $(function() {
 			var $container = this.$('#drops-view');
 			
 			// Add the drops to the view all at once and do masonry
-			if (id > maxId) {
+			if (id > this.options.maxId) {
 				// New drops, prepend them
 				$container.prepend($newElems);
 			} else {
 				// Pagination, append the drops
 				$container.append($newElems);
 			}
+			
 			$newElems.imagesLoaded(function(){
 				// show elems now they're ready
 				$newElems.animate({ opacity: 1 });
-				if (id > maxId) {
+				if (id > context.options.maxId) {
 					// New drops, prepend them
 					 $container.masonry('reload');
 				} else {
@@ -703,18 +668,37 @@ $(function() {
 		// Add a single drop to the view either in initialization
 		// or list view.
 		addDrop: function(drop) {
-			var view = new DropView({model: drop, layout: this.options.layout});
+			var view = new DropView({model: drop, 
+									layout: this.options.layout, 
+									baseURL: this.options.baseURL,
+									router: this.options.router});
 			drop.view = view;
+			
+			// Create a circular linked list of drops
+			var i = this.options.dropsList.indexOf(drop);
+			// Last index
+			var l = this.options.dropsList.length - 1;
+			
+			if (l > 0) {
+				drop.prev = i > 0 ? this.options.dropsList.at(i-1) : this.options.dropsList.at(l);
+				drop.next = i == l ? this.options.dropsList.at(0) : this.options.dropsList.at(i+1);
+				drop.prev.next = drop;
+				drop.next.prev = drop;
+			} else {
+				drop.prev = null;
+				drop.next = null;
+			}
+			
 			if (this.options.layout == "list") {
 				// Ordering is significant for list view
 				// and drops will be inserted in the view according to
 				// their dates and not simply appended/prepended.
-				var index = dropsList.indexOf(drop);
+				var index = this.options.dropsList.indexOf(drop);
 				if (index > 0) {
 					// Newer drops are added in the view before drops
 					// they follow in the list i.e. newer drops are added
 					// on top
-					dropsList.at(index-1).view.$el.before(view.render().el);
+					this.options.dropsList.at(index-1).view.$el.before(view.render().el);
 				} else {
 					// First drop is simply appended to the view
 					this.$("#drops-view").append(view.render().el);
@@ -745,7 +729,7 @@ $(function() {
 			
 			if (!this.checkEmpty()) {
 				this.hideNoContentEl();
-				dropsList.each(this.addDrop, this);
+				this.options.dropsList.each(this.addDrop, this);
 			}
 			
 			if (doMasonry) {
@@ -789,7 +773,7 @@ $(function() {
 		},
 		
 		checkEmpty: function() {
-			if (!dropsList.length) {
+			if (!this.options.dropsList.length) {
 				var noContentEl = this.$(".no-content");
 				this.$el.remove();
 				$("#content").removeClass("river").addClass("cf").append(noContentEl);
@@ -801,7 +785,7 @@ $(function() {
 		},
 		
 		alertNewDrops: function() {
-			var count = newDropsList.size();
+			var count = this.options.newDropsList.size();
 			if (count > 0) {
 				// Alert message to show
 				var message = "<p style=\"text-align:center\">" +
@@ -831,8 +815,8 @@ $(function() {
 			// Prevent further updates while in here
 			isSyncing = true;
 			
-			dropsList.add(newDropsList.models);
-			newDropsList.reset();
+			this.options.dropsList.add(this.options.newDropsList.models);
+			this.options.newDropsList.reset();
 			
 			// Proceed
 			isSyncing = false;
@@ -850,11 +834,13 @@ $(function() {
 	var EditMetadataListItemView = Backbone.View.extend({
 	
 		tagName: "li",
-	
-		template: _.template($("#edit-metadata-listitem").html()),
 		
 		events: {
 			"click span.remove-small": "removeMeta",
+		},
+		
+		initialize: function() {
+			this.template = _.template($("#edit-metadata-listitem").html());
 		},
 						
 		render: function() {
@@ -890,8 +876,6 @@ $(function() {
 		tagName: "article",
 	
 		className: "modal",
-	
-		template: _.template($("#add-metadata-template").html()),
 		
 		events: {
 			"click .create-new a": "saveNewMetadata",
@@ -899,6 +883,7 @@ $(function() {
 		},
 		
 		initialize: function() {
+			this.template = _.template($("#add-metadata-template").html());
 			this.collection.on("add", this.addMetadata, this);
 		},
 		
@@ -1016,8 +1001,6 @@ $(function() {
 	
 		className: "meta-data",
 		
-		template: _.template($("#metadata-template").html()),
-		
 		events: {
 			// Show/Hide the edit buttong
 			"mouseover h3": function() { this.$("h3 .button-blue").show(); },
@@ -1027,6 +1010,7 @@ $(function() {
 		},
 		
 		initialize: function() {
+			this.template = _.template($("#metadata-template").html());
 			this.collection.on("add", this.addMetadata, this);
 		},
 		
@@ -1078,35 +1062,37 @@ $(function() {
 	});
 	
 	// VIEW: Full Drop
-	var DropFullView = Backbone.View.extend({
+	var DropFullView = Drops.DropFullView = Backbone.View.extend({
 	
 		tagName: "article",
 	
 		className: "drop drop-full cf",
 		
-		template: _.template($("#drop-full-view-template").html()),
+		initialize: function(options) {
+			this.template = _.template($("#drop-full-view-template").html());
+		},
 		
 		render: function() {
 			// Render the layout
 			this.$el.html(this.template());
 			
 			// Render the droplet detail
-			var detailView = new DropDetailView({model: this.model});
+			var detailView = new DropDetailView({model: this.model, baseURL: this.options.baseURL, router: this.options.router});
 			this.$("article .center .col_3").before(detailView.render().el);
 			
 			// Render metadata
 			var places = new Places;
-			places.url = base_url+"/places/"+this.model.get("id");
+			places.url = this.options.baseURL+"/places/"+this.model.get("id");
 			places.reset(this.model.get("places"));
 			this.addMetadataBlock(places);
 			
 			var links = new Links;
-			links.url = base_url+"/links/"+this.model.get("id");
+			links.url = this.options.baseURL+"/links/"+this.model.get("id");
 			links.reset(this.model.get("links"));
 			this.addMetadataBlock(links);
 			
 			var tags = new Tags;
-			tags.url = base_url+"/tags/"+this.model.get("id");
+			tags.url = this.options.baseURL+"/tags/"+this.model.get("id");
 			tags.reset(this.model.get("tags"));
 			this.addMetadataBlock(tags);
 			
@@ -1127,20 +1113,24 @@ $(function() {
 
 		className: "modal",
 
-		template: _.template($("#share-drop-template").html()),
-
 		events: {
 			"click li.email > a": "showEmailDialog",
 		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#share-drop-template").html());
+		},
 
 		showEmailDialog: function() {
-			var emailView = new EmailDropView({model: this.model});
+			var emailView = new EmailDropView({model: this.model, baseURL: this.options.baseURL});
 			modalShow(emailView.render().el);
 			return false;
 		},
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			var data = this.model.toJSON();
+			data['drop_url'] = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + data["id"];
+			this.$el.html(this.template(data));
 			return this;
 		}
 	});
@@ -1150,10 +1140,12 @@ $(function() {
 
 		className: "modal",
 
-		template: _.template($("#email-dialog-template").html()),
-
 		events: {
 			"click #send_sharing_email > a": "sendEmail"
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#email-dialog-template").html());
 		},
 
 		sendEmail: function() {
@@ -1165,7 +1157,7 @@ $(function() {
 
 			// Submit for sharing
 			$.ajax({
-				url: base_url + "/share",
+				url: this.options.baseURL + "/share",
 				
 				type: "POST",
 				
@@ -1190,350 +1182,12 @@ $(function() {
 		},
 
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			var data = this.model.toJSON();
+			data['drop_url'] = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + data["id"];
+			this.$el.html(this.template(data));
 			return this;
 		}
 
 	});
 	
-	// Filters modal window
-	var FiltersView = Backbone.View.extend({
-		tagName: "article",
-
-		className: "modal",
-
-		template: _.template($("#filters-modal-template").html()),
-		
-		events: {
-			"click .save-toolbar .button-blue a": "applyFilter",
-			"click .save-toolbar .button-blank a": "resetFilter"
-		},
-		
-		render: function() {
-			this.$el.html(this.template({filters: filters, channels: window.drops_channels}));
-			return this;
-		},
-		
-		applyFilter: function() {
-			if (!this.$('.save-toolbar').hasClass('visible'))
-				return false;
-			
-			// Prepare a key value pair of data to send to the server
-			var data = {};
-			this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-				var input = $(el);
-				var value = $.trim(input.val());
-				if (value.length) {
-					data[input.attr("name")] = encodeURIComponent(value);
-				}
-			});
-			
-			// If there is a filter or a previous filter has been cleared
-			if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
-				
-				// Photos view?
-				data['photos'] = photos;
-				
-				var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
-				var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
-				
-				isSyncing = isPageFetching = true
-				var view = this;
-				
-				// Show a loading message if the GET request takes longer than 500ms
-				var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
-				$.get(base_url + "/droplets", data, function(response) {
-					// Success, replace the drops list with the new data
-					dropsList.reset(response);
-					
-					// Update the filter
-					filters = new Filter(data);
-					appRouter.setFilter(filters.getString(), false);
-					dropsList.url = newDropsList.url = getDropletListUrl(true);
-
-					// Reset pagination
-					pageNo = 1;
-					isAtLastPage = false;
-					
-					modalHide();
-				}, "json")
-				.complete(function() {
-					isSyncing = isPageFetching = false;
-									
-					clearTimeout(t);
-					loading_msg.replaceWith(save_toolbar);
-				});
-			}
-			
-			return false;
-		},
-		
-		resetFilter: function() {
-			this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-				$(el).val("");
-			});	
-			
-			this.applyFilter();
-			
-			return false;
-		}
-	})
-	
-	// Bind to the filters button which is our of any of our views.
-	$("nav.page-navigation div.filter-actions a").click(function () {
-		var view = new FiltersView();
-		modalShow(view.render().el);
-		return false;
-	})
-	
-	
-	// Load content while scrolling - Infinite Scrolling
-	var pageNo = 1;
-	var maxId = 0;
-	var isAtLastPage = false;
-	var isPageFetching = false;
-	
-	function nearBottom(bottomEl) {
-		var bufferPixels = 40;
-		return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - bottomEl.offset().top;
-	}
-	
-	var loading_msg = window.loading_message.clone();
-	
-	$(window).bind("scroll", function() {
-		bottomEl = $("#next_page_button");
-		
-		if (!bottomEl.length)
-			return;
-		
-		if (nearBottom(bottomEl) && !isPageFetching && !isAtLastPage) {
-			// Advance page and fetch it
-			isPageFetching = true;
-			pageNo += 1;		
-    
-			// Hide the navigation selector and show a loading message				
-			loading_msg.appendTo(bottomEl).show();
-			
-			dropsList.fetch({
-			    data: {
-			        page: pageNo, 
-			        max_id: maxId,
-			        photos: photos
-			    }, 
-			    add: true,
-			    complete: function(model, response) {
-					// Reanable scrolling after a delay
-					setTimeout(function(){ isPageFetching = false; }, 700);
-			        loading_msg.fadeOut('normal');
-			    },
-			    error: function(model, response) {
-			        if (response.status == 404) {
-			            isAtLastPage = true;
-			        }
-			    }
-			});
-	    }
-	});
-	
-	// New drop polling
-	var sinceId = 0;	
-	var isSyncing = false;
-	
-	// Update since id whenever a droplet is added to the collection
-	function updateSinceId (droplet) {
-		if (parseInt(droplet.get("sort_id")) > sinceId) {
-			sinceId = parseInt(droplet.get("sort_id"));
-		}
-	}
-	newDropsList.on('add', updateSinceId, this);
-	
-	if (window.drops_polling_enabled) {
-		// Poll for new drops every 30 seconds
-		setInterval(function() {
-			if (!isSyncing) {
-				isSyncing = true;
-				newDropsList.fetch({data: {since_id: sinceId, photos: photos}, 
-				    add: true, 
-				    complete: function () {
-				        isSyncing = false;
-				    }
-				});   
-			}		    
-		}, 30000 + Math.floor((Math.random()*30000)+1));
-	}
-			
-	// Bootstrap the droplet list
-	dropsList.reset(window.droplet_list);
-	
-	// Set the maxId after inital rendering of droplet list
-	maxId = sinceId = window.drops_max_drop_id;
-	
-	var AppRouter = Backbone.Router.extend({
-		routes: {
-			"drop/:id" : "dropFullView",
-			"drop/:id/zoom" : "dropZoomView",
-			"*actions": "defaultRoute"
-		},
-
-		initialize: function() {
-			this.route(/^drops(\?.+)?$/, "dropsView");
-			this.route(/^list(\?.+)?$/, "listView");
-			this.route(/^photos(\?.+)?$/, "photosView");
-		},
-		
-		listingDone: false,
-		
-		// Cache for the drops view to unbinding event handlers
-		// when the view changes.
-		view: null,
-				
-		resetView: function() {
-			var noticeContent = $("#system_notification", "#content");
-			
-			$("#content").empty();
-			if (noticeContent !== null) {
-				$("#content").append(noticeContent);
-			}
-			modalHide();
-			zoomHide();
-			dropsList.off(null, null, this.view);
-			this.view = null;
-		},
-		
-		getView: function (layout) {
-			if (!this.view) {
-				this.view = new DropsView({layout: layout});
-				this.view.render();
-				this.view.initDrops();
-			}
-			return this.view.el;
-		},
-		
-		dropsView: function() {
-			$("#drops-navigation-link").addClass("active");
-			$("#list-navigation-link").removeClass("active");
-			$("#photos-navigation-link").removeClass("active");
-			this.resetView();		
-			$("#content").append(this.getView("drops"));
-			this.view.masonry();
-			this.listingDone = true;
-			
-			// Apply filter parameters to the navigation if any
-			if (!filters.isEmpty()) {
-				this.setFilter(filters.getString(), true);
-			}
-		},
-		
-		listView: function() {
-			$("#list-navigation-link").addClass("active");
-			$("#drops-navigation-link").removeClass("active");
-			$("#photos-navigation-link").removeClass("active");
-			this.resetView();
-			$("#content").append(this.getView("list"));
-			this.listingDone = true;
-			
-			// Apply filter parameters to the navigation if any
-			if (!filters.isEmpty()) {
-				this.setFilter(filters.getString(), true);
-			}
-		},
-
-		photosView: function() {
-			$("#list-navigation-link").removeClass("active");
-			$("#drops-navigation-link").removeClass("active");
-			$("#photos-navigation-link").addClass("active");
-			this.resetView();		
-			$("#content").append(this.getView("photos"));
-			this.view.masonry();
-			this.listingDone = true;
-			
-			// Apply filter parameters to the navigation if any
-			if (!filters.isEmpty()) {
-				this.setFilter(filters.getString(), true);
-			}
-		},		
-		
-		dropFullView: function(id) {
-			this.resetView();
-			var drop = dropsList.get(id);
-			if (!drop) {
-				// Drop not in the local collection, request it from the server
-				drop = new Drop({id: id});
-				drop.urlRoot = getDropletListUrl(false);
-				var context = this;
-				var callback = this.dropFullView;
-				drop.fetch({
-					success: function() {
-						// Add the drop to the collection only when successful
-						dropsList.add(drop);
-						// Retry the drop view now that the drop is loaded
-						setTimeout(function() { callback.call(context, id); }, 0);
-					}
-				});
-				return;
-			}
-			var fullView = new DropFullView({model: drop}).render();
-			fullView.$('.settings-toolbar').remove();
-			$("#content").append(fullView.el);
-		},
-		
-		dropZoomView: function(id) {
-			var drop = dropsList.get(id);
-			var detailView = new DropDetailView({model: drop});
-			var layout = this.view.options.layout;
-			zoomShow(detailView.render().el);
-			$("#zoom-container div.modal-window").bind("clickoutside", function(event){
-				if(!appRouter.listingDone) {
-					appRouter.navigate(layout, {trigger: true});
-				} else {
-					appRouter.navigate(layout);
-				}
-			});
-			return false;
-		},
-				
-		defaultRoute: function(actions) {
-			switch(default_view) {
-				case 'photos':
-					this.navigate("photos", {trigger: true, replace: true});
-					break;
-				case 'list':
-					this.navigate("list", {trigger: true, replace: true});
-					break;
-				case 'drops':
-				default:
-					this.navigate("drops", {trigger: true, replace: true});
-					break;
-			}
-		},
-		
-		setFilter: function(query, repl) {
-			var fragment = "list";
-			if (this.view.options.layout !=  undefined) {
-				fragment = this.view.options.layout;
-			} 
-			if (query) {
-				fragment += '?' + query;
-			}
-			this.navigate(fragment, {replace: repl});
-		}
-	});
-	
-	// Initiate the router
-	window.appRouter = new AppRouter;
-	// Start Backbone history
-	Backbone.history.start({pushState: true, root: base_url + "/"});
-
-	// Onclick Handlers for Drops/List
-	if ( ! photos)
-	{
-		$("#drops-navigation-link a").click(function() {
-			appRouter.navigate('/drops', {trigger: true});
-			return false;
-		});
-		$("#list-navigation-link a").click(function() {
-			appRouter.navigate('/list', {trigger: true});
-			return false;
-		});
-	}
-});
+}(this));

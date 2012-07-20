@@ -165,7 +165,12 @@ class Controller_River extends Controller_Drop_Base {
 		$droplet_js->fetch_base_url = $this->river_base_url;
 		$droplet_js->default_view = $this->river->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
-		$droplet_js->filters = empty($filters) ? 'null' : json_encode($filters);
+		// Check if any filters exist and modify the fetch urls
+		$droplet_js->filters = NULL;
+		if ( ! empty($filters))
+		{
+			$droplet_js->filters = json_encode($filters);
+		}
 		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode($this->river->get_channels());

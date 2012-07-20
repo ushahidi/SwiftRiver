@@ -118,7 +118,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$droplet_js->fetch_base_url = $this->bucket_base_url;
 		$droplet_js->default_view = $this->bucket->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
-		$droplet_js->filters = 'null';
+		$droplet_js->filters = NULL;
 		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode(array());
