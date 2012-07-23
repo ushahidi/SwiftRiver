@@ -104,7 +104,7 @@ class Controller_User extends Controller_Swiftriver {
 			$this->template->header->title = __('Dashboard');
 			$this->template->header->js = View::factory('pages/user/js/main');
 			
-			$this->active = 'main';
+			$this->active = 'dashboard-navigation-link';
 			
 			$this->sub_content = View::factory('pages/user/main')
 				->bind('owner', $this->owner)
@@ -329,7 +329,7 @@ class Controller_User extends Controller_Swiftriver {
 		}
 		
 		// Set the current page
-		$this->active = 'settings';
+		$this->active = 'settings-navigation-link';
 		$this->template->content->view_type = 'settings';
 		$this->template->header->js = View::factory('pages/user/js/settings');
 		$this->template->header->js->user = $this->user;
@@ -723,7 +723,6 @@ class Controller_User extends Controller_Swiftriver {
 		// List
 		$nav[] = array(
 			'id' => 'dashboard-navigation-link',
-			'active' => 'main',
 			'url' => '',
 			'label' => __('Dashboard')
 		);
@@ -731,7 +730,6 @@ class Controller_User extends Controller_Swiftriver {
 		// Drops
 		$nav[] = array(
 			'id' => 'settings-navigation-link',
-			'active' => 'settings',
 			'url' => '/settings',
 			'label' => __('Settings')
 		);

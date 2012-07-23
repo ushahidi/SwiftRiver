@@ -24,8 +24,8 @@
 <nav class="page-navigation cf">
 	<ul class="center">
 		<?php foreach ($nav as $item): ?>
-		<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
-			<a href="<?php echo URL::site().$account->account_path.$item['url']; ?>">
+		<li id="<?php echo $item['id']; ?>" class="<?php echo $item['id'] == $active ? 'active' : ''; ?>">
+			<a href="<?php echo URL::site($account->account_path.$item['url']) ?>">
 				<?php echo $item['label'];?>
 			</a>
 		</li>
