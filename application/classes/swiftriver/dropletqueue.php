@@ -143,11 +143,12 @@ class Swiftriver_Dropletqueue {
 	 */
 	public static function create_drop($drop)
 	{
-		list($drops, $new_drops) = Model_Droplet::create_from_array(array($drop), FALSE);
+		list($drops, $new_drops) = Model_Droplet::create_from_array(array($drop));
 		
 		if ( ! empty($new_drops))
 		{
-			Swiftriver_Event::run('swiftriver.drop.new', $new_drops[0]);
+			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $new_drops[0]);
+			Model_Droplet::create_from_array(array($new_drops[0]));
 		}
 		
 		return $drops[0];
