@@ -810,19 +810,8 @@
 		},
 		
 		showNewDrops: function() {
-			if (isSyncing)
-				return;
-			
-			// Prevent further updates while in here
-			isSyncing = true;
-			
 			this.options.dropsList.add(this.options.newDropsList.models);
 			this.options.newDropsList.reset();
-			
-			// Proceed
-			isSyncing = false;
-			
-			return false;
 		},
 		
 		resetNewDropsAlert: function() {
