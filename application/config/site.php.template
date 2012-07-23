@@ -8,7 +8,7 @@ return array(
 	'cdn_url' => NULL,
 
 	/* Directories that are available via the CDN */
-	'cdn_directories' => array('themes/default/media'),
+	'cdn_directories' => array('themes/default/media', 'plugins/[^\/]+/media'),
 	
 	/* Default cache driver */
 	'default_cache' => 'file'
