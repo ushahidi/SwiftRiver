@@ -18,12 +18,12 @@ class Controller_User extends Controller_Swiftriver {
 	/**
 	 * sub content
 	 */
-	private $sub_content;
+	protected $sub_content;
 	
 	/**
 	 * active
 	 */
-	private $active;
+	protected $active;
 	
 	/**
 	 * Is the visiting user the owner?
@@ -34,13 +34,13 @@ class Controller_User extends Controller_Swiftriver {
 	 * Buckets accessible by the current user
 	 * @var araray
 	 */
-	private $buckets = array();
+	protected $buckets = array();
 
 	/**
 	 * Rivers accessible by the current user
 	 * @var array
 	 */
-	private $rivers = array();
+	protected $rivers = array();
 	
 	/**
 	 * @return	void
@@ -77,6 +77,7 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('followers', $followers)
 			->bind('following', $following)
 			->bind('view_type', $view_type);
+		$this->template->content->nav = $this->get_nav();
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
@@ -706,5 +707,38 @@ class Controller_User extends Controller_Swiftriver {
 
 		$follower_list = json_encode($following);
 		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	
+	}
+	
+	
+	/**
+	 * Dashboard Navigation Links
+	 * 
+	 * @param string $active - the active menu
+	 * @return	array $nav
+	 */
+	protected static function get_nav()
+	{
+		$nav = array();
+
+		// List
+		$nav[] = array(
+			'id' => 'dashboard-navigation-link',
+			'active' => 'main',
+			'url' => '',
+			'label' => __('Dashboard')
+		);
+        
+		// Drops
+		$nav[] = array(
+			'id' => 'settings-navigation-link',
+			'active' => 'settings',
+			'url' => '/settings',
+			'label' => __('Settings')
+		);
+
+		// SwiftRiver Plugin Hook -- Add Nav Items
+		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);
+
+		return $nav;
 	}
 }
