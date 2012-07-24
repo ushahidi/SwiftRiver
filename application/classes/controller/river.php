@@ -158,36 +158,22 @@ class Controller_River extends Controller_Drop_Base {
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
 			$max_droplet_id, NULL, $filters, $this->photos);
-
-		// Total Droplets Before Filtering
-		$total = $droplets_array['total'];
-
-		// The Droplets
-		$droplets = $droplets_array['droplets'];
-
-		// Total Droplets After Filtering
-		$filtered_total = count($droplets);
-
+		
 		// Bootstrap the droplet list
+		$this->template->header->js .= Html::script("themes/default/media/js/drops.js");
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->droplet_list = @json_encode($droplets);
-		$droplet_js->max_droplet_id = $max_droplet_id;
-		$droplet_js->user = $this->user;
-		$droplet_js->channels = json_encode($this->river->get_channels());
-
-		// Polling is only active when the river has not expired
-		$droplet_js->polling_enabled = ( ! $this->river->is_expired($this->owner));
-		
 		$droplet_js->default_view = $this->river->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
-		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
 		{
 			$droplet_js->filters = json_encode($filters);
 		}
+		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->max_droplet_id = $max_droplet_id;
+		$droplet_js->channels = json_encode($this->river->get_channels());
 
 		// Select droplet list view with drops view as the default if list not specified
 		$this->droplets_view = View::factory('pages/drop/drops')
@@ -195,6 +181,7 @@ class Controller_River extends Controller_Drop_Base {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+
 
 		// Show expiry notice to owners only
 		if ($this->owner AND $this->river->is_expired($this->owner))

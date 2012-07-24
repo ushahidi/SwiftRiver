@@ -18,12 +18,12 @@ class Controller_User extends Controller_Swiftriver {
 	/**
 	 * sub content
 	 */
-	private $sub_content;
+	protected $sub_content;
 	
 	/**
 	 * active
 	 */
-	private $active;
+	protected $active;
 	
 	/**
 	 * Is the visiting user the owner?
@@ -34,13 +34,13 @@ class Controller_User extends Controller_Swiftriver {
 	 * Buckets accessible by the current user
 	 * @var araray
 	 */
-	private $buckets = array();
+	protected $buckets = array();
 
 	/**
 	 * Rivers accessible by the current user
 	 * @var array
 	 */
-	private $rivers = array();
+	protected $rivers = array();
 	
 	/**
 	 * @return	void
@@ -77,6 +77,7 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('followers', $followers)
 			->bind('following', $following)
 			->bind('view_type', $view_type);
+		$this->template->content->nav = $this->get_nav();
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
@@ -103,7 +104,7 @@ class Controller_User extends Controller_Swiftriver {
 			$this->template->header->title = __('Dashboard');
 			$this->template->header->js = View::factory('pages/user/js/main');
 			
-			$this->active = 'main';
+			$this->active = 'dashboard-navigation-link';
 			
 			$this->sub_content = View::factory('pages/user/main')
 				->bind('owner', $this->owner)
@@ -328,7 +329,7 @@ class Controller_User extends Controller_Swiftriver {
 		}
 		
 		// Set the current page
-		$this->active = 'settings';
+		$this->active = 'settings-navigation-link';
 		$this->template->content->view_type = 'settings';
 		$this->template->header->js = View::factory('pages/user/js/settings');
 		$this->template->header->js->user = $this->user;
@@ -633,51 +634,6 @@ class Controller_User extends Controller_Swiftriver {
 		echo $modal_create;
 	}
 
-	/**
-	 * REST endpoint for sharing droplets via email
-	 */
-	public function action_share()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		if ($_POST)
-		{
-			// Extract the input data
-			$post = Arr::extract($_POST, array('recipient', 
-				'subject', 'body'));
-			
-			$csrf_token = $this->request->headers('x-csrf-token');
-
-			// Setup validation
-			$validation = Validation::factory($post)
-			    ->rule('recipient', 'not_empty')
-			    ->rule('recipient', 'email')
-			    ->rule('subject', 'not_empty')
-			    ->rule('body', 'not_empty')
-			    ->rule('body', 'max_length', array(':value', 300));
-
-			// Validate
-			if ( ! CSRF::valid($csrf_token) AND ! $validation->check())
-			{
-				$this->response->status(400);
-			}
-			else
-			{
-				// Modify the mail body to include the email address of the
-				// use sharing content
-				$mail_body = __(":body \n\nShared by :sender",
-				    array(':body' => $post['body'], ':sender' => $this->user->username));
-
-				// Send the email
-				Swiftriver_Mail::send($post['recipient'], $post['subject'], $mail_body);
-			}
-		}
-		else
-		{
-			throw new HTTP_Exception_405("Only HTTP POST requests are allowed");
-		}
-	}
 
 	/**
 	 * Loads the list of followers
@@ -750,6 +706,37 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$follower_list = json_encode($following);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	}
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	
+	}
+	
+	
+	/**
+	 * Dashboard Navigation Links
+	 * 
+	 * @param string $active - the active menu
+	 * @return	array $nav
+	 */
+	protected static function get_nav()
+	{
+		$nav = array();
 
+		// List
+		$nav[] = array(
+			'id' => 'dashboard-navigation-link',
+			'url' => '',
+			'label' => __('Dashboard')
+		);
+        
+		// Drops
+		$nav[] = array(
+			'id' => 'settings-navigation-link',
+			'url' => '/settings',
+			'label' => __('Settings')
+		);
+
+		// SwiftRiver Plugin Hook -- Add Nav Items
+		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);
+
+		return $nav;
+	}
 }

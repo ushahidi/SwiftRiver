@@ -112,27 +112,17 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
 			$this->bucket->id, 0, 1, $max_droplet_id, $this->photos);
 
-		// Total Droplets Before Filtering
-		$total = $droplets_array['total'];
-		
-		// The Droplets
-		$droplets = $droplets_array['droplets'];
-				
 		// Bootstrap the droplet list
-		$droplet_list = @json_encode($droplets);
-		$droplet_js = View::factory('pages/drop/js/drops')
-		        ->bind('fetch_base_url', $fetch_base_url)
-		        ->bind('droplet_list', $droplet_list)
-		        ->bind('max_droplet_id', $max_droplet_id)
-		        ->bind('user', $this->user);
-		$droplet_js->channels = json_encode(array());
-	    $droplet_js->polling_enabled = TRUE;
+		$this->template->header->js .= Html::script("themes/default/media/js/drops.js");
+		$droplet_js = View::factory('pages/drop/js/drops');
+		$droplet_js->fetch_base_url = $this->bucket_base_url;
 		$droplet_js->default_view = $this->bucket->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
-		
-		$fetch_base_url = $this->bucket_base_url;
 		$droplet_js->filters = NULL;
-				
+		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->max_droplet_id = $max_droplet_id;
+		$droplet_js->channels = json_encode(array());
+		
 		// Generate the List HTML
 		$droplets_view = View::factory('pages/drop/drops')
 			->bind('droplet_js', $droplet_js)
@@ -477,5 +467,4 @@ class Controller_Bucket extends Controller_Drop_Base {
 			Cache::instance()->delete('user_buckets_'.$this->user->id);
 		}
 	}
-	
 }

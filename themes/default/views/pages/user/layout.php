@@ -23,17 +23,13 @@
 <?php if ($owner AND ! empty($active)): ?>
 <nav class="page-navigation cf">
 	<ul class="center">
-		<li <?php if ($active == 'main') echo 'class="active"'; ?>>
-			<a href="<?php echo URL::site().$account->account_path; ?>">
-				<?php echo __("Dashboard"); ?>
+		<?php foreach ($nav as $item): ?>
+		<li id="<?php echo $item['id']; ?>" class="<?php echo $item['id'] == $active ? 'active' : ''; ?>">
+			<a href="<?php echo URL::site($account->account_path.$item['url']) ?>">
+				<?php echo $item['label'];?>
 			</a>
 		</li>
-		<li <?php if ($active == 'settings') echo 'class="active"'; ?>>
-			<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
-				<?php echo __("Account Settings"); ?>
-			</a>
-		</li>
-
+		<?php endforeach; ?>
 	</ul>
 </nav>
 <?php endif; ?>

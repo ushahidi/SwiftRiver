@@ -16,7 +16,7 @@ class HTML extends Kohana_HTML {
 	 */
 	public static function style($file, array $attributes = NULL, $protocol = NULL, $index = FALSE)
 	{
-		$file = self::get_cdn_url($file);
+		$file = Swiftriver::get_cdn_url($file);
 		return parent::style($file, $attributes, $protocol, $index);
 	}
 
@@ -34,7 +34,7 @@ class HTML extends Kohana_HTML {
 	 */
 	public static function script($file, array $attributes = NULL, $protocol = NULL, $index = FALSE)
 	{
-		$file = self::get_cdn_url($file);
+		$file = Swiftriver::get_cdn_url($file);
 		return parent::script($file, $attributes, $protocol, $index);
 	}
 	
@@ -53,28 +53,7 @@ class HTML extends Kohana_HTML {
 	 */
 	public static function image($file, array $attributes = NULL, $protocol = NULL, $index = FALSE)
 	{
-		$file = self::get_cdn_url($file);
+		$file = Swiftriver::get_cdn_url($file);
 		return parent::image($file, $attributes, $protocol, $index);
-	}
-	
-	/**
-	 * Returns the CDN url for $file
-	 *
-	 * @param   string   file name
-	 * @return  string
-	 */
-	private static function get_cdn_url($file)
-	{
-		$cdn_url = Kohana::$config->load('site')->get('cdn_url');
-		if (isset($cdn_url))
-		{
-			$cdn_dirs = Kohana::$config->load('site')->get('cdn_directories');
-			foreach ($cdn_dirs as $dir)
-			{
-				$file = preg_replace('|^('.$dir.')|', $cdn_url.'/$1', $file);
-			}
-		}
-		
-		return $file;
 	}
 }

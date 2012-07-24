@@ -30,8 +30,12 @@
 			<?php endif; ?>
 			
 			window.logged_in_user = <?php echo $user->id; ?>;
+		<?php else: ?>
+			window.logged_in_account = null;
+			window.logged_in_account_path = null;
+			window.logged_in_user = null;
 		<?php endif; ?>
-
+		window.public_registration_enabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>;
 		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
 	</script>
 	
@@ -60,6 +64,7 @@
 	
 	// SwiftRiver global JS
 	echo(Html::script("themes/default/media/js/global.js"));
+	echo(Html::script("themes/default/media/js/assets.js"));
 
 	// Dynamic inline JS
 	echo $js; 
@@ -86,24 +91,26 @@
 		<script type="text/javascript">
 			$(function() {
 				// Bootstrap the global bucket list		
-				bucketList.reset(<?php echo $bucket_list; ?>);
+				Assets.bucketList.reset(<?php echo $bucket_list; ?>);
 				
 				// Bootstrap the global bucket list		
-				riverList.reset(<?php echo $river_list; ?>);
+				Assets.riverList.reset(<?php echo $river_list; ?>);
 			});
 		</script>
 	<?php endif; ?>
 </head> 
  
 <body> 
-	<header class="toolbar">
-		<div class="center">
-			<div class="col_4">
-				<h1 class="logo">
-					<a href="<?php echo $dashboard_url; ?>">
-					<span class="nodisplay">SwiftRiver</span>
-					</a>
-				</h1>
-			<?php echo $nav_header;?>
-		</div>
-	</header>
+	<?php if ($show_nav): ?>
+		<header class="toolbar">
+			<div class="center">
+				<div class="col_4">
+					<h1 class="logo">
+						<a href="<?php echo $dashboard_url; ?>">
+						<span class="nodisplay">SwiftRiver</span>
+						</a>
+					</h1>
+				<?php echo $nav_header;?>
+			</div>
+		</header>
+	<?php endif; ?>

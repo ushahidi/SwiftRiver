@@ -78,7 +78,7 @@ class Swiftriver_Dropletqueue {
 	 */
 	public static function add($droplet, $queue_droplet = TRUE)
 	{
-		if ($new_drops = Model_Droplet::create_from_array(array($droplet)))
+		if (list(,$new_drops) = Model_Droplet::create_from_array(array($droplet)))
 		{
 			$drop = array_pop($new_drops);
 
@@ -133,6 +133,25 @@ class Swiftriver_Dropletqueue {
 		self::$_processed = array();
 		
 		return $result;
+	}
+	
+	
+	/**
+	 * Create a single new drop and publish new ones for meta extraction.
+	 *
+	 * @return array
+	 */
+	public static function create_drop($drop)
+	{
+		list($drops, $new_drops) = Model_Droplet::create_from_array(array($drop));
+		
+		if ( ! empty($new_drops))
+		{
+			Swiftriver_Event::run('swiftriver.droplet.extract_metadata', $new_drops[0]);
+			Model_Droplet::create_from_array(array($new_drops[0]));
+		}
+		
+		return $drops[0];
 	}
 }
 ?>

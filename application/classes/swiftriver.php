@@ -74,5 +74,26 @@ class Swiftriver {
 		// Set the default site locale
 		I18n::$lang = Model_Setting::get_setting('site_locale');
 	}
+	
+	/**
+	 * Returns the CDN url for $file
+	 *
+	 * @param   string   file name
+	 * @return  string
+	 */
+	public static function get_cdn_url($file)
+	{
+		$cdn_url = Kohana::$config->load('site')->get('cdn_url');
+		if (isset($cdn_url))
+		{
+			$cdn_dirs = Kohana::$config->load('site')->get('cdn_directories');
+			foreach ($cdn_dirs as $dir)
+			{
+				$file = preg_replace('|^('.$dir.')|', $cdn_url.'/$1', $file);
+			}
+		}
+		
+		return $file;
+	}
 
 }
