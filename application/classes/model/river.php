@@ -647,12 +647,15 @@ class Model_River extends ORM {
 	 *
 	 * @return array
 	 */	
-	public function get_collaborators()
+	public function get_collaborators($active_only = FALSE)
 	{
 		$collaborators = array();
 		
-		foreach ($this->river_collaborators->where('collaborator_active', '=', 1)->find_all() as $collaborator)
+		foreach ($this->river_collaborators->find_all() as $collaborator)
 		{
+			if ($active_only AND ! (bool) $collaborator->collaborator_active)
+				continue;
+				
 			$collaborators[] = array(
 				'id' => $collaborator->user->id, 
 				'name' => $collaborator->user->name,
