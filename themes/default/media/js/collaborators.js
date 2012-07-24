@@ -67,10 +67,23 @@
 		
 		addCollaborator: function(collaborator) {
 			var viewItem = this.$el;
+			
+			var buttons = this.$(".actions .dual-buttons");
+			var loading_msg = window.loading_message.clone();
+			// Show loading icon if there is a delay
+			var t = setTimeout(function() { buttons.replaceWith(loading_msg); }, 500);
+			
 			this.collection.create(collaborator.toJSON(),{
 				wait: true,
+				complete: function() {
+					clearTimeout(t);
+				},
 				success: function() {
 					viewItem.fadeOut();
+				},
+				error: function() {
+					showConfirmationMessage("Unable to add collaborator. Try again later.");
+					loading_msg.replaceWith(buttons);
 				}
 			});
 		},
