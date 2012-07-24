@@ -9,7 +9,8 @@
 	// Collaborator model, collection and view
 	var Collaborator = Backbone.Model.extend({
 		defaults: {
-			collaborator_active: 0
+			collaborator_active: 0,
+			read_only: false
 		},
 	});
 
@@ -56,21 +57,32 @@
 		tagName: "li",
 
 		events: {
-			"click": "addCollaborator"
+			"click .actions .editor a": "addAsEditor",
+			"click .actions .viewer a": "addAsViewer"
 		},
 		
 		initialize: function() {
 			this.template = _.template($("#collaborator-search-result-template").html());
 		},
-
-		addCollaborator: function(e) {
+		
+		addCollaborator: function(collaborator) {
 			var viewItem = this.$el;
-			this.collection.create(this.model.toJSON(),{
+			this.collection.create(collaborator.toJSON(),{
 				wait: true,
 				success: function() {
 					viewItem.fadeOut();
 				}
 			});
+		},
+
+		addAsEditor: function() {
+			this.addCollaborator(this.model);
+			return false;
+		},
+		
+		addAsViewer: function() {
+			this.model.set('read_only', true);
+			this.addCollaborator(this.model);
 			return false;
 		},
 
@@ -88,8 +100,6 @@
 		className: "modal",
 
 		events: {
-			"click": "resetSearch",
-			"focusout input[name=search_box]": "resetSearch",
 			"focus input[name=search_box]": "liveSearch",
 			"keyup input[name=search_box]": "liveSearch"
 		},
@@ -116,7 +126,7 @@
 
 		addCollaborator: function(collaborator) {
 			this.$("div.link-list h2").show();
-			this.$("div.link-list ul").append("<li><a href=\"#\">" + collaborator.get("name") + "</a></li>");
+			this.$("div.link-list ul").append("<li>" + collaborator.get("name") + "</li>");
 		},
 
 		focusSearchBox: function() {
@@ -125,14 +135,16 @@
 
 		// Clear the search input and remove the dropdown
 		resetSearch: function() {
-			this.$(".livesearch").fadeOut("slow").children("li").remove();
+			this.$(".livesearch").fadeOut("slow", function() {
+				$(this).children("li").remove();
+			});
 			this.$("#add-collaborator-input").val("");
 		},
 
 		// Display a search result
 		addSearchResult: function(searchResult) {
 			var view = new SearchResultView({model: searchResult, collection: this.collection});	
-			this.$(".livesearch ul").append(view.render().el);
+			this.$(".livesearch > ul").append(view.render().el);
 		},
 
 

@@ -630,6 +630,7 @@ CREATE TABLE IF NOT EXISTS `river_collaborators` (
   `river_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `river_id` (`river_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -643,6 +644,7 @@ CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`bucket_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -21,14 +21,31 @@
 			<% } %>
 			<div class="property-title">
 				<a href="#" class="avatar-wrap"><img src="<%= avatar %>" /></a>
-				<h1><%= name %> </h1>
+				<% if (read_only) { %>
+					<h1><%= name %> (Viewer) </h1>
+				<% } else { %>
+					<h1><%= name %> (Editor) </h1>
+				<% } %>
 			</div>
 		</header>
 	</article>	
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
-	<a class="avatar-wrap"><img src="<%= avatar %>" /></span></a><%= name %>
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<a class="avatar-wrap"><img src="<%= avatar %>" /></span></a>
+				<h1><%= name %> </h1>
+			</div>
+			<div class="actions">
+				<ul class="dual-buttons">
+					<li class="button-blue button-small editor"><a href="#"><?php echo __('Make editor'); ?></a></li>
+					<li class="button-blue button-small viewer"><a href="#"><?php echo __('Make viewer'); ?></a></li>
+				</ul>
+			</div>
+		</header>
+	</article>
 </script>
 
 <script type="text/template" id="collaborator-modal-template">

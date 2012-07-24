@@ -75,14 +75,11 @@ class Controller_River extends Controller_Drop_Base {
 		// Action involves a specific river, check permissions
 		if ($this->river->loaded())
 		{					
-			// Is the logged in user an owner
-			if ($this->river->is_owner($this->user->id)) 
-			{
-				$this->owner = TRUE;
-			}
+			$this->owner = $this->river->is_owner($this->user->id);
+			$this->collaborator = $this->river->is_collaborator($this->user->id);
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->river->river_public AND ! $this->owner)
+			if ( ! $this->river->river_public AND ! $this->owner AND ! $this->collaborator)
 			{
 				$this->request->redirect($this->dashboard_url);			
 			}
@@ -113,7 +110,8 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
 				->bind('active', $this->active);
-
+			$this->template->content->is_collaborator = $this->collaborator;
+			
 			if ( ! $this->owner)
 			{
 				$river_item = json_encode(array(
@@ -380,6 +378,8 @@ class Controller_River extends Controller_Drop_Base {
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				
 				$collaborator_orm = ORM::factory("river_collaborator")
 									->where('river_id', '=', $this->river->id)
 									->where('user_id', '=', $user_orm->id)
@@ -387,6 +387,11 @@ class Controller_River extends Controller_Drop_Base {
 				
 				if ( ! $collaborator_orm->loaded())
 				{
+					if (isset($collaborator_array['read_only']))
+					{
+						$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
+					}
+					
 					$collaborator_orm->river = $this->river;
 					$collaborator_orm->user = $user_orm;
 					$collaborator_orm->save();
