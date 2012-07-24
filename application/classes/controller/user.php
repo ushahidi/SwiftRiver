@@ -734,6 +734,15 @@ class Controller_User extends Controller_Swiftriver {
 			'label' => __('Settings')
 		);
 
+		// Messages
+		$unread = Model_Message::count_unread(Auth::instance()->get_user()->id);
+		$unread = ($unread > 0) ? ' ('.$unread.')' : '';
+		$nav[] = array(
+			'id'    => 'messages-navigation-link',
+			'url'   => '/messages',
+			'label' => __('Messages').$unread
+		);
+
 		// SwiftRiver Plugin Hook -- Add Nav Items
 		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);
 

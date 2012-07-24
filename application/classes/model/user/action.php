@@ -308,11 +308,15 @@ class Model_User_Action extends ORM {
 	 */
 	public static function count_notifications($user_id)
 	{
-		$query = DB::select(array(DB::expr('COUNT(*)'),'num_notification'))
-		             ->from('activity_stream')
-		             ->where('action_to_id', '=', $user_id)
-		             ->where('confirmed', '!=', 1);
-		
-		return $query->execute()->get('num_notification', 0);
+		$n = DB::select(array(DB::expr('COUNT(*)'),'num_notification'))
+			->from('activity_stream')
+			->where('action_to_id', '=', $user_id)
+			->where('confirmed', '!=', 1)
+			->execute()
+			->get('num_notification', 0);
+
+		$m = Model_Message::count_unread($user_id);
+
+		return $n+$m;
 	}
 }

@@ -133,6 +133,21 @@ CREATE TABLE IF NOT EXISTS `media_thumbnails` (
 
 
 -- -----------------------------------------------------
+-- Table `messages`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `recipient_id` BIGINT UNSIGNED NOT NULL,
+  `sender_id` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+  `subject` VARCHAR(255) NOT NULL DEFAULT '',
+  `message` TEXT NOT NULL DEFAULT '',
+  `read` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- -----------------------------------------------------
 -- Table `droplets_places`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `droplets_places` (

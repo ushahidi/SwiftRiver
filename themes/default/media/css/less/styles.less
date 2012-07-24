@@ -1584,6 +1584,7 @@ article.container div.parameter p.field {
 }
 
 article.container div.parameter input[type="text"],
+article.container div.parameter textarea,
 article.container div.parameter input[type="email"],
 article.container div.parameter input[type="password"] {
    width: 50%;
@@ -2633,6 +2634,85 @@ div.modal-window .modal {float:none;}
 
 div.modal-window .modal.col_9 {width: auto;}
 
+}
+
+/* --------------------------- MESSAGES */
+.messages {
+  background-color: #EAF3F5;
+  padding: 8px;
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.messages table {
+  width: 99%;
+  border-top: 1px #E5E5E5 solid;
+  table-layout: fixed;
+}
+.messages tr {
+  color: #222;
+  cursor: pointer;
+}
+.messages .unread {
+  font-weight: bold;
+}
+.messages td {
+  vertical-align: middle;
+  line-height: 200%;
+  border-bottom: 1px #E5E5E5 solid;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.messages td div {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.messages td .details {
+  font-weight: normal;
+  color: #777;
+}
+
+.message .message-content {
+  text-align: left;
+}
+.message .message-content p {
+  margin: 10px 10px 0;
+}
+.message .message-content .meta {
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 200%;
+}
+.message .message-content .meta img {
+  width: 25px;
+  height: 25px;
+  margin: 0 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.message .message-content .timestamp {
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 200%;
+}
+.message .message-content .message-body {
+  color: #222;
+  background-color: white;
+  padding: 20px;
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.message .message-content .button-reply {
+  float: right;
+}
+
+.messages_link {
+  float: right;
+  line-height: 2.5em;
+  padding: 0 10px;
 }
 
 /* --- ####### LARGE VIEWPORT ###### --- */
