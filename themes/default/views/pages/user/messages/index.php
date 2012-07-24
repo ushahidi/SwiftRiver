@@ -48,7 +48,7 @@
 </article><?php endif; ?><?php if (count($outbox) > 0): ?>
 <div id="content" class="messages outbox cf" align="center">
 	<hgroup class="page-title bucket-title cf">
-		<h1>Outbox</h1>
+		<a href="<?php echo $link_outbox; ?>"><h1>Outbox</h1></a>
 		<h2 class="discussion">
 			<a href="<?php echo $link_outbox; ?>">
 				<span class="icon"></span>
