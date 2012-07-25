@@ -5,10 +5,7 @@
 				<img src="<?php echo Swiftriver_Users::gravatar($account->user->email, 131); ?>" class="avatar"/>
 			</a>
 			<h1><?php echo $account->user->name; ?></h1>
-			<h2 class="label"><?php echo $account->account_path; ?></h2><?php if ( ! $owner AND ! $anonymous): ?>
-			<p class="button-blue button-small button-pm">
-				<a href="<?php echo URL::site($username.'/messages/create').'?r='.urlencode($account->user->username); ?>">Send Message</a>
-			</p><?php endif; ?>
+			<h2 class="label"><?php echo $account->account_path; ?></h2>
 		</div>
 		<div id="follow_section" class="follow-summary col_3">
 			<p class="follow-count">
