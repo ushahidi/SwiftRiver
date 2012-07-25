@@ -338,16 +338,17 @@ class Controller_Bucket extends Controller_Drop_Base {
 				
 				if ( ! $collaborator_orm->loaded())
 				{
-					if (isset($collaborator_array['read_only']))
-					{
-						$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
-					}
-					
 					$collaborator_orm->bucket = $this->bucket;
 					$collaborator_orm->user = $user_orm;
-					$collaborator_orm->save();
 					Model_User_Action::create_action($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
 				}
+				
+				if (isset($collaborator_array['read_only']))
+				{
+					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
+				}
+				
+				$collaborator_orm->save();
 			break;
 		}
 	}

@@ -25,7 +25,9 @@
 		className: "item cf",
 
 		events: {
-			"click a.remove-large": "removeCollaborator",	
+			"click a.remove-large": "removeCollaborator",
+			"click .actions .editor": "makeEditor",
+			"click .actions .viewer": "makeViewer",
 		},
 		
 		initialize: function() {
@@ -35,6 +37,37 @@
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;	
+		},
+		
+		setReadOnly: function(isReadOnly) {
+			var button = this.$(".actions p.button-blue");
+			var loading_msg = window.loading_message.clone();
+			// Show loading icon if there is a delay
+			var t = setTimeout(function() { button.replaceWith(loading_msg); }, 500);
+			view = this;
+			this.model.save({read_only: isReadOnly}, {
+				wait: true,
+				complete: function() {
+					clearTimeout(t);
+				},
+				success: function() {
+					view.render();
+				},
+				error: function() {
+					showConfirmationMessage("Unable to change collaboration level. Try again later.");
+					loading_msg.replaceWith(button);
+				}
+			});
+		},
+		
+		makeEditor: function() {
+			this.setReadOnly(false);
+			return false;
+		},
+		
+		makeViewer: function() {
+			this.setReadOnly(true);
+			return false;
 		},
 
 		removeCollaborator: function() {

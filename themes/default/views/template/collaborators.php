@@ -18,6 +18,13 @@
 		<header class="cf">
 			<% if (id != logged_in_user) { %>
 			<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+			<div class="actions">
+				<% if (read_only) { %>
+					<p class="button-blue button-small editor"><a href="#" title="<?php echo __('Editors have full access and can change settings.'); ?>">Make editor</a></p>
+				<% } else { %>
+					<p class="button-blue button-small viewer"><a href="#" title="<?php echo __('Viewers have read only access and cannot change settings.'); ?>">Make viewer</a></p>
+				<% } %>
+			</div>
 			<% } %>
 			<div class="property-title">
 				<a href="#" class="avatar-wrap"><img src="<%= avatar %>" /></a>
@@ -40,8 +47,8 @@
 			</div>
 			<div class="actions">
 				<ul class="dual-buttons">
-					<li class="button-blue button-small editor"><a href="#"><?php echo __('Make editor'); ?></a></li>
-					<li class="button-blue button-small viewer"><a href="#"><?php echo __('Make viewer'); ?></a></li>
+					<li class="button-blue button-small editor"><a href="#" title="<?php echo __('Editors have full access and can change settings.'); ?>"><?php echo __('Add as editor'); ?></a></li>
+					<li class="button-blue button-small viewer"><a href="#" title="<?php echo __('Viewers have read only access and cannot change settings.'); ?>"><?php echo __('Add as viewer'); ?></a></li>
 				</ul>
 			</div>
 		</header>
