@@ -58,14 +58,11 @@ class Controller_Bucket extends Controller_Drop_Base {
 		
 		if ($this->bucket->loaded())
 		{
-			// Is the logged in user owner / collaborator?
-			if ($this->bucket->is_owner($this->user->id))
-			{
-				$this->owner = TRUE;
-			}
+			$this->owner = $this->bucket->is_owner($this->user->id);
+			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
 			
 			// Bucket isn't published and logged in user isn't owner
-			if ( ! $this->bucket->bucket_publish AND ! $this->owner)
+			if ( ! $this->bucket->bucket_publish AND ! $this->owner AND ! $this->collaborator)
 			{
 				$this->request->redirect($this->dashboard_url);
 			}
@@ -101,6 +98,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('owner', $this->owner);
 
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
+		$this->template->content->is_collaborator = $this->collaborator;
 		$this->template->content->anonymous = $this->anonymous;
 		$this->template->content->bucket = $this->bucket;
 		$this->template->content->user = $this->user;
@@ -331,6 +329,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				
 				$collaborator_orm = ORM::factory("bucket_collaborator")
 									->where('bucket_id', '=', $this->bucket->id)
 									->where('user_id', '=', $user_orm->id)
@@ -340,9 +340,15 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$collaborator_orm->bucket = $this->bucket;
 					$collaborator_orm->user = $user_orm;
-					$collaborator_orm->save();
 					Model_User_Action::create_action($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
 				}
+				
+				if (isset($collaborator_array['read_only']))
+				{
+					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
+				}
+				
+				$collaborator_orm->save();
 			break;
 		}
 	}

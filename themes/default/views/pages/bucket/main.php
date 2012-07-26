@@ -42,7 +42,7 @@
 				</a>
 			</h2>
 		</div>
-		<?php elseif ( ! $anonymous): ?>
+		<?php elseif ( ! $anonymous AND ! $is_collaborator ): ?>
 		<div class="follow-summary col_3">
 			<p class="button-score button-white follow">
 				<a href="#" title="now following">
