@@ -82,7 +82,7 @@ class Swiftriver_Dropletqueue {
 		{
 			$drop = array_pop($new_drops);
 
-			if ($queue_droplet)
+			if ($queue_droplet AND ! empty($drop))
 			{
 				self::$_queue[] = $drop;
 			}
