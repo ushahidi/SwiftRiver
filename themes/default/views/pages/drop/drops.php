@@ -247,7 +247,7 @@
 			<%= droplet_content %>
 		</section>
 		<% } %>
-		<% if (media.length > 0) { %>
+		<% if (media.length > 0 && channel == "twitter") { %>
 		<section class="drop-media drop-sub">
 			<h2><?php echo __("Media"); ?></h2>
 			<div>
@@ -351,7 +351,15 @@
 		<form class="following">
 		</form>
 	</div>
-	<div class="modal-body create-new">
+	<div class="modal-body create-new" id="show-create-new">
+		<form>
+			<div class="field">
+				<p class="button-blue" id="show-create-bucket-button"><a href="#" title="<?php echo __("Click here to create a new bucke"); ?>">Create a new bucket</a></p>
+			</div>
+			<div class="system_error"></div>
+		</form>
+	</div>
+	<div class="modal-body create-new nodisplay" id="create-bucket-form">
 		<form>
 			<h2><?php echo __("Create a new bucket"); ?></h2>
 			<div class="field">
