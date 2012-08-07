@@ -75,14 +75,11 @@ class Controller_River extends Controller_Drop_Base {
 		// Action involves a specific river, check permissions
 		if ($this->river->loaded())
 		{					
-			// Is the logged in user an owner
-			if ($this->river->is_owner($this->user->id)) 
-			{
-				$this->owner = TRUE;
-			}
+			$this->owner = $this->river->is_owner($this->user->id);
+			$this->collaborator = $this->river->is_collaborator($this->user->id);
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->river->river_public AND ! $this->owner)
+			if ( ! $this->river->river_public AND ! $this->owner AND ! $this->collaborator)
 			{
 				$this->request->redirect($this->dashboard_url);			
 			}
@@ -113,7 +110,8 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
 				->bind('active', $this->active);
-
+			$this->template->content->is_collaborator = $this->collaborator;
+			
 			if ( ! $this->owner)
 			{
 				$river_item = json_encode(array(
@@ -158,36 +156,22 @@ class Controller_River extends Controller_Drop_Base {
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
 			$max_droplet_id, NULL, $filters, $this->photos);
-
-		// Total Droplets Before Filtering
-		$total = $droplets_array['total'];
-
-		// The Droplets
-		$droplets = $droplets_array['droplets'];
-
-		// Total Droplets After Filtering
-		$filtered_total = count($droplets);
-
+		
 		// Bootstrap the droplet list
+		$this->template->header->js .= Html::script("themes/default/media/js/drops.js");
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->droplet_list = @json_encode($droplets);
-		$droplet_js->max_droplet_id = $max_droplet_id;
-		$droplet_js->user = $this->user;
-		$droplet_js->channels = json_encode($this->river->get_channels());
-
-		// Polling is only active when the river has not expired
-		$droplet_js->polling_enabled = ( ! $this->river->is_expired($this->owner));
-		
 		$droplet_js->default_view = $this->river->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
-		
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
 		{
 			$droplet_js->filters = json_encode($filters);
 		}
+		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->max_droplet_id = $max_droplet_id;
+		$droplet_js->channels = json_encode($this->river->get_channels());
 
 		// Select droplet list view with drops view as the default if list not specified
 		$this->droplets_view = View::factory('pages/drop/drops')
@@ -195,6 +179,7 @@ class Controller_River extends Controller_Drop_Base {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+
 
 		// Show expiry notice to owners only
 		if ($this->owner AND $this->river->is_expired($this->owner))
@@ -393,6 +378,8 @@ class Controller_River extends Controller_Drop_Base {
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				
 				$collaborator_orm = ORM::factory("river_collaborator")
 									->where('river_id', '=', $this->river->id)
 									->where('user_id', '=', $user_orm->id)
@@ -402,9 +389,15 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					$collaborator_orm->river = $this->river;
 					$collaborator_orm->user = $user_orm;
-					$collaborator_orm->save();
 					Model_User_Action::create_action($this->user->id, 'river', $this->river->id, $user_orm->id);
-				}				
+				}
+				
+				if (isset($collaborator_array['read_only']))
+				{
+					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
+				}
+				
+				$collaborator_orm->save();
 			break;
 		}
 	}

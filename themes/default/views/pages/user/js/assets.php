@@ -3,11 +3,11 @@ $(function() {
 	
 	var visited_account = <?php echo $visited_account->id; ?>;
 	
-	var AssetView = BaseAssetView.extend({
+	var AssetView = Assets.BaseAssetView.extend({
 		template: _.template($("#profile-asset-list-item-template").html())
 	});
 	
-	var AssetListView = BaseAssetListView.extend({
+	var AssetListView = Assets.BaseAssetListView.extend({
 		
 		el: $("#assets"),
 		
@@ -76,9 +76,9 @@ $(function() {
 	
 	<?php if ($owner): ?>
 		<?php if ($asset == 'river'): ?>
-			new AssetListView({collection: window.riverList});
+			new AssetListView({collection: Assets.riverList});
 		<?php else: ?>
-			new AssetListView({collection: window.bucketList});
+			new AssetListView({collection: Assets.bucketList});
 		<?php endif; ?>
 	<?php else: ?>
 		<?php if ($asset == 'river'): ?>

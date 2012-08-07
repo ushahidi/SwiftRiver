@@ -234,7 +234,7 @@ class Model_Droplet extends ORM {
 		// Populate the drop's metadata tables
 		self::add_metadata($droplets);
 		
-		return $new_droplets; 
+		return array($droplets, $new_droplets); 
 	}
 	
 	/**

@@ -21,6 +21,7 @@ class Controller_Bucket_Collaborators extends Controller_Bucket_Settings {
 	public function action_index()
 	{
 		$this->template->header->title = $this->bucket->bucket_name.' ~ '.__('Collaborator Settings');
+		$this->template->header->js .= Html::script("themes/default/media/js/collaborators.js");
 		
 		$this->active = 'collaborators';
 		$this->settings_content = View::factory('template/collaborators');

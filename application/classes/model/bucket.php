@@ -384,6 +384,7 @@ class Model_Bucket extends ORM {
 				'name' => $collaborator->user->name,
 				'account_path' => $collaborator->user->account->account_path,
 				'collaborator_active' => $collaborator->collaborator_active,
+				'read_only' => (bool) $collaborator->read_only,
 				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}
@@ -510,7 +511,39 @@ class Model_Bucket extends ORM {
 		
 				
 		// Is the user_id a collaborator
-		if ($this->bucket_collaborators->where('user_id', '=', $user_orm->id)->find()->loaded())
+		if ($this->bucket_collaborators
+				->where('user_id', '=', $user_orm->id)
+				->where('read_only', '!=', 1)
+				->find()
+				->loaded())
+		{
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+	
+	/**
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_collaborator($user_id)
+	{
+		// Does the user exist?
+		$user_orm = ORM::factory('user', $user_id);
+		if ( ! $user_orm->loaded())
+		{
+			return FALSE;
+		}
+		
+		// Is the user id a bucket collaborator?
+		if
+		(
+			$this->bucket_collaborators
+			    ->where('user_id', '=', $user_orm->id)
+			    ->find()
+			    ->loaded()
+		)
 		{
 			return TRUE;
 		}

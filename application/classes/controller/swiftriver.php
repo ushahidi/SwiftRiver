@@ -319,6 +319,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->js = ''; // Dynamic Javascript
 			$this->template->header->css = ''; // Dynamic CSS
 			$this->template->header->meta = '';
+			$this->template->header->show_nav = TRUE;
 			$site_name = Model_Setting::get_setting('site_name');
 			
 			// Header Nav

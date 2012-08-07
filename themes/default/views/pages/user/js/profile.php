@@ -3,20 +3,20 @@ $(function() {
 	
 	var visited_account = <?php echo $visited_account->id; ?>;
 	
-	var ProfileAssetView = BaseAssetView.extend({
+	var ProfileAssetView = Assets.BaseAssetView.extend({
 		template: _.template($("#profile-asset-list-item-template").html())
 	});
 	
-	var ProfileAssetListView = BaseAssetListView.extend({
+	var ProfileAssetListView = Assets.BaseAssetListView.extend({
 		
 		listSelector: '.asset-list',
 		
 		initialize: function(options) {
-			BaseAssetListView.prototype.initialize.call(this, options);
+			Assets.BaseAssetListView.prototype.initialize.call(this, options);
 						
-			if (this.collection instanceof window.BucketList) {
+			if (this.collection instanceof Assets.BucketList) {
 				this.setElement($("#buckets"));
-			} else if (this.collection instanceof window.RiverList) {
+			} else if (this.collection instanceof Assets.RiverList) {
 				this.setElement($("#rivers"));
 			}
 		},
@@ -51,11 +51,11 @@ $(function() {
 		}		
 	});
 	
-	var buckets = new BucketList();
+	var buckets = new Assets.BucketList();
 	new ProfileAssetListView({collection: buckets});
 	buckets.reset(<?php echo $bucket_list; ?>);
 	
-	var rivers = new RiverList();
+	var rivers = new Assets.RiverList();
 	new ProfileAssetListView({collection: rivers});
 	rivers.reset(<?php echo $river_list; ?>);
 });

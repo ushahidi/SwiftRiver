@@ -480,7 +480,7 @@ CREATE TABLE IF NOT EXISTS `droplets` (
   `original_url` bigint(20) DEFAULT NULL,
   `comment_count` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`) USING HASH,
+  UNIQUE KEY `droplet_hash_idx` (`droplet_hash`),
   KEY `droplet_date_pub_idx` (`droplet_date_pub`),
   KEY `droplet_date_add_idx` (`droplet_date_add`),
   KEY `droplet_processed_idx` (`processing_status`),
@@ -631,6 +631,7 @@ CREATE TABLE IF NOT EXISTS `river_collaborators` (
   `river_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1)  DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `river_id` (`river_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -644,6 +645,7 @@ CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1)  DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`bucket_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
