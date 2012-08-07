@@ -744,7 +744,7 @@ class Controller_User extends Controller_Swiftriver {
 
 				if (isset($new['errors']))
 				{
-					$errors[] = $email.' - '.implode(" ",$messages['errors']);
+					$errors[] = $email.' - '.implode(" ",$new['errors']);
 					continue;
 				}
 
