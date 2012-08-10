@@ -6,7 +6,7 @@
 		<div class="page-actions col_3">
 			<h2 class="back">
 				<a href="<?php echo $river_base_url; ?>">
-					<span class="icon"></span>
+					<span class="icon-back-arrow"></span>
 					Return to river
 				</a>
 			</h2>

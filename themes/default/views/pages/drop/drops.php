@@ -331,7 +331,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -391,7 +391,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -432,7 +432,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -479,7 +479,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -546,9 +546,9 @@
 			<h1>Filters</h1>
 		</div>
 		<div class="page-actions col_3">
-			<h2 class="close">
+			<h2>
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>
