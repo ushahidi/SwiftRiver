@@ -14,15 +14,15 @@
 		</div>
 		<?php if ($owner): ?>
 		<div class="page-actions col_3">
-			<h2>
+			<h2 class="settings">
 				<a href="<?php echo $settings_url; ?>">
-					<span class="icon-cog"></span>
+					<span class="icon"></span>
 					<?php echo __("River settings"); ?>
 				</a>
 			</h2>
-			<h2>
+			<h2 class="settings">
 				<a href="<?php echo $settings_url.'/collaborators'; ?>">
-					<span class="icon-users"></span>
+					<span class="icon"></span>
 					<?php echo __("Collaborators"); ?>
 				</a>
 			</h2>

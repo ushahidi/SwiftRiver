@@ -1,7 +1,7 @@
 <div class="col_9">
 	<article id="primer" class="container base">
 		<header class="cf remove">
-			<a href="#primer" class="remove-large"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
+			<a href="#primer" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
 			<div class="property-title">
 				<h1>Get started</h1>
 			</div>
@@ -75,7 +75,7 @@
 		</section>
 		<section class="property-parameters empty-message" style="display:none">
 			<div class="parameter">
-				<p><a href="#">Create a bucket</a></p>
+				<p><a href="#">Click here to create a bucket</a></p>
 			</div>
 		</section>		
 	</article>

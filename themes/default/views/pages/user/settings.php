@@ -111,7 +111,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>

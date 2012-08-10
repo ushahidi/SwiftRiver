@@ -2,7 +2,7 @@
 	<div class="center">
 		<div class="col_12">
 			<div class="settings-toolbar">
-				<p class="button-blue button-small"><a href="#" class="modal-trigger"><span class="icon-plus"></span>Add collaborator</a></p>
+				<p class="button-blue button-small create"><a href="#" class="modal-trigger"><span class="icon"></span>Add collaborator</a></p>
 			</div>
 			
 			<div class="alert-message blue" style="display:none;">
@@ -63,7 +63,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>

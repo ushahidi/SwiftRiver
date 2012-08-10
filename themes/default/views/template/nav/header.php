@@ -1,9 +1,9 @@
 <ul class="global-menu">
-	<li class="home"><a href="/"><span class="icon-home"></span></a></li>
+	<li class="home"><a href="/"><span class="icon"></span></a></li>
 	<?php if ($user AND $user->account->loaded()): ?>
 		<li class="search">
 			<a href="<?php echo URL::site('search/main'); ?>" class="modal-trigger" title="<?php echo __("Search"); ?>">
-				<span class="icon-search"></span>
+				<span class="icon"></span>
 			</a>
 		</li>
 	<?php endif; ?>
@@ -15,11 +15,11 @@
 		<!-- hide parts of the header menu in the login page and for non registered users -->
 		<?php if ($user AND ! $anonymous): ?>
 			<?php if ($user->account->loaded()): ?>
-				<li class="rivers"><a href="#"><span class="icon-river"></span><span class="label"><?php echo __("Rivers"); ?></span></a></li>
-				<li class="bucket"><a href="#"><span class="icon-bucket"></span><span class="label"><?php echo __("Buckets"); ?></span></a></li>
+				<li class="rivers"><a href="#"><span class="icon"></span><span class="label"><?php echo __("Rivers"); ?></span></a></li>
+				<li class="bucket"><a href="#"><span class="icon"></span><span class="label"><?php echo __("Buckets"); ?></span></a></li>
 				<li class="user popover">
 					<a href="#" class="popover-trigger">
-						<span class="icon-arrow-down"></span>
+						<span class="dropdown-arrow"></span>
 						<span class="avatar-wrap">
 							<?php if ($num_notifications): ?>
 								<span class="notification"><?php echo $num_notifications; ?></span>
@@ -73,7 +73,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>
@@ -107,7 +107,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>
@@ -152,7 +152,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>
@@ -175,7 +175,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon-cancel"></span>
+					<span class="icon"></span>
 					Close
 				</a>
 			</h2>

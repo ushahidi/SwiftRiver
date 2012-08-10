@@ -72,7 +72,7 @@ body {
    font-weight: bold;
    line-height: 27px;
    text-align: center;
-   text-shadow: 0 1px 0 rgba(0,0,0,.35);
+   text-shadow: 0 1px 0 rgba(0,0,0,.45);
    -moz-box-shadow: 0 1px 0 rgba(0,0,0,.15);
    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,.15);
    box-shadow: 0 1px 0 rgba(0,0,0,.15);
@@ -107,10 +107,9 @@ body {
    top: 1px;
 }
 
-.button-blue a [class^="icon-"],
-.button-white a [class^="icon-"] {
+.button-blue a span.icon,
+.button-white a span.icon {
    float:left;
-   margin-right: 0.5em;
 }
 
 .button-big a {
@@ -138,7 +137,7 @@ body {
    border-radius: 3px;
    border: 1px solid #e4e8e8;
    background: #fff;
-   padding: 5px 10px;
+   padding: 5px 15px;
 }
 
 .button-white a:hover,
@@ -153,6 +152,14 @@ body {
    text-shadow: 0 1px 0 rgba(0,0,0,.45);
    border: 1px solid #49b3c5;
    background: #54c2d5;
+}
+
+.has-icon a {
+   padding-left: 0;
+}
+
+.only-icon a {
+   padding: 0;
 }
 
 .notify-total {
@@ -319,6 +326,14 @@ span.icon {
    background-position: center -449px;
 }
 
+.remove-large span.icon {
+   background-position: center -475px;
+}
+
+.remove-small span.icon {
+   background-position: center -500px;
+}
+
 .discussion span.icon {
    background-position: center -525px;
 }
@@ -409,7 +424,7 @@ input, textarea {
    -webkit-box-sizing: border-box; 
    box-sizing: border-box;
    color: #444444;
-   font-size: 1.1em;
+   font-size: 0.9em;
    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
    box-shadow: 0 1px 1px rgba(0,0,0,.4) inset;
    -moz-box-shadow: 0 1px 1px rgba(0,0,0,.15) inset;
@@ -418,7 +433,7 @@ input, textarea {
    -moz-border-radius: 3px;
    border-radius: 3px;
    border: 1px solid #e0e0e0;
-   padding: 0.7em;
+   padding: 5px;
 }
 
 input.name {
@@ -482,9 +497,9 @@ ul.popover-window.header-toolbar li.group a {
 header.toolbar {
    height: 40px;
    overflow: hidden;
-   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
-   box-shadow: 0 1px 2px rgba(0,0,0,.2);
+   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.25);
+   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.25);
+   box-shadow: 0 1px 2px rgba(0,0,0,.25);
    background: url(../img/header-toolbarBG.gif) bottom repeat-x;
 }
 
@@ -498,13 +513,13 @@ header.toolbar .logo a {
    height: 35px;
    background: url(../img/logo-swiftriver.png) center left no-repeat;
    background-size: 90%;
-   padding: 1px 0;
-   margin-right: 8px;
+   padding: 2.5px 0;
+   margin: 0 8px;
 }
 
 header.toolbar ul.global-menu {
    float: left;
-   margin-top: 0.4em;
+   margin-top: 6px;
 }
 
 header.toolbar ul.user-menu {
@@ -520,43 +535,33 @@ header.toolbar ul.global-menu li.home {
    display: none;
 }
 
-header.toolbar ul.global-menu > li > a,
 header.toolbar ul.user-menu > li > a {
    display: block;
+   width: 40px;
+   height: 40px;
    color: #fff;
-   font-size: 1.05em;
-   text-shadow: 0 1px 1px rgba(0,0,0,.25);
+   font-weight: bold;
+   font-size: 0.9em;
+   text-shadow: 0 1px 1px rgba(0,0,0,.45);
    border-right: 1px solid rgba(0,0,0,0.1);
    border-left: 1px solid rgba(256,256,256,0.17);
-}
-
-header.toolbar ul.user-menu > li > a {
-   height: 40px;
-   padding: 0 1em;
+   padding: 0 7px;
 }
 
 header.toolbar ul.user-menu > li a:hover {
    text-decoration: none;
 }
 
-header.toolbar ul.global-menu > li > a [class^="icon-"],
-header.toolbar ul.user-menu > li > a [class^="icon-"] {
-   display: block;
-   float: left;
-   font-size: 2.1em;
+header.toolbar ul.global-menu > li span.icon {
+   margin: 0 6px;
 }
 
-header.toolbar ul.global-menu > li > a [class^="icon-"] {
-   font-size: 1.4em;
-   padding: 3px 9px;
-}
-
-header.toolbar ul.user-menu > li > a [class^="icon-"] {
-   line-height: 1.5em;
+header.toolbar ul.user-menu > li span.icon {
+   display: inline-block;
+   margin: 6px auto;
 }
 
 header.toolbar ul.user-menu > li span.label {
-   font-weight: bold;
    line-height: 40px;
 }
 
@@ -566,7 +571,7 @@ header.toolbar ul.user-menu li.rivers a {
 
 header.toolbar ul.user-menu li.user > a {
    border-right: none;
-   padding-right: 0;
+   padding: 4px 0 0 5px;
 }
 
 header.toolbar ul.user-menu li.login > a {
@@ -575,10 +580,6 @@ header.toolbar ul.user-menu li.login > a {
 
 header.toolbar ul.user-menu li.login > a span.label {
   display: block;
-}
-
-header.toolbar ul.user-menu li.user > a span.icon-arrow-down {
-   display: none;
 }
 
 header.toolbar ul.user-menu li.user > a span.notification {
@@ -611,7 +612,6 @@ header.toolbar ul.user-menu li.user span.avatar-wrap {
    vertical-align: bottom;
    width: 30px;
    height: 30px;
-   margin-top: 0.4em;
 }
 
 header.toolbar ul.user-menu li.user span.avatar-wrap:after {
@@ -730,9 +730,8 @@ hgroup.page-title .page-actions {
 
 hgroup.page-title h2 {
    display: inline-block;
-   font-size: 1em;
+   font-size: 0.9em;
    line-height: 20px;
-   padding: 0.2em 0;
 }
 
 hgroup.page-title h2:last-child {
@@ -743,20 +742,16 @@ hgroup.user-title h2 {
    font-size: 1.3em;
 }
 
-hgroup.page-title h2 a:hover {
-   opacity: 0.7;
-   text-decoration: none;
-}
-
-hgroup.page-title h2 [class^="icon-"] {
+hgroup.page-title h2 span.icon {
    float: left;
-   font-weight: normal;
-   font-size: 1.3em;
-   margin-right: 0.4em;
+   position: relative;
+   top: -2px;
+   width: 20px;
+   height: 20px;
 }
 
-hgroup.page-title h2.close [class^="icon-"] {
-   font-size: 1em;
+hgroup.page-title h2.discussion span.icon {
+   background-position: center -550px;
 }
 
 hgroup.page-title .page-actions h2 span.title {
@@ -800,14 +795,14 @@ nav.page-navigation {
 }
 
 nav.page-navigation ul {
-   max-height: 37px;
+   height: 35px;
    overflow: hidden;
 }
 
 nav.page-navigation ul li a {
    float: left;
    color: #666666;
-   font-size: 1em;
+   font-size: 0.9em;
    text-shadow: 1px 0 1px #fff;
    padding: 10px 20px;
 }
@@ -1460,24 +1455,8 @@ section.rundown .rundown-totals ul li strong {
 /* --------------------------- CONTAINER */
 
 article.container a.remove-large {
-   display: block;
    float: right;
-   width: 23px;
-   height: 23px;
-   color: #666666;
-   font-size: 1em;
-   line-height: 23px;
-   text-align: center;
-   border: 3px solid #666666;
-   -webkit-border-radius: 30px;
-   -moz-border-radius: 30px;
-   border-radius: 30px;
-   margin: 15px 15px 15px 0;
-}
-
-article.container a.remove-large:hover {
-   opacity: 0.7;
-   text-decoration: none;
+   margin: 20px 10px 20px 0;
 }
 
 article.container div.property-title {
@@ -1485,32 +1464,10 @@ article.container div.property-title {
    padding: 10px 0;
 }
 
-article.container div.property-title > [class^="icon-"] {
+article.container div.property-title a.avatar-wrap {
    float: left;
-   width: 35px;
-   height: 35px;
-   color: #fff;
-   font-size: 2em;
-   line-height: 35px;
-   text-align: center;
--webkit-border-radius: 3px;
--moz-border-radius: 3px;
-border-radius: 3px;   
-   background: #dedede;
-   padding: 5px;
+   width: 45px;
    margin-left: 10px;
-}
-
-article.container div.property-title > .icon-twitter {
-   background: rgb(30,162,227);
-}
-
-article.container div.property-title > .icon-facebook {
-   background: rgb(44,67,136);
-}
-
-article.container div.property-title > .icon-feed {
-   background: rgb(242,98,11);
 }
 
 article.container div.property-title h1 {
@@ -1552,16 +1509,6 @@ article.container p.button-white span.icon {
 
 article.container .actions {
    float: right;
-}
-
-article.container .actions.remove-small {
-   font-size: 1.4em;
-   margin-top: 0.2em;
-}
-
-article.container .actions.remove-small:hover {
-   opacity: 0.7;
-   cursor: pointer;
 }
 
 article.container header .actions {
@@ -1633,7 +1580,7 @@ article.container div.parameter p.field {
    color: #666666;
    font-weight: bold;
    text-shadow: 0 1px 1px #fff;
-   padding: 1em 0;
+   padding: 6px 0;
 }
 
 article.container div.parameter input[type="text"],
@@ -2009,6 +1956,10 @@ article.modal div.create-new p.button-blue {
    display: inline-block;
 }
 
+article.modal div.create-new p.button-blue a {
+   padding: 0 10px;
+}
+
 /* MODAL: Channel selection */
 
 article.modal form label.selected {
@@ -2058,7 +2009,6 @@ article.modal div.link-list ul {
 article.modal div.link-list ul li {
    clear: both;
    font-weight: bold;
-   font-size: 1.1em;
    margin: 15px 0;
 }
 
@@ -2081,6 +2031,11 @@ div.link-list ul li.google span.icon {
 
 div.link-list ul li.email span.icon {
    background-position: left -254px;
+}
+
+div.link-list ul li span.remove-small span.icon {
+   position: relative;
+   top: -5px;
 }
 
 div.link-list ul li.selected {
@@ -2343,7 +2298,11 @@ header.toolbar ul.global-menu {
    -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
    box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
    border: 1px solid rgba(0,0,0,0.1);
-   margin-top: 0.8em;
+   margin-top: 13px;
+}
+
+header.toolbar ul.user-menu {
+   margin-right: 1.041666667%;
 }
 
 header.toolbar ul.user-menu > li > a {
@@ -2354,19 +2313,22 @@ header.toolbar ul.user-menu > li > a {
 
 header.toolbar ul.user-menu > li span.icon,
 header.toolbar ul.user-menu > li span.label {
-   display: inline-block;
+   display: block;
+   float: left;
 }
 
-header.toolbar ul.user-menu > li > a [class^="icon-"] {
-   margin-right: 6px;
+header.toolbar ul.user-menu li.user span.avatar-wrap {
+   width: 30px;
+   height: 30px;
+   margin: 2px 0 0 7px;
 }
 
-header.toolbar ul.user-menu li.user > a span.icon-arrow-down {
+header.toolbar ul.user-menu li.user > a span.dropdown-arrow {
    display: block;
    float: right;
-   font-size: 1.5em;
-   line-height: 35px;
-   padding-left: 3px;
+   width: 18px;
+   height: 25px;
+   background: url(../img/icons-25x25.png) left -421px no-repeat;   
 }
 
 ul.popover-window.header-toolbar {
@@ -2378,11 +2340,11 @@ ul.popover-window.header-toolbar {
 
 hgroup.page-title .page-h1 {
    text-align: left;
-   padding: 30px 0;
+   padding: 22px 0;
 }
 
 hgroup.page-title h1 {
-   font-size: 2.4em;
+   font-size: 2.1em;
 }
 
 hgroup.page-title .page-actions,
@@ -2397,7 +2359,7 @@ nav.page-navigation .filter-actions {
 }
 
 hgroup.page-title .page-actions {
-   padding: 32px 0;
+   padding: 28px 0;
 }
 
 hgroup.bucket-title .page-actions {
@@ -2427,7 +2389,7 @@ hgroup.user-title div.follow-summary {
 }
 
 nav.page-navigation ul li a {
-   font-size: 1.05em;
+   font-size: 1em;
 }
 
 nav.page-navigation .river ul.touchcarousel-container li a {
@@ -2944,120 +2906,3 @@ hgroup.user-title.dashboard div.follow-summary {
 
 /* Cursor that used when mouse drag is disabled */
 .touchcarousel .auto-cursor{ cursor:auto; }
-
-@font-face {
-	font-family: 'swiftriver-icons';
-	src: url('../fonts/swiftriver-icons.eot');
-	src: url('../fonts/swiftriver-icons.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/swiftriver-icons.svg#swiftriver-icons') format('svg'),
-		url('../fonts/swiftriver-icons.woff') format('woff'),
-		url('../fonts/swiftriver-icons.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-/* Use the following CSS code if you want to use data attributes for inserting your icons */
-[data-icon]:before {
-	font-family: 'swiftriver-icons';
-	content: attr(data-icon);
-	speak: none;
-}
-
-/* Use the following CSS code if you want to have a class per icon */
-[class^="icon-"]:before, [class*=" icon-"]:before {
-	font-family: 'swiftriver-icons';
-	font-style: normal;
-	speak: none;
-}
-.icon-bucket:before {
-	content: "\21";
-}
-.icon-add-to-bucket:before {
-	content: "\22";
-}
-.icon-added-to-bucket:before {
-	content: "\23";
-}
-.icon-river:before {
-	content: "\24";
-}
-.icon-home:before {
-	content: "\34";
-}
-.icon-users:before {
-	content: "\30";
-}
-.icon-forward-arrow:before {
-	content: "\26";
-}
-.icon-thumbs-up:before {
-	content: "\27";
-}
-.icon-thumbs-down:before {
-	content: "\28";
-}
-.icon-twitter:before {
-	content: "\2a";
-}
-.icon-facebook:before {
-	content: "\2b";
-}
-.icon-feed:before {
-	content: "\2c";
-}
-.icon-google-plus:before {
-	content: "\29";
-}
-.icon-cancel:before {
-	content: "\2d";
-}
-.icon-mail:before {
-	content: "\2f";
-}
-.icon-cog:before {
-	content: "\2e";
-}
-.icon-plus:before {
-	content: "\31";
-}
-.icon-arrow-down:before {
-	content: "\32";
-}
-.icon-arrow-right:before {
-	content: "\33";
-}
-.icon-back-arrow:before {
-	content: "\35";
-}
-.icon-comments:before {
-	content: "\36";
-}
-.icon-checkmark:before {
-	content: "\37";
-}
-.icon-locked:before {
-	content: "\38";
-}
-.icon-close:before {
-	content: "\39";
-}
-.icon-search:before {
-	content: "\3a";
-}
-
-@media only screen and (-moz-min-device-pixel-ratio: 2),
-   only screen and (-o-min-device-pixel-ratio: 2/1),
-   only screen and (-webkit-min-device-pixel-ratio: 2),
-   only screen and (min-device-pixel-ratio: 2) {
-
-body { text-rendering: optimizeLegibility; }
-
-header.toolbar .logo a {
-   background: url(../img/logo-swiftriver-2x.png) center left no-repeat;
-   -o-background-size: 100%;
-   -moz-background-size: 100%;
-   -webkit-background-size: 100%;
-   background-size: 100%;
-}
-
-}
