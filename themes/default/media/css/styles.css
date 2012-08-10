@@ -68,7 +68,7 @@ body {
   font-weight: bold;
   line-height: 27px;
   text-align: center;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
@@ -100,9 +100,10 @@ body {
   position: relative;
   top: 1px;
 }
-.button-blue a span.icon,
-.button-white a span.icon {
+.button-blue a [class^="icon-"],
+.button-white a [class^="icon-"] {
   float: left;
+  margin-right: 0.5em;
 }
 .button-big a {
   display: inline-block;
@@ -127,7 +128,7 @@ body {
   border-radius: 3px;
   border: 1px solid #e4e8e8;
   background: #fff;
-  padding: 5px 15px;
+  padding: 5px 10px;
 }
 .button-white a:hover,
 .active > .button-score a {
@@ -140,12 +141,6 @@ body {
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
   border: 1px solid #49b3c5;
   background: #54c2d5;
-}
-.has-icon a {
-  padding-left: 0;
-}
-.only-icon a {
-  padding: 0;
 }
 .notify-total {
   color: #fff;
@@ -279,12 +274,6 @@ span.icon {
 .arrow-left span.icon {
   background-position: center -449px;
 }
-.remove-large span.icon {
-  background-position: center -475px;
-}
-.remove-small span.icon {
-  background-position: center -500px;
-}
 .discussion span.icon {
   background-position: center -525px;
 }
@@ -358,7 +347,7 @@ textarea {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   color: #444444;
-  font-size: 0.9em;
+  font-size: 1.1em;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4) inset;
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) inset;
@@ -367,7 +356,7 @@ textarea {
   -moz-border-radius: 3px;
   border-radius: 3px;
   border: 1px solid #e0e0e0;
-  padding: 5px;
+  padding: 0.7em;
 }
 input.name {
   width: 50%;
@@ -418,9 +407,9 @@ ul.popover-window.header-toolbar li.group a {
 header.toolbar {
   height: 40px;
   overflow: hidden;
-  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   background: url(../img/header-toolbarBG.gif) bottom repeat-x;
 }
 header.toolbar .logo {
@@ -432,12 +421,12 @@ header.toolbar .logo a {
   height: 35px;
   background: url(../img/logo-swiftriver.png) center left no-repeat;
   background-size: 90%;
-  padding: 2.5px 0;
-  margin: 0 8px;
+  padding: 1px 0;
+  margin-right: 8px;
 }
 header.toolbar ul.global-menu {
   float: left;
-  margin-top: 6px;
+  margin-top: 0.4em;
 }
 header.toolbar ul.user-menu {
   float: right;
@@ -449,29 +438,37 @@ header.toolbar ul.user-menu > li {
 header.toolbar ul.global-menu li.home {
   display: none;
 }
+header.toolbar ul.global-menu > li > a,
 header.toolbar ul.user-menu > li > a {
   display: block;
-  width: 40px;
-  height: 40px;
   color: #fff;
-  font-weight: bold;
-  font-size: 0.9em;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+  font-size: 1.05em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   border-left: 1px solid rgba(256, 256, 256, 0.17);
-  padding: 0 7px;
+}
+header.toolbar ul.user-menu > li > a {
+  height: 40px;
+  padding: 0 1em;
 }
 header.toolbar ul.user-menu > li a:hover {
   text-decoration: none;
 }
-header.toolbar ul.global-menu > li span.icon {
-  margin: 0 6px;
+header.toolbar ul.global-menu > li > a [class^="icon-"],
+header.toolbar ul.user-menu > li > a [class^="icon-"] {
+  display: block;
+  float: left;
+  font-size: 2.1em;
 }
-header.toolbar ul.user-menu > li span.icon {
-  display: inline-block;
-  margin: 6px auto;
+header.toolbar ul.global-menu > li > a [class^="icon-"] {
+  font-size: 1.4em;
+  padding: 3px 9px;
+}
+header.toolbar ul.user-menu > li > a [class^="icon-"] {
+  line-height: 1.5em;
 }
 header.toolbar ul.user-menu > li span.label {
+  font-weight: bold;
   line-height: 40px;
 }
 header.toolbar ul.user-menu li.rivers a {
@@ -479,13 +476,16 @@ header.toolbar ul.user-menu li.rivers a {
 }
 header.toolbar ul.user-menu li.user > a {
   border-right: none;
-  padding: 4px 0 0 5px;
+  padding-right: 0;
 }
 header.toolbar ul.user-menu li.login > a {
   border-right: none;
 }
 header.toolbar ul.user-menu li.login > a span.label {
   display: block;
+}
+header.toolbar ul.user-menu li.user > a span.icon-arrow-down {
+  display: none;
 }
 header.toolbar ul.user-menu li.user > a span.notification {
   position: absolute;
@@ -516,6 +516,7 @@ header.toolbar ul.user-menu li.user span.avatar-wrap {
   vertical-align: bottom;
   width: 30px;
   height: 30px;
+  margin-top: 0.4em;
 }
 header.toolbar ul.user-menu li.user span.avatar-wrap:after {
   content: ' ';
@@ -615,8 +616,9 @@ hgroup.page-title .page-actions {
 }
 hgroup.page-title h2 {
   display: inline-block;
-  font-size: 0.9em;
+  font-size: 1em;
   line-height: 20px;
+  padding: 0.2em 0;
 }
 hgroup.page-title h2:last-child {
   margin-left: 10px;
@@ -624,15 +626,18 @@ hgroup.page-title h2:last-child {
 hgroup.user-title h2 {
   font-size: 1.3em;
 }
-hgroup.page-title h2 span.icon {
-  float: left;
-  position: relative;
-  top: -2px;
-  width: 20px;
-  height: 20px;
+hgroup.page-title h2 a:hover {
+  opacity: 0.7;
+  text-decoration: none;
 }
-hgroup.page-title h2.discussion span.icon {
-  background-position: center -550px;
+hgroup.page-title h2 [class^="icon-"] {
+  float: left;
+  font-weight: normal;
+  font-size: 1.3em;
+  margin-right: 0.4em;
+}
+hgroup.page-title h2.close [class^="icon-"] {
+  font-size: 1em;
 }
 hgroup.page-title .page-actions h2 span.title {
   float: left;
@@ -658,7 +663,6 @@ div.follow-summary p.follow-count a strong {
 hgroup.user-title div.follow-summary p.button-white a {
   display: inline-block;
 }
-
 /* --------------------------- PAGE NAVIGATION */
 nav.page-navigation {
   -wekbit-box-shadow: 0 1px 0 rgba(256, 256, 256, 0.5) inset;
@@ -667,13 +671,13 @@ nav.page-navigation {
   border-bottom: 1px solid #dbdbdb;
 }
 nav.page-navigation ul {
-  height: 35px;
+  max-height: 37px;
   overflow: hidden;
 }
 nav.page-navigation ul li a {
   float: left;
   color: #666666;
-  font-size: 0.9em;
+  font-size: 1em;
   text-shadow: 1px 0 1px #fff;
   padding: 10px 20px;
 }
@@ -814,6 +818,9 @@ p.metadata span.icon {
   background-color: #eaf3f5;
   padding-right: 5px;
 }
+.drop ul.score-drop li.scored a span.icon {
+  float: left;
+}
 .drop ul.score-drop li.like.scored a {
   color: #81c279;
   border: 1px solid #81c279;
@@ -880,10 +887,8 @@ p.metadata span.icon {
   display: none;
   position: absolute;
   top: -50px;
-  left: -12%;
   width: 100%;
   border: 3px solid #259cb5;
-  z-index: 1;
 }
 #buoy .buoy-message p {
   color: #444444;
@@ -956,21 +961,6 @@ p.metadata span.icon {
   float: right;
   max-width: 40%;
   margin: 10px 0 10px 10px;
-}
-/* VIEW FULL > MEDIA */
-.drop-full section.drop-media div {
-  margin: 5px 0 0;
-}
-.drop-full section.drop-media a {
-  margin: 1px;
-}
-.drop-full section.drop-media img {
-  max-height: 100px;
-}
-.drop-full section.drop-media img:hover {
-  -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 }
 /* VIEW FULL > RELATED DISCUSSION */
 #zoom-container section.drop-discussion {
@@ -1054,6 +1044,7 @@ section.meta-data img.media-image {
 /* ---- DROP: VIEW DROPS */
 .drops article.drop {
   margin: 15px 0;
+  overflow: hidden;
 }
 .drops article.drop div.drop-actions {
   padding: 5px 10px 15px;
@@ -1218,17 +1209,51 @@ section.rundown .rundown-totals ul li strong {
 }
 /* --------------------------- CONTAINER */
 article.container a.remove-large {
+  display: block;
   float: right;
-  margin: 20px 10px 20px 0;
+  width: 23px;
+  height: 23px;
+  color: #666666;
+  font-size: 1em;
+  line-height: 23px;
+  text-align: center;
+  border: 3px solid #666666;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  margin: 15px 15px 15px 0;
+}
+article.container a.remove-large:hover {
+  opacity: 0.7;
+  text-decoration: none;
 }
 article.container div.property-title {
   float: left;
   padding: 10px 0;
 }
-article.container div.property-title a.avatar-wrap {
+article.container div.property-title > [class^="icon-"] {
   float: left;
-  width: 45px;
+  width: 35px;
+  height: 35px;
+  color: #fff;
+  font-size: 2em;
+  line-height: 35px;
+  text-align: center;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: #dedede;
+  padding: 5px;
   margin-left: 10px;
+}
+article.container div.property-title > .icon-twitter {
+  background: #1ea2e3;
+}
+article.container div.property-title > .icon-facebook {
+  background: #2c4388;
+}
+article.container div.property-title > .icon-feed {
+  background: #f2620b;
 }
 article.container div.property-title h1 {
   float: left;
@@ -1263,6 +1288,14 @@ article.container p.button-white span.icon {
 }
 article.container .actions {
   float: right;
+}
+article.container .actions.remove-small {
+  font-size: 1.4em;
+  margin-top: 0.2em;
+}
+article.container .actions.remove-small:hover {
+  opacity: 0.7;
+  cursor: pointer;
 }
 article.container header .actions {
   padding: 20px 10px;
@@ -1319,7 +1352,7 @@ article.container div.parameter p.field {
   color: #666666;
   font-weight: bold;
   text-shadow: 0 1px 1px #fff;
-  padding: 6px 0;
+  padding: 1em 0;
 }
 article.container div.parameter input[type="text"],
 article.container div.parameter input[type="email"],
@@ -1632,9 +1665,6 @@ article.modal form {
 article.modal div.create-new p.button-blue {
   display: inline-block;
 }
-article.modal div.create-new p.button-blue a {
-  padding: 0 10px;
-}
 /* MODAL: Channel selection */
 article.modal form label.selected {
   color: #444444;
@@ -1675,6 +1705,7 @@ article.modal div.link-list ul {
 article.modal div.link-list ul li {
   clear: both;
   font-weight: bold;
+  font-size: 1.1em;
   margin: 15px 0;
 }
 article.modal div.link-list ul li span.icon {
@@ -1692,10 +1723,6 @@ div.link-list ul li.google span.icon {
 }
 div.link-list ul li.email span.icon {
   background-position: left -254px;
-}
-div.link-list ul li span.remove-small span.icon {
-  position: relative;
-  top: -5px;
 }
 div.link-list ul li.selected {
   color: #444444;
@@ -1920,10 +1947,7 @@ article.modal div.search ul.dual-buttons {
     -webkit-box-shadow: 0 1px 1px rgba(256, 256, 256, 0.25) inset;
     box-shadow: 0 1px 1px rgba(256, 256, 256, 0.25) inset;
     border: 1px solid rgba(0, 0, 0, 0.1);
-    margin-top: 13px;
-  }
-  header.toolbar ul.user-menu {
-    margin-right: 1.041666667%;
+    margin-top: 0.8em;
   }
   header.toolbar ul.user-menu > li > a {
     width: auto;
@@ -1932,20 +1956,17 @@ article.modal div.search ul.dual-buttons {
   }
   header.toolbar ul.user-menu > li span.icon,
   header.toolbar ul.user-menu > li span.label {
-    display: block;
-    float: left;
+    display: inline-block;
   }
-  header.toolbar ul.user-menu li.user span.avatar-wrap {
-    width: 30px;
-    height: 30px;
-    margin: 2px 0 0 7px;
+  header.toolbar ul.user-menu > li > a [class^="icon-"] {
+    margin-right: 6px;
   }
-  header.toolbar ul.user-menu li.user > a span.dropdown-arrow {
+  header.toolbar ul.user-menu li.user > a span.icon-arrow-down {
     display: block;
     float: right;
-    width: 18px;
-    height: 25px;
-    background: url(../img/icons-25x25.png) left -421px no-repeat;
+    font-size: 1.5em;
+    line-height: 35px;
+    padding-left: 3px;
   }
   ul.popover-window.header-toolbar {
     width: auto;
@@ -1955,10 +1976,10 @@ article.modal div.search ul.dual-buttons {
   }
   hgroup.page-title .page-h1 {
     text-align: left;
-    padding: 22px 0;
+    padding: 30px 0;
   }
   hgroup.page-title h1 {
-    font-size: 2.1em;
+    font-size: 2.4em;
   }
   hgroup.page-title .page-actions,
   nav.page-navigation .filter-actions {
@@ -1968,7 +1989,7 @@ article.modal div.search ul.dual-buttons {
     text-align: left;
   }
   hgroup.page-title .page-actions {
-    padding: 28px 0;
+    padding: 32px 0;
   }
   hgroup.bucket-title .page-actions {
     padding: 34px 0;
@@ -1992,7 +2013,7 @@ article.modal div.search ul.dual-buttons {
     clear: none;
   }
   nav.page-navigation ul li a {
-    font-size: 1em;
+    font-size: 1.05em;
   }
   nav.page-navigation .river ul.touchcarousel-container li a {
     width: auto;
@@ -2087,24 +2108,6 @@ article.modal div.search ul.dual-buttons {
      top: 10px;
      left: 10px; */
   
-  }
-  .button-prev div {
-    float: left;
-    width: 0;
-    height: 0;
-    border-top: 19px solid transparent;
-    border-bottom: 19px solid transparent;
-    border-right: 30px solid #EAF3F5;
-    margin: 0 5px;
-  }
-  .button-next div {
-    float: right;
-    width: 0;
-    height: 0;
-    border-top: 19px solid transparent;
-    border-bottom: 19px solid transparent;
-    border-left: 30px solid #EAF3F5;
-    margin: 0 5px;
   }
   /* --------------------------- BUCKET */
   section.rundown {
@@ -2274,14 +2277,6 @@ article.modal div.search ul.dual-buttons {
   margin: 0 auto;
   display: block;
 }
-/* --------------------------- FOOTER */
-footer a.btn-feedback {
-  display:block; height:156px; width:36px; position:fixed; top:210px; left:0; z-index:99; overflow:hidden; text-indent:-24234px;
-  background:transparent url('../img/btn-feedback.png') top left no-repeat;
-}
-footer a.btn-feedback:hover {
-  background:transparent url('../img/btn-feedback.png') bottom left no-repeat;
-}
 /******************************************************\
 *
 *  1. Main containers (carousel size, background)
@@ -2441,4 +2436,111 @@ footer a.btn-feedback:hover {
 /* Cursor that used when mouse drag is disabled */
 .touchcarousel .auto-cursor {
   cursor: auto;
+}
+@font-face {
+  font-family: 'swiftriver-icons';
+  src: url('../fonts/swiftriver-icons.eot');
+  src: url('../fonts/swiftriver-icons.eot?#iefix') format('embedded-opentype'), url('../fonts/swiftriver-icons.svg#swiftriver-icons') format('svg'), url('../fonts/swiftriver-icons.woff') format('woff'), url('../fonts/swiftriver-icons.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+  font-family: 'swiftriver-icons';
+  content: attr(data-icon);
+  speak: none;
+}
+/* Use the following CSS code if you want to have a class per icon */
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: 'swiftriver-icons';
+  font-style: normal;
+  speak: none;
+}
+.icon-bucket:before {
+  content: "\21";
+}
+.icon-add-to-bucket:before {
+  content: "\22";
+}
+.icon-added-to-bucket:before {
+  content: "\23";
+}
+.icon-river:before {
+  content: "\24";
+}
+.icon-home:before {
+  content: "\34";
+}
+.icon-users:before {
+  content: "\30";
+}
+.icon-forward-arrow:before {
+  content: "\26";
+}
+.icon-thumbs-up:before {
+  content: "\27";
+}
+.icon-thumbs-down:before {
+  content: "\28";
+}
+.icon-twitter:before {
+  content: "\2a";
+}
+.icon-facebook:before {
+  content: "\2b";
+}
+.icon-feed:before {
+  content: "\2c";
+}
+.icon-google-plus:before {
+  content: "\29";
+}
+.icon-cancel:before {
+  content: "\2d";
+}
+.icon-mail:before {
+  content: "\2f";
+}
+.icon-cog:before {
+  content: "\2e";
+}
+.icon-plus:before {
+  content: "\31";
+}
+.icon-arrow-down:before {
+  content: "\32";
+}
+.icon-arrow-right:before {
+  content: "\33";
+}
+.icon-back-arrow:before {
+  content: "\35";
+}
+.icon-comments:before {
+  content: "\36";
+}
+.icon-checkmark:before {
+  content: "\37";
+}
+.icon-locked:before {
+  content: "\38";
+}
+.icon-close:before {
+  content: "\39";
+}
+.icon-search:before {
+  content: "\3a";
+}
+@media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
+  body {
+    text-rendering: optimizeLegibility;
+  }
+  header.toolbar .logo a {
+    background: url(../img/logo-swiftriver-2x.png) center left no-repeat;
+    -o-background-size: 100%;
+    -moz-background-size: 100%;
+    -webkit-background-size: 100%;
+    background-size: 100%;
+  }
 }

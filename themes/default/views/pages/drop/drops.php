@@ -247,7 +247,7 @@
 			<%= droplet_content %>
 		</section>
 		<% } %>
-		<% if (media.length > 0 && channel == "twitter") { %>
+		<% if (media.length > 0) { %>
 		<section class="drop-media drop-sub">
 			<h2><?php echo __("Media"); ?></h2>
 			<div>
@@ -331,7 +331,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -351,15 +351,7 @@
 		<form class="following">
 		</form>
 	</div>
-	<div class="modal-body create-new" id="show-create-new">
-		<form>
-			<div class="field">
-				<p class="button-blue" id="show-create-bucket-button"><a href="#" title="<?php echo __("Click here to create a new bucke"); ?>">Create a new bucket</a></p>
-			</div>
-			<div class="system_error"></div>
-		</form>
-	</div>
-	<div class="modal-body create-new nodisplay" id="create-bucket-form">
+	<div class="modal-body create-new">
 		<form>
 			<h2><?php echo __("Create a new bucket"); ?></h2>
 			<div class="field">
@@ -391,7 +383,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -432,7 +424,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -479,7 +471,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					<?php echo __("Close"); ?>
 				</a>
 			</h2>
@@ -546,9 +538,9 @@
 			<h1>Filters</h1>
 		</div>
 		<div class="page-actions col_3">
-			<h2 class="close">
+			<h2>
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>

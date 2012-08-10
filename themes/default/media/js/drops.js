@@ -578,18 +578,7 @@
 			if (!this.model.isInBucket(bucket)) {
 				this.model.setBucket(bucket);
 			}
-		},
-		
-		saveNewBucket: function() {
-			
-			if (this.$("#create-bucket-form").hasClass("nodisplay")) {
-				this.$("#show-create-new").remove();
-				this.$("#create-bucket-form").removeClass("nodisplay")
-				return false;
-			}
-			
-			return Assets.BaseModalAssetListView.prototype.saveNewBucket.call(this);
-		}	
+		}		
 	});
 		
 	// VIEW: Listing of drops
