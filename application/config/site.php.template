@@ -11,5 +11,8 @@ return array(
 	'cdn_directories' => array('themes/default/media', 'plugins/[^\/]+/media'),
 	
 	/* Default cache driver */
-	'default_cache' => 'file'
+	'default_cache' => 'file',
+	
+	/* The 'from' address used in emails */
+    'email_address' => 'no-response@example.com',
 );
