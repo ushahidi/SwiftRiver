@@ -77,7 +77,7 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('followers', $followers)
 			->bind('following', $following)
 			->bind('view_type', $view_type);
-		$this->template->content->nav = $this->get_nav();
+		$this->template->content->nav = $this->get_nav($this->user);
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
@@ -773,10 +773,10 @@ class Controller_User extends Controller_Swiftriver {
 	/**
 	 * Dashboard Navigation Links
 	 * 
-	 * @param string $active - the active menu
+	 * @param string $user - logged in user
 	 * @return	array $nav
 	 */
-	protected static function get_nav()
+	protected static function get_nav($user)
 	{
 		$nav = array();
 
@@ -795,7 +795,8 @@ class Controller_User extends Controller_Swiftriver {
 		);
 
 		// Invite
-		if (Model_Setting::get_setting('general_invites_enabled'))
+		if (Model_Setting::get_setting('general_invites_enabled') AND
+			$user->invites > 0)
 		{
 			$nav[] = array(
 				'id' => 'invite-navigation-link',

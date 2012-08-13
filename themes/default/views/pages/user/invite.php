@@ -92,7 +92,7 @@
 		<div class="alert-message red">
 			<p><strong>Uh oh.</strong></p>
 			<ul>
-				<li>You have no invites to send!</li>
+				<li>You have no more invites to send!</li>
 			</ul>
 		</div>
 	<?php endif; ?>
