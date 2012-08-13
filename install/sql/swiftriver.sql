@@ -394,6 +394,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(255) NOT NULL,
   `api_key` varchar(255) NOT NULL,
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `invites` smallint(6) NOT NULL DEFAULT '10',
   `last_login` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
@@ -839,7 +840,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
 (6, 'river_active_duration', '14'),
-(7, 'river_expiry_notice_period', '3');
+(7, 'river_expiry_notice_period', '3'),
+(8, 'general_invites_enabled', '0');
 
 -- -----------------------------------------------------
 -- Data for table `users`
