@@ -1147,12 +1147,16 @@
 		
 		initialize: function(options) {
 			this.template = _.template($("#email-dialog-template").html());
+			this.dropURL = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + this.model.get("id");
 		},
 
 		sendEmail: function() {
-			var data = {};
+			var postData = {
+				drop_title: this.model.get("droplet_title"),
+				drop_url: this.dropURL
+			};
 			$(":input", this.$("form")).each(function(field){
-				data[$(this).attr("name")] = $(this).val();
+				postData[$(this).attr("name")] = $(this).val();
 			});
 			var context = this;
 
@@ -1162,7 +1166,7 @@
 				
 				type: "POST",
 				
-				data: data,
+				data: postData,
 
 				success: function(response) {
 					// Show success message
@@ -1183,9 +1187,7 @@
 		},
 
 		render: function() {
-			var data = this.model.toJSON();
-			data['drop_url'] = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + data["id"];
-			this.$el.html(this.template(data));
+			this.$el.html(this.template(this.model.toJSON()));
 			return this;
 		}
 

@@ -506,7 +506,7 @@
 			<section class="property-parameters">
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __("To:"); ?></p>
+						<p class="field"><?php echo __("Send To:"); ?></p>
 						<?php echo Form::input('recipient', ''); ?>
 					</label>
 				</div>
@@ -515,19 +515,15 @@
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("Subject:"); ?></p>
-						<input type="text" name="subject" value="<%= droplet_title %>" />
+				    <label>
+					    <p class="field"><?php echo __("Security Image:"); ?></p>
+						<?php echo Captcha::instance()->render(); ?>
 					</label>
 				</div>
-			</section>
-		</article>
-		<article class="container base">
-			<section class="property-parameters">
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __("Message:"); ?></p>
-						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= drop_url %></textarea>
+						<p class="field"><?php echo __("Security Code:"); ?></p>
+						<input type="text" name="security_code" placeholder="<?php echo __("Enter the text in the image above"); ?>" />
 					</label>
 				</div>
 			</section>
