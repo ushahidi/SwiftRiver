@@ -61,8 +61,12 @@ class Controller_Bucket extends Controller_Drop_Base {
 			$this->owner = $this->bucket->is_owner($this->user->id);
 			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
 			
-			// Bucket isn't published and logged in user isn't owner
-			if ( ! $this->bucket->bucket_publish AND ! $this->owner AND ! $this->collaborator)
+			// Bucket isn't published and logged in user isn't owner 
+			// and doesn't have a valid token
+			if ( ! $this->bucket->bucket_publish AND 
+				! $this->owner AND 
+				! $this->collaborator AND
+				! $this->bucket->is_valid_token($this->request->query('at')))
 			{
 				$this->request->redirect($this->dashboard_url);
 			}

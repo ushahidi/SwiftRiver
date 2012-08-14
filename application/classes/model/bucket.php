@@ -86,6 +86,11 @@ class Model_Bucket extends ORM {
 			$this->bucket_date_add = date("Y-m-d H:i:s", time());
 		}
 		
+		if ( ! isset($this->public_token))
+		{
+			$this->public_token = $this->get_token();
+		}
+		
 		// Set river_name_url as river_name sanitized
 		$this->bucket_name_url = URL::title($this->bucket_name);
 
@@ -702,6 +707,33 @@ class Model_Bucket extends ORM {
 		}
 
 		return $buckets;
+	}
+	
+	/**
+	 * Sets the bucket's access token overwriting the pre-existing one
+	 *
+	 * @return void
+	 */
+	public function set_token()
+	{
+		$this->public_token = $this->get_token();
+		$this->save();
+	}
+	
+	/**
+	 * @return void
+	 */
+	private function get_token()
+	{
+		return md5(uniqid(mt_rand().$this->account->account_path.$this->bucket_name, true));
+	}
+	
+	/**
+	 * @return void
+	 */	
+	public function is_valid_token($token)
+	{
+		return $token == $this->public_token AND isset($this->public_token);
 	}
 
 }

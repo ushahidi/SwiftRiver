@@ -67,6 +67,25 @@
 				</section>
 			</article>
 			
+			<article class="container base">
+				<header class="cf">
+					<div class="property-title">
+						<h1>Tokens</h1>
+					</div>
+				</header>
+				<section class="property-parameters">
+					<div class="parameter">
+						<label for="public_token">
+							<p class="field">Public Token</p>
+							<input type="text" value="<?php echo $river->public_token ?>" name="public_token" id="public_token" disabled="disabled" />
+							<p class="button-blue button-small generate" style="float: right;">
+								<a href="#" title="Generate a new public token. WARNING: The old token will no longer be usable." >Generate</a>
+							</p>
+						</label>
+					</div>
+				</section>
+			</article>			
+			
 			<div class="save-toolbar">
 				<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
 				<p class="button-blank"><a href="#">Cancel</a></p>
@@ -75,3 +94,15 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(function() {
+		$('.generate a').click(function() {
+			$.getJSON('<?php echo $river->get_base_url(); ?>/settings/display/create_token', function(result) {
+				$('#public_token').val(result);
+			});
+			return false;
+		});
+	});
+</script>
+
