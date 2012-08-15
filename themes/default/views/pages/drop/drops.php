@@ -533,6 +533,15 @@
 		</p>
 		<?php echo Form::close(); ?>
 	</div>
+	<section class="drop-summary cf">
+		<a class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<div class="drop-content">
+			<p><strong><%= identity_name %>:</strong> <%= droplet_title %></p>
+			<p class="drop-source-channel rss">
+				<a href="#"><span class="icon"></span>via <%= channel %></a>
+			</p>
+		</div>
+	</section>
 </article>
 </script>
 
