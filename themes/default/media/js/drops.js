@@ -1142,12 +1142,13 @@
 		className: "modal",
 
 		events: {
-			"click #send_sharing_email > a": "sendEmail"
+			"click p.button-blue a": "sendEmail"
 		},
 		
 		initialize: function(options) {
 			this.template = _.template($("#email-dialog-template").html());
 			this.dropURL = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + this.model.get("id");
+			this.hasSubmitted = false;
 		},
 
 		sendEmail: function() {
@@ -1155,34 +1156,51 @@
 				drop_title: this.model.get("droplet_title"),
 				drop_url: this.dropURL
 			};
-			$(":input", this.$("form")).each(function(field){
+			$(":input", this.$("form")).each(function(index){
 				postData[$(this).attr("name")] = $(this).val();
 			});
-			var context = this;
 
-			// Submit for sharing
-			$.ajax({
-				url: this.options.baseURL + "/share",
-				
-				type: "POST",
-				
-				data: postData,
+			if (!this.hasSubmitted) {
+				this.hasSubmitted = true;
 
-				success: function(response) {
-					// Show success message
-					context.$("#success").show();
+				// Hide pre-existing error messsages
+				this.$("#error").hide();
 
-					// Close the dialog
-					setTimeout(function(){context.$("h2.close a").trigger("click");}, 1500);
-				},
+				// Show the loading icon
+				var loading_msg = window.loading_message.clone();
+				var submitButton = this.$("p.button-blue");
+				this.$("p.button-blue").replaceWith(loading_message);
 
-				error: function() {
-					// Show error message
-					context.$("#error").show();
-				},
+				var context = this;
 
-				dataType: "json"
-			});
+				// Submit for sharing
+				$.ajax({
+					url: this.options.baseURL + "/share",
+					
+					type: "POST",
+					
+					data: postData,
+
+					success: function(response) {
+						// Show success message
+						context.$("#success").show();
+						context.$(loading_message).replaceWith(submitButton);
+						context.hasSubmitted = false;
+
+						// Close the dialog
+						setTimeout(function(){context.$("h2.close a").trigger("click");}, 1800);
+					},
+
+					error: function() {
+						// Show error message
+						context.$("#error").show();
+						context.hasSubmitted = false;
+						context.$(loading_message).replaceWith(submitButton);
+					},
+
+					dataType: "json"
+				});
+			}
 			return false;
 		},
 

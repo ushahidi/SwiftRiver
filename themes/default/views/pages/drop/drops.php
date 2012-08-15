@@ -490,8 +490,8 @@
 		<!-- notifications -->
 		<div class="alert-message red" id="error" style="display: none;">
 			<p>
-				<strong><?php echo __("Email sharing error"); ?></strong>
-				<?php echo __("Please provide all the information in the form below"); ?>
+				<strong><?php echo __("Error"); ?></strong>
+				<?php echo __("You have entererd an invalid email address or security code"); ?>
 			</p>
 		</div>
 		<div class="alert-message blue" id="success" style="display: none;">
@@ -528,7 +528,7 @@
 				</div>
 			</section>
 		</article>
-		<p class="button-blue" id="send_sharing_email">
+		<p class="button-blue">
 			<a href="#"><?php echo __("Send"); ?></a>
 		</p>
 		<?php echo Form::close(); ?>
