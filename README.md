@@ -114,9 +114,9 @@ Installing SwiftRiver
 		INDEX ON `<swiftriver-database>`.* TO '<swiftriver-user>'@'localhost' IDENTIFIED BY <swiftriver-user-password>;
 
 	Where:
-	- <swiftriver-database> is the name of your SwiftRiver database
-	- <swiftriver-user> is the username to use when connecting to your SwiftRiver database
-	- <swiftriver-user-password> is the password associated with the user account to be used for connecting to your SwiftRiver database
+	- `<swiftriver-database>` is the name of your SwiftRiver database
+	- `<swiftriver-user>` is the username to use when connecting to your SwiftRiver database
+	- `<swiftriver-user-password>` is the password associated with the user account to be used for connecting to your SwiftRiver database
 
 * Run the schema setup script
 	The schema setup script is located at `/path/to/SwiftRiver/install/sql/swiftriver.sql`.
