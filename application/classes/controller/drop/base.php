@@ -263,7 +263,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				// Modify the mail body to include the email address of the
 				// use sharing content
 				$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
-				    array(':sender' => $this->user->username, ':url' => $post['drop_url']));
+				    array(':user' => $this->user->username, ':url' => $post['drop_url']));
 
 				// Send the email
 				Swiftriver_Mail::send($recipient, $subject, $mail_body);
