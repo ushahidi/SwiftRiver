@@ -15,7 +15,7 @@
 
 return array(
 
-	// Restrictst the domain the cookie is available to
+	// Restrict the domain the cookie is available to
     'domain' => 'example.com',
 
     // Only transmit cookies over secure connections
