@@ -79,6 +79,12 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 				$plugin_orm->plugin_enabled = $item_array['plugin_enabled'];
 				$plugin_orm->save();
 
+				// Run the plugins installer
+				if ($plugin_orm->plugin_enabled)
+				{
+					Swiftriver_Plugins::install($plugin_orm->plugin_path);
+				}
+
 			break;
 		}
 	}
