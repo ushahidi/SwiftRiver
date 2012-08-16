@@ -94,6 +94,10 @@ Installing SwiftRiver
 		cp application/config/cache.php.template application/config/cache.php
 		cp application/config/auth.php.template application/config/auth.php
 
+	Alternatively, you can run the following one-liner from the command line:
+
+		for config in application/config/*.php.template; do cp $config application/`basename ${config} .php.template`.php; done
+
 * Create the database
 	Log in to your MySQL server:
 	
