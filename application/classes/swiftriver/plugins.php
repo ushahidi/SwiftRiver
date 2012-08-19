@@ -78,7 +78,7 @@ class Swiftriver_Plugins {
 	 * Run Plugin Installer Script if Available
 	 *
 	 * @param   string   plugin namespace
-	 * @return  void
+	 * @return  bool
 	 */
 	public static function install($plugin)
 	{
@@ -88,8 +88,19 @@ class Swiftriver_Plugins {
 		// Does the plugin have an installer script?
 		if ( isset(self::$_installers[$plugin]) )
 		{
-			call_user_func(self::$_installers[$plugin]);
+			try
+			{
+				call_user_func(self::$_installers[$plugin]);
+				return true;
+			}
+			catch (Exception $e)
+			{
+				throw new Kohana_Exception('Could not execute plugin installer callback function :callback',
+					array(':callback' => self::$_installers[$plugin]));
+			}
 		}
+
+		return false;
 	}
 	
 	/**
