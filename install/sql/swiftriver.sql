@@ -343,6 +343,7 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `plugin_description` VARCHAR(255) NULL DEFAULT NULL ,
   `plugin_enabled` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'Global Plugin Enabled/Disable' ,
   `plugin_weight` TINYINT(4) NOT NULL DEFAULT 1 COMMENT 'Lower digit = higher priority' ,
+  `plugin_installed` TINYINT(4) NOT NULL DEFAULT 0 ,
   UNIQUE INDEX (`plugin_path` ASC) ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
