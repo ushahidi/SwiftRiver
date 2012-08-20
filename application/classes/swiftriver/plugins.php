@@ -91,16 +91,18 @@ class Swiftriver_Plugins {
 			try
 			{
 				call_user_func(self::$_installers[$plugin]);
-				return true;
+				return TRUE;
 			}
 			catch (Exception $e)
 			{
-				throw new Kohana_Exception('Could not execute plugin installer callback function :callback',
+				Kohana::$log->add(Log::ERROR, "Could not execute plugin installer callback function :callback", 
 					array(':callback' => self::$_installers[$plugin]));
+
+				return FALSE;
 			}
 		}
 
-		return false;
+		return FALSE;
 	}
 	
 	/**
