@@ -6,16 +6,8 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?> <em>settings</em></h1>
-			</div>
-			<div class="page-actions col_3">
-				<h2 class="back">
-					<a href="/markup/river/">
-						<span class="icon"></span>
-						Return to river
-					</a>
-				</h2>
+			<div class="page-h1 col_12">
+				<h1><a href="/markup/river/"><?php print $page_title; ?></a> <em>settings</em></h1>
 			</div>
 		</div>
 	</hgroup>
@@ -38,16 +30,18 @@
 			<div class="col_12">
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
-							<h1>Who can view this river</h1>
+						<div class="property-title col_12">
+							<h1>Who can view this river?</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
-							<select>
-								<option>Public</option>
-								<option>Collaborators only</option>
-							</select>
+							<div class="field">
+								<select>
+									<option>Public</option>
+									<option>Only collaborators</option>
+								</select>
+							</div>
 						</div>
 					</section>
 				</article>

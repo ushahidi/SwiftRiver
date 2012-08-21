@@ -5,7 +5,7 @@
     <meta charset="utf-8"> 
 	<title>SwiftRiver ~ Pattern portfolio</title> 
 	<link rel="shortcut icon" href="#">
-	<link type="text/css" href="/markup/css/styles.css" rel="stylesheet" />
+	<link type="text/css" href="/themes/default/media/css/styles.css" rel="stylesheet" />
 	<style>
 header {
    text-align: left;
@@ -84,7 +84,7 @@ body > nav li {
 		<p class="button-blue"><a href="#">Blue button</a></p>
 	</div>
 	<div class="col_2">
-		<p class="button-blue button-small create"><a href="#"><span class="icon"></span>Blue, small, icon</a></p>
+		<p class="button-blue button-small"><a href="#"><span class="icon-plus"></span>Blue, small, icon</a></p>
 	</div>
 	<div class="col_2">
 		<p class="button-blue button-big"><a href="#">Blue, big</a></p>
@@ -93,10 +93,10 @@ body > nav li {
 		<p class="button-white"><a href="#">White button</a></p>
 	</div>
 	<div class="col_2">
-		<p class="button-white add"><a href="#"><span class="icon"></span>White, icon</a></p>
+		<p class="button-white"><a href="#"><span class="icon-plus"></span>White, icon</a></p>
 	</div>
 	<div class="col_2">
-		<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+		<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 	</div>
 </div>
 
@@ -109,9 +109,9 @@ body > nav li {
 				<h1>Page title</h1>
 			</div>
 			<div class="page-actions col_3">
-				<h2 class="settings">
+				<h2>
 					<a href="/markup/river/settings-filters.php">
-						<span class="icon"></span>
+						<span class="icon-cog"></span>
 						Page action
 					</a>
 				</h2>
@@ -136,15 +136,15 @@ body > nav li {
 				</div>
 			</div>
 			<div class="page-actions col_3">
-				<h2 class="settings">
+				<h2>
 					<a href="/markup/bucket/settings-filters.php">
-						<span class="icon"></span>
+						<span class="icon-cog"></span>
 						Bucket settings
 					</a>
 				</h2>
-				<h2 class="discussion">
+				<h2>
 					<a href="/markup/bucket/discussion.php">
-						<span class="icon"></span>
+						<span class="icon-comments"></span>
 						Discussion
 					</a>
 				</h2>
@@ -165,7 +165,7 @@ body > nav li {
 			</div>
 			<div class="follow-summary col_3">
 				<p class="follow-count"><a href="#"><strong>28</strong> followers</a>, <a href="#"><strong>18</strong> following</a></p>
-				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
+				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span>Follow</a></p>
 			</div>
 		</div>
 	</hgroup>
@@ -216,12 +216,12 @@ body > nav li {
 	<div class="col_12">
 		<article class="container base">
 			<header class="cf">
-				<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+				<a href="#" class="remove-large"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
 				<div class="property-title">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/channel-twitter.gif" /></a>
+					<span class="icon-twitter"></span>
 					<h1>Twitter</h1>
 					<div class="popover add-parameter">
-						<p class="button-white add"><a href="#" class="popover-trigger"><span class="icon"></span>Add parameter</a></p>
+						<p class="button-white add"><a href="#" class="popover-trigger"><span class="icon-plus"></span>Add parameter</a></p>
 						<ul class="popover-window base">
 							<li><a href="#">Keyword</a></li>
 							<li><a href="#">User</a></li>
@@ -234,7 +234,7 @@ body > nav li {
 					<label for="twitter_keyword">
 						<p class="field">Keyword</p>
 						<input type="text" name="twitter_keyword" placeholder="Enter keyword" />
-						<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
+						<p class="remove-small actions"><span class="icon-close"></span><span class="nodisplay">Remove</span></p>
 					</label>
 				</div>
 			</section>
@@ -247,7 +247,7 @@ body > nav li {
 	<h2>Generic toolbar: <em>Used at the top of settings</em></h2>
 	<div class="col_12">
 		<div class="settings-toolbar">
-			<p class="button-blue button-small create"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon"></span>Add channel</a></p>
+			<p class="button-blue button-small"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon-plus"></span>Add channel</a></p>
 		</div>
 	</div>
 </div>
@@ -268,14 +268,14 @@ body > nav li {
 	<a name="pagination"></a>
 	<h2>Pagination: <em>Used at the bottom of a list of articles</em></h2>
 	<div class="pagination col_12 cf">
-		<p class="button-blue arrow-left"><a href="#"><span class="label">Previous</span><span class="icon"></span></a></p>
+		<p class="button-blue"><a href="#"><span class="icon-arrow-left"></span><span class="label">Previous</span></a></p>
 		<ul>
 			<li class="current"><a href="#">1</a></li>
 			<li><a href="#">2</a></li>
 			<li><a href="#">3</a></li>
 			<li><a href="#">4</a></li>
 		</ul>
-		<p class="button-blue arrow-right"><a href="#"><span class="label">Next</span><span class="icon"></span></a></p>
+		<p class="button-blue"><a href="#"><span class="label">Next</span><span class="icon-arrow-right"></span></a></p>
 	</div>
 </div>
 
@@ -288,19 +288,19 @@ body > nav li {
 			<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
 			<div class="drop-actions cf">
 				<ul class="dual-buttons score-drop">
-					<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-					<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+					<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+					<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 				</ul>
 				<ul class="dual-buttons move-drop">
-					<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-					<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+					<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+					<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 				</ul>
 			</div>
 			<section class="drop-source cf">
 				<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a>
 				<div class="byline">
 					<h2>The Global Journal</h2>
-					<p class="drop-source-channel rss"><a href="#"><span class="icon"></span>via RSS</a></p>
+					<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
 				</div>
 			</section>
 		</article>
@@ -316,24 +316,24 @@ body > nav li {
 				<div class="drop-body">
 					<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
 					<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-					<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
+					<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon-comments"></span><strong>3</strong> comments</a></p>
 				</div>
 				<section class="drop-source cf">
 					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 					<div class="byline">
 						<h2>Nanjira Sambuli</h2>
-						<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+						<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 					</div>
 				</section>
 			</div>
 			<div class="drop-actions stacked cf">
 				<ul class="dual-buttons move-drop">
-					<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-					<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+					<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+					<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 				</ul>
 				<ul class="dual-buttons score-drop">
-					<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-					<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+					<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+					<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 				</ul>
 			</div>
 		</article>
@@ -350,12 +350,12 @@ body > nav li {
 					<a href="#" class="drop-image-wrap"><img src="/markup/images/content/drop-photo1.jpg" class="drop-image" /></a>
 					<div class="drop-actions cf">
 						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 						</ul>
 						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 						</ul>
 					</div>
 				</div>
@@ -363,7 +363,7 @@ body > nav li {
 					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 					<div class="byline">
 						<h2>Nanjira Sambuli</h2>
-						<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+						<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 					</div>
 				</section>
 			</div>

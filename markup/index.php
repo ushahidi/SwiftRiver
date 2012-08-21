@@ -31,7 +31,7 @@
 			<div class="col_9">
 				<article id="primer" class="container base">
 					<header class="cf">
-						<a href="/markup/modal-prompt.php" class="remove-large modal-trigger"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+						<a href="/markup/modal-prompt.php" class="remove-large modal-trigger"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
 						<div class="property-title">
 							<h1>Get started</h1>
 						</div>
@@ -96,14 +96,14 @@
 						<div class="parameter">
 							<div class="actions">
 								<p class="follow-count"><strong>48</strong> new followers</p>
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						<div class="parameter">
 							<div class="actions">
 								<p class="follow-count"><strong>67</strong> new followers</p>
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
@@ -122,14 +122,14 @@
 						<p class="category">Your rivers</p>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
@@ -137,13 +137,13 @@
 						<p class="category">Rivers you follow</p>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
 						</div>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Robotics</a></h2>
 						</div>
@@ -160,13 +160,13 @@
 						<p class="category">Your buckets</p>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
 						</div>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
 						</div>
@@ -174,13 +174,13 @@
 						<p class="category">Buckets you follow</p>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay">Follow</span></a></p>
+								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
 						</div>
 						<div class="parameter">
 							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon"></span><span class="nodisplay">Following</span></a></p>
+								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
 							</div>
 							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
 						</div>

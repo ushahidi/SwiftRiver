@@ -6,7 +6,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>

@@ -23,23 +23,23 @@
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
 					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-					    <span class="icon"></span>
+					    <span class="icon-share"></span>
 					</a>
 				</li>
 				<?php if ( ! $anonymous): ?>
 					<li class="button-blue bucket">
 						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-						    <span class="icon"></span>
+						    <span class="icon-add-to-bucket"></span>
 						</a>
 					</li>
 				<?php endif; ?>
 			</ul>
 			<ul class="dual-buttons score-drop">
 				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+					<a href="#"><span class="icon-thumbs-up"></span></a>
 				</li>
 				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+					<a href="#"><span class="icon-thumbs-down"></span></a>
 				</li>
 			</ul>
 		<?php endif; ?>
@@ -50,8 +50,8 @@
 		<% } %>
 		<div class="byline">
 			<h2><%= identity_name %></h2>
-			<p class="drop-source-channel <%= channel %>">
-				<a href="#"><span class="icon"></span>via <%= channel %></a>
+			<p class="drop-source-channel">
+				<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 			</p>
 		</div>
 	</section>
@@ -66,7 +66,7 @@
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
 			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-comments"></span>
 					<strong><%= comment_count ? comment_count : 0 %></strong> 
 					<?php echo __("comments"); ?>
 				</a>
@@ -78,8 +78,8 @@
 			<% } %>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel <%= channel %>">
-					<a href="#"><span class="icon"></span>via <%= channel %></a>
+				<p class="drop-source-channel">
+					<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 				</p>
 			</div>
 		</section>
@@ -89,21 +89,21 @@
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
 					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-					    <span class="icon"></span>
+					    <span class="icon-share"></span>
 					</a>
 				</li>
 				<li class="button-blue bucket">
 					<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-					    <span class="icon"></span>
+					    <span class="icon-add-to-bucket"></span>
 					</a>
 				</li>
 			</ul>		
 			<ul class="dual-buttons score-drop">
 				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+					<a href="#"><span class="icon-thumbs-up"></span></a>
 				</li>
 				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+					<a href="#"><span class="icon-thumbs-down"></span></a>
 				</li>
 			</ul>
 		<?php endif; ?>
@@ -121,21 +121,21 @@
 						<ul class="dual-buttons move-drop">
 							<li class="button-blue share">
 								<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-									<span class="icon"></span>
+									<span class="icon-share"></span>
 								</a>
 							</li>
 							<li class="button-blue bucket">
 								<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-									<span class="icon"></span>
+									<span class="icon-add-to-bucket"></span>
 								</a>
 							</li>
 						</ul>
 						<ul class="dual-buttons score-drop">
 							<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>" >
-								<a href="#"><span class="icon"></span></a>
+								<a href="#"><span class="icon-thumbs-up"></span></a>
 							</li>
 							<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-								<a href="#"><span class="icon"></span></a>
+								<a href="#"><span class="icon-thumbs-down"></span></a>
 							</li>
 						</ul>
 					<?php endif; ?>
@@ -147,8 +147,8 @@
 				<% } %>
 				<div class="byline">
 					<h2><%= identity_name %></h2>
-					<p class="drop-source-channel <%= channel %>">
-						<a href="#"><span class="icon"></span>via <%= channel %></a>
+					<p class="drop-source-channel">
+						<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 					</p>
 				</div>
 			</section>
@@ -187,7 +187,7 @@
 <script type="text/template" id="drop-detail-template">
 	<div class="settings-toolbar base">
 		<p class="button-white close">
-			<a href="#"><span class="icon"></span><?php echo __("Close"); ?></a>
+			<a href="#"><span class="icon-cancel"></span><?php echo __("Close"); ?></a>
 		</p>
 		<p class="button-blue button-big">
 			<a href="#"><?php echo __("Edit this drop"); ?></a>
@@ -200,8 +200,8 @@
 			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel twitter">
-					<a href="#"><span class="icon"></span>via <%= channel %></a>
+				<p class="drop-source-channel">
+					<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 				</p>
 			</div>
 		</section>
@@ -215,10 +215,10 @@
 			<?php if ( ! $anonymous): ?>
 				<ul class="dual-buttons score-drop">
 					<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon"></span></a>
+						<a href="#"><span class="icon-thumbs-up"></span></a>
 					</li>
 					<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon"></span></a>
+						<a href="#"><span class="icon-thumbs-down"></span></a>
 					</li>
 				</ul>
 			<?php endif; ?>
@@ -228,10 +228,10 @@
 			<?php if ( ! $anonymous): ?>
 				<ul class="dual-buttons move-drop">
 					<li class="button-blue share">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger"><span class="icon-share"></span></a>
 					</li>
 					<li class="button-blue bucket">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger"><span class="icon-add-to-bucket"></span></a>
 					</li>
 				</ul>
 			<?php endif; ?>

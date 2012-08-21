@@ -12,6 +12,20 @@ $(document).ready(function() {
 	if ($("#page-views ul").children().length > 2) {
 		$.getScript('/markup/js/jquery.touch.min.js');
 	}
+	
+	// DISPLAY SAVE TOOLBAR
+	function saveToolbar () {
+		if ($(".save-toolbar").length > 0) {
+			$('input, textarea').keypress(function() {
+				$(this).closest('.property-parameters').find('.save-toolbar').fadeIn('fast');
+			});
+			$('.save-toolbar .cancel a').live('click', function(e) {
+				$(this).closest('.save-toolbar').fadeOut('fast');
+				e.preventDefault();
+			});
+		}
+	}
+	saveToolbar();	
 
 	// DROP SCORING
 	$('article.drop ul.score-drop > li.like').live('click', function(e) {
@@ -31,10 +45,10 @@ $(document).ready(function() {
 	}
 	$('a.popover-trigger').live('click', function(e) {
 		$(this).closest('.popover').toggleClass('active');
-		$(this).closest('.popover').find('.popover-window').fadeToggle('fast')
+		$(this).closest('.popover').find('.popover-window').fadeToggle('fast');
 		popoverHide();
 		return false;
-	});
+	});	
  
 	// MODAL WINDOWS
 	function modalHide () {
@@ -46,7 +60,9 @@ $(document).ready(function() {
 	}
 	$('a.modal-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
-		$('#modal-container div.modal-window').load(url + ' .modal');
+		$('#modal-container div.modal-window').load(url + ' .modal', function(){
+			saveToolbar();
+		});
 		$('#modal-container').fadeIn('fast').addClass('visible');
 		$('body').addClass('noscroll');
 		if ($('body').hasClass('zoomed')) {
@@ -112,14 +128,14 @@ $(document).ready(function() {
 		$(this).parent().fadeOut('fast').remove();
 		e.preventDefault();
 	});
-
-	// DISPLAY SAVE TOOLBAR
-	if ($(".save-toolbar").length > 0) {
-		$('input, textarea').change(function () {
-			$('.save-toolbar').addClass('visible');
-		});
-	}
-
+	
+	 // PARAMETERS EDIT
+	$('a.parameters-edit').live('click', function(e) {
+		$(this).closest('article.container').toggleClass('active');
+		$(this).closest('.settings').toggleClass('active');
+		e.preventDefault();
+	}); 	
+	
 	// ACCORDION MENU
 	$('section.meta-data h3').live('click', function(e) {
 		$(this).toggleClass('open').siblings('div.meta-data-content').slideToggle('fast');

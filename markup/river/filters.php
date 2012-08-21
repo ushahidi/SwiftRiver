@@ -1,12 +1,12 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Filters</h1>
+			<h1>Add filter</h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>
@@ -24,12 +24,12 @@
 		// END: IF NO FILTERS APPLIED -->
 
 		<div class="settings-toolbar">
-			<p class="button-blue button-small has-icon create"><a href="/markup/modal-filters.php" class="modal-trigger"><span class="icon"></span>Add filter</a></p>
+			<p class="button-blue button-small has-icon create"><a href="/markup/modal-filters.php" class="modal-trigger"><span class="icon-plus"></span>Add filter</a></p>
 		</div>
 
 		<article class="container base">
 			<header class="cf">
-				<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
+				<a href="#" class="remove-large"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
 				<div class="property-title">
 					<h1>Date</h1>
 				</div>
