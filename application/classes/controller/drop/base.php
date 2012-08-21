@@ -236,9 +236,9 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 
 		if ($_POST)
 		{
-			// Extract the input data
+			// Extract the input data to be used for sending the email
 			$post = Arr::extract($_POST, array('recipient', 
-				'subject', 'body'));
+				'drop_title', 'drop_url', 'security_code'));
 			
 			$csrf_token = $this->request->headers('x-csrf-token');
 
@@ -246,24 +246,27 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			$validation = Validation::factory($post)
 			    ->rule('recipient', 'not_empty')
 			    ->rule('recipient', 'email')
-			    ->rule('subject', 'not_empty')
-			    ->rule('body', 'not_empty')
-			    ->rule('body', 'max_length', array(':value', 300));
+			    ->rule('security_code', 'Captcha::valid')
+			    ->rule('drop_title', 'not_empty')
+			    ->rule('drop_url', 'url');
 
 			// Validate
-			if ( ! CSRF::valid($csrf_token) AND ! $validation->check())
+			if ( ! CSRF::valid($csrf_token) OR ! $validation->check())
 			{
+				Kohana::$log->add(Log::DEBUG, "CSRF token or form validation failure");
 				$this->response->status(400);
 			}
 			else
 			{
+				list($recipient, $subject) = array($post['recipient'], $post['drop_title']);
+
 				// Modify the mail body to include the email address of the
 				// use sharing content
-				$mail_body = __(":body \n\nShared by :sender",
-				    array(':body' => $post['body'], ':sender' => $this->user->username));
+				$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
+				    array(':user' => $this->user->username, ':url' => $post['drop_url']));
 
 				// Send the email
-				Swiftriver_Mail::send($post['recipient'], $post['subject'], $mail_body);
+				Swiftriver_Mail::send($recipient, $subject, $mail_body);
 			}
 		}
 		else
