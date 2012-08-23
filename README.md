@@ -82,8 +82,8 @@ Installing SwiftRiver
 
 * Create the following directories and ensure they are writable:
 
-	application/config/cache
-	application/config/logs
+	application/cache
+	application/logs
 
 * Create the configuration files
 	Create a `.php` for each of the `.php.template` files in your `application/config/` directory.
@@ -93,6 +93,7 @@ Installing SwiftRiver
 		cp applicaiton/config/database.php.template application/config/database.php
 		cp application/config/cache.php.template application/config/cache.php
 		cp application/config/auth.php.template application/config/auth.php
+		cp application/config/cookie.php.template application/config/cookie.php
 
 	Alternatively, you can run the following one-liner from the command line:
 
@@ -115,7 +116,7 @@ Installing SwiftRiver
 
 		GRANT CREATE ROUTINE, CREATE VIEW, ALTER, SHOW VIEW, CREATE, ALTER ROUTINE, EVENT, INSERT, SELECT, DELETE,
 		TRIGGER, GRANT OPTION, REFERENCES, UPDATE, DROP, EXECUTE, LOCK TABLES, CREATE TEMPORARY TABLES, 
-		INDEX ON `<swiftriver-database>`.* TO '<swiftriver-user>'@'localhost' IDENTIFIED BY <swiftriver-user-password>;
+		INDEX ON `<swiftriver-database>`.* TO `<swiftriver-user>`@'localhost' IDENTIFIED BY `<swiftriver-user-password>`;
 
 	Where:
 	- `<swiftriver-database>` is the name of your SwiftRiver database
