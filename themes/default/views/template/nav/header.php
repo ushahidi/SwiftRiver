@@ -166,21 +166,3 @@
 		</div>
 	</div>
 </script>
-
-<script type="text/template" id="feedback-modal-template">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1>Feedback</h1>
-		</div>
-		<div class="page-actions col_3">
-			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					Close
-				</a>
-			</h2>
-		</div>
-	</hgroup>
-
-	<iframe src="https://docs.google.com/a/ushahidi.com/spreadsheet/embeddedform?formkey=dEJlTFU1ODY4aGNaazhTZWRCblhaUnc6MQ" width="100%" height="400" frameborder="0" marginheight="0" marginwidth="0">Loading...</iframe>
-</script>
