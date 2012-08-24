@@ -36,10 +36,10 @@
 	
 				<article class="container base channels">
 					<header class="cf">
-						<div class="property-title col_8">
+						<div class="property-title col_6">
 							<h1>Channels</h1>
 						</div>
-						<ul class="button-actions col_4">
+						<ul class="button-actions col_6">
 							<li class="popover"><a href="#" class="popover-trigger"><i class="icon-plus"></i>Add channel</a>
 								<ul class="popover-window base">
 									<li><a href="#"><i class="icon-twitter"></i>Twitter</a></li>
@@ -47,7 +47,6 @@
 									<li><a href="#"><i class="icon-facebook"></i>Facebook</a></li>
 								</ul>
 							</li>
-							<li><a href="#" class="parameters-edit"><i class="icon-pencil"></i>Edit multiple channels</a></li>
 						</ul>
 					</header>
 					<section class="property-parameters cf">
@@ -102,7 +101,6 @@
 									<li><a href="#">Date</a></li>
 								</ul>
 							</li>
-							<li><a href="#" class="parameters-edit"><i class="icon-pencil"></i>Edit multiple filters</a></li>							
 							<li><a href="edit-filters.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
 							<li><a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a></li>
 						</ul>						
@@ -135,10 +133,10 @@
 	
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title col_8">
+						<div class="property-title col_6">
 							<h1><i class="icon-locked"></i>Filter group</h1>
 						</div>
-						<ul class="button-actions col_4">
+						<ul class="button-actions col_6">
 							<li class="popover"><a href="#" class="popover-trigger"><i class="icon-plus"></i>Add filter</a>
 								<ul class="popover-window base">
 									<li><a href="#">Keyword</a></li>

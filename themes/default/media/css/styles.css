@@ -1333,7 +1333,6 @@ article.container div.property-title h1 a {
 article.container .button-actions {
   clear: both;
   text-align: left;
-  margin-top: 1.7em;
   margin-bottom: 1.7em;
 }
 article.container .actions p.follow-count {
@@ -1383,12 +1382,6 @@ article.container .actions p.follow [class^="icon-"] {
   font-size: 5em;
   line-height: 0.6em;
 }
-.settings.active article.container {
-  opacity: 0.3;
-}
-.settings.active article.container.active {
-  opacity: 1;
-}
 article.container section.property-parameters {
   -wekbit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05) inset;
   -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05) inset;
@@ -1400,12 +1393,6 @@ article.container section.property-parameters p.category {
   text-transform: uppercase;
   border-bottom: 1px solid #c6c6c6;
   margin: 15px 10px 0;
-}
-article.container section.property-parameters .parameter-control {
-  display: none;
-}
-article.container.active section.property-parameters .parameter-control {
-  display: block;
 }
 article.container div.parameter {
   margin: 3.125%;
@@ -2399,11 +2386,18 @@ footer#global-footer {
     float: right;
     clear: none;
     text-align: right;
+    margin-top: 1.7em;
   }
   article.container div.parameter,
   article.container div.parameter-placeholder,
   article.container div.parameter-summary {
     margin: 1.0416667%;
+  }
+  article.container section.property-parameters .parameter-summary .parameter-control {
+    opacity: 0;
+  }
+  article.container section.property-parameters .parameter-summary:hover .parameter-control {
+    opacity: 1;
   }
   /* --------------------------- SETTINGS */
   #content.settings .settings-toolbar {
