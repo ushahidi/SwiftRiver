@@ -66,7 +66,7 @@ body {
    background: #fff;
 }
 
-.col_3, .col_4, .col_8, .col_9, .col_10, .col_12 {
+[class^="col_"], [class*=" col_"] {
    margin: 0 @smallscreen-10px;
 }
 
@@ -439,7 +439,7 @@ span.icon {
 
 /* --------------------------- FORM ELEMENTS */
 
-input, textarea {
+input[type="text"], input[type="email"], input[type="password"], input[type="url"], textarea {
    -moz-box-sizing: border-box; 
    -webkit-box-sizing: border-box; 
    box-sizing: border-box;
@@ -460,11 +460,72 @@ input.name {
    width: 50%;
 }
 
+input[type="checkbox"]::after {
+    content: '';
+    margin: 0; 
+    padding: 0;
+    width: 39px;
+    height: 25px;
+    background: -webkit-linear-gradient(top, #cdcdcd, #fbfbfb);
+    border-radius: 3px;
+    box-shadow: inset 0 1px 0 #f0f0f0;
+    position: absolute;
+    top: 0; left: 53px;
+    border: 1px solid #919191;
+    -webkit-transition: 1s all linear;
+}
+input[type="checkbox"]::before {
+    content: 'NO';
+    margin: 0; 
+    padding: 0;
+    width: 55px;
+    height: 25px;
+    background: -webkit-linear-gradient(top, #cfcfcf, #efefef 50%, #f9f9f9 50%, #fefefe);
+    border-radius: 3px;
+    border: 1px solid #7d7d7d;
+    box-shadow: inset 0 2px 2px rgba(0,0,0,.2);                
+    color: #7f7f7f;                
+    text-align: center;
+    font: 700 14px sans-serif; 
+    line-height: 27px;
+    position: absolute;
+    top: 0; left: 0;
+}
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    padding: 0;
+    display: block;
+    width: 94px;
+    height: 27px;
+    position: relative;
+    border-radius: 3px 0 0 3px;
+    -webkit-transition: 1s all linear;
+}
+input[type="checkbox"]:checked::after {
+    left: 0;
+}
+input[type="checkbox"]:checked::before {
+    content: 'YES';
+    left: 37px;
+   background-color: #54c2d5;
+   background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(84, 194, 213)), to(rgb(54, 183, 206)));
+   background-image: -webkit-linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
+   background-image: -moz-linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
+   background-image: -o-linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
+   background-image: -ms-linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
+   background-image: linear-gradient(top, rgb(84, 194, 213), rgb(54, 183, 206));
+   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#54c2d5', EndColorStr='#36b7ce');
+    color: #fff;    
+    text-shadow: 0 -1px 0 #1b3b6f;
+    border-color: #1654b5;
+}
+
 form .field {
+   text-align: left;
    padding: 3.125% 0;
 }
 
-form .field input {
+form .field input[type="text"], form .field input[type="email"], form .field input[type="password"], form .field input[type="url"], form .field textarea {
    width: 100%;
 }
 
@@ -487,6 +548,12 @@ ul.popover-window {
    margin-top: 6px;
 }
 
+ul.popover-window.popover-prompt {
+   width: 200px;
+   right: 0;
+   text-align: center;
+}
+
 ul.popover-window li a {
    display: block;
    color: #666;
@@ -496,6 +563,21 @@ ul.popover-window li a {
    border: none;
    border-bottom: 1px solid #E4E8E8;
    padding: 10px 20px 10px 10px;
+}
+
+ul.popover-window.popover-prompt li a {
+   display: block;
+   color: #fff;  
+   border: none;
+   border: 1px solid #444;
+   background: #666;
+   padding: 0.8em;
+   margin: 0.3em;
+}
+
+ul.popover-window.popover-prompt li.destruct a {
+   border: 1px solid #bb131e;
+   background: #dc1a27;
 }
 
 ul.popover-window li a:hover {
@@ -2563,51 +2645,45 @@ article.modal hgroup.page-title .page-actions {
    margin: 0 auto;
 }
 
-.col_1, .col_2, .col_3, .col_4, .col_6, .col_8, .col_9, .col_10, .col_12 {
+[class^="col_"], [class*=" col_"] {
+   float: left;
    margin: 0 1.041666667%;
 }
 
 .col_1 {
-   float: left;
    width: 6.25%;
 }
 
 .col_2 {
-   float: left;
    width: 14.58333333%;
 }
 
 .col_3 {
-   float: left;
    width: 22.91666667%;
 }
 
 .col_4 {
-   float: left;
    width: 31.25%;
 }
 
 .col_6 {
-   float: left;
    width: 47.91666667%;
 }
 
 .col_8 {
-   float: left;
    width: 64.58333333%;
 }
 
 .col_9 {
-   float: left;
    width: 72.91666667%;
 }
 
 .col_10 {
-   float: left;
    width: 81.25%;
 }
 
 .col_12 {
+   float: none;
    width: auto;
 }
 

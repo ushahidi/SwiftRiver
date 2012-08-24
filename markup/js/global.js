@@ -141,6 +141,17 @@ $(document).ready(function() {
 		$(this).toggleClass('open').siblings('div.meta-data-content').slideToggle('fast');
 	});
 
+	// CHECKBOX TOGGLE
+	function checkboxCheck () {
+		$('a.checkbox input:checkbox:checked').addClass('checked');
+	}
+	$('a.checkbox').live('click', function(e) {
+		checkboxCheck();
+		$(this).toggleClass('checked');
+		e.preventDefault();
+	});
+	checkboxCheck();
+	
 	// SCROLL TO BUOY
 	if ($("#buoy").length > 0) {
 		$.getScript('/markup/js/jquery.scrollto.js');

@@ -1,7 +1,7 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Acme filter group <em>settings</em></h1>
+			<h1>Filter group <em>settings</em></h1>
 		</div>
 		<div class="page-actions col_3">
 			<h2 class="close">
@@ -15,10 +15,10 @@
 	
 	<div class="modal-body">
 		<form class="settings">
-			<div class="field">
+			<div class="hidden field">
 				<p class="label">Group name</p>
-				<input type="text" value="Acme filter group" />
-			</div>
+				<input type="text" value="Filter group" />
+			</div>		
 			<div class="field">
 				<p class="label">Who can see this group</p>
 				<select>
@@ -26,6 +26,10 @@
 					<option>Only you</option>
 				</select>
 			</div>
+			<div class="field">
+				<p class="label">Save this filter group for use in other rivers</p>
+				<input type="checkbox" />
+			</div>			
 			<div class="save-toolbar">
 				<p class="button-blue"><a href="#">Save changes</a></p>
 				<p class="button-blank"><a href="#">Cancel</a></p>

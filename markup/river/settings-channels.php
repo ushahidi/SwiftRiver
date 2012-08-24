@@ -101,8 +101,13 @@
 									<li><a href="#">Date</a></li>
 								</ul>
 							</li>
-							<li><a href="edit-filters.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
-							<li><a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a></li>
+							<li><a href="edit-filter-group.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
+							<li class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+								<ul class="popover-window popover-prompt base">
+									<li><a href="#">Remove from river</a></li>
+									<li class="destruct"><a href="#">Remove and delete from saved filters</a></li>
+								</ul>							
+							</li>
 						</ul>						
 					</header>
 					<section class="property-parameters cf">						
@@ -143,7 +148,7 @@
 									<li><a href="#">Date</a></li>
 								</ul>
 							</li>
-							<li><a href="edit-filters.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
+							<li><a href="edit-filter-group_unsaved.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
 							<li><a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a></li>
 						</ul>						
 					</header>
