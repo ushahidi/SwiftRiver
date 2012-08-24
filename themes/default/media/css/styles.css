@@ -2275,14 +2275,6 @@ article.modal div.search ul.dual-buttons {
   margin: 0 auto;
   display: block;
 }
-/* --------------------------- FOOTER */
-footer a.btn-feedback {
-  display:block; height:156px; width:36px; position:fixed; top:210px; left:0; z-index:99; overflow:hidden; text-indent:-24234px;
-  background:transparent url('../img/btn-feedback.png') top left no-repeat;
-}
-footer a.btn-feedback:hover {
-  background:transparent url('../img/btn-feedback.png') bottom left no-repeat;
-}
 /******************************************************\
 *
 *  1. Main containers (carousel size, background)
