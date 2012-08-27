@@ -514,7 +514,7 @@
 		</article>
 		<article class="container base">
 			<section class="property-parameters">
-				<div class="parameter">
+				<div class="parameter image-field">
 				    <label>
 					    <p class="field"><?php echo __("Security Image:"); ?></p>
 						<?php echo Captcha::instance()->render(); ?>
