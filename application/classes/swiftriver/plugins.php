@@ -79,6 +79,10 @@ class Swiftriver_Plugins {
 						->where("plugin_path", "=", $plugin_path)
 						->find();
 					$plugin->delete();
+
+					// Log this event
+					Kohana::$log->add(Log::INFO, "Plugin directory for ':plugin' not found. Deleting from DB",
+						array(':plugin' => $plugin_path));
 					
 					unset($plugin_entries[$plugin_path]);
 					continue;
