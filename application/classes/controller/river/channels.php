@@ -27,6 +27,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 		$this->settings_content->channels_config = json_encode(Swiftriver_Plugins::channels());
 		$this->settings_content->channels = json_encode($this->river->get_channels(TRUE));
 		$this->settings_content->base_url = $this->river->get_base_url().'/settings/channels';
+		$this->settings_content->river = $this->river;
 	}
 	
 	/**
