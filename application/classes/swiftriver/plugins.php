@@ -68,6 +68,30 @@ class Swiftriver_Plugins {
 			
 			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
 		}
+		else
+		{
+			foreach ($plugin_entries as $plugin_path => $value)
+			{
+				if ( ! is_dir(realpath(PLUGINPATH.$plugin_path.DIRECTORY_SEPARATOR)))
+				{
+					// Plugin no longer exists. Remove from DB.
+					$plugin = ORM::factory("plugin")
+						->where("plugin_path", "=", $plugin_path)
+						->find();
+					$plugin->delete();
+
+					// Log this event
+					Kohana::$log->add(Log::INFO, "Plugin directory for ':plugin' not found. Deleting from DB",
+						array(':plugin' => $plugin_path));
+					
+					unset($plugin_entries[$plugin_path]);
+					continue;
+				}
+			}
+
+			// Update Cache
+			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
+		}
 		
 		
 		// Add the plugin entries to the list of Kohana modules

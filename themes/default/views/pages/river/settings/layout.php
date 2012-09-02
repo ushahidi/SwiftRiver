@@ -27,6 +27,10 @@
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
 					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Display</a>
 				</li>
+				<?php
+					// Swiftriver Plugin Hook -- add river settings nav item
+					Swiftriver_Event::run('swiftriver.river.settings.nav', $active);
+				?>
 			</ul>
 		</div>
 	</div>

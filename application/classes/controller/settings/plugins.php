@@ -49,7 +49,9 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 				'id' => $plugin->id, 
 				'plugin_name' => $plugin->plugin_name, 
 				'plugin_description' => $plugin->plugin_description,
-				'plugin_enabled' => ($plugin->plugin_enabled == 1)
+				'plugin_enabled' => ($plugin->plugin_enabled == 1),
+				'plugin_path' => $plugin->plugin_path, 
+				'plugin_settings' => Swiftriver_Plugins::has_settings($plugin->plugin_path)
 			);
 		}
 		$plugins_list = json_encode($entries);
