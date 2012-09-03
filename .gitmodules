@@ -46,3 +46,6 @@
 [submodule "modules/captcha"]
 	path = modules/captcha
 	url = git://github.com/ekala/kohana-captcha.git
+[submodule "modules/purifier"]
+	path = modules/purifier
+	url = git://github.com/shadowhand/purifier.git
