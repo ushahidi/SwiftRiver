@@ -64,7 +64,6 @@ body > nav li {
 		<li><a href="#page-title-bucket">Bucket page title</a></li>
 		<li><a href="#page-title-user">User page title</a></li>
 		<li><a href="#page-navigation">Page navigation</a></li>
-		<li><a href="#page-navigation-filters">Page navigation with filters</a></li>
 		<li><a href="#container">Container</a></li>
 		<li><a href="#settings-toolbar">Generic toolbar</a></li>
 		<li><a href="#save-toolbar">Save toolbar</a></li>
@@ -108,13 +107,8 @@ body > nav li {
 			<div class="page-h1 col_9">
 				<h1>Page title</h1>
 			</div>
-			<div class="page-actions col_3">
-				<h2>
-					<a href="/markup/river/settings-filters.php">
-						<span class="icon-cog"></span>
-						Page action
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<span class="button-blue"><a href="#"><i class="icon-settings"></i>Page action</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -125,29 +119,16 @@ body > nav li {
 	<h2>Bucket page title: <em>Used for bucket views; Displays two page actions</em></h2>
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
-			<div class="page-h1 col_9">
+			<div class="page-h1 col_8">
 				<h1>Page title</h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
 			</div>
-			<div class="page-actions col_3">
-				<h2>
-					<a href="/markup/bucket/settings-filters.php">
-						<span class="icon-cog"></span>
-						Bucket settings
-					</a>
-				</h2>
-				<h2>
-					<a href="/markup/bucket/discussion.php">
-						<span class="icon-comments"></span>
-						Discussion
-					</a>
-				</h2>
+			<div class="page-action col_4">
+				<span>
+				<ul class="dual-buttons">
+					<li class="button-blue"><a href="/markup/bucket/discussion.php"><i class="icon-comment"></i>Discussion</a></li>
+					<li class="button-blue"><a href="/markup/bucket/settings-collaborators.php"><i class="icon-settings"></i>Settings</a></li>
+				</ul>
+				</span>
 			</div>
 		</div>
 	</hgroup>
@@ -189,53 +170,32 @@ body > nav li {
 	</nav>
 </div>
 
-<div class="sample">
-	<a name="page-navigation-filters"></a>
-	<h2>Page navigation with filters: <em>Used for pages with alternate views and filters</em></h2>
-	<nav class="page-navigation cf">
-		<div class="center">
-			<div id="page-views" class="river touchcarousel col_9">
-				<ul class="touchcarousel-container">
-					<li class="touchcarousel-item active"><a href="/markup/river">Drops</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/view-list.php">List</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/view-photos.php">Photos</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/view-map.php">Map</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/view-timeline.php">Timeline</a></li>
-				</ul>
-			</div>
-			<div class="filter-actions col_3">
-				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
-			</div>
-		</div>
-	</nav>
-</div>
-
 <div class="sample settings">
 	<a name="container"></a>
 	<h2>Container: <em>Used for settings and dashboard</em></h2>
 	<div class="col_12">
 		<article class="container base">
 			<header class="cf">
-				<a href="#" class="remove-large"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
-				<div class="property-title">
-					<span class="icon-twitter"></span>
-					<h1>Twitter</h1>
-					<div class="popover add-parameter">
-						<p class="button-white add"><a href="#" class="popover-trigger"><span class="icon-plus"></span>Add parameter</a></p>
-						<ul class="popover-window base">
-							<li><a href="#">Keyword</a></li>
-							<li><a href="#">User</a></li>
-						</ul>
-					</div>
+				<div class="property-title col_12">
+					<h1>Name</h1>
 				</div>
 			</header>
-			<section class="property-parameters">
+			<section class="property-parameters cf">
 				<div class="parameter">
-					<label for="twitter_keyword">
-						<p class="field">Keyword</p>
-						<input type="text" name="twitter_keyword" placeholder="Enter keyword" />
-						<p class="remove-small actions"><span class="icon-close"></span><span class="nodisplay">Remove</span></p>
-					</label>
+					<div class="field">
+						<p class="field-label">Display name</p>
+						<input type="text" value="Ushahidi at SXSW" />
+					</div>
+				</div>
+				<div class="parameter">
+					<div class="field">
+						<p class="field-label">URL</p>
+						<input type="text" value="ushahidi-at-sxsw" name="river_url" />
+					</div>
+				</div>
+				<div class="save-toolbar col_12">
+					<p class="button-blue"><a href="#">Save changes</a></p>
+					<p class="button-blank cancel"><a href="#">Cancel</a></p>
 				</div>
 			</section>
 		</article>
@@ -246,8 +206,8 @@ body > nav li {
 	<a name="settings-toolbar"></a>
 	<h2>Generic toolbar: <em>Used at the top of settings</em></h2>
 	<div class="col_12">
-		<div class="settings-toolbar">
-			<p class="button-blue button-small"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon-plus"></span>Add channel</a></p>
+		<div class="button-actions">
+			<span><a href="/markup/modal-collaborators.php" class="modal-trigger"><i class="icon-users"></i>Add collaborator</a></span>
 		</div>
 	</div>
 </div>
@@ -256,11 +216,13 @@ body > nav li {
 	<a name="save-toolbar"></a>
 	<h2>Save toolbar: <em>Used at the bottom of settings</em></h2>
 	<div class="col_12">
-		<input type="text" placeholder="Change my value to see buttons" style="width:100%;margin-bottom:10px;" />
-		<div class="save-toolbar">
-			<p class="button-blue"><a href="#">Save changes</a></p>
-			<p class="button-blank"><a href="#">Cancel</a></p>
-		</div>
+		<form>
+			<input type="text" placeholder="Change my value to see buttons" style="width:100%;margin-bottom:10px;" />
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Save changes</a></p>
+				<p class="button-blank"><a href="#">Cancel</a></p>
+			</div>
+		</form>
 	</div>
 </div>
 
