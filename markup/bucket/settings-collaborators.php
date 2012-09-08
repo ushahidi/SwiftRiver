@@ -7,28 +7,10 @@
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?> <em>settings</em></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
+				<h1><a href="/markup/bucket/"><?php print $page_title; ?></a> <em>settings</em></h1>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="back">
-					<a href="/markup/bucket/">
-						<span class="icon"></span>
-						Return to bucket
-					</a>
-				</h2>
-				<h2 class="discussion">
-					<a href="/markup/bucket/discussion.php">
-						<span class="icon"></span>
-						Discussion
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/bucket/">Return to bucket</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -48,27 +30,40 @@
 	<div id="content" class="settings collaborators cf">
 		<div class="center">
 			<div class="col_12">
-				<div class="settings-toolbar">
-					<p class="button-blue button-small create"><a href="/markup/modal-collaborators.php" class="modal-trigger"><span class="icon"></span>Add collaborator</a></p>
-				</div>
+				<div class="button-actions">
+					<span><a href="/markup/modal-collaborators.php" class="modal-trigger"><i class="icon-users"></i>Add collaborator</a></span>
+				</div>			
+			
 				<article class="container base">
 					<header class="cf">
-						<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
-						<div class="property-title">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar3.png" /></a>
-							<h1>Nathaniel Manning</h1>
+						<div class="property-title col_8">
+							<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/2480249545/5k18ycibrx45r7g3v4pb_reasonably_small.jpeg" /></a>
+							<h1><a href="#">Juliana Rotich</a></h1>
 						</div>
-					</header>
+						<div class="button-actions col_4">
+							<span class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+								<ul class="popover-window popover-prompt base">
+									<li class="destruct"><a href="#">Remove collaborator from river</a></li>
+								</ul>							
+							</span>
+						</div>						
+					</header>				
 				</article>
 	
 				<article class="container base">
 					<header class="cf">
-						<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
-						<div class="property-title">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a>
-							<h1>Juliana Rotich</h1>
+						<div class="property-title col_8">
+							<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_reasonably_small.jpeg" /></a>
+							<h1><a href="#">Nathaniel Manning</a></h1>
 						</div>
-					</header>
+						<div class="button-actions col_4">
+							<span class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+								<ul class="popover-window popover-prompt base">
+									<li class="destruct"><a href="#">Remove collaborator from river</a></li>
+								</ul>							
+							</span>							
+						</div>						
+					</header>				
 				</article>
 			</div>
 		</div>

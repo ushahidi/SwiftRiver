@@ -15,52 +15,93 @@
 		<ul class="center">
 			<li><a href="/markup/river/new.php">1. Name your river</a></li>
 			<li class="active"><a href="/markup/river/new2.php">2. Open channels</a></li>
-			<li><a href="/markup/river/new3.php">3. View your river</a></li>
 		</ul>
 	</nav>
 
-	<div id="content" class="settings channels cf">
+	<div id="content" class="settings flow cf">
 		<div class="center">
 			<div class="col_12">
-				<div class="settings-toolbar">
-					<p class="button-blue create button-small"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon"></span>Add channel</a></p>
-				</div>
-
-				<div class="alert-message blue">
-					<p><strong>Open at least one channel.</strong> You can flow new channels into your river by selecting the "Add channel" button above.</p>
-				</div>
-
-				<!-- MARKUP FOR OPEN CHANNELS //	
-				<article class="container base">
+				<article class="container base channels">
 					<header class="cf">
-						<a href="#" class="remove-large"><span class="icon"></span><span class="nodisplay">Remove</span></a>
-						<div class="property-title">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/channel-twitter.gif" /></a>
-							<h1>Twitter</h1>
-							<div class="popover add-parameter">
-								<p class="button-white add"><a href="#" class="popover-trigger"><span class="icon"></span>Add parameter</a></p>
+						<div class="property-title col_6">
+							<h1>Channels</h1>
+						</div>
+						<ul class="button-actions col_6">
+							<li class="popover"><a href="#" class="popover-trigger"><i class="icon-plus"></i>Add channel</a>
 								<ul class="popover-window base">
-									<li><a href="#">Keyword</a></li>
-									<li><a href="#">User</a></li>
+									<li><a href="#"><i class="icon-twitter"></i>Twitter</a></li>
+									<li><a href="#"><i class="icon-rss"></i>RSS</a></li>
+									<li><a href="#"><i class="icon-facebook"></i>Facebook</a></li>
 								</ul>
-							</div>
-						</div>
+							</li>
+						</ul>
 					</header>
-					<section class="property-parameters">
-						<div class="parameter">
-							<label for="twitter_keyword">
-								<p class="field">Keyword</p>
-								<input type="text" name="twitter_keyword" placeholder="Enter keyword" />
-								<p class="remove-small actions"><span class="icon"></span><span class="nodisplay">Remove</span></p>
-							</label>
+					<section class="property-parameters cf">
+						<div class="parameter-placeholder col_2">
+							<a href="add-channel-twitter.php" class="parameter-edit modal-trigger">
+								<h1><span class="icon-twitter"><span class="icon-plus"></span></span><span class="label">Add Twitter search for <em>river name</em></label></h1>							
+							</a>					
 						</div>
+						<div class="parameter-placeholder col_2">
+							<a href="add-channel-rss.php" class="parameter-edit modal-trigger">
+								<h1><span class="icon-rss"><span class="icon-plus"></span></span><span class="label">Add RSS feeds</label></h1>							
+							</a>					
+						</div>
+						<div class="parameter-placeholder col_2">
+							<a href="add-channel-twitter.php" class="parameter-edit modal-trigger">
+								<h1><span class="icon-facebook"><span class="icon-plus"></span></span><span class="label">Add Facebook search for <em>river name</em></label></h1>							
+							</a>					
+						</div>																	
 					</section>
 				</article>
-				// END MARKUP -->
-
-				<div class="settings-toolbar">
-					<p class="button-blue button-big"><a href="/markup/river/new3.php">Next</a></p>
+				
+				<div class="property-link">
+					<span class="icon-river"></span>
+					<span class="button-actions"><a href="#"><span class="icon-plus"></span></a></span>
 				</div>
+	
+				<article class="container base">
+					<header class="cf">
+						<div class="property-title col_6">
+							<h1><i class="icon-locked"></i>Filter group</h1>
+						</div>
+						<ul class="button-actions col_6">
+							<li class="popover"><a href="#" class="popover-trigger"><i class="icon-plus"></i>Add filter</a>
+								<ul class="popover-window base">
+									<li><a href="#">Keyword</a></li>
+									<li><a href="#">Date</a></li>
+								</ul>
+							</li>
+							<li><a href="edit-filter-group_unsaved.php" class="modal-trigger"><i class="icon-settings"></i>Group settings</a></li>
+							<li><a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a></li>
+						</ul>						
+					</header>
+					<section class="property-parameters cf">
+						<!-- WHEN NO PARAMETERS EXIST, YET. -->
+						<div class="parameter-placeholder col_2">
+							<a href="add-filter-date.php" class="parameter-edit modal-trigger">
+								<h1><span class="icon-calendar"><span class="icon-plus"></span></span><span class="label">Add date filter</label></h1>							
+							</a>					
+						</div>
+						<div class="parameter-placeholder col_2">
+							<a href="add-filter-keyword.php" class="parameter-edit modal-trigger">
+								<h1><span class="icon-pencil-2"><span class="icon-plus"></span></span><span class="label">Add keyword filter</label></h1>							
+							</a>					
+						</div>
+						<div class="parameter-placeholder col_2">
+							<a href="open-group.php" class="parameter-edit modal-trigger">
+								<h1>Open a saved filter group</h1>							
+							</a>					
+						</div>																
+					</section>
+				</article>				
+				
+				<div class="property-link">
+					<span class="icon-river"></span>
+					<span class="button-actions"><a href="#"><span class="icon-plus"></span></a></span>
+				</div>				
+
+				<span class="view-results button-blue"><a href="/markup/river">View your river</a></span>	
 			</div>
 		</div>
 	</div>

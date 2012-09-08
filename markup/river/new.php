@@ -15,7 +15,6 @@
 		<ul class="center">
 			<li class="active"><a href="/markup/river/new.php">1. Name your river</a></li>
 			<li><a href="/markup/river/new2.php">2. Open channels</a></li>
-			<li><a href="/markup/river/new3.php">3. View your river</a></li>
 		</ul>
 	</nav>
 
@@ -24,29 +23,23 @@
 			<div class="col_12">
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
-							<h1>Name</h1>
+						<div class="property-title col_12">
+							<h1>What's your river about?</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
+						<form>
 						<div class="parameter">
-							<label for="river_name">
-								<p class="field">Display name</p>
-								<input type="text" value="<?php print $page_title; ?>" name="river_name" />
-							</label>
+							<div class="field">
+								<input type="text" placeholder="Name your river" />
+							</div>
 						</div>
-						<div class="parameter">
-							<label for="river_url">
-								<p class="field">URL</p>
-								<input type="text" value="ushahidi-at-sxsw" name="river_url" />
-							</label>
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="/markup/river/new2.php">Next</a></p>
 						</div>
+						</form>						
 					</section>
 				</article>
-
-				<div class="settings-toolbar">
-					<p class="button-blue button-big"><a href="/markup/river/new2.php">Next</a></p>
-				</div>
 			</div>
 		</div>
 	</div>

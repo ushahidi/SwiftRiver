@@ -1,7 +1,7 @@
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?></h1>
+				<h1><?php print $page_title; ?> <em><?php echo __("discussion"); ?></em></h1>
 				<?php if ( ! empty($collaborators)): ?>
 				<div class="rundown-people">
 					<h2>Collaborators on this bucket</h2>
@@ -14,20 +14,9 @@
 				<?php endif; ?>			
 			</div>
 			<?php if ($owner): ?>
-			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="<?php echo $settings_url; ?>">
-						<span class="icon"></span>
-						<?php echo __("Bucket settings"); ?>
-					</a>
-				</h2>
-				<h2 class="back">
-					<a href="<?php echo $bucket_url; ?>">
-						<span class="icon"></span>
-						<?php echo __('Return to bucket'); ?>
-					</a>
-				</h2>
-			</div>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="<?php echo $bucket_url; ?>"><?php echo __('Return to bucket'); ?></a></span>
+			</div>			
 			<?php else: ?>
 			<div class="follow-summary col_3">
 				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>

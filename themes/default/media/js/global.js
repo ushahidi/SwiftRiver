@@ -78,6 +78,7 @@ $(document).ready(function() {
 	Dialog.prototype.show = function() {
 		this.dialogBox.html(this.contents);
 		this.container.fadeIn(350);
+		saveToolbar();
 		$('body').addClass('noscroll');
 		this._registerHide(); 
 		
@@ -189,16 +190,24 @@ $(document).ready(function() {
 	});
 
 	// DISPLAY SAVE TOOLBAR
-	$('input, textarea').live('keypress', function () {
-		$(this).closest("form").find('.save-toolbar').addClass('visible');
-	});
-	$('select').live('change', function () {
-		$(this).closest("form").find('.save-toolbar').addClass('visible');
-	});
-	$(':radio, :checkbox').click(function(){
-		$(this).closest("form").find(".save-toolbar").addClass("visible");
-	});
-	
+	function saveToolbar () {
+		if ($(".save-toolbar").length > 0) {
+			$('select').change(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
+			});
+			$('input, textarea').keypress(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
+			});	
+			$(':radio, :checkbox').click(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
+			});						
+			$('.save-toolbar .cancel a').live('click', function(e) {
+				$(this).closest('.save-toolbar').fadeOut('fast');
+				e.preventDefault();
+			});
+		}
+	}
+	saveToolbar();
 
 	// ACCORDION MENU
 	$('section.meta-data h3').live('click', function(e) {

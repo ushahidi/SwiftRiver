@@ -1,47 +1,26 @@
 <hgroup class="page-title bucket-title cf">
 	<div class="center">
-		<div class="page-h1 col_9">
+		<div class="page-h1 col_8">
 			<h1 class="<?php echo ($bucket->bucket_publish == 0) ? "private" : "public"; ?>">
 				<?php $bucket_name = $bucket->bucket_name; ?>
 				<?php if ($bucket->account->user->id == $user->id): ?>
-					<span> <?php echo $bucket->bucket_name; ?></span>
+					<span><?php echo $bucket->bucket_name; ?></span>
 				<?php else: ?>
 					<a href="<?php echo URL::site().$bucket->account->account_path ?>">
 						<?php $bucket_name = $bucket->account->account_path.'/'.$bucket_name; ?>
 						<span><?php echo $bucket->account->account_path; ?></a> / <?php echo $bucket->bucket_name; ?></span>
 				<?php endif; ?>
-			</h1>
-			<?php if ( ! empty($collaborators)): ?>
-				<div class="rundown-people">
-					<h2><?php echo __("Collaborators on this bucket"); ?></h2>
-					<ul>
-						<?php foreach ($collaborators as $collaborator): ?>
-							<li>
-								<a href="<?php echo URL::site().$collaborator['account_path'] ?>" 
-									class="avatar-wrap" title="<?php echo $collaborator['name']; ?>">
-									<img src="<?php echo $collaborator['avatar']; ?>" />
-								</a>
-							</li>
-						<?php endforeach;?>
-					</ul>
-				</div>
-			<?php endif; ?>			
+			</h1>		
 		</div>
 		<?php if ($owner): ?>
-		<div class="page-actions col_3">
-			<h2 class="settings">
-				<a href="<?php echo $settings_url; ?>">
-					<span class="icon"></span>
-					<?php echo __("Bucket settings"); ?>
-				</a>
-			</h2>
-			<h2 class="discussion">
-				<a href="<?php echo $discussion_url; ?>">
-					<span class="icon"></span>
-					<?php echo __("Discussion"); ?>
-				</a>
-			</h2>
-		</div>
+		<div class="page-action col_4">
+			<span>
+			<ul class="dual-buttons">
+				<li class="button-blue"><a href="<?php echo $discussion_url; ?>"><i class="icon-comment"></i><?php echo __("Discussion"); ?></a></li>
+				<li class="button-blue"><a href="<?php echo $settings_url; ?>"><i class="icon-settings"></i><?php echo __("Settings"); ?></a></li>
+			</ul>
+			</span>
+		</div>		
 		<?php elseif ( ! $anonymous AND ! $is_collaborator ): ?>
 		<div class="follow-summary col_3">
 			<p class="button-score button-white follow">
@@ -57,14 +36,14 @@
 
 <nav class="page-navigation cf">
 	<ul class="center">
-		<li id="list-navigation-link">
-			<a href="list">
-				<?php echo __("List"); ?>
-			</a>
-		</li>
 		<li id="drops-navigation-link">
 			<a href="drops">
 				<?php echo __("Drops"); ?>
+			</a>
+		</li>
+		<li id="list-navigation-link">
+			<a href="list">
+				<?php echo __("List"); ?>
 			</a>
 		</li>		
 		<li id="photos-navigation-link">

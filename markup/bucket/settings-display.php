@@ -7,28 +7,10 @@
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?> <em>settings</em></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
+				<h1><a href="/markup/bucket/"><?php print $page_title; ?></a> <em>settings</em></h1>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="back">
-					<a href="/markup/bucket/">
-						<span class="icon"></span>
-						Return to bucket
-					</a>
-				</h2>
-				<h2 class="discussion">
-					<a href="/markup/bucket/discussion.php">
-						<span class="icon"></span>
-						Discussion
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/bucket/">Return to bucket</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -50,41 +32,51 @@
 			<div class="col_12">
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1>Name</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
-							<label for="river_name">
-								<p class="field">Display name</p>
-								<input type="text" value="<?php print $page_title; ?>" name="river_name" />
-							</label>
+							<div class="field">
+								<p class="field-label">Display name</p>
+								<input type="text" value="<?php print $page_title; ?>" />
+							</div>
 						</div>
 						<div class="parameter">
-							<label for="river_url">
-								<p class="field">URL</p>
+							<div class="field">
+								<p class="field-label">URL</p>
 								<input type="text" value="ushahidi-at-sxsw" name="river_url" />
-							</label>
+							</div>
+						</div>
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
 						</div>
 					</section>
 				</article>
-	
+
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1>Default view</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
-							<select>
-								<option>Drops</option>
-								<option>List</option>
-								<option>Photos</option>
-								<option>Timeline</option>
-							</select>
+							<div class="field">
+								<select>
+									<option>Drops</option>
+									<option>List</option>
+									<option>Photos</option>
+									<option>Timeline</option>
+								</select>
+							</div>
 						</div>
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
+						</div>	
 					</section>
 				</article>
 			</div>

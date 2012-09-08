@@ -68,14 +68,11 @@
 <script type="text/template" id="header-rivers-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Rivers</h1>
+			<h1><span class="icon-river"></span>Rivers</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -102,14 +99,11 @@
 <script type="text/template" id="header-buckets-modal-template">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Buckets</h1>
+			<h1><span class="icon-bucket"></span>Buckets</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -130,11 +124,14 @@
 
 	<div class="modal-body create-new">
 		<form>
-			<h2>Create a new bucket</h2>
+			<h3>Create a new bucket</h3>
 			<div class="field">
 				<input type="text" placeholder="Name your new bucket" class="name" name="new_bucket" />
-				<p class="button-blue"><a href="#">Save</a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Save</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 		</form>
 	</div>
 </script>
@@ -149,12 +146,9 @@
 		<div class="page-h1 col_9">
 			<h1><%= message %></h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -172,12 +166,9 @@
 		<div class="page-h1 col_9">
 			<h1>Feedback</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>

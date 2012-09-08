@@ -20,23 +20,23 @@
 			<?php echo Form::open(); ?>
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Name</h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
-						<label for="river_name">
-							<p class="field">Display name</p>
+						<div class="field">
+							<p class="field-label">Display name</p>
 							<input type="text" value="<?php echo $river->river_name ?>" name="river_name" />
-						</label>
+						</div>
 					</div>
 				</section>
 			</article>
 
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Default view</h1>
 					</div>
 				</header>
@@ -53,7 +53,7 @@
 			
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Who can view this river</h1>
 					</div>
 				</header>

@@ -326,16 +326,13 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __("Add to bucket"); ?></h1>
-		</div>
-		<div class="page-actions col_3">
+			<h1><span class="icon-add-to-bucket"></span><?php echo __("Add to bucket"); ?></h1>
+		</div>		
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 
 	<div class="modal-body select-list">
@@ -356,8 +353,11 @@
 			<h2><?php echo __("Create a new bucket"); ?></h2>
 			<div class="field">
 				<input type="text" placeholder="Name your new bucket" class="name" name="new_bucket" />
-				<p class="button-blue"><a href="#">Save and add drop</a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Save and add drop</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 			<div class="system_error"></div>
 		</form>
 	</div>
@@ -372,7 +372,8 @@
 </script>
 
 <script type="text/template" id="edit-metadata-listitem">
-	<a href="#"><%= label %></a><span class="remove-small"><span class="icon"></span></span>
+	<span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span>
+	<a href="#"><%= label %></a>
 </script>
 
 <script type="text/template" id="add-metadata-template">
@@ -380,14 +381,11 @@
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Edit"); ?> <%= label %></h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 
 	<div class="modal-body link-list"  style="overflow: auto; max-height: 150px">
@@ -401,8 +399,10 @@
 			<h2>Add a new <%= label %></h2>
 			<div class="field">
 				<input type="text" placeholder="Name the <%= label %>" class="name" name="new_metadata" />
-				<p class="button-blue"><a href="#"><?php echo __("Add this"); ?> <%= label %></a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#"><i class="icon-plus"></i><?php echo __("Add this"); ?> <%= label %></a></p>
+			</div>			
 			<div class="system_error"></div>
 		</form>
 	</div>
@@ -420,34 +420,31 @@
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Share this drop"); ?></h1>
-		</div>
-		<div class="page-actions col_3">
+		</div>	
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 	<div class="modal-body link-list">
 		<ul>
-			<li class="twitter">
+			<li>
 				<a href="https://twitter.com/share?url=<%= encodeURIComponent(drop_url) %>&text=<%= encodeURIComponent(droplet_title) %>" 
 				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" 
 				    target="_blank">
-					<span class="icon"></span><?php echo __("Twitter"); ?>
+					<i class="icon-twitter"></i><?php echo __("Twitter"); ?>
 				</a>
 			</li>
-			<li class="facebook">
+			<li>
 				<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(droplet_title); %>
 				<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %>" 
 				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
 				    target="_blank">
-				    <span class="icon"></span><?php echo __("Facebook"); ?>
+				    <i class="icon-facebook"></i><?php echo __("Facebook"); ?>
 			    <a/>
 			</li>
-			<li class="email"><a href="#"><span class="icon"></span><?php echo __("Email"); ?></a></li>
+			<li><a href="#"><i class="icon-mail"></i><?php echo __("Email"); ?></a></li>
 		</ul>
 	</div>
 	<section class="drop-summary cf">
@@ -468,12 +465,9 @@
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Share via Email"); ?></h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -497,36 +491,24 @@
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("To:"); ?></p>
+					<div class="field">
+						<p class="field-label"><?php echo __("To:"); ?></p>
 						<?php echo Form::input('recipient', ''); ?>
-					</label>
-				</div>
-			</section>
-		</article>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("Subject:"); ?></p>
+					</div>
+					<div class="field">
+						<p class="field-label"><?php echo __("Subject:"); ?></p>
 						<input type="text" name="subject" value="<%= droplet_title %>" />
-					</label>
-				</div>
-			</section>
-		</article>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("Message:"); ?></p>
+					</div>
+					<div class="field">
+						<p class="field-label"><?php echo __("Message:"); ?></p>
 						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= drop_url %></textarea>
-					</label>
+					</div>
 				</div>
 			</section>
 		</article>
-		<p class="button-blue" id="send_sharing_email">
-			<a href="#"><?php echo __("Send"); ?></a>
-		</p>
+		<div class="save-toolbar">
+			<p id="send_sharing_email" class="button-blue"><a href="#"><?php echo __("Send"); ?></a></p>
+		</div>		
 		<?php echo Form::close(); ?>
 	</div>
 </article>
@@ -552,8 +534,8 @@
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="channel">
-						<p class="field">Channel</p>
+					<div class="field">
+						<p class="field-label">Channel</p>
 						<select name="channel">
 							<option value="">Any</option>
 							<% for (channel in channels) { %>
@@ -561,28 +543,27 @@
 								<option value="<%= channels[channel]['channel'] %>" <%= selected %>><%= channels[channel]['name'] %></option>
 							<% } %>
 						</select>
-					</label>
+					</div>
 				</div>
 			</section>
 			
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="tags">
-						<p class="field">Tags</p>
+					<div class="field">
+						<p class="field-label">Tags</p>
 						<input type="text" name="tags" value="<%= filters.get('tags') ? decodeURIComponent(filters.get('tags')).replace(',', ', ') : '' %>"/>
-					</label>
+					</div>
 				</div>
 			</section>
 			
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="date">
-						<p class="field">Date</p>
+					<div class="field">
+						<p class="field-label">Date</p>
 						<input type="date" name="start_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('start_date') %>" />
 						<span class="combine">to</span>
 						<input type="date" name="end_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('end_date') %>" />
-					</label>
-					</label>
+					</div>
 				</div>
 			</section>
 		</article>

@@ -31,8 +31,7 @@
 			<div class="col_9">
 				<article id="primer" class="container base">
 					<header class="cf">
-						<a href="/markup/modal-prompt.php" class="remove-large modal-trigger"><span class="icon-cancel"></span><span class="nodisplay">Remove</span></a>
-						<div class="property-title">
+						<div class="property-title col_6">
 							<h1>Get started</h1>
 						</div>
 					</header>
@@ -51,35 +50,33 @@
 
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_6">
 							<h1>Activity</h1>
 						</div>
 					</header>
 					<section class="property-parameters">
-						<div class="parameter activity-item cf">
+						<div class="parameter activity-item">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
 							<div class="item-body">
-								<h2><a href="/markup/user">Nat Manning</a> subscribed to the <a href="#">Reasons to hate the Patriots</a> river</h2>
+								<h3><a href="/markup/user">Nat Manning</a> subscribed to the <a href="#">Reasons to hate the Patriots</a> river</h3>
 								<p class="metadata">4:30 p.m. Jan. 13, 2012</p>
 							</div>
 						</div>
-						<div class="parameter activity-item cf">
+						<div class="parameter activity-item">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
 							<div class="item-body">
-								<h2><a href="/markup/user">Nat Manning</a> created the <a href="#">Top restaurants in Berkeley</a> bucket</h2>
+								<h3><a href="/markup/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h3>
 								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
 							</div>
-						</div>
-						<div class="parameter activity-item cf">
+							<ul class="button-actions">
+								<li><a href="#">Accept</a></li>
+								<li><a href="#">Reject</a></li>
+							</ul>							
+						</div>						
+						<div class="parameter activity-item">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
 							<div class="item-body">
-								<div class="actions">
-									<ul class="dual-buttons">
-										<li class="button-white"><a href="#">Reject</a></li>
-										<li class="button-white"><a href="#">Approve</a></li>
-									</ul>
-								</div>
-								<h2><a href="/markup/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h2>
+								<h3><a href="/markup/user">Nat Manning</a> created the <a href="#">Top restaurants in Berkeley</a> bucket</h3>
 								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
 							</div>
 						</div>
@@ -88,24 +85,22 @@
 
 				<article class="container action-list base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_6">
 							<h1>Popular this week</h1>
 						</div>
 					</header>
 					<section class="property-parameters">
 						<div class="parameter">
-							<div class="actions">
-								<p class="follow-count"><strong>48</strong> new followers</p>
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
+							<ul class="button-actions">
+								<li><span class="count"><strong>48</strong> new followers</span><a href="#"><i class="icon-checkmark"></i>Follow</a></li>
+							</ul>
+							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
 						</div>
 						<div class="parameter">
-							<div class="actions">
-								<p class="follow-count"><strong>67</strong> new followers</p>
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Robotics</a></h2>
+							<ul class="button-actions">
+								<li><span class="count"><strong>67</strong> new followers</span><a href="#" class="selected"><i class="icon-checkmark"></i><span class="nodisplay">Following</span></a></li>
+							</ul>
+							<h3><a href="/markup/river">Robotics</a></h3>
 						</div>
 					</section>
 				</article>
@@ -114,75 +109,51 @@
 			<div class="col_3">
 				<article class="container action-list base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1><a href="/user/rivers.php">Rivers</a></h1>
 						</div>
 					</header>
-					<section class="property-parameters">
-						<p class="category">Your rivers</p>
+					<section class="property-parameters asset-list">
+						<h2 class="category">Your rivers</h2>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
+							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
 						</div>
 						
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Robotics</a></h2>
+							<h3><a href="/markup/river">Robotics</a></h3>
 						</div>
 
-						<p class="category">Rivers you follow</p>
+						<h2 class="category">Rivers you follow</h2>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Ushahidi at SXSW</a></h2>
+							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
 						</div>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Robotics</a></h2>
+							<h3><a href="/markup/river">Robotics</a></h3>
 						</div>
 					</section>
 				</article>
 
 				<article class="container action-list base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_6">
 							<h1><a href="/user/buckets.php">Buckets</a></h1>
 						</div>
 					</header>
 					<section class="property-parameters">
-						<p class="category">Your buckets</p>
+						<h2 class="category">Your buckets</h2>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
+							<h3><a href="/markup/river">Love for Ushahidi</a></h3>
 						</div>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
+							<h3><a href="/markup/river">Top restaurants in Berkeley</a></h3>
 						</div>
 
-						<p class="category">Buckets you follow</p>
+						<h2 class="category">Buckets you follow</h2>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow"><a href="#" title="now following"><span class="icon-checkmark"></span><span class="nodisplay">Follow</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Love for Ushahidi</a></h2>
+							<h3><a href="/markup/river">Love for Ushahidi</a></h3>
 						</div>
 						<div class="parameter">
-							<div class="actions">
-								<p class="button-white follow selected"><a href="#" title="no longer following"><span class="icon-checkmark"></span><span class="nodisplay">Following</span></a></p>
-							</div>
-							<h2><a href="/markup/river">Top restaurants in Berkeley</a></h2>
+							<h3><a href="/markup/river">Top restaurants in Berkeley</a></h3>
 						</div>
 					</section>
 				</article>

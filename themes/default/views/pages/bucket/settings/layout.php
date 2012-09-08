@@ -1,16 +1,11 @@
 <hgroup class="page-title bucket-title cf">
 	<div class="center">
 		<div class="page-h1 col_9">
-			<h1><?php echo $bucket->bucket_name; ?> <em><?php echo __("Settings"); ?></em></h1>
+			<h1><?php echo $bucket->bucket_name; ?> <em><?php echo __("settings"); ?></em></h1>
 		</div>
-		<div class="page-actions col_3">
-			<h2 class="back">
-				<a href="<?php echo $bucket_base_url; ?>">
-					<span class="icon"></span>
-					<?php echo __("Return to bucket"); ?>
-				</a>
-			</h2>
-		</div>
+		<div class="page-action col_3">
+			<span class="button-white"><a href="<?php echo $bucket_base_url; ?>"><?php echo __('Return to bucket'); ?></a></span>
+		</div>			
 	</div>
 </hgroup>
 

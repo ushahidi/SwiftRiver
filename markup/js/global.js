@@ -1,8 +1,4 @@
 $(document).ready(function() { 
-	// BUTTON CHECK FOR ICON
-	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
-	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
-
 	// DETERMINE NEED FOR MASONRY SCRIPT
 	if ($("#content.drops").length > 0) {
 		$.getScript('/markup/js/jquery.masonry.js');
@@ -16,9 +12,15 @@ $(document).ready(function() {
 	// DISPLAY SAVE TOOLBAR
 	function saveToolbar () {
 		if ($(".save-toolbar").length > 0) {
-			$('input, textarea').keypress(function() {
-				$(this).closest('.property-parameters').find('.save-toolbar').fadeIn('fast');
+			$('select').change(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
 			});
+			$('input, textarea').keypress(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
+			});	
+			$(':radio, :checkbox').click(function() {
+				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
+			});						
 			$('.save-toolbar .cancel a').live('click', function(e) {
 				$(this).closest('.save-toolbar').fadeOut('fast');
 				e.preventDefault();
@@ -51,13 +53,13 @@ $(document).ready(function() {
 	});	
  
 	// MODAL WINDOWS
-	function modalHide () {
-		$("#modal-container div.modal-window").bind( "clickoutside", function(event){
-			$(this).parent().fadeOut('fast').removeClass('visible');
-			$('body').removeClass('noscroll');
-			$(this).unbind();
-		});
-	}
+//	function modalHide () {
+//		$("#modal-container div.modal-window").bind( "clickoutside", function(event){
+//			$(this).parent().fadeOut('fast').removeClass('visible');
+//			$('body').removeClass('noscroll');
+//			$(this).unbind();
+//		});
+//	}
 	$('a.modal-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
 		$('#modal-container div.modal-window').load(url + ' .modal', function(){
@@ -69,7 +71,7 @@ $(document).ready(function() {
 			$('div.modal-window').unbind();
 		} 
 		else {
-			modalHide(); 
+//			modalHide(); 
 		}
 		e.preventDefault();
 	});
@@ -79,7 +81,7 @@ $(document).ready(function() {
 	$('article.modal .close a').live('click', function(e) {
 		$('#modal-container').fadeOut('fast').removeClass('visible');
 		if ($('body').hasClass('zoomed')) {
-			zoomHide();
+//			zoomHide();
 		} 
 		else {
 			$('body').removeClass('noscroll');
@@ -89,19 +91,19 @@ $(document).ready(function() {
 	});
 
 	// ZOOM WINDOWS
-	function zoomHide () {
-		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
-			$(this).parent().fadeOut('fast').removeClass('visible');
-			$('body').removeClass('noscroll zoomed');
-			$(this).unbind();
-		});
-	}
+//	function zoomHide () {
+//		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
+//			$(this).parent().fadeOut('fast').removeClass('visible');
+//			$('body').removeClass('noscroll zoomed');
+//			$(this).unbind();
+//		});
+//	}
 	$('a.zoom-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
 		$('#zoom-container div.modal-window').load(url + ' .modal');
 		$('#zoom-container').fadeIn('fast').addClass('visible');
 		$('body').addClass('noscroll zoomed');
-		zoomHide();
+//		zoomHide();
 		e.preventDefault();
 	});
 	$('#zoom-container .close a').live('click', function(e) {

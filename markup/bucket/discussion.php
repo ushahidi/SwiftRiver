@@ -7,28 +7,10 @@
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
 			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?> <em>discussion</em></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
+				<h1><a href="/markup/bucket/"><?php print $page_title; ?></a> <em>discussion</em></h1>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="/markup/bucket/settings-collaborators.php">
-						<span class="icon"></span>
-						Bucket settings
-					</a>
-				</h2>
-				<h2 class="back">
-					<a href="/markup/bucket/">
-						<span class="icon"></span>
-						Return to bucket
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/bucket/">Return to bucket</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -46,18 +28,18 @@
 							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 							<div class="byline">
 								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+								<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 							</div>
 						</section>
 					</div>
 					<div class="drop-actions stacked cf">
 						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 						</ul>
 						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 						</ul>
 					</div>
 				</article>
@@ -73,18 +55,18 @@
 							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 							<div class="byline">
 								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+								<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 							</div>
 						</section>
 					</div>
 					<div class="drop-actions stacked cf">
 						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 						</ul>
 						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 						</ul>
 					</div>
 				</article>

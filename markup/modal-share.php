@@ -3,22 +3,19 @@
 		<div class="page-h1 col_9">
 			<h1>Share this drop</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
 
 	<div class="modal-body link-list">
 		<ul>
-			<li class="twitter"><a href="#"><span class="icon"></span>Twitter</a></li>
-			<li class="facebook"><a href="#"><span class="icon"></span>Facebook</a></li>
-			<li class="google"><a href="#"><span class="icon"></span>Google+</a></li>
-			<li class="email"><a href="#"><span class="icon"></span>Email</a></li>
+			<li><a href="#"><i class="icon-twitter"></i>Twitter</a></li>
+			<li><a href="#"><i class="icon-facebook"></i>Facebook</a></li>
+			<li><a href="#"><i class="icon-google-plus"></i>Google+</a></li>
+			<li><a href="#"><i class="icon-mail"></i>Email</a></li>
 		</ul>
 	</div>
 	<section class="drop-summary cf">

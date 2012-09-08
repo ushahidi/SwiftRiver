@@ -3,12 +3,9 @@
 		<div class="page-h1 col_9">
 			<h1><span class="icon-twitter"></span>Edit channel</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>

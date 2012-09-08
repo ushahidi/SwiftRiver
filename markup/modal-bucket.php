@@ -1,14 +1,11 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Add to bucket</h1>
+			<h1><span class="icon-add-to-bucket"></span>Add to bucket</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -27,11 +24,14 @@
 	</div>
 	<div class="modal-body create-new">
 		<form>
-			<h2>Create a new bucket</h2>
+			<h3>Create a new bucket</h3>
 			<div class="field">
 				<input type="text" placeholder="Name your new bucket" class="name" name="new_bucket" />
-				<p class="button-blue"><a href="#">Save and add drop</a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Save and add drop</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 		</form>
 	</div>
 	<section class="drop-summary cf">

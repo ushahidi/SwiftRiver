@@ -25,11 +25,11 @@
 			<div class="col_12">
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1>Name</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
 							<label for="website_name">
 								<p class="field">Website name</p>

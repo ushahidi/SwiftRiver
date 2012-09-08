@@ -12,21 +12,10 @@
 				<?php endif; ?>
 			</h1>
 		</div>
-		<?php if ($owner): ?>
-		<div class="page-actions col_3">
-			<h2>
-				<a href="<?php echo $settings_url; ?>">
-					<span class="icon-cog"></span>
-					<?php echo __("River settings"); ?>
-				</a>
-			</h2>
-			<h2>
-				<a href="<?php echo $settings_url.'/collaborators'; ?>">
-					<span class="icon-users"></span>
-					<?php echo __("Collaborators"); ?>
-				</a>
-			</h2>
-		</div>
+		<?php if ($owner): ?>		
+		<div class="page-action col_3">
+			<span class="button-blue"><a href="<?php echo $settings_url; ?>"><i class="icon-settings"></i><?php echo __("River settings"); ?></a></span>
+		</div>		
 		<?php elseif ( ! $anonymous AND ! $is_collaborator): ?>
 		<div class="follow-summary col_3" id="section_follow_river">
 		</div>
@@ -46,9 +35,6 @@
 				</li>
 				<?php endforeach; ?>
 			</ul>
-		</div>
-		<div class="filter-actions col_3">
-			<p class="button-blue button-small"><a href="#" class="modal-trigger">Filters</a></p>
 		</div>
 	</div>
 </nav>

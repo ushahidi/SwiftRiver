@@ -6,36 +6,23 @@
 
 	<hgroup class="page-title bucket-title cf">
 		<div class="center">
-			<div class="page-h1 col_9">
+			<div class="page-h1 col_8">
 				<h1><?php print $page_title; ?></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="/markup/bucket/settings-collaborators.php">
-						<span class="icon"></span>
-						Bucket settings
-					</a>
-				</h2>
-				<h2 class="discussion">
-					<a href="/markup/bucket/discussion.php">
-						<span class="icon"></span>
-						Discussion
-					</a>
-				</h2>
+			<div class="page-action col_4">
+				<span>
+				<ul class="dual-buttons">
+					<li class="button-blue"><a href="/markup/bucket/discussion.php"><i class="icon-comment"></i>Discussion</a></li>
+					<li class="button-blue"><a href="/markup/bucket/settings-collaborators.php"><i class="icon-settings"></i>Settings</a></li>
+				</ul>
+				</span>
 			</div>
 		</div>
 	</hgroup>
 
 	<nav class="page-navigation cf">
 		<div class="center">
-			<div id="page-views" class="river touchcarousel col_9">
+			<div id="page-views" class="river touchcarousel col_12">
 				<ul class="touchcarousel-container">
 					<li class="touchcarousel-item"><a href="/markup/bucket">Drops</a></li>
 					<li class="touchcarousel-item active"><a href="/markup/bucket/view-list.php">List</a></li>
@@ -43,9 +30,6 @@
 					<li class="touchcarousel-item"><a href="/markup/bucket/view-map.php">Map</a></li>
 					<li class="touchcarousel-item"><a href="/markup/bucket/view-timeline.php">Timeline</a></li>
 				</ul>
-			</div>
-			<div class="filter-actions col_3">
-				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
 			</div>
 		</div>
 	</nav>
@@ -62,18 +46,18 @@
 						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 						<div class="byline">
 							<h2>Nanjira Sambuli</h2>
-							<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 						</div>
 					</section>
 				</div>
 				<div class="drop-actions stacked cf">
 					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 					</ul>
 					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 					</ul>
 				</div>
 			</article>
@@ -89,18 +73,18 @@
 						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 						<div class="byline">
 							<h2>Nanjira Sambuli</h2>
-							<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 						</div>
 					</section>
 				</div>
 				<div class="drop-actions stacked cf">
 					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 					</ul>
 					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 					</ul>
 				</div>
 			</article>

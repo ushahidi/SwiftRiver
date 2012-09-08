@@ -1,14 +1,11 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1>Rivers</h1>
+			<h1><span class="icon-river"></span>Rivers</h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -32,6 +29,6 @@
 	</div>
 
 	<div class="modal-body create-new">
-		<p class="button-blue"><a href="#">Create a new river</a></p>
+		<p class="button-blue"><a href="/markup/river/new.php">Create a new river</a></p>
 	</div>
 </article>

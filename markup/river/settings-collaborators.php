@@ -6,8 +6,11 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="page-h1 col_12">
+			<div class="page-h1 col_9">
 				<h1><a href="/markup/river/"><?php print $page_title; ?></a> <em>settings</em></h1>
+			</div>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/river/">Return to river</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -28,6 +31,11 @@
 	<div id="content" class="settings collaborators cf">
 		<div class="center">
 			<div class="col_12">
+			
+				<div class="button-actions">
+					<span><a href="/markup/modal-collaborators.php" class="modal-trigger"><i class="icon-users"></i>Add collaborator</a></span>
+				</div>			
+			
 				<article class="container base">
 					<header class="cf">
 						<div class="property-title col_8">
@@ -35,7 +43,11 @@
 							<h1><a href="#">Juliana Rotich</a></h1>
 						</div>
 						<div class="button-actions col_4">
-							<a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+							<span class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+								<ul class="popover-window popover-prompt base">
+									<li class="destruct"><a href="#">Remove collaborator from river</a></li>
+								</ul>							
+							</span>
 						</div>						
 					</header>				
 				</article>
@@ -47,7 +59,11 @@
 							<h1><a href="#">Nathaniel Manning</a></h1>
 						</div>
 						<div class="button-actions col_4">
-							<a href="#"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+							<span class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+								<ul class="popover-window popover-prompt base">
+									<li class="destruct"><a href="#">Remove collaborator from river</a></li>
+								</ul>							
+							</span>							
 						</div>						
 					</header>				
 				</article>

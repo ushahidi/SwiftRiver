@@ -1,5 +1,5 @@
 <?php
-	$page_title = "Nat Manning";
+	$page_title = "Brandon Rosage";
 	$template_type = "user";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
@@ -26,72 +26,79 @@
 			<div class="col_12">
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1>About you</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
-							<label for="name_nickname">
-								<p class="field">Full name</p>
-								<input type="text" name="name_fulllname" placeholder="Enter full name" />
-							</label>
+							<div class="field">
+								<p class="field-label">Full name</p>
+								<input type="text" value="<?php print $page_title; ?>" />
+							</div>
 						</div>
 						<div class="parameter">
-							<label for="name_nickname">
-								<p class="field">Username</p>
-								<input type="text" name="name_username" placeholder="Enter username" />
-							</label>
+							<div class="field">
+								<p class="field-label">Username</p>
+								<input type="text" value="brosage" />
+							</div>
 						</div>
 						<div class="parameter">
-							<label for="email">
-								<p class="field">Email address</p>
-								<input type="email" name="email" placeholder="Enter your email address" />
-							</label>
+							<div class="field">
+								<p class="field-label">Email address</p>
+								<input type="email" value="brandon@ushahidi.com" />
+							</div>
+						</div>						
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
 						</div>
 					</section>
 				</article>
 	
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
-							<h1>Password</h1>
+						<div class="property-title col_12">
+							<h1>Change password</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
+					<section class="property-parameters cf">
 						<div class="parameter">
-							<label for="password">
-								<p class="field">Password</p>
-								<input type="password" name="password" />
-							</label>
+							<div class="field">
+								<p class="field-label">New password</p>
+								<input type="password" value="" />
+							</div>
 						</div>
-						<div class="parameter cf">
-							<label for="password">
-								<p class="field">Confirm password</p>
-								<input type="password" name="password" />
-							</label>
+						<div class="parameter">
+							<div class="field">
+								<p class="field-label">Confirm password</p>
+								<input type="password" value="" />
+							</div>
+						</div>					
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
 						</div>
 					</section>
 				</article>
-
+				
 				<article class="container base">
 					<header class="cf">
-						<div class="property-title">
+						<div class="property-title col_12">
 							<h1>Photo</h1>
 						</div>
 					</header>
-					<section class="property-parameters">
-						<div class="parameter cf">
+					<section class="property-parameters cf">
+						<div class="parameter">
 							<a class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" class="avatar" /></a>
 							<p class="button-blue button-small"><a href="http://gravatar.com">Use a different photo</a></p>
+						</div>					
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
 						</div>
 					</section>
 				</article>
-
-				<div class="save-toolbar">
-					<p class="button-blue"><a href="#">Save changes</a></p>
-					<p class="button-blank"><a href="#">Cancel</a></p>
-				</div>
 			</div>
 		</div>
 	</div>

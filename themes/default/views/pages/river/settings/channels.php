@@ -1,15 +1,8 @@
 <div id="content" class="settings channels cf">
 	<div class="center">
 		<div class="col_12">
-			<div class="settings-toolbar">
-				<p class="button-blue button-small"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon-plus"></span>Add channels</a></p>
-			</div>
-
-			<div class="alert-message blue" style="display:none;">
-				<p><strong>No channels.</strong> You can flow new channels into your river by selecting the "Add channel" button above.</p>
-			</div>
 			
-			<!-- CHANNELS WILL GO HERE -->
+			<!-- GROUPS GO HERE -->
 
 		</div>
 	</div>

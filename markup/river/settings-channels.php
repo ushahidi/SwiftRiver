@@ -6,9 +6,12 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="page-h1 col_12">
+			<div class="page-h1 col_9">
 				<h1><a href="/markup/river/"><?php print $page_title; ?></a> <em>settings</em></h1>
 			</div>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/river/">Return to river</a></span>
+			</div>			
 		</div>
 	</hgroup>
 

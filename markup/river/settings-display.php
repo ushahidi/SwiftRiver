@@ -6,8 +6,11 @@
 
 	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="page-h1 col_12">
+			<div class="page-h1 col_9">
 				<h1><a href="/markup/river/"><?php print $page_title; ?></a> <em>settings</em></h1>
+			</div>
+			<div class="page-action col_3">
+				<span class="button-white"><a href="/markup/river/">Return to river</a></span>
 			</div>
 		</div>
 	</hgroup>
@@ -47,6 +50,10 @@
 								<input type="text" value="ushahidi-at-sxsw" name="river_url" />
 							</div>
 						</div>
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
+						</div>
 					</section>
 				</article>
 
@@ -67,6 +74,10 @@
 								</select>
 							</div>
 						</div>
+						<div class="save-toolbar col_12">
+							<p class="button-blue"><a href="#">Save changes</a></p>
+							<p class="button-blank cancel"><a href="#">Cancel</a></p>
+						</div>	
 					</section>
 				</article>
 			</div>
