@@ -19,10 +19,9 @@
 		<div class="center">
 			<div id="page-views" class="settings touchcarousel col_12">
 				<ul class="touchcarousel-container">
-					<li class="touchcarousel-item"><a href="/markup/river/settings-channels.php">Channels</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/settings-channels.php">Flow</a></li>
 					<li class="touchcarousel-item active"><a href="/markup/river/settings-collaborators.php">Collaborators</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/settings-display.php">Display</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/settings-permissions.php">Permissions</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/settings-options.php">Options</a></li>
 				</ul>
 			</div>
 		</div>

@@ -24,7 +24,7 @@
 						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 						<div class="byline">
 							<h2>Nanjira Sambuli</h2>
-							<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 						</div>
 					</section>
 					<div class="drop-body">
@@ -32,12 +32,12 @@
 					</div>
 					<div class="drop-actions cf">
 						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 						</ul>
 						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 						</ul>
 					</div>
 					<section class="drop-fullstory drop-sub">
@@ -63,18 +63,18 @@
 								<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
 								<div class="byline">
 									<h2>Nanjira Sambuli</h2>
-									<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+									<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
 								</div>
 							</section>
 						</div>
 						<div class="drop-actions stacked cf">
 							<ul class="dual-buttons move-drop">
-								<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-								<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
+								<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+								<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 							</ul>
 							<ul class="dual-buttons score-drop">
-								<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-								<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
+								<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
+								<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
 							</ul>
 						</div>
 					</article>

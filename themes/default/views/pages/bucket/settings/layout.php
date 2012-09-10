@@ -17,7 +17,7 @@
 					<a href="<?php echo $bucket_base_url.'/settings/collaborators'; ?>"><?php echo __("Collaborators"); ?></a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $bucket_base_url.'/settings/display'; ?>"><?php echo __("Display"); ?></a>
+					<a href="<?php echo $bucket_base_url.'/settings/display'; ?>"><?php echo __("Options"); ?></a>
 				</li>
 			</ul>
 		</div>

@@ -31,6 +31,10 @@
 							<input type="text" value="<?php echo $bucket->bucket_name ?>" name="bucket_name" />
 						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 
@@ -48,6 +52,10 @@
 							<option value="photos" <?php echo ($bucket->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 			
@@ -64,6 +72,10 @@
 							<option value="0" <?php echo $bucket->bucket_publish ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>						
 				</section>
 			</article>
 
@@ -82,13 +94,15 @@
 							</p>
 						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
+			
+			<span class="view-results button-white destruct"><a href="#">Delete this bucket</a></span>				
 
-			<div class="save-toolbar">
-				<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-				<p class="button-blank"><a href="#">Cancel</a></p>
-			</div>
 			<?php echo Form::close(); ?>
 		</div>
 	</div>

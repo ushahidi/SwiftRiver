@@ -31,6 +31,10 @@
 							<input type="text" value="<?php echo $river->river_name ?>" name="river_name" />
 						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 
@@ -48,6 +52,10 @@
 							<option value="photos" <?php echo ($river->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>										
 				</section>
 			</article>
 			
@@ -64,14 +72,16 @@
 							<option value="0" <?php echo $river->river_public ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
-			
-			<div class="save-toolbar">
-				<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-				<p class="button-blank"><a href="#">Cancel</a></p>
-			</div>
-			<?php echo Form::close(); ?>
+
+			<span class="view-results button-white destruct"><a href="#">Delete this river</a></span>
+
+			<?php echo Form::close(); ?>			
 		</div>
 	</div>
 </div>

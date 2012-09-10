@@ -13,18 +13,18 @@
 	<div class="modal-body link-list">
 		<p class="category">Your Rivers</p>
 		<ul>
-			<li><a href="#">River 1</a></li>
-			<li><a href="#">River 2</a></li>
-			<li><a href="#">River 3</a></li>
-			<li><a href="#">River 4</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 1</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 2</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 3</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 4</a></li>
 		</ul>
 
 		<p class="category">Rivers you follow</p>
 		<ul>
-			<li><a href="#">River 1</a></li>
-			<li><a href="#">River 2</a></li>
-			<li><a href="#">River 3</a></li>
-			<li><a href="#">River 4</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 1</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 2</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 3</a></li>
+			<li><span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="#">River 4</a></li>
 		</ul>
 	</div>
 

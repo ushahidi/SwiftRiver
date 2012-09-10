@@ -20,7 +20,7 @@
 					<a href="<?php echo $river_base_url.'/settings/collaborators'; ?>">Collaborators</a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Display</a>
+					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Options</a>
 				</li>
 			</ul>
 		</div>

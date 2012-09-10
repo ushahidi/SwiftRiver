@@ -137,7 +137,7 @@
 </script>
 
 <script type="text/template" id="header-asset-template">
-	<a href="<%= url %>"><%= display_name %></a>
+	<span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span><a href="<%= url %>"><%= display_name %></a>
 </script>
 <?php endif; ?>
 

@@ -20,8 +20,7 @@
 			<div id="page-views" class="settings touchcarousel col_12">
 				<ul class="touchcarousel-container">
 					<li class="touchcarousel-item active"><a href="/markup/bucket/settings-collaborators.php">Collaborators</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/settings-display.php">Display</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/settings-permissions.php">Permissions</a></li>
+					<li class="touchcarousel-item"><a href="/markup/bucket/settings-options.php">Options</a></li>
 				</ul>
 			</div>
 		</div>

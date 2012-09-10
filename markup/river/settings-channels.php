@@ -21,8 +21,7 @@
 				<ul class="touchcarousel-container">
 					<li class="touchcarousel-item active"><a href="/markup/river/settings-channels.php">Flow</a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/settings-collaborators.php">Collaborators</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/settings-display.php">Display</a></li>
-					<li class="touchcarousel-item"><a href="/markup/river/settings-permissions.php">Permissions</a></li>
+					<li class="touchcarousel-item"><a href="/markup/river/settings-options.php">Options</a></li>
 				</ul>
 			</div>
 		</div>
