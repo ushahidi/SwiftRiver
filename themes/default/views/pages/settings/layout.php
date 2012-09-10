@@ -20,6 +20,9 @@
 		<li <?php if ($active == 'plugins') echo 'class="active"'; ?>>
 			<a href="<?php echo URL::site().'settings/plugins';?>"><?php echo __('Plugins'); ?></a>
 		</li>
+		<li <?php if ($active == 'quotas') echo 'class="active"'; ?>>
+			<a href="<?php echo URL::site('settings/quotas'); ?>"><?php echo __('Channel Quotas'); ?></a>
+		</li>
 		<?php
 			// Swiftriver Plugin Hook -- add settings nav item
 			Swiftriver_Event::run('swiftriver.settings.nav', $active);
