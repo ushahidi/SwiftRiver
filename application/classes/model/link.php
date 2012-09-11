@@ -168,7 +168,7 @@ class Model_Link extends ORM
 	public static function get_ids($num)
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('links',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('links',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}	

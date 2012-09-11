@@ -1821,7 +1821,7 @@ class Model_Droplet extends ORM {
 	public static function get_ids($num, $table="droplets")
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('".$table."',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('".$table."',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}
