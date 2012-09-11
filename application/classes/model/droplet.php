@@ -232,7 +232,9 @@ class Model_Droplet extends ORM {
 		Model_Media::get_media($droplets);
 		
 		// Populate the drop's metadata tables
-		self::add_metadata($droplets);		
+		self::add_metadata($droplets);
+		
+		return array($droplets, $new_droplets); 
 	}
 	
 	/**
