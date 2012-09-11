@@ -145,7 +145,7 @@ class Model_Media extends ORM {
 	 */
 	public static function get_ids($num)
 	{
-		$query = DB::select(array(DB::expr("NEXTVAL('media',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('media',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}

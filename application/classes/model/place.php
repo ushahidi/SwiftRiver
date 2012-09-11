@@ -195,7 +195,7 @@ class Model_Place extends ORM
 	public static function get_ids($num)
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('places',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('places',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}
