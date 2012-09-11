@@ -208,6 +208,16 @@ $(document).ready(function() {
 		}
 	}
 	saveToolbar();
+	
+	// DROP SHOW 'REMOVE' ON HOVER
+	if (window.innerWidth > 800) {
+		$('article.drop').hover(
+			function() {
+				$(this).find('.remove').fadeIn('fast');		
+			},function() {
+				$(this).find('.remove').fadeOut('fast');
+		});
+	}	
 
 	// ACCORDION MENU
 	$('section.meta-data h3').live('click', function(e) {

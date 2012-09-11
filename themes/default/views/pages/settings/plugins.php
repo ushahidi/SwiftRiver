@@ -6,27 +6,22 @@
 
 <script type="text/template" id="plugin_item_template">
 	<header class="cf">
-		<div class="actions">
+		<div class="property-title col_8">
+			<h1><%= plugin_name %></h1>
+		</div>
+		<div class="button-actions col_4">
 			<% var link_title = (plugin_enabled)
 			       ? "<?php echo __('deactivated plugin'); ?>" 
 			       : "<?php echo __('activated plugin'); ?>"; 
 
 			    var selected = (plugin_enabled)? "selected" : "";
-			%>
-			<p class="button-white has-icon only-icon follow <%= selected %>">
-				<a href="#" title="<%= link_title %>">
-					<span class="icon">
-					<span class="nodisplay"><%= link_title %></span>
-				</a>
-			</p>
-		</div>
-		<div class="property-title">
-			<h1><%= plugin_name %></h1>
-		</div>
+			%>		
+			<a href="#" title="<%= link_title %>" class="<%= selected %>"><span class="icon-checkmark"></span><span class="nodisplay"><%= link_title %></span></a>
+		</div>		
 	</header>
 	<section class="property-parameters">
 		<div class="parameter">
-			<h2><%= plugin_description %></h2>
+			<p><%= plugin_description %></p>
 		</div>
 	</section>
 </script>
@@ -65,11 +60,11 @@ $(function() {
 		template: _.template($("#plugin_item_template").html()),
 
 		events: {
-			"click p.button-white > a": "toggleActivation"
+			"click .button-actions a": "toggleActivation"
 		},
 
 		toggleActivation: function(e) {
-			targetEl = $(e.currentTarget).parent('p');
+			targetEl = $(e.currentTarget);
 			this.model.toggleActivation(targetEl);
 			return false;
 		},

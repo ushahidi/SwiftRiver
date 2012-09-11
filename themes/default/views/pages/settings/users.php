@@ -1,20 +1,19 @@
-<div class="settings-toolbar">
-	<p class="button-blue create">
-		<a href="#" class="modal-trigger">
-			<span class="icon"></span><?php echo __("Add User"); ?>
-		</a>
-	</p>
+<div class="button-actions">
+	<span><a href="/markup/modal-collaborators.php" class="modal-trigger"><i class="icon-users"></i>Add collaborator</a></span>
 </div>
 
 <script type="text/template" id="user_item_template">
 	<header class="cf">
-		<a href="#" class="remove-large" title="<?php echo __("Delete"); ?>">
-			<span class="icon"></span>
-			<span class="nodisplay"><?php echo __("Remove"); ?></span>
-		</a>
-		<div class="property-title">
+		<div class="property-title col_8">
 			<a href="<%= user_url %>" class="avatar-wrap"><img src="<%= user_avatar %>"/></a>
 			<h1><a href="<%= user_url %>"><%= name %></a></h1>
+		</div>
+		<div class="button-actions col_4">		
+			<span class="popover"><a href="#" class="popover-trigger" title="<?php echo __("Delete"); ?>"><span class="icon-remove"></span><span class="nodisplay"><?php echo __("Remove"); ?></span></a>
+				<ul class="popover-window popover-prompt base">
+					<li class="destruct"><a href="#">Remove collaborator from river</a></li>
+				</ul>							
+			</span>					
 		</div>
 	</header>
 </script>
@@ -35,7 +34,7 @@ $(function() {
 		template: _.template($("#user_item_template").html()),
 
 		events: {
-			"click a.remove-large": "deleteUser"
+			"click .destruct > a": "deleteUser"
 		},
 
 		deleteUser: function(e) {

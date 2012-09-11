@@ -203,11 +203,9 @@ body {
   filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#e88184', EndColorStr='#d71b2a');
   padding: 1px 5px;
 }
-ul.dual-buttons li {
-  float: left;
-}
 ul.dual-buttons li a {
   display: block;
+  float: left;
   line-height: 21px;
   padding: 0;
 }
@@ -251,16 +249,11 @@ ul.dual-buttons li a span[class^="icon-"] {
   font-size: 1.5em;
   text-align: center;
   padding: 2px 0;
-  margin: 0 0.4em;
+  margin: 0 0.2em;
 }
 ul.dual-buttons li.share a span[class^="icon-"] {
   position: relative;
   top: 2px;
-}
-ul.dual-buttons.score-drop li a span[class^="icon-"] {
-  color: rgba(0, 0, 0, 0.2);
-  font-size: 1.7em;
-  margin: 0 0.2em;
 }
 ul.dual-buttons li a span[class^="icon-"] strong {
   position: absolute;
@@ -961,6 +954,7 @@ nav.page-navigation .filter-actions p.button-blue a {
 }
 article.drop,
 article.container {
+  position: relative;
   margin-top: 15px;
   margin-bottom: 15px;
 }
@@ -1014,60 +1008,85 @@ article.container {
 }
 p.metadata {
   font-style: italic;
-  font-size: 0.85em;
-  padding: 5px 0;
+  font-size: 0.9em;
 }
 p.metadata a {
   color: #666666;
 }
-p.metadata span.icon {
-  display: inline-block;
-  position: relative;
-  top: 4px;
-  width: 17px;
-  height: 15px;
-  background-position: center -531px;
-  margin-left: 10px;
-}
-/* ---- DROP: ACTIONS */.drop .drop-actions ul li a {
-  padding: 0;
-}
-.drop ul.score-drop li.scored a {
-  font-size: 0.9em;
-  line-height: 25px;
-  background-color: #eaf3f5;
-  padding-right: 5px;
-}
-.drop ul.score-drop li.scored a span.icon {
+/* ---- DROP: ACTIONS */.drop .drop-actions ul li {
   float: left;
 }
-.drop ul.score-drop li.like.scored a {
-  color: #81c279;
-  border: 1px solid #81c279;
+.drop .drop-actions ul li a {
+  display: block;
+  float: left;
+  padding: 0;
 }
-.drop ul.score-drop li.dislike.scored a {
-  border: 1px solid #cc9898;
+.drop .drop-actions li span[class^="icon-"] {
+  display: inline-block;
+  float: none;
+  font-weight: normal;
+  margin: 0.2em 0.5em;
 }
-.drop ul.score-drop li.scored a span.user-score {
-  position: relative;
-  color: #666666;
-  font-size: 0.8em;
-  top: -7px;
-  right: 5px;
+.drop ul.score-drop li span[class^="icon-"] {
+  font-size: 1.5em;
 }
-.drop ul.move-drop li.bucket a span.icon {
-  background-position: center -675px;
+.drop ul.score-drop li a {
+  color: #aeaeae;
 }
-.drop ul.move-drop li.bucket.added a span.icon {
-  background-position: center -700px;
+.drop ul.score-drop li.star a {
+  font-size: 1.3em;
+  line-height: 26px;
+  text-shadow: 0 1px 0 rgba(256, 256, 256, 0.7);
+  transition: all 0.1s;
+  -moz-transition: all 0.1s;
+  /* Firefox 4 */
+
+  -webkit-transition: all 0.1s;
+  /* Safari and Chrome */
+
+  -o-transition: all 0.1s;
+  /* Opera */
+
 }
-.drop ul.move-drop li.bucket.added a span.icon strong {
-  position: relative;
-  top: -8px;
-  left: 5px;
-  color: #3eb7d0;
-  font-size: 9px;
-  text-shadow: none;
+.drop ul.score-drop li.star a:hover span.icon-star {
+  color: #f4c72a;
+}
+.drop ul.score-drop li.star span.icon-star {
+  font-size: 1.1em;
+}
+.drop ul.score-drop li.star a:hover span.icon-star:before {
+  content: "\27";
+}
+.drop ul.score-drop li.star span.star-total {
+  float: right;
+  margin: 0.2em 0.2em 0.2em 0;
+}
+.drop ul.score-drop li.star.selected a {
+  color: #666;
+  border: 1px solid #f1da8a;
+  background: #fff3ca;
+  padding-right: 0.4em;
+}
+.drop ul.score-drop li.star.selected span.icon-star {
+  color: #f4c72a;
+}
+.drop ul.score-drop li.star.selected span.icon-star:before {
+  content: "\27";
+}
+.drop ul.score-drop li.remove a {
+  display: block;
+  background: #fff;
+  padding: 0.5em;
+}
+.drop ul.score-drop li.remove a:hover {
+  color: #666;
+  text-decoration: none;
+}
+.drop ul.score-drop li.remove span.icon-cancel {
+  font-size: 1.1em;
+}
+.drop ul.move-drop {
+  float: right;
 }
 /* ---- DROP: SOURCE */
 .drop section.drop-source {
@@ -1104,6 +1123,7 @@ p.metadata span.icon {
   display: none;
   position: absolute;
   top: -50px;
+  z-index: 100;
   width: 100%;
   border: 3px solid #259cb5;
 }
@@ -1115,6 +1135,9 @@ p.metadata span.icon {
   margin-left: 5px;
 }
 /* ---- DROP: VIEW FULL */
+.drop-full {
+  position: relative;
+}
 .drop-full section.drop-source,
 .drop-full div.drop-body,
 .drop-full div.drop-actions,
@@ -1260,8 +1283,7 @@ section.meta-data img.media-image {
 }
 /* ---- DROP: VIEW DROPS */
 .drops article.drop {
-  margin: 15px 0;
-  overflow: hidden;
+  margin: 15px 3.125%;
 }
 .drops article.drop div.drop-actions {
   padding: 5px 10px 15px;
@@ -1273,8 +1295,12 @@ section.meta-data img.media-image {
   padding: 10px;
 }
 .drops article.drop section.drop-source {
-  background: #eaf3f5 url(../img/drop-wave.gif) top right repeat-x;
-  padding: 20px 10px 7px;
+  background: #eaf3f5 url(../img/drop-wave1.png) top no-repeat;
+  -o-background-size: 100%;
+  -moz-background-size: 100%;
+  -webkit-background-size: 100%;
+  background-size: 100%;
+  padding: 20px 10px 15px;
 }
 .drops article.drop section.drop-source a.avatar-wrap,
 .list article.drop section.drop-source a.avatar-wrap {
@@ -1319,32 +1345,25 @@ section.meta-data img.media-image {
   transition-property: left, right, top;
 }
 /* ---- DROP: VIEW LIST */
-.list article.drop .drop-content {
-  float: left;
-  width: 76.66666667%;
-}
 .list article.drop section.drop-source {
-  background: #eaf3f5 url(../img/drop-wave_list.gif) top right no-repeat;
+  background: #eaf3f5 url(../img/drop-wave1.png) right top repeat-x;
   padding: 3.125%;
 }
 .list article.drop .drop-body {
   padding: 15px 3.125%;
 }
+.list article.drop .drop-details {
+  clear: both;
+}
+.list article.drop .drop-details .metadata {
+  margin: 1em 0;
+}
 .list article.drop a.drop-image-wrap {
   float: right;
-  width: 15%;
+  width: 20%;
+  max-height: 100px;
   overflow: hidden;
-  border: 1px solid #e4e8e8;
-  padding: 5px;
-  margin-left: 10px;
-}
-.list article.drop div.drop-actions {
-  float: left;
-  width: 16.66666667%;
-  padding: 3.125%;
-}
-.list .drop-actions ul li a {
-  padding: 5px 0;
+  margin: 0 0 1.6666667% 1.6666667%;
 }
 /* ---- DROP: VIEW PHOTOS */
 .photos article.drop section.drop-source {
@@ -2411,6 +2430,16 @@ footer#global-footer {
     float: left;
     margin: 7px 1.041666667% 10px;
   }
+  article.drop ul.score-drop li.remove {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  article.drop ul.score-drop li.remove a {
+    box-shadow: -1px 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 0.6em 0.5em;
+  }
   /* ---- DROP: VIEW FULL */
   .drop-full section.drop-source,
   .drop-full div.drop-body,
@@ -2427,14 +2456,43 @@ footer#global-footer {
   .drop-full section.drop-discussion h2 {
     padding-left: 1.041666667%;
   }
+  .drops article.drop {
+    margin: 10px 1.041666667%;
+  }
+  .list article.drop .drop-body {
+    float: right;
+    width: 82.2916667%;
+    padding: 1.5625% 1.041666667%;
+  }
   .list article.drop div.drop-content {
-    width: 82.29166667%;
+    float: left;
+    width: 75.9493671%;
+  }
+  .drop-discussion.list article.drop div.drop-content {
+    width: 58.2278481%;
+  }
+  .list article.drop div.drop-details {
+    float: left;
+    clear: none;
+    width: 21.5189873%;
+    border-left: 1px solid #dedede;
+    padding-left: 1.2658228%;
+    margin-left: 1.2658228%;
+  }
+  .drop-discussion.list article.drop div.drop-details {
+    width: 39.2405063%;
+  }
+  .list article.drop div.drop-details p.metadata a {
+    display: block;
+    margin: 0.4em 0;
   }
   .list article.drop section.drop-source {
     float: left;
-    width: 17.72151899%;
+    width: 13.5416667%;
+    /*   background: #eaf3f5 url(../img/drop-wave2.png) right bottom repeat-y;*/
+  
+    background: none;
     padding: 1.041666667%;
-    min-height: 75px;
   }
   .list article.drop section.drop-source a.avatar-wrap,
   .list article.drop section.drop-source div.byline {
@@ -2448,19 +2506,6 @@ footer#global-footer {
   }
   .list article.drop section.drop-source div.byline {
     width: auto;
-  }
-  .list article.drop .drop-body {
-    float: right;
-    width: 77.21518987%;
-    padding: 1.5625% 1.041666667%;
-  }
-  .list article.drop div.drop-actions {
-    float: left;
-    width: 15.625%;
-    padding: 1.041666667%;
-  }
-  .list article.drop div.drop-actions ul li {
-    width: 50%;
   }
   .photos article.drop div.drop-actions {
     padding: 0;
@@ -2863,92 +2908,83 @@ footer#global-footer {
 i[class^="icon-"]:before {
   margin-right: 0.4em;
 }
-.icon-bucket:before {
+.icon-twitter:before {
   content: "\21";
 }
-.icon-add-to-bucket:before {
+.icon-facebook:before {
   content: "\22";
 }
-.icon-river:before {
-  content: "\24";
-}
-.icon-twitter:before {
-  content: "\2a";
-}
-.icon-cancel:before {
-  content: "\2d";
-}
-.icon-plus:before {
-  content: "\31";
-}
-.icon-arrow-down:before {
-  content: "\32";
+.icon-arrow-left:before {
+  content: "\23";
 }
 .icon-arrow-right:before {
-  content: "\33";
+  content: "\24";
 }
-.icon-checkmark:before {
-  content: "\37";
+.icon-arrow-down:before {
+  content: "\25";
 }
-.icon-search:before {
-  content: "\3a";
+.icon-star:before {
+  content: "\26";
 }
-.icon-users:before {
-  content: "\30";
+.icon-star-2:before {
+  content: "\27";
+}
+.icon-cancel:before {
+  content: "\28";
+}
+.icon-plus:before {
+  content: "\29";
 }
 .icon-home:before {
-  content: "\34";
-}
-.icon-thumbs-down:before {
-  content: "\e033";
-}
-.icon-thumbs-up:before {
-  content: "\e032";
-}
-.icon-locked:before {
-  content: "\e039";
-}
-.icon-share:before {
-  content: "\e000";
-}
-.icon-rss:before {
-  content: "\e01e";
-}
-.icon-google-plus:before {
-  content: "\e001";
+  content: "\2a";
 }
 .icon-comment:before {
-  content: "\e004";
+  content: "\2b";
+}
+.icon-users:before {
+  content: "\2c";
 }
 .icon-settings:before {
-  content: "\e005";
+  content: "\2d";
 }
-.icon-arrow-left:before {
-  content: "\e006";
-}
-.icon-arrow-down-2:before {
-  content: "\e007";
+.icon-search:before {
+  content: "\2e";
 }
 .icon-remove:before {
-  content: "\e008";
+  content: "\2f";
 }
 .icon-pencil:before {
-  content: "\e009";
+  content: "\30";
 }
 .icon-calendar:before {
-  content: "\e00b";
+  content: "\31";
+}
+.icon-rss:before {
+  content: "\32";
+}
+.icon-google-plus:before {
+  content: "\33";
 }
 .icon-pencil-2:before {
-  content: "\e00d";
+  content: "\34";
 }
-.icon-facebook:before {
-  content: "\e002";
+.icon-checkmark:before {
+  content: "\35";
 }
-.icon-mail:before {
-  content: "\e02b";
+.icon-share:before {
+  content: "\36";
 }
-.icon-back-arrow:before {
-  content: "\e003";
+.icon-locked:before {
+  content: "\37";
+}
+.icon-river:before {
+  content: "\38";
+}
+.icon-bucket:before {
+  content: "\39";
+}
+.icon-add-to-bucket:before {
+  content: "\3a";
 }
 @media only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-device-pixel-ratio: 2) {
   body {
@@ -2961,4 +2997,10 @@ i[class^="icon-"]:before {
     -webkit-background-size: 100%;
     background-size: 100%;
   }
+  .drops article.drop section.drop-source {
+    background-image: url(../img/drop-wave1@2x.png);
+  }
+  /*.list article.drop section.drop-source {
+     background-image: url(../img/drop-wave2@2x.png);
+  }*/
 }

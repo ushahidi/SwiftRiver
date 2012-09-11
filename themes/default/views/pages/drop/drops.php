@@ -34,14 +34,14 @@
 					</li>
 				<?php endif; ?>
 			</ul>
-			<ul class="dual-buttons score-drop">
-				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon-thumbs-up"></span></a>
+			<ul class="score-drop">
+				<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+					<a href="#"><span class="icon-star"></span></a>
 				</li>
-				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon-thumbs-down"></span></a>
+				<li class="remove <%= parseInt(user_score) == -1 ? 'scored' : 'selected'  %>">
+					<a href="#"><span class="icon-cancel"></span></a>
 				</li>
-			</ul>
+			</ul>			
 		<?php endif; ?>
 	</div>
 	<section class="drop-source cf">
@@ -58,56 +58,58 @@
 </script>
 
 <script type="text/template" id="drop-list-view-template">
-	<div class="drop-content">
-		<div class="drop-body">
+	<div class="drop-body">
+		<div class="drop-content">
 			<% if (typeof(droplet_image_url) != "undefined") { %>
 				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= droplet_image_url %>" class="drop-image" /></a>
-			<% } %>		
+			<% } %>							
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
-			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
+		</div>
+		<div class="drop-details">						
+			<p class="metadata"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
-					<span class="icon-comments"></span>
+					<span class="icon-comment"></span>
 					<strong><%= comment_count ? comment_count : 0 %></strong> 
 					<?php echo __("comments"); ?>
 				</a>
+			</p>			
+			<div class="drop-actions cf">
+			<?php if ( ! $anonymous): ?>
+				<ul class="score-drop">
+					<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-star"></span></a>
+					</li>
+					<li class="remove <%= parseInt(user_score) == -1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-cancel"></span></a>
+					</li>									
+				</ul>					
+				<ul class="dual-buttons move-drop">
+					<li class="button-blue share">
+						<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+							<span class="icon-share"></span>
+						</a>
+					</li>
+					<li class="button-blue bucket">
+						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+							<span class="icon-add-to-bucket"></span>
+						</a>
+					</li>
+				</ul>
+			<?php endif; ?>	
+			</div>
+		</div>							
+	</div>
+	<section class="drop-source cf">
+		<% if ( identity_avatar) { %>
+			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% } %>
+		<div class="byline">
+			<h2><%= identity_name %></h2>
+			<p class="drop-source-channel">
+				<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 			</p>
 		</div>
-		<section class="drop-source cf">
-			<% if ( identity_avatar) { %>
-				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
-			<% } %>
-			<div class="byline">
-				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel">
-					<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
-				</p>
-			</div>
-		</section>
-	</div>
-	<div class="drop-actions stacked cf">
-		<?php if ( ! $anonymous): ?>
-			<ul class="dual-buttons move-drop">
-				<li class="button-blue share">
-					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-					    <span class="icon-share"></span>
-					</a>
-				</li>
-				<li class="button-blue bucket">
-					<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-					    <span class="icon-add-to-bucket"></span>
-					</a>
-				</li>
-			</ul>		
-			<ul class="dual-buttons score-drop">
-				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon-thumbs-up"></span></a>
-				</li>
-				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon-thumbs-down"></span></a>
-				</li>
-			</ul>
-		<?php endif; ?>
-	</div>
+	</section>	
 </script>
 
 <script type="text/template" id="drop-photos-view-template">
@@ -213,12 +215,12 @@
 			<a href="#" class="button-prev"><div></div></a>
 			<% } %>
 			<?php if ( ! $anonymous): ?>
-				<ul class="dual-buttons score-drop">
-					<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon-thumbs-up"></span></a>
+				<ul class="score-drop">
+					<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-star"></span></a>
 					</li>
-					<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon-thumbs-down"></span></a>
+					<li class="remove <%= parseInt(user_score) == -1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-cancel"></span></a>
 					</li>
 				</ul>
 			<?php endif; ?>

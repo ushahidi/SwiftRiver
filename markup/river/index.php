@@ -41,9 +41,9 @@
 			<article class="drop col_3 base">
 				<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
@@ -63,13 +63,13 @@
 				<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
 				<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star selected"><a href="#"><span class="icon-star"></span><span class="star-total">57</span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket added"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"><strong>4</strong></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -84,9 +84,9 @@
 			<article class="drop col_3 base">
 				<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
@@ -105,9 +105,9 @@
 			<article class="drop col_3 base">
 				<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
@@ -127,9 +127,9 @@
 				<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
 				<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
@@ -148,9 +148,9 @@
 			<article class="drop col_3 base">
 				<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
 				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
+					<ul class="score-drop">
+						<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+						<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>

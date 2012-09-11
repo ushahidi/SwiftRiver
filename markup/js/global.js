@@ -28,15 +28,23 @@ $(document).ready(function() {
 		}
 	}
 	saveToolbar();	
+	
+	// DROP SHOW 'REMOVE' ON HOVER
+	if (window.innerWidth > 800) {
+		$('article.drop, .drop-full').hover(
+			function() {
+				$(this).find('.remove').fadeIn('fast');		
+			},function() {
+				$(this).find('.remove').fadeOut('fast');
+		});
+	}
 
 	// DROP SCORING
-	$('article.drop ul.score-drop > li.like').live('click', function(e) {
-		$(this).addClass('scored').siblings().remove();
-		$(this).children().append('<span class="user-score">Useful</span>');
-	});
-	$('article.drop ul.score-drop > li.dislike').live('click', function(e) {
-		$(this).addClass('scored').siblings().remove();
-		$(this).children().append('<span class="user-score">Not useful</span>');
+	$('article.drop ul.score-drop li.star').toggle(function() {
+		$(this).addClass('selected').children('a').append('<span class="star-total">23</span>');	
+	}, function() {
+		$(this).removeClass('selected');
+		$(this).find('.star-total').remove();	
 	});
 
 	// POPOVER WINDOWS
@@ -91,19 +99,19 @@ $(document).ready(function() {
 	});
 
 	// ZOOM WINDOWS
-//	function zoomHide () {
-//		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
-//			$(this).parent().fadeOut('fast').removeClass('visible');
-//			$('body').removeClass('noscroll zoomed');
-//			$(this).unbind();
-//		});
-//	}
+	function zoomHide () {
+		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
+			$(this).parent().fadeOut('fast').removeClass('visible');
+			$('body').removeClass('noscroll zoomed');
+			$(this).unbind();
+		});
+	}
 	$('a.zoom-trigger').live('click', function(e) {
 		var url = $(this).attr('href');
 		$('#zoom-container div.modal-window').load(url + ' .modal');
 		$('#zoom-container').fadeIn('fast').addClass('visible');
 		$('body').addClass('noscroll zoomed');
-//		zoomHide();
+		zoomHide();
 		e.preventDefault();
 	});
 	$('#zoom-container .close a').live('click', function(e) {

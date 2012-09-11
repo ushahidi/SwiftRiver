@@ -33,56 +33,60 @@
 		<div class="center">
 			<div class="col_12">
 				<article class="drop base cf">
-					<div class="drop-content">
-						<div class="drop-body">
+					<div class="drop-body">
+						<div class="drop-content">
 							<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-							<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 						</div>
-						<section class="drop-source cf">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
-							<div class="byline">
-								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						<div class="drop-details">
+							<p class="metadata">4:30 p.m. Jan. 13, 2012 <a href="#"><i class="icon-comment"></i><strong>3</strong> comments</a></p>
+							<div class="drop-actions cf">
+								<ul class="score-drop">
+									<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+									<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
+								</ul>						
+								<ul class="dual-buttons move-drop">
+									<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+									<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+								</ul>
 							</div>
-						</section>
-					</div>
-					<div class="drop-actions stacked cf">
-						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
-						</ul>
-						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
-						</ul>
-					</div>
+						</div>
+					</div>						
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>
 				</article>
 	
 				<article class="drop base cf">
-					<div class="drop-content">
-						<div class="drop-body">
+					<div class="drop-body">
+						<div class="drop-content">
 							<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
 							<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-							<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
 						</div>
-						<section class="drop-source cf">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
-							<div class="byline">
-								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						<div class="drop-details">						
+							<p class="metadata">4:30 p.m. Jan. 13, 2012 <a href="#"><i class="icon-comment"></i><strong>3</strong> comments</a></p>
+							<div class="drop-actions cf">
+								<ul class="score-drop">
+									<li class="button-white star"><a href="#"><span class="icon-star"></span></a></li>
+									<li class="remove"><a href="#"><span class="icon-cancel"></span></a></li>					
+								</ul>					
+								<ul class="dual-buttons move-drop">
+									<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
+									<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+								</ul>
 							</div>
-						</section>
+						</div>							
 					</div>
-					<div class="drop-actions stacked cf">
-						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
-						</ul>
-						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon-thumbs-up"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon-thumbs-down"></span></a></li>
-						</ul>
-					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>
 				</article>
 			</div>
 		</div>
