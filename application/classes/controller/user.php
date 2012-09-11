@@ -191,7 +191,6 @@ class Controller_User extends Controller_Swiftriver {
 			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
 		}
 	}
-
 	
 	/**
 	 * @return	void
@@ -236,7 +235,10 @@ class Controller_User extends Controller_Swiftriver {
 						$this->user->has('river_subscriptions', $river_orm))
 					{
 						$this->user->remove('river_subscriptions', $river_orm);
-					}					
+					}
+
+					// Purge the rivers cache
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				
 				if ($item_array['type'] == 'bucket') 
@@ -262,7 +264,10 @@ class Controller_User extends Controller_Swiftriver {
 						$this->user->has('bucket_subscriptions', $bucket_orm))
 					{
 						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}					
+					}
+
+					// Purge the buckets cache
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
 				
 				// Stalking!
@@ -278,21 +283,19 @@ class Controller_User extends Controller_Swiftriver {
 					}
 					
 					// Are following
-					if ($item_array['following'] == 1 AND 
-						! $this->user->has('following', $user_orm))
+					if ($item_array['following'] == 1 AND ! $this->user->has('following', $user_orm))
 					{
 						$this->user->add('following', $user_orm);
 					}
 					
 					// Are unfollowing
-					if ($item_array['following'] == 0 AND 
-						$this->user->has('following', $user_orm))
+					if ($item_array['following'] == 0 AND $this->user->has('following', $user_orm))
 					{
 						$this->user->remove('following', $user_orm);
 					}					
 				}
-				
 			break;
+
 			case "DELETE":
 				$item_type = $this->request->param('name', 0);
 				$id = $this->request->param('id', 0);
@@ -302,14 +305,23 @@ class Controller_User extends Controller_Swiftriver {
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				if ($item_type == 'bucket') {
+
+				if ($item_type == 'bucket')
+				{
 					$bucket_orm = ORM::factory('bucket', $id);
 					$bucket_orm->delete();
+
+					// Delete the buckets cache so that it's recreated on page reload
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
-				if ($item_type == 'river') {
+
+				if ($item_type == 'river')
+				{
 					$river_orm = ORM::factory('river', $id);
 					$river_orm->delete();
+
+					// Delete the rivers cache so that it's recreated on page reload
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				
 			break;

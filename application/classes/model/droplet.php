@@ -232,9 +232,7 @@ class Model_Droplet extends ORM {
 		Model_Media::get_media($droplets);
 		
 		// Populate the drop's metadata tables
-		self::add_metadata($droplets);
-		
-		return array($droplets, $new_droplets); 
+		self::add_metadata($droplets);		
 	}
 	
 	/**
@@ -1530,6 +1528,10 @@ class Model_Droplet extends ORM {
 
 		if ($user_orm->loaded())
 		{
+			// Get the current date
+			$today = new DateTime(date('Y-m-d'));
+			$start_date = $today->sub(new DateInterval('P14D'));
+
 			// Sanity check for the page number
 			$page = (empty($page)) ? 1 : $page;
 
@@ -1547,8 +1549,8 @@ class Model_Droplet extends ORM {
 			    ->on('all_scores.droplet_id', '=', 'droplets.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
-			    ->where('droplets.parent_id', '=', 0);
+			    ->where('droplets.parent_id', '=', 0)
+			    ->where('droplets.droplet_date_add', '>=', $start_date->format('Y-m-d H:i:s'));
 
 			self::apply_droplets_filter($query, $filters, $user_id);
 

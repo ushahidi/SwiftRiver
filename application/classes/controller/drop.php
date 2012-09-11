@@ -38,8 +38,7 @@ class Controller_Drop extends Controller_Swiftriver {
 				// Get the POST data
 				$drops = json_decode($this->request->body(), TRUE);
 				Kohana::$log->add(Log::DEBUG, ":count Drops received", array(':count' => count($drops)));
-				list(, $new_drops) = Model_Droplet::create_from_array($drops);
-				echo json_encode($new_drops);
+				Model_Droplet::create_from_array($drops);
 			break;
 		}
 	 }
