@@ -400,7 +400,6 @@ class Controller_River extends Controller_Drop_Base {
 	
 	/**
 	 * River management
-	 * 
 	 */
 	public function action_manage()
 	{
@@ -422,36 +421,43 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_404();
 				}
-				
-				if (!$river_array['subscribed']) {
-					// Unsubscribing
-					
-					// Unfollow
-					if ($this->user->has('river_subscriptions', $river_orm)) {
+
+				if ( ! $river_array['subscribed'])
+				{
+					// Unsubscribe					
+					if ($this->user->has('river_subscriptions', $river_orm))
+					{
 						$this->user->remove('river_subscriptions', $river_orm);
 					}
 					
 					// Stop collaborating
 					$collaborator_orm = $river_orm->river_collaborators
-													->where('user_id', '=', $this->user->id)
-													->where('collaborator_active', '=', 1)
-													->find();
+					                        ->where('user_id', '=', $this->user->id)
+					                        ->where('collaborator_active', '=', 1)
+					                        ->find();
 					if ($collaborator_orm->loaded())
 					{
 						$collaborator_orm->delete();
 						$river_array['is_owner'] = FALSE;
 						$river_array['collaborator'] = FALSE;
 					}
-				} else {
-					// Subscribing
-					
-					if (!$this->user->has('river_subscriptions', $river_orm)) {
+
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
+				}
+				else
+				{
+					// Subscribing				
+					if ( ! $this->user->has('river_subscriptions', $river_orm))
+					{
 						$this->user->add('river_subscriptions', $river_orm);
 					}
+
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				// Return updated bucket
 				echo json_encode($river_array);
 			break;
+
 			case "DELETE":
 				$river_id = intval($this->request->param('id', 0));
 				$river_orm = ORM::factory('river', $river_id);
@@ -465,6 +471,7 @@ class Controller_River extends Controller_Drop_Base {
 					}
 					
 					$river_orm->delete();
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				else
 				{

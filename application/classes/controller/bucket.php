@@ -385,32 +385,41 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_404();
 				}
 				
-				if (!$bucket_array['subscribed']) {
+				if ( ! $bucket_array['subscribed'])
+				{
 					// Unsubscribing
 					
 					// Unfollow
-					if ($this->user->has('bucket_subscriptions', $bucket_orm)) {
+					if ($this->user->has('bucket_subscriptions', $bucket_orm))
+					{
 						$this->user->remove('bucket_subscriptions', $bucket_orm);
 					}
 					
 					// Stop collaborating
 					$collaborator_orm = $bucket_orm->bucket_collaborators
-													->where('user_id', '=', $this->user->id)
-													->where('collaborator_active', '=', 1)
-													->find();
+					                        ->where('user_id', '=', $this->user->id)
+					                        ->where('collaborator_active', '=', 1)
+					                        ->find();
 					if ($collaborator_orm->loaded())
 					{
 						$collaborator_orm->delete();
 						$bucket_array['is_owner'] = FALSE;
 						$bucket_array['collaborator'] = FALSE;
 					}
-				} else {
+
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
+				}
+				else
+				{
 					// Subscribing
-					
-					if (!$this->user->has('bucket_subscriptions', $bucket_orm)) {
+					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
+					{
 						$this->user->add('bucket_subscriptions', $bucket_orm);
 					}
+
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
+
 				// Return updated bucket
 				echo json_encode($bucket_array);
 			break;
@@ -435,7 +444,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 					$this->response->status(400);
 					$this->response->headers('Content-Type', 'application/json');
 					$errors = array();
-					foreach ($e->errors('validation') as $message) {
+					foreach ($e->errors('validation') as $message)
+					{
 						$errors[] = $message;
 					}
 					echo json_encode(array('errors' => $errors));
@@ -444,12 +454,13 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$this->response->status(400);
 					$this->response->headers('Content-Type', 'application/json');
-					$errors = array(__("A bucket with the name ':name' already exists", 
-					                                array(':name' => $bucket_array['bucket_name']
-					)));
+					$errors = array(__("A bucket with the name ':name' already exists",
+						array(':name' => $bucket_array['bucket_name'])
+					));
 					echo json_encode(array('errors' => $errors));
 				}
 			break;
+
 			case "DELETE":
 				$bucket_id = intval($this->request->param('id', 0));
 				$bucket_orm = ORM::factory('bucket', $bucket_id);
@@ -463,6 +474,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					}
 					
 					$bucket_orm->delete();
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
 				else
 				{

@@ -301,9 +301,8 @@ class Model_River extends ORM {
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
-				->where('rivers_droplets.droplet_date_pub', '>', '0000-00-00 00:00:00')
-			    ->where('rivers_droplets.river_id', '=', $river_id)
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE);
+			    ->where('rivers_droplets.droplet_date_pub', '>', '0000-00-00 00:00:00')
+			    ->where('rivers_droplets.river_id', '=', $river_id);
 			
 			if ($drop_id)
 			{
@@ -404,7 +403,6 @@ class Model_River extends ORM {
 			    ->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			    ->join('identities', 'INNER')
 			    ->on('droplets.identity_id', '=', 'identities.id')
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 			    ->where('rivers_droplets.river_id', '=', $river_id)
 			    ->where('rivers_droplets.id', '>', $since_id);
 			
