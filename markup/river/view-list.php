@@ -20,7 +20,7 @@
 			<div id="page-views" class="river touchcarousel col_12">
 				<ul class="touchcarousel-container">
 					<li class="touchcarousel-item"><a href="/markup/river">Drops</a></li>
-					<li class="touchcarousel-item active"><a href="/markup/river/view-list.php">List</a></li>
+					<li class="touchcarousel-item active"><a href="/markup/river/view-list.php">List <span class="drop-total">81</span></a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-photos.php">Photos</a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-map.php">Map</a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-timeline.php">Timeline</a></li>
@@ -75,7 +75,7 @@
 								</ul>					
 								<ul class="dual-buttons move-drop">
 									<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-									<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+									<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">3</span></a></li>
 								</ul>
 							</div>
 						</div>							

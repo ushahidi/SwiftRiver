@@ -52,7 +52,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">1</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -74,7 +74,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket added"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"><strong>4</strong></span></a></li>
+						<li class="button-blue bucket added"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">6</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -95,7 +95,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">1</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -116,7 +116,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">1</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -138,7 +138,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">4</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">
@@ -159,7 +159,7 @@
 					</ul>
 					<ul class="dual-buttons move-drop">
 						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon-share"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">2</span></a></li>
 					</ul>
 				</div>
 				<section class="drop-source cf">

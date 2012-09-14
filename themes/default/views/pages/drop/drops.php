@@ -30,6 +30,7 @@
 					<li class="button-blue bucket">
 						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
 						    <span class="icon-add-to-bucket"></span>
+						    <!--span class="bucket-total">4</span-->
 						</a>
 					</li>
 				<?php endif; ?>
