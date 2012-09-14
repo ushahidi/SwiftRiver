@@ -43,6 +43,3 @@
 [submodule "plugins/twitter"]
 	path = plugins/twitter
 	url = git://github.com/ushahidi/swiftriver-plugin-twitter.git
-[submodule "plugins/messaging"]
-	path = plugins/messaging
-	url = git@github.com:ushahidi/swiftriver-plugin-messaging.git
