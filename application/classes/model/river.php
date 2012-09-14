@@ -62,7 +62,7 @@ class Model_River extends ORM {
 		return array(
 			'river_name' => array(
 				array('not_empty'),
-				array('max_length', array(':value', 25)),
+				array('max_length', array(':value', 255)),
 			),
 			'river_public' => array(
 				array('in_array', array(':value', array('0', '1')))

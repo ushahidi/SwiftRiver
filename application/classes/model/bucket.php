@@ -65,7 +65,7 @@ class Model_Bucket extends ORM {
 		return array(
 			'bucket_name' => array(
 				array('not_empty'),
-				array('max_length', array(':value', 25)),
+				array('max_length', array(':value', 255)),
 			),
 			'bucket_publish' => array(
 				array('in_array', array(':value', array('0', '1')))
