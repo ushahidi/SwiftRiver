@@ -203,6 +203,9 @@ body {
   filter: progid:dximagetransform.microsoft.gradient(GradientType=0, StartColorStr='#e88184', EndColorStr='#d71b2a');
   padding: 1px 5px;
 }
+ul.dual-buttons li {
+  float: left;
+}
 ul.dual-buttons li a {
   display: block;
   float: left;
@@ -878,7 +881,7 @@ hgroup.page-title .page-action .button-blue a {
 }
 /* --------------------------- PAGE NAVIGATION */
 nav.page-navigation {
-  -wekbit-box-shadow: 0 1px 0 rgba(256, 256, 256, 0.5) inset;
+  -webkit-box-shadow: 0 1px 0 rgba(256, 256, 256, 0.5) inset;
   -moz-box-shadow: 1px 0 0 rgba(256, 256, 256, 0.5) inset;
   box-shadow: 0 1px 0 rgba(256, 256, 256, 0.75) inset;
   border-bottom: 1px solid #dbdbdb;
@@ -905,6 +908,19 @@ nav.page-navigation ul li.active a {
 nav.page-navigation ul li a:hover {
   color: #259cb5;
   text-decoration: none;
+}
+nav.page-navigation ul li a span.drop-total {
+  color: #fff;
+  font-size: 0.85em;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -wekbit-box-shadow: 0 1px 0 rgba(256, 256, 256, 0.5) inset;
+  -moz-box-shadow: 1px 0 0 rgba(256, 256, 256, 0.5) inset;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) inset;
+  background: #6cbfd0;
+  padding: 0.2em 0.35em;
 }
 nav.page-navigation .filter-actions {
   text-align: right;
@@ -2374,9 +2390,6 @@ footer#global-footer {
   hgroup.page-title .page-action {
     text-align: right;
     margin: 25px 0;
-  }
-  hgroup.page-title .page-action ul.dual-buttons {
-    float: right;
   }
   hgroup.page-title .page-action .button-blue a {
     line-height: 27px;

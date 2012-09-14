@@ -19,7 +19,7 @@
 		<div class="center">
 			<div id="page-views" class="river touchcarousel col_12">
 				<ul class="touchcarousel-container">
-					<li class="touchcarousel-item active"><a href="/markup/river">Drops</a></li>
+					<li class="touchcarousel-item active"><a href="/markup/river">Drops <span class="drop-total">81</span></a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-list.php">List</a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-photos.php">Photos</a></li>
 					<li class="touchcarousel-item"><a href="/markup/river/view-map.php">Map</a></li>

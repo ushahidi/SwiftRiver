@@ -30,7 +30,7 @@
 				<?php foreach ($nav as $item): ?>
 				<li id="<?php echo $item['id']; ?>" class="touchcarousel-item <?php echo $item['active'] == $active ? 'active' : ''; ?>">
 					<a href="<?php echo $river_base_url.$item['url']; ?>">
-						<?php echo $item['label'];?>
+						<?php echo $item['label'];?> <!--span class="drop-total">81</span-->
 					</a>
 				</li>
 				<?php endforeach; ?>
