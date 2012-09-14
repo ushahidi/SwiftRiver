@@ -123,7 +123,7 @@ class Model_River_Tag_Trend extends ORM {
 	 */
 	public static function get_ids($num)
 	{
-		$query = DB::select(array(DB::expr("NEXTVAL('river_tag_trends',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('river_tag_trends',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}

@@ -95,9 +95,10 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `drop_count` int(11) NOT NULL DEFAULT '0',
   `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
   `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
-  `expiry_extension_token` varchar(64),
+  `expiry_extension_token` varchar(64) DEFAULT NULL,
   `extension_count` int(11) NOT NULL DEFAULT '0' COMMENT 'The no. of times the expiry date has been extended',
   `expiry_candidate` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
+  `public_token` char(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `river_name_url` (`river_name_url`),
@@ -342,6 +343,7 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `plugin_description` VARCHAR(255) NULL DEFAULT NULL ,
   `plugin_enabled` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'Global Plugin Enabled/Disable' ,
   `plugin_weight` TINYINT(4) NOT NULL DEFAULT 1 COMMENT 'Lower digit = higher priority' ,
+  `plugin_installed` TINYINT(4) NOT NULL DEFAULT 0 ,
   UNIQUE INDEX (`plugin_path` ASC) ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
@@ -394,6 +396,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(255) NOT NULL,
   `api_key` varchar(255) NOT NULL,
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `invites` smallint(6) NOT NULL DEFAULT '10',
   `last_login` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
@@ -630,6 +633,7 @@ CREATE TABLE IF NOT EXISTS `river_collaborators` (
   `river_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1)  DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `river_id` (`river_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -643,6 +647,7 @@ CREATE TABLE IF NOT EXISTS `bucket_collaborators` (
   `user_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `bucket_id` bigint(11) unsigned NOT NULL DEFAULT '0',
   `collaborator_active` tinyint(1) DEFAULT NULL,
+  `read_only` tinyint(1)  DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`,`bucket_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -837,7 +842,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
 (6, 'river_active_duration', '14'),
-(7, 'river_expiry_notice_period', '3');
+(7, 'river_expiry_notice_period', '3'),
+(8, 'general_invites_enabled', '0');
 
 -- -----------------------------------------------------
 -- Data for table `users`

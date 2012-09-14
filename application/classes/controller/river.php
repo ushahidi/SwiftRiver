@@ -75,14 +75,11 @@ class Controller_River extends Controller_Drop_Base {
 		// Action involves a specific river, check permissions
 		if ($this->river->loaded())
 		{					
-			// Is the logged in user an owner
-			if ($this->river->is_owner($this->user->id)) 
-			{
-				$this->owner = TRUE;
-			}
+			$this->owner = $this->river->is_owner($this->user->id);
+			$this->collaborator = $this->river->is_collaborator($this->user->id);
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->river->river_public AND ! $this->owner)
+			if ( ! $this->river->river_public AND ! $this->owner AND ! $this->collaborator)
 			{
 				$this->request->redirect($this->dashboard_url);			
 			}
@@ -96,12 +93,13 @@ class Controller_River extends Controller_Drop_Base {
 			if ($this->river->account->user->id == $this->user->id OR 
 				$this->river->account->user->username == 'public')
 			{
-				$this->template->header->title = $this->river->river_name;
+				$this->page_title = $this->river->river_name;
 			}
 			else
 			{
-				$this->template->header->title = $this->river->account->account_path.' / '.$this->river->river_name;
+				$this->page_title = $this->river->account->account_path.' / '.$this->river->river_name;
 			}
+			$this->template->header->title = $this->page_title;
 
 			$this->template->content = View::factory('pages/river/layout')
 				->bind('river', $this->river)
@@ -113,7 +111,8 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
 				->bind('active', $this->active);
-
+			$this->template->content->is_collaborator = $this->collaborator;
+			
 			if ( ! $this->owner)
 			{
 				$river_item = json_encode(array(
@@ -144,13 +143,7 @@ class Controller_River extends Controller_Drop_Base {
 		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 				
 		// The maximum droplet id for pagination and polling
-		$max_droplet_id = 0;
-		if ( ! ($max_droplet_id = $this->cache->get('river_max_id_'.$river_id, FALSE)))
-		{
-			$max_droplet_id = Model_River::get_max_droplet_id($river_id);
-			// Cache for 90s
-			$this->cache->set('river_max_id_'.$river_id, $max_droplet_id, 90);
-		}
+		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 
 		// River filters
 		$filters = $this->_get_filters();
@@ -380,6 +373,8 @@ class Controller_River extends Controller_Drop_Base {
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('user', $user_id);
 				
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				
 				$collaborator_orm = ORM::factory("river_collaborator")
 									->where('river_id', '=', $this->river->id)
 									->where('user_id', '=', $user_orm->id)
@@ -389,9 +384,15 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					$collaborator_orm->river = $this->river;
 					$collaborator_orm->user = $user_orm;
-					$collaborator_orm->save();
 					Model_User_Action::create_action($this->user->id, 'river', $this->river->id, $user_orm->id);
-				}				
+				}
+				
+				if (isset($collaborator_array['read_only']))
+				{
+					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
+				}
+				
+				$collaborator_orm->save();
 			break;
 		}
 	}

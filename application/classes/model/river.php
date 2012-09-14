@@ -91,6 +91,11 @@ class Model_River extends ORM {
 			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 		}
 		
+		if ( ! isset($this->public_token))
+		{
+			$this->public_token = $this->get_token();
+		}
+		
 		// Set river_name_url to the sanitized version of river_name sanitized
 		$this->river_name_url = URL::title($this->river_name);
 
@@ -452,12 +457,22 @@ class Model_River extends ORM {
 	 */
 	public static function get_max_droplet_id($river_id)
 	{
-	    // Build River Query
-		$query = DB::select(array('max_drop_id', 'id'))
-		    ->from('rivers')
-		    ->where('id', '=', $river_id);
+		$max_droplet_id = 0;
+		if ( ! ($max_droplet_id = Cache::instance()->get('river_max_id_'.$river_id, FALSE)))
+		{
+			// Build River Query
+			$query = DB::select(array('max_drop_id', 'id'))
+			    ->from('rivers')
+			    ->where('id', '=', $river_id);
+			
+			$max_droplet_id = $query->execute()->get('id', 0);
+			
+			// Cache for 90s
+			Cache::instance()->set('river_max_id_'.$river_id, $max_droplet_id, 90);
+		}
+	    
 		    
-		return $query->execute()->get('id', 0);
+		return $max_droplet_id;
 	}
 	
 	/**
@@ -504,7 +519,35 @@ class Model_River extends ORM {
 		(
 			$this->river_collaborators
 			    ->where('user_id', '=', $user_orm->id)
-			    ->where('collaborator_active', '=', 1)
+			    ->where('read_only', '!=', 1)
+			    ->find()
+			    ->loaded()
+		)
+		{
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+	
+	/**
+	 * @param int $user_id Database ID of the user	
+	 * @return int
+	 */
+	public function is_collaborator($user_id)
+	{
+		// Does the user exist?
+		$user_orm = ORM::factory('user', $user_id);
+		if ( ! $user_orm->loaded())
+		{
+			return FALSE;
+		}
+		
+		// Is the user id a river collaborator?
+		if
+		(
+			$this->river_collaborators
+			    ->where('user_id', '=', $user_orm->id)
 			    ->find()
 			    ->loaded()
 		)
@@ -647,17 +690,21 @@ class Model_River extends ORM {
 	 *
 	 * @return array
 	 */	
-	public function get_collaborators()
+	public function get_collaborators($active_only = FALSE)
 	{
 		$collaborators = array();
 		
-		foreach ($this->river_collaborators->where('collaborator_active', '=', 1)->find_all() as $collaborator)
+		foreach ($this->river_collaborators->find_all() as $collaborator)
 		{
+			if ($active_only AND ! (bool) $collaborator->collaborator_active)
+				continue;
+				
 			$collaborators[] = array(
 				'id' => $collaborator->user->id, 
 				'name' => $collaborator->user->name,
 				'account_path' => $collaborator->user->account->account_path,
 				'collaborator_active' => $collaborator->collaborator_active,
+				'read_only' => (bool) $collaborator->read_only,
 				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
 		}
@@ -899,6 +946,33 @@ class Model_River extends ORM {
 	{
 		return $this->river_collaborators
 		           ->where('collaborator_active', '=', 1);
+	}
+	
+	/**
+	 * Sets the bucket's access token overwriting the pre-existing one
+	 *
+	 * @return void
+	 */
+	public function set_token()
+	{
+		$this->public_token = $this->get_token();
+		$this->save();
+	}
+	
+	/**
+	 * @return void
+	 */
+	private function get_token()
+	{
+		return md5(uniqid(mt_rand().$this->account->account_path.$this->river_name, true));
+	}
+	
+	/**
+	 * @return void
+	 */	
+	public function is_valid_token($token)
+	{
+		return $token == $this->public_token AND isset($this->public_token);
 	}
 
 }

@@ -1,4 +1,4 @@
-<hgroup class="page-title cf">
+<hgroup class="page-title river-title cf">
 	<div class="center">
 		<div class="page-h1 col_9">
 			<h1 class="<?php echo ($river->river_public == 0) ? "private" : "public"; ?>">
@@ -27,7 +27,7 @@
 				</a>
 			</h2>
 		</div>
-		<?php elseif ( ! $anonymous): ?>
+		<?php elseif ( ! $anonymous AND ! $is_collaborator): ?>
 		<div class="follow-summary col_3" id="section_follow_river">
 		</div>
 		<?php endif; ?>

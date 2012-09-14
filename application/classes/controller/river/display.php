@@ -61,4 +61,15 @@ class Controller_River_Display extends Controller_River_Settings {
 		$session->delete('messages');
 	}
 	
+	/**
+	 * Create, save, and echo a new key for this bucket in JSON
+	 */
+	public function action_create_token()
+	{
+		$this->river->set_token();
+		$this->auto_render = false;
+		$this->response->headers('Content-Type', 'application/json');
+		echo json_encode($this->river->public_token);
+	}
+	
 }

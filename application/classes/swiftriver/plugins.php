@@ -19,6 +19,24 @@ class Swiftriver_Plugins {
 	 * @var array
 	 */
 	private static $channels = array();
+
+	/**
+	 * Registry for plugin installers and their respective callbacks
+	 * @var array
+	 */
+	protected static $_installers = array();
+
+	/**
+	 * Register an installer
+	 *
+	 * @param   string   plugin namespace
+	 * @param   array    http://php.net/callback
+	 * @return  void
+	 */
+	public static function register($plugin, $callback)
+	{
+		self::$_installers[$plugin] = $callback;
+	}
 	
 	/**
 	 * Load all active plugins into the Kohana system
@@ -50,10 +68,65 @@ class Swiftriver_Plugins {
 			
 			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
 		}
+		else
+		{
+			foreach ($plugin_entries as $plugin_path => $value)
+			{
+				if ( ! is_dir(realpath(PLUGINPATH.$plugin_path.DIRECTORY_SEPARATOR)))
+				{
+					// Plugin no longer exists. Remove from DB.
+					$plugin = ORM::factory("plugin")
+						->where("plugin_path", "=", $plugin_path)
+						->find();
+					$plugin->delete();
+
+					// Log this event
+					Kohana::$log->add(Log::INFO, "Plugin directory for ':plugin' not found. Deleting from DB",
+						array(':plugin' => $plugin_path));
+					
+					unset($plugin_entries[$plugin_path]);
+					continue;
+				}
+			}
+
+			// Update Cache
+			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
+		}
 		
 		
 		// Add the plugin entries to the list of Kohana modules
 		Kohana::modules(Kohana::modules() + $plugin_entries);
+	}
+
+	/**
+	 * Run Plugin Installer Script if Available
+	 *
+	 * @param   string   plugin namespace
+	 * @return  bool
+	 */
+	public static function install($plugin)
+	{
+		// Dynamically load the new module into the system
+		Kohana::modules(array_merge(array(PLUGINPATH.$plugin), Kohana::modules()));
+		
+		// Does the plugin have an installer script?
+		if ( isset(self::$_installers[$plugin]) )
+		{
+			try
+			{
+				call_user_func(self::$_installers[$plugin]);
+				return TRUE;
+			}
+			catch (Exception $e)
+			{
+				Kohana::$log->add(Log::ERROR, "Could not execute plugin installer callback function :callback", 
+					array(':callback' => self::$_installers[$plugin]));
+
+				return FALSE;
+			}
+		}
+
+		return FALSE;
 	}
 	
 	/**

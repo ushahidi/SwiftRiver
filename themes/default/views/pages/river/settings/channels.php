@@ -9,6 +9,8 @@
 				<p><strong>No channels.</strong> You can flow new channels into your river by selecting the "Add channel" button above.</p>
 			</div>
 			
+			<?php Swiftriver_Event::run('swiftriver.template.river.settings.channels', $river); ?>
+			
 			<!-- CHANNELS WILL GO HERE -->
 
 		</div>

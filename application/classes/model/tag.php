@@ -188,7 +188,7 @@ class Model_Tag extends ORM
 	public static function get_ids($num)
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('tags',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('tags',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}

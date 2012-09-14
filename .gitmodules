@@ -43,3 +43,6 @@
 [submodule "plugins/twitter"]
 	path = plugins/twitter
 	url = git://github.com/ushahidi/swiftriver-plugin-twitter.git
+[submodule "modules/captcha"]
+	path = modules/captcha
+	url = git://github.com/ekala/kohana-captcha.git

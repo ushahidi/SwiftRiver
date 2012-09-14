@@ -440,7 +440,7 @@ class Model_User extends Model_Auth_User {
 		$admin = FALSE;
 		if (Auth::instance()->logged_in())
 		{
-			$admin = Auth::instance()->get_user()->is_admin();
+			$admin = (Auth::instance()->get_user()->is_admin() || Model_Setting::get_setting('general_invites_enabled'));
 		}
 		
 		if ( ! (bool) Model_Setting::get_setting('public_registration_enabled') AND ! $admin)
@@ -499,7 +499,7 @@ class Model_User extends Model_Auth_User {
 				array(':sitename' => Model_Setting::get_setting('site_name')));
 		}
 		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('useradmin.email_address');
+		$site_email = Kohana::$config->load('site.email_address');
 		
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		
@@ -597,7 +597,7 @@ class Model_User extends Model_Auth_User {
 		$mail_body = View::factory('emails/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
 		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('useradmin.email_address');
+		$site_email = Kohana::$config->load('site.email_address');
 		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		

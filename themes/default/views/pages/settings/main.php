@@ -86,6 +86,12 @@
 					<?php echo __('Allow anonymous access'); ?>
 				</label>
 			</div>
+			<div class="parameter">
+				<label for="general_invites_enabled">
+					<?php echo Form::checkbox('general_invites_enabled', 1,  (bool)$settings['general_invites_enabled']); ?>
+					<?php echo __('Allow general invites'); ?>
+				</label>
+			</div>
 		</section>
 	</article>
 	<article class="container base">

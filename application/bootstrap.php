@@ -101,6 +101,7 @@ Kohana::modules(array(
 	'themes/default' => THEMEPATH.'default', // Themes
 	'csrf'         => MODPATH.'csrf',        // CSRF
 	'K3-Cache_Redis' => MODPATH.'K3-Cache_Redis', // Redis Cache
+	'captcha' => MODPATH.'captcha',          // Captcha
 	));
 
 
@@ -268,7 +269,7 @@ Route::set('river_maintenance', 'maintenance')
  */
 Route::set('account_pages', '<account>/<action>',
     array(
-    	'action' => '(rivers|buckets|create|settings|share|followers|following)'
+    	'action' => '(rivers|buckets|create|settings|share|followers|following|invite)'
     ))
 	->defaults(array(
 		'controller' => 'user',

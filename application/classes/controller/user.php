@@ -77,7 +77,7 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('followers', $followers)
 			->bind('following', $following)
 			->bind('view_type', $view_type);
-		$this->template->content->nav = $this->get_nav();
+		$this->template->content->nav = $this->get_nav($this->user);
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
@@ -417,7 +417,7 @@ class Controller_User extends Controller_Swiftriver {
 							 ->bind('secret_url', $secret_url);		            
         
 				$secret_url = url::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
-				$site_email = Kohana::$config->load('useradmin.email_address');
+				$site_email = Kohana::$config->load('site.email_address');
 				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 				$resp = RiverID_API::instance()
 						    ->change_email($this->user->email, $new_email, $current_password,
@@ -706,17 +706,77 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$follower_list = json_encode($following);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';
 	}
-	
+
+	public function action_invite()
+	{
+		if ( ! Model_Setting::get_setting('general_invites_enabled') OR ! $this->owner)
+			$this->request->redirect($this->dashboard_url);
+
+		// Set the current page
+		$this->active = 'invite-navigation-link';
+		$this->template->content->view_type = 'invites';
+
+		$this->sub_content = View::factory('pages/user/invite')
+			->bind('user', $this->user);
+
+		if ($this->request->post())
+		{
+			$errors = array();
+			$messages = array();
+			$count = 0;
+			$valid_emails = array();
+			$emails = explode(', ', $this->request->post('emails'));
+			foreach ($emails as $k => $email)
+			{
+				if ($count == $this->user->invites)
+					break;
+				
+				$email = trim($email);
+				if ( ! Valid::email($email, TRUE))
+				{
+					$errors[] = 'The email address "'.$email.'" is invalid.';
+					continue;
+				}
+
+				$new = Model_User::new_user($email, $this->riverid_auth, TRUE);
+
+				if (isset($new['errors']))
+				{
+					$errors[] = $email.' - '.implode(" ",$new['errors']);
+					continue;
+				}
+
+				$valid_emails[] = $email;
+				$count++;
+			}
+
+			$this->user->invites -= $count;
+			$this->user->save();
+
+			foreach ($valid_emails as $email)
+			{
+				$messages[] = 'Invite sent to "'.$email.'" successfully!';
+			}
+			if (count($errors) > 0)
+			{
+				$this->sub_content->bind('errors', $errors);
+			}
+			if (count($messages) > 0)
+			{
+				$this->sub_content->bind('messages', $messages);
+			}
+		}
+	}	
 	
 	/**
 	 * Dashboard Navigation Links
 	 * 
-	 * @param string $active - the active menu
+	 * @param string $user - logged in user
 	 * @return	array $nav
 	 */
-	protected static function get_nav()
+	protected static function get_nav($user)
 	{
 		$nav = array();
 
@@ -734,6 +794,18 @@ class Controller_User extends Controller_Swiftriver {
 			'label' => __('Settings')
 		);
 
+		// Invite
+		if (Model_Setting::get_setting('general_invites_enabled') AND
+			$user->invites > 0)
+		{
+			$nav[] = array(
+				'id' => 'invite-navigation-link',
+				'url' => '/invite',
+				'label' => __('Invites')
+			);
+		}
+		
+		
 		// SwiftRiver Plugin Hook -- Add Nav Items
 		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);
 

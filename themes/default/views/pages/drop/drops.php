@@ -247,7 +247,7 @@
 			<%= droplet_content %>
 		</section>
 		<% } %>
-		<% if (media.length > 0) { %>
+		<% if (media.length > 0 && channel == "twitter") { %>
 		<section class="drop-media drop-sub">
 			<h2><?php echo __("Media"); ?></h2>
 			<div>
@@ -351,7 +351,15 @@
 		<form class="following">
 		</form>
 	</div>
-	<div class="modal-body create-new">
+	<div class="modal-body create-new" id="show-create-new">
+		<form>
+			<div class="field">
+				<p class="button-blue" id="show-create-bucket-button"><a href="#" title="<?php echo __("Click here to create a new bucke"); ?>">Create a new bucket</a></p>
+			</div>
+			<div class="system_error"></div>
+		</form>
+	</div>
+	<div class="modal-body create-new nodisplay" id="create-bucket-form">
 		<form>
 			<h2><?php echo __("Create a new bucket"); ?></h2>
 			<div class="field">
@@ -482,8 +490,8 @@
 		<!-- notifications -->
 		<div class="alert-message red" id="error" style="display: none;">
 			<p>
-				<strong><?php echo __("Email sharing error"); ?></strong>
-				<?php echo __("Please provide all the information in the form below"); ?>
+				<strong><?php echo __("Error"); ?></strong>
+				<?php echo __("You have entererd an invalid email address or security code"); ?>
 			</p>
 		</div>
 		<div class="alert-message blue" id="success" style="display: none;">
@@ -498,7 +506,7 @@
 			<section class="property-parameters">
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __("To:"); ?></p>
+						<p class="field"><?php echo __("Send To:"); ?></p>
 						<?php echo Form::input('recipient', ''); ?>
 					</label>
 				</div>
@@ -506,29 +514,34 @@
 		</article>
 		<article class="container base">
 			<section class="property-parameters">
+				<div class="parameter image-field">
+				    <label>
+					    <p class="field"><?php echo __("Security Image:"); ?></p>
+						<?php echo Captcha::instance()->render(); ?>
+					</label>
+				</div>
 				<div class="parameter">
 					<label>
-						<p class="field"><?php echo __("Subject:"); ?></p>
-						<input type="text" name="subject" value="<%= droplet_title %>" />
+						<p class="field"><?php echo __("Security Code:"); ?></p>
+						<input type="text" name="security_code" placeholder="<?php echo __("Enter the text in the image above"); ?>" />
 					</label>
 				</div>
 			</section>
 		</article>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label>
-						<p class="field"><?php echo __("Message:"); ?></p>
-						<textarea name="body" cols="50" rows="8" style="resize: none;"><%= drop_url %></textarea>
-					</label>
-				</div>
-			</section>
-		</article>
-		<p class="button-blue" id="send_sharing_email">
+		<p class="button-blue">
 			<a href="#"><?php echo __("Send"); ?></a>
 		</p>
 		<?php echo Form::close(); ?>
 	</div>
+	<section class="drop-summary cf">
+		<a class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<div class="drop-content">
+			<p><strong><%= identity_name %>:</strong> <%= droplet_title %></p>
+			<p class="drop-source-channel rss">
+				<a href="#"><span class="icon"></span>via <%= channel %></a>
+			</p>
+		</div>
+	</section>
 </article>
 </script>
 
