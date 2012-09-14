@@ -15,8 +15,8 @@
 	echo(Html::style("themes/default/media/css/styles.css"));
 	
 	// Inline css
-	echo $css; 
-	
+	echo $css;
+	Swiftriver_Event::run('swiftriver.template.head.css');
 	?>
 
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
@@ -67,10 +67,8 @@
 	echo(Html::script("themes/default/media/js/assets.js"));
 
 	// Dynamic inline JS
-	echo $js; 
-	
-    // SwiftRiver Plugin Hook
-    Swiftriver_Event::run('swiftriver.template.head');
+	echo $js;
+	Swiftriver_Event::run('swiftriver.template.head.js');
 	?>
 	
 	<script type="text/javascript">
@@ -98,6 +96,7 @@
 			});
 		</script>
 	<?php endif; ?>
+	<?php Swiftriver_Event::run('swiftriver.template.head'); ?>
 </head> 
  
 <body> 
