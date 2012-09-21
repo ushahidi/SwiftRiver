@@ -34,7 +34,7 @@
 </nav>
 <?php endif; ?>
 
-<div id="content" class="user <?php echo $view_type ;?> cf">
+<div id="content" class="<?php echo $view_type ;?> cf">
 	<div class="center">
 		<?php echo $sub_content; ?>
 	</div>
