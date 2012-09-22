@@ -4,10 +4,10 @@
  * The wrapper adds an 'X-CSRF-Token' header if a HTTP POST request
  * is made via XHR.
  *
- * @package    SwiftRiver
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
  * @author     Usahidi Team <team(at)ushahidi.com>
  * @copyright  (c) 2008-2012 Ushahidi Team
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
 class Request extends Kohana_Request {
