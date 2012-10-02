@@ -90,7 +90,7 @@ Installing SwiftRiver
 	This can be done via the command line as follows:
 
 		cp application/config/site.php.template application/config/site.php
-		cp applicaiton/config/database.php.template application/config/database.php
+		cp application/config/database.php.template application/config/database.php
 		cp application/config/cache.php.template application/config/cache.php
 		cp application/config/auth.php.template application/config/auth.php
 		cp application/config/cookie.php.template application/config/cookie.php
