@@ -530,6 +530,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `account_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `account_date_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `account_active` tinyint(4) NOT NULL DEFAULT '1',
+  `river_quota_remaining` INT  NULL  DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `account_path` (`account_path`),
   KEY `user_id` (`user_id`)

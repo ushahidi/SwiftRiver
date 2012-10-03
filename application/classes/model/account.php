@@ -174,4 +174,39 @@ class Model_Account extends ORM
 		return FALSE;		
 	}
 	
+	
+	/**
+	 * Get remaining river quota in the account.
+	 *
+	 * Obtains an exclusive lock so if called within a transaction, the quota
+	 * can be updated.
+	 *
+	 * @return int
+	 */	
+	public function get_remaining_river_quota()
+	{
+		$query = DB::query(Database::SELECT, "select river_quota_remaining from accounts where id = ".$this->id." for update;");
+		
+		return intval($query->execute()->get('river_quota_remaining', 0));
+	}
+	
+	public function decrease_river_quota($count = 1, $save = FALSE)
+	{
+		$this->river_quota_remaining -= $count;
+		
+		if ($save) 
+		{
+			$this->save();
+		}
+	}
+	
+	public function increase_river_quota($count = 1, $save = FALSE)
+	{
+		$this->river_quota_remaining += $count;
+		
+		if ($save)
+		{
+			$this->save();
+		}
+	}
 }

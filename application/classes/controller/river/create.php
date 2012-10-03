@@ -99,6 +99,10 @@ class Controller_River_Create extends Controller_River {
 					array(':name' => $post['river_name'])
 				));
 			}
+			catch (Swiftriver_Exception_Quota $e)
+			{
+				$errors = array(__("No more rivers can be added to this account."));
+			}
 		}		
 	}
 

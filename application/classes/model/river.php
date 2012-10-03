@@ -145,6 +145,8 @@ class Model_River extends ORM {
 		DB::delete('river_collaborators')
 		    ->where('river_id', '=', $this->id)
 		    ->execute();
+		
+		$this->account->increase_river_quota(1, TRUE);
 
 		// Proceed with default behaviour
 		parent::delete();
@@ -175,12 +177,19 @@ class Model_River extends ORM {
 	}
 	
 	/**
-	* Creat a river
+	* Create a river
 	*
 	* @return Model_River
 	*/
 	public static function create_new($river_name, $public, $account, $river_name_url = NULL)
 	{
+		Database::instance()->query(NULL, 'START TRANSACTION');
+		
+		if ( ! $account->get_remaining_river_quota() > 0)
+		{
+			throw new Swiftriver_Exception_Quota(__('River quota exceeded'));
+		}
+		
 		$river = ORM::factory('river');
 		$river->river_name = $river_name;
 		if ($river_name_url)
@@ -190,6 +199,10 @@ class Model_River extends ORM {
 		$river->river_public = $public;
 		$river->account_id = $account->id;
 		$river->save();
+		
+		$account->decrease_river_quota(1, TRUE);
+		
+		Database::instance()->query(NULL, 'COMMIT');
 		
 		// Force refresh of cached rivers
         Cache::instance()->delete('user_rivers_'.$account->user->id);
