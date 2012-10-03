@@ -398,6 +398,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
   `invites` smallint(6) NOT NULL DEFAULT '10',
   `last_login` int(10) unsigned DEFAULT NULL,
+  `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`),

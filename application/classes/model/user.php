@@ -76,6 +76,12 @@ class Model_User extends Model_Auth_User {
 	);
 	
 	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'created_date', 'format' => 'Y-m-d H:i:s');
+	
+	/**
 	 * Rules for the user model. Because the password is _always_ a hash
 	 * when it's set,you need to run an additional not_empty rule in your controller
 	 * to make sure you didn't hash an empty string. The password rules
