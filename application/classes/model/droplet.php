@@ -246,6 +246,7 @@ class Model_Droplet extends ORM {
 	{
 		// Build queries for creating entries in the meta tables droplet_tags, droplet_links and so on
 		$drops_idx = array();
+		$rivers = array();
 		$river_check_query = NULL;
 		$tags_ref = array();
 		$tag_values = NULL;
@@ -269,6 +270,16 @@ class Model_Droplet extends ORM {
 			{
 				foreach ($drop['river_id'] as $river_id)
 				{
+					if (isset($rivers[$river_id])) 
+					{
+						$rivers[$river_id] += 1;
+					}
+					else 
+					{
+						$rivers[$river_id] = 1;
+					}
+					
+					
 					// Subquery to find new river drops
 					$subquery = DB::select(array(DB::expr($drop['id']), 'droplet_id'), 
 										   array(DB::expr($river_id), 'river_id'));
@@ -429,15 +440,53 @@ class Model_Droplet extends ORM {
 		{
 			Swiftriver_Mutex::obtain('rivers_droplets', 3600);
 			
+			// Get river quotas
+			$river_quotas = DB::select('id', 'drop_quota', 'drop_count')
+										->from('rivers')
+										->where('id', 'IN', array_keys($rivers))
+										->execute()
+										->as_array();
+				
+			$over_quota_rivers = array();
+			$rivers_to_disable = array();
+			foreach ($river_quotas as $river_quota)
+			{
+				if ($river_quota['drop_count'] >= $river_quota['drop_quota'])
+				{
+					// River already over quota
+					$over_quota_rivers[] = $river_quota['id'];
+				}
+				else if ($river_quota['drop_count'] + $rivers[$river_quota['id']] >= $river_quota['drop_quota'])
+				{
+					// Signal interested parties that this river's quota has been reached
+					Swiftriver_Event::run('swiftriver.river.quota_reached', $river_quota['id']);
+					$rivers_to_disable[] = $river_quota['id'];
+				}
+			}
+			
+			// Mark now over quota rivers as disabled
+			if ( ! empty($rivers_to_disable))
+			{
+				DB::update('rivers')
+				    ->set(array('river_active' => 0))
+				    ->where('id', 'IN', $rivers_to_disable)
+				    ->execute();
+			}
+			
 			$sub = DB::select('droplet_id', 'river_id')
 						->from('rivers_droplets')
 						->where('droplet_id', 'IN', array_keys($drops_idx));
-			$new_river_drops = DB::select('droplet_id', 'river_id')
+			$new_river_drops_query = DB::select('droplet_id', 'river_id')
 						->distinct(TRUE)
 						->from(array($river_check_query, 'a'))
-						->where(DB::expr('(`droplet_id`, `river_id`)'), 'NOT IN', $sub)
-						->execute()
-						->as_array();
+						->where(DB::expr('(`droplet_id`, `river_id`)'), 'NOT IN', $sub);
+			
+			if ( ! empty($over_quota_rivers))
+			{
+				$new_river_drops_query->where('river_id', 'NOT IN', $over_quota_rivers);
+			}
+			
+			$new_river_drops = $new_river_drops_query->execute()->as_array();
 			
 			if ( ! empty($new_river_drops))
 			{

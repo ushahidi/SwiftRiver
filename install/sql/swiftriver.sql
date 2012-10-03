@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `max_drop_id` bigint(20) NOT NULL DEFAULT '0',
   `drop_count` int(11) NOT NULL DEFAULT '0',
+  `drop_quota` INT  NULL  DEFAULT '10000',
   `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
   `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
   `expiry_extension_token` varchar(64) DEFAULT NULL,
