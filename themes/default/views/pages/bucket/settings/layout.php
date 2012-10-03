@@ -24,6 +24,11 @@
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
 					<a href="<?php echo $bucket_base_url.'/settings/display'; ?>"><?php echo __("Display"); ?></a>
 				</li>
+				<?php
+					// Add bucket settings nav item
+					$event_params = array($bucket_base_url, $active);
+					Swiftriver_Event::run("swiftriver.bucket.settings.nav", $event_params);
+				?>
 			</ul>
 		</div>
 	</div>

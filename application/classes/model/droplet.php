@@ -1333,6 +1333,9 @@ class Model_Droplet extends ORM {
 			if ($bucket_orm->loaded())
 			{
 				$this->add('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
 			}
 		}
 		
@@ -1349,6 +1352,9 @@ class Model_Droplet extends ORM {
 			if ($this->has('buckets', $bucket_orm))
 			{
 				$this->remove('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
 			}
 		}
 
