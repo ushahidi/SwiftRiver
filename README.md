@@ -1,15 +1,17 @@
 SwiftRiver
 ==========
-SwiftRiver is a tool that helps people curate and make sense of large amounts of
-data in a short amount of time. The data originates from various channels such as
-RSS feeds, Email, Twitter, Facebook, SMS etc
+SwiftRiver is a free and open source platform for helping people to make sense of large amounts of information in a short amount of time. It is a mission to democratize access to the tools used to make sense of data - discover information that is authentic, accurate and above all, relevant - by providing the following capabilities:
+
+* Gathering and filtering of information from a variety of channels e.g. RSS, Email, SMS, Twitter etc
+* Drawing insights from the collected information
+* Allowing people to create buckets of information using their own expectations of authority and accuracy as opposed to popularity.
 
 System Requirements
 ====================
 To run the application, the following software packages must be installed your production 
 or development environment:
 
- * PHP 5.2.3 or greater
+ * PHP 5.3 or greater
  * Apache HTTP Server 2.x
  * MySQL Database Server 5.1 or greater
 
@@ -70,20 +72,19 @@ Restart Apache:
 	$ sudo service httpd restart
 
 
-Installing SwiftRiver
-=====================
-* Download an archive of the latest code from our [GitHub Repository](https://github.com/ushahidi/SwiftRiver/zipball/master)
-	To extract the archive on a typical Linux/Unix command line:
+Get the latest code from GitHub
+===============================
+* Get the latest (stable) code from the `master` branch on our [GitHub](https://github.com/ushahidi/SwiftRiver) repository. To do this, Git has to be installed on your system.
 
-		unzip SwiftRiver-xxx.zip
+		git clone --recursive git://github.com/ushahidi/SwiftRiver.git
 
-	This will create a new SwiftRiver-xxx directory. Copy this directory to your webserver's document root
-	or your `public_html` directory.
+	This will clone the code into a newly created `SwiftRiver` directory. Copy this directory to your web server's document root 
+	or `public_html` directory.
 
 * Create the following directories and ensure they are writable:
 
-	application/cache
-	application/logs
+		application/cache
+		application/logs
 
 * Create the configuration files
 	Create a `.php` for each of the `.php.template` files in your `application/config/` directory.
@@ -128,6 +129,17 @@ Installing SwiftRiver
 
 		mysql <swiftriver-database> -u <swiftriver-user> -p < /path/to/SwiftRiver/install/sql/swiftriver.sql
 
+	__NOTE__: If you get the following error:
+
+		ERROR 1418 (HY000) at line 801: This function has none of DETERMINISTIC, NO SQL, or READS SQL DATA in its declaration 
+		and binary logging is enabled (you might want to use the less safe log_bin_trust_function_creators variable)
+
+	it's because MySQL gets paranoid when you attempt to create a function that is not deterministic and/or attempts to modify data.
+	See http://dev.mysql.com/doc/refman/5.5/en/stored-programs-logging.html for a more detailed explanation. 
+	To circumvent this restriction, set the `log_bin_trust_function_creators` system variable to 1. You can do this from the MySQL prompt as follows:
+
+		SET GLOBAL log_bin_trust_function_creators = 1;
+
 * Update the database configuration
 	Update your database configuration file (`application/config/database.php`) with the __values__ you used for the 
 	`swiftriver-` parameters in the preceding steps. The updated database configuration should read as follows:
@@ -160,7 +172,6 @@ __NOTE:__ Change the default password after the initial login
 
 Configuring the crawler
 =======================
-
 Add the following entries to your crontab to schedule crawling every 30 
 minutes and post processing every 15 minutes respectively:
 
@@ -176,3 +187,6 @@ out notifications to their owners. To schedule maintenance to run every day at m
 following entries to your crontab:
 
     * 0 * * * cd <app home>; php5 index.php --uri=maintenance >> application/logs/maintenance.log 2>&1
+
+
+For additional information, see the [Installing SwiftRiver](https://wiki.ushahidi.com/display/WIKI/Installing+SwiftRiver) section on the Ushahidi wiki.
