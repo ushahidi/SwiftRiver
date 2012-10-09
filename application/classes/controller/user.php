@@ -4,14 +4,14 @@
  * User Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_User extends Controller_Swiftriver {
 	
@@ -77,7 +77,7 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('followers', $followers)
 			->bind('following', $following)
 			->bind('view_type', $view_type);
-		$this->template->content->nav = $this->get_nav();
+		$this->template->content->nav = $this->get_nav($this->user);
 			
 		$following = $this->visited_account->user->following->find_all();
 		$followers =  $this->visited_account->user->followers->find_all();
@@ -191,7 +191,6 @@ class Controller_User extends Controller_Swiftriver {
 			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
 		}
 	}
-
 	
 	/**
 	 * @return	void
@@ -236,7 +235,10 @@ class Controller_User extends Controller_Swiftriver {
 						$this->user->has('river_subscriptions', $river_orm))
 					{
 						$this->user->remove('river_subscriptions', $river_orm);
-					}					
+					}
+
+					// Purge the rivers cache
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				
 				if ($item_array['type'] == 'bucket') 
@@ -262,7 +264,10 @@ class Controller_User extends Controller_Swiftriver {
 						$this->user->has('bucket_subscriptions', $bucket_orm))
 					{
 						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}					
+					}
+
+					// Purge the buckets cache
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
 				
 				// Stalking!
@@ -278,21 +283,19 @@ class Controller_User extends Controller_Swiftriver {
 					}
 					
 					// Are following
-					if ($item_array['following'] == 1 AND 
-						! $this->user->has('following', $user_orm))
+					if ($item_array['following'] == 1 AND ! $this->user->has('following', $user_orm))
 					{
 						$this->user->add('following', $user_orm);
 					}
 					
 					// Are unfollowing
-					if ($item_array['following'] == 0 AND 
-						$this->user->has('following', $user_orm))
+					if ($item_array['following'] == 0 AND $this->user->has('following', $user_orm))
 					{
 						$this->user->remove('following', $user_orm);
 					}					
 				}
-				
 			break;
+
 			case "DELETE":
 				$item_type = $this->request->param('name', 0);
 				$id = $this->request->param('id', 0);
@@ -302,14 +305,23 @@ class Controller_User extends Controller_Swiftriver {
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				if ($item_type == 'bucket') {
+
+				if ($item_type == 'bucket')
+				{
 					$bucket_orm = ORM::factory('bucket', $id);
 					$bucket_orm->delete();
+
+					// Delete the buckets cache so that it's recreated on page reload
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
-				if ($item_type == 'river') {
+
+				if ($item_type == 'river')
+				{
 					$river_orm = ORM::factory('river', $id);
 					$river_orm->delete();
+
+					// Delete the rivers cache so that it's recreated on page reload
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				
 			break;
@@ -417,7 +429,7 @@ class Controller_User extends Controller_Swiftriver {
 							 ->bind('secret_url', $secret_url);		            
         
 				$secret_url = url::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
-				$site_email = Kohana::$config->load('useradmin.email_address');
+				$site_email = Kohana::$config->load('site.email_address');
 				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 				$resp = RiverID_API::instance()
 						    ->change_email($this->user->email, $new_email, $current_password,
@@ -706,17 +718,77 @@ class Controller_User extends Controller_Swiftriver {
 		}
 
 		$follower_list = json_encode($following);
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';	
+		$fetch_url = URL::site().$this->visited_account->account_path.'/user/followers/manage';
 	}
-	
+
+	public function action_invite()
+	{
+		if ( ! Model_Setting::get_setting('general_invites_enabled') OR ! $this->owner)
+			$this->request->redirect($this->dashboard_url);
+
+		// Set the current page
+		$this->active = 'invite-navigation-link';
+		$this->template->content->view_type = 'invites';
+
+		$this->sub_content = View::factory('pages/user/invite')
+			->bind('user', $this->user);
+
+		if ($this->request->post())
+		{
+			$errors = array();
+			$messages = array();
+			$count = 0;
+			$valid_emails = array();
+			$emails = explode(', ', $this->request->post('emails'));
+			foreach ($emails as $k => $email)
+			{
+				if ($count == $this->user->invites)
+					break;
+				
+				$email = trim($email);
+				if ( ! Valid::email($email, TRUE))
+				{
+					$errors[] = 'The email address "'.$email.'" is invalid.';
+					continue;
+				}
+
+				$new = Model_User::new_user($email, $this->riverid_auth, TRUE);
+
+				if (isset($new['errors']))
+				{
+					$errors[] = $email.' - '.implode(" ",$new['errors']);
+					continue;
+				}
+
+				$valid_emails[] = $email;
+				$count++;
+			}
+
+			$this->user->invites -= $count;
+			$this->user->save();
+
+			foreach ($valid_emails as $email)
+			{
+				$messages[] = 'Invite sent to "'.$email.'" successfully!';
+			}
+			if (count($errors) > 0)
+			{
+				$this->sub_content->bind('errors', $errors);
+			}
+			if (count($messages) > 0)
+			{
+				$this->sub_content->bind('messages', $messages);
+			}
+		}
+	}	
 	
 	/**
 	 * Dashboard Navigation Links
 	 * 
-	 * @param string $active - the active menu
+	 * @param string $user - logged in user
 	 * @return	array $nav
 	 */
-	protected static function get_nav()
+	protected static function get_nav($user)
 	{
 		$nav = array();
 
@@ -734,6 +806,18 @@ class Controller_User extends Controller_Swiftriver {
 			'label' => __('Settings')
 		);
 
+		// Invite
+		if (Model_Setting::get_setting('general_invites_enabled') AND
+			$user->invites > 0)
+		{
+			$nav[] = array(
+				'id' => 'invite-navigation-link',
+				'url' => '/invite',
+				'label' => __('Invites')
+			);
+		}
+		
+		
 		// SwiftRiver Plugin Hook -- Add Nav Items
 		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);
 

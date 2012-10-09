@@ -4,14 +4,14 @@
  * Plugins Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @category Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_Settings_Plugins extends Controller_Settings_Main {
 	
@@ -49,7 +49,9 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 				'id' => $plugin->id, 
 				'plugin_name' => $plugin->plugin_name, 
 				'plugin_description' => $plugin->plugin_description,
-				'plugin_enabled' => ($plugin->plugin_enabled == 1)
+				'plugin_enabled' => ($plugin->plugin_enabled == 1),
+				'plugin_path' => $plugin->plugin_path, 
+				'plugin_settings' => Swiftriver_Plugins::has_settings($plugin->plugin_path)
 			);
 		}
 		$plugins_list = json_encode($entries);
@@ -78,6 +80,16 @@ class Controller_Settings_Plugins extends Controller_Settings_Main {
 
 				$plugin_orm->plugin_enabled = $item_array['plugin_enabled'];
 				$plugin_orm->save();
+
+				// Run the plugin installer script if it hasn't been run before
+				if ($plugin_orm->plugin_enabled AND $plugin_orm->plugin_installed != 1)
+				{
+					if ( Swiftriver_Plugins::install($plugin_orm->plugin_path) )
+					{
+						$plugin_orm->plugin_installed = 1;
+						$plugin_orm->save();
+					}
+				}
 
 			break;
 		}

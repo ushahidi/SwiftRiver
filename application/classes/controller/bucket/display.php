@@ -4,14 +4,14 @@
  * Bucket Display Settings Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_Bucket_Display extends Controller_Bucket_Settings {
 	
@@ -66,9 +66,8 @@ class Controller_Bucket_Display extends Controller_Bucket_Settings {
 	 */
 	public function action_create_token()
 	{
+		$this->bucket->set_token();
 		$this->auto_render = false;
-		$this->bucket->public_token = md5(uniqid(mt_rand().$this->bucket->account->account_path.'/'.$this->request->param('name'), true));
-		$this->bucket->save();
 		$this->response->headers('Content-Type', 'application/json');
 		echo json_encode($this->bucket->public_token);
 	}

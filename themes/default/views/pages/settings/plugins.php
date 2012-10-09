@@ -6,10 +6,13 @@
 
 <script type="text/template" id="plugin_item_template">
 	<header class="cf">
-		<div class="property-title col_8">
-			<h1><%= plugin_name %></h1>
-		</div>
-		<div class="button-actions col_4">
+		<div class="actions">
+			<% if (plugin_enabled && plugin_settings) { %>
+				<p class="button-blue button-small">
+					<a href="<?php echo URL::site('settings')?>/<%= plugin_path %>">Settings</a>
+				</p>
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+			<% } %>
 			<% var link_title = (plugin_enabled)
 			       ? "<?php echo __('deactivated plugin'); ?>" 
 			       : "<?php echo __('activated plugin'); ?>"; 

@@ -4,14 +4,14 @@
  * Main Settings Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_Settings_Main extends Controller_Swiftriver {
 	
@@ -56,6 +56,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			'site_locale' => '',
 			'public_registration_enabled' => '',
 			'anonymous_access_enabled' => '',
+			'general_invites_enabled' => '',
 			'river_active_duration' => '',
 			'river_expiry_notice_period' => ''
 		);
@@ -80,6 +81,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 					'site_locale' => $this->request->post('site_locale'),
 					'public_registration_enabled' => $this->request->post('public_registration_enabled') == 1,
 					'anonymous_access_enabled' => $this->request->post('anonymous_access_enabled') == 1,
+					'general_invites_enabled' => $this->request->post('general_invites_enabled') == 1,
 					'river_active_duration' => $this->request->post('river_active_duration'),
 					'river_expiry_notice_period' => $this->request->post('river_expiry_notice_period')
 				);

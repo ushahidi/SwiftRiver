@@ -4,14 +4,14 @@
  * Drop Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_Drop extends Controller_Swiftriver {
 	
@@ -38,8 +38,7 @@ class Controller_Drop extends Controller_Swiftriver {
 				// Get the POST data
 				$drops = json_decode($this->request->body(), TRUE);
 				Kohana::$log->add(Log::DEBUG, ":count Drops received", array(':count' => count($drops)));
-				list(, $new_drops) = Model_Droplet::create_from_array($drops);
-				echo json_encode($new_drops);
+				Model_Droplet::create_from_array($drops);
 			break;
 		}
 	 }

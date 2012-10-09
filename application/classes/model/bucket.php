@@ -4,14 +4,14 @@
  * Model for Buckets
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
  * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_Bucket extends ORM {
 	
@@ -65,7 +65,7 @@ class Model_Bucket extends ORM {
 		return array(
 			'bucket_name' => array(
 				array('not_empty'),
-				array('max_length', array(':value', 25)),
+				array('max_length', array(':value', 255)),
 			),
 			'bucket_publish' => array(
 				array('in_array', array(':value', array('0', '1')))
@@ -84,6 +84,11 @@ class Model_Bucket extends ORM {
 		{
 			// Save the date the bucket was first added
 			$this->bucket_date_add = date("Y-m-d H:i:s", time());
+		}
+		
+		if ( ! isset($this->public_token))
+		{
+			$this->public_token = $this->get_token();
 		}
 		
 		// Set river_name_url as river_name sanitized
@@ -211,7 +216,6 @@ class Model_Bucket extends ORM {
 				->join('links', 'LEFT')
 			    ->on('links.id', '=', 'droplets.original_url')
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 				->where('droplets.parent_id', '=', 0);
 				
 			if ($drop_id)
@@ -317,7 +321,6 @@ class Model_Bucket extends ORM {
 				->join('links', 'LEFT')
 			    ->on('links.id', '=', 'droplets.original_url')
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
-				->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
 				->where('droplets.parent_id', '=', 0)
 				->where('buckets_droplets.id', '>', $since_id)
 				->order_by('buckets_droplets.id', 'ASC');
@@ -702,6 +705,33 @@ class Model_Bucket extends ORM {
 		}
 
 		return $buckets;
+	}
+	
+	/**
+	 * Sets the bucket's access token overwriting the pre-existing one
+	 *
+	 * @return void
+	 */
+	public function set_token()
+	{
+		$this->public_token = $this->get_token();
+		$this->save();
+	}
+	
+	/**
+	 * @return void
+	 */
+	private function get_token()
+	{
+		return md5(uniqid(mt_rand().$this->account->account_path.$this->bucket_name, true));
+	}
+	
+	/**
+	 * @return void
+	 */	
+	public function is_valid_token($token)
+	{
+		return $token == $this->public_token AND isset($this->public_token);
 	}
 
 }

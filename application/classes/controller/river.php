@@ -4,14 +4,14 @@
  * River Controller
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_River extends Controller_Drop_Base {
 
@@ -93,12 +93,13 @@ class Controller_River extends Controller_Drop_Base {
 			if ($this->river->account->user->id == $this->user->id OR 
 				$this->river->account->user->username == 'public')
 			{
-				$this->template->header->title = $this->river->river_name;
+				$this->page_title = $this->river->river_name;
 			}
 			else
 			{
-				$this->template->header->title = $this->river->account->account_path.' / '.$this->river->river_name;
+				$this->page_title = $this->river->account->account_path.' / '.$this->river->river_name;
 			}
+			$this->template->header->title = $this->page_title;
 
 			$this->template->content = View::factory('pages/river/layout')
 				->bind('river', $this->river)
@@ -142,13 +143,7 @@ class Controller_River extends Controller_Drop_Base {
 		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 				
 		// The maximum droplet id for pagination and polling
-		$max_droplet_id = 0;
-		if ( ! ($max_droplet_id = $this->cache->get('river_max_id_'.$river_id, FALSE)))
-		{
-			$max_droplet_id = Model_River::get_max_droplet_id($river_id);
-			// Cache for 90s
-			$this->cache->set('river_max_id_'.$river_id, $max_droplet_id, 90);
-		}
+		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
 
 		// River filters
 		$filters = $this->_get_filters();
@@ -405,7 +400,6 @@ class Controller_River extends Controller_Drop_Base {
 	
 	/**
 	 * River management
-	 * 
 	 */
 	public function action_manage()
 	{
@@ -427,36 +421,43 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_404();
 				}
-				
-				if (!$river_array['subscribed']) {
-					// Unsubscribing
-					
-					// Unfollow
-					if ($this->user->has('river_subscriptions', $river_orm)) {
+
+				if ( ! $river_array['subscribed'])
+				{
+					// Unsubscribe					
+					if ($this->user->has('river_subscriptions', $river_orm))
+					{
 						$this->user->remove('river_subscriptions', $river_orm);
 					}
 					
 					// Stop collaborating
 					$collaborator_orm = $river_orm->river_collaborators
-													->where('user_id', '=', $this->user->id)
-													->where('collaborator_active', '=', 1)
-													->find();
+					                        ->where('user_id', '=', $this->user->id)
+					                        ->where('collaborator_active', '=', 1)
+					                        ->find();
 					if ($collaborator_orm->loaded())
 					{
 						$collaborator_orm->delete();
 						$river_array['is_owner'] = FALSE;
 						$river_array['collaborator'] = FALSE;
 					}
-				} else {
-					// Subscribing
-					
-					if (!$this->user->has('river_subscriptions', $river_orm)) {
+
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
+				}
+				else
+				{
+					// Subscribing				
+					if ( ! $this->user->has('river_subscriptions', $river_orm))
+					{
 						$this->user->add('river_subscriptions', $river_orm);
 					}
+
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				// Return updated bucket
 				echo json_encode($river_array);
 			break;
+
 			case "DELETE":
 				$river_id = intval($this->request->param('id', 0));
 				$river_orm = ORM::factory('river', $river_id);
@@ -470,6 +471,7 @@ class Controller_River extends Controller_Drop_Base {
 					}
 					
 					$river_orm->delete();
+					Cache::instance()->delete('user_rivers_'.$this->user->id);
 				}
 				else
 				{

@@ -4,14 +4,14 @@
  * Bucket Controller - Handles Individual Buckets
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author	   Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Controllers
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Controllers
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license	   http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Controller_Bucket extends Controller_Drop_Base {
 
@@ -61,8 +61,12 @@ class Controller_Bucket extends Controller_Drop_Base {
 			$this->owner = $this->bucket->is_owner($this->user->id);
 			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
 			
-			// Bucket isn't published and logged in user isn't owner
-			if ( ! $this->bucket->bucket_publish AND ! $this->owner AND ! $this->collaborator)
+			// Bucket isn't published and logged in user isn't owner 
+			// and doesn't have a valid token
+			if ( ! $this->bucket->bucket_publish AND 
+				! $this->owner AND 
+				! $this->collaborator AND
+				! $this->bucket->is_valid_token($this->request->query('at')))
 			{
 				$this->request->redirect($this->dashboard_url);
 			}
@@ -381,32 +385,41 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_404();
 				}
 				
-				if (!$bucket_array['subscribed']) {
+				if ( ! $bucket_array['subscribed'])
+				{
 					// Unsubscribing
 					
 					// Unfollow
-					if ($this->user->has('bucket_subscriptions', $bucket_orm)) {
+					if ($this->user->has('bucket_subscriptions', $bucket_orm))
+					{
 						$this->user->remove('bucket_subscriptions', $bucket_orm);
 					}
 					
 					// Stop collaborating
 					$collaborator_orm = $bucket_orm->bucket_collaborators
-													->where('user_id', '=', $this->user->id)
-													->where('collaborator_active', '=', 1)
-													->find();
+					                        ->where('user_id', '=', $this->user->id)
+					                        ->where('collaborator_active', '=', 1)
+					                        ->find();
 					if ($collaborator_orm->loaded())
 					{
 						$collaborator_orm->delete();
 						$bucket_array['is_owner'] = FALSE;
 						$bucket_array['collaborator'] = FALSE;
 					}
-				} else {
+
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
+				}
+				else
+				{
 					// Subscribing
-					
-					if (!$this->user->has('bucket_subscriptions', $bucket_orm)) {
+					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
+					{
 						$this->user->add('bucket_subscriptions', $bucket_orm);
 					}
+
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
+
 				// Return updated bucket
 				echo json_encode($bucket_array);
 			break;
@@ -431,7 +444,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 					$this->response->status(400);
 					$this->response->headers('Content-Type', 'application/json');
 					$errors = array();
-					foreach ($e->errors('validation') as $message) {
+					foreach ($e->errors('validation') as $message)
+					{
 						$errors[] = $message;
 					}
 					echo json_encode(array('errors' => $errors));
@@ -440,12 +454,13 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$this->response->status(400);
 					$this->response->headers('Content-Type', 'application/json');
-					$errors = array(__("A bucket with the name ':name' already exists", 
-					                                array(':name' => $bucket_array['bucket_name']
-					)));
+					$errors = array(__("A bucket with the name ':name' already exists",
+						array(':name' => $bucket_array['bucket_name'])
+					));
 					echo json_encode(array('errors' => $errors));
 				}
 			break;
+
 			case "DELETE":
 				$bucket_id = intval($this->request->param('id', 0));
 				$bucket_orm = ORM::factory('bucket', $bucket_id);
@@ -459,6 +474,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					}
 					
 					$bucket_orm->delete();
+					Cache::instance()->delete('user_buckets_'.$this->user->id);
 				}
 				else
 				{

@@ -1752,14 +1752,16 @@ article.container div.parameter-summary .parameter-data {
   color: #444444;
   padding: 0 10px 10px 10px;
 }
-article.container div.parameter-summary span.parameter-status {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0.5em;
+article.container div.parameter input[type="text"],
+article.container div.parameter textarea,
+article.container div.parameter input[type="email"],
+article.container div.parameter input[type="password"] {
+  width: 50%;
+  margin-left: 30px;
 }
-article.container div.parameter-summary span.parameter-status a {
-  display: block;
+article.container div.parameter textarea,
+article.container div.image-field img {
+  margin-left: 30px;
 }
 article.container div.parameter-summary span.parameter-status a:hover {
   text-decoration: none;
@@ -1890,6 +1892,18 @@ select.boolean-operator {
 }
 #content.user article.container a.remove-large {
   margin: 13px 10px 13px 0;
+}
+#content.user article.container header .actions {
+  padding: 13px 10px;
+}
+#content.user section.property-parameters div.activity-item span.icon {
+  float: left;
+  padding: 0;
+}
+#content.user section.property-parameters div.activity-item div.item-body {
+  float: left;
+  width: 87%;
+  padding-left: 5px;
 }
 /* --------------------------- DASHBOARD */
 #content.dashboard #primer {

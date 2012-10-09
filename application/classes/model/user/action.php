@@ -4,14 +4,14 @@
  * Model for User Actions
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
  * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_User_Action extends ORM {
 	/**
@@ -308,11 +308,16 @@ class Model_User_Action extends ORM {
 	 */
 	public static function count_notifications($user_id)
 	{
-		$query = DB::select(array(DB::expr('COUNT(*)'),'num_notification'))
-		             ->from('activity_stream')
-		             ->where('action_to_id', '=', $user_id)
-		             ->where('confirmed', '!=', 1);
-		
-		return $query->execute()->get('num_notification', 0);
+		$count = DB::select(array(DB::expr('COUNT(*)'),'num_notification'))
+			->from('activity_stream')
+			->where('action_to_id', '=', $user_id)
+			->where('confirmed', '!=', 1)
+			->execute()
+			->get('num_notification', 0);
+
+		// SwiftRiver Plugin Hook -- Add Notification Count
+		Swiftriver_Event::run('swiftriver.user.notification.count', $count);
+
+		return $count;
 	}
 }

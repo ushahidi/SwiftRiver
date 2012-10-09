@@ -4,14 +4,14 @@
  * Model for Media
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
  * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_Media extends ORM {
 	/**
@@ -145,7 +145,7 @@ class Model_Media extends ORM {
 	 */
 	public static function get_ids($num)
 	{
-		$query = DB::select(array(DB::expr("NEXTVAL('media',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('media',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}

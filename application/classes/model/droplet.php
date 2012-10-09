@@ -4,14 +4,14 @@
  * Model for Droplets
  *
  * PHP version 5
- * LICENSE: This source file is subject to GPLv3 license 
+ * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
- * http://www.gnu.org/copyleft/gpl.html
+ * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
- * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
  * @category   Models
  * @copyright  Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_Droplet extends ORM {
 	
@@ -1212,7 +1212,8 @@ class Model_Droplet extends ORM {
 		}
 		
 		//Query account links belonging to the selected droplet IDs
-		$query_account = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical')
+		$query_account = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical',
+				array('places.hash', 'place_hash'), 'latitude', 'longitude')
 					->from('account_droplet_places')
 					->join('places', 'INNER')
 					->on('places.id', '=', 'place_id')
@@ -1228,7 +1229,8 @@ class Model_Droplet extends ORM {
 		    ->where('deleted', '=', 1);
 
 		//Query all places belonging to the selected droplet IDs
-		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical')
+		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical',
+			array('places.hash', 'place_hash'), 'latitude', 'longitude')
 					->union($query_account, TRUE)
 					->from('droplets_places')
 					->join('places', 'INNER')
@@ -1333,6 +1335,9 @@ class Model_Droplet extends ORM {
 			if ($bucket_orm->loaded())
 			{
 				$this->add('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
 			}
 		}
 		
@@ -1349,6 +1354,9 @@ class Model_Droplet extends ORM {
 			if ($this->has('buckets', $bucket_orm))
 			{
 				$this->remove('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
 			}
 		}
 
@@ -1530,6 +1538,10 @@ class Model_Droplet extends ORM {
 
 		if ($user_orm->loaded())
 		{
+			// Get the current date
+			$today = new DateTime(date('Y-m-d'));
+			$start_date = $today->sub(new DateInterval('P14D'));
+
 			// Sanity check for the page number
 			$page = (empty($page)) ? 1 : $page;
 
@@ -1547,8 +1559,8 @@ class Model_Droplet extends ORM {
 			    ->on('all_scores.droplet_id', '=', 'droplets.id')
 			    ->join(array('droplet_scores', 'user_scores'), 'LEFT')
 			    ->on('user_scores.droplet_id', '=', DB::expr('droplets.id AND user_scores.user_id = '.$user_id))
-			    ->where('droplets.processing_status', '=', Model_Droplet::PROCESSING_STATUS_COMPLETE)
-			    ->where('droplets.parent_id', '=', 0);
+			    ->where('droplets.parent_id', '=', 0)
+			    ->where('droplets.droplet_date_add', '>=', $start_date->format('Y-m-d H:i:s'));
 
 			self::apply_droplets_filter($query, $filters, $user_id);
 
@@ -1821,7 +1833,7 @@ class Model_Droplet extends ORM {
 	public static function get_ids($num, $table="droplets")
 	{
 	    // Build River Query
-		$query = DB::select(array(DB::expr("NEXTVAL('".$table."',$num)"), 'id'));
+		$query = DB::query(Database::SELECT, "/*ms=master*/SELECT NEXTVAL('".$table."',$num) AS id");
 		    
 		return intval($query->execute()->get('id', 0));
 	}

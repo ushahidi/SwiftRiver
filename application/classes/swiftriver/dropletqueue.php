@@ -6,10 +6,10 @@
  * of the queue on a per channel basis.
  *
  * @author     Ushahidi Team <team@ushahidi.com>
- * @package     Swiftriver http://github.com/ushahidi/Swiftriver_v2
- * @subpackage  Libraries
- * @copyright   (c) 2008-2011 Ushahidi Inc <http://www.ushahidi.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU General Public License v3 (GPLv3) 
+ * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category   Libraries
+ * @copyright  (c) 2008-2011 Ushahidi Inc <http://www.ushahidi.com>
+ * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
 class Swiftriver_Dropletqueue {

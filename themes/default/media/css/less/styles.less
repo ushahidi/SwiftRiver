@@ -1915,9 +1915,17 @@ article.container div.parameter .field-label {
    padding-bottom: 0.8em;
 }
 
-article.container div.parameter .field-data {
-   color: #444444;
-   padding: 1em 0; 
+article.container div.parameter input[type="text"],
+article.container div.parameter textarea,
+article.container div.parameter input[type="email"],
+article.container div.parameter input[type="password"] {
+   width: 50%;
+   margin-left: 30px;
+}
+
+article.container div.parameter textarea,
+article.container div.image-field img {
+   margin-left: 30px;
 }
 
 article.container div.parameter .field-data span {
@@ -2261,6 +2269,21 @@ select.boolean-operator {
 
 #content.user article.container a.remove-large {
    margin: 13px 10px 13px 0;
+}
+
+#content.user article.container header .actions {
+  padding: 13px 10px;
+}
+
+#content.user section.property-parameters div.activity-item span.icon {
+   float: left;
+   padding: 0;
+}
+
+#content.user section.property-parameters div.activity-item div.item-body {
+   float: left;
+   width: 87%;
+   padding-left: 5px;
 }
 
 /* --------------------------- DASHBOARD */
@@ -3504,135 +3527,3 @@ hgroup.user-title.dashboard div.follow-summary {
 
 /* Cursor that used when mouse drag is disabled */
 .touchcarousel .auto-cursor{ cursor:auto; }
-
-@font-face {
-	font-family: 'swiftriver-icons';
-	src: url('../fonts/swiftriver-icons.eot');
-	src: url('../fonts/swiftriver-icons.eot?#iefix') format('embedded-opentype'),
-		url('../fonts/swiftriver-icons.svg#swiftriver-icons') format('svg'),
-		url('../fonts/swiftriver-icons.woff') format('woff'),
-		url('../fonts/swiftriver-icons.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-/* Use the following CSS code if you want to use data attributes for inserting your icons */
-[data-icon]:before {
-	font-family: 'swiftriver-icons';
-	content: attr(data-icon);
-	speak: none;
-}
-
-/* Use the following CSS code if you want to have a class per icon */
-[class^="icon-"]:before, [class*=" icon-"]:before {
-	font-family: 'swiftriver-icons';
-	font-style: normal;
-	speak: none;
-}
-i[class^="icon-"]:before {
-   margin-right: 0.4em;
-}
-
-.icon-twitter:before {
-	content: "\21";
-}
-.icon-facebook:before {
-	content: "\22";
-}
-.icon-arrow-left:before {
-	content: "\23";
-}
-.icon-arrow-right:before {
-	content: "\24";
-}
-.icon-arrow-down:before {
-	content: "\25";
-}
-.icon-star:before {
-	content: "\26";
-}
-.icon-star-2:before {
-	content: "\27";
-}
-.icon-cancel:before {
-	content: "\28";
-}
-.icon-plus:before {
-	content: "\29";
-}
-.icon-home:before {
-	content: "\2a";
-}
-.icon-comment:before {
-	content: "\2b";
-}
-.icon-users:before {
-	content: "\2c";
-}
-.icon-settings:before {
-	content: "\2d";
-}
-.icon-search:before {
-	content: "\2e";
-}
-.icon-remove:before {
-	content: "\2f";
-}
-.icon-pencil:before {
-	content: "\30";
-}
-.icon-calendar:before {
-	content: "\31";
-}
-.icon-rss:before {
-	content: "\32";
-}
-.icon-google-plus:before {
-	content: "\33";
-}
-.icon-pencil-2:before {
-	content: "\34";
-}
-.icon-checkmark:before {
-	content: "\35";
-}
-.icon-share:before {
-	content: "\36";
-}
-.icon-locked:before {
-	content: "\37";
-}
-.icon-river:before {
-	content: "\38";
-}
-.icon-bucket:before {
-	content: "\39";
-}
-.icon-add-to-bucket:before {
-	content: "\3a";
-}
-
-@media only screen and (-moz-min-device-pixel-ratio: 2),
-   only screen and (-o-min-device-pixel-ratio: 2/1),
-   only screen and (-webkit-min-device-pixel-ratio: 2),
-   only screen and (min-device-pixel-ratio: 2) {
-
-body { text-rendering: optimizeLegibility; }
-
-header.toolbar .logo a {
-   background: url(../img/logo-swiftriver-2x.png) center left no-repeat;
-   -o-background-size: 100%;
-   -moz-background-size: 100%;
-   -webkit-background-size: 100%;
-   background-size: 100%;
-}
-
-.drops article.drop section.drop-source {
-   background-image: url(../img/drop-wave1@2x.png);
-}
-
-/*.list article.drop section.drop-source {
-   background-image: url(../img/drop-wave2@2x.png);
-}*/
-
-}

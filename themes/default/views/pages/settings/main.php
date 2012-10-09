@@ -94,6 +94,12 @@
 					<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
 				</div>				
 			</div>
+			<div class="parameter">
+				<label for="general_invites_enabled">
+					<?php echo Form::checkbox('general_invites_enabled', 1,  (bool)$settings['general_invites_enabled']); ?>
+					<?php echo __('Allow general invites'); ?>
+				</label>
+			</div>
 		</section>
 	</article>
 	
@@ -119,4 +125,7 @@
 			</div>
 		</section>
 	</article>
+	<div class="save-toolbar">
+		<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+	</div>
 <?php echo Form::close(); ?>

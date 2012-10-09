@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS `droplets_links` (
 CREATE TABLE IF NOT EXISTS `rivers` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `river_name` varchar(25) NOT NULL DEFAULT '',
-  `river_name_url` varchar(30) NOT NULL DEFAULT '',
+  `river_name` varchar(255) NOT NULL DEFAULT '',
+  `river_name_url` varchar(255) NOT NULL DEFAULT '',
   `river_active` tinyint(4) NOT NULL DEFAULT '1',
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
@@ -95,9 +95,10 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `drop_count` int(11) NOT NULL DEFAULT '0',
   `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
   `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
-  `expiry_extension_token` varchar(64),
+  `expiry_extension_token` varchar(64) DEFAULT NULL,
   `extension_count` int(11) NOT NULL DEFAULT '0' COMMENT 'The no. of times the expiry date has been extended',
   `expiry_candidate` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
+  `public_token` char(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
   KEY `river_name_url` (`river_name_url`),
@@ -246,8 +247,8 @@ CREATE TABLE IF NOT EXISTS `buckets` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(11) unsigned NOT NULL DEFAULT '0',
   `user_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Creator of this bucket',
-  `bucket_name` varchar(25) NOT NULL DEFAULT '',
-  `bucket_name_url` varchar(30) NOT NULL DEFAULT '',
+  `bucket_name` varchar(255) NOT NULL DEFAULT '',
+  `bucket_name_url` varchar(255) NOT NULL DEFAULT '',
   `bucket_description` text,
   `bucket_publish` tinyint(4) NOT NULL DEFAULT '0',
   `default_layout` varchar(10) DEFAULT 'drops',
@@ -342,6 +343,7 @@ CREATE TABLE IF NOT EXISTS `plugins` (
   `plugin_description` VARCHAR(255) NULL DEFAULT NULL ,
   `plugin_enabled` TINYINT(4) NOT NULL DEFAULT 0 COMMENT 'Global Plugin Enabled/Disable' ,
   `plugin_weight` TINYINT(4) NOT NULL DEFAULT 1 COMMENT 'Lower digit = higher priority' ,
+  `plugin_installed` TINYINT(4) NOT NULL DEFAULT 0 ,
   UNIQUE INDEX (`plugin_path` ASC) ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
@@ -394,6 +396,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(255) NOT NULL,
   `api_key` varchar(255) NOT NULL,
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
+  `invites` smallint(6) NOT NULL DEFAULT '10',
   `last_login` int(10) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
@@ -839,7 +842,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
 (6, 'river_active_duration', '14'),
-(7, 'river_expiry_notice_period', '3');
+(7, 'river_expiry_notice_period', '3'),
+(8, 'general_invites_enabled', '0');
 
 -- -----------------------------------------------------
 -- Data for table `users`
