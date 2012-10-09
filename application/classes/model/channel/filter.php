@@ -125,7 +125,10 @@ class Model_Channel_Filter extends ORM {
 	        $since_date = DB::expr('now() - interval '.self::RUN_INTERVAL.' minute');
 	    }
 	    $query = DB::select('river_id', 'channel')
-	                 ->from('channel_filters')
+	                 ->from('rivers')
+					 ->join('channel_filters', 'INNER')
+					 ->on('channel_filters.river_id', '=', 'rivers.id')
+					 ->where('river_active', '=', 1)
 	                 ->where('filter_enabled', '=', 1)
 	                 ->where('filter_last_run', '<', $since_date)
 	                 ->order_by('filter_last_successful_run', 'ASC')
