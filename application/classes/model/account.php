@@ -119,6 +119,8 @@ class Model_Account extends ORM
 
 			// Save the date the feed was first added
 			$this->account_date_add = date("Y-m-d H:i:s", time());
+			
+			$this->river_quota_remaining = Model_Setting::get_setting('default_river_quota');
 		}
 		else
 		{

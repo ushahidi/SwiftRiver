@@ -115,6 +115,27 @@
 			</div>
 		</section>
 	</article>
+	<article class="container base">
+		<header class="container cf">
+			<div class="property-title">
+				<h1><?php echo __("Quotas"); ?></h1>
+			</div>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter">
+				<label for="default_river_quota">
+					<p class="field"><?php echo __('Default max rivers per account'); ?></p>
+					<?php echo Form::input('default_river_quota', $settings['default_river_quota']); ?>
+				</label>
+			</div>
+			<div class="parameter">
+				<label for="default_river_drop_quota">
+					<p class="field"><?php echo __('Default max drops per river'); ?></p>
+					<?php echo Form::input('default_river_drop_quota', $settings['default_river_drop_quota']); ?>
+				</label>
+			</div>
+		</section>
+	</article>
 	<div class="save-toolbar">
 		<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
 	</div>

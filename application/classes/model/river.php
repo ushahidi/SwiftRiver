@@ -89,6 +89,8 @@ class Model_River extends ORM {
 			$river_lifetime = Model_Setting::get_setting('river_lifetime');
 			$expiry_date = strtotime(sprintf("+%s day", $river_lifetime), strtotime($this->river_date_add));
 			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
+			
+			$this->drop_quota = Model_Setting::get_setting('default_river_drop_quota');
 		}
 		
 		if ( ! isset($this->public_token))
