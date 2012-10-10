@@ -46,6 +46,32 @@ class Model_Channel_Filter extends ORM {
 	 * @var string
 	 */
 	protected $_created_column = array('column' => 'filter_date_modified', 'format' => 'Y-m-d H:i:s');
+	
+	
+	/**
+	 * Overload saving to perform additional functions on the channel_filter
+	 */
+	public function save(Validation $validation = NULL)
+	{
+		$original_values = $this->original_values();
+		$ret = parent::save();
+		
+		// Run post_save events
+		if ( isset($original_values['filter_enabled']) AND 
+			! (bool) $original_values['filter_enabled'] AND 
+				(bool) $this->filter_enabled)
+		{
+			Swiftriver_Event::run('swiftriver.channel.enable', $this);
+		} 
+		else if ( isset($original_values['filter_enabled']) AND 
+				(bool) $original_values['filter_enabled'] AND 
+				! (bool) $this->filter_enabled)
+		{
+			Swiftriver_Event::run('swiftriver.channel.disable', $this);
+		}
+		
+		return $ret;
+	}
 
 	/**
 	 * Overrides the default behaviour to perform
@@ -54,6 +80,8 @@ class Model_Channel_Filter extends ORM {
 	 */
 	public function delete()
 	{
+		Swiftriver_Event::run('swiftriver.channel.disable', $this);
+		
 		// Delete the channel filter options
 		DB::delete('channel_filter_options')
 		    ->where('channel_filter_id', '=', $this->id)
