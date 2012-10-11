@@ -54,9 +54,10 @@ class Model_Channel_Quota extends ORM {
 			{
 				if ($options['type'] !== 'text')
 					continue;
-
+					
 				// Initialize the quota id and channel quota
-				list($quota_id, $quota) = array(NULL, 0);
+				$default = isset($options['default_quota']) ? $options['default_quota'] : 0;
+				list($quota_id, $quota) = array(NULL, $default);
 
 				// Canonical channel name
 				$channel_name = $channel['channel'];
@@ -98,8 +99,15 @@ class Model_Channel_Quota extends ORM {
 		    ->where('channel', '=', $channel)
 		    ->where('channel_option', '=', $option)
 		    ->find();
+		
+		$channel_config = Swiftriver_Plugin::get_channel_config($channel);
+		$default = 0;
+		if (isset($channel_config['options'][$option]) AND isset($channel_config['options'][$option]['default_quota']))
+		{
+			$default = $channel_config['options'][$option]['default_quota'];
+		}
 
-		return $quota_orm->loaded() ? $quota_orm->quota : 0;
+		return $quota_orm->loaded() ? $quota_orm->quota : $default;
 	}
 
 	/**
