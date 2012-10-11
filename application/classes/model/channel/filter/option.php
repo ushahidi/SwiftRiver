@@ -14,7 +14,7 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_Channel_Filter_Option extends ORM {
-	
+
 	/**
 	 * A channel_filter_option belongs to a channel_filter
 	 * @var array Relationhips
@@ -28,6 +28,18 @@ class Model_Channel_Filter_Option extends ORM {
 	 */
 	public function save(Validation $validation = NULL)
 	{
+		$channel_filter = ORM::factory('channel_filter', $this->channel_filter_id);
+
+		$option_data = array(
+			'user_id' => $channel_filter->river->account->user_id,
+			'channel' => $channel_filter->channel,
+			'channel_option' => $this->key
+		);
+
+		// Update the quota usage
+		Model_User_Quota::update_quota_usage($option_data);
+
+		// Check the quota for this channel option
 		$ret = parent::save();
 		
 		// Run post_save events
@@ -35,7 +47,7 @@ class Model_Channel_Filter_Option extends ORM {
 		
 		return $ret;
 	}
-	
+
 	/**
 	 * Overrides the default behaviour to perform
 	 * extra tasks before removing the channel filter
@@ -45,12 +57,19 @@ class Model_Channel_Filter_Option extends ORM {
 	{
 		Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $this);
 
-		// Default
+		$option_data = array(
+			'user_id' => $this->channel_filter->river->account->user_id,
+			'channel' => $this->channel_filter->channel,
+			'channel_option' => $this->key
+		);
+
+		// Update quota usage
+		Model_User_Quota::update_quota_usage($option_data, FALSE);
+
+		// Delete the filter option
 		parent::delete();
 	}
-	
-	
-	
+
 	/**
 	 * Parses the "value" column of the channel filter option and returns it 
 	 * as an array
@@ -65,4 +84,3 @@ class Model_Channel_Filter_Option extends ORM {
 		return array($this->key => $options);
 	}
 }
-?>

@@ -197,6 +197,9 @@ class Swiftriver_Plugins {
 		                     ->find_all();
 		foreach ($active_plugins as $active_plugin)
 		{
+			if ( ! isset($config_plugins[$active_plugin->plugin_path]))
+				continue;
+
 			$plugin_config = $config_plugins[$active_plugin->plugin_path];
 			if (isset($plugin_config['channel']) AND $plugin_config['channel'] == TRUE )
 			{
@@ -288,21 +291,17 @@ class Swiftriver_Plugins {
 		{
 			$all_plugin_configs = Kohana::$config->load('plugin');
 			$plugin_configs = $all_plugin_configs->get($plugin);
-			if ( is_array($plugin_configs) 
+			if
+			(
+				is_array($plugin_configs) 
 				AND isset($plugin_configs['settings']) 
-				AND $plugin_configs['settings'] == TRUE )
+				AND $plugin_configs['settings'] == TRUE
+			)
 			{
 				return TRUE;
 			}
-			else
-			{
-				return FALSE;
-			}
 		}
-		else
-		{
-			return FALSE;
-		}
+		return FALSE;
 	}
 
 
@@ -317,21 +316,18 @@ class Swiftriver_Plugins {
 		{
 			$all_plugin_configs = Kohana::$config->load('plugin');
 			$plugin_configs = $all_plugin_configs->get($plugin);
-			if ( is_array($plugin_configs) 
+			if
+			(
+				is_array($plugin_configs)
 				AND isset($plugin_configs['service']) 
-				AND $plugin_configs['service'] == TRUE )
+				AND $plugin_configs['service'] == TRUE
+			)
 			{
 				return TRUE;
 			}
-			else
-			{
-				return FALSE;
-			}
 		}
-		else
-		{
-			return FALSE;
-		}
+
+		return FALSE;
 	}
 
 	/**
