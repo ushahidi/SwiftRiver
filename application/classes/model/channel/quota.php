@@ -100,7 +100,7 @@ class Model_Channel_Quota extends ORM {
 		    ->where('channel_option', '=', $option)
 		    ->find();
 		
-		$channel_config = Swiftriver_Plugin::get_channel_config($channel);
+		$channel_config = Swiftriver_Plugins::get_channel_config($channel);
 		$default = 0;
 		if (isset($channel_config['options'][$option]) AND isset($channel_config['options'][$option]['default_quota']))
 		{

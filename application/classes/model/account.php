@@ -30,6 +30,7 @@ class Model_Account extends ORM
 		'snapshots' => array(),
 		'sources' => array(),
 		'account_collaborators' => array(),
+		'account_channel_quotas' => array(),
 		'droplets_links' => array(
 			'model' => 'droplets_link',
 			'through' => 'accounts_droplets_links'

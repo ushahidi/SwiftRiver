@@ -886,15 +886,16 @@ CREATE TABLE IF NOT EXISTS `channel_quotas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- -----------------------------------------------------
--- Table `user_quotas`
+-- Table `account_channel_quotas`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_quotas` (
+CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL,
+  `account_id` bigint(20) NOT NULL,
   `channel` varchar(100) NOT NULL DEFAULT '',
   `channel_option` varchar(100) NOT NULL DEFAULT '',
-  `quota_usage` int(11) NOT NULL DEFAULT 0 COMMENT 'Current no. of options that the user has used up',
+  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
+  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`),
-  KEY `idx_user_id` (`user_id`)
+  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
+  KEY `idx_user_id` (`account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
