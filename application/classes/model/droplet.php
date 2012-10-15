@@ -441,7 +441,7 @@ class Model_Droplet extends ORM {
 			Swiftriver_Mutex::obtain('rivers_droplets', 3600);
 			
 			// Get river quotas
-			$river_quotas = DB::select('id', 'drop_quota', 'drop_count')
+			$river_quotas = DB::select('id', 'drop_quota', 'drop_count', 'river_active')
 										->from('rivers')
 										->where('id', 'IN', array_keys($rivers))
 										->execute()
@@ -451,9 +451,9 @@ class Model_Droplet extends ORM {
 			$rivers_to_disable = array();
 			foreach ($river_quotas as $river_quota)
 			{
-				if ($river_quota['drop_count'] >= $river_quota['drop_quota'])
+				if (($river_quota['drop_count'] >= $river_quota['drop_quota']) OR ! (bool)$river_quota['river_active'])
 				{
-					// River already over quota
+					// River already over quota or disabled
 					$over_quota_rivers[] = $river_quota['id'];
 				}
 				else if ($river_quota['drop_count'] + $rivers[$river_quota['id']] >= $river_quota['drop_quota'])
@@ -469,6 +469,7 @@ class Model_Droplet extends ORM {
 			{
 				DB::update('rivers')
 				    ->set(array('river_active' => 0))
+					->set(array('river_full' => 1))
 				    ->where('id', 'IN', $rivers_to_disable)
 				    ->execute();
 			}

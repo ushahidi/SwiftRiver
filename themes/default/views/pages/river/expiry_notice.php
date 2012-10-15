@@ -2,10 +2,8 @@
 	<div class="center cf">
 		<article class="container base alert-message red">
 			<p>
-				<?php echo __("Your river has already expired and is no longer receiving drops from your channels."); ?>
-				<?php echo __("Click "); ?><a href="<?php echo $river_base_url."/extend?token=".$expiry_extension_token ?>">here</a>
-				<?php echo __(" to extend the lifetime of your river by another :extension_period days", 
-				    array(":extension_period" => $extension_period)); ?>
+				<?php echo __("Your river has expired and is no longer receiving drops from your channels."); ?>
+				<?php echo __("You can click :here to reactivate it for another :extension_period days", array(":here" => HTML::anchor($river_base_url, 'here'), ":extension_period" => $extension_period)); ?>
 			</p>	
 		</article>
 	</div>

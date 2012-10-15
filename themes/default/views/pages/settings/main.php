@@ -97,19 +97,19 @@
 	<article class="container base">
 		<header class="container cf">
 			<div class="property-title">
-				<h1><?php echo __("River Expiry"); ?></h1>
+				<h1><?php echo __("River Lifetime"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
-				<label for="river_active_duration">
-					<p class="field"><?php echo __('Expiry duration (days)'); ?></p>
-					<?php echo Form::input('river_active_duration', $settings['river_active_duration']); ?>
+				<label for="default_river_lifetime">
+					<p class="field"><?php echo __('Default lifetime (days)'); ?></p>
+					<?php echo Form::input('default_river_lifetime', $settings['default_river_lifetime']); ?>
 				</label>
 			</div>
 			<div class="parameter">
 				<label for="river_expiry_notice_period">
-					<p class="field"><?php echo __('Notice Period (days)'); ?></p>
+					<p class="field"><?php echo __('Expiry notice period (days)'); ?></p>
 					<?php echo Form::input('river_expiry_notice_period', $settings['river_expiry_notice_period']); ?>
 				</label>
 			</div>

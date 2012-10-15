@@ -35,39 +35,29 @@ class Controller_River_Maintenance extends Controller {
 			Kohana::$log->add(Log::ERROR, __("Maintenance must be run in CLI mode"));
 			exit;
 		}
-
+		
+		Swiftriver_Mutex::obtain(get_class(), 3600);
 		Kohana::$log->add(Log::INFO, __("Running river maintenance schedule"));
 
 		// Get settings
 		$settings = Model_Setting::get_settings(array(
-			'river_active_duration',
+			'default_river_lifetime',
 			'river_expiry_notice_period',
 			'site_url'
 		));
 
 		$notice_period = $settings['river_expiry_notice_period'];
 		$site_url = $settings['site_url'];
-
-
+		
 		// Templates for the notifications
 		$warning_template = View::factory('emails/expiry_warning');
 		$notice_template = View::factory('emails/expiry_notice');
 
-		// Fix the current date to the time when the maintenance
-		// is being run
-		$current_date_timestamp = time();
-		$current_date = date("Y-m-d H:i:s", $current_date_timestamp);
-
-		// Compute the filter date
-		$filter_date_timestamp = strtotime(sprintf("+%s day", $notice_period),
-		    $current_date_timestamp);
-
-		$filter_date = date("Y-m-d H:i:s", $filter_date_timestamp);
-
 		// Get the rivers that have expired or are about to expire
 		$candidates = ORM::factory('river')
 		    ->where('river_expired', '=', 0)
-		    ->where('river_date_expiry', '<=', $filter_date)
+			->where('river_active', '=', 1)
+		    ->where('river_date_expiry', '<=', DB::expr('DATE_ADD(NOW(),INTERVAL '.$notice_period.' DAY)'))
 		    ->find_all();
 
 		$to_be_expired = array();
@@ -76,20 +66,18 @@ class Controller_River_Maintenance extends Controller {
 
 		foreach ($candidates as $river)
 		{
-			$days_to_expiry = $river->get_days_to_expiry($current_date);
+			$days_to_expiry = $river->get_days_to_expiry();
 			$river_url = $site_url.$river->get_base_url();
 
-			// Generate extension token and modify the URL
 			if ($days_to_expiry === 0)
 			{
-				$token = hash("sha256", Text::random('alnum', 32));
-				$river_url .= '/extend?token='.$token;
-				$to_be_expired[$river->id] = $token;
+				$to_be_expired[] = $river->id;
+				Swiftriver_Event::run('swiftriver.river.disable', $river);
 			}
 			else
 			{
 				// Is the river to be flagged for expiry
-				if ($days_to_expiry > 0 AND $river->expiry_candidate == 0)
+				if ($days_to_expiry > 0 AND $river->expiry_notification_sent == 0)
 				{
 					$to_be_flagged[] = $river->id;
 				}
@@ -119,14 +107,18 @@ class Controller_River_Maintenance extends Controller {
 		// Expire rivers
 		if (count($to_be_expired) > 0)
 		{
-			$this->_expire_rivers($to_be_expired);
+			DB::update('rivers')
+			    ->set(array('river_expired' => 1))
+				->set(array('river_active' => 0))
+			    ->where('id', 'IN', $to_be_expired)
+				->execute();
 		}
 
 		// Switch on the expiry flag
 		if (count($to_be_flagged) > 0)
 		{
 			DB::update('rivers')
-			    ->set(array('expiry_candidate' => 1))
+			    ->set(array('expiry_notification_sent' => 1))
 			    ->where('id', 'IN', $to_be_flagged)
 			    ->execute();
 		}
@@ -138,41 +130,43 @@ class Controller_River_Maintenance extends Controller {
 			$data = $rivers[$river_id];
 
 			// Mail subject
-			$subject = __("Your :river_name river will shutdown in :days_to_expiry day(s)!",
+			$subject = __('Your ":river_name" river will expire in :days_to_expiry day(s)!',
 			    array(
 			    	":river_name" => $data['river_name'],
-			    	":days_to_expiry" => $data['days_to_expiry']
+			    	":days_to_expiry" => ceil($data['days_to_expiry'])
 			    ));
 
 			// Mail body - expiry warning is the default
 			$mail_body = $warning_template->set(array(
 				'river_name' => $data['river_name'],
-				'days_to_expiry' => $data['days_to_expiry'],
-				'active_duration' => $settings['river_active_duration'],
+				'days_to_expiry' => ceil($data['days_to_expiry']),
+				'active_duration' => $settings['default_river_lifetime'],
 				'river_url' => $data['river_url']
 			));
 
 			if ($data['days_to_expiry'] === 0)
 			{
-				$subject = __("Your :river_name has shutdown!", 
+				$subject = __('Your ":river_name" river has expired!', 
 				    array(":river_name" => $data['river_name']));
 
 				// Expiry notice message
 				$mail_body = $notice_template->set(array(
 					'river_name' => $data['river_name'],
-					'active_duration' => $settings['river_active_duration'],
-					'activation_url' => $data['river_url']
+					'active_duration' => $settings['default_river_lifetime'],
+					'activation_url' => $data['river_url'].'/extend'
 				));
 			}
 
 			// Construct the mail body
 			foreach ($owners as $owner)
 			{
+				Kohana::$log->add(Log::INFO, __("Sending notification to :email", array(":email" => $owner['email'])));
 				$mail_body->recipient_name = $owner['name'];
 				Swiftriver_Mail::send($owner['email'], $subject, $mail_body);
 			}
 		}
 
+		Swiftriver_Mutex::release(get_class());
 		Kohana::$log->add(Log::INFO, "Completed maintenance schedule");
 	}
 
@@ -225,34 +219,4 @@ class Controller_River_Maintenance extends Controller {
 
 		return $river_owners;
 	}
-
-	/**
-	 * Expires the rivers
-	 */
-	private function _expire_rivers($expiry_data)
-	{
-		$river_ids = array_keys($expiry_data);
-
-		// Disable the rivers' channels
-		DB::update('channel_filters')
-		    ->set(array('filter_enabled' => 0))
-		    ->where('filter_enabled', '=', 1)
-		    ->where('river_id', 'IN', $river_ids);
-
-		// Update query
-		$update_query = "UPDATE rivers SET river_expired = 1, "
-		    . "expiry_extension_token = CASE `id` ";
-
-		foreach ($expiry_data as $river_id => $token)
-		{
-			$condition = sprintf("WHEN %s THEN '%s' ", $river_id, $token);
-			$update_query .= $condition;
-		}
-
-		$update_query .= sprintf("END WHERE `id` IN (%s)", implode(",", $river_ids));
-
-		// Set the expiry token
-		DB::query(Database::UPDATE, $update_query)->execute();
-	}
-
 }

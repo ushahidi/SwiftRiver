@@ -57,7 +57,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			'public_registration_enabled' => '',
 			'anonymous_access_enabled' => '',
 			'general_invites_enabled' => '',
-			'river_active_duration' => '',
+			'default_river_lifetime' => '',
 			'river_expiry_notice_period' => '',
 			'default_river_quota' => '',
 			'default_river_drop_quota' => ''
@@ -69,8 +69,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			$validation = Validation::factory($this->request->post())
 				->rule('site_name', 'not_empty')
 				->rule('site_locale', 'not_empty')
-				->rule('river_active_duration', 'not_empty')
-				->rule('river_active_duration', 'digit')
+				->rule('default_river_lifetime', 'not_empty')
+				->rule('default_river_lifetime', 'digit')
 				->rule('river_expiry_notice_period', 'not_empty')
 				->rule('river_expiry_notice_period', 'digit')
 				->rule('form_auth_token', array('CSRF', 'valid'))
@@ -86,7 +86,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 					'public_registration_enabled' => $this->request->post('public_registration_enabled') == 1,
 					'anonymous_access_enabled' => $this->request->post('anonymous_access_enabled') == 1,
 					'general_invites_enabled' => $this->request->post('general_invites_enabled') == 1,
-					'river_active_duration' => $this->request->post('river_active_duration'),
+					'default_river_lifetime' => $this->request->post('default_river_lifetime'),
 					'river_expiry_notice_period' => $this->request->post('river_expiry_notice_period'),
 					'default_river_quota' => $this->request->post('default_river_quota'),
 					'default_river_drop_quota' => $this->request->post('default_river_drop_quota')

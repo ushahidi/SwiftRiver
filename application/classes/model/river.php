@@ -86,7 +86,7 @@ class Model_River extends ORM {
 			$this->river_date_add = date("Y-m-d H:i:s", time());
 
 			// Set the expiry date
-			$river_lifetime = Model_Setting::get_setting('river_lifetime');
+			$river_lifetime = Model_Setting::get_setting('default_river_lifetime');
 			$expiry_date = strtotime(sprintf("+%s day", $river_lifetime), strtotime($this->river_date_add));
 			$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 			
@@ -116,9 +116,6 @@ class Model_River extends ORM {
 	 */
 	public function delete()
 	{
-		// Remove the river's channel options from the crawling schedule
-		$this->_toggle_channel_option_status(FALSE);
-
 		// Delete the channel filter options
 		DB::delete('channel_filter_options')
 		    ->where('channel_filter_id', 'IN', 
@@ -152,6 +149,8 @@ class Model_River extends ORM {
 
 		// Proceed with default behaviour
 		parent::delete();
+		
+		Swiftriver_Event::run('swiftriver.river.disable', $this);
 	}
 	
 	
@@ -837,20 +836,18 @@ class Model_River extends ORM {
 		if ($this->river_expired)
 			return TRUE;
 
-		// River hasn't yet expired, extend the lifetime
-		if ($is_owner AND $this->expiry_candidate)
-		{
-			$notice_expiry_period = Model_Setting::get_setting('river_expiry_notice_period');
-
-			// Extend the expiry date of the river if accessed within the
-			// period allocated for extending its lifetime
-			if (intval($notice_expiry_period) >= $this->get_days_to_expiry())
-			{
-				$this->extend_lifetime(FALSE);
-			}
-		}		
-
 		return FALSE;
+	}
+	
+	/**
+	 * Returns whether a river expiry notification has been sent
+	 *
+	 * @param bool $is_owner Whether the user accessing the river is an owner
+	 * @return bool
+	 */
+	public function is_notified()
+	{
+		return (bool)$this->expiry_notification_sent;
 	}
 
 	/**
@@ -865,20 +862,16 @@ class Model_River extends ORM {
 			return 0;
 
 		// Has the current date been specified?
-		if ( ! $current_date instanceof DateTime)
+		if ( ! isset($current_date))
 		{
-			Kohana::$log->add(Log::INFO, 
-			    __("Current date not specified. Setting to current date"));
-			$current_date = new DateTime(date('Y-m-d H:i:s', time()));
+			$current_date = time();
 		}
-		$expiry_date = new DateTime($this->river_date_expiry);
+		$expiry_date = strtotime($this->river_date_expiry);
 
 		if ($current_date > $expiry_date)
 			return 0;
 
-		$interval = $expiry_date->diff($current_date);
-
-		return $interval->d;
+		return ($expiry_date-$current_date)/86400;
 	}
 
 	/**
@@ -890,34 +883,31 @@ class Model_River extends ORM {
 	 * @param bool $reactivate_channels When TRUE, reactivates the channels for the 
 	 * current river so that the crawlers can resume fetching content from them
 	 */
-	public function extend_lifetime($reactivate_channels = TRUE)
+	public function extend_lifetime()
 	{
-		$lifetime = Model_Setting::get_setting('river_active_duration');
+		// Do not reactivate full rivers
+		if ($this->river_full)
+			return FALSE;
 		
+		$lifetime = Model_Setting::get_setting('default_river_lifetime');
 		$expiry_start_date = strtotime($this->river_date_expiry);
 		if ($this->get_days_to_expiry() == 0)
 		{
 			$expiry_start_date = time();
 		}
-		$expiry_date = strtotime(sprintf("+%s day", $lifetime), $expiry_start_date);
+		$expiry_date = strtotime(sprintf("+%d day", $lifetime), $expiry_start_date);
+		Kohana::$log->add(Log::DEBUG, $this->river_date_expiry);
+		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_start_date));
+		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_date));
 
 		$this->river_expired = 0;
-		$this->expiry_extension_token = NULL;
+		$this->river_active = 1;
 		$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 		$this->extension_count += 1;
-		$this->expiry_candidate = 0;
+		$this->expiry_notification_sent = 0;
 		parent::save();
 
-		if ($reactivate_channels)
-		{
-			// Disable the channel filters for the river
-			DB::update('channel_filters')
-			    ->set(array('filter_enabled' => 1))
-			    ->where('river_id', '=', $this->id)
-			    ->execute();
-
-			$this->_toggle_channel_option_status(TRUE);
-		}
+		Swiftriver_Event::run('swiftriver.river.enable', $this);
 	}
 
 	/**

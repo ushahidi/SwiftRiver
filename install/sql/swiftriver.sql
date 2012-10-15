@@ -90,15 +90,15 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
   `default_layout` varchar(10) DEFAULT 'list',
-  `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `max_drop_id` bigint(20) NOT NULL DEFAULT '0',
   `drop_count` int(11) NOT NULL DEFAULT '0',
-  `drop_quota` INT  NULL  DEFAULT '10000',
+  `drop_quota` int(11) DEFAULT '10000',
+  `river_full` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
+  `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
   `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
-  `expiry_extension_token` varchar(64) DEFAULT NULL,
+  `expiry_notification_sent` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
   `extension_count` int(11) NOT NULL DEFAULT '0' COMMENT 'The no. of times the expiry date has been extended',
-  `expiry_candidate` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
   `public_token` char(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
@@ -848,7 +848,8 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (7, 'river_expiry_notice_period', '3'),
 (8, 'general_invites_enabled', '0'),
 (9, 'default_river_quota', '1'),
-(10, 'default_river_drop_quota', '10000');
+(10, 'default_river_drop_quota', '10000'),
+(11, 'site_url', 'http://www.example.com');
 
 -- -----------------------------------------------------
 -- Data for table `users`

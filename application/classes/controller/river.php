@@ -182,10 +182,8 @@ class Controller_River extends Controller_Drop_Base {
 			$this->droplets_view->nothing_to_display = "";
 
 			$expiry_notice = View::factory('pages/river/expiry_notice');
-			$expiry_notice->river_base_url = $this->river_base_url;
-			$expiry_notice->expiry_extension_token = $this->river->expiry_extension_token;
-			$expiry_notice->extension_period = Model_Setting::get_setting('river_active_duration');
-
+			$expiry_notice->river_base_url = $this->river_base_url."/extend";
+			$expiry_notice->extension_period = Model_Setting::get_setting('default_river_lifetime');
 			$this->droplets_view->expiry_notice = $expiry_notice;
 
 		}
@@ -195,6 +193,20 @@ class Controller_River extends Controller_Drop_Base {
 			$this->droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 			    ->bind('anonymous', $this->anonymous);
 			$this->droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);
+		}
+		
+		
+		// Extend rivers accessed by an owner during notice perio
+		if ($this->owner AND ! $this->river->is_expired($this->owner))
+		{
+		 	$days_remaining = $this->river->get_days_to_expiry();
+			$notice_period = Model_Setting::get_setting('default_river_lifetime');
+			
+			if (($days_remaining <= $notice_period) AND $this->river->is_notified())
+			{
+				Kohana::$log->add(Log::DEBUG, __("Extending lifetime of river with id :id", array(':id' => $this->river->id)));
+				$this->river->extend_lifetime();
+			}
 		}
 
 	}
@@ -599,24 +611,14 @@ class Controller_River extends Controller_Drop_Base {
 	 */
 	public function action_extend()
 	{
-		if ( ! $this->owner)
+		if ( ! $this->owner || ! $this->river->is_expired($this->owner))
 		{
 			$this->request->redirect($this->river_base_url);
 		}
 
 		$this->auto_render = FALSE;
 		$this->template = "";
-
-		// Get the token
-		if (isset($_GET['token']) AND ($extension_token = $_GET['token']) !== NULL)
-		{
-			if ($this->river->expiry_extension_token === $extension_token)
-			{
-				$this->river->extend_lifetime();
-			}
-		}
-
-		// Redirect to the landing page
+		$this->river->extend_lifetime();
 		$this->request->redirect($this->river_base_url);
 	}
 }
