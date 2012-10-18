@@ -1445,6 +1445,9 @@ select.boolean-operator {
 #content.user article.container a.remove-large {
   margin: 13px 10px 13px 0;
 }
+#content.user article.container header .actions {
+  padding: 13px 10px;
+}
 #content.user section.property-parameters div.activity-item span.icon {
   float: left;
   padding: 0;

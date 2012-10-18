@@ -2,7 +2,7 @@
 	<div class="center">
 		<div class="col_12">
 			<div class="settings-toolbar">
-				<p class="button-blue button-small create"><a href="/markup/modal-channels.php" class="modal-trigger"><span class="icon"></span>Add channels</a></p>
+				<p class="button-blue button-small create"><a href="#" class="modal-trigger"><span class="icon"></span>Add channels</a></p>
 			</div>
 
 			<div class="alert-message blue" style="display:none;">

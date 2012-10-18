@@ -1262,7 +1262,8 @@ class Model_Droplet extends ORM {
 		}
 		
 		//Query account links belonging to the selected droplet IDs
-		$query_account = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical')
+		$query_account = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical',
+				array('places.hash', 'place_hash'), 'latitude', 'longitude')
 					->from('account_droplet_places')
 					->join('places', 'INNER')
 					->on('places.id', '=', 'place_id')
@@ -1278,7 +1279,8 @@ class Model_Droplet extends ORM {
 		    ->where('deleted', '=', 1);
 
 		//Query all places belonging to the selected droplet IDs
-		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical')
+		$query_places = DB::select('droplet_id', array('place_id', 'id'), 'place_name', 'place_name_canonical',
+			array('places.hash', 'place_hash'), 'latitude', 'longitude')
 					->union($query_account, TRUE)
 					->from('droplets_places')
 					->join('places', 'INNER')
@@ -1383,6 +1385,9 @@ class Model_Droplet extends ORM {
 			if ($bucket_orm->loaded())
 			{
 				$this->add('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
 			}
 		}
 		
@@ -1399,6 +1404,9 @@ class Model_Droplet extends ORM {
 			if ($this->has('buckets', $bucket_orm))
 			{
 				$this->remove('buckets', $bucket_orm);
+
+				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
+				Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
 			}
 		}
 
