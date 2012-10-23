@@ -844,7 +844,7 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (3, 'site_locale', 'en'),
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
-(6, 'river_active_duration', '14'),
+(6, 'default_river_lifetime', '14'),
 (7, 'river_expiry_notice_period', '3'),
 (8, 'general_invites_enabled', '0'),
 (9, 'default_river_quota', '1'),
