@@ -113,11 +113,18 @@
 		deleteAsset: function() {
 			var message = 'Delete <a href="#">' + this.model.get('display_name') + "</a>?";
 			new ConfirmationWindow(message, function() {
-				message = '<a href="#">' + this.model.get('display_name') + "</a> has been deleted.";
-				this.model.destroy();
-				showConfirmationMessage(message);
-				this.$el.fadeOut("slow", function () {
-					$(this).remove();
+				asset = this;
+				this.model.destroy({
+					success: function() {
+						message = '<a href="#">' + asset.model.get('display_name') + "</a> has been deleted.";
+						showConfirmationMessage(message);
+						asset.$el.fadeOut("slow", function () {
+							$(this).remove();
+						});
+					},
+					error: function() {
+						showConfirmationMessage('Oops, unable to delete <a href="#">' + asset.model.get('display_name') + "</a>. Try again later.");
+					}
 				});
 			}, this).show();
 			return false;
