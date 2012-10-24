@@ -978,6 +978,33 @@ class Model_River extends ORM {
 		return $token == $this->public_token AND isset($this->public_token);
 	}
 
+	/**
+	 * Gets the last date when the river was updated
+	 *
+	 * @param  int $river_id
+	 * @return mixed string on succeed, FALSE otherwise
+	 */
+	public static function get_last_update_date($river_id)
+	{
+		$last_update_date = DB::select('droplets.droplet_date_add')
+			->from('rivers_droplets')
+			->join('rivers', 'INNER')
+			->on('rivers_droplets.river_id', '=', 'rivers.id')
+			->join('droplets', 'INNER')
+			->on('rivers_droplets.droplet_id', '=', 'droplets.id')
+			->where('rivers.max_drop_id', '=', DB::expr('rivers_droplets.id'))
+			->where('rivers_droplets.river_id', '=', $river_id)
+			->execute()
+			->as_array();
+
+		if (count($last_update_date))
+		{
+			return $last_update_date[0]['droplet_date_add'];
+		}
+
+		return FALSE;
+	}
+
 }
 
 ?>
