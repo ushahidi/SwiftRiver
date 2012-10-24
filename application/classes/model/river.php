@@ -116,6 +116,18 @@ class Model_River extends ORM {
 	 */
 	public function delete()
 	{
+		Swiftriver_Event::run('swiftriver.river.disable', $this);
+		
+		Database::instance()->query(NULL, 'START TRANSACTION');
+		
+		foreach ($this->channel_filters->find_all() as $channel)
+		{
+			foreach ($channel->get_quota_usage() as $key => $value) 
+			{
+				Model_Account_Channel_Quota::decrease_quota_usage($this->account->id, $channel->channel, $key, $value);
+			}
+		}
+				
 		// Delete the channel filter options
 		DB::delete('channel_filter_options')
 		    ->where('channel_filter_id', 'IN', 
@@ -124,7 +136,7 @@ class Model_River extends ORM {
 		            ->where('river_id', '=', $this->id)
 		        )
 		    ->execute();
-
+				
 		// Delete the channel options
 		DB::delete('channel_filters')
 		    ->where('river_id', '=', $this->id)
@@ -150,7 +162,7 @@ class Model_River extends ORM {
 		// Proceed with default behaviour
 		parent::delete();
 		
-		Swiftriver_Event::run('swiftriver.river.disable', $this);
+		Database::instance()->query(NULL, 'COMMIT');
 	}
 	
 	

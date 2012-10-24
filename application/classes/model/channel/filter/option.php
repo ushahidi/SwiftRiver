@@ -96,6 +96,22 @@ class Model_Channel_Filter_Option extends ORM {
 		// Delete the filter option
 		parent::delete();
 	}
+	
+	/**
+	 * Get the quota usage of the channel option
+	 *
+	 * @return int
+	 */
+	public function get_quota_usage() {
+		$quota_usage = 0;
+		$option_data = json_decode($this->value, TRUE);
+		if (isset($option_data['quota_usage']))
+		{
+			$account_id = $this->channel_filter->river->account->id;
+			$quota_usage += (int)$option_data['quota_usage'];
+		}
+		return $quota_usage;
+	}
 
 	/**
 	 * Parses the "value" column of the channel filter option and returns it 

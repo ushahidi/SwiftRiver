@@ -232,4 +232,25 @@ class Model_Channel_Filter extends ORM {
 			$filter_option->delete();
 		}
 	}
+	
+	/**
+	 * Get the total quota usage of the channel options in this channel
+	 *
+	 * @return array
+	 */
+	public function get_quota_usage() {
+		$quota_usage = array();
+			
+		$options = $this->channel_filter_options->find_all();		
+		foreach ($options as $option)
+		{
+			if ( ! isset($quota_usage[$option->key]))
+			{
+				$quota_usage[$option->key] = 0;
+			}
+			$quota_usage[$option->key] += $option->get_quota_usage();
+		}
+		
+		return $quota_usage;
+	}
 }
