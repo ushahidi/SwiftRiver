@@ -113,6 +113,9 @@
 		deleteAsset: function() {
 			var message = 'Delete <a href="#">' + this.model.get('display_name') + "</a>?";
 			new ConfirmationWindow(message, function() {
+				var loading_msg = window.loading_image.clone();
+				var button = this.$(".remove-small");
+				var t = setTimeout(function() { button.replaceWith(loading_msg); }, 500);
 				asset = this;
 				this.model.destroy({
 					success: function() {
@@ -124,6 +127,7 @@
 					},
 					error: function() {
 						showConfirmationMessage('Oops, unable to delete <a href="#">' + asset.model.get('display_name') + "</a>. Try again later.");
+						loading_msg.replaceWith(button);
 					}
 				});
 			}, this).show();
