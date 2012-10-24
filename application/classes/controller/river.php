@@ -184,12 +184,18 @@ class Controller_River extends Controller_Drop_Base {
 			$expiry_notice = View::factory('pages/river/expiry_notice');
 			$expiry_notice->river_base_url = $this->river_base_url."/extend";
 			$expiry_notice->extension_period = Model_Setting::get_setting('default_river_lifetime');
-			$this->droplets_view->expiry_notice = $expiry_notice;
+			$this->droplets_view->river_notice = $expiry_notice;
+
+		}
+		elseif ($this->owner AND $this->river->is_full())
+		{
+			$this->droplets_view->nothing_to_display = "";
+			$this->droplets_view->river_notice = View::factory('pages/river/full_notice');
 
 		}
 		else
 		{
-			$this->droplets_view->expiry_notice = '';
+			$this->droplets_view->river_notice = '';
 			$this->droplets_view->nothing_to_display = View::factory('pages/river/nothing_to_display')
 			    ->bind('anonymous', $this->anonymous);
 			$this->droplets_view->nothing_to_display->river_url = $this->request->url(TRUE);

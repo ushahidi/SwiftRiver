@@ -1,5 +1,5 @@
 <div id="content" class="river">
-<?php echo $expiry_notice; ?>
+<?php echo $river_notice; ?>
 </div>
 
 <script type="text/template" id="drop-listing-template">

@@ -851,6 +851,17 @@ class Model_River extends ORM {
 		return FALSE;
 	}
 	
+	
+	/**
+	 * Checks if the current river is full
+	 *
+	 * @return bool
+	 */
+	public function is_full()
+	{
+		return (bool)$this->river_full;
+	}
+	
 	/**
 	 * Returns whether a river expiry notification has been sent
 	 *
