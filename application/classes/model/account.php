@@ -188,7 +188,7 @@ class Model_Account extends ORM
 	 */	
 	public function get_remaining_river_quota()
 	{
-		$query = DB::query(Database::SELECT, "select river_quota_remaining from accounts where id = ".$this->id." for update;");
+		$query = DB::query(Database::SELECT, "/*ms=master*/select river_quota_remaining from accounts where id = ".$this->id." for update;");
 		
 		return intval($query->execute()->get('river_quota_remaining', 0));
 	}

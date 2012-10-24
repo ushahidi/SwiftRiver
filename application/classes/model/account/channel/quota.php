@@ -49,7 +49,7 @@ class Model_Account_Channel_Quota extends ORM {
 		$quota = Model_Channel_Quota::get_channel_quota($channel, $option);
 		$quota_used = 0;
 
-		$query = DB::query(Database::SELECT, "select quota, quota_used from account_channel_quotas where account_id = ".$account_id." and channel = '".$channel."' and channel_option = '".$option."' for update;");
+		$query = DB::query(Database::SELECT, "/*ms=master*/select quota, quota_used from account_channel_quotas where account_id = ".$account_id." and channel = '".$channel."' and channel_option = '".$option."' for update;");
 		$results = $query->execute();
 		
 		if ($results->count() > 0) 

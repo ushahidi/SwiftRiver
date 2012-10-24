@@ -185,8 +185,8 @@ class Model_River extends ORM {
 	public static function create_new($river_name, $public, $account, $river_name_url = NULL)
 	{
 		Database::instance()->query(NULL, 'START TRANSACTION');
-		
-		if ( ! $account->get_remaining_river_quota() > 0)
+
+		if ( ! ($account->get_remaining_river_quota() > 0))
 		{
 			throw new Swiftriver_Exception_Quota(__('River quota exceeded'));
 		}
