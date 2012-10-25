@@ -82,6 +82,13 @@ class Model_Channel_Filter extends ORM {
 	{
 		Swiftriver_Event::run('swiftriver.channel.disable', $this);
 		
+		Database::instance()->query(NULL, 'START TRANSACTION');
+		
+		foreach ($this->get_quota_usage() as $key => $value) 
+		{
+			Model_Account_Channel_Quota::decrease_quota_usage($this->river->account->id, $this->channel, $key, $value);
+		}
+		
 		// Delete the channel filter options
 		DB::delete('channel_filter_options')
 		    ->where('channel_filter_id', '=', $this->id)
@@ -89,6 +96,8 @@ class Model_Channel_Filter extends ORM {
 
 		// Default
 		parent::delete();
+		
+		Database::instance()->query(NULL, 'COMMIT');
 	}
 
 	/**
