@@ -1,5 +1,7 @@
 <div id="content" class="river">
+<?php if (isset($river_notice)): ?>
 <?php echo $river_notice; ?>
+<?php endif; ?>
 </div>
 
 <script type="text/template" id="drop-listing-template">

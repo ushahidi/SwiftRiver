@@ -132,9 +132,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 
-		// Suppress expiry notices
-		$droplets_view->expiry_notice = "";
-
 		if ( ! $this->owner)
 		{
 			$bucket_item = json_encode(array(
