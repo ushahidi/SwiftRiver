@@ -1,9 +1,6 @@
 [submodule "modules/unittest"]
 	path = modules/unittest
 	url = git://github.com/kohana/unittest.git
-[submodule "modules/K3-Cache_Redis"]
-	path = modules/K3-Cache_Redis
-	url = git://github.com/jmhobbs/K3-Cache_Redis.git
 [submodule "system"]
 	path = system
 	url = https://github.com/kohana/core.git
