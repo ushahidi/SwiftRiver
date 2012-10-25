@@ -168,14 +168,14 @@ class Controller_River_Channels extends Controller_River_Settings {
 			echo json_encode(array('error' => __("Invalid file")));
 			return;
 		}
-		
+		sleep(5);
 		// Pass on the files to plugings
 		try 
 		{
 			$file['key'] = $this->request->post('key');
 			Swiftriver_Event::run('swiftriver.channel.option.file', $file);
 		}
-		catch (SwiftRiver_Exception_ChannelOption $e)
+		catch (SwiftRiver_Exception_Channel_Option $e)
 		{
 			$this->response->status(400);
 			$this->response->headers('Content-Type', 'application/json');
@@ -200,7 +200,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 				$option_array = $this->river->get_channel_options($channel, $channel_option->id);
 				$options_array[] = $option_array[0];
 			}
-			catch (SwiftRiver_Exception_ChannelOption $e) 
+			catch (SwiftRiver_Exception_Channel_Option $e) 
 			{
 				// Do nothing
 			}
