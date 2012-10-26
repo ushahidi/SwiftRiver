@@ -203,7 +203,8 @@ class Swiftriver_Plugins {
 			$plugin_config = $config_plugins[$active_plugin->plugin_path];
 			if (isset($plugin_config['channel']) AND $plugin_config['channel'] == TRUE )
 			{
-				if ( ! ($channel_config = self::_validate_channel_plugin_config($plugin_config)))
+				$channel_config = self::_validate_channel_plugin_config($plugin_config);
+				if ( ! isset($channel_config))
 					continue;
 
 				self::$channels[] = array(
@@ -245,8 +246,8 @@ class Swiftriver_Plugins {
 	 *
 	 * @param array $plugin Plugin configuration
 	 * @param array $channel_config Channel config parameters to store
-	 * @return bool TRUE if the config for the channel plugin is in order, 
-	 *     FALSE otherwise
+	 * @return mixed array if the config for the channel plugin is in order, 
+	 *     NULL otherwise
 	 */
 	private static function _validate_channel_plugin_config($plugin)
 	{
@@ -256,7 +257,7 @@ class Swiftriver_Plugins {
 			Kohana::$log->add(Log::ERROR, ":plugin plugin config error. "
 			    . "'channel_options' MUST be an array.", array(':plugin' => $plugin['name']));
 			
-			return FALSE;
+			return NULL;
 		}
 		
 		foreach ($plugin['channel_options'] as $key =>  & $option)
