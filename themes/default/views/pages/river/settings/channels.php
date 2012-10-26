@@ -531,17 +531,17 @@ $(function() {
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
 			
-			if (this.model.get('options').length) {
-				// Populate the parameter list
-				var config = channelsConfig.getChannelConfig(this.model.get("channel"));
-				_.each(config.get("options"), function(option) {
-					var view = new ParameterView({model: option, channelView: this});
-					this.$("div.add-parameter ul").append(view.render().el);
-				}, this);
+			// Populate the parameter list
+			var config = channelsConfig.getChannelConfig(this.model.get("channel"));
+			_.each(config.get("options"), function(option) {
+				var view = new ParameterView({model: option, channelView: this});
+				this.$("div.add-parameter ul").append(view.render().el);
+			}, this);
 			
-				// Render channel options
-				this.channelOptions.each(this.addChannelOption, this);
-			} else {
+			// Render channel options
+			this.channelOptions.each(this.addChannelOption, this);
+			
+			if (!_.size(config.get("options"))) {
 				// Hide the 'Add parameter' button
 				this.$("div.add-parameter").hide();
 			}
