@@ -79,7 +79,10 @@ class Controller_River extends Controller_Drop_Base {
 			$this->collaborator = $this->river->is_collaborator($this->user->id);
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->river->river_public AND ! $this->owner AND ! $this->collaborator)
+			if ( ! $this->river->river_public AND 
+				 ! $this->owner AND 
+				 ! $this->collaborator AND
+				 ! $this->river->is_valid_token($this->request->query('at')))
 			{
 				$this->request->redirect($this->dashboard_url);			
 			}

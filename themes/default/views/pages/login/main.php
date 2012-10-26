@@ -1,4 +1,11 @@
-
+<script type="text/javascript">
+$(function() {
+	// Enable login button if username and password are autofilled by the browser
+	if ($('input[name="username"]').val() && $('input[name="username"]').val()) {
+		$('.save-toolbar').addClass('visible');
+	}
+});
+</script>
 <div class="modal col_9">
 
 <?php if (isset($errors)): ?>

@@ -143,6 +143,15 @@ class Controller_Login extends Controller_Swiftriver {
 						$user = Auth::instance()->get_user();
 						$redirect_to = URL::site().$user->account->account_path;
 					}
+					
+					$redirect_to_request = Request::factory(parse_url($redirect_to, PHP_URL_PATH));
+					if ($redirect_to_request->controller() == 'welcome')
+					{
+						// Just logged in from the welcome page, go to the dashboard.
+						$user = Auth::instance()->get_user();
+						$redirect_to = URL::site($user->account->account_path);
+					}
+					
 					$this->request->redirect($redirect_to);
 				}
 				else
