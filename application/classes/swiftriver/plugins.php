@@ -188,7 +188,7 @@ class Swiftriver_Plugins {
 			return self::$channels;
 
 		self::$channels = array();
-		
+
 		// Load the plugin configs and fetch only those that 
 		// have the channel property set to TRUE
 		$config_plugins = Kohana::$config->load('plugin');

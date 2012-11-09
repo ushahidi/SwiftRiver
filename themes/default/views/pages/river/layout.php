@@ -26,6 +26,8 @@
 					<?php echo __("Collaborators"); ?>
 				</a>
 			</h2>
+                        
+            <?php Swiftriver_Event::run('swiftriver.river.owner.nav', $river); ?>
 		</div>
 		<?php elseif ( ! $anonymous AND ! $is_collaborator): ?>
 		<div class="follow-summary col_3" id="section_follow_river">
