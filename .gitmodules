@@ -19,9 +19,6 @@
 [submodule "modules/orm"]
 	path = modules/orm
 	url = git://github.com/kohana/orm.git
-[submodule "modules/pagination"]
-	path = modules/pagination
-	url = git://github.com/kohana/pagination.git
 [submodule "plugins/feedwriter"]
 	path = plugins/feedwriter
 	url = git://github.com/ushahidi/swiftriver-plugin-feedwriter.git
@@ -42,7 +39,10 @@
 	url = git://github.com/ushahidi/swiftriver-plugin-twitter.git
 [submodule "modules/captcha"]
 	path = modules/captcha
-	url = git://github.com/ekala/kohana-captcha.git
+	url = git://github.com/ushahidi/kohana-captcha.git
 [submodule "modules/purifier"]
 	path = modules/purifier
 	url = git://github.com/shadowhand/purifier.git
+[submodule "modules/minion"]
+	path = modules/minion
+	url = git://github.com/kohana/minion.git

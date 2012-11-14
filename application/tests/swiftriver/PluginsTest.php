@@ -15,7 +15,7 @@ class Swiftriver_PluginsTest extends Unittest_TestCase {
 	public function test_channels()
 	{
 		// Get the no. of enabled plugins from the DB
-		$plugin_count = ORM::factory('plugin')->where('plugin_enabled', '=', 1)->count_all();
+		$plugin_count = ORM::factory('Plugin')->where('plugin_enabled', '=', 1)->count_all();
 		
 		if ($plugin_count == 0)
 		{
