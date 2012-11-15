@@ -102,7 +102,7 @@ class Controller_Swiftriver extends Controller_Template {
 		if
 		( 
 			(bool) Model_Setting::get_setting('anonymous_access_enabled') AND 
-				$this->request->controller() != 'Login'
+				strtolower($this->request->controller()) != 'login'
 		)
 		{
 			if ( ! ($public_user = Cache::instance()->get('site_public_user', FALSE)))
@@ -194,7 +194,7 @@ class Controller_Swiftriver extends Controller_Template {
 		if (
 				Auth::instance()->logged_in() AND 
 				Auth::instance()->get_user()->username == 'public' AND 
-					$this->request->controller() == 'Login'
+					strtolower($this->request->controller()) == 'login'
 			)
 		{
 			Auth::instance()->logout();
@@ -213,7 +213,7 @@ class Controller_Swiftriver extends Controller_Template {
 			if 
 			( 
 				! Auth::instance()->get_user() AND 
-				! in_array($this->request->controller(), $exempt_controllers)
+				! in_array(strtolower($this->request->controller()), $exempt_controllers)
 			)
 			{
 				$this->login_required();
@@ -350,7 +350,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
 
-			if ( ! in_array($this->request->controller(), array('River', 'Bucket', 'Search')))
+			if ( ! in_array(strtolower($this->request->controller()), array('river', 'bucket', 'search')))
 			{
 				// Reset cookies
 				Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'all');

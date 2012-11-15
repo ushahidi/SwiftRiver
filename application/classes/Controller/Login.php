@@ -145,7 +145,7 @@ class Controller_Login extends Controller_Swiftriver {
 					}
 					
 					$redirect_to_request = Request::factory(parse_url($redirect_to, PHP_URL_PATH));
-					if ($redirect_to_request->controller() == 'Welcome')
+					if (strtolower($redirect_to_request->controller()) == 'welcome')
 					{
 						// Just logged in from the welcome page, go to the dashboard.
 						$user = Auth::instance()->get_user();
