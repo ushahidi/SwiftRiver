@@ -20,15 +20,33 @@ class Swiftriver_Mail {
 	 * @param	string	 $email
 	 * @param	string	 $subject
 	 * @param	string	 $mail_body	 	 
+	 * @param   string   $mail_body_html
 	 * @return	null
 	 */	   
-	public static function send($email, $subject, $mail_body)
+	public static function send($email, $subject, $mail_body, $mail_body_html = NULL)
 	{
 		$site_email = Kohana::$config->load('site.email_address');
-		$headers = 'From: "'.Model_Setting::get_setting('site_name').
-										'" <'.$site_email.'>'."\r\n".
-		           'Reply-To: '.$site_email."\r\n";
-		mail($email, $subject, $mail_body, $headers);
+		$from_address = '"'.Model_Setting::get_setting('site_name').'" <'.$site_email.'>';
+		
+		// Send multipart message
+		require_once ("Mail.php");
+		require_once ("Mail/mime.php");
+			
+		$mime = new Mail_mime(array('eol' => "\n"));
+		$mime->setTXTBody($mail_body);
+		
+		if ( ! empty($mail_body_html))
+		{
+			$mime->setHTMLBody($mail_body_html);
+		}
+
+		$body = $mime->get();
+		$headers = $mime->headers(array(
+								'From'    => $from_address,
+								'Subject' => $subject));
+
+		$mail =& Mail::factory('mail');
+		$mail->send($email, $headers, $body);
 	}
 
 }

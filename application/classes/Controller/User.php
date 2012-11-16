@@ -425,7 +425,7 @@ class Controller_User extends Controller_Swiftriver {
 			if ($this->riverid_auth)
 			{
 				// RiverID email change process
-				$mail_body = View::factory('emails/changeemail')
+				$mail_body = View::factory('emails/text/changeemail')
 							 ->bind('secret_url', $secret_url);		            
         
 				$secret_url = url::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
@@ -459,7 +459,7 @@ class Controller_User extends Controller_Swiftriver {
 				if ($auth_token->loaded())
 				{
 					// Send an email with a secret token URL
-					$mail_body = View::factory('emails/changeemail')
+					$mail_body = View::factory('emails/text/changeemail')
 									   ->bind('secret_url', $secret_url);		            
         
 					$secret_url = URL::site('login/changeemail/'

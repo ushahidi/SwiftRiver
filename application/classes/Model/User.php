@@ -492,14 +492,14 @@ class Model_User extends Model_Auth_User {
 		$mail_body = NULL;
 		if ($invite)
 		{
-			$mail_body = View::factory('emails/invite')
+			$mail_body = View::factory('emails/text/invite')
 						 ->bind('secret_url', $secret_url);
 			$mail_body->site_name = Model_Setting::get_setting('site_name');
 			$mail_subject = __(':sitename Invite!', array(':sitename' => Model_Setting::get_setting('site_name')));
 		}
 		else
 		{
-			$mail_body = View::factory('emails/createuser')
+			$mail_body = View::factory('emails/text/createuser')
 						 ->bind('secret_url', $secret_url);
 			$mail_subject = __(':sitename: Please confirm your email address', 
 				array(':sitename' => Model_Setting::get_setting('site_name')));
@@ -546,7 +546,7 @@ class Model_User extends Model_Auth_User {
 				$mail_subject = NULL;
 				if ($invite)
 				{
-					$mail_body = View::factory('emails/invite')
+					$mail_body = View::factory('emails/text/invite')
 								 ->bind('secret_url', $secret_url);
 					$mail_body->site_name = Model_Setting::get_setting('site_name');
 					$mail_subject = __(':sitename Invite!', 
@@ -554,7 +554,7 @@ class Model_User extends Model_Auth_User {
 				}
 				else
 				{
-					$mail_body = View::factory('emails/createuser')
+					$mail_body = View::factory('emails/text/createuser')
 								 ->bind('secret_url', $secret_url);
 					$mail_subject = __(':sitename: Please confirm your email address', 
 						array(':sitename' => Model_Setting::get_setting('site_name')));
@@ -600,7 +600,7 @@ class Model_User extends Model_Auth_User {
 	private static function password_reset_riverid($email)
 	{
 		$riverid_api = RiverID_API::instance();		            
-		$mail_body = View::factory('emails/resetpassword')
+		$mail_body = View::factory('emails/text/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
 		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
 		$site_email = Kohana::$config->load('site.email_address');
@@ -631,7 +631,7 @@ class Model_User extends Model_Auth_User {
 		if ($auth_token->loaded())
 		{
 			//Send an email with a secret token URL
-			$mail_body = View::factory('emails/resetpassword')
+			$mail_body = View::factory('emails/text/resetpassword')
 						 ->bind('secret_url', $secret_url);		            
 			$secret_url = url::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
 			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
