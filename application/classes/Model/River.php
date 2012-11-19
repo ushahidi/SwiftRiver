@@ -726,6 +726,7 @@ class Model_River extends ORM {
 			$collaborators[] = array(
 				'id' => $collaborator->user->id, 
 				'name' => $collaborator->user->name,
+				'email' => $collaborator->user->email,
 				'account_path' => $collaborator->user->account->account_path,
 				'collaborator_active' => $collaborator->collaborator_active,
 				'read_only' => (bool) $collaborator->read_only,

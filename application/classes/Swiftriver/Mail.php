@@ -29,7 +29,6 @@ class Swiftriver_Mail {
 		$from_address = '"'.Model_Setting::get_setting('site_name').'" <'.$site_email.'>';
 		
 		// Send multipart message
-		require_once ("Mail.php");
 		require_once ("Mail/mime.php");
 			
 		$mime = new Mail_mime(array('eol' => "\n"));
@@ -40,14 +39,15 @@ class Swiftriver_Mail {
 			$mime->setHTMLBody($mail_body_html);
 		}
 
+		$headers = $mime->headers(array('From' => $from_address));
+		$headers_str = '';
+		foreach ($headers as $key => $value)
+		{
+			$headers_str .= $key.': '.$value."\r\n";
+		}
+		
 		$body = $mime->get();
-		$headers = $mime->headers(array(
-								'From'    => $from_address,
-								'Subject' => $subject));
-
-		$mail =& Mail::factory('mail');
-		$mail->send($email, $headers, $body);
+		mail($email, $subject, $body, $headers_str);
 	}
-
 }
 ?>

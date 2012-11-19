@@ -337,7 +337,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 									->where('user_id', '=', $user_orm->id)
 									->find();
 				
-				if ( ! $collaborator_orm->loaded())
+				$exists = $collaborator_orm->loaded();
+				if ( ! $exists)
 				{
 					$collaborator_orm->bucket = $this->bucket;
 					$collaborator_orm->user = $user_orm;
@@ -350,6 +351,25 @@ class Controller_Bucket extends Controller_Drop_Base {
 				}
 				
 				$collaborator_orm->save();
+				
+				if ( ! $exists)
+				{
+					// Send email notification after successful save
+					$html = View::factory('emails/html/collaboration_invite');
+					$text = View::factory('emails/text/collaboration_invite');
+					$html->invitor = $text->invitor = $this->user->name;
+					$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+					$html->asset = $text->asset = 'bucket';
+					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
+					$html->asset_link = URL::site($this->bucket_base_url, TRUE);
+					$subject = __(':invitor has invited you to collaborate on a bucket',
+									array( ":invitor" => $this->user->name,
+									));
+					SwiftRiver_Mail::send($collaborator_orm->user->email, 
+										  $subject, $text->render(), $html->render());
+				}
 			break;
 		}
 	}

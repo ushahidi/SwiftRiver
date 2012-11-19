@@ -428,7 +428,6 @@ class Controller_River extends Controller_Drop_Base {
 					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
 					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
 					$html->asset_link = URL::site($this->river_base_url, TRUE);
-					$subject = "XX has invited you to collaborate on a river";
 					$subject = __(':invitor has invited you to collaborate on a river',
 									array( ":invitor" => $this->user->name,
 									));
