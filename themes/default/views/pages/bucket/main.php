@@ -43,14 +43,9 @@
 			</h2>
 		</div>
 		<?php elseif ( ! $anonymous AND ! $is_collaborator ): ?>
-		<div class="follow-summary col_3">
-			<p class="button-score button-white follow">
-				<a href="#" title="now following">
-					<span class="icon"></span>
-					<?php echo __("Follow"); ?>
-				</a>
-			</p>
+		<div class="follow-summary col_3" id="follow_button">
 		</div>
+		<?php echo $follow_button; ?>
 		<?php endif; ?>
 	</div>
 </hgroup>

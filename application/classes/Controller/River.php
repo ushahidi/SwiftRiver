@@ -118,17 +118,15 @@ class Controller_River extends Controller_Drop_Base {
 			
 			if ( ! $this->owner)
 			{
-				$river_item = json_encode(array(
+				$follow_button = View::factory('template/follow');
+				$follow_button->data = json_encode(array(
 					'id' => $this->river->id, 
+					'name' => $this->river->river_name,
 					'type' => 'river',
 					'subscribed' => $this->river->is_subscriber($this->user->id)
 				));
-
-				// Action URL - To handle the follow/unfollow actions on the river
-				$action_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
-
-				$this->template->content->river_item = $river_item;
-				$this->template->content->action_url = $action_url;
+				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
+				$this->template->content->follow_button = $follow_button;
 			}
 		}
 	}

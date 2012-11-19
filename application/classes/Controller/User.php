@@ -83,18 +83,18 @@ class Controller_User extends Controller_Swiftriver {
 		$followers =  $this->visited_account->user->followers->find_all();
 		$view_type = "dashboard";
 
-		// Some info about the owner of the user profile being visited
-		// Will be used later for following unfollowing
-		$this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
-
-		$this->template->content->user_item = json_encode(array(
-				"id" => $this->visited_account->user->id,
-				"type" => "user",					
-				"item_name" => $this->visited_account->user->name,
-				"item_url" => URL::site().$this->visited_account->account_path,
-				"following" => $this->user->has('following', $this->visited_account->user),
-				"is_owner" => $this->user->id == $this->visited_account->user->id				
+		if ( ! $this->owner)
+		{
+			$follow_button = View::factory('template/follow');
+			$follow_button->data = json_encode(array(
+				'id' => $this->visited_account->user->id,
+				'name' => $this->visited_account->user->name,
+				'type' => 'user',
+				'subscribed' => $this->user->has('following', $this->visited_account->user)
 			));
+			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+			$this->template->content->follow_button = $follow_button;
+		}
 	}
 	
 	public function action_index()
@@ -211,65 +211,6 @@ class Controller_User extends Controller_Swiftriver {
 			case "PUT":
 				$item_array = json_decode($this->request->body(), TRUE);
 				
-				if ($item_array['type'] == 'river') 
-				{
-					
-					$river_orm = ORM::factory('River', $item_array['id']);
-					if ( ! $river_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					
-					// Are we adding a subscription?
-					if ($item_array['subscribed'] == 1 AND 
-						! $this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->add('river_subscriptions', $river_orm);
-					}
-					
-					// Are we removing a subscription?
-					if ($item_array['subscribed'] == 0 AND 
-						$this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->remove('river_subscriptions', $river_orm);
-					}
-
-					// Purge the rivers cache
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				
-				if ($item_array['type'] == 'bucket') 
-				{
-					$bucket_orm = ORM::factory('Bucket', $item_array['id']);
-					if ( ! $bucket_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					
-					// Are we adding a subscription?
-					if ($item_array['subscribed'] == 1 AND 
-						! $this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->add('bucket_subscriptions', $bucket_orm);
-					}
-					
-					// Are we removing a subscription?
-					if ($item_array['subscribed'] == 0 AND 
-						$this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}
-
-					// Purge the buckets cache
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				
 				// Stalking!
 				if ($item_array['type'] == 'user') 
 				{
@@ -281,49 +222,21 @@ class Controller_User extends Controller_Swiftriver {
 					        array(':page' => $page)
 					        );
 					}
+					if ($user_orm->id == $this->user->id)
+						throw new HTTP_Exception_400(); // Do not follow self
 					
 					// Are following
-					if ($item_array['following'] == 1 AND ! $this->user->has('following', $user_orm))
+					if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
 					{
 						$this->user->add('following', $user_orm);
 					}
 					
 					// Are unfollowing
-					if ($item_array['following'] == 0 AND $this->user->has('following', $user_orm))
+					if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
 					{
 						$this->user->remove('following', $user_orm);
 					}					
 				}
-			break;
-
-			case "DELETE":
-				$item_type = $this->request->param('name', 0);
-				$id = $this->request->param('id', 0);
-				
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-
-				if ($item_type == 'bucket')
-				{
-					$bucket_orm = ORM::factory('Bucket', $id);
-					$bucket_orm->delete();
-
-					// Delete the buckets cache so that it's recreated on page reload
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-
-				if ($item_type == 'river')
-				{
-					$river_orm = ORM::factory('River', $id);
-					$river_orm->delete();
-
-					// Delete the rivers cache so that it's recreated on page reload
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				
 			break;
 		}
 	}
@@ -729,7 +642,7 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			$follower['user_avatar'] = Swiftriver_Users::gravatar($follower['username'], 35);
 			$follower['user_url'] = URL::site().$follower['account_path'];
-			$follower['following'] = in_array($follower['id'], $following);
+			$follower['subscribed'] = in_array($follower['id'], $following);
 			$follower['type'] = "user";
 		}
 
@@ -762,7 +675,7 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			$follow['user_avatar'] = Swiftriver_Users::gravatar($follow['username'], 35);
 			$follow['user_url'] = URL::site().$follow['account_path'];
-			$follow['following'] = TRUE;
+			$follow['subscribed'] = TRUE;
 			$follow['type'] = "user";
 		}
 

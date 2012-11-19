@@ -134,19 +134,15 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		if ( ! $this->owner)
 		{
-			$bucket_item = json_encode(array(
-				'id' => $this->bucket->id, 
-				'type' => 'river',
+			$follow_button = View::factory('template/follow');
+			$follow_button->data = json_encode(array(
+				'id' => $this->bucket->id,
+				'name' => $this->bucket->bucket_name,
+				'type' => 'bucket',
 				'subscribed' => $this->bucket->is_subscriber($this->user->id)
 			));
-
-			// Action URL - To handle the follow/unfollow actions on the river
-			$action_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
-
-			$this->template->content->bucket_name = $this->page_title;
-			$this->template->content->bucket_item = $bucket_item;
-			$this->template->content->action_url = $action_url;
-
+				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
+			$this->template->content->follow_button = $follow_button;
 		}
 		
 		// Nothing to display message
