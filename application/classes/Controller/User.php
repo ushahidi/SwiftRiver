@@ -212,33 +212,50 @@ class Controller_User extends Controller_Swiftriver {
 				$item_array = json_decode($this->request->body(), TRUE);
 				
 				// Stalking!
-				if ($item_array['type'] == 'user') 
+				$user_orm = ORM::factory('User', $item_array['id']);
+				if ( ! $user_orm->loaded())
 				{
-					$user_orm = ORM::factory('User', $item_array['id']);
-					if ( ! $user_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					if ($user_orm->id == $this->user->id)
-						throw new HTTP_Exception_400(); // Do not follow self
-					
-					// Are following
-					if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
-					{
-						$this->user->add('following', $user_orm);
-					}
-					
-					// Are unfollowing
-					if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
-					{
-						$this->user->remove('following', $user_orm);
-					}					
+					throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
 				}
+				if ($user_orm->id == $this->user->id)
+					throw new HTTP_Exception_400(); // Do not follow self
+				
+				// Are following
+				if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
+				{
+					$this->user->add('following', $user_orm);
+					$this->notify_new_follower($user_orm);
+				}
+				
+				// Are unfollowing
+				if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
+				{
+					$this->user->remove('following', $user_orm);
+				}					
 			break;
 		}
+	}
+	
+	/**
+	 * @return	void
+	 */
+	private function notify_new_follower($user_orm)
+	{
+		// Send email notification after successful save
+		$html = View::factory('emails/html/new_follower');
+		$text = View::factory('emails/text/new_follower');
+		$html->from_name = $text->from_name = $this->user->name;
+		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+		$html->from_link = $text->from_link = URL::site($this->user->account->account_path, TRUE);
+		$html->nickname = $text->nickname = $user_orm->account->account_path;
+		$subject = __(':who if now following you of SwiftRiver!',
+						array( ":who" => $this->user->name,
+						));
+		SwiftRiver_Mail::send($user_orm->email, 
+							  $subject, $text->render(), $html->render());
 	}
 	
 	/**
