@@ -90,17 +90,18 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	'auth'         => MODPATH.'auth',       // Basic authentication
-	'orm'          => MODPATH.'orm',        // Object Relationship Mapping
-	'riverid'      => MODPATH.'riverid',
-	'cache'        => MODPATH.'cache',      // Caching with multiple backends
-	'dummy'        => MODPATH.'dummy_cache',// Blackhole cache driver
-	'database'     => MODPATH.'database',   // Database access
-	'image'        => MODPATH.'image',      // Image manipulation
-	'minion'       => MODPATH.'minion',     // CLI
-	'themes/default' => THEMEPATH.'default', // Themes
-	'csrf'         => MODPATH.'csrf',        // CSRF
-	'captcha' => MODPATH.'captcha',          // Captcha
+	'auth'            => MODPATH.'auth',        // Basic authentication
+	'orm'             => MODPATH.'orm',         // Object Relationship Mapping
+	'riverid'         => MODPATH.'riverid',     // Ushahidi products Single Sign On
+	'cache'           => MODPATH.'cache',       // Caching with multiple backends
+	'dummy'           => MODPATH.'dummy_cache', // Blackhole cache driver
+	'database'        => MODPATH.'database',    // Database access
+	'image'           => MODPATH.'image',       // Image manipulation
+	'minion'          => MODPATH.'minion',      // CLI
+	'themes/default'  => THEMEPATH.'default',   // Themes
+	'csrf'            => MODPATH.'csrf',        // CSRF
+	'captcha'         => MODPATH.'captcha',     // Captcha
+	'markdown'        => MODPATH.'markdown',    // Markdown module
 	));
 
 
