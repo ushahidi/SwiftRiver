@@ -13,14 +13,15 @@
 				</div>
 				<?php endif; ?>			
 			</div>
-			<?php if ($owner): ?>
 			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="<?php echo $settings_url; ?>">
-						<span class="icon"></span>
-						<?php echo __("Bucket settings"); ?>
-					</a>
-				</h2>
+				<?php if ($owner): ?>
+					<h2 class="settings">
+						<a href="<?php echo $settings_url; ?>">
+							<span class="icon"></span>
+							<?php echo __("Bucket settings"); ?>
+						</a>
+					</h2>
+				<?php endif; ?>
 				<h2 class="back">
 					<a href="<?php echo $bucket_url; ?>">
 						<span class="icon"></span>
@@ -28,11 +29,6 @@
 					</a>
 				</h2>
 			</div>
-			<?php else: ?>
-			<div class="follow-summary col_3">
-				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
-			</div>
-			<?php endif; ?>
 		</div>
 	</hgroup>
 
@@ -54,22 +50,24 @@
 				<div id="comments"></div>
 				<div id="comments_error"></div>
 				<div id="comments_footer">
-					<article class="add-comment drop base cf">
-						<div class="drop-content">
-							<div class="drop-body">
-								<textarea id="comment_content"></textarea>
-							</div>
-							<section class="drop-source cf">
-								<a href="#" class="avatar-wrap"><img src="<?php echo $user_avatar; ?>" /></a>
-								<div class="byline">
-									<h2><?php echo $user->name; ?></h2>
+					<?php if ( ! $anonymous):?>
+						<article class="add-comment drop base cf">
+							<div class="drop-content">
+								<div class="drop-body">
+									<textarea id="comment_content"></textarea>
 								</div>
-							</section>
-						</div>
-						<div class="drop-actions cf">
-							<p class="button-blue"><a href="#">Publish</a></p>
-						</div>
-					</article>	
+								<section class="drop-source cf">
+									<a href="#" class="avatar-wrap"><img src="<?php echo $user_avatar; ?>" /></a>
+									<div class="byline">
+										<h2><?php echo $user->name; ?></h2>
+									</div>
+								</section>
+							</div>
+							<div class="drop-actions cf">
+								<p class="button-blue"><a href="#">Publish</a></p>
+							</div>
+						</article>
+					<?php endif;?>
 				</div>
 								
 			</div>
@@ -77,7 +75,7 @@
 	</div>
 
 	<script type="text/template" id="comment-item-template">
-		<article class="drop base cf">
+		<article class="drop base cf" id="comment-<%= id %>">
 			<div class="drop-content">
 				<div class="drop-body">
 					<h1><%= comment_content %></h1>

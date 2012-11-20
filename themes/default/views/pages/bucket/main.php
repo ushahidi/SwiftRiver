@@ -27,14 +27,20 @@
 				</div>
 			<?php endif; ?>			
 		</div>
-		<?php if ($owner): ?>
 		<div class="page-actions col_3">
-			<h2 class="settings">
-				<a href="<?php echo $settings_url; ?>">
-					<span class="icon"></span>
-					<?php echo __("Bucket settings"); ?>
-				</a>
-			</h2>
+			<?php if ( ! $owner AND ! $anonymous AND ! $is_collaborator ): ?>
+				<div class="follow-summary col_3" id="follow_button">
+				</div>
+				<?php echo $follow_button; ?>
+			<?php endif;?>
+			<?php if ($owner): ?>
+				<h2 class="settings">
+					<a href="<?php echo $settings_url; ?>">
+						<span class="icon"></span>
+						<?php echo __("Bucket settings"); ?>
+					</a>
+				</h2>
+			<?php endif; ?>
 			<h2 class="discussion">
 				<a href="<?php echo $discussion_url; ?>">
 					<span class="icon"></span>
@@ -42,11 +48,6 @@
 				</a>
 			</h2>
 		</div>
-		<?php elseif ( ! $anonymous AND ! $is_collaborator ): ?>
-		<div class="follow-summary col_3" id="follow_button">
-		</div>
-		<?php echo $follow_button; ?>
-		<?php endif; ?>
 	</div>
 </hgroup>
 

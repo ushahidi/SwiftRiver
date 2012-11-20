@@ -40,7 +40,8 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user)
-			->bind('user_avatar', $user_avatar);
+			->bind('user_avatar', $user_avatar)
+			->bind('anonymous', $this->anonymous);
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
 		$comments = $this->bucket->get_comments($this->user->id);
 		foreach ($comments as &$comment)
@@ -66,10 +67,12 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
+		if ($this->anonymous)
+			throw new HTTP_Exception_403();
+		
 		switch ($this->request->method())
 		{			
 			case "POST":
-			
 				$post = json_decode($this->request->body(), TRUE);
 				$comment = ORM::factory('Bucket_Comment');
 				$valid = $comment->validate($post);
@@ -80,7 +83,7 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 					$comment->comment_content = $post['comment_content'];
 					$comment->comment_date_add = gmdate("Y-m-d H:i:s", time());
 					$comment->save();
-					
+					$this->notify_new_comment($comment);
 					echo json_encode(array(
 						'id' => $comment->id, 
 						'name' => $comment->user->name,
@@ -126,6 +129,55 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 				$comment_score->save();		
 			break;
 		}
-	}	
+	}
+	
+	/**
+	 * Notify bucket owners and followers of a new comment
+	 * 
+	 * @return	void
+	 */
+	private function notify_new_comment($comment)
+	{
+		$html = View::factory('emails/html/bucket_comment');
+		$text = View::factory('emails/text/bucket_comment');
+		$html->from_name = $text->from_name = $this->user->name;
+		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+		$html->from_link = URL::site($this->user->account->account_path, TRUE);
+		$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+		$html->asset_link = $text->asset_link = URL::site($this->bucket->get_base_url(), TRUE);
+		$html->link = $text->link = URL::site($this->bucket->get_base_url().'/discussion#comment-'.$comment->id, TRUE);
+		$text->comment = $comment->comment_content;
+		$html->comment = Markdown::instance()->transform($comment->comment_content);
+		$subject = __(':from commented on the ":name" bucket.',
+						array( ":from" => $this->user->name,
+						":name" => $this->bucket->bucket_name
+						));
+		
+		// Add owner of the bucket first 
+		$emails = Array($this->bucket->user->email);		
+		
+		// Then collaborators
+		foreach ($this->bucket->get_collaborators(TRUE) as $collaborator)
+		{
+			$emails[] = $collaborator['email'];
+		}
+		
+		// Then followers
+		foreach ($this->bucket->subscriptions->find_all() as $follower)
+		{
+			$emails[] = $follower->email;
+		}
+		
+		$text_body = $text->render();
+		$html_body = $html->render();
+		foreach ($emails as $email)
+		{
+			if ($email != $this->user->email) 
+			{
+				Kohana::$log->add(Log::DEBUG, "Sending email to :email", array(':email' => $email));
+				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body);
+			}
+		}
+	}
 	
 }
