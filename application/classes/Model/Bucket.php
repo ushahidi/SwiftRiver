@@ -137,6 +137,7 @@ class Model_Bucket extends ORM {
 		return array(
 			"id" => $this->id, 
 			"name" => $this->bucket_name,
+			"type" => 'bucket',
 			"url" => URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url,
 			"account_id" => $this->account->id,
 			"user_id" => $this->account->user->id,

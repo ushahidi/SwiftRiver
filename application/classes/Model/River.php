@@ -176,6 +176,7 @@ class Model_River extends ORM {
 		return array(
 			"id" => $this->id, 
 			"name" => $this->river_name,
+			"type" => 'river',
 			"url" => URL::site().$this->account->account_path.'/river/'.$this->river_name_url,
 			"account_id" => $this->account->id,
 			"user_id" => $this->account->user->id,

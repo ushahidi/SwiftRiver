@@ -17,8 +17,24 @@
  */
 $(function() {
 	// Boostrap the follow button
-	var asset = new Assets.Asset(<?php echo $data; ?>);
+	var data = <?php echo $data; ?>;
+	var asset = null;
+	
+	var collection = null;
+	if (data.type == "bucket")
+	{
+		asset = new Assets.Bucket(data);
+		collection = Assets.bucketList;
+	}
+	else if (data.type == "river")
+	{
+		asset = new Assets.River(data);
+		collection = Assets.riverList;
+	} else {
+		asset = new Assets.Asset(data);
+	}
+	
 	asset.urlRoot = "<?php echo $action_url; ?>";
-	(new Assets.FollowButtonView({model: asset})).render();
+	(new Assets.FollowButtonView({model: asset, collection: collection})).render();
 });
 </script>

@@ -119,12 +119,7 @@ class Controller_River extends Controller_Drop_Base {
 			if ( ! $this->owner)
 			{
 				$follow_button = View::factory('template/follow');
-				$follow_button->data = json_encode(array(
-					'id' => $this->river->id, 
-					'name' => $this->river->river_name,
-					'type' => 'river',
-					'subscribed' => $this->river->is_subscriber($this->user->id)
-				));
+				$follow_button->data = json_encode($this->river->get_array($this->user, $this->user));
 				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
 				$this->template->content->follow_button = $follow_button;
 			}

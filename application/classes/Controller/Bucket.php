@@ -135,13 +135,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 		if ( ! $this->owner)
 		{
 			$follow_button = View::factory('template/follow');
-			$follow_button->data = json_encode(array(
-				'id' => $this->bucket->id,
-				'name' => $this->bucket->bucket_name,
-				'type' => 'bucket',
-				'subscribed' => $this->bucket->is_subscriber($this->user->id)
-			));
-				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
+			$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
+			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
 			$this->template->content->follow_button = $follow_button;
 		}
 		
