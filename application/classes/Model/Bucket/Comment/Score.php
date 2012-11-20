@@ -13,12 +13,25 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Model_Comment_Score extends ORM {
+class Model_Bucket_Comment_Score extends ORM {
 	
 	protected $_belongs_to = array(
-		'comment' => array(),
+		'bucket_comment' => array(),
 		'user' => array()
 	);
+	
+	
+	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'score_date_add', 'format' => 'Y-m-d H:i:s');
+	
+	/**
+	 * Auto-update columns for updates
+	 * @var string
+	 */
+    protected $_updated_column = array('column' => 'score_date_modified', 'format' => 'Y-m-d H:i:s');
 
 }
 ?>

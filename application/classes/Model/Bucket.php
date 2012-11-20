@@ -35,7 +35,7 @@ class Model_Bucket extends ORM {
 		'bucket_collaborators' => array(),
 
 		// A bucket has many collaborators
-		'comments' => array(),		
+		'bucket_comments' => array(),		
 
 		// A bucket has many subscribers
 		'subscriptions' => array(
@@ -407,11 +407,12 @@ class Model_Bucket extends ORM {
 	{
 		$comments = array();
 		$i = 0;	
-		foreach ($this->comments->find_all() as $comment)
+		foreach ($this->bucket_comments->find_all() as $comment)
 		{
 			$comments[$i] = array(
 				'id' => $comment->id, 
 				'name' => $comment->user->name,
+				'user_id' => $comment->user->id,
 				'comment_content' => $comment->comment_content,
 				'date' => $comment->comment_date_add,
 				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40),
@@ -421,7 +422,7 @@ class Model_Bucket extends ORM {
 			// Attach [signed in] users score
 			if ($user_id)
 			{
-				foreach ($comment->comment_scores
+				foreach ($comment->bucket_comment_scores
 					->where('user_id', '=', $user_id)
 					->find_all() as $score)
 				{

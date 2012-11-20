@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Model_Comment extends ORM
+class Model_Bucket_Comment extends ORM
 {
 	/**
 	 * A comment belongs to an bucket and a user
@@ -31,8 +31,20 @@ class Model_Comment extends ORM
 	 * @var array Relationships
 	 */
 	protected $_has_many = array(
-		'comment_scores' => array()
+		'bucket_comment_scores' => array()
 		);	
+		
+	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'comment_date_add', 'format' => 'Y-m-d H:i:s');
+	
+	/**
+	 * Auto-update columns for updates
+	 * @var string
+	 */
+    protected $_updated_column = array('column' => 'comment_date_modified', 'format' => 'Y-m-d H:i:s');
 
 	/**
 	 * Validation for comments
@@ -46,23 +58,4 @@ class Model_Comment extends ORM
 			->rule('comment_content', 'not_empty');
 	}
 	
-	/**
-	 * Overload saving to perform additional functions on the comment
-	 */
-	public function save(Validation $validation = NULL)
-	{
-
-		// Do this for first time comments only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the comment was first added
-			$this->comment_date_add = date("Y-m-d H:i:s", time());
-		}
-		else
-		{
-			$this->comment_date_modified = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}		
 }
