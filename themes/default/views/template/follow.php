@@ -32,6 +32,15 @@ $(function() {
 		collection = Assets.riverList;
 	} else {
 		asset = new Assets.Asset(data);
+		asset.on("change", function() {
+			var count = parseInt($("#follower_count > strong").html());
+			if (asset.get("subscribed")) {
+				count += 1;
+			} else {
+				count -= 1;
+			}	
+			$("#follower_count > strong").html(count);
+		});
 	}
 	
 	asset.urlRoot = "<?php echo $action_url; ?>";
