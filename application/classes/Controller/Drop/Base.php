@@ -172,6 +172,10 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					}
 				}
 				
+				foreach ($comments as &$comment)
+				{
+					$comment['comment_text'] = Markdown::instance()->transform($comment['comment_text']);
+				}
 				echo json_encode($comments);
 			break;
 			case "POST":
@@ -190,23 +194,21 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				$comment->user_id = $this->user->id;
 				$comment->save();
 								
-				if ($comment->loaded()) 
-				{
-					echo json_encode(array(
-						'id' => $comment->id,
-						'droplet_id' => $comment->droplet_id,
-						'comment_text' => $comment->comment_text,
-						'identity_user_id' => $this->user->id,
-						'identity_name' => $this->user->name,
-						'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
-						'deleted' => FALSE,
-						'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
-					));
-				}
-				else
-				{
-					$this->response->status(400);
-				}
+				if ( ! $comment->loaded()) 
+					throw new HTTP_Exception_400();
+				
+				$this->notify_new_comment($comment);
+				
+				echo json_encode(array(
+					'id' => $comment->id,
+					'droplet_id' => $comment->droplet_id,
+					'comment_text' => Markdown::instance()->transform($comment->comment_text),
+					'identity_user_id' => $this->user->id,
+					'identity_name' => $this->user->name,
+					'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
+					'deleted' => FALSE,
+					'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
+				));
 			break;
 			case "PUT":
 				$comment_id = intval($this->request->param('id2', 0));
@@ -223,6 +225,76 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				$comment->deleted = TRUE;
 				$comment->save();
 			break;
+		}
+	}
+	
+	/**
+	 * Notify bucket owners and followers of a new comment
+	 * 
+	 * @return	void
+	 */
+	private function notify_new_comment($comment)
+	{
+		$html = View::factory('emails/html/comment');
+		$text = View::factory('emails/text/comment');
+		$html->is_drop = $text->is_drop = TRUE;
+		$html->from_name = $text->from_name = $this->user->name;
+		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+		$html->from_link = URL::site($this->user->account->account_path, TRUE);
+		$text->comment = $comment->comment_text;
+		$html->comment = Markdown::instance()->transform($comment->comment_text);
+		$subject = "";
+		$asset = NULL;
+		
+		if ($this instanceof Controller_River)
+		{
+			$asset = $this->river;
+			$html->asset = $text->asset = "river";
+			$html->asset_name = $text->asset_name = $this->river->river_name;
+			$html->asset_link = $text->asset_link = URL::site($this->river->get_base_url(), TRUE);
+			$html->link = $text->link = URL::site($this->river->get_base_url().'/drop/'.$comment->droplet_id, TRUE);
+			$subject = __(':from commented on a drop in the ":asset_name" river.',
+						  array( ":from" => $this->user->name,
+						         ":asset_name" => $this->river->river_name
+						  ));
+		} 
+		else
+		{
+			$asset = $this->bucket;
+			$html->asset = $text->asset = "bucket";
+			$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+			$html->asset_link = $text->asset_link = URL::site($this->bucket->get_base_url(), TRUE);
+			$html->link = $text->link = URL::site($this->bucket->get_base_url().'/drop/'.$comment->droplet_id, TRUE);
+			$subject = __(':from commented on a drop in the ":asset_name" bucket.',
+						  array( ":from" => $this->user->name,
+						         ":asset_name" => $this->bucket->bucket_name
+						  ));
+		}
+		
+		// Add owner of the bucket first 
+		$emails = Array($asset->account->user->email);		
+		
+		// Then collaborators
+		foreach ($asset->get_collaborators(TRUE) as $collaborator)
+		{
+			$emails[] = $collaborator['email'];
+		}
+		
+		// Then followers
+		foreach ($asset->subscriptions->find_all() as $follower)
+		{
+			$emails[] = $follower->email;
+		}
+		
+		$text_body = $text->render();
+		$html_body = $html->render();
+		foreach ($emails as $email)
+		{
+			if ($email != $this->user->email) 
+			{
+				Kohana::$log->add(Log::DEBUG, "Sending email to :email", array(':email' => $email));
+				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body);
+			}
 		}
 	}
 	

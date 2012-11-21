@@ -138,11 +138,13 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 	 */
 	private function notify_new_comment($comment)
 	{
-		$html = View::factory('emails/html/bucket_comment');
-		$text = View::factory('emails/text/bucket_comment');
+		$html = View::factory('emails/html/comment');
+		$text = View::factory('emails/text/comment');
+		$html->is_drop = $text->is_drop = FALSE;
 		$html->from_name = $text->from_name = $this->user->name;
 		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
 		$html->from_link = URL::site($this->user->account->account_path, TRUE);
+		$html->asset = $text->asset = 'bucket';
 		$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
 		$html->asset_link = $text->asset_link = URL::site($this->bucket->get_base_url(), TRUE);
 		$html->link = $text->link = URL::site($this->bucket->get_base_url().'/discussion#comment-'.$comment->id, TRUE);
@@ -174,7 +176,6 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 		{
 			if ($email != $this->user->email) 
 			{
-				Kohana::$log->add(Log::DEBUG, "Sending email to :email", array(':email' => $email));
 				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body);
 			}
 		}

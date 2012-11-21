@@ -1,4 +1,4 @@
-<?php echo __('":from_name" has commented on the ":asset_name" bucket.
+<?php echo __('":from_name" has commented on the ":asset_name" :asset.
 
 :comment
 
@@ -9,7 +9,8 @@ array(
 	":from_name" => $from_name,
 	":asset_name" => $asset_name,
 	":comment" => $comment,
-	":link" => $link
+	":link" => $link,
+	":asset" => $asset
 ));
 	
 ?>
