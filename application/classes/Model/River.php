@@ -545,6 +545,7 @@ class Model_River extends ORM {
 			$this->river_collaborators
 			    ->where('user_id', '=', $user_orm->id)
 			    ->where('read_only', '!=', 1)
+				->where('collaborator_active', '=', 1)
 			    ->find()
 			    ->loaded()
 		)
