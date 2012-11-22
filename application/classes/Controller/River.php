@@ -399,7 +399,7 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					$collaborator_orm->river = $this->river;
 					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'river', $this->river->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'river', 'invite', $this->river->id, $user_orm->id);
 				}
 				
 				if (isset($collaborator_array['read_only']))
@@ -484,6 +484,7 @@ class Controller_River extends Controller_Drop_Base {
 					if ( ! $this->user->has('river_subscriptions', $river_orm))
 					{
 						$this->user->add('river_subscriptions', $river_orm);
+						Model_User_Action::create_action($this->user->id, 'river', 'follow', $river_orm->id);
 					}
 
 					Cache::instance()->delete('user_rivers_'.$this->user->id);

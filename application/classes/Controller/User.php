@@ -131,6 +131,7 @@ class Controller_User extends Controller_Swiftriver {
 		}		
 				
 		// Activity stream
+		$this->template->header->js .= HTML::script("themes/default/media/js/activities.js");
 		$this->sub_content->activity_stream = View::factory('template/activities')
 		    ->bind('activities', $activities)
 		    ->bind('fetch_url', $fetch_url)
@@ -144,7 +145,6 @@ class Controller_User extends Controller_Swiftriver {
 
 		$this->sub_content->has_activity = count($activity_list) > 0;
 		$activities = json_encode($activity_list);
-
 	}
 
 
@@ -227,6 +227,7 @@ class Controller_User extends Controller_Swiftriver {
 				if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
 				{
 					$this->user->add('following', $user_orm);
+					Model_User_Action::create_action($this->user->id, 'user', 'follow', $user_orm->id);
 					$this->notify_new_follower($user_orm);
 				}
 				
@@ -455,14 +456,35 @@ class Controller_User extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		switch ($this->request->method())
-		{			
-			case "POST":
+		{	
+			case "GET":
+				$query_params = $this->request->query();
+				$last_id = array_key_exists('last_id', $query_params)  ? intval($this->request->query('last_id')) : NULL;
+				$since_id = array_key_exists('since_id', $query_params) ? intval($this->request->query('since_id')) : NULL;
+				
+				$activity_list = Model_User_Action::get_activity_stream(
+											$this->visited_account->user->id, 
+											$this->user->id, 
+											! $this->owner,
+											$last_id,
+											$since_id);
+											
+				if (empty($activity_list))
+					throw new HTTP_Exception_404();
+				
+				echo json_encode($activity_list);
+				break;
+			case "PUT":
 				$action_array = json_decode($this->request->body(), TRUE);
-				$action_id = intval($action_array['action_id']);
+				
+				$action_id = intval($action_array['id']);
 				$action_orm = ORM::factory('User_Action', $action_id);
 				
 				if ( ! $action_orm->loaded())
-					return;
+					throw new HTTP_Exception_404();
+				
+				if ( $this->user->id != $action_orm->action_to_id)
+					throw new HTTP_Exception_403(); // User can only accept own invites
 				
 				
 				// Get the collaboration being saved

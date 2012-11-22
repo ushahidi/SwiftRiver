@@ -82,9 +82,8 @@ class Controller_River_Create extends Controller_River {
 			try
 			{
 				$river = Model_River::create_new($post['river_name'], $post['river_public'], $this->user->account);
-
-				// Delete the rivers cache so that it's recreated on page reload
-				Cache::instance()->delete('user_rivers_'.$this->user->id);
+				
+				Model_User_Action::create_action($this->user->id, 'river', 'create', $river->id);
 
 				// Redirect to the /create/open/<id> to open channels
 				$this->redirect(URL::site().$this->account_path.'/river/create/open/'.$river->id, 302);

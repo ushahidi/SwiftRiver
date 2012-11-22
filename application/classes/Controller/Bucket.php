@@ -333,7 +333,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$collaborator_orm->bucket = $this->bucket;
 					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'bucket', 'invite', $this->bucket->id, $user_orm->id);
 				}
 				
 				if (isset($collaborator_array['read_only']))
@@ -423,6 +423,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
 					{
 						$this->user->add('bucket_subscriptions', $bucket_orm);
+						Model_User_Action::create_action($this->user->id, 'bucket', 'follow', $bucket_orm->id);
 					}
 
 					Cache::instance()->delete('user_buckets_'.$this->user->id);
@@ -445,6 +446,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					$bucket_array['user_id'] = $this->user->id;
 					$bucket_array['account_id'] = $this->account->id;
 					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
+					Model_User_Action::create_action($this->user->id, 'bucket', 'create', $bucket_orm->id);
 					echo json_encode($bucket_orm->get_array($this->user, $this->user));
 				}
 				catch (ORM_Validation_Exception $e)

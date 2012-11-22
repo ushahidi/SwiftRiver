@@ -751,5 +751,39 @@ class Model_User extends Model_Auth_User {
 		
 		return $is_admin;
 	}
+	
+	
+	/**
+	 * Return the list of users who have the given user IDs
+	 *
+	 * @param    Array $ids List of user ids
+	 * @return   Array Model_User array
+	 */
+	
+	public static function get_users($ids)
+	{
+		$users = Array();
+		
+		if ( ! empty($ids))
+		{
+			$query = ORM::factory('User')
+						->where('id', 'IN', $ids);
 
+			// Execute query and return results
+			$users = $query->find_all();
+		}
+		
+		return $users;
+	}
+	
+	/**
+	 * Get the user's dashboard URL
+	 *
+	 * @return   string
+	 */
+	
+	public function get_profile_url()
+	{
+		return URL::site($this->account->account_path);
+	}
 }

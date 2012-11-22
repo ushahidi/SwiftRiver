@@ -1030,7 +1030,30 @@ class Model_River extends ORM {
 
 		return FALSE;
 	}
+	
+	
+	/**
+	 * Return the list of rivers that have the given IDs
+	 *
+	 * @param    Array $ids List of river ids
+	 * @return   Array Model_River array
+	 */
+	
+	public static function get_rivers($ids)
+	{
+		$rivers = Array();
+		
+		if ( ! empty($ids))
+		{
+			$query = ORM::factory('River')
+						->where('id', 'IN', $ids);
 
+			// Execute query and return results
+			$rivers = $query->find_all();
+		}
+		
+		return $rivers;
+	}
 }
 
 ?>

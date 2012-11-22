@@ -610,7 +610,8 @@ CREATE TABLE IF NOT EXISTS `user_actions` (
   PRIMARY KEY (`id`),
   KEY `user_id_idx` (`user_id`),
   KEY `action_on_idx` (`action_to_id`),
-  KEY `action_on_id_idx` (`action_on_id`)
+  KEY `action_on_id_idx` (`action_on_id`),
+  KEY (`action_on`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tracks user actions across the system';
 
 
@@ -683,35 +684,6 @@ CREATE TABLE IF NOT EXISTS `auth_tokens` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_tokens_un_token` (`token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
--- ----------------------------------------
--- VIEW 'activity_stream'
--- ----------------------------------------
-CREATE OR REPLACE VIEW `activity_stream` AS
-SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
-  action_on_id, ac.account_path action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-FROM user_actions ua 
-LEFT JOIN users u1 ON (ua.user_id = u1.id)
-JOIN accounts ac ON (ua.action_on_id = ac.id)
-LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
-WHERE action_on = 'account'
-UNION ALL
-SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
-  action_on_id, r.river_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-FROM user_actions ua
-LEFT JOIN users u1 ON (ua.user_id = u1.id)
-JOIN rivers r ON (ua.action_on_id = r.id)
-LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
-WHERE action_on = 'river'
-UNION ALL
-SELECT ua.id, action_date_add, ua.user_id, u1.name user_name, u1.email user_email, action, action_on, 
-  action_on_id, b.bucket_name action_on_name, u2.name action_to_name, u2.id action_to_id, confirmed
-FROM user_actions ua 
-LEFT JOIN users u1 ON (ua.user_id = u1.id)
-JOIN buckets b ON (ua.action_on_id = b.id)
-LEFT OUTER JOIN users u2 ON (ua.action_to_id = u2.id)
-WHERE action_on = 'bucket';
 
 
 -- ----------------------------------------

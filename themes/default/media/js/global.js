@@ -343,3 +343,9 @@ function scrollToBuoy() {
 		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
 	});
 }
+
+// Returns true if the window scrolled to bottomEL
+function nearBottom(bottomEl) {
+	var bufferPixels = 40;
+	return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - bottomEl.offset().top;
+}

@@ -463,7 +463,7 @@
 					} else {
 						modelCopy = model.clone();
 						modelCopy.set("is_owner", false);
-						this.globalCollection.add(modelCopy);
+						view.collection.add(modelCopy);
 					}
 				}
 			}, function() {

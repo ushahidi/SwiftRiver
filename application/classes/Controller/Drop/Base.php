@@ -292,7 +292,6 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 		{
 			if ($email != $this->user->email) 
 			{
-				Kohana::$log->add(Log::DEBUG, "Sending email to :email", array(':email' => $email));
 				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body);
 			}
 		}

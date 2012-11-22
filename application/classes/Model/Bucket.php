@@ -737,5 +737,28 @@ class Model_Bucket extends ORM {
 	{
 		return $token == $this->public_token AND isset($this->public_token);
 	}
+	
+	/**
+	 * Return the list of buckets that have the given IDs
+	 *
+	 * @param    Array $ids List of bucket ids
+	 * @return   Array Model_Bucket array
+	 */
+	
+	public static function get_buckets($ids)
+	{
+		$buckets = Array();
+		
+		if ( ! empty($ids))
+		{
+			$query = ORM::factory('Bucket')
+						->where('id', 'IN', $ids);
+
+			// Execute query and return results
+			$buckets = $query->find_all();
+		}
+		
+		return $buckets;
+	}
 
 }

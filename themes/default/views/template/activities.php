@@ -1,6 +1,6 @@
 <script type="text/template" id="activity_template">
 	<?php if ($owner AND $gravatar_view): ?>
-		<a class="avatar-wrap"><img src="<%= user_avatar %>"/></a>
+		<a class="avatar-wrap"><img src="<%= avatar %>"/></a>
 	<?php else: ?>
 		<span class="icon"></span>
 	<?php endif; ?>
@@ -8,7 +8,7 @@
 	<div class="item-body">
 		
 		<?php if ($owner): ?>
-			<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
+			<% if (action == "invite" && (action_to_id == logged_in_user) && !confirmed) { %>
 				<div class="actions">
 					<ul class="dual-buttons">
 						<li class="button-white confirm"><a href="#"><?php echo __('Accept'); ?></a></li>
@@ -20,24 +20,32 @@
 
 		<h2>
 			<a href="<%= user_url %>"><%= user_name %></a>
-			<% if (action_name == "invite" && parseInt(action_to_self)) { %>
-				<?php echo __("invited you to collaborate on "); ?>
-				<% var determiner = (action_on == "account") ? "an " : "the "; %>
-				<%= determiner %><a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
+			<% if (action == "invite" && (action_to_id == logged_in_user)) { %>
+				invited you <% if (count > 1) { %> and <%= count %> others <% } %> to collaborate on the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
 			<% } %>
 			
-			<% if (action_name == "invite" && !parseInt(action_to_self)) { %>
-				<% var determiner = (action_on == "account") ? "an " : "the "; %>
-				invited <%= action_to_name %> to collaborate on <%= determiner %> 
-				<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
+			<% if (action == "invite" && (action_to_id != logged_in_user)) { %>
+				invited <%= action_to_name %><% if (count > 1) { %> and <%= count %> others <% } %> to collaborate on the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
 			<% } %>
 
-			<% if (action_name == "create") { %>
-				created the <a href="<%= action_on_url %>"><%= action_on %> "<%= action_on_name %>"</a>
+			<% if (action == "create") { %>
+				created the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
+			<% } %>
+			
+			<% if (action == "follow") { %>
+				<% if (action_on == "user") { %>
+					<% if (action_on_id == logged_in_user) { %>
+						started following you.
+					<% } else { %>
+						started following <a href="<%= action_on_url %>"><%= action_on_name %></a>.
+					<% } %>
+				<% } else {  %>
+					subscribed to the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
+				<% } %>
 			<% } %>
 
 			<?php if ($owner): ?>
-				<% if (action_name == "invite" && parseInt(action_to_self) && !parseInt(confirmed)) { %>
+				<% if (action == "invite" && (action_to_id == logged_in_user) && !confirmed) { %>
 					<p>
 					<?php echo __("By accepting this invitation, you will be able to view and edit the settings for the "); ?>
 					<a href="<%= action_on_url %>">"<%= action_on_name %>"</a> 
@@ -47,203 +55,135 @@
 			<?php endif; ?>
 
 		</h2>
-		<p class="metadata"><%= new Date(action_date).toLocaleString() %></p>
+		<p class="metadata"><%= new Date(action_date_add).toLocaleString() %></p>
 	</div>
 </script>
-
-<script type="text/template" id="grouped_activity_template">
-	<?php if ($owner AND $gravatar_view): ?>
-		<a class="avatar-wrap"><img src="<%= user_avatar %>"/></a>
-	<?php else: ?>
-		<span class="icon"></span>
-	<?php endif; ?>
-
-	<div class="item-body">
-		<h2>
-			<a href="<%= user_url %>"><%= user_name %></a>
-			<% if (action_name == "invite") { %>
-				<% if (users.length == 2) { %>
-					<?php echo __("invited"); ?> <%= users[0].action_to_name %> and <%= users[1].action_to_name %> 
-					<?php echo __("to collaborate on the "); ?>
-					<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
-				<% } else if (users.length > 2) { %>
-					<% var user_count = users.length - 1; %>
-					<?php echo __("invited"); ?> <%= users[0].action_to_name %> and <%= user_count %> 
-					<?php echo __("others to collaborate on the"); ?>
-					<a href="<%= action_on_url %>"><%= action_on_name %></a> <%= action_on %>
-				<% } %>
-			<% } %>
-		</h2>
-		<p class="metadata"><%= new Date(action_date).toLocaleString() %></p>
-	</div>
-</script>
-
 
 <script type="text/javascript">
 
 $(function() {
+	var activities = new Activities.ActivityList;
+	activities.url = "<?php echo $fetch_url ?>";
+	var activityStream = new Activities.ActivityStream({collection: activities});
 	
-	var fetch_url = "<?php echo $fetch_url ?>";
-	
-	// Activity model, collection and view
-	var Activity = Backbone.Model.extend({
-		
-		urlRoot: fetch_url,
-		
-		ignore: function() {
-			this.save({ignored: 1}, {wait: true});
-		}
-	
-	});
-	
-	var ActivityList = Backbone.Collection.extend({		
-		model: Activity,				
-		url: fetch_url,		
-	});
-	
-	var ActivityView = Backbone.View.extend({
-		
-		tagName: "div",
-		
-		className: "parameter activity-item cf",
-		
-		template: _.template($("#activity_template").html()),
-		
-		events: {
-			"click .actions .confirm a": "confirm",
-			"click .actions .ignore a": "ignore"
-		},
-		
-		initialize: function() {
-			// Listen for confirmed state change
-			this.model.on("change:confirmed", this.render, this);
-		},
-		
-		confirm: function() {
-			this.model.save({confirmed: 1}, {
-			    	wait: true,
-			    	success: function(model, response) {
-						// Show notification message of the acceptance
-						var message = "You have accepted " + model.get("user_name") + "'s " +
-						    "invitation to collaborate on the " + model.get("action_on_name") +
-						    " " + model.get("action_on");
-
-						showConfirmationMessage(message);
-
-			    	},
-			    	error: function(model, response) {
-						// The server threw an error
-						var message = "Oops! Something went wrong...";
-						showConfirmationMessage(message);
-			    	}
-			});
-
-			return false;
-		},
-
-		ignore: function() {
-			this.model.ignore();
-			this.$el.fadeOut('slow');
-			return false;
-		},
-		
-		render: function() {
-			var action = this.model.get("action_name");
-			<?php if ( ! $gravatar_view): ?>
-			if (action == "create") {
-				this.$el.addClass("add");
-			} else if (action == "invite") {
-				this.$el.addClass("follow");
+	<?php if ($owner): ?>
+		// Keep track of the last activity we have in the view
+		var lastId = -1;
+		function updateLastId(activity) {
+			if (activity.get("id") < lastId || lastId < 0) {
+				lastId = activity.get("id");
 			}
-			<?php endif; ?>
-			this.$el.html(this.template(this.model.toJSON()));
-			return this;	
 		}
-	});
+		activities.on("add", updateLastId, this);
+		activities.on("reset", function() { activities.each(updateLastId, this); }, this);
+	
+		var isPageFetching = false;
+		var isAtLastPage = false;
+		var loading_msg = window.loading_message.clone();
+		$(window).bind("scroll", function() {
+			bottomEl = $("#next_page_button");
 
-	// View for grouped activity streams
-	var GroupedActivityView = Backbone.View.extend({
-		
-		tagName: "div",
-		
-		className: "parameter activity-item cf",
-		
-		template: _.template($("#grouped_activity_template").html()),
+			if (!bottomEl.length)
+				return;
 
-		render: function() {
-			var action = this.model.get("action_name");
-			<?php if ( ! $gravatar_view): ?>
-			if (action == "create") {
-				this.$el.addClass("add");
-			} else if (action == "invite") {
-				this.$el.addClass("follow");
+			if (nearBottom(bottomEl) && !isPageFetching && !isAtLastPage) {
+				// Advance page and fetch it
+				isPageFetching = true;
+
+				// Hide the navigation selector and show a loading message				
+				loading_msg.appendTo(bottomEl).show();
+
+				activities.fetch({
+				    data: {
+				        last_id: lastId
+				    }, 
+				    add: true,
+				    complete: function(model, response) {
+						// Reanable scrolling after a delay
+						setTimeout(function(){ isPageFetching = false; }, 700);
+				        loading_msg.fadeOut('normal');
+				    },
+				    error: function(model, response) {
+				        if (response.status == 404) {
+				            isAtLastPage = true;
+				        }
+				    }
+				});
+		    }
+		});
+		
+		// Poll for new activities every 30-60 seconds
+		var newActivities = new Activities.ActivityList;
+		newActivities.url = "<?php echo $fetch_url ?>";
+		
+		// Keep track of the last and first activity we have in the view
+		var maxId = 0;
+		function updateMaxId(activity) {
+			if (activity.get("id") > maxId) {
+				maxId = activity.get("id");
 			}
-			<?php endif; ?>
-
-			this.$el.html(this.template(this.model.toJSON()));
-
-			return this;	
+			
 		}
-
-	})
-	
-	// Master activity list
-	var Activities = new ActivityList;
-	
-	// View of the entire activity stream
-	var ActivityStream = Backbone.View.extend({
+		activities.on("reset", function() { activities.each(updateMaxId, this); }, this);
+		newActivities.on("add", updateMaxId);
+		newActivities.on("add", function() {
+			$("#no_activities_alert").hide();	
+		});
 		
-		el: "#activity_stream",
+		var isSyncing = false;
+		setInterval(function() {
+			if (!isSyncing) {
+				isSyncing = true;
+				newActivities.fetch({data: {since_id: maxId}, 
+				    add: true, 
+				    complete: function () {
+				        isSyncing = false;
+				    }
+				});   
+			}		    
+		}, 30000 + Math.floor((Math.random()*30000)+1));
 		
-		initialize: function() {
-			Activities.on('add', this.addActivity, this);
-			Activities.on('reset', this.addActivities, this);			
-		},
+		// View of the entire activity stream
+		var NewActivitiesAlert = Backbone.View.extend({
 		
-		addActivity: function(activity) {
-			var json = activity.toJSON();
-			for (var i=0; i<json.actions.length; i++) {
-				var actionData = json.actions[i].action_data;
-				
-				for (var j=0; j<actionData.length; j++) {
-					var actionTarget = actionData[j].action_on_target;
-
-					var activityModel = new Activity({
-						user_id: json.user_id,
-						user_name: json.user_name,
-						user_url: json.user_url,
-						user_avatar: json.user_avatar,
-						action_name: json.actions[i].action_name,
-						action_on: actionData[j].action_on,
-						action_on_url: actionTarget.action_on_url,
-						action_on_name: actionTarget.action_on_name
-					});
-
-					if (actionTarget.users.length == 1) {
-						// Rebuild the activity model
-						activityModel.set(actionTarget.users[0]);
-						var view = new ActivityView({model: activityModel});	
-						this.$el.append(view.render().el);
-					} else if (actionTarget.users.length > 1) {
-						// Grouped items
-						activityModel.set({
-							action_date: actionData[j].timestamp_date_str,
-							users: actionTarget.users
-						});
-						var view = new GroupedActivityView({model: activityModel});
-						this.$el.append(view.render().el);
-					}
+			el: "#new_activities_alert",
+			
+			events: {
+				"click a": "showNewActivities",
+			},
+		
+			initialize: function() {
+				this.collection.on('add', this.alertNewActivities, this);
+			},
+		
+			alertNewActivities: function(activity) {
+				var message = null;
+				if (this.collection.length > 1) {
+					message = this.collection.length + " new activities";
+				} else {
+					message = this.collection.length + " new activity";
 				}
+				
+				this.$("#new_activity_count").html(message);
+				this.$el.show();
+			},
+			
+			showNewActivities: function() {
+				this.options.activities.add(this.collection.models.reverse());
+				this.collection.reset();
+				this.$el.hide();
+				return false;
 			}
-		},
-		
-		addActivities: function() {
-			Activities.each(this.addActivity, this);
-		}		
-	});
+		});
+		new NewActivitiesAlert({collection: newActivities, activities: activities});
+	<?php endif; ?>
 	
 	// Bootstrap the list
-	var activityStream = new ActivityStream;
-	Activities.reset(<?php echo $activities ?>);
+	activities.reset(<?php echo $activities ?>);
+	
+	if (!(activities.length > 0)) {
+		$("#no_activities_alert").show();
+		isAtLastPage = true;
+	}
 });
 </script>
