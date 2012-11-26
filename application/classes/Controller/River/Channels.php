@@ -21,6 +21,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 	public function action_index()
 	{
 		$this->template->header->title = $this->river->river_name.' ~ '.__('Channel Settings');
+        $this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
 		
 		$this->active = 'channels';
 		$this->settings_content = View::factory('pages/river/settings/channels');		
