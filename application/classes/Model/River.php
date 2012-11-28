@@ -919,9 +919,6 @@ class Model_River extends ORM {
 			$expiry_start_date = time();
 		}
 		$expiry_date = strtotime(sprintf("+%d day", $lifetime), $expiry_start_date);
-		Kohana::$log->add(Log::DEBUG, $this->river_date_expiry);
-		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_start_date));
-		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_date));
 
 		$this->river_expired = 0;
 		$this->river_active = 1;
@@ -1026,6 +1023,25 @@ class Model_River extends ORM {
 		}
 
 		return FALSE;
+	}
+	
+	/**
+	 * Gets the number of days that the river has been active. Therefore,
+	 * if a river has expired, the expiry date is used as the end date.
+	 * Otherwise, the current (UTC) date is used.
+	 *
+	 * @return int
+	 */
+	public function get_number_of_days_active()
+	{
+		$last_date = ($this->river_expired)
+			? $this->expiry_date
+			: gmdate("Y-m-d H:i:s");
+		
+		$start_date = new DateTime($this->river_date_add);
+		$end_date = new DateTime($last_date);
+		
+		return $start_date->diff($end_date)->format('%a');
 	}
 
 }
