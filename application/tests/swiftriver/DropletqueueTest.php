@@ -103,7 +103,7 @@ class Swiftriver_Dropletqueue_Test extends PHPUnit_Extensions_Story_TestCase {
 				foreach ($processed as $test_droplet)
 				{
 					// Delete the test droplet(s) from the database
-					ORM::factory('droplet', $test_droplet['id'])->delete();
+					ORM::factory('Droplet', $test_droplet['id'])->delete();
 				}
 				unset ($processed, $empty_queue);
 			}

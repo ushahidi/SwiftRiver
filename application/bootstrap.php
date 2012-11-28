@@ -3,17 +3,17 @@
 // -- Environment setup --------------------------------------------------------
 
 // Load the core Kohana class
-require SYSPATH.'classes/kohana/core'.EXT;
+require SYSPATH.'classes/Kohana/Core'.EXT;
 
-if (is_file(APPPATH.'classes/kohana'.EXT))
+if (is_file(APPPATH.'classes/Kohana'.EXT))
 {
 	// Application extends the core
-	require APPPATH.'classes/kohana'.EXT;
+	require APPPATH.'classes/Kohana'.EXT;
 }
 else
 {
 	// Load empty core extension
-	require SYSPATH.'classes/kohana'.EXT;
+	require SYSPATH.'classes/Kohana'.EXT;
 }
 
 /**
@@ -97,7 +97,7 @@ Kohana::modules(array(
 	'dummy'        => MODPATH.'dummy_cache',// Blackhole cache driver
 	'database'     => MODPATH.'database',   // Database access
 	'image'        => MODPATH.'image',      // Image manipulation
-	'pagination'   => MODPATH.'pagination', // Pagination
+	'minion'       => MODPATH.'minion',     // CLI
 	'themes/default' => THEMEPATH.'default', // Themes
 	'csrf'         => MODPATH.'csrf',        // CSRF
 	'captcha' => MODPATH.'captcha',          // Captcha
@@ -155,27 +155,6 @@ Route::set('login', 'login(/<action>(/<id>))', array('id' => '\d+'))
 		'controller' => 'login',
 		'action'     => 'index',
 	));
-
-/**
- * Swiftriver Droplet Processing Route
- */	
-Route::set('process', 'process')
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'process',
-		'directory'  => 'crawler'
-	));	
-
-
-/**
- * Swiftriver Crawl Route
- */	
-Route::set('crawler', 'crawler(/<id>(/<channel>))')
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'crawler'
-	));	
 	
 /**
  * API Route
@@ -251,16 +230,6 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
     ->defaults(array(
     	'controller' => 'search',
     	'action' => 'index'
-    ));
-
-/**
- * Swiftriver River maintenance route
- */
-Route::set('river_maintenance', 'maintenance')
-    ->defaults(array(
-    	'controller' => 'maintenance',
-    	'action' => 'run',
-    	'directory' => 'river'
     ));
 	
 /**

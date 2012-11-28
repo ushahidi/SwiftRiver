@@ -6,8 +6,8 @@ $error_id = uniqid('error');
 ?>
 <style type="text/css">
 body {
-	margin: 0;
-	padding: 0;
+       margin: 0;
+       padding: 0;
 }
 #kohana_error { background: #ddd; font-size: 1em; font-family:sans-serif; text-align: left; color: #111; }
 #kohana_error h1,
@@ -52,7 +52,7 @@ function koggle(elem)
 }
 </script>
 <div id="kohana_error">
-	<h1><strong>SWIFTRIVER:</strong> <span class="type"><?php echo $type ?> [ <?php echo $code ?> ]:</span> <span class="message"><?php echo html::chars($message) ?></span></h1>
+	<h1><span class="type"><?php echo $class ?> [ <?php echo $code ?> ]:</span> <span class="message"><?php echo HTML::chars($message) ?></span></h1>
 	<div id="<?php echo $error_id ?>" class="content">
 		<p><span class="file"><?php echo Debug::path($file) ?> [ <?php echo $line ?> ]</span></p>
 		<?php echo Debug::source($file, $line) ?>
