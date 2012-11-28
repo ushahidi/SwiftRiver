@@ -341,7 +341,8 @@ class Controller_Login extends Controller_Swiftriver {
 			$post = Model_Auth_User::get_password_validation($this->request->post())
 									->rule('name', 'not_empty')
 									->rule('nickname', 'not_empty')
-									->rule('nickname', 'alpha_dash');
+									->rule('nickname', 'alpha_dash')
+									->rule('nickname', array('Model_Account', 'account_path_available'));
 									
 			if ( ! $post->check())
 			{
@@ -380,14 +381,6 @@ class Controller_Login extends Controller_Swiftriver {
 							$errors = array(__('Invalid email'));
 						}
 					}
-				}
-				
-				// Is the nickname taken?
-				$nickname = strtolower($this->request->post('nickname'));
-				$account = ORM::factory('account',array('account_path' => $nickname));
-				if ($account->loaded())
-				{
-					$errors = array(__('Nickname is already taken'));
 				}
 			}
 			

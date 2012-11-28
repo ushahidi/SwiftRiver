@@ -212,4 +212,19 @@ class Model_Account extends ORM
 			$this->save();
 		}
 	}
+	
+	/**
+	 * Returns true if the given account path does not exist.
+	 *
+	 * @param string $account_path
+	 * @return boolean
+	 */	
+	public static function account_path_available($account_path)
+	{
+		$account = ORM::factory('Account',array(
+						'account_path' => strtolower($account_path))
+					);
+		
+		return !$account->loaded();		
+	}
 }
