@@ -54,6 +54,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 		$settings = array(
 			'site_name' => '',
 			'site_locale' => '',
+			'email_domain' => '',
+			'comments_email_domain' => '',
 			'public_registration_enabled' => '',
 			'anonymous_access_enabled' => '',
 			'general_invites_enabled' => '',
@@ -69,6 +71,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			$validation = Validation::factory($this->request->post())
 				->rule('site_name', 'not_empty')
 				->rule('site_locale', 'not_empty')
+				->rule('email_domain', 'not_empty')
+				->rule('comments_email_domain', 'not_empty')
 				->rule('default_river_lifetime', 'not_empty')
 				->rule('default_river_lifetime', 'digit')
 				->rule('river_expiry_notice_period', 'not_empty')
@@ -83,6 +87,8 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 				$settings = array(
 					'site_name' => $this->request->post('site_name'),
 					'site_locale' => $this->request->post('site_locale'),
+					'email_domain' => $this->request->post('email_domain'),
+					'comments_email_domain' => $this->request->post('comments_email_domain'),
 					'public_registration_enabled' => $this->request->post('public_registration_enabled') == 1,
 					'anonymous_access_enabled' => $this->request->post('anonymous_access_enabled') == 1,
 					'general_invites_enabled' => $this->request->post('general_invites_enabled') == 1,

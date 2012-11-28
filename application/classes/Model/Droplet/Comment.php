@@ -42,5 +42,23 @@ class Model_Droplet_Comment extends ORM {
 		
 		return $ret;
 	}
+	
+	/**
+	 * Creates a new drop comment
+	 *
+	 * @param array $comment
+	 * @return Model_Droplet_Comment
+	 */
+	public static function create_new($comment_text, $drop_id, $user_id)
+	{
+		$comment = ORM::factory('Droplet_Comment');
+		$comment->comment_text = $comment_text;
+		$comment->droplet_id = $drop_id;
+		$comment->user_id = $user_id;
+		$comment->save();
+		
+		return $comment;
+	}
+	
 }
 ?>

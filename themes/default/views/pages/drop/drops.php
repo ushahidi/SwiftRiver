@@ -300,7 +300,7 @@
 </script>
 
 <script type="text/template" id="discussion-template">
-	<div class="drop-content">
+	<div class="drop-content" id="drop-comment-<%= id %>">
 		<div class="drop-body">
 			<% if (!deleted && (identity_user_id == logged_in_user)) { %>
 				<p class="remove-small actions" title="Delete this comment">

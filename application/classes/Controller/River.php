@@ -25,12 +25,6 @@ class Controller_River extends Controller_Drop_Base {
 	 * @var Model_River
 	 */
 	protected $river;
-	
-	/**
-	 * Boolean indicating whether the logged in user owns the river
-	 * @var bool
-	 */
-	protected $owner = FALSE; 
 
 	/**
 	 * Whether the river is newly created
@@ -77,6 +71,7 @@ class Controller_River extends Controller_Drop_Base {
 		{					
 			$this->owner = $this->river->is_owner($this->user->id);
 			$this->collaborator = $this->river->is_collaborator($this->user->id);
+			$this->public = (bool) $this->river->river_public;
 			
 			// If this river is not public and no ownership...
 			if ( ! $this->river->river_public AND 

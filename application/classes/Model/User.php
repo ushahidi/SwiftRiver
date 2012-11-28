@@ -505,7 +505,7 @@ class Model_User extends Model_Auth_User {
 				array(':sitename' => Model_Setting::get_setting('site_name')));
 		}
 		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('site.email_address');
+		$site_email = Swiftriver_Mail::get_default_address();
 		
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		
@@ -603,7 +603,7 @@ class Model_User extends Model_Auth_User {
 		$mail_body = View::factory('emails/text/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
 		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
-		$site_email = Kohana::$config->load('site.email_address');
+		$site_email = Swiftriver_Mail::get_default_address();
 		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
 		
@@ -774,6 +774,17 @@ class Model_User extends Model_Auth_User {
 		}
 		
 		return $users;
+	}
+	
+	/**
+	 * Return user registered with the provided email address
+	 *
+	 * @param    string $email
+	 * @return   Model_User
+	 */
+	public static function get_user_by_email($email)
+	{
+		return ORM::factory('User',array('email'=>$email));
 	}
 	
 	/**

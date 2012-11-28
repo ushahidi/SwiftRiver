@@ -58,4 +58,22 @@ class Model_Bucket_Comment extends ORM
 			->rule('comment_content', 'not_empty');
 	}
 	
+	
+	/**
+	 * Creates a new comment
+	 *
+	 * @param array $comment
+	 * @return Model_Bucket_Comment
+	 */
+	public static function create_new($comment_text, $bucket_id, $user_id)
+	{
+		$comment = ORM::factory('Bucket_Comment');
+		$comment->bucket_id = $bucket_id;
+		$comment->user_id = $user_id;
+		$comment->comment_content = $comment_text;
+		$comment->save();
+		
+		return $comment;
+	}
+	
 }

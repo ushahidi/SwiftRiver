@@ -15,6 +15,18 @@
  */
 class Controller_Drop_Base extends Controller_Swiftriver {
 	
+	/**
+	 * Boolean indicating whether the logged in user owns the river
+	 * @var bool
+	 */
+	protected $owner = FALSE; 
+	
+	/**
+	 * Boolean indicating whether the logged in user owns the river
+	 * @var bool
+	 */
+	protected $public = FALSE; 
+	
 	 /**
 	  * Tags restful api
 	  */ 
@@ -180,7 +192,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			break;
 			case "POST":
 				// Is the logged in user an owner?
-				if ( ! $this->owner)
+				if ( ! $this->owner AND ! $this->collaborator AND ! $this->public)
 				{
 					throw new HTTP_Exception_403();
 				}
@@ -188,16 +200,17 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				// Get the POST data
 				$body = json_decode($this->request->body(), TRUE);
 				
-				$comment = ORM::factory('Droplet_Comment');
-				$comment->comment_text = $body['comment_text'];
-				$comment->droplet_id = intval($this->request->param('id', 0));
-				$comment->user_id = $this->user->id;
-				$comment->save();
+				$comment = Model_Droplet_Comment::create_new(
+					$body['comment_text'],
+					intval($this->request->param('id', 0)),
+					$this->user->id
+				);
 								
 				if ( ! $comment->loaded()) 
 					throw new HTTP_Exception_400();
 				
-				$this->notify_new_comment($comment);
+				$context_obj = ($this instanceof Controller_River) ? $this->river : $this->bucket;
+				Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
 				
 				echo json_encode(array(
 					'id' => $comment->id,
@@ -229,120 +242,47 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 	}
 	
 	/**
-	 * Notify bucket owners and followers of a new comment
-	 * 
-	 * @return	void
-	 */
-	private function notify_new_comment($comment)
-	{
-		$html = View::factory('emails/html/comment');
-		$text = View::factory('emails/text/comment');
-		$html->is_drop = $text->is_drop = TRUE;
-		$html->from_name = $text->from_name = $this->user->name;
-		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-		$html->from_link = URL::site($this->user->account->account_path, TRUE);
-		$text->comment = $comment->comment_text;
-		$html->comment = Markdown::instance()->transform($comment->comment_text);
-		$subject = "";
-		$asset = NULL;
-		
-		if ($this instanceof Controller_River)
-		{
-			$asset = $this->river;
-			$html->asset = $text->asset = "river";
-			$html->asset_name = $text->asset_name = $this->river->river_name;
-			$html->asset_link = $text->asset_link = URL::site($this->river->get_base_url(), TRUE);
-			$html->link = $text->link = URL::site($this->river->get_base_url().'/drop/'.$comment->droplet_id, TRUE);
-			$subject = __(':from commented on a drop in the ":asset_name" river.',
-						  array( ":from" => $this->user->name,
-						         ":asset_name" => $this->river->river_name
-						  ));
-		} 
-		else
-		{
-			$asset = $this->bucket;
-			$html->asset = $text->asset = "bucket";
-			$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
-			$html->asset_link = $text->asset_link = URL::site($this->bucket->get_base_url(), TRUE);
-			$html->link = $text->link = URL::site($this->bucket->get_base_url().'/drop/'.$comment->droplet_id, TRUE);
-			$subject = __(':from commented on a drop in the ":asset_name" bucket.',
-						  array( ":from" => $this->user->name,
-						         ":asset_name" => $this->bucket->bucket_name
-						  ));
-		}
-		
-		// Add owner of the bucket first 
-		$emails = Array($asset->account->user->email);		
-		
-		// Then collaborators
-		foreach ($asset->get_collaborators(TRUE) as $collaborator)
-		{
-			$emails[] = $collaborator['email'];
-		}
-		
-		// Then followers
-		foreach ($asset->subscriptions->find_all() as $follower)
-		{
-			$emails[] = $follower->email;
-		}
-		
-		$text_body = $text->render();
-		$html_body = $html->render();
-		foreach ($emails as $email)
-		{
-			if ($email != $this->user->email) 
-			{
-				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body);
-			}
-		}
-	}
-	
-	/**
 	 * REST endpoint for sharing droplets via email
 	 */
 	public function action_share()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
+		
+		if ($this->request->method() != "POST")
+			throw HTTP_Exception::factory(405)->allowed('POST');
 
-		if ($_POST)
+		// Extract the input data to be used for sending the email
+		$post = Arr::extract($_POST, array('recipient', 
+			'drop_title', 'drop_url', 'security_code'));
+		
+		$csrf_token = $this->request->headers('x-csrf-token');
+
+		// Setup validation
+		$validation = Validation::factory($post)
+		    ->rule('recipient', 'not_empty')
+		    ->rule('recipient', 'email')
+		    ->rule('security_code', 'Captcha::valid')
+		    ->rule('drop_title', 'not_empty')
+		    ->rule('drop_url', 'url');
+
+		// Validate
+		if ( ! CSRF::valid($csrf_token) OR ! $validation->check())
 		{
-			// Extract the input data to be used for sending the email
-			$post = Arr::extract($_POST, array('recipient', 
-				'drop_title', 'drop_url', 'security_code'));
-			
-			$csrf_token = $this->request->headers('x-csrf-token');
-
-			// Setup validation
-			$validation = Validation::factory($post)
-			    ->rule('recipient', 'not_empty')
-			    ->rule('recipient', 'email')
-			    ->rule('security_code', 'Captcha::valid')
-			    ->rule('drop_title', 'not_empty')
-			    ->rule('drop_url', 'url');
-
-			// Validate
-			if ( ! CSRF::valid($csrf_token) OR ! $validation->check())
-			{
-				Kohana::$log->add(Log::DEBUG, "CSRF token or form validation failure");
-				$this->response->status(400);
-			}
-			else
-			{
-				list($recipient, $subject) = array($post['recipient'], $post['drop_title']);
-
-				// Modify the mail body to include the email address of the
-				// use sharing content
-				$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
-				    array(':user' => $this->user->username, ':url' => $post['drop_url']));
-
-				// Send the email
-				Swiftriver_Mail::send($recipient, $subject, $mail_body);
-			}
+			Kohana::$log->add(Log::DEBUG, "CSRF token or form validation failure");
+			throw HTTP_Exception::factory(400);
 		}
 		else
 		{
-			throw new HTTP_Exception_405("Only HTTP POST requests are allowed");
+			list($recipient, $subject) = array($post['recipient'], $post['drop_title']);
+
+			// Modify the mail body to include the email address of the
+			// use sharing content
+			$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
+			    array(':user' => $this->user->username, ':url' => $post['drop_url']));
+
+			// Send the email
+			Swiftriver_Mail::send($recipient, $subject, $mail_body);
 		}
 	}
 }

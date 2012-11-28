@@ -18,19 +18,19 @@ class Model_Auth_Token extends ORM {
     /**
 	 * Generate a secret user token
 	 *
-	 * @param $email
-	 * @param $type
+	 * @param $type Type of token
+	 * @param $data Free text data to be stored in the token
+	 * @param $valid_for Time in seconds the token is valid for
 	 * @return Model_Auth_Token
 	 */	
-	public static function create_token($type, $data)
+	public static function create_token($type, $data, $valid_for = 86400)
 	{
 		$auth_token = ORM::factory('Auth_Token');
 		$auth_token->type = $type;
 		$auth_token->data = json_encode($data);
 		$auth_token->token = md5(Text::random('alnum', 16).serialize($data));
 		$auth_token->created_date = date("Y-m-d H:i:s", time());
-		//Expire in 24 hours
-		$auth_token->expire_date = date("Y-m-d H:i:s", time()+86400);
+		$auth_token->expire_date = date("Y-m-d H:i:s", time() + $valid_for);
 		$auth_token->save();
 		
 		return $auth_token;

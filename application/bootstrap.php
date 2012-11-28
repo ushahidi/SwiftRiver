@@ -160,9 +160,16 @@ Route::set('login', 'login(/<action>(/<id>))', array('id' => '\d+'))
 /**
  * API Route
  */
-Route::set('api', 'api(/<controller>)')
+Route::set('drops_api', 'api/drop(/<id>(/<action>))')
 	->defaults(array(
-		'action'     => 'api'
+		'controller' => 'drop',
+		'action'     => 'index'
+	));	
+		
+Route::set('bucket_comment_api', 'api/bucket/<id>/comment')
+	->defaults(array(
+		'controller' => 'bucket',
+		'action'     => 'comment_api'
 	));	
 	
 /**

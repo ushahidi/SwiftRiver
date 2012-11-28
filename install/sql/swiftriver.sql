@@ -824,7 +824,9 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (8, 'general_invites_enabled', '0'),
 (9, 'default_river_quota', '1'),
 (10, 'default_river_drop_quota', '10000'),
-(11, 'site_url', 'http://www.example.com');
+(11, 'site_url', 'http://www.example.com'),
+(12, 'email_domain', 'example.com'),
+(12, 'comments_email_domain', 'example.com');
 
 -- -----------------------------------------------------
 -- Data for table `users`

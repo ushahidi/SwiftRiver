@@ -22,13 +22,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	protected $bucket;
 	
 	/**
-	 * Boolean indicating whether the logged in user owns the bucket
-	 * or is a collaborator
-	 * @var bool
-	 */
-	protected $owner = FALSE; 
-	
-	/**
 	 * Whether photo drops only are selected.
 	 */
 	protected $photos = FALSE;
@@ -60,6 +53,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		{
 			$this->owner = $this->bucket->is_owner($this->user->id);
 			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
+			$this->public = (bool) $this->bucket->bucket_publish;
 			
 			// Bucket isn't published and logged in user isn't owner 
 			// and doesn't have a valid token
@@ -498,5 +492,50 @@ class Controller_Bucket extends Controller_Drop_Base {
 		{
 			Cache::instance()->delete('user_buckets_'.$this->user->id);
 		}
+	}
+	
+	/**
+	 * Comments Posting API
+	 * 
+	 * Used for email replies at the moment.
+	 *
+	 */
+	public function action_comment_api()
+	{
+ 		$this->template = "";
+		$this->auto_render = FALSE;
+		
+ 		if ( ! $this->admin)
+ 			throw new HTTP_Exception_403();
+		
+		if ($this->request->method() != "POST")
+			throw HTTP_Exception::factory(405)->allowed('POST');
+
+ 		// Get the POST data
+ 		$data = json_decode($this->request->body(), TRUE);
+		$user = Model_User::get_user_by_email($data['from_email']);
+		$bucket_id = intval($this->request->param('id', 0));
+		$bucket = ORM::factory('Bucket', $bucket_id);
+		
+		if ( ! $user->loaded())
+			throw HTTP_Exception::factory(404);		
+		
+		if ( ! $bucket->loaded())
+			throw HTTP_Exception::factory(404);		
+		
+		$comment = Model_Bucket_Comment::create_new(
+			$data['comment_text'],
+			$bucket_id,
+			$user->id
+		);
+		
+	    Swiftriver_Mail::notify_new_bucket_comment($comment, $bucket);
+		
+ 		Kohana::$log->add(Log::DEBUG, "New comment for bucket id :id from :email", 
+			array(
+ 				':id' => $bucket_id, 
+				':email' => $data['from_email']
+ 			)
+		);
 	}
 }
