@@ -12,7 +12,7 @@
 	<?php
 	echo $meta; 
 	
-	echo(Html::style("themes/default/media/css/styles.css"));
+	echo(HTML::style("themes/default/media/css/styles.css"));
 	
 	// Inline css
 	echo $css;
@@ -40,31 +40,31 @@
 	</script>
 	
 	<?php
-	echo(Html::script("themes/default/media/js/jquery-1.7.2.min.js"));
+	echo(HTML::script("themes/default/media/js/jquery-1.7.2.min.js"));
 	
 	// Outside events plugin
-	echo(Html::script("themes/default/media/js/jquery.outside.js"));
+	echo(HTML::script("themes/default/media/js/jquery.outside.js"));
 	
 	// Masonry plugin
-	echo(Html::script("themes/default/media/js/jquery.masonry.min.js"));
-	echo(Html::script("themes/default/media/js/jquery.imagesloaded.min.js"));
-	echo(Html::script("themes/default/media/js/modernizr.custom.01220.js"));
+	echo(HTML::script("themes/default/media/js/jquery.masonry.min.js"));
+	echo(HTML::script("themes/default/media/js/jquery.imagesloaded.min.js"));
+	echo(HTML::script("themes/default/media/js/modernizr.custom.01220.js"));
 	
 	// Fileupload jQuery plugin
-	echo(Html::script("themes/default/media/js/jquery.ui.widget.js"));
-	echo(Html::script("themes/default/media/js/jquery.iframe-transport.js"));
-	echo(Html::script("themes/default/media/js/jquery.fileupload.js"));
+	echo(HTML::script("themes/default/media/js/jquery.ui.widget.js"));
+	echo(HTML::script("themes/default/media/js/jquery.iframe-transport.js"));
+	echo(HTML::script("themes/default/media/js/jquery.fileupload.js"));
 
 	// Touch Plugin
-	// echo(Html::script("themes/default/media/js/jquery.touch.min.js"));
+	// echo(HTML::script("themes/default/media/js/jquery.touch.min.js"));
 
 	// Backbone
-	echo(Html::script("themes/default/media/js/underscore-min.js"));
-	echo(Html::script("themes/default/media/js/backbone-min.js"));
+	echo(HTML::script("themes/default/media/js/underscore-min.js"));
+	echo(HTML::script("themes/default/media/js/backbone-min.js"));
 	
 	// SwiftRiver global JS
-	echo(Html::script("themes/default/media/js/global.js"));
-	echo(Html::script("themes/default/media/js/assets.js"));
+	echo(HTML::script("themes/default/media/js/global.js"));
+	echo(HTML::script("themes/default/media/js/assets.js"));
 
 	// Dynamic inline JS
 	echo $js;

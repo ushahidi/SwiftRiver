@@ -175,18 +175,18 @@ Configuring the crawler
 Add the following entries to your crontab to schedule crawling every 30 
 minutes and post processing every 15 minutes respectively:
 
-	0,30 * * * * cd <app home>; php5 index.php --uri=crawler >> application/logs/crawl.log 2>&1
-	0,15,30,45 * * * * cd <app home>; php5 index.php --uri=process >> application/logs/process.log 2>&1
+	0,30 * * * * cd <app home>; php5 index.php --task=crawler >> application/logs/crawl.log 2>&1
+	0,15,30,45 * * * * cd <app home>; php5 index.php --task=process >> application/logs/process.log 2>&1
 
 
-Configuring river maintenance
+Configuring River Expiry
 =============================
 
-River maintenance involves checking which rivers have expired and are about to expire and sending 
-out notifications to their owners. To schedule maintenance to run every day at midnight, add the
-following entries to your crontab:
+This process checks which rivers have expired or are about to expire and sends out notifications
+to the their oenwer. Add the following entries to your crontab to schedule the process to run
+everyday at midnight:
 
-    * 0 * * * cd <app home>; php5 index.php --uri=maintenance >> application/logs/maintenance.log 2>&1
+    * 0 * * * cd <app home>; php5 index.php --task=river:expire >> application/logs/river_expiry.log 2>&1
 
 
 For additional information, see the [Installing SwiftRiver](https://wiki.ushahidi.com/display/WIKI/Installing+SwiftRiver) section on the Ushahidi wiki.

@@ -1,13 +1,12 @@
 <?php 
-echo __("Hi :recipient_name!
+echo __('Hello,
 
-Your :river_name river has shutdown and is no longer receiving new drops 
+Your ":river_name" river has expired and is no longer receiving new drops 
 from your channels.
 
-Click on the link below to extend the expiration date of your 
-river for another :active_duration days.
+Click on the link below to reactivate your river for another :active_duration days.
 
-:activation_url",
+:activation_url',
 array(
 	":recipient_name" => $recipient_name,
 	":river_name" => $river_name,

@@ -389,13 +389,13 @@ $(function() {
 					// Disable the inputs and show the loading icon
 					view.$("span.error-message").remove();
 					view.$("input").attr("disabled", "disabled").blur();
-					view.$("a.save").parents("p.actions").hide().after(loading_msg);
+					view.$(".button-blue").hide().after(loading_msg);
 				},
 				done: function (e, data) {
 					if (!data.result.length) {
 						var error_msg = $('<span class="error-message">No parameters were found in the file</span>');
 						loading_msg.replaceWith(error_msg).remove();
-						view.$("a.save").parents("p.actions").fadeIn();
+						view.$(".button-blue").fadeIn()
 						view.$("input").removeAttr("disabled");
 						return;
 					} else {
@@ -411,7 +411,7 @@ $(function() {
 					} 
 					var error_msg = $('<span class="error-message">' + message + '</span>');
 					loading_msg.replaceWith(error_msg).remove();
-					view.$("a.save").parents("p.actions").fadeIn()
+					 view.$(".button-blue").fadeIn()
 					view.$("input").removeAttr("disabled");
 				}
 			});
@@ -539,6 +539,11 @@ $(function() {
 			
 			// Render channel options
 			this.channelOptions.each(this.addChannelOption, this);
+			
+			if (!_.size(config.get("options"))) {
+				// Hide the 'Add parameter' button
+				this.$("div.add-parameter").hide();
+			}
 			
 			return this;	
 		},

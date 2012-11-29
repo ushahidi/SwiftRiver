@@ -90,14 +90,15 @@ CREATE TABLE IF NOT EXISTS `rivers` (
   `river_public` tinyint(4) NOT NULL DEFAULT '0',
   `river_current` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Identifies if this is the last River that  was worked on',
   `default_layout` varchar(10) DEFAULT 'list',
-  `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `max_drop_id` bigint(20) NOT NULL DEFAULT '0',
   `drop_count` int(11) NOT NULL DEFAULT '0',
+  `drop_quota` int(11) DEFAULT '10000',
+  `river_full` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
+  `river_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `river_date_expiry` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'Date when the river shall expire',
   `river_expired` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the river has expired',
-  `expiry_extension_token` varchar(64) DEFAULT NULL,
+  `expiry_notification_sent` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
   `extension_count` int(11) NOT NULL DEFAULT '0' COMMENT 'The no. of times the expiry date has been extended',
-  `expiry_candidate` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Flags whether the river has been marked for expiry',
   `public_token` char(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `un_river_name_url` (`account_id`,`river_name_url`),
@@ -398,6 +399,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `logins` int(10) unsigned NOT NULL DEFAULT '0',
   `invites` smallint(6) NOT NULL DEFAULT '10',
   `last_login` int(10) unsigned DEFAULT NULL,
+  `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `username` (`username`),
@@ -529,6 +531,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
   `account_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `account_date_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `account_active` tinyint(4) NOT NULL DEFAULT '1',
+  `river_quota_remaining` INT  NULL  DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `account_path` (`account_path`),
   KEY `user_id` (`user_id`)
@@ -841,9 +844,12 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (3, 'site_locale', 'en'),
 (4, 'public_registration_enabled', '0'),
 (5, 'anonymous_access_enabled', '0'),
-(6, 'river_active_duration', '14'),
+(6, 'default_river_lifetime', '14'),
 (7, 'river_expiry_notice_period', '3'),
-(8, 'general_invites_enabled', '0');
+(8, 'general_invites_enabled', '0'),
+(9, 'default_river_quota', '1'),
+(10, 'default_river_drop_quota', '10000'),
+(11, 'site_url', 'http://www.example.com');
 
 -- -----------------------------------------------------
 -- Data for table `users`
@@ -867,3 +873,30 @@ INSERT INTO `accounts` (`user_id`, `account_path`) VALUES
 (2, 'public');
 
 COMMIT;
+
+-- -----------------------------------------------------
+-- Table `channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel` varchar(100) NOT NULL DEFAULT '' COMMENT 'Channel on which to apply the quota',
+  `channel_option` varchar(100) NOT NULL,
+  `quota` int(11) NOT NULL DEFAULT 0 COMMENT 'No. of allowable options for the specified channel',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `account_channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) NOT NULL,
+  `channel` varchar(100) NOT NULL DEFAULT '',
+  `channel_option` varchar(100) NOT NULL DEFAULT '',
+  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
+  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
+  KEY `idx_user_id` (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

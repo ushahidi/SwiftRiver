@@ -1,8 +1,7 @@
 <?php
-echo __("Hi :recipient_name!
+echo __("Hello,
 
-Your :river_name river will shutdown in :days_to_expiry day(s). This means that in :days_to_expiry day(s),
-your river will stop being updated with new drops.
+Your :river_name river will stop receiving new drops in :days_to_expiry day(s).
 
 Click on the link below to view your river and extend its lifetime
 by another :active_duration days.
