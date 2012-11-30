@@ -252,20 +252,6 @@ Route::set('account_bucket_new', '<account>/bucket/new')
 	));
 
 /**
- * Trends
- */
-Route::set('account_trend', '<account>/<context>/<name>/trend/<controller>(/<action>(/<id>))',
-	array(
-		'context' => '(river|bucket)',
-		'id' => '\d+'
-	))
-	->defaults(array(
-		'controller' => 'main',
-		'action'     => 'index',
-		'directory'  => 'trend'
-	));
-	
-/**
  * River and bucket settings
  */
 Route::set('river_bucket_settings', '<account>/<directory>/<name>/settings(/<controller>(/<action>(/<id>(/<id2>))))',
@@ -288,6 +274,16 @@ Route::set('river_bucket_discussion', '<account>/<directory>/<name>/discussion(/
 		'controller' => 'discussion',
 		'action'     => 'index'
 	));	
+
+// Route for the analytics pages at the river and bucket levels
+Route::set('river_bucket_analytics', '<account>/<directory>/<name>/analytics(/<action>)',
+	array(
+		'directory' => '(river|bucket)'
+	))
+	->defaults(array(
+		'controller' => 'analytics',
+		'action' => 'index'
+	));
 
 /**
  * River and bucket create
@@ -333,3 +329,10 @@ Route::set('error', 'error/<action>(/<message>)', array('action' => '[0-9]++', '
 ->defaults(array(
     'controller' => 'error_handler'
 ));
+
+// Route for the analytics page on the user dashboard
+Route::set('user_analytics', '<account>/analytics(/<action>)')
+	->defaults(array(
+		'controller' => 'analytics',
+		'action' => 'index'
+	));
