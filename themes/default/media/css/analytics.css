@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+section.analytics { font-size: 10px; }
+
+.axis path, .axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.y.axis path { 
+	display: none;
+}
+
+.area, .bar {
+	fill: steelblue;
+}
+
+.line {
+	fill: none;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+rect.background { fill: #EAF3F5; }
+
+.arc path {
+	stroke: #fff;
+}

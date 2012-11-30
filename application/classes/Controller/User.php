@@ -817,6 +817,11 @@ class Controller_User extends Controller_Swiftriver {
 			);
 		}
 		
+		$nav[] = array(
+			'id' => 'analytics-dashboard-link',
+			'url' => '/analytics',
+			'label' => __('Analytics')			
+		);
 		
 		// SwiftRiver Plugin Hook -- Add Nav Items
 		Swiftriver_Event::run('swiftriver.dashboard.nav', $nav);

@@ -26,6 +26,13 @@
 					<?php echo __("Collaborators"); ?>
 				</a>
 			</h2>
+			
+			<h2 class="settings">
+				<a href="<?php echo $river->get_base_url()."/analytics"; ?>">
+					<span class="icon"></span>
+					<?php echo __("Analytics"); ?>
+				</a>
+			</h2>
                         
             <?php Swiftriver_Event::run('swiftriver.river.owner.nav', $river); ?>
 		</div>

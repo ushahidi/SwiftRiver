@@ -528,25 +528,25 @@ class Model_Droplet extends ORM {
 				}
 
 				$query->execute();
-								
-				$max_river_drops_query = NULL;
+
+				$max_river_drops_query = array();
+				$query_template = "SELECT %s AS id, %s AS max_id, %s AS cnt";
 				foreach ($max_river_drop_ids as $key => $value)
 				{
-					if ($max_river_drops_query)
-					{
-						$max_river_drops_query .= ' union all ';
-					}
-					$max_river_drops_query .= 'select '.$key.' id, '.$value['max_id'].' max_id, '.$value['count'].' cnt';
+					$max_river_drops_query[] = sprintf($query_template, $key, $value['max_id'], $value['count']);
 				}
-				
+
+				// Create a union of each of the queries
+				$river_update_query = implode(" UNION ALL ", $max_river_drops_query);
+
 				// Update river max_drop_id
-				$update_rivers_sql = "UPDATE `rivers` JOIN (".$max_river_drops_query.") a "
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$river_update_query.") a "
 				    ."USING (`id`) SET `rivers`.`max_drop_id` = `a`.`max_id` "
 					."WHERE `rivers`.`max_drop_id` < `a`.`max_id`";
 				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
 				
 				// Update drop count
-				$update_rivers_sql = "UPDATE `rivers` JOIN (".$max_river_drops_query.") a "
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$river_update_query.") a "
 				    ."USING (`id`) SET `rivers`.`drop_count` = `rivers`.`drop_count` + `a`.`cnt` ";
 				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
 			}
@@ -596,12 +596,12 @@ class Model_Droplet extends ORM {
 			if ($new_river_drops)
 			{
 				$drop_tags = DB::select('droplet_id', 'tags.id', 'tag', 'tag_type')
-											->from('droplets_tags')
-											->join('tags', 'INNER')
-										    ->on('droplets_tags.tag_id', '=', 'tags.id')
-											->where('droplet_id', 'IN', array_keys($drops_idx))
-											->execute()
-											->as_array();
+								->from('droplets_tags')
+								->join('tags', 'INNER')
+							    ->on('droplets_tags.tag_id', '=', 'tags.id')
+								->where('droplet_id', 'IN', array_keys($drops_idx))
+								->execute()
+								->as_array();
 				foreach ($drop_tags as $drop_tag)
 				{
 					if ( ! isset($all_drop_tags[$drop_tag['droplet_id']]))
