@@ -504,7 +504,7 @@ class Model_User extends Model_Auth_User {
 			$mail_subject = __(':sitename: Please confirm your email address', 
 				array(':sitename' => Model_Setting::get_setting('site_name')));
 		}
-		$secret_url = url::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
+		$secret_url = URL::site('login/create/'.urlencode($email).'/%token%', TRUE, TRUE);
 		$site_email = Kohana::$config->load('site.email_address');
 		
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
@@ -602,7 +602,7 @@ class Model_User extends Model_Auth_User {
 		$riverid_api = RiverID_API::instance();		            
 		$mail_body = View::factory('emails/resetpassword')
 					 ->bind('secret_url', $secret_url);		            
-		$secret_url = url::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
+		$secret_url = URL::site('login/reset/'.urlencode($email).'/%token%', TRUE, TRUE);
 		$site_email = Kohana::$config->load('site.email_address');
 		$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 		$response = $riverid_api->request_password($email, $mail_body, $mail_subject, $site_email);
@@ -633,7 +633,7 @@ class Model_User extends Model_Auth_User {
 			//Send an email with a secret token URL
 			$mail_body = View::factory('emails/resetpassword')
 						 ->bind('secret_url', $secret_url);		            
-			$secret_url = url::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
+			$secret_url = URL::site('login/reset/'.urlencode($email).'/'.$auth_token->token, TRUE, TRUE);
 			$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
 			Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 			
