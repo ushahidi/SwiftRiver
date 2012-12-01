@@ -537,16 +537,16 @@ class Model_Droplet extends ORM {
 				}
 
 				// Create a union of each of the queries
-				$river_update_query = implode(" UNION ALL ", $max_river_drops_query);
+				$rivers_update_query = implode(" UNION ALL ", $max_river_drops_query);
 
 				// Update river max_drop_id
-				$update_rivers_sql = "UPDATE `rivers` JOIN (".$river_update_query.") a "
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$rivers_update_query.") a "
 				    ."USING (`id`) SET `rivers`.`max_drop_id` = `a`.`max_id` "
 					."WHERE `rivers`.`max_drop_id` < `a`.`max_id`";
 				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
 				
 				// Update drop count
-				$update_rivers_sql = "UPDATE `rivers` JOIN (".$river_update_query.") a "
+				$update_rivers_sql = "UPDATE `rivers` JOIN (".$rivers_update_query.") a "
 				    ."USING (`id`) SET `rivers`.`drop_count` = `rivers`.`drop_count` + `a`.`cnt` ";
 				DB::query(Database::UPDATE, $update_rivers_sql)->execute();
 			}

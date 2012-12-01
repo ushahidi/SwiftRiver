@@ -23,6 +23,7 @@ class Controller_River_Analytics extends Controller_River {
 		// an owner of the river
 		if ( ! $this->owner)
 		{
+			// TODO: Show 404 page
 			$this->request->redirect($this->river_base_url);
 		}
 
@@ -44,22 +45,25 @@ class Controller_River_Analytics extends Controller_River {
 	 */
 	public function action_index()
 	{
-		$this->active = "summary";
-		$this->analytics_content = View::factory('pages/river/analytics/summary')
+		$this->active = "overview";
+		$this->analytics_content = View::factory('pages/river/analytics/overview')
 			->set('total_drop_count', $this->river->drop_count)
 			->bind('days_active', $days_active)
 			->bind('breakdown', $breakdown)
-			->bind('river_velocity', $river_velocity)
-			->bind('used_quota', $used_quota);
+			->bind('drops_per_day', $drops_per_day)
+			->bind('used_quota', $used_quota)
+			->bind('river_growth_trend', $river_growth_trend);
 		
 		$breakdown = json_encode(Swiftriver_Trends::get_river_channels_breakdown($this->river->id));
 		$days_active = $this->river->get_number_of_days_active();
 		
 		// Calculate the river velocity - no. of drops per day
-		$river_velocity = round($this->river->drop_count/$days_active);
+		$drops_per_day = round($this->river->drop_count/$days_active);
 		$used_quota = ($this->river->drop_count >= $this->river->drop_quota)
 			? 100
-			: round($this->river->drop_count/$this->river->drop_quota, 2) * 100;		
+			: round($this->river->drop_count/$this->river->drop_quota, 2) * 100;
+		
+		$river_growth_trend = json_encode(Swiftriver_Trends::get_river_growth_trend($this->user, $this->river->id));
 	}
 
 	public function action_channels()
@@ -94,7 +98,7 @@ class Controller_River_Analytics extends Controller_River {
 	 *  5. Level of curation - % of drops that have been put in buckets
 	 *  6. Composition of the tags
 	 */
-	public function action_summary()
+	public function action_overview()
 	{
 		$this->action_index();		
 	}

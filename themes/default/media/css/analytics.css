@@ -26,3 +26,23 @@ rect.background { fill: #EAF3F5; }
 .arc path {
 	stroke: #fff;
 }
+
+/**
+ * --------------------
+ * Analytics containers
+ * --------------------
+ */
+.analytics-summary div.property-title, 
+.analytics-summary div.parameter {
+	text-align: center !important;
+}
+
+.analytics-summary div.property-title {
+	float: none !important;
+	padding: 0 !important;
+}
+.analytics-summary div.property-title h1 {
+	color: #888 !important;
+	font-size: 30px !important;
+	float: none !important;
+}

@@ -22,14 +22,11 @@ class Swiftriver_Trends {
 	 * on the trend data for that river is returned
 	 *
 	 * @param ORM $user
-	 * @param int $river_id When specifies, generates the histogram for a single river
+	 * @param int $river_id When specified, generates the histogram for a single river
 	 * @return array
 	 */
 	public static function get_river_growth_trend($user, $river_id = NULL)
 	{
-		// Check if $river_id is non-empty and is valid
-		$river_orm = ! empty($river_id) ? ORM::factory('river', $river_id) : NULL;
-
 		// Query to fetch the trend data
 		$query = DB::select('rivers_droplets.river_id', 'rivers.river_name',
 				array(DB::expr('COUNT(rivers_droplets.droplet_id)'), 'drop_count'),
@@ -38,16 +35,20 @@ class Swiftriver_Trends {
 			->join('droplets', 'INNER')
 			->on('rivers_droplets.droplet_id', '=', 'droplets.id')
 			->join('rivers', 'INNER')
-			->on('rivers_droplets.river_id', '=', 'rivers.id')
-			->join('accounts', 'INNER')
-			->on('rivers.account_id', '=', 'accounts.id')
-			->where('accounts.user_id', '=', $user->id);
+			->on('rivers_droplets.river_id', '=', 'rivers.id');
 
-		// If $river_id was specified and exists, only fetch activity
-		// data for that river
-		if ( ! empty($river_orm) AND $river_orm->loaded())
+		// If the river_id is not specified, get the all the user's rivers
+		if (empty($river_id))
 		{
-			$query->where('rivers_droplets.river_id', '=', $river_orm->id);
+			$query->join('accounts', 'INNER')
+				->on('rivers.account_id', '=', 'accounts.id')
+				->where('accounts.user_id', '=', $user->id);
+		}
+
+		// If river_id is specified, fetch data for a single river
+		if ( ! empty($river_id))
+		{
+			$query->where('rivers_droplets.river_id', '=', $river_id);
 		}
 
 		// Group the results
@@ -56,20 +57,35 @@ class Swiftriver_Trends {
 		// Histogram data
 		$histogram = array();
 
-		// Fetch the data and build the histogram
-		foreach ($query->execute()->as_array() as $row)
+		// Generate the histogram
+		if  ( ! empty($river_id))
 		{
-			$river_name = $row['river_name'];
-			if ( ! array_key_exists($river_name, $histogram))
+			// Build the histogram for a single river
+			foreach ($query->execute()->as_array() as $row)
 			{
-				$histogram[$river_name] = array();
+				$histogram[] = array(
+					'activity_date' => $row['activity_date'],
+					'drop_count' => $row['drop_count']
+				);
 			}
-			$entry = array(
-				'activity_date' => $row['activity_date'],
-				'drop_count' => $row['drop_count']
-			);
+		}
+		else
+		{
+			// Build histogram for all the rivers
+			foreach ($query->execute()->as_array() as $row)
+			{
+				$river_name = $row['river_name'];
+				if ( ! array_key_exists($river_name, $histogram))
+				{
+					$histogram[$river_name] = array();
+				}
+				$entry = array(
+					'activity_date' => $row['activity_date'],
+					'drop_count' => $row['drop_count']
+				);
 
-			$histogram[$river_name][] = $entry;
+				$histogram[$river_name][] = $entry;
+			}
 		}
 
 		return $histogram;
@@ -267,6 +283,7 @@ class Swiftriver_Trends {
 
 	/**
 	 * Gets the no. of drops that have been curated (placed in buckets)
+	 * TODO: Move this to the river model; the same as the no. of read drops
 	 *
 	 * @param int $river_id ID of the river 
 	 * @return int

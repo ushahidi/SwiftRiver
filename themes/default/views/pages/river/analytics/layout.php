@@ -18,8 +18,8 @@
 	<div class="center">
 		<div id="page-views" class="settings touchcarousel col_12">
 			<ul class="touchcarousel-container">
-				<li class="touchcarousel-item <?php if ($active == 'summary' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/analytics/summary'; ?>"><?php echo __("Summary"); ?></a>
+				<li class="touchcarousel-item <?php if ($active == 'overview' OR ! $active) echo 'active'; ?>">
+					<a href="<?php echo $river_base_url.'/analytics/overview'; ?>"><?php echo __("Overview"); ?></a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'channels' OR ! $active) echo 'active'; ?>">
 					<a href="<?php echo $river_base_url.'/analytics/channels'; ?>"><?php echo __("Channels"); ?></a>
