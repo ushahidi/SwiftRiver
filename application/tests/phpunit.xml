@@ -7,7 +7,7 @@
 
 	Any options you specify when calling phpunit will override the ones in here
 -->
-<phpunit colors="true" bootstrap="../../modules/unittest/bootstrap.php">
+<phpunit colors="true" bootstrap="bootstrap.php">
 	<testsuites>
 		<testsuite name="SwiftRiver Tests">
 			<file>../../modules/unittest/tests.php</file>
