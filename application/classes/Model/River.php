@@ -1036,12 +1036,12 @@ class Model_River extends ORM {
 	 * Return the list of rivers that have the given IDs
 	 *
 	 * @param    Array $ids List of river ids
-	 * @return   Array Model_River array
+	 * @return   Database_Result Model_River array
 	 */
 	
 	public static function get_rivers($ids)
 	{
-		$rivers = Array();
+		$rivers = array();
 		
 		if ( ! empty($ids))
 		{

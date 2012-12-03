@@ -742,12 +742,12 @@ class Model_Bucket extends ORM {
 	 * Return the list of buckets that have the given IDs
 	 *
 	 * @param    Array $ids List of bucket ids
-	 * @return   Array Model_Bucket array
+	 * @return   Database_Result Model_Bucket array
 	 */
 	
 	public static function get_buckets($ids)
 	{
-		$buckets = Array();
+		$buckets = array();
 		
 		if ( ! empty($ids))
 		{

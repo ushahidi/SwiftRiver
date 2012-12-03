@@ -128,12 +128,12 @@ class Model_User_Action extends ORM {
 	private static function populate_action_data(& $user_actions, $visitor_id) 
 	{
 		// Hash that will hold the unique bucket/river/user ids in the actions array
-		$ids = Array(
-			'user_id' => Array(),
-			'action_to' => Array(),
-			'user' => Array(),
-			'bucket' => Array(),
-			'river' => Array(),
+		$ids = array(
+			'user_id' => array(),
+			'action_to' => array(),
+			'user' => array(),
+			'bucket' => array(),
+			'river' => array(),
 		);
 		
 		// Collect the user/bucket/river etc IDs to query in single batches
@@ -141,7 +141,8 @@ class Model_User_Action extends ORM {
 		{
 			// Get user IDs
 			$user_id = $user_action['user_id'];
-			if (!isset($ids['user_id'][$user_id])) {
+			if ( ! isset($ids['user_id'][$user_id])) 
+			{
 				$ids['user_id'][$user_id] = Array();
 			}
 			
@@ -151,7 +152,8 @@ class Model_User_Action extends ORM {
 			// Get action_on IDs
 			$action_on = $user_action['action_on'];
 			$action_on_id = $user_action['action_on_id'];
-			if (!isset($ids[$action_on][$action_on_id])) {
+			if ( ! isset($ids[$action_on][$action_on_id])) 
+			{
 				$ids[$action_on][$action_on_id] = Array();
 			}
 			
@@ -160,7 +162,8 @@ class Model_User_Action extends ORM {
 			
 			// Get action_to IDs
 			$action_to_id = $user_action['action_to_id'];
-			if (!isset($ids['action_to'][$action_to_id])) {
+			if ( ! isset($ids['action_to'][$action_to_id])) 
+			{
 				$ids['action_to'][$action_to_id] = Array();
 			}
 			
