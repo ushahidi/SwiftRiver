@@ -21,11 +21,8 @@
 				<li class="touchcarousel-item <?php if ($active == 'overview' OR ! $active) echo 'active'; ?>">
 					<a href="<?php echo $river_base_url.'/analytics/overview'; ?>"><?php echo __("Overview"); ?></a>
 				</li>
-				<li class="touchcarousel-item <?php if ($active == 'channels' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/analytics/channels'; ?>"><?php echo __("Channels"); ?></a>
-				</li>
-				<li class="touchcarousel-item <?php if ($active == 'sources' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/analytics/sources'; ?>"><?php echo __("Sources"); ?></a>
+				<li class="touchcarousel-item <?php if ($active == 'content' OR ! $active) echo 'active'; ?>">
+					<a href="<?php echo $river_base_url.'/analytics/content'; ?>"><?php echo __("Content"); ?></a>
 				</li>
 			</ul>
 		</div>

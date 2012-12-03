@@ -66,29 +66,22 @@ class Controller_River_Analytics extends Controller_River {
 		$river_growth_trend = json_encode(Swiftriver_Trends::get_river_growth_trend($this->user, $this->river->id));
 	}
 
-	public function action_channels()
+	public function action_content()
 	{
-		$this->active = "channels";
+		$this->active = "content";
 		// Analytics view page
-		$this->analytics_content = View::factory('pages/river/analytics/channels')
-			->set('duration', __("year"))
-			->bind('channels_trend', $channels_trend);
-
-		$channels_trend = json_encode(Swiftriver_Trends::get_channels_trend($this->river->id, NULL));
+		$this->analytics_content = View::factory('pages/river/analytics/content')
+			->set('total_drop_count', $this->river->drop_count)
+			->bind('tags_breakdown', $tags_breakdown)
+			->bind('channels_breakdown', $channels_breakdown)
+			->bind('media_types_breakdown', $media_types_breakdown);
+		
+		$river_id = $this->river->id;
+		$tags_breakdown = json_encode(Swiftriver_Trends::get_tag_count_by_type($river_id));
+		$channels_breakdown = json_encode(Swiftriver_Trends::get_river_channels_breakdown($river_id));
+		$media_types_breakdown = json_encode(Swiftriver_Trends::get_media_types_breakdown($river_id));
 	}
     
-	/**
-	 * Source activity visualization
-	 */
-	public function action_sources()
-	{
-		$this->active = "sources";
-		$this->analytics_content = View::factory('pages/river/analytics/sources')
-			->bind('sources_trend', $sources_trend);
-
-		$sources_trend = json_encode(Swiftriver_Trends::get_sources_trend($this->river->id));
-	}
-	
 	/**
 	 * Summary analytics of the river i.e.
 	 *	1. Content volume (pie chart)

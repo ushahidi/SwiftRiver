@@ -82,4 +82,24 @@ class Swiftriver_TrendsTest extends Unittest_TestCase {
 			$this->assertLessThanOrEqual($count, count($data));
 		}
 	}
+
+	/**
+	 * Provides data for test_get_media_types_breakdown
+	 * @return array
+	 */
+	public function provider_get_media_types_breakdown()
+	{
+		return array(array(1));
+	}
+
+	/**
+	 * @dataProvider provider_get_media_types_breakdown
+	 * @covers Swiftriver_Trends::get_media_types_breakdown
+	 */
+	public function test_get_media_types_breakdown($river_id)
+	{
+		$breakdown = Swiftriver_Trends::get_media_types_breakdown($river_id);
+		$this->assertTrue(is_array($breakdown));
+	}
+			
 }

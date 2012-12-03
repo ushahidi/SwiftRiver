@@ -207,41 +207,30 @@ class Swiftriver_Trends {
 	}
 
 	/**
-	 * Trend data for the specified river. The data contains the totals for
-	 * each tag for each of the days that the river has been active. 
+	 * Gets a breakdown of the tag volume by type
 	 *
 	 * @param int $river_id 
 	 * @return array
 	 */
-	public static function get_tags_trend($river_id)
+	public static function get_tag_count_by_type($river_id)
 	{
 		$tags_trend = array();
 
 		// Get the tag trends
-		// TODO: Move this to Model_River_Tag_Trend
-		$query = DB::select(
-				array(DB::expr('DATE_FORMAT(river_tag_trends.date_pub, "%Y-%m-%d")'), 'activity_date'),
-				'river_tag_trends.tag_type',
+		$query = DB::select('river_tag_trends.tag_type',
 				array(DB::expr('SUM(river_tag_trends.count)'), 'tag_count'))
 			->from('river_tag_trends')
 			->join('rivers', 'INNER')
 			->on('river_tag_trends.river_id', '=', 'rivers.id')
 			->where('river_tag_trends.river_id', '=', $river_id)
 			->where('river_tag_trends.date_pub', '>=', DB::expr('rivers.river_date_add'))
-			->group_by('activity_date', 'river_tag_trends.tag_type')
-			->order_by('activity_date');
+			->group_by('river_tag_trends.tag_type');
 
 		// Group the data by tag type
 		foreach ($query->execute()->as_array() as $row)
 		{
-			$tag_type = ucfirst($row['tag_type']);
-			if ( ! array_key_exists($tag_type, $tags_trend))
-			{
-				$tags_trend[$tag_type] = array();
-			}
-			
-			$tags_trend[$tag_type][] = array(
-				'activity_date' => $row['activity_date'],
+			$tags_trend[] = array(
+				'tag_type' => ucfirst($row['tag_type']),
 				'tag_count' => $row['tag_count']
 			);
 		}
@@ -299,5 +288,46 @@ class Swiftriver_Trends {
 			->get(0, 'drop_count');
 
 		return intval($drop_count);
+	}
+	
+	/**
+	 * Gets the breakdown of all the media types within the river
+	 *
+	 * @param  int  $river_id
+	 * @return array
+	 */
+	public static function get_media_types_breakdown($river_id)
+	{
+		$media_breakdown = array();
+		
+		// Links
+		$links_query = DB::select(array(DB::expr("'link'"), 'media_type'),
+				array(DB::expr('COUNT(droplets_links.id)'), 'media_count'))
+			->from('droplets_links')
+			->join('rivers_droplets', 'INNER')
+			->on('droplets_links.droplet_id', '=', 'rivers_droplets.droplet_id')
+			->where('rivers_droplets.river_id', '=', $river_id)
+			->group_by('media_type');
+		
+		$query = DB::select(array('media.type', 'media_type'),
+				array(DB::expr('COUNT(droplets_media.id)'), 'media_count'))
+			->union($links_query, TRUE)
+			->from('droplets_media')
+			->join('media' , 'INNER')
+			->on('droplets_media.media_id', '=', 'media.id')
+			->join('rivers_droplets', 'INNER')
+			->on('rivers_droplets.droplet_id', '=', 'droplets_media.droplet_id')
+			->where('rivers_droplets.river_id', '=', $river_id)
+			->group_by('media_type');
+
+		foreach ($query->execute()->as_array() as $row)
+		{
+			$media_breakdown[] = array(
+				'media_type' => ucfirst($row['media_type']).'s',
+				'media_count' => $row['media_count']
+			);
+		}
+		
+		return $media_breakdown;
 	}
 }
