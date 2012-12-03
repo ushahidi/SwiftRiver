@@ -334,7 +334,7 @@ class Controller_Search extends Controller_Swiftriver {
 				$data = Model_Bucket::get_droplets($user_id, $bucket_id, 0, $page, 
 					PHP_INT_MAX, $this->photos, $query_filters);
 
-				$results['droplets'] = $data['droplets'];
+				$results['droplets'] = $data;
 			break;
 
 		}

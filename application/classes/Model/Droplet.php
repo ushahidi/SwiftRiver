@@ -1382,13 +1382,7 @@ class Model_Droplet extends ORM {
 				throw new HTTP_Exception_403();
 			}
 			
-			if ($bucket_orm->loaded())
-			{
-				$this->add('buckets', $bucket_orm);
-
-				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
-				Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
-			}
+			$bucket_orm->add_drop($this);
 		}
 		
 		// Remove droplet for the delete buckets
@@ -1401,13 +1395,7 @@ class Model_Droplet extends ORM {
 				throw new HTTP_Exception_403();
 			}
 			
-			if ($this->has('buckets', $bucket_orm))
-			{
-				$this->remove('buckets', $bucket_orm);
-
-				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
-				Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
-			}
+			$bucket_orm->remove_drop($this);
 		}
 
 	}

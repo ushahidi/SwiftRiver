@@ -102,7 +102,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template->content->user = $this->user;
 			
         // The maximum droplet id for pagination and polling
-		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
+		$max_droplet_id = $this->bucket->get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
 		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
@@ -115,7 +115,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$droplet_js->default_view = $this->bucket->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
 		$droplet_js->filters = NULL;
-		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode(array());
 		
@@ -210,12 +210,10 @@ class Controller_Bucket extends Controller_Drop_Base {
 					{
 					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id, $photos == 1);
 					}
-        			
-					$droplets = $droplets_array['droplets'];
 				}
 				
 				//Throw a 404 if a non existent page is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets))
+				if (($page > 1 OR $drop_id) AND empty($droplets_array))
 				{
 				    throw new HTTP_Exception_404(
 				        'The requested page :page was not found on this server.',
@@ -224,7 +222,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				}
 				
 				
-				echo json_encode($droplets);
+				echo json_encode($droplets_array);
 			break;
 			
 			case "PUT":
@@ -521,7 +519,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			throw HTTP_Exception::factory(404);		
 		
 		if ( ! $bucket->loaded())
-			throw HTTP_Exception::factory(404);		
+			throw HTTP_Exception::factory(404);
 		
 		$comment = Model_Bucket_Comment::create_new(
 			$data['comment_text'],
