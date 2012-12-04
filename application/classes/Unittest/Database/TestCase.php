@@ -19,43 +19,26 @@
  */
 abstract class Unittest_Database_TestCase extends Kohana_Unittest_Database_TestCase {
 	
-	 /**
-	 * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-	 */
-	 public function getDataSet()
-	 {
-		 $test_data = Kohana::find_file('tests', 'test-data', 'xml');
-		 return $this->createFlatXMLDataSet($test_data);
-	 }
-	
-	 
- 	/**
- 	 * Tests will use test database
- 	 * @var string
- 	 */
- 	protected $_database_connection = 'unittest';
-	
-	
 	/**
-	 * SetUp test enviroment
-	 */
-	public function setUp()
+	* @return PHPUnit_Extensions_Database_DataSet_IDataSet
+	*/
+	public function getDataSet()
 	{
-		parent::setUp();
+		$compositeDs = new PHPUnit_Extensions_Database_DataSet_CompositeDataSet(array());
 		
-		$this->old_default = Database::$default;
-		Database::$default = 'unittest';
+		foreach ($this->datasets as $dataset)
+		{
+			$file = Kohana::find_file('tests', 'test-data/'.$dataset, 'xml');
+			$ds = $this->createFlatXmlDataSet($file);
+			$compositeDs->addDataSet($ds);
+		}
+	    return $compositeDs;
 	}
 	
-	
 	/**
-	 * Tear down environment
+	 * Tests will use test database
+	 * @var string
 	 */
-	public function tearDown()
-	{
-		parent::tearDown();
-		
-		Database::$default = $this->old_default;
-	}
+	 protected $_database_connection = 'unittest';
 
- }
+}

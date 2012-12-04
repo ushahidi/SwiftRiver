@@ -104,6 +104,13 @@ Kohana::modules(array(
 	'markdown'        => MODPATH.'markdown',    // Markdown module
 	));
 
+/**
+* Use the 'unittest' database configuration when testing;
+*/
+if (defined('TESTING_MODE'))
+{
+	Database::$default = 'unittest';
+}
 
 /**
  * Initialize the SwiftRiver runtime environment

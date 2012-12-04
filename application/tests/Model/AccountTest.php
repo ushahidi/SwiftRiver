@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Model_Account Test
+ * Model_Account tests
  *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
@@ -18,6 +18,11 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_AccountTest extends Unittest_Database_TestCase {
+	
+	/**
+	 * @var  array  data used by this test
+	 */
+	protected $datasets = array('users', 'accounts');
 	
 	/**
 	* Provides test data for test_save_invalid()

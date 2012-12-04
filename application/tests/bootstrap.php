@@ -58,6 +58,9 @@ $modpath = realpath($modules).DIRECTORY_SEPARATOR;
 define('THEMEPATH', realpath($themes).DIRECTORY_SEPARATOR);
 define('PLUGINPATH', realpath($plugins).DIRECTORY_SEPARATOR);
 
+// Flag testing mode is on
+define('TESTING_MODE', TRUE);
+
 // Clean up the configuration vars
 unset($modules, $themes, $plugins, $docroot);
 

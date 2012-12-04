@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<dataset>
+	<plugins plugin_path="twitter" plugin_name="Twitter" plugin_description="Twitter" plugin_enabled="1" plugin_installed="1" />
+	<plugins plugin_path="rss" plugin_name="RSS" plugin_description="RSS" plugin_enabled="1" plugin_installed="1" />
+	<plugins plugin_path="mediaextractor" plugin_name="Media Extractor" plugin_description="Media Extractor" plugin_enabled="0" plugin_installed="0" />
+</dataset>

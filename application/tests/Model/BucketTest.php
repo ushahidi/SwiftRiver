@@ -2,6 +2,7 @@
 
 /**
  * Drops Base Controller
+ * Model_Bucket tests.
  *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
@@ -18,6 +19,11 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 class Model_BucketTest extends Unittest_Database_TestCase {
+	
+	/**
+	 * @var  array  data used by this test
+	 */
+	protected $datasets = array('users', 'accounts', 'drops', 'identities', 'buckets');
 	 
 	/**
 	* Provides test data for testSaveInvalid()
