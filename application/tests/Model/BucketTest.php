@@ -1,7 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Drops Base Controller
  * Model_Bucket tests.
  *
  * PHP version 5
@@ -111,7 +110,7 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 				 	"public" => TRUE
 				)
 			),
-			// Collaborator user_id 4 requesting public bucket owner by user_id 3
+			// Collaborator user_id 4 requesting public bucket owned by user_id 3
 			array(
 				1, 
 				4, 
@@ -131,7 +130,7 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 				 	"public" => TRUE
 				)
 			),
-			// Subscriber user_id 7 requesting public bucket owner by user_id 3
+			// Subscriber user_id 7 requesting public bucket owned by user_id 3
 			array(
 				1, 
 				7, 
@@ -426,10 +425,15 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 	*/
 	public function test_get_buckets()
 	{
+		// Existing buckets
 		$buckets = Model_Bucket::get_buckets(array(1, 2, 3));
-		
 		$this->assertInstanceOf("Database_Result", $buckets);
 		$this->assertEquals(3, $buckets->count());
+		
+		// Invalid buckets
+		$buckets = Model_Bucket::get_buckets(array());
+		$this->assertInternalType('array', $buckets);
+		$this->assertEmpty($buckets);
 	}
 	
 	/**
