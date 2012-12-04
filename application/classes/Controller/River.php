@@ -141,7 +141,7 @@ class Controller_River extends Controller_Drop_Base {
 
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
-			$max_droplet_id, NULL, $filters, $this->photos);
+			$max_droplet_id, $this->photos, $filters);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -155,7 +155,7 @@ class Controller_River extends Controller_Drop_Base {
 		{
 			$droplet_js->filters = json_encode($filters);
 		}
-		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode($this->river->get_channels());
 
@@ -168,7 +168,7 @@ class Controller_River extends Controller_Drop_Base {
 
 
 		// Show expiry notice to owners only
-		if ($this->owner AND $this->river->is_expired($this->owner))
+		if ($this->owner AND $this->river->is_expired())
 		{
 			$this->droplets_view->nothing_to_display = "";
 
@@ -194,7 +194,7 @@ class Controller_River extends Controller_Drop_Base {
 		
 		
 		// Extend rivers accessed by an owner during notice perio
-		if ($this->owner AND ! $this->river->is_expired($this->owner))
+		if ($this->owner AND ! $this->river->is_expired())
 		{
 		 	$days_remaining = $this->river->get_days_to_expiry();
 			$notice_period = Model_Setting::get_setting('default_river_lifetime');
@@ -251,7 +251,7 @@ class Controller_River extends Controller_Drop_Base {
 					// Specific drop requested
 					$droplets_array = Model_River::get_droplets($this->user->id, 
 				    	$this->river->id, $drop_id);
-					$droplets = array_pop($droplets_array['droplets']);
+					$droplets = array_pop($droplets_array);
 				}
 				else
 				{
@@ -262,17 +262,17 @@ class Controller_River extends Controller_Drop_Base {
 					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					$filters = $this->_get_filters();
 
+					$droplets = array();
 					if ($since_id)
 					{
-					    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
-					    	$this->river->id, $since_id, $filters, $photos == 1);
+					    $droplets = Model_River::get_droplets_since_id($this->user->id, 
+					    	$this->river->id, $since_id, $photos == 1, $filters);
 					}
 					else
 					{
-					    $droplets_array = Model_River::get_droplets($this->user->id, 
-					    	$this->river->id, 0, $page, $max_id, NULL, $filters, $photos == 1);
+					    $droplets = Model_River::get_droplets($this->user->id, 
+					    	$this->river->id, 0, $page, $max_id, $photos == 1, $filters);
 					}
-					$droplets = $droplets_array['droplets'];
 				}				
 				
 
@@ -629,7 +629,7 @@ class Controller_River extends Controller_Drop_Base {
 	 */
 	public function action_extend()
 	{
-		if ( ! $this->owner || ! $this->river->is_expired($this->owner))
+		if ( ! $this->owner || ! $this->river->is_expired())
 		{
 			$this->redirect($this->river_base_url, 302);
 		}
