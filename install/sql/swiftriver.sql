@@ -505,21 +505,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `sources`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `sources` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `source_name` VARCHAR(255) NULL DEFAULT NULL ,
-  `source_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  `source_date_modified` TIMESTAMP NULL DEFAULT '0000-00-00 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `source_date_add_idx` (`source_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `accounts`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `accounts` (

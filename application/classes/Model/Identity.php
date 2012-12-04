@@ -30,10 +30,6 @@ class Model_Identity extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_has_many = array(
-		'sources' => array(
-			'model' => 'Sources',
-			'through' => 'identities_sources'
-		),
 		'droplets' => array()
 	);
 
