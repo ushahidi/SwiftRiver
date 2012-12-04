@@ -22,7 +22,7 @@ class Model_AccountTest extends Unittest_Database_TestCase {
 	/**
 	 * @var  array  data used by this test
 	 */
-	protected $datasets = array('users', 'accounts');
+	protected $datasets = array('users', 'accounts', 'settings');
 	
 	/**
 	* Provides test data for test_save_invalid()

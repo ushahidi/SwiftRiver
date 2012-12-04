@@ -22,7 +22,10 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 	/**
 	 * @var  array  data used by this test
 	 */
-	protected $datasets = array('plugins', 'users', 'accounts', 'drops', 'identities', 'rivers', 'buckets');
+	protected $datasets = array(
+		'plugins', 'users', 'accounts', 'drops', 
+		'identities', 'rivers', 'buckets', 'settings'
+	);
 	
 	
 	/**
