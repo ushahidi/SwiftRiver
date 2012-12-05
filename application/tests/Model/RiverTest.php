@@ -552,7 +552,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 		$all_collaborators = array(
 			array(
 				'id' => 4, 
-				'name' => 'user2',
+				'name' => 'user2 name',
 				'email' => 'user2@example.com',
 				'account_path' => 'user2',
 				'collaborator_active' => TRUE,
@@ -561,7 +561,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 			),
 			array(
 				'id' => 5, 
-				'name' => 'user3',
+				'name' => 'user3 name',
 				'email' => 'user3@example.com',
 				'account_path' => 'user3',
 				'collaborator_active' => FALSE,
@@ -570,7 +570,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 			),
 			array(
 				'id' => 6, 
-				'name' => 'user4',
+				'name' => 'user4 name',
 				'email' => 'user4@example.com',
 				'account_path' => 'user4',
 				'collaborator_active' => TRUE,

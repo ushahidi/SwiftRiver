@@ -14,6 +14,6 @@
 	<buckets_droplets id="4" bucket_id="1" droplet_id="5" />
 	
     <buckets id="2" account_id="3" user_id="3" bucket_name="Testing Bucket 2" bucket_name_url="testing-bucket-2" bucket_publish="0" default_layout="drops" />
-	<buckets id="3" account_id="4" user_id="4" bucket_name="Testing Bucket 3" bucket_name_url="testing-bucket-3" bucket_publish="1" default_layout="drops" />
+	<buckets id="3" account_id="4" user_id="4" bucket_name="Testing Bucket 3" bucket_name_url="testing-bucket-3" bucket_publish="0" default_layout="drops" />
 	<buckets id="4" account_id="4" user_id="4" bucket_name="Testing Bucket 4" bucket_name_url="testing-bucket-4" bucket_publish="0" default_layout="drops" />
 </dataset>
