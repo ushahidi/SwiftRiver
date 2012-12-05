@@ -928,7 +928,7 @@ class Model_River extends ORM {
 	 * Return the list of rivers that have the given IDs
 	 *
 	 * @param    Array $ids List of river ids
-	 * @return   Database_Result or Array
+	 * @return   Array
 	 */
 	
 	public static function get_rivers($ids)
@@ -941,7 +941,7 @@ class Model_River extends ORM {
 						->where('id', 'IN', $ids);
 
 			// Execute query and return results
-			$rivers = $query->find_all();
+			$rivers = $query->find_all()->as_array();
 		}
 		
 		return $rivers;

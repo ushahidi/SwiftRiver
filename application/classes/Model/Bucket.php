@@ -713,7 +713,7 @@ class Model_Bucket extends ORM {
 	 * Return the buckets that have the given IDs
 	 *
 	 * @param    Array $ids List of bucket ids
-	 * @return   mixed Database_Result or Array
+	 * @return   Array
 	 */
 	
 	public static function get_buckets($ids)
@@ -726,7 +726,7 @@ class Model_Bucket extends ORM {
 						->where('id', 'IN', $ids);
 
 			// Execute query and return results
-			$buckets = $query->find_all();
+			$buckets = $query->find_all()->as_array();
 		}
 		
 		return $buckets;

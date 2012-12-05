@@ -373,20 +373,33 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 	}
 	
 	/**
-	* @test
+	* Provides test data for test_get_rivers()
 	*/
-	public function test_get_rivers()
+	public function provider_get_rivers()
 	{
-		// Existing rivers
-		$rivers = Model_River::get_rivers(array(1, 2, 3));
-		$this->assertInstanceOf("Database_Result", $rivers);
-		$this->assertEquals(3, $rivers->count());
+		return array(
+			// User with 2 rivers, no collaborations, no subscriptions
+			array(array(2, 3, 4)),
+			array(array()),
+		);
+	}
+	
+	/**
+	* @test
+	* @dataProvider provider_get_rivers
+	*/
+	public function test_get_rivers($river_ids)
+	{		
+		$expected = array();
+		foreach ($river_ids as $river_id)
+		{
+			$expected[] = ORM::factory("River", $river_id);
+		}
 		
-		// Invalid rivers
-		$rivers = Model_River::get_rivers(array());
-		$this->assertInternalType('array', $rivers);
-		$this->assertEmpty($rivers);
-		
+		$this->assertEquals(
+			$expected, 
+			Model_River::get_rivers($river_ids)
+		);
 	}
 	
 	private function date_add($date, $days)

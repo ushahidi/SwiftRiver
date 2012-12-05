@@ -421,20 +421,35 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 	}
 	
 	/**
-	* @test
+	* Provides test data for test_get_buckets()
 	*/
-	public function test_get_buckets()
+	public function provider_get_buckets()
 	{
-		// Existing buckets
-		$buckets = Model_Bucket::get_buckets(array(1, 2, 3));
-		$this->assertInstanceOf("Database_Result", $buckets);
-		$this->assertEquals(3, $buckets->count());
-		
-		// Invalid buckets
-		$buckets = Model_Bucket::get_buckets(array());
-		$this->assertInternalType('array', $buckets);
-		$this->assertEmpty($buckets);
+		return array(
+			// User with 2 buckets, no collaborations, no subscriptions
+			array(array(2, 3, 4)),
+			array(array()),
+		);
 	}
+	
+	/**
+	* @test
+	* @dataProvider provider_get_buckets
+	*/
+	public function test_get_buckets($bucket_ids)
+	{		
+		$expected = array();
+		foreach ($bucket_ids as $bucket_id)
+		{
+			$expected[] = ORM::factory("Bucket", $bucket_id);
+		}
+		
+		$this->assertEquals(
+			$expected, 
+			Model_Bucket::get_buckets($bucket_ids)
+		);
+	}
+	
 	
 	/**
 	* Provides test data for test_get_subscriber_count()
