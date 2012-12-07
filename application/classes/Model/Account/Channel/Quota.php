@@ -20,6 +20,15 @@ class Model_Account_Channel_Quota extends ORM {
 		'account' => array()
 	);
 
+	/**
+	 * Create a new quota for the given account
+	 *
+	 * @param  string  $account_id
+	 * @param  string  $channel
+	 * @param  string  $option
+	 * @param  string  $quota 
+	 * @return void
+	 */
 	public static function create_new($account_id, $channel, $option, $quota = NULL)
 	{
 		if ( ! isset($quota))
@@ -42,6 +51,9 @@ class Model_Account_Channel_Quota extends ORM {
 	 * Obtains an exclusive lock so if called within a transaction, the quota
 	 * can be updated.
 	 *
+	 * @param  string  $account_id
+	 * @param  string  $channel
+	 * @param  string  $option
 	 * @return int
 	 */	
 	public static function get_remaining_quota($account_id, $channel, $option)
@@ -65,7 +77,15 @@ class Model_Account_Channel_Quota extends ORM {
 		return $quota - $quota_used;
 	}
 	
-	
+	/**
+	 * Decrease an account's quota usage
+	 *
+	 * @param  string  $account_id
+	 * @param  string  $channel
+	 * @param  string  $option
+	 * @param  string  $count 
+	 * @return void
+	 */
 	public static function decrease_quota_usage($account_id, $channel, $option, $count = 1)
 	{
 		$channel_quota = ORM::factory("Account_Channel_Quota")
@@ -81,6 +101,15 @@ class Model_Account_Channel_Quota extends ORM {
 		}
 	}
 	
+	/**
+	 * Increase an account's quota usage
+	 *
+	 * @param  string  $account_id
+	 * @param  string  $channel
+	 * @param  string  $option
+	 * @param  string  $count 
+	 * @return void
+	 */
 	public static function increase_quota_usage($account_id, $channel, $option, $count = 1)
 	{
 		$channel_quota = ORM::factory("Account_Channel_Quota")
