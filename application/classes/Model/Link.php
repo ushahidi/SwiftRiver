@@ -56,22 +56,14 @@ class Model_Link extends ORM
 					->where('url', '=', $url)
 					->find();
 		
-		if ($orm_link->loaded())
-		{
-			return $orm_link;
-		}
-		elseif ( ! $orm_link->loaded() AND $save)
+		if ( ! $orm_link->loaded() AND $save)
 		{
 			// Get the full URL
 			$orm_link->url = $url;
-
-			// Save and return
-			return $orm_link->save();
+			$orm_link->save();
 		}
-		else
-		{
-			return FALSE;
-		}
+		
+		return $orm_link;
 	}
 	
 	/**
