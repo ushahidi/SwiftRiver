@@ -46,3 +46,16 @@ rect.background { fill: #EAF3F5; }
 	font-size: 30px !important;
 	float: none !important;
 }
+
+.property-parameters.data-table div.parameter span {
+	float: left;
+	padding: 10px;
+}
+.property-parameters.data-table div.parameter :first-child {
+	width: 80%;
+}
+
+.property-parameters.data-table div.parameter :last-child {
+	width: 10%;
+	text-align: right;
+}

@@ -13,7 +13,7 @@
 		<article class="container base">
 			<header class="cf">
 				<div class="property-title">
-					<h1><?php echo __("Tag Types"); ?></h1>
+					<h1><?php echo __("Breakdown of Total Tag Volume"); ?></h1>
 				</div>
 			</header>
 			<section class="property-parameters analytics" id="tags-breakdown"></section>
@@ -23,10 +23,71 @@
 		<article class="container base">
 			<header class="cf">
 				<div class="property-title">
-					<h1><?php echo __("Media Types"); ?></h1>
+					<h1><?php echo __("Breakdown of Extracted Media"); ?></h1>
 				</div>
 			</header>
 			<section class="property-parameters analytics" id="media-breakdown"></section>
+		</article>
+	</div>
+	<div style="clear:both;"></div>
+
+	<div class="col_6">
+		<article class="container base">
+			<header class="cf">
+				<div class="property-title">
+					<h1><?php echo __("Analysis of Total River Volume"); ?></h1>
+				</div>
+			</header>
+			<section class="property-parameters data-table">
+				<?php if (array_key_exists('links_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with Links"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['links_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+				
+				<?php if (array_key_exists('image_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with Images"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['image_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+				
+				<?php if (array_key_exists('video_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with Videos"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['video_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+				
+				<?php if (array_key_exists('place_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with Place Tags"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['place_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+
+				<?php if (array_key_exists('person_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with People Tags"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['person_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+
+				<?php if (array_key_exists('organization_count', $content_analysis)): ?>
+				<div class="parameter">
+					<span class="breakdown-item"><?php echo __("% with Organization Tags"); ?></span>
+					<span class="breakdown-val"><?php echo $content_analysis['organization_count']; ?></span>
+				</div>
+				<div style="clear:both;"></div>
+				<?php endif; ?>
+
+			</section>
 		</article>
 	</div>
 </div>

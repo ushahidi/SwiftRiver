@@ -72,6 +72,7 @@ class Controller_River_Analytics extends Controller_River {
 		// Analytics view page
 		$this->analytics_content = View::factory('pages/river/analytics/content')
 			->set('total_drop_count', $this->river->drop_count)
+			->set('content_analysis', Swiftriver_Trends::get_content_analysis($this->river))
 			->bind('tags_breakdown', $tags_breakdown)
 			->bind('channels_breakdown', $channels_breakdown)
 			->bind('media_types_breakdown', $media_types_breakdown);

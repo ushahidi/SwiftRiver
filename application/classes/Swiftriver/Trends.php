@@ -330,4 +330,59 @@ class Swiftriver_Trends {
 		
 		return $media_breakdown;
 	}
+	
+	/**
+	 * Gets the following analytics for the drops within the river
+	 *    % of drops with links
+	 *    % of drops with media (photos and video)
+	 *    % of grops with place tags
+	 *    % of drops with people and organization tags
+	 *
+	 * @param   Model_River  $river_orm
+	 * @return  array
+	 */
+	public static function get_content_analysis($river_orm)
+	{
+		$analysis = array();
+		
+		// No. of drops with links
+		$links_query = DB::select(array(DB::expr('COUNT(DISTINCT rivers_droplets.id)'), 'item_count'),
+			array(DB::expr("'links_count'"), 'analytics_param'))
+			->from('droplets_links')
+			->join('rivers_droplets', 'INNER')
+			->on('droplets_links.droplet_id', '=', 'rivers_droplets.droplet_id')
+			->where('rivers_droplets.river_id', '=', $river_orm->id)
+			->group_by('analytics_param');
+		
+		// No. of drops with links and media
+		$links_media_query = DB::select(array(DB::expr('COUNT(DISTINCT rivers_droplets.id)'), 'item_count'),
+			array(DB::expr("CONCAT_WS('_', media.type, 'count')"), 'analytics_param'))
+				->union($links_query, TRUE)
+				->from('droplets_media')
+				->join('media', 'INNER')
+				->on('droplets_media.media_id', '=', 'media.id')
+				->join('rivers_droplets', 'INNER')
+				->on('rivers_droplets.droplet_id', '=', 'droplets_media.droplet_id')
+				->where('rivers_droplets.river_id', '=', $river_orm->id)
+				->group_by('analytics_param');
+		
+			// No. of drops with links, media, place, people and organization tags
+		$query = DB::select(array(DB::expr('SUM(river_tag_trends.count)'), 'item_count'),
+				array(DB::expr("CONCAT_WS('_', river_tag_trends.tag_type, 'count')"), 'analytics_param'))
+				->union($links_media_query, TRUE)
+				->from('river_tag_trends')
+				->where('river_tag_trends.river_id', '=', $river_orm->id)
+				->group_by('analytics_param');
+		
+		foreach ($query->execute()->as_array() as $row)
+		{
+			$item_count = intval($row['item_count']);
+			$percentage = round(($item_count/$river_orm->drop_count) * 100, 2);
+
+			$analysis[$row['analytics_param']] = $percentage."%";
+		}
+		
+		return $analysis;
+	}
+	
 }

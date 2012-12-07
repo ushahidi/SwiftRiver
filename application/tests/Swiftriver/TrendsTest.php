@@ -101,5 +101,27 @@ class Swiftriver_TrendsTest extends Unittest_TestCase {
 		$breakdown = Swiftriver_Trends::get_media_types_breakdown($river_id);
 		$this->assertTrue(is_array($breakdown));
 	}
+	
+	/**
+	 * Provides data for test_get_content_analysis
+	 * @return array
+	 */
+	public function provider_get_content_analysis()
+	{
+		return array(array(
+			ORM::factory('River', 1)
+		));
+	}
+	
+	/**
+	 * @dataProvider provider_get_content_analysis
+	 * @covers Swiftriver_Trends::get_content_analysis
+	 */
+	public function test_get_content_analysis($river_orm)
+	{
+		$analysis = Swiftriver_Trends::get_content_analysis($river_orm);
+		
+		$this->assertTrue(is_array($analysis));
+	}
 			
 }
