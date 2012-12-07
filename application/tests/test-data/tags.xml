@@ -10,4 +10,5 @@
 	<tags id="8" hash="11027fb6f5e08898004bdc7b76e45bdc" tag="Wigan" tag_canonical="wigan" tag_type="organization" />
 	<tags id="9" hash="75005f5248fdf77037062fe6ef8a581e" tag="Dave Whelan" tag_canonical="dave whelan" tag_type="person" />
 	<tags id="10" hash="5e1223d4589aa77990c5b3b761365179" tag="David Cameron" tag_canonical="david cameron" tag_type="person" />
+	<tags id="11" hash="6e9588e3abeaf043e72036a9386add41" tag="Custom Tag" tag_canonical="custom tag" tag_type="user_generated" />
 </dataset>
