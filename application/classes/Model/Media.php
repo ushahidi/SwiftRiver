@@ -30,25 +30,15 @@ class Model_Media extends ORM {
 			),
 		'thumbnails' => array(
 			'model' => 'Media_Thumbnail'
-			),			
-		);
-		
+			),
+	);
+	
 	/**
-	 * Overload saving to perform additional functions on the media
+	 * Auto-update columns for creation
+	 * @var string
 	 */
-	public function save(Validation $validation = NULL)
-	{
-		// Do this for first time media only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the media was first added
-			$this->media_date_add = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}
-
-
+	 protected $_created_column = array('column' => 'media_date_add', 'format' => 'Y-m-d H:i:s');
+	 
 	/**
 	 * Checks if a given media item already exists. 
 	 * The parameter $media is an array of hashes containing the 
