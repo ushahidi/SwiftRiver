@@ -1,162 +1,121 @@
 <?php
-	$page_title = "Dashboard";
-	$template_type = "dashboard";
+	$page_title = "Emmanuel Kala";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="user-title dashboard cf">
+	<hgroup class="page-title user-title cf">
 		<div class="center">
-			<div class="user-summary col_9">		
-				<a class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" class="avatar" /></a>
-				<h1>Brandon Rosage</h1>
-				<h2 class="label">brosage</h2>
+			<div class="col_9">		
+				<a class="avatar-wrap"><img src="http://www.ushahidi.com/uploads/people/team_Emmanuel-Kala.jpg" class="avatar" /></a>
+				<h1><?php print $page_title; ?></h1>
+				<h2 class="label">ekala</h2>
 			</div>
-			<div class="follow-summary col_3">
-				<p class="follow-count"><a href="#"><strong>28</strong> followers</a>, <a href="#"><strong>18</strong> following</a></p>
+			<div class="page-action col_3">
+				<span class="follow-total"><a href="/markup/_modals/followers.php" class="modal-trigger"><strong>28</strong> followers</a>, <a href="#"><strong>18</strong> following</a></span>
 			</div>
 		</div>
 	</hgroup>
 
 	<nav class="page-navigation cf">
-		<div id="page-views" class="col_12">
-			<ul class="center">
-				<li class="active"><a href="/">Dashboard</a></li>
-				<li><a href="/markup/user/settings.php">Account settings</a></li>
+		<div class="center">
+			<ul class="col_12">
+				<li class="active"><a href="/markup/">Activity</a></li>
+				<li><a href="/markup/home/content.php">Content</a></li>
 			</ul>
 		</div>
 	</nav>
 
-	<div id="content" class="user dashboard cf">
+	<div id="content" class="cf">
 		<div class="center">
-			<div class="col_9">
-				<article id="primer" class="container base">
-					<header class="cf">
-						<div class="property-title col_6">
-							<h1>Get started</h1>
-						</div>
-					</header>
-					<section class="property-parameters cf">
-						<div class="parameter primer-item learn">
-							<h3><a href="#">Learn how SwiftRiver works</a></h3>
-						</div>
-						<div class="parameter primer-item create">
-							<h3><a href="/markup/river/new.php">Create a river</a></h3>
-						</div>
-						<div class="parameter primer-item search">
-							<h3><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
-						</div>
-					</section>
-				</article>
-
-				<article class="container base">
-					<header class="cf">
-						<div class="property-title col_6">
-							<h1>Activity</h1>
-						</div>
-					</header>
-					<section class="property-parameters">
-						<div class="parameter activity-item">
-							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
-							<div class="item-body">
-								<h3><a href="/markup/user">Nat Manning</a> subscribed to the <a href="#">Reasons to hate the Patriots</a> river</h3>
-								<p class="metadata">4:30 p.m. Jan. 13, 2012</p>
-							</div>
-						</div>
-						<div class="parameter activity-item">
-							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
-							<div class="item-body">
-								<h3><a href="/markup/user">Nat Manning</a> invited you to collaborate on the <a href="#">Batman Forever</a> bucket</h3>
-								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
-							</div>
-							<ul class="button-actions">
-								<li><a href="#">Accept</a></li>
-								<li><a href="#">Reject</a></li>
-							</ul>							
-						</div>						
-						<div class="parameter activity-item">
-							<a class="avatar-wrap"><img src="/markup/images/content/avatar5.jpg" class="avatar" /></a>
-							<div class="item-body">
-								<h3><a href="/markup/user">Nat Manning</a> created the <a href="#">Top restaurants in Berkeley</a> bucket</h3>
-								<p class="metadata">9:04 a.m. Feb. 28, 2012</p>
-							</div>
-						</div>
-					</section>
-				</article>
-
-				<article class="container action-list base">
-					<header class="cf">
-						<div class="property-title col_6">
-							<h1>Popular this week</h1>
-						</div>
-					</header>
-					<section class="property-parameters">
-						<div class="parameter">
-							<ul class="button-actions">
-								<li><span class="count"><strong>48</strong> new followers</span><a href="#"><i class="icon-checkmark"></i>Follow</a></li>
-							</ul>
-							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
-						</div>
-						<div class="parameter">
-							<ul class="button-actions">
-								<li><span class="count"><strong>67</strong> new followers</span><a href="#" class="selected"><i class="icon-checkmark"></i><span class="nodisplay">Following</span></a></li>
-							</ul>
-							<h3><a href="/markup/river">Robotics</a></h3>
-						</div>
-					</section>
-				</article>
+			<div id="filters-trigger" class="col_12 cf">
+				<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
 			</div>
 
-			<div class="col_3">
-				<article class="container action-list base">
-					<header class="cf">
-						<div class="property-title col_12">
-							<h1><a href="/user/rivers.php">Rivers</a></h1>
-						</div>
-					</header>
-					<section class="property-parameters asset-list">
-						<h2 class="category">Your rivers</h2>
-						<div class="parameter">
-							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
-						</div>
-						
-						<div class="parameter">
-							<h3><a href="/markup/river">Robotics</a></h3>
+			<section id="filters" class="col_3">
+				<div class="modal-window">
+					<div class="modal">		
+						<div class="modal-title cf">
+							<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+							<h1>Filters</h1>
 						</div>
 
-						<h2 class="category">Rivers you follow</h2>
-						<div class="parameter">
-							<h3><a href="/markup/river">Ushahidi at SXSW</a></h3>
-						</div>
-						<div class="parameter">
-							<h3><a href="/markup/river">Robotics</a></h3>
-						</div>
-					</section>
-				</article>
+						<ul class="filters-primary">
+							<li class="active"><a href="#" class="modal-close">Everything</a></li>
+							<li><a href="#" class="modal-close">Pending</a></li>
+							<li><a href="#" class="modal-close">Discussion</a></li>
+						</ul>
+					</div>
+				</div>		
+			</section>
 
-				<article class="container action-list base">
-					<header class="cf">
-						<div class="property-title col_6">
-							<h1><a href="/user/buckets.php">Buckets</a></h1>
+			<div class="col_9">
+				<div id="news-feed" class="container base">
+					<!-- NO RESULTS: Clear filters
+					<div class="null-message">
+						<h2>No rivers or buckets to show.</h2>
+						<p>Clear active filters.</p>
+					</div>
+					--->
+					
+					<article class="news-feed-item cf">
+						<div class="item-type">
+							<span class="icon-comment"></span>
 						</div>
-					</header>
-					<section class="property-parameters">
-						<h2 class="category">Your buckets</h2>
-						<div class="parameter">
-							<h3><a href="/markup/river">Love for Ushahidi</a></h3>
+						<div class="item-summary">
+							<span class="timestamp">42 minutes ago</span>
+							<h2><a href="#">Juliana Rotich</a> commented on bucket <a href="#">Kenya election hate speech</a></h2>
+							<div class="item-sample">
+								<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_reasonably_small.jpg" /></a>
+								<div class="item-sample-body">
+									<p>Pork andouille tail, jowl ball tip jerky turkey bacon tongue flank strip steak swine pork chop. Sirloin chuck chicken spare ribs kielbasa tenderloin swine sausage leberkas cow.</p>
+								</div>
+							</div>
 						</div>
-						<div class="parameter">
-							<h3><a href="/markup/river">Top restaurants in Berkeley</a></h3>
+					</article>
+					
+					<article class="news-feed-item cf">
+						<div class="item-type">
+							<span class="icon-river"></span>
 						</div>
+						<div class="item-summary">
+							<span class="timestamp">3 hours ago</span>
+							<h2><a href="/markup/river">Open Source software</a> added <strong>60 new drops</strong></h2>
+							<div class="item-sample">
+								<span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:40%;"></span></span>40% full</span>
+							</div>
+						</div>
+					</article>
 
-						<h2 class="category">Buckets you follow</h2>
-						<div class="parameter">
-							<h3><a href="/markup/river">Love for Ushahidi</a></h3>
+					<article class="news-feed-item cf">
+						<div class="item-type">
+							<span class="icon-comment"></span>
 						</div>
-						<div class="parameter">
-							<h3><a href="/markup/river">Top restaurants in Berkeley</a></h3>
+						<div class="item-summary">
+							<span class="timestamp">1 day ago</span>
+							<h2><a href="#">Rob Baker</a> commented on bucket <a href="#">Web development</a></h2>
+							<div class="item-sample">
+								<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/899724610/profile-me2_normal.jpg" /></a>
+								<div class="item-sample-body">
+									<p>Short loin meatball pork loin leberkas venison pork belly tri-tip short ribs ground round ribeye. Tail pastrami shankle pancetta pork belly ball tip, filet mignon shank.</p>
+								</div>
+							</div>
 						</div>
-					</section>
-				</article>
+					</article>
+					
+					<article class="pending news-feed-item cf">
+						<div class="item-type">
+							<span class="icon-bucket"></span>
+						</div>
+						<div class="item-summary">
+							<span class="timestamp">2 days ago</span>
+							<h2><a href="#">Linda Kamau</a> invited you to collaborate on bucket <a href="#">Skyfall</a></h2>
+							<div class="item-actions">
+								<a href="#" class="button-white"><i class="icon-checkmark"></i>Accept</a>
+								<a href="#" class="button-white">Ignore</a>
+							</div>
+						</div>
+					</article>														
+				</div>
 			</div>
 		</div>
 	</div>
