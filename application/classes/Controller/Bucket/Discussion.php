@@ -75,8 +75,10 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			case "POST":
 				$post = json_decode($this->request->body(), TRUE);
 				$comment = ORM::factory('Bucket_Comment');
-				$valid = $comment->validate($post);
-				if ($valid->check())
+				$validation = Validation::factory($post)
+				    ->rule('comment_content', 'not_empty')
+				    ->rule('comment_content', 'min_length', array(':value', 3));
+				if ($validation->check())
   				{
   					$comment->bucket_id = $this->bucket->id;
 					$comment->user_id = $this->user->id;
