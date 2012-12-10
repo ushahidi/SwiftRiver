@@ -27,6 +27,7 @@
 				<ul class="user-menu">
 					<li class="rivers"><a href="/markup/_modals/rivers.php" class="modal-trigger"><span class="icon-river"></span><span class="label">Rivers</span></a></li>
 					<li class="bucket"><a href="/markup/_modals/buckets.php" class="modal-trigger"><span class="icon-bucket"></span><span class="label">Buckets</span></a></li>
+					<!-- IF: User logged in -->
 					<li class="user popover">
 						<a href="#" class="popover-trigger">
 							<span class="icon-arrow-down"></span>
@@ -41,6 +42,9 @@
 							<li><a href="#"><em>Log out</em></a></li>
 						</ul>
 					</li>
+					<!-- ELSE
+					<li class="login"><a href="/markup/login.php" class="modal-trigger"><span class="icon-login"></span><span class="label">Log in</span></a></li>
+					END:IF -->
 				</ul>
 			</div>
 		</div>		

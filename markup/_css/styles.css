@@ -381,6 +381,9 @@ i[class^="icon-"]:before {
 .icon-menu:before {
 	content: "\3f";
 }
+.icon-login:before {
+	content: "\40";
+}
 
 /* --------------------------- AVATAR IMAGE */
 
@@ -875,8 +878,8 @@ header.toolbar ul.user-menu li.login > a {
   border-right: none;
 }
 
-header.toolbar ul.user-menu li.login > a span.label {
-  display: block;
+header.toolbar ul.user-menu li.login > a span.icon-login {
+   font-size: 1.4em;
 }
 
 header.toolbar ul.user-menu li.user > a span.icon-arrow-down {
@@ -992,7 +995,7 @@ hgroup.user-title h1 {
    padding: 0.3em 0 0;
 }
 
-hgroup.page-title h1 [class^="icon-"] {
+/*hgroup.page-title h1 [class^="icon-"] {
    color: #fff;
    font-weight: normal;
    text-align: center;
@@ -1006,7 +1009,7 @@ hgroup.page-title h1 [class^="icon-"] {
 
 hgroup.page-title h1 [class^="icon-"] {
    margin-right: 0.5em;
-}
+}*/
 
 hgroup.page-title h1 a {
    color: #444444;
@@ -2553,7 +2556,12 @@ div#confirmation-container article.modal {
 }
 
 .modal .modal-title .modal-close {
+   display: none;
    float: right;
+}
+
+.visible .modal .modal-title .modal-close {
+   display: inline-block;
 }
 
 .modal .modal-title .modal-close i.icon-cancel {
@@ -2648,6 +2656,7 @@ article.modal .modal-body .modal-tabs-menu li a:hover span.label {
 article.modal .modal-body .modal-tabs-menu li.active span.channel-icon,
 article.modal .modal-body .modal-tabs-menu li.active span.label {
    color: #259cb5;
+   font-weight: bold;
    border: 1px solid #e1e1e1;
    background: #eeeeee;
 }
@@ -2798,6 +2807,24 @@ article.modal .modal-body .modal-map iframe {
    color: #fff;
    text-shadow: 0 1px 1px rgba(0,0,0,.4);
    padding: 0.2em 0;
+}
+
+.modal-base-toolbar {
+   text-align: left;
+   	border-top: 1px solid #dedede;
+	background-color: #f9f9f9;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(249, 249, 249)), to(rgb(247, 247, 247)));
+	background-image: -webkit-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
+	background-image: -moz-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
+	background-image: -o-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
+	background-image: -ms-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
+	background-image: linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f9f9f9', EndColorStr='#f7f7f7');
+   padding: 1em;
+}
+
+.modal-base-toolbar .button-destruct {
+   padding: 1em;
 }
 
 /* ---- MODAL: Fields */
@@ -3189,7 +3216,6 @@ header.toolbar ul.user-menu > li > a {
    margin: 7px 0;
 }
 
-header.toolbar ul.user-menu > li span.icon,
 header.toolbar ul.user-menu > li span.label {
    display: inline-block;
 }

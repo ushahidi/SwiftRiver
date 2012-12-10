@@ -1,14 +1,14 @@
 <?php
 	$page_title = "Summary";
-	$template_type = "dashboard";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="user-title dashboard cf">
+	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="page-title col_12">		
+			<div class="col_9">		
 				<h1>SwiftRiver <em>settings</em></h1>
 			</div>
+			<div class="col_3"></div>			
 		</div>
 	</hgroup>
 
