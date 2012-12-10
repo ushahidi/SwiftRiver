@@ -19,6 +19,23 @@ class Model_Account_Channel_Quota extends ORM {
 	protected $_belongs_to = array(
 		'account' => array()
 	);
+	
+	/**
+	 * Validation rules for comments
+	 *
+	 * @return array Rules
+	 */
+	public function rules()
+	{
+		return array(
+			'channel' => array(
+				array('not_empty'),
+			),
+			'channel_option' => array(
+				array('not_empty'),
+			),
+		);
+	}
 
 	/**
 	 * Create a new quota for the given account
@@ -42,6 +59,8 @@ class Model_Account_Channel_Quota extends ORM {
 		$channel_quota->channel_option = $option;
 		$channel_quota->quota = $quota;
 		$channel_quota->save();
+		
+		return $channel_quota;
 	}
 	
 	
@@ -120,7 +139,7 @@ class Model_Account_Channel_Quota extends ORM {
 		
 		if ( ! $channel_quota->loaded())
 		{
-			self::create_new($account_id, $channel, $option);	
+			$channel_quota = self::create_new($account_id, $channel, $option);	
 		}
 		
 		$channel_quota->quota_used = (int)$channel_quota->quota_used + (int)$count;

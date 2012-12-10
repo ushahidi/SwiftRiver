@@ -24,6 +24,32 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 	 */
 	protected $datasets = array('plugins', 'channel_quotas', 'account_channel_quotas');
 	
+	/**
+	* Provides test data for test_validation()
+	*/
+	public function provider_validation()
+	{
+		 return array(
+			 // Empty channel
+			 array(NULL, 'channel_option'),
+			 // Empty channel option
+			 array('channel', NULL),
+		);
+	}
+	 
+	/**
+	* @test
+	* @dataProvider provider_validation
+	*/
+	public function test_validation($channel, $channel_option)
+	{
+		$this->setExpectedException('ORM_Validation_Exception');
+		
+		$quota = ORM::factory("Account_Channel_Quota");
+		$quota->channel = $channel;
+		$quota->channel_option = $channel_option;
+		$quota->save();
+	}
 	
 	/**
 	* Provides test data for test_create_new()
@@ -32,10 +58,10 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 	{
 		return array(
 			// Use default quota
-			array(1, 'twitter', 'user', NULL, 
+			array(3, 'twitter', 'user', NULL, 
 				array(
 					array(
-						'account_id' => 1,
+						'account_id' => 3,
 						'channel' => 'twitter',
 						'channel_option' => 'user',
 						'quota' => '999',
@@ -44,10 +70,10 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 				)
 			),
 			// Use specific quota
-			array(1, 'twitter', 'user', 143, 
+			array(3, 'twitter', 'user', 143, 
 				array(
 					array(
-						'account_id' => 1,
+						'account_id' => 3,
 						'channel' => 'twitter',
 						'channel_option' => 'user',
 						'quota' => '143',
@@ -70,7 +96,7 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 			Database::SELECT, 
 			"SELECT `account_id`, `channel`, `channel_option`, `quota`, `quota_used` ".
 			"FROM `account_channel_quotas` ".
-			"WHERE `account_id` = 1 ".
+			"WHERE `account_id` = 3 ".
 			"AND `channel` = 'twitter' ".
 			"AND `channel_option` = 'user'; "
 		)->execute()->as_array();
@@ -86,9 +112,9 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 	{
 		return array(
 			// Existing quota
-			array(1, 'rss', 'url', 130),
+			array(3, 'rss', 'url', 130),
 			// No quota, return default
-			array(1, 'twitter', 'user', 999),
+			array(3, 'twitter', 'user', 999),
 		);
 	}
 	
@@ -111,9 +137,9 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 	{
 		return array(
 			// Existing quota
-			array(1, 'rss', 'url', 10, 3),
+			array(3, 'rss', 'url', 10, 3),
 			// Non existing quota
-			array(1, 'twitter', 'user', 10, 0),
+			array(3, 'twitter', 'user', 10, 0),
 		);
 	}
 	
@@ -152,9 +178,9 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 	{
 		return array(
 			// Existing quota
-			array(1, 'rss', 'url', 10, 23),
+			array(3, 'rss', 'url', 10, 23),
 			// Non existing quota
-			array(1, 'twitter', 'user', 10, 0),
+			array(3, 'twitter', 'user', 10, 10),
 		);
 	}
 	
