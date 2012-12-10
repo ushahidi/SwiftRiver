@@ -24,7 +24,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 	 */
 	protected $datasets = array(
 		'plugins', 'users', 'accounts', 'drops', 
-		'identities', 'rivers', 'buckets', 'settings'
+		'identities', 'rivers', 'channel_filters',  'buckets', 'settings'
 	);
 	
 	
@@ -746,7 +746,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 					'id' => '1',
 					'channel' => 'rss',
 					'name' => 'RSS',
-					'enabled' => true,
+					'enabled' => TRUE,
 					'options' => array(
 						array(
 							'value' => 'http://feeds.bbci.co.uk/news/rss.xml',
@@ -775,7 +775,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 					'id' => '2',
 					'channel' => 'twitter',
 					'name' => 'Twitter',
-					'enabled' => true,
+					'enabled' => FALSE,
 					'options' => array(
 						array(
 							'value' => 'meow',
@@ -801,10 +801,10 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 			// Active Channels Only
 			array(2, TRUE, array(
 				array(
-					'id' => '4',
+					'id' => '5',
 					'channel' => 'twitter',
 					'name' => 'Twitter',
-					'enabled' => true,
+					'enabled' => TRUE,
 					'options' => array(
 						array(
 							'value' => 'meow',
@@ -819,8 +819,8 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 							'key' => 'keyword',
 						),
 						array(
-							'value' => '69mb',
-							'quota_usage' => 1,
+							'value' => '69mb,ushahidi',
+							'quota_usage' => 2,
 							'id' => '12',
 							'key' => 'user',
 						),

@@ -10,28 +10,7 @@
 	<rivers_droplets id="3" river_id="1" droplet_id="4" droplet_date_pub="2012-11-15 00:00:04" />
 	<rivers_droplets id="4" river_id="1" droplet_id="5" droplet_date_pub="2012-11-15 00:00:05" />
 	
-	<channel_filters id="1" channel="rss" river_id="1" filter_enabled="1" />
-	<channel_filter_options id="1" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.bbci.co.uk\/news\/rss.xml&quot;,&quot;title&quot;:&quot;BBC News - Home&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="2" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.feedburner.com\/ommalik&quot;,&quot;title&quot;:&quot;GigaOM&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="3" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/www.engadget.com\/rss.xml&quot;,&quot;title&quot;:&quot;Engadget&quot;,&quot;quota_usage&quot;:1}" />
-		
-	<channel_filters id="2" channel="twitter" river_id="1" filter_enabled="1" />
-	<channel_filter_options id="4" channel_filter_id="2" key="keyword" value="{&quot;value&quot;:&quot;meow&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="5" channel_filter_id="2" key="keyword" value="{&quot;value&quot;:&quot;kudishnyao&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="6" channel_filter_id="2" key="user" value="{&quot;value&quot;:&quot;69mb&quot;,&quot;quota_usage&quot;:1}" /> 
-	
 	<rivers id="2" account_id="3" river_name="Testing River 2" river_name_url="testing-river-2" river_active="0" river_public="0" default_layout="list" max_drop_id="0" drop_count="0" river_full="0" river_expired="1" expiry_notification_sent="1" extension_count="2" public_token="token" river_date_expiry="2012-11-29 00:00:02" />
-
-	<channel_filters id="3" channel="rss" river_id="2" filter_enabled="0" />
-	<channel_filter_options id="7" channel_filter_id="3" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.bbci.co.uk\/news\/rss.xml&quot;,&quot;title&quot;:&quot;BBC News - Home&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="8" channel_filter_id="3" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.feedburner.com\/ommalik&quot;,&quot;title&quot;:&quot;GigaOM&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="9" channel_filter_id="3" key="url" value="{&quot;value&quot;:&quot;http:\/\/www.engadget.com\/rss.xml&quot;,&quot;title&quot;:&quot;Engadget&quot;,&quot;quota_usage&quot;:1}" />
-		
-	<channel_filters id="4" channel="twitter" river_id="2" filter_enabled="1" />
-	<channel_filter_options id="10" channel_filter_id="4" key="keyword" value="{&quot;value&quot;:&quot;meow&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="11" channel_filter_id="4" key="keyword" value="{&quot;value&quot;:&quot;kudishnyao&quot;,&quot;quota_usage&quot;:1}" /> 
-	<channel_filter_options id="12" channel_filter_id="4" key="user" value="{&quot;value&quot;:&quot;69mb&quot;,&quot;quota_usage&quot;:1}" /> 
-
 	<rivers id="3" account_id="4" river_name="Testing River 3" river_name_url="testing-river-3" river_active="0" river_public="0" default_layout="photos" max_drop_id="0" drop_count="0" river_full="1" river_expired="1" expiry_notification_sent="1" extension_count="1" public_token="token" river_date_expiry="2012-11-29 00:00:03" />
 	<rivers id="4" account_id="4" river_name="Testing River 4" river_name_url="testing-river-4" river_active="1" river_public="0" default_layout="drops" max_drop_id="999" drop_count="0" river_full="0" river_expired="0" expiry_notification_sent="0" extension_count="0" public_token="token" river_date_expiry="2022-11-29 00:00:04" />
 </dataset>
