@@ -1,6 +1,8 @@
 <?xml version="1.0" ?>
 <dataset>
-	<droplets id="1" identity_id="1" channel="rss" droplet_hash="1" droplet_orig_id="1" droplet_type="original" droplet_title="droplet_1_title" droplet_content="droplet_1_content" droplet_date_pub="2012-11-15 00:00:01" comment_count="0" />
+	<droplets id="1" identity_id="1" channel="rss" droplet_hash="1" droplet_orig_id="1" droplet_type="original" droplet_title="droplet_1_title" droplet_content="droplet_1_content" droplet_date_pub="2012-11-15 00:00:01" comment_count="2" />
+	<droplet_comments droplet_id="1" user_id="3" comment_text="Good stuff" date_added="2012-11-20 05:44:23" deleted="" />
+	
 	<droplets id="2" identity_id="1" channel="rss" droplet_hash="2" droplet_orig_id="2" droplet_type="original" droplet_title="droplet_2_title" droplet_content="droplet_2_content" droplet_date_pub="2012-11-15 00:00:02" comment_count="0" />
 	<droplets id="3" identity_id="2" channel="twitter" droplet_hash="3" droplet_orig_id="3" droplet_type="original" droplet_title="droplet_3_title" droplet_content="droplet_3_content" droplet_date_pub="2012-11-15 00:00:03" comment_count="0" />
 	<droplets id="4" identity_id="2" channel="twitter" droplet_hash="4" droplet_orig_id="4" droplet_type="original" droplet_title="droplet_4_title" droplet_content="droplet_4_content" droplet_date_pub="2012-11-15 00:00:04" comment_count="0" />
