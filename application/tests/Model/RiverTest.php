@@ -24,7 +24,8 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 	 */
 	protected $datasets = array(
 		'plugins', 'users', 'accounts', 'drops', 
-		'identities', 'rivers', 'channel_filters',  'buckets', 'settings'
+		'identities', 'rivers', 'river_droplets', 'channel_filters',
+		'buckets', 'settings'
 	);
 	
 	
@@ -943,7 +944,7 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 							array(
 								'id' => '1',
 								'bucket_name' => 'Testing Bucket 1',
-							)
+							),
 						),
 					    'tags' => array(),
 					    'links' => array(),
@@ -966,6 +967,10 @@ class Model_RiverTest extends Unittest_Database_TestCase {
 							array(
 								'id' => '1',
 								'bucket_name' => 'Testing Bucket 1',
+							),
+							array(
+								'id' => '2',
+								'bucket_name' => 'Testing Bucket 2',
 							)
 						),
 					    'tags' => array(),

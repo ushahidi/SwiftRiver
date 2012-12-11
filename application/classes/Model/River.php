@@ -336,12 +336,6 @@ class Model_River extends ORM {
 			// Get our droplets as an Array
 			$droplets = $query->execute()->as_array();
 
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
-			
 			// Populate the metadata arrays
 			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
 
@@ -418,12 +412,6 @@ class Model_River extends ORM {
 			
 			$droplets = $query->execute()->as_array();
 			
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
-
 			// Populate the metadata
 			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
 		}

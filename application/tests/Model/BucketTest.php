@@ -22,7 +22,10 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 	/**
 	 * @var  array  data used by this test
 	 */
-	protected $datasets = array('users', 'accounts', 'drops', 'identities', 'buckets');
+	protected $datasets = array(
+		'users', 'accounts', 'drops', 'identities', 'buckets',
+		'bucket_droplets'
+	);
 	 
 	/**
 	* Provides test data for testSaveInvalid()
@@ -613,7 +616,7 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 							array(
 								'id' => '1',
 								'bucket_name' => 'Testing Bucket 1',
-							)
+							),
 						),
 					    'tags' => array(),
 					    'links' => array(),
@@ -636,6 +639,10 @@ class Model_BucketTest extends Unittest_Database_TestCase {
 							array(
 								'id' => '1',
 								'bucket_name' => 'Testing Bucket 1',
+							),
+							array(
+								'id' => '2',
+								'bucket_name' => 'Testing Bucket 2',
 							)
 						),
 					    'tags' => array(),

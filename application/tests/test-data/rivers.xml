@@ -5,10 +5,6 @@
 	<river_collaborators user_id="5" river_id="1" collaborator_active="0" read_only="0" />
 	<river_collaborators user_id="6" river_id="1" collaborator_active="1" read_only="1" />
 	<river_subscriptions user_id="7" river_id="1" />
-	<rivers_droplets id="1" river_id="1" droplet_id="2" droplet_date_pub="2012-11-15 00:00:02" />
-	<rivers_droplets id="2" river_id="1" droplet_id="3" droplet_date_pub="2012-11-15 00:00:03" />
-	<rivers_droplets id="3" river_id="1" droplet_id="4" droplet_date_pub="2012-11-15 00:00:04" />
-	<rivers_droplets id="4" river_id="1" droplet_id="5" droplet_date_pub="2012-11-15 00:00:05" />
 	
 	<rivers id="2" account_id="3" river_name="Testing River 2" river_name_url="testing-river-2" river_active="0" river_public="0" default_layout="list" max_drop_id="0" drop_count="0" river_full="0" river_expired="1" expiry_notification_sent="1" extension_count="2" public_token="token" river_date_expiry="2012-11-29 00:00:02" />
 	<rivers id="3" account_id="4" river_name="Testing River 3" river_name_url="testing-river-3" river_active="0" river_public="0" default_layout="photos" max_drop_id="0" drop_count="0" river_full="1" river_expired="1" expiry_notification_sent="1" extension_count="1" public_token="token" river_date_expiry="2012-11-29 00:00:03" />
