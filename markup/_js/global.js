@@ -4,11 +4,6 @@ $(document).ready(function() {
 		$.getScript('/markup/_js/jquery.masonry.js');
 	}
 
-	// DETERMINE NEED FOR SCROLLING VIEWS
-	if ($("#page-views ul").children().length > 2) {
-		$.getScript('/markup/_js/jquery.touch.min.js');
-	}
-
 	// DROP SHOW 'REMOVE' ON HOVER
 	if (window.innerWidth > 800) {
 		$('article.drop, .drop-full').hover(

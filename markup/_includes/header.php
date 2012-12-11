@@ -8,7 +8,7 @@
 	<link type="text/css" href="/markup/_css/styles.css" rel="stylesheet" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/markup/_js/jquery.outside.js"></script>
-	<script type="text/javascript" src="/markup/_js/global.js"></script>
+	<script type="text/javascript" src="/markup/_js/global-ck.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
  

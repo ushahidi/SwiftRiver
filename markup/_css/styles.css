@@ -384,6 +384,9 @@ i[class^="icon-"]:before {
 .icon-login:before {
 	content: "\40";
 }
+.icon-full-screen:before {
+	content: "\41";
+}
 
 /* --------------------------- AVATAR IMAGE */
 
@@ -1041,7 +1044,7 @@ hgroup.page-title h2 a:hover {
    text-decoration: none;
 }
 
-hgroup.page-title .page-action {
+.page-action {
    text-align: left;
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
@@ -1062,6 +1065,10 @@ hgroup.user-title .page-action {
    box-shadow: none; 
    background: none;
    padding: 1em 0 0;
+}
+
+.page-action .zoom-close {
+   float: right;
 }
 
 hgroup.page-title .follow-total {
@@ -1085,14 +1092,20 @@ hgroup.page-title .follow-total a strong {
    font-size: 1.2em;
 }
 
-hgroup.page-title .page-action a.button {
+.page-action a.button {
    line-height: 1em;
    padding: 0.7em 1em;
 }
 
-hgroup.page-title .page-action a.button .notification {
+.page-action a.button .notification {
    top: -0.5em;
    left: -0.5em;
+}
+
+.page-action a.button .icon-full-screen {
+   float: left;
+   font-size: 1.3em;
+   line-height: 0.8em;
 }
 
 /* --------------------------- PAGE NAVIGATION */
@@ -1684,50 +1697,12 @@ article.drop,
    padding: 1.5em 0 0;
 }
 
-#zoom-container .drop-full h2.label {
-   color: #f9f9f9;
-   text-shadow: 0 1px 0 #000;
-}
-
 .drop-full .base h2.label,
 #zoom-container .drop-full .base h2.label {
    color: #333;
    text-shadow: none;   
    border-top: 1px solid #eeeeee;
    padding: 1.5em 1em 0;
-}
-
-.drop-full .drop-toolbar {
-   font-weight: bold;
-   text-shadow: 0 1px 0 #fff;
-	-webkit-border-top-left-radius: 3px;
-	-webkit-border-top-right-radius: 3px;
-	-moz-border-radius-topleft: 3px;
-	-moz-border-radius-topright: 3px;
-	border-top-left-radius: 3px;
-	border-top-right-radius: 3px;
-	border-bottom: 1px solid #eaeaea;
-	background-color: #f9f9f9;
-background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(249, 249, 249)), to(rgb(247, 247, 247)));
-background-image: -webkit-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
-background-image: -moz-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
-background-image: -o-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
-background-image: -ms-linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
-background-image: linear-gradient(top, rgb(249, 249, 249), rgb(247, 247, 247));
-filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#f9f9f9', EndColorStr='#f7f7f7');
-   padding: 0.7em 1em;
-}
-
-#content .drop-full .drop-toolbar {
-   display: none;
-}
-
-.drop-full .drop-toolbar .zoom-close {
-   float: right;
-}
-
-.drop-full .drop-toolbar .zoom-close:hover {
-   text-decoration: none;
 }
 
 /* VIEW FULL > FULL STORY */
@@ -1767,15 +1742,6 @@ section.drop-discussion div.drop-body h1,
 
 article.add-comment div.drop-body textarea {
    width: 100%;
-}
-
-#zoom-container section.drop-discussion div.drop-actions ul li a {
-   padding: 5px;
-}
-
-section.drop-discussion div.drop-body p.remove-small {
-  float: right;
-  display: none;
 }
 
 /* VIEW FULL > META COLUMN */
@@ -2503,10 +2469,6 @@ div#confirmation-container {
    background-color: rgba(0,0,0,.25);
 }
 
-div#zoom-container {
-   background-color: rgba(0,0,0,.9);
-}
-
 .visible div.modal-window {
    position: static;
    z-index: 2;
@@ -2521,6 +2483,19 @@ div#zoom-container {
     -moz-animation-name: modalPop;
     -webkit-animation-duration: .2s;
     -webkit-animation-name: modalPop;
+}
+
+.visible div.modal-window .center {
+   width: auto;
+}
+
+div#zoom-container div.modal-window .center {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background-color: #f6f6f6;
+   padding: 1.0416667% 0;
+   margin-bottom: 1em;
 }
 
 div#confirmation-container article.modal {
@@ -2942,14 +2917,17 @@ div.modal-window .modal.col_9 {margin: 0;}
 
 /* ---- MODAL: DROP ZOOM */
 
-#zoom-container .drop-full .settings-toolbar {
-   position: fixed;
-   bottom: 10px;
-   right: 30px;
-   padding: 10px;
+article.modal .page-action {display: none;}
+
+.visible article.modal .page-action {
+   display: block;
+   margin: 0 1.0416667%;
 }
 
-#zoom-container .drop-full .settings-toolbar .close {display: none;}
+#zoom-container article.drop {
+   margin-top: 0;
+   margin-bottom: 0;
+}
 
 /* ---- MODAL: DROP SUMMARY */
 
@@ -3062,7 +3040,7 @@ footer#global-footer {
 
 /* ---- PAGE TITLE ---- */
 
-hgroup.page-title .page-action a.button {
+.page-action a.button {
    display: inline-block;
    font-weight: bold;
    font-size: 1em;
@@ -3070,7 +3048,8 @@ hgroup.page-title .page-action a.button {
    padding: 0.7em 1em;
 }
 
-hgroup.page-title .page-action .filters-trigger {
+.page-action .filters-trigger,
+.page-action .zoom-close {
    float: right;
 }
 
@@ -3284,7 +3263,7 @@ hgroup.page-title .button-follow {
    text-align: right;
 }
 
-hgroup.page-title .page-action a.button-white.settings {
+.page-action a.button-white.settings {
    display: inline-block;
    position: relative;
    color: #bebebe;
@@ -3503,11 +3482,12 @@ div#confirmation-container div.modal-window {
 }
 
 div#zoom-container div.modal-window {
-   width: 600px;
+   width: 700px;
    min-height: 150px;
-   border: 1px solid #000;
-   background-color: rgba(0,0,0,.5);
-   margin: 3em auto;
+   border: 1px solid #111;
+   background-color: rgba(0,0,0,.4);
+   padding: 1em;
+   margin: 1.5em auto;
 }
 
 div.modal-window .modal {float:none;}

@@ -4,14 +4,16 @@
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<article id="content" class="drop drop-full cf">
-		<div class="center">
-			<div class="modal drop drop-full col_9">
+	<article id="content" class="modal drop drop-full">
+		<div class="center cf">
+			<div class="page-action">
+				<a href="/markup/drop" class="button button-primary"><i class="icon-full-screen"></i>View full-screen</a>
+				<a href="#" class="button button-white zoom-close"><i class="icon-cancel"></i>Close</a>
+			</div>
+		</div>
+		<div class="center cf">
+			<div class="col_9">
 				<div class="base">
-					<div class="drop-toolbar">
-						<a href="#" class="zoom-close"><i class="icon-cancel"></i></a>
-						<a href="/markup/drop" class="button">Edit this drop</a>
-					</div>
 					<section class="drop-source cf">
 						<p class="metadata">4:30 p.m. Jan. 13, 2012</p>
 						<a href="#" class="avatar-wrap"><img src="http://0.gravatar.com/avatar/0c6078b8694a5c8c2385ab7ba4a1f81b?s=100&r=pg&d=mm" /></a>
