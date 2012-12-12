@@ -104,9 +104,5 @@
 	<div class="modal-window-secondary"></div>
 </div>
 
-<div id="confirmation-container">
-	<div class="modal-window"></div>
-</div>
-
 </body>
 </html>

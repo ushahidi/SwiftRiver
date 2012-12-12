@@ -10,6 +10,9 @@
 				<a href="/markup/drop" class="button button-primary"><i class="icon-full-screen"></i>View full-screen</a>
 				<a href="#" class="button button-white zoom-close"><i class="icon-cancel"></i>Close</a>
 			</div>
+			<div id="create-new" class="page-action col_12">
+				<a href="#" class="button button-primary"><i class="icon-plus"></i>Create new drop from selection</a>
+			</div>					
 		</div>
 		<div class="center cf">
 			<div class="col_9">

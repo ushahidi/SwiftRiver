@@ -1685,8 +1685,16 @@ article.drop,
    float: right;
 }
 
-.drop-full div.drop-actions ul li a {
+.drop-full .drop-actions ul li a {
    padding: 5px 10px;
+}
+
+.drop-full .drop-discussion section.drop-source a.avatar-wrap {
+   float: none;
+}
+
+.drop-full .drop-discussion div.drop-actions ul li a {
+   padding: 0;
 }
 
 .drop-full h2.label {
@@ -2450,7 +2458,6 @@ filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr=
 }
 
 div#modal-container,
-div#confirmation-container,
 div#zoom-container {
    display: none;
    position: fixed;
@@ -2463,10 +2470,6 @@ div#zoom-container {
    overflow-y: scroll;
    -webkit-overflow-scrolling: touch;   
    background-color: rgba(0,0,0,.75);
-}
-
-div#confirmation-container {
-   background-color: rgba(0,0,0,.25);
 }
 
 .visible div.modal-window {
@@ -2498,10 +2501,8 @@ div#zoom-container div.modal-window .center {
    margin-bottom: 1em;
 }
 
-div#confirmation-container article.modal {
-   text-align: center;
-   font-size: 1.3em;
-   padding: 10px;
+div#zoom-container .drop-discussion article.drop {
+   margin: 15px 0;
 }
 
 #modal-viewport {
@@ -2917,14 +2918,19 @@ div.modal-window .modal.col_9 {margin: 0;}
 
 /* ---- MODAL: DROP ZOOM */
 
-article.modal .page-action {display: none;}
+article.modal .page-action,
+article.modal #create-new.page-action {display: none;}
 
 .visible article.modal .page-action {
    display: block;
    margin: 0 1.0416667%;
 }
 
-#zoom-container article.drop {
+article.modal #create-new.page-action {
+   margin-bottom: 1em;
+}
+
+#zoom-container article.drop-full {
    margin-top: 0;
    margin-bottom: 0;
 }
@@ -3474,11 +3480,6 @@ div#modal-container div.modal-window {
    width: 500px;
    min-height: 150px;
    margin: 3em auto;
-}
-
-div#confirmation-container div.modal-window {
-   width: 500px;
-   margin: 90px auto 20px;
 }
 
 div#zoom-container div.modal-window {

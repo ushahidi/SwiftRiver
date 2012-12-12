@@ -84,7 +84,6 @@
 							<table>
 								<tbody>
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-river"></span>
 										</td>
@@ -97,7 +96,6 @@
 										</td>
 									</tr>	
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-river"></span>
 										</td>
@@ -110,7 +108,6 @@
 										</td>
 									</tr>																	
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-bucket"></span>
 										</td>										
@@ -124,7 +121,6 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-river"></span>
 										</td>										
@@ -136,7 +132,6 @@
 										</td>
 									</tr>																										
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-form"></span>
 										</td>										
@@ -149,7 +144,6 @@
 										</td>
 									</tr>
 									<tr>
-										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-bucket"></span>
 										</td>										
