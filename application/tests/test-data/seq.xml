@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<dataset>
+	<seq name="droplets" id="99" />
+	<seq name="identities" id="99" />
+	<seq name="links" id="99" />
+	<seq name="media" id="99" />
+	<seq name="places" id="99" />
+	<seq name="rivers_droplets" id="99" />
+	<seq name="river_tag_trends" id="99" />
+	<seq name="tags" id="99" />
+</dataset>

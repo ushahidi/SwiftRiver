@@ -46,3 +46,6 @@
 [submodule "modules/minion"]
 	path = modules/minion
 	url = git://github.com/kohana/minion.git
+[submodule "modules/markdown"]
+	path = modules/markdown
+	url = git://github.com/durham-university/kohana-markdown.git

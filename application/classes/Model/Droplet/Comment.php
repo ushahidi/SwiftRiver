@@ -25,8 +25,21 @@ class Model_Droplet_Comment extends ORM {
 	 * @var string
 	 */
     protected $_created_column = array('column' => 'date_added', 'format' => 'Y-m-d H:i:s');
-
-
+	
+	/**
+	 * Validation rules for comments
+	 *
+	 * @return array Rules
+	 */
+	public function rules()
+	{
+		return array(
+			'comment_text' => array(
+				array('not_empty'),
+				array('min_length', array(':value', 3)),
+			),
+		);
+	}
 
 	/**
 	 * Overload saving to perform additional functions on the comment
@@ -42,5 +55,23 @@ class Model_Droplet_Comment extends ORM {
 		
 		return $ret;
 	}
+	
+	/**
+	 * Creates a new drop comment
+	 *
+	 * @param array $comment
+	 * @return Model_Droplet_Comment
+	 */
+	public static function create_new($comment_text, $drop_id, $user_id)
+	{
+		$comment = ORM::factory('Droplet_Comment');
+		$comment->comment_text = $comment_text;
+		$comment->droplet_id = $drop_id;
+		$comment->user_id = $user_id;
+		$comment->save();
+		
+		return $comment;
+	}
+	
 }
 ?>

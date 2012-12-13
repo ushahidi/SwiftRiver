@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<dataset>
+	<rivers id="1" account_id="3" river_name="Testing River 1" river_name_url="testing-river-1" river_active="1" river_public="1" default_layout="drops" max_drop_id="0" drop_count="0" river_full="0" river_expired="0" expiry_notification_sent="0" extension_count="0" public_token="token" river_date_expiry="2012-11-29 00:00:01" />
+	<river_collaborators user_id="4" river_id="1" collaborator_active="1" read_only="0" />
+	<river_collaborators user_id="5" river_id="1" collaborator_active="0" read_only="0" />
+	<river_collaborators user_id="6" river_id="1" collaborator_active="1" read_only="1" />
+	<river_subscriptions user_id="7" river_id="1" />
+	
+	<rivers id="2" account_id="3" river_name="Testing River 2" river_name_url="testing-river-2" river_active="0" river_public="0" default_layout="list" max_drop_id="0" drop_count="0" river_full="0" river_expired="1" expiry_notification_sent="1" extension_count="2" public_token="token" river_date_expiry="2012-11-29 00:00:02" />
+	<rivers id="3" account_id="4" river_name="Testing River 3" river_name_url="testing-river-3" river_active="0" river_public="0" default_layout="photos" max_drop_id="0" drop_count="0" river_full="1" river_expired="1" expiry_notification_sent="1" extension_count="1" public_token="token" river_date_expiry="2012-11-29 00:00:03" />
+	<rivers id="4" account_id="4" river_name="Testing River 4" river_name_url="testing-river-4" river_active="1" river_public="0" default_layout="drops" max_drop_id="999" drop_count="0" river_full="0" river_expired="0" expiry_notification_sent="0" extension_count="0" public_token="token" river_date_expiry="2022-11-29 00:00:04" />
+</dataset>

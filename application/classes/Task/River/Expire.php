@@ -33,8 +33,8 @@ class Task_River_Expire extends Minion_Task {
 		$site_url = $settings['site_url'];
 		
 		// Templates for the notifications
-		$warning_template = View::factory('emails/expiry_warning');
-		$notice_template = View::factory('emails/expiry_notice');
+		$warning_template = View::factory('emails/text/expiry_warning');
+		$notice_template = View::factory('emails/text/expiry_notice');
 
 		// Get the rivers that have expired or are about to expire
 		$candidates = ORM::factory('River')

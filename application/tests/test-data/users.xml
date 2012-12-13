@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<dataset>
+    <users id="1" email="admin@example.com" name="admin name" username="admin" api_key="admin" invites="10" />
+	<users id="2" email="public@example.com" name="public name" username="public" api_key="public" invites="10" />
+	<users id="3" email="user1@example.com" name="user1 name" username="user1 username" api_key="user1" invites="10" />
+	<user_followers user_id="3" follower_id="4" />
+	<user_followers user_id="3" follower_id="5" />
+		
+	<users id="4" email="user2@example.com" name="user2 name" username="user2 username" api_key="user2" invites="10" />
+	<users id="5" email="user3@example.com" name="user3 name" username="user3 username" api_key="user3" invites="10" />
+	<users id="6" email="user4@example.com" name="user4 name" username="user4 username" api_key="user4" invites="10" />
+	<users id="7" email="user5@example.com" name="user5 name" username="user5 username" api_key="user5" invites="10" />
+	
+</dataset>

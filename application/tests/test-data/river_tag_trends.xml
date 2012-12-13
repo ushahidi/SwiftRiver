@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<dataset>
+	<river_tag_trends id="1" hash="db2b58aeb608846cb0d4d5cf9d8d22f5" river_id="1" date_pub="2012-11-15 07:00:00" tag="New York" tag_type="place" count="2" />
+	<river_tag_trends id="2" hash="bc70d73bb9c38f191e9d4d3b108c7470" river_id="1" date_pub="2012-11-14 20:00:00" tag="New York Times" tag_type="organization" count="1" />
+	<river_tag_trends id="3" hash="5da768f7bedc49294a936764043ef691" river_id="1" date_pub="2012-11-14 20:00:00" tag="New York" tag_type="place" count="1" />
+	<river_tag_trends id="4" hash="a48fec5f915afc494c240fc622e54e76" river_id="1" date_pub="2012-11-15 04:00:00" tag="U.S." tag_type="place" count="1" />
+	<river_tag_trends id="5" hash="59a8bf4ba345a1bba2fc85967b2e091d" river_id="1" date_pub="2012-11-14 20:00:00" tag="Google" tag_type="organization" count="1" />
+	<river_tag_trends id="6" hash="fed0da23bf50fa883212328f45e874a5" river_id="1" date_pub="2012-11-14 20:00:00" tag="U.S." tag_type="place" count="1" />
+	<river_tag_trends id="7" hash="709f21d4eb45c086617109c2ebc85eb7" river_id="1" date_pub="2012-11-14 18:00:00" tag="New York" tag_type="place" count="1" />
+	<river_tag_trends id="8" hash="b6949bd4a52dad653133cf16acd7e06f" river_id="1" date_pub="2012-11-14 22:00:00" tag="New York Times" tag_type="organization" count="1" />
+	<river_tag_trends id="9" hash="c0dd251a03b6ebe69d80f7b728f87deb" river_id="1" date_pub="2012-11-14 19:00:00" tag="Samsung" tag_type="organization" count="1" />
+	<river_tag_trends id="10" hash="dd938fea4c1f1320ef10a7c36dbe52d7" river_id="1" date_pub="2012-11-14 19:00:00" tag="U.S." tag_type="place" count="1" />
+	<river_tag_trends id="11" hash="4e923c47b70c4660257e4bccccfc412b" river_id="1" date_pub="2012-11-14 18:00:00" tag="Samsung" tag_type="organization" count="1" />
+	<river_tag_trends id="12" hash="c9689466368960e474701859e5ecf938" river_id="1" date_pub="2012-11-14 17:00:00" tag="Google" tag_type="organization" count="2" />
+	<river_tag_trends id="13" hash="a00258f8e505494c6b60262d3505319e" river_id="1" date_pub="2012-11-15 00:00:00" tag="Google" tag_type="organization" count="1" />
+	<river_tag_trends id="14" hash="4518dec376d9855e7fc53c00aeef3b98" river_id="1" date_pub="2012-11-14 23:00:00" tag="New York Times" tag_type="organization" count="1" />
+	<river_tag_trends id="15" hash="aebc257ca6078c0a50b76c5b5948f7c1" river_id="1" date_pub="2012-11-14 17:00:00" tag="New York" tag_type="place" count="2" />
+	<river_tag_trends id="16" hash="6c5f3af9d6fd98c1fe934c746f9ebadc" river_id="1" date_pub="2012-11-14 15:00:00" tag="Google" tag_type="organization" count="1" />
+	<river_tag_trends id="17" hash="12b58c4e76c2ceb2aab7f7899b5a3a37" river_id="1" date_pub="2012-11-14 15:00:00" tag="U.S." tag_type="place" count="1" />
+	<river_tag_trends id="18" hash="83397441fca8e8e54d5c0e02cafe6230" river_id="1" date_pub="2012-11-15 07:00:00" tag="Google" tag_type="organization" count="1" />
+	<river_tag_trends id="19" hash="4307185cfdacbfe4eae04846d5f9cb00" river_id="1" date_pub="2012-11-15 04:00:00" tag="Samsung" tag_type="organization" count="1" />
+</dataset>

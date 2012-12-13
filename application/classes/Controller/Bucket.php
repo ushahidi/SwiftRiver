@@ -22,13 +22,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	protected $bucket;
 	
 	/**
-	 * Boolean indicating whether the logged in user owns the bucket
-	 * or is a collaborator
-	 * @var bool
-	 */
-	protected $owner = FALSE; 
-	
-	/**
 	 * Whether photo drops only are selected.
 	 */
 	protected $photos = FALSE;
@@ -60,6 +53,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		{
 			$this->owner = $this->bucket->is_owner($this->user->id);
 			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
+			$this->public = (bool) $this->bucket->bucket_publish;
 			
 			// Bucket isn't published and logged in user isn't owner 
 			// and doesn't have a valid token
@@ -108,7 +102,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template->content->user = $this->user;
 			
         // The maximum droplet id for pagination and polling
-		$max_droplet_id = Model_Bucket::get_max_droplet_id($this->bucket->id);
+		$max_droplet_id = $this->bucket->get_max_droplet_id($this->bucket->id);
 				
 		//Get Droplets
 		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
@@ -121,7 +115,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$droplet_js->default_view = $this->bucket->default_layout;
 		$droplet_js->photos = $this->photos ? 1 : 0;
 		$droplet_js->filters = NULL;
-		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode(array());
 		
@@ -134,19 +128,10 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		if ( ! $this->owner)
 		{
-			$bucket_item = json_encode(array(
-				'id' => $this->bucket->id, 
-				'type' => 'river',
-				'subscribed' => $this->bucket->is_subscriber($this->user->id)
-			));
-
-			// Action URL - To handle the follow/unfollow actions on the river
-			$action_url = URL::site().$this->visited_account->account_path.'/user/bucket/manage';
-
-			$this->template->content->bucket_name = $this->page_title;
-			$this->template->content->bucket_item = $bucket_item;
-			$this->template->content->action_url = $action_url;
-
+			$follow_button = View::factory('template/follow');
+			$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
+			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
+			$this->template->content->follow_button = $follow_button;
 		}
 		
 		// Nothing to display message
@@ -225,12 +210,10 @@ class Controller_Bucket extends Controller_Drop_Base {
 					{
 					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id, $photos == 1);
 					}
-        			
-					$droplets = $droplets_array['droplets'];
 				}
 				
 				//Throw a 404 if a non existent page is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets))
+				if (($page > 1 OR $drop_id) AND empty($droplets_array))
 				{
 				    throw new HTTP_Exception_404(
 				        'The requested page :page was not found on this server.',
@@ -239,7 +222,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				}
 				
 				
-				echo json_encode($droplets);
+				echo json_encode($droplets_array);
 			break;
 			
 			case "PUT":
@@ -337,11 +320,12 @@ class Controller_Bucket extends Controller_Drop_Base {
 									->where('user_id', '=', $user_orm->id)
 									->find();
 				
-				if ( ! $collaborator_orm->loaded())
+				$exists = $collaborator_orm->loaded();
+				if ( ! $exists)
 				{
 					$collaborator_orm->bucket = $this->bucket;
 					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'bucket', 'invite', $this->bucket->id, $user_orm->id);
 				}
 				
 				if (isset($collaborator_array['read_only']))
@@ -350,6 +334,25 @@ class Controller_Bucket extends Controller_Drop_Base {
 				}
 				
 				$collaborator_orm->save();
+				
+				if ( ! $exists)
+				{
+					// Send email notification after successful save
+					$html = View::factory('emails/html/collaboration_invite');
+					$text = View::factory('emails/text/collaboration_invite');
+					$html->invitor = $text->invitor = $this->user->name;
+					$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+					$html->asset = $text->asset = 'bucket';
+					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
+					$html->asset_link = URL::site($this->bucket_base_url, TRUE);
+					$subject = __(':invitor has invited you to collaborate on a bucket',
+									array( ":invitor" => $this->user->name,
+									));
+					Swiftriver_Mail::send($collaborator_orm->user->email, 
+										  $subject, $text->render(), $html->render());
+				}
 			break;
 		}
 	}
@@ -412,6 +415,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
 					{
 						$this->user->add('bucket_subscriptions', $bucket_orm);
+						Model_User_Action::create_action($this->user->id, 'bucket', 'follow', $bucket_orm->id);
 					}
 
 					Cache::instance()->delete('user_buckets_'.$this->user->id);
@@ -434,6 +438,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					$bucket_array['user_id'] = $this->user->id;
 					$bucket_array['account_id'] = $this->account->id;
 					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
+					Model_User_Action::create_action($this->user->id, 'bucket', 'create', $bucket_orm->id);
 					echo json_encode($bucket_orm->get_array($this->user, $this->user));
 				}
 				catch (ORM_Validation_Exception $e)
@@ -485,5 +490,50 @@ class Controller_Bucket extends Controller_Drop_Base {
 		{
 			Cache::instance()->delete('user_buckets_'.$this->user->id);
 		}
+	}
+	
+	/**
+	 * Comments Posting API
+	 * 
+	 * Used for email replies at the moment.
+	 *
+	 */
+	public function action_comment_api()
+	{
+ 		$this->template = "";
+		$this->auto_render = FALSE;
+		
+ 		if ( ! $this->admin)
+ 			throw new HTTP_Exception_403();
+		
+		if ($this->request->method() != "POST")
+			throw HTTP_Exception::factory(405)->allowed('POST');
+
+ 		// Get the POST data
+ 		$data = json_decode($this->request->body(), TRUE);
+		$user = Model_User::get_user_by_email($data['from_email']);
+		$bucket_id = intval($this->request->param('id', 0));
+		$bucket = ORM::factory('Bucket', $bucket_id);
+		
+		if ( ! $user->loaded())
+			throw HTTP_Exception::factory(404);		
+		
+		if ( ! $bucket->loaded())
+			throw HTTP_Exception::factory(404);
+		
+		$comment = Model_Bucket_Comment::create_new(
+			$data['comment_text'],
+			$bucket_id,
+			$user->id
+		);
+		
+	    Swiftriver_Mail::notify_new_bucket_comment($comment, $bucket);
+		
+ 		Kohana::$log->add(Log::DEBUG, "New comment for bucket id :id from :email", 
+			array(
+ 				':id' => $bucket_id, 
+				':email' => $data['from_email']
+ 			)
+		);
 	}
 }

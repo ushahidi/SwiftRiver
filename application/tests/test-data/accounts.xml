@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<dataset>
+    <accounts id="1" user_id="1" account_path="default" account_private="0" account_active="1" river_quota_remaining="1" />
+    <accounts id="2" user_id="2" account_path="public" account_private="0" account_active="1" river_quota_remaining="1" />
+	<accounts id="3" user_id="3" account_path="user1" account_private="0" account_active="1" river_quota_remaining="93" />	
+	<accounts id="4" user_id="4" account_path="user2" account_private="0" account_active="1" river_quota_remaining="0" />
+	<accounts id="5" user_id="5" account_path="user3" account_private="0" account_active="1" river_quota_remaining="1" />
+	<accounts id="6" user_id="6" account_path="user4" account_private="0" account_active="1" river_quota_remaining="1" />
+	<accounts id="7" user_id="7" account_path="user5" account_private="0" account_active="1" river_quota_remaining="1" />
+</dataset>

@@ -38,7 +38,7 @@
 	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
-				<h1><?php echo __('Name'); ?></h1>
+				<h1><?php echo __('General'); ?></h1>
 			</div>
 		</header>
 
@@ -49,16 +49,6 @@
 					<?php echo Form::input("site_name", $settings['site_name']); ?>
 				</label>
 			</div>
-		</section>
-	</article>
-	<article class="container base">
-		<header class="container cf">
-			<div class="property-title">
-				<h1><?php echo __("Locale"); ?></h1>
-			</div>
-		</header>
-
-		<section class="property-parameters">
 			<div class="parameter">
 				<label for="site_locale">
 					<p class="field"><?php echo __("Site Locale"); ?></p>
@@ -67,6 +57,31 @@
 			</div>
 		</section>
 	</article>
+	
+	<article class="container base">
+		<header class="cf">
+			<div class="property-title">
+				<h1><?php echo __('Email'); ?></h1>
+			</div>
+		</header>
+
+		<section class="property-parameters">
+			<div class="parameter">
+				<label for="email_domain">
+					<p class="field"><?php echo __("Default Domain"); ?></p>
+					<?php echo Form::input("email_domain", $settings['email_domain']); ?>
+				</label>
+			</div>
+			<div class="parameter">
+				<label for="comments_email_domain">
+					<p class="field"><?php echo __("Comments Domain"); ?></p>
+					<?php echo Form::input("comments_email_domain", $settings['comments_email_domain']); ?>
+				</label>
+			</div>
+		</section>
+	</article>
+	
+	
 	<article class="container base">
 		<header class="container cf">
 			<div class="property-title">

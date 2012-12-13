@@ -5,7 +5,7 @@
 			<p>
 			<?php if ($following_mode): ?>
 				<strong><?php echo __("Your following"); ?></strong>
-				<?php echo __("You are not following anybody"); ?>
+				<?php echo __("You are not following anyone"); ?>
 			<?php else: ?>
 				<strong><?php echo __("No followers"); ?></strong>
 				<?php echo __("You do have any followers"); ?>
@@ -17,7 +17,7 @@
 				<p>
 				<?php if ($following_mode): ?>
 					<strong><?php echo __(":account_owner's following", array(':account_owner' => $account_owner)); ?></strong>
-					<?php echo __(":account_owner does not follow anybody", 
+					<?php echo __(":account_owner is not following anyone", 
 					array(":account_owner" => $account_owner)); ?>
 				<?php else: ?>
 					<strong><?php echo __("No followers"); ?></strong>
@@ -42,7 +42,7 @@
 	
 	<% if (currentUserID != id) { %>
 	<div class="actions">
-		<% if (following) { %>
+		<% if (subscribed) { %>
 			<p class="button-white follow only-icon has-icon selected">
 				<a href="#" title="">
 					<span class="icon"></span>
@@ -68,7 +68,7 @@
 		
 		toggleFollow: function(target) {
 			this.save(
-				{following: this.get("following") ? 0 : 1}
+				{subscribed: !this.get("subscribed")}
 				<?php if ($following_mode): ?>
 				,
 				{

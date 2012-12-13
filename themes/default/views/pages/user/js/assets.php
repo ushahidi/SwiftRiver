@@ -43,7 +43,7 @@ $(function() {
 		},
 		
 		subscriptionChanged: function(model, subscribed) {
-			BaseAssetListView.prototype.subscriptionChanged.call(this, model, subscribed);
+			Assets.BaseAssetListView.prototype.subscriptionChanged.call(this, model, subscribed);
 			
 			if (model.previous('subscribed') && model.previous("collaborator") &&
 				logged_in_account == visited_account &&
@@ -82,11 +82,11 @@ $(function() {
 		<?php endif; ?>
 	<?php else: ?>
 		<?php if ($asset == 'river'): ?>
-			var rivers = new RiverList();
+			var rivers = new Assets.RiverList();
 			new AssetListView({collection: rivers});
 			rivers.reset(<?php echo $asset_list; ?>);
 		<?php else: ?>
-			var buckets = new BucketList();
+			var buckets = new Assets.BucketList();
 			new AssetListView({collection: buckets});
 			buckets.reset(<?php echo $asset_list; ?>);
 		<?php endif; ?>

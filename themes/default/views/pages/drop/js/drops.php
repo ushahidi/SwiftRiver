@@ -139,11 +139,6 @@
 		var isAtLastPage = false;
 		var isPageFetching = false;
 
-		function nearBottom(bottomEl) {
-			var bufferPixels = 40;
-			return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - bottomEl.offset().top;
-		}
-
 		var loading_msg = window.loading_message.clone();
 
 		$(window).bind("scroll", function() {

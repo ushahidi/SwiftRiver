@@ -23,7 +23,7 @@ class Controller_Drop extends Controller_Swiftriver {
 	 /**
 	  * Single drop restful api
 	  */ 
-	 public function action_api()
+	 public function action_index()
 	 {
 		$this->template = "";
 		
@@ -41,5 +41,47 @@ class Controller_Drop extends Controller_Swiftriver {
 				Model_Droplet::create_from_array($drops);
 			break;
 		}
+	 }
+	 
+	 
+	 /**
+	  * Comments
+	  */ 
+	 public function action_comment()
+	 {
+ 		$this->template = "";
+		
+ 		if ( ! $this->admin)
+ 			throw new HTTP_Exception_403();
+		
+		if ($this->request->method() != "POST")
+			throw HTTP_Exception::factory(405)->allowed('POST');
+
+ 		// Get the POST data
+ 		$data = json_decode($this->request->body(), TRUE);
+		$user = Model_User::get_user_by_email($data['from_email']);
+		$drop_id = intval($this->request->param('id', 0));
+		
+		if ( ! $user->loaded())
+			throw HTTP_Exception::factory(404);		
+		
+		$comment = Model_Droplet_Comment::create_new(
+			$data['comment_text'],
+			$drop_id,
+			$user->id
+		);
+		
+		$context_obj = ORM::factory(ucfirst($data['context']), $data['context_obj_id']);
+		if ($context_obj->loaded())
+		{
+			Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
+		}
+		
+ 		Kohana::$log->add(Log::DEBUG, "New comment for drop id :id from :email", 
+			array(
+ 				':id' => $drop_id, 
+				':email' => $data['from_email']
+ 			)
+		);
 	 }
 }

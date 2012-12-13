@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<dataset>
+	<!-- Channel Filters -->
+	<channel_filters id="1" channel="rss" river_id="1" filter_enabled="1" filter_last_run="2012-11-15 00:00:00" filter_last_successful_run="2012-11-14 00:00:00" filter_runs="0" />
+	<channel_filters id="2" channel="twitter" river_id="1" filter_enabled="0" filter_last_run="2012-11-15 00:00:01" filter_last_successful_run="2012-11-14 00:00:01" filter_runs="0" />
+	<channel_filters id="3" channel="sms" river_id="1" filter_enabled="1" filter_last_run="2012-11-15 00:00:02" filter_last_successful_run="2012-11-14 00:00:02" filter_runs="0" />
+	<channel_filters id="4" channel="rss" river_id="2" filter_enabled="0" filter_last_run="2012-11-15 00:00:03" filter_last_successful_run="2012-11-14 00:00:03" filter_runs="0" />
+	<channel_filters id="5" channel="twitter" river_id="2" filter_enabled="1" filter_last_run="2012-11-15 00:00:04" filter_last_successful_run="2012-11-14 00:00:04" filter_runs="0" />
+	
+
+	<!-- Filter options for channel_id=1 -->
+	<channel_filter_options id="1" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.bbci.co.uk\/news\/rss.xml&quot;,&quot;title&quot;:&quot;BBC News - Home&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="2" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.feedburner.com\/ommalik&quot;,&quot;title&quot;:&quot;GigaOM&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="3" channel_filter_id="1" key="url" value="{&quot;value&quot;:&quot;http:\/\/www.engadget.com\/rss.xml&quot;,&quot;title&quot;:&quot;Engadget&quot;,&quot;quota_usage&quot;:1}" />
+	
+	<!-- Filter options for channel_id=2 -->	
+	<channel_filter_options id="4" channel_filter_id="2" key="keyword" value="{&quot;value&quot;:&quot;meow&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="5" channel_filter_id="2" key="keyword" value="{&quot;value&quot;:&quot;kudishnyao&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="6" channel_filter_id="2" key="user" value="{&quot;value&quot;:&quot;69mb&quot;,&quot;quota_usage&quot;:1}" /> 
+	
+	
+	<!-- Filter options for channel_id=4 -->
+	<channel_filter_options id="7" channel_filter_id="4" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.bbci.co.uk\/news\/rss.xml&quot;,&quot;title&quot;:&quot;BBC News - Home&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="8" channel_filter_id="4" key="url" value="{&quot;value&quot;:&quot;http:\/\/feeds.feedburner.com\/ommalik&quot;,&quot;title&quot;:&quot;GigaOM&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="9" channel_filter_id="4" key="url" value="{&quot;value&quot;:&quot;http:\/\/www.engadget.com\/rss.xml&quot;,&quot;title&quot;:&quot;Engadget&quot;,&quot;quota_usage&quot;:1}" />
+	
+	<!-- Filter options for channel_id=5 -->
+	<channel_filter_options id="10" channel_filter_id="5" key="keyword" value="{&quot;value&quot;:&quot;meow&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="11" channel_filter_id="5" key="keyword" value="{&quot;value&quot;:&quot;kudishnyao&quot;,&quot;quota_usage&quot;:1}" /> 
+	<channel_filter_options id="12" channel_filter_id="5" key="user" value="{&quot;value&quot;:&quot;69mb,ushahidi&quot;,&quot;quota_usage&quot;:2}" /> 
+</dataset>

@@ -12,7 +12,4 @@ return array(
 	
 	/* Default cache driver */
 	'default_cache' => 'file',
-	
-	/* The 'from' address used in emails */
-    'email_address' => 'no-response@example.com',
 );

@@ -319,10 +319,8 @@ class Controller_Search extends Controller_Swiftriver {
 				// Get the river id
 				$river_id = Cookie::get('search_item_id');
 
-				$data = Model_River::get_droplets($user_id, $river_id, 0, $page, 
-					PHP_INT_MAX, 'DESC', $query_filters, $this->photos);
-
-				$results['droplets'] = $data['droplets'];
+				$results['droplets'] = Model_River::get_droplets($user_id, $river_id, 0, $page, 
+				PHP_INT_MAX, $this->photos, $query_filters);
 			break;
 
 			// Bucket search
@@ -334,7 +332,7 @@ class Controller_Search extends Controller_Swiftriver {
 				$data = Model_Bucket::get_droplets($user_id, $bucket_id, 0, $page, 
 					PHP_INT_MAX, $this->photos, $query_filters);
 
-				$results['droplets'] = $data['droplets'];
+				$results['droplets'] = $data;
 			break;
 
 		}

@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<dataset>
+    <auth_tokens id="1" token="2b96dde1c2ab0860d82a6c9266f7a940" type="new_registration" data="{&quot;email&quot;:&quot;user@example.com&quot;}" created_date="2012-11-28 08:01:35" expire_date="2030-11-29 08:01:35" />
+	<auth_tokens id="2" token="9e4f5eb747b4263514a4c91d4fa54de4" type="new_registration" data="{&quot;email&quot;:&quot;user2@example.com&quot;}" created_date="2012-11-28 08:01:35" expire_date="2012-11-29 08:01:35" />
+</dataset>

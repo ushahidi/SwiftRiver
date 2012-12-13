@@ -13,14 +13,15 @@
 				</div>
 				<?php endif; ?>			
 			</div>
-			<?php if ($owner): ?>
 			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="<?php echo $settings_url; ?>">
-						<span class="icon"></span>
-						<?php echo __("Bucket settings"); ?>
-					</a>
-				</h2>
+				<?php if ($owner): ?>
+					<h2 class="settings">
+						<a href="<?php echo $settings_url; ?>">
+							<span class="icon"></span>
+							<?php echo __("Bucket settings"); ?>
+						</a>
+					</h2>
+				<?php endif; ?>
 				<h2 class="back">
 					<a href="<?php echo $bucket_url; ?>">
 						<span class="icon"></span>
@@ -28,30 +29,53 @@
 					</a>
 				</h2>
 			</div>
-			<?php else: ?>
-			<div class="follow-summary col_3">
-				<p class="button-score button-white follow"><a href="#" title="now following"><span class="icon"></span>Follow</a></p>
-			</div>
-			<?php endif; ?>
 		</div>
 	</hgroup>
 
 	<div id="content" class="list cf">
 		<div class="center">
+			<div class="center no-content nodisplay">
+				<div class="col_12">
+					<article class="container base">
+						<div class="alert-message blue">
+							<p>
+								<strong><?php echo __('Nothing to display yet.') ?></strong>
+								<?php echo __('There are no comments in this bucket yet. Add the first one below.'); ?>
+							</p>
+						</div>
+					</article>
+				</div>
+			</div>
 			<div class="col_12">
-
 				<div id="comments"></div>
 				<div id="comments_error"></div>
-				<div id="comments_footer"></div>
+				<div id="comments_footer">
+					<?php if ( ! $anonymous):?>
+						<article class="add-comment drop base cf">
+							<div class="drop-content">
+								<div class="drop-body">
+									<textarea id="comment_content"></textarea>
+								</div>
+								<section class="drop-source cf">
+									<a href="#" class="avatar-wrap"><img src="<?php echo $user_avatar; ?>" /></a>
+									<div class="byline">
+										<h2><?php echo $user->name; ?></h2>
+									</div>
+								</section>
+							</div>
+							<div class="drop-actions cf">
+								<p class="button-blue"><a href="#">Publish</a></p>
+							</div>
+						</article>
+					<?php endif;?>
+				</div>
 								
 			</div>
 		</div>
 	</div>
 
-	<script type="text/template" id="comment-list-template"></script>
-
 	<script type="text/template" id="comment-item-template">
-		<article class="drop base cf">
+		<article class="drop base cf" id="comment-<%= id %>">
 			<div class="drop-content">
 				<div class="drop-body">
 					<h1><%= comment_content %></h1>
@@ -64,38 +88,15 @@
 					</div>
 				</section>
 			</div>
-			<div class="drop-actions stacked cf">
-				<ul class="dual-buttons score-drop">
-					<li class="button-white like <%= parseInt(score) == 1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
-					<li class="button-white dislike <%= parseInt(score) == -1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
-				</ul>
-			</div>
-		</article>	
-	</script>
-
-	<script type="text/template" id="comment-footer-template">
-		<article class="add-comment drop base cf">
-			<div class="drop-content">
-				<div class="drop-body">
-					<textarea id="comment_content"></textarea>
+			<% if (user_id != logged_in_user) { %>
+				<div class="drop-actions stacked cf">
+					<ul class="dual-buttons score-drop">
+						<li class="button-white like <%= parseInt(score) == 1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
+						<li class="button-white dislike <%= parseInt(score) == -1 ? 'scored' : ''  %>"><a href="#"><span class="icon"></span></a></li>
+					</ul>
 				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="<?php echo $user_avatar; ?>" /></a>
-					<div class="byline">
-						<h2><?php echo $user->name; ?></h2>
-					</div>
-				</section>
-			</div>
-			<div class="drop-actions cf">
-				<p class="button-blue"><a href="#">Publish</a></p>
-			</div>
+			<% } %>
 		</article>	
-	</script>
-
-	<script type="text/template" id="comment-error-template">
-		<div class="alert-message red">
-			<p><strong><?php echo __('Uh oh.');?></strong> <?php echo __('Invalid Comment'); ?></p>
-		</div>
 	</script>
 
 	<script type="text/javascript">
@@ -106,48 +107,20 @@
 		var fetch_url = '<?php echo $fetch_url ?>';
 
 		// Models
-		window.Comment = Backbone.Model.extend({
-			urlRoot: fetch_url,
-
+		var Comment = Backbone.Model.extend({
 			// Score the comment
 			score: function(val) {
 				this.save({score: val});
 			}			
 		});
 		
-		window.CommentCollection = Backbone.Collection.extend({
+		var CommentCollection = Backbone.Collection.extend({
 			model:Comment,
 			url: fetch_url
 		});
-		 
-		// Views
-		window.CommentListView = Backbone.View.extend({
-		 
-			//tagName:'ul',
-		 
-			initialize:function () {
-				this.model.bind("reset", this.render, this);
-				var self = this;
-				this.model.bind("add", function (comment) {
-					$(self.el).append(new CommentListItemView({model:comment}).render().el);
-				});
-			},
-		 
-			render:function (eventName) {
-				_.each(this.model.models, function (comment) {
-					$(this.el).append(new CommentListItemView({model:comment}).render().el);
-				}, this);
-				return this;
-			},
-
-			events:{
-				
-			}		
-		});
-		 
-		window.CommentListItemView = Backbone.View.extend({
-
-			//tagName:"li",
+		 		 
+		// Single comment in the comment list
+		var CommentView = Backbone.View.extend({
 
 			template:_.template($('#comment-item-template').html()),
 		 
@@ -190,119 +163,65 @@
 			}
 		});
 		 
-		window.CommentView = Backbone.View.extend({
+		// Listing of comments
+		var CommentListView = Backbone.View.extend({
 		 
-			template:_.template($('#comment-list-template').html()),
-		 
-			initialize:function () {
-				this.model.bind("change", this.render, this);
-			},
-		 
-			render:function (eventName) {
-				$(this.el).html(this.template(this.model.toJSON()));
-				return this;
-			},
-		 
-			events:{
-
-			},
-		 
-			change:function (event) {
-				var target = event.target;
-				console.log('changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value);
-				// You could change your model on the spot, like this:
-				// var change = {};
-				// change[target.name] = target.value;
-				// this.model.set(change);
-			},
-		 
-			close:function () {
-				$(this.el).unbind();
-				$(this.el).empty();
-			}
-		});
-		 
-		window.FooterView = Backbone.View.extend({
+			el: "#content",
 			
-			template:_.template($('#comment-footer-template').html()),
+			events: {
+				"click #comments_footer .drop-actions .button-blue": "publishComment",
+			},
 		 
 			initialize:function () {
-				//this.render();
-			},
-		 
-			render:function (eventName) {
-				$(this.el).append(this.template());
-				return this;
+				this.collection.on("reset", this.addComments, this);
+				this.collection.on("add", this.addComment, this);
 			},
 
-			events:{
-				"click .button-blue":"saveComment"
+			addComments: function() {
+				this.collection.each(this.addComment, this);
+				if (!this.collection.length) {
+					this.$(".no-content").show();
+				}
 			},
+			
+			addComment: function(comment) {
+				var view = new CommentView({model: comment});
+				this.$("#comments").append(view.render().el);
+			},
+			
+			publishComment: function() {
+				var textarea = this.$(".add-comment textarea");
+			
+				if (!$(textarea).val().length)
+					return false;
 
-			saveComment:function (event) {
-				var newComment = new window.Comment;
-				var now = new Date();
-				newComment.set({
-					comment_content:$('#comment_content').val(),
-					name:'<?php echo $user->name; ?>',
-					date:now.toString("yyyy-mm-dd HH:MM:ss"),
-					avatar:'<?php echo Swiftriver_Users::gravatar($user->email); ?>',
-					score:0
-				});
-				newComment.save(
-					newComment.attributes,
-					{
-						success: function (model, response) {
-							//app.commentList.create(newComment);
-							commentList.add(newComment);
-							$('#comment_content').val('');
-							$('#comments_error').html('');
-						},
-						error: function (model, response) {
-							$('#comments_error').html(new ErrorView().render().el);
-						}
+				var publishButton = this.$(".add-comment .drop-actions p").clone();            
+				var loading_msg = window.loading_message.clone();
+				this.$(".add-comment .drop-actions p").replaceWith(loading_msg);
+				var view = this;
+				
+				this.collection.create({comment_content: $(textarea).val()}, {
+					wait: true,
+					complete: function() {
+						loading_msg.replaceWith(publishButton);
+					},
+					success: function(model, response) {
+						textarea.val("");
+						view.$(".no-content").hide();
+					},
+					error: function(model, response) {
+						showConfirmationMessage("Unable to add comment. Try again later.");
 					}
-				);
-
-				return false;				
-			}
-		});
-
-		window.ErrorView = Backbone.View.extend({
-			template:_.template($('#comment-error-template').html()),
-		 
-			initialize:function () {
-				//this.render();
-			},
-		 
-			render:function (eventName) {
-				$(this.el).append(this.template());
-				return this;
-			},
-		});		
-		
-		// Router
-		var AppRouter = Backbone.Router.extend({
-		 
-			routes:{
-				"":"list"
-			},
-		 
-			initialize:function () {
-				$('#comments_footer').html(new FooterView().render().el);
-			},
-		 
-			list:function () {
-				commentList = new CommentCollection();
-				this.commentListView = new CommentListView({model:commentList});
-				commentList.fetch();
-				$('#comments').html(this.commentListView.render().el);
-			} 
+				});
+			
+				return false;
+				
+			}	 
 		});
 		
-		var commentList;
-		var app = new AppRouter();
-		Backbone.history.start();
+		var commentList = new CommentCollection;
+		new CommentListView({collection: commentList});
+		commentList.reset(<?php echo $comments; ?>);
 	});
 	</script>
 

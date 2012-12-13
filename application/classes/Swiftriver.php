@@ -55,7 +55,7 @@ class Swiftriver {
 		// Add the current default theme to the list of modules
 		$theme = Model_Setting::get_setting('site_theme');
 
-		if ($theme != "default")
+		if (isset($theme) AND $theme != "default")
 		{
 			Kohana::modules(array_merge(
 				array('themes/'.$theme->value => THEMEPATH.$theme->value),

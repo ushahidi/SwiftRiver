@@ -105,7 +105,7 @@ class Model_Channel_Filter extends ORM {
 	 *
 	 * @param string $channel Name of the channel
 	 * @param int $river_id Database ID of the river associated with the channel
-	 * @return Database_Result
+	 * @return Model_Channel_Filter
 	 */
 	public static function get_channel_filters($channel, $river_id)
 	{
@@ -195,7 +195,7 @@ class Model_Channel_Filter extends ORM {
         if ($channel_filter and $channel_filter->loaded())
         {
     	    $channel_filter->filter_last_run = $run_date;
-    	    if ( $success) 
+    	    if ($success) 
     	    {
     	        $channel_filter->filter_last_successful_run = $run_date;
     	    }
@@ -207,17 +207,30 @@ class Model_Channel_Filter extends ORM {
 	/**
 	 * Update channel filter option and creates it if it doesn't exist
 	 *
+	 * Value is an array with the following fields:
+	 *  array(
+	 *		'key' => 'url',
+	 *		'value' => 'http://ushahidi.com/rss.xml',
+	 *		'title' => 'Ushahidi',
+	 *		'quota_usage' => 1
+	 *	)
+	 *
 	 * @param int id
-	 * @param mixed  value
+	 * @param array  value 
 	 * @return Model_Channel_Filter_option
 	 */	
 	public  function update_option($value, $id = 0)
 	{
-		$filter_option = ORM::factory('Channel_Filter_Option', $id);
+		$filter_option = ORM::factory('Channel_Filter_Option')
+			                ->where('channel_filter_id', '=', $this->id)
+			                ->where('id', '=', $id)
+							->find();
+		
 		if ($filter_option->loaded())
 		{
 			Swiftriver_Event::run('swiftriver.channel.option.pre_delete', $filter_option);
 		}
+		
 		$filter_option->channel_filter_id = $this->id;
 		$filter_option->key = $value['key'];		
 		unset($value['key']);
@@ -228,14 +241,18 @@ class Model_Channel_Filter extends ORM {
 	}
 	
 	/**
-	 * Update channel filter option and creates it if it doesn't exist
+	 * Delete a channel option
 	 *
 	 * @param int id
 	 * @return void
 	 */	
 	public  function delete_option($id)
 	{
-		$filter_option = ORM::factory('Channel_Filter_Option', $id);
+		$filter_option = ORM::factory('Channel_Filter_Option')
+							->where('channel_filter_id', '=', $this->id)
+							->where('id', '=', $id)
+							->find();
+		
 		if ($filter_option->loaded())
 		{
 			$filter_option->delete();

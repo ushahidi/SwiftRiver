@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<dataset>
+	<tags id="1" hash="4a89e0631472a4dd72e36608c36a9ee8" tag="Jeremy Hunt" tag_canonical="jeremy hunt" tag_type="person" />
+	<tags id="2" hash="7936b26688ae5eb79fa41aa19fa1bad9" tag="NHS" tag_canonical="nhs" tag_type="organization" />
+	<tags id="3" hash="7e1d798c0338fc645cda0bdb476f2d13" tag="David Attenborough" tag_canonical="david attenborough" tag_type="person" />
+	<tags id="4" hash="892c1b85244f18a1dfc317bf7cdaa52f" tag="Jinping" tag_canonical="jinping" tag_type="person" />
+	<tags id="5" hash="cc6971c236dbba7463b335e155bcaa1c" tag="John Sudworth" tag_canonical="john sudworth" tag_type="person" />
+	<tags id="6" hash="52c191f2fc49a667822a8a6d34874431" tag="David Petraeus" tag_canonical="david petraeus" tag_type="person" />
+	<tags id="7" hash="3de40abcba71ced5ffd533a842ebc755" tag="CIA" tag_canonical="cia" tag_type="organization" />
+	<tags id="8" hash="11027fb6f5e08898004bdc7b76e45bdc" tag="Wigan" tag_canonical="wigan" tag_type="organization" />
+	<tags id="9" hash="75005f5248fdf77037062fe6ef8a581e" tag="Dave Whelan" tag_canonical="dave whelan" tag_type="person" />
+	<tags id="10" hash="5e1223d4589aa77990c5b3b761365179" tag="David Cameron" tag_canonical="david cameron" tag_type="person" />
+	<tags id="11" hash="6e9588e3abeaf043e72036a9386add41" tag="Custom Tag" tag_canonical="custom tag" tag_type="user_generated" />
+</dataset>

@@ -83,18 +83,18 @@ class Controller_User extends Controller_Swiftriver {
 		$followers =  $this->visited_account->user->followers->find_all();
 		$view_type = "dashboard";
 
-		// Some info about the owner of the user profile being visited
-		// Will be used later for following unfollowing
-		$this->template->content->fetch_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
-
-		$this->template->content->user_item = json_encode(array(
-				"id" => $this->visited_account->user->id,
-				"type" => "user",					
-				"item_name" => $this->visited_account->user->name,
-				"item_url" => URL::site().$this->visited_account->account_path,
-				"following" => $this->user->has('following', $this->visited_account->user),
-				"is_owner" => $this->user->id == $this->visited_account->user->id				
+		if ( ! $this->owner)
+		{
+			$follow_button = View::factory('template/follow');
+			$follow_button->data = json_encode(array(
+				'id' => $this->visited_account->user->id,
+				'name' => $this->visited_account->user->name,
+				'type' => 'user',
+				'subscribed' => $this->user->has('following', $this->visited_account->user)
 			));
+			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+			$this->template->content->follow_button = $follow_button;
+		}
 	}
 	
 	public function action_index()
@@ -131,6 +131,7 @@ class Controller_User extends Controller_Swiftriver {
 		}		
 				
 		// Activity stream
+		$this->template->header->js .= HTML::script("themes/default/media/js/activities.js");
 		$this->sub_content->activity_stream = View::factory('template/activities')
 		    ->bind('activities', $activities)
 		    ->bind('fetch_url', $fetch_url)
@@ -144,7 +145,6 @@ class Controller_User extends Controller_Swiftriver {
 
 		$this->sub_content->has_activity = count($activity_list) > 0;
 		$activities = json_encode($activity_list);
-
 	}
 
 
@@ -211,121 +211,52 @@ class Controller_User extends Controller_Swiftriver {
 			case "PUT":
 				$item_array = json_decode($this->request->body(), TRUE);
 				
-				if ($item_array['type'] == 'river') 
-				{
-					
-					$river_orm = ORM::factory('River', $item_array['id']);
-					if ( ! $river_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					
-					// Are we adding a subscription?
-					if ($item_array['subscribed'] == 1 AND 
-						! $this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->add('river_subscriptions', $river_orm);
-					}
-					
-					// Are we removing a subscription?
-					if ($item_array['subscribed'] == 0 AND 
-						$this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->remove('river_subscriptions', $river_orm);
-					}
-
-					// Purge the rivers cache
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				
-				if ($item_array['type'] == 'bucket') 
-				{
-					$bucket_orm = ORM::factory('Bucket', $item_array['id']);
-					if ( ! $bucket_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					
-					// Are we adding a subscription?
-					if ($item_array['subscribed'] == 1 AND 
-						! $this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->add('bucket_subscriptions', $bucket_orm);
-					}
-					
-					// Are we removing a subscription?
-					if ($item_array['subscribed'] == 0 AND 
-						$this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}
-
-					// Purge the buckets cache
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				
 				// Stalking!
-				if ($item_array['type'] == 'user') 
+				$user_orm = ORM::factory('User', $item_array['id']);
+				if ( ! $user_orm->loaded())
 				{
-					$user_orm = ORM::factory('User', $item_array['id']);
-					if ( ! $user_orm->loaded())
-					{
-						throw new HTTP_Exception_404(
-					        'The requested page :page was not found on this server.',
-					        array(':page' => $page)
-					        );
-					}
-					
-					// Are following
-					if ($item_array['following'] == 1 AND ! $this->user->has('following', $user_orm))
-					{
-						$this->user->add('following', $user_orm);
-					}
-					
-					// Are unfollowing
-					if ($item_array['following'] == 0 AND $this->user->has('following', $user_orm))
-					{
-						$this->user->remove('following', $user_orm);
-					}					
+					throw new HTTP_Exception_404(
+				        'The requested page :page was not found on this server.',
+				        array(':page' => $page)
+				        );
 				}
-			break;
-
-			case "DELETE":
-				$item_type = $this->request->param('name', 0);
-				$id = $this->request->param('id', 0);
+				if ($user_orm->id == $this->user->id)
+					throw new HTTP_Exception_400(); // Do not follow self
 				
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
+				// Are following
+				if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
 				{
-					throw new HTTP_Exception_403();
-				}
-
-				if ($item_type == 'bucket')
-				{
-					$bucket_orm = ORM::factory('Bucket', $id);
-					$bucket_orm->delete();
-
-					// Delete the buckets cache so that it's recreated on page reload
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-
-				if ($item_type == 'river')
-				{
-					$river_orm = ORM::factory('River', $id);
-					$river_orm->delete();
-
-					// Delete the rivers cache so that it's recreated on page reload
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
+					$this->user->add('following', $user_orm);
+					Model_User_Action::create_action($this->user->id, 'user', 'follow', $user_orm->id);
+					$this->notify_new_follower($user_orm);
 				}
 				
+				// Are unfollowing
+				if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
+				{
+					$this->user->remove('following', $user_orm);
+				}					
 			break;
 		}
+	}
+	
+	/**
+	 * @return	void
+	 */
+	private function notify_new_follower($user_orm)
+	{
+		// Send email notification after successful save
+		$html = View::factory('emails/html/new_follower');
+		$text = View::factory('emails/text/new_follower');
+		$html->from_name = $text->from_name = $this->user->name;
+		$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+		$html->from_link = $text->from_link = URL::site($this->user->account->account_path, TRUE);
+		$html->nickname = $text->nickname = $user_orm->account->account_path;
+		$subject = __(':who if now following you of SwiftRiver!',
+						array( ":who" => $this->user->name,
+						));
+		Swiftriver_Mail::send($user_orm->email, 
+							  $subject, $text->render(), $html->render());
 	}
 	
 	/**
@@ -425,11 +356,11 @@ class Controller_User extends Controller_Swiftriver {
 			if ($this->riverid_auth)
 			{
 				// RiverID email change process
-				$mail_body = View::factory('emails/changeemail')
+				$mail_body = View::factory('emails/text/changeemail')
 							 ->bind('secret_url', $secret_url);		            
         
 				$secret_url = URL::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
-				$site_email = Kohana::$config->load('site.email_address');
+				$site_email = Swiftriver_Mail::get_default_address();
 				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
 				$resp = RiverID_API::instance()
 						    ->change_email($this->user->email, $new_email, $current_password,
@@ -459,7 +390,7 @@ class Controller_User extends Controller_Swiftriver {
 				if ($auth_token->loaded())
 				{
 					// Send an email with a secret token URL
-					$mail_body = View::factory('emails/changeemail')
+					$mail_body = View::factory('emails/text/changeemail')
 									   ->bind('secret_url', $secret_url);		            
         
 					$secret_url = URL::site('login/changeemail/'
@@ -525,14 +456,35 @@ class Controller_User extends Controller_Swiftriver {
 		$this->auto_render = FALSE;
 		
 		switch ($this->request->method())
-		{			
-			case "POST":
+		{	
+			case "GET":
+				$query_params = $this->request->query();
+				$last_id = array_key_exists('last_id', $query_params)  ? intval($this->request->query('last_id')) : NULL;
+				$since_id = array_key_exists('since_id', $query_params) ? intval($this->request->query('since_id')) : NULL;
+				
+				$activity_list = Model_User_Action::get_activity_stream(
+											$this->visited_account->user->id, 
+											$this->user->id, 
+											! $this->owner,
+											$last_id,
+											$since_id);
+											
+				if (empty($activity_list))
+					throw new HTTP_Exception_404();
+				
+				echo json_encode($activity_list);
+				break;
+			case "PUT":
 				$action_array = json_decode($this->request->body(), TRUE);
-				$action_id = intval($action_array['action_id']);
+				
+				$action_id = intval($action_array['id']);
 				$action_orm = ORM::factory('User_Action', $action_id);
 				
 				if ( ! $action_orm->loaded())
-					return;
+					throw new HTTP_Exception_404();
+				
+				if ( $this->user->id != $action_orm->action_to_id)
+					throw new HTTP_Exception_403(); // User can only accept own invites
 				
 				
 				// Get the collaboration being saved
@@ -570,6 +522,9 @@ class Controller_User extends Controller_Swiftriver {
 						$collaborator_orm->save();
 						$action_orm->save();
 					}
+					
+					// Notify owners
+					$this->notify_new_collaborator($collaborator_orm);
 				}
 				else
 				{
@@ -579,6 +534,52 @@ class Controller_User extends Controller_Swiftriver {
 			break;
 		}
 			
+	}
+	
+	private function notify_new_collaborator($collaborator_orm)
+	{
+		// Send email notification after successful save
+		$html = View::factory('emails/html/collaboration_invite_accepted');
+		$text = View::factory('emails/text/collaboration_invite_accepted');
+		$html->from_name = $text->from_name = $collaborator_orm->user->name;
+		$html->avatar = Swiftriver_Users::gravatar($collaborator_orm->user->email, 80);
+		$html->from_link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+		$subject = __(':from accepted your collaboration invite!',
+						array( ":from" => $collaborator_orm->user->name,
+						));
+		
+		$owners = NULL;
+		$to = NULL;
+		if ($collaborator_orm instanceof Model_River_Collaborator)
+		{
+			$to = '"'.$collaborator_orm->river->account->user->name.'" <'.$collaborator_orm->river->account->user->email.'>';
+			$owners = $collaborator_orm->river->get_collaborators(TRUE);
+			$text->link = $html->asset_link = URL::site($collaborator_orm->river->get_base_url(), TRUE);
+			$html->asset_name = $text->asset_name = $collaborator_orm->river->river_name;
+			$html->asset = $text->asset = "river";
+		}
+		elseif ($collaborator_orm instanceof Model_Bucket_Collaborator)
+		{
+			$to = '"'.$collaborator_orm->bucket->account->user->name.'" <'.$collaborator_orm->bucket->account->user->email.'>';
+			$owners = $collaborator_orm->bucket->get_collaborators(TRUE);
+			$text->link = $html->asset_link = URL::site($collaborator_orm->bucket->get_base_url(), TRUE);
+			$html->asset_name = $text->asset_name = $collaborator_orm->bucket->bucket_name;
+			$html->asset = $text->asset = "bucket";
+		}
+		
+		foreach ($owners as $owner)
+		{
+			if ($collaborator_orm->user->id == $owner['id'])
+				continue; // Skip the just added collaborator
+			
+			if ($to)
+			{
+				$to .= ', ';
+			}
+			$to .= '"'.$owner['name'].'" '.'<'.$owner['email'].'>';
+		}
+		
+		Swiftriver_Mail::send($to, $subject, $text->render(), $html->render());
 	}
 	
 	/**
@@ -680,7 +681,7 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			$follower['user_avatar'] = Swiftriver_Users::gravatar($follower['username'], 35);
 			$follower['user_url'] = URL::site().$follower['account_path'];
-			$follower['following'] = in_array($follower['id'], $following);
+			$follower['subscribed'] = in_array($follower['id'], $following);
 			$follower['type'] = "user";
 		}
 
@@ -713,7 +714,7 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			$follow['user_avatar'] = Swiftriver_Users::gravatar($follow['username'], 35);
 			$follow['user_url'] = URL::site().$follow['account_path'];
-			$follow['following'] = TRUE;
+			$follow['subscribed'] = TRUE;
 			$follow['type'] = "user";
 		}
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<dataset>
+	<places id="1" hash="867da1cf4e6bd9fc5512a19a90e0141f" place_name="Wales" place_name_canonical="wales" longitude="146" latitude="-33" />
+	<places id="2" hash="5f1823c378ecb68558282f7462e3fd87" place_name="England" place_name_canonical="england" longitude="-4" latitude="54" />
+	<places id="3" hash="c01ceb95cdaf55355a89e7749a3f6c4d" place_name="China" place_name_canonical="china" longitude="105" latitude="35" />
+	<places id="4" hash="67ec7056b9618e92b0f5f35c2372317d" place_name="Freetown" place_name_canonical="freetown" longitude="-13.2299" latitude="8.484" />
+	<places id="5" hash="a0feadafb547fde23f26724d70fb5785" place_name="Gaza" place_name_canonical="gaza" longitude="34.3333" latitude="31.4167" />
+	<places id="6" hash="b48a4004999d58f41d876def626d2bd8" place_name="Palestinian" place_name_canonical="palestinian" longitude="35.2033" latitude="31.9216" />
+	<places id="7" hash="7457a6c6a321cd1165d3efb4d523f4ba" place_name="US" place_name_canonical="us" longitude="-98.5" latitude="39.76" />
+	<places id="8" hash="a03122d00783b59d218abbee8061129d" place_name="Pakistani" place_name_canonical="pakistani" longitude="70" latitude="30" />
+	<places id="9" hash="7a17c2a0d99f5f274d882bdc3acc5e79" place_name="Heathrow" place_name_canonical="heathrow" longitude="-81.3722" latitude="28.7633" />
+	<places id="10" hash="6747703539026b8cd9bba1c68803bfe6" place_name="London City" place_name_canonical="london city" longitude="-0.09184" latitude="51.5128" />
+</dataset>

@@ -46,6 +46,9 @@ class Model_Setting extends ORM
 	 */
 	public static function get_settings($setting_keys)
 	{
+		if (empty($setting_keys) OR ! is_array($setting_keys))
+			return NULL;
+		
 		$settings = ORM::factory('Setting')
 		               ->where('key', 'IN', $setting_keys)
 		               ->find_all();

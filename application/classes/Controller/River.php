@@ -25,12 +25,6 @@ class Controller_River extends Controller_Drop_Base {
 	 * @var Model_River
 	 */
 	protected $river;
-	
-	/**
-	 * Boolean indicating whether the logged in user owns the river
-	 * @var bool
-	 */
-	protected $owner = FALSE; 
 
 	/**
 	 * Whether the river is newly created
@@ -77,6 +71,7 @@ class Controller_River extends Controller_Drop_Base {
 		{					
 			$this->owner = $this->river->is_owner($this->user->id);
 			$this->collaborator = $this->river->is_collaborator($this->user->id);
+			$this->public = (bool) $this->river->river_public;
 			
 			// If this river is not public and no ownership...
 			if ( ! $this->river->river_public AND 
@@ -118,17 +113,10 @@ class Controller_River extends Controller_Drop_Base {
 			
 			if ( ! $this->owner)
 			{
-				$river_item = json_encode(array(
-					'id' => $this->river->id, 
-					'type' => 'river',
-					'subscribed' => $this->river->is_subscriber($this->user->id)
-				));
-
-				// Action URL - To handle the follow/unfollow actions on the river
-				$action_url = URL::site().$this->visited_account->account_path.'/user/river/manage';
-
-				$this->template->content->river_item = $river_item;
-				$this->template->content->action_url = $action_url;
+				$follow_button = View::factory('template/follow');
+				$follow_button->data = json_encode($this->river->get_array($this->user, $this->user));
+				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
+				$this->template->content->follow_button = $follow_button;
 			}
 		}
 	}
@@ -153,7 +141,7 @@ class Controller_River extends Controller_Drop_Base {
 
 		//Get Droplets
 		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
-			$max_droplet_id, NULL, $filters, $this->photos);
+			$max_droplet_id, $this->photos, $filters);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -167,7 +155,7 @@ class Controller_River extends Controller_Drop_Base {
 		{
 			$droplet_js->filters = json_encode($filters);
 		}
-		$droplet_js->droplet_list = json_encode($droplets_array['droplets']);
+		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
 		$droplet_js->channels = json_encode($this->river->get_channels());
 
@@ -180,7 +168,7 @@ class Controller_River extends Controller_Drop_Base {
 
 
 		// Show expiry notice to owners only
-		if ($this->owner AND $this->river->is_expired($this->owner))
+		if ($this->owner AND $this->river->is_expired())
 		{
 			$this->droplets_view->nothing_to_display = "";
 
@@ -206,7 +194,7 @@ class Controller_River extends Controller_Drop_Base {
 		
 		
 		// Extend rivers accessed by an owner during notice perio
-		if ($this->owner AND ! $this->river->is_expired($this->owner))
+		if ($this->owner AND ! $this->river->is_expired())
 		{
 		 	$days_remaining = $this->river->get_days_to_expiry();
 			$notice_period = Model_Setting::get_setting('default_river_lifetime');
@@ -263,7 +251,7 @@ class Controller_River extends Controller_Drop_Base {
 					// Specific drop requested
 					$droplets_array = Model_River::get_droplets($this->user->id, 
 				    	$this->river->id, $drop_id);
-					$droplets = array_pop($droplets_array['droplets']);
+					$droplets = array_pop($droplets_array);
 				}
 				else
 				{
@@ -274,17 +262,17 @@ class Controller_River extends Controller_Drop_Base {
 					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					$filters = $this->_get_filters();
 
+					$droplets = array();
 					if ($since_id)
 					{
-					    $droplets_array = Model_River::get_droplets_since_id($this->user->id, 
-					    	$this->river->id, $since_id, $filters, $photos == 1);
+					    $droplets = Model_River::get_droplets_since_id($this->user->id, 
+					    	$this->river->id, $since_id, $photos == 1, $filters);
 					}
 					else
 					{
-					    $droplets_array = Model_River::get_droplets($this->user->id, 
-					    	$this->river->id, 0, $page, $max_id, NULL, $filters, $photos == 1);
+					    $droplets = Model_River::get_droplets($this->user->id, 
+					    	$this->river->id, 0, $page, $max_id, $photos == 1, $filters);
 					}
-					$droplets = $droplets_array['droplets'];
 				}				
 				
 
@@ -401,11 +389,12 @@ class Controller_River extends Controller_Drop_Base {
 									->where('user_id', '=', $user_orm->id)
 									->find();
 				
-				if ( ! $collaborator_orm->loaded())
+				$exists = $collaborator_orm->loaded();
+				if ( ! $exists)
 				{
 					$collaborator_orm->river = $this->river;
 					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'river', $this->river->id, $user_orm->id);
+					Model_User_Action::create_action($this->user->id, 'river', 'invite', $this->river->id, $user_orm->id);
 				}
 				
 				if (isset($collaborator_array['read_only']))
@@ -414,6 +403,25 @@ class Controller_River extends Controller_Drop_Base {
 				}
 				
 				$collaborator_orm->save();
+				
+				if ( ! $exists)
+				{
+					// Send email notification after successful save
+					$html = View::factory('emails/html/collaboration_invite');
+					$text = View::factory('emails/text/collaboration_invite');
+					$html->invitor = $text->invitor = $this->user->name;
+					$html->asset_name = $text->asset_name = $this->river->river_name;
+					$html->asset = $text->asset = 'river';
+					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
+					$html->asset_link = URL::site($this->river_base_url, TRUE);
+					$subject = __(':invitor has invited you to collaborate on a river',
+									array( ":invitor" => $this->user->name,
+									));
+					Swiftriver_Mail::send($collaborator_orm->user->email, 
+										  $subject, $text->render(), $html->render());
+				}
 			break;
 		}
 	}
@@ -471,6 +479,7 @@ class Controller_River extends Controller_Drop_Base {
 					if ( ! $this->user->has('river_subscriptions', $river_orm))
 					{
 						$this->user->add('river_subscriptions', $river_orm);
+						Model_User_Action::create_action($this->user->id, 'river', 'follow', $river_orm->id);
 					}
 
 					Cache::instance()->delete('user_rivers_'.$this->user->id);
@@ -620,7 +629,7 @@ class Controller_River extends Controller_Drop_Base {
 	 */
 	public function action_extend()
 	{
-		if ( ! $this->owner || ! $this->river->is_expired($this->owner))
+		if ( ! $this->owner || ! $this->river->is_expired())
 		{
 			$this->redirect($this->river_base_url, 302);
 		}

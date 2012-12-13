@@ -80,6 +80,12 @@ class Model_Droplet extends ORM {
 	protected $_belongs_to = array(
 		'identity' => array()
 	);
+	
+	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'droplet_date_add', 'format' => 'Y-m-d H:i:s');
 
 	/**
 	 * Overload saving to perform additional functions on the droplet
@@ -89,40 +95,7 @@ class Model_Droplet extends ORM {
 		// Ensure Channel Goes In as Lower Case
 		$this->channel = strtolower($this->channel);
 
-		// Do this for first time droplets only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the droplet was first added in UTC
-			$this->droplet_date_add = gmdate("Y-m-d H:i:s", time());
-		}
-
 		return parent::save($validation);
-	}
-	
-	/**
-	 * Checks if a droplet already exists based on its hash
-	 *
-	 * @param string $droplet_hash SHA2 Hash of the origin ID of the droplet
-	 */
-	public static function is_duplicate_droplet($droplet_hash)
-	{
-		return (bool) ORM::factory('Droplet')
-						->where('droplet_hash', '=', $droplet_hash)
-						->count_all();
-	}
-	
-	/**
-	 * Retrives a droplet from the DB based on its droplet_hash. The hash is 
-	 * unique for every droplet.
-	 *
-	 * @param string $droplet_hash Has value of the droplet to retrieve
-	 * @return array Array of new droplets
-	 */
-	public static function get_droplet_by_hash($droplet_hash)
-	{
-		return ORM::factory('Droplet')
-		    ->where('droplet_hash', '=', $droplet_hash)
-		    ->find();
 	}
 	
 	/**
@@ -242,7 +215,7 @@ class Model_Droplet extends ORM {
 	 *
 	 * @param array $drops Drop array
 	 */
-	public static function add_metadata(& $drops)
+	private static function add_metadata(& $drops)
 	{
 		// Build queries for creating entries in the meta tables droplet_tags, droplet_links and so on
 		$drops_idx = array();
@@ -364,7 +337,7 @@ class Model_Droplet extends ORM {
 					}
 					$media_values .= '('.$drop['id'].','.$media['id'].')';
 					
-					if ($media['droplet_image'])
+					if (isset($media['droplet_image']) AND $media['droplet_image'])
 					{
 						if ($drop_images)
 						{
@@ -1319,10 +1292,10 @@ class Model_Droplet extends ORM {
 	 * @param array
 	 * @return void
 	 */
-	public function update_from_array($droplet_array, $logged_in_user_id) 
+	public function update_from_array($drop_array, $user_id) 
 	{
-		$this->_update_buckets($droplet_array, $logged_in_user_id);
-		$this->_update_score($droplet_array);
+		$this->_update_buckets($drop_array, $user_id);
+		$this->_update_score($drop_array);
 	}
 	
 	/**
@@ -1358,16 +1331,13 @@ class Model_Droplet extends ORM {
 	 */	
 	private function _update_buckets($droplet_array, $logged_in_user_id)
 	{
-
-		// Function to xxtract the bucket ids from the array
-		function id($bucket)
-		{
-			return $bucket['id'];
-		}
-		
 		// Determine the delta
-		$current_buckets = array_map("id", $this->get_buckets());
-		$change_buckets = array_map("id", $droplet_array['buckets']);
+		$current_buckets = array_map(function ($bucket) {
+			return $bucket['id'];
+		}, $this->get_buckets());
+		$change_buckets = array_map(function ($bucket) {
+			return $bucket['id'];
+		}, $droplet_array['buckets']);
 		
 		$new_buckets = array_diff($change_buckets, $current_buckets);
 		$delete_buckets = array_diff($current_buckets, $change_buckets);
@@ -1382,13 +1352,7 @@ class Model_Droplet extends ORM {
 				throw new HTTP_Exception_403();
 			}
 			
-			if ($bucket_orm->loaded())
-			{
-				$this->add('buckets', $bucket_orm);
-
-				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
-				Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
-			}
+			$bucket_orm->add_drop($this);
 		}
 		
 		// Remove droplet for the delete buckets
@@ -1401,13 +1365,7 @@ class Model_Droplet extends ORM {
 				throw new HTTP_Exception_403();
 			}
 			
-			if ($this->has('buckets', $bucket_orm))
-			{
-				$this->remove('buckets', $bucket_orm);
-
-				$event_data = array('droplet_id' => $this->id, 'bucket_id' => $bucket_orm->id);
-				Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
-			}
+			$bucket_orm->remove_drop($this);
 		}
 
 	}
@@ -1542,35 +1500,6 @@ class Model_Droplet extends ORM {
 		}
 		
 		return TRUE;
-	}
-
-	/**
-	 * Given an array performs UTF-8 encoding of droplet title and droplet content
-	 *
-	 * @param array $droplet Array representation of the droplet
-	 */
-	public static function utf8_encode(& $droplet)
-	{
-		// Exempted encodings
-		$exempt_charsets = array('UTF-8', 'ASCII');
-
-		// Encode content and title as utf8 in case they aren't
-		$content = $droplet['droplet_content'];
-		$title = $droplet['droplet_title'];
-		$identity_name = $droplet['identity_name'];
-
-		$droplet['droplet_content'] = mb_check_encoding($content, 'UTF-8') 
-		    ? $content 
-		    : utf8_encode($content);
-		
-		$droplet['droplet_title'] = mb_check_encoding($title, 'UTF-8') 
-		    ? $title 
-		    : utf8_encode($title);
-		
-		$droplet['identity_name'] = mb_check_encoding($identity_name, 'UTF-8') 
-		    ? $identity_name 
-		    : utf8_encode($identity_name);
-
 	}
 
 	/**

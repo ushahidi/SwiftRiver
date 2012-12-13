@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<dataset>
+	<buckets_droplets id="1" bucket_id="1" droplet_id="2" />
+	<buckets_droplets id="2" bucket_id="1" droplet_id="3" />
+	<buckets_droplets id="3" bucket_id="1" droplet_id="4" />
+	<buckets_droplets id="4" bucket_id="1" droplet_id="5" />
+	<buckets_droplets id="5" bucket_id="2" droplet_id="2" />
+</dataset>

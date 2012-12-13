@@ -425,4 +425,61 @@
 		}
 	});
 	
+	// View for the Follow Button
+	var FollowButtonView = Assets.FollowButtonView = Backbone.View.extend({
+		el: "#follow_button",
+
+		events: {
+			'click p.button-white > a': 'toggleSubscription'
+		},
+			
+		initialize: function() {
+			this.template = _.template($("#follow-button-template").html());
+			this.model.on('change', this.render, this);
+		},
+
+		toggleSubscription: function(e) {
+			var loading_msg = window.loading_message.clone();
+			var button = this.$("p.button-white");
+			var t = setTimeout(function() { button.replaceWith(loading_msg); }, 500);
+				
+			var view = this;
+			var action = this.model.get("subscribed") ? "unfollow" : "follow";
+			var name = this.model.get("name");
+			this.model.toggleSubscription(function(model, response, options) {
+				var message = "You are now following '" + name + "'";
+				if (action == "unfollow") {
+					message = "You are no longer following '" + name + "'";
+				}
+				showConfirmationMessage(message);
+				
+				// Update the global collection
+				if (view.collection != null)
+				{
+					var globalAsset = view.collection.get(model.get("id"));
+
+					if (globalAsset != undefined) {
+						globalAsset.toggleSubscriptionNoSync();
+					} else {
+						modelCopy = model.clone();
+						modelCopy.set("is_owner", false);
+						view.collection.add(modelCopy);
+					}
+				}
+			}, function() {
+					
+				showConfirmationMessage("Oops, unable to " + action + ". Try again later.");
+			}, function() {
+				clearTimeout(t);
+				loading_msg.replaceWith(button);
+			});
+			return false;
+		},
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		}
+	});
+	
 }(this));

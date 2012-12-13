@@ -90,19 +90,27 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-	'auth'         => MODPATH.'auth',       // Basic authentication
-	'orm'          => MODPATH.'orm',        // Object Relationship Mapping
-	'riverid'      => MODPATH.'riverid',
-	'cache'        => MODPATH.'cache',      // Caching with multiple backends
-	'dummy'        => MODPATH.'dummy_cache',// Blackhole cache driver
-	'database'     => MODPATH.'database',   // Database access
-	'image'        => MODPATH.'image',      // Image manipulation
-	'minion'       => MODPATH.'minion',     // CLI
-	'themes/default' => THEMEPATH.'default', // Themes
-	'csrf'         => MODPATH.'csrf',        // CSRF
-	'captcha' => MODPATH.'captcha',          // Captcha
+	'auth'            => MODPATH.'auth',        // Basic authentication
+	'orm'             => MODPATH.'orm',         // Object Relationship Mapping
+	'riverid'         => MODPATH.'riverid',     // Ushahidi products Single Sign On
+	'cache'           => MODPATH.'cache',       // Caching with multiple backends
+	'dummy'           => MODPATH.'dummy_cache', // Blackhole cache driver
+	'database'        => MODPATH.'database',    // Database access
+	'image'           => MODPATH.'image',       // Image manipulation
+	'minion'          => MODPATH.'minion',      // CLI
+	'themes/default'  => THEMEPATH.'default',   // Themes
+	'csrf'            => MODPATH.'csrf',        // CSRF
+	'captcha'         => MODPATH.'captcha',     // Captcha
+	'markdown'        => MODPATH.'markdown',    // Markdown module
 	));
 
+/**
+* Use the 'unittest' database configuration when testing;
+*/
+if (defined('TESTING_MODE'))
+{
+	Database::$default = 'unittest';
+}
 
 /**
  * Initialize the SwiftRiver runtime environment
@@ -159,9 +167,16 @@ Route::set('login', 'login(/<action>(/<id>))', array('id' => '\d+'))
 /**
  * API Route
  */
-Route::set('api', 'api(/<controller>)')
+Route::set('drops_api', 'api/drop(/<id>(/<action>))')
 	->defaults(array(
-		'action'     => 'api'
+		'controller' => 'drop',
+		'action'     => 'index'
+	));	
+		
+Route::set('bucket_comment_api', 'api/bucket/<id>/comment')
+	->defaults(array(
+		'controller' => 'bucket',
+		'action'     => 'comment_api'
 	));	
 	
 /**

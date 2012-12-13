@@ -70,6 +70,18 @@ class Model_Account extends ORM
 	protected $_belongs_to = array('user' => array());
 	
 	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'account_date_add', 'format' => 'Y-m-d H:i:s');
+	
+	/**
+	 * Auto-update columns for updates
+	 * @var string
+	 */
+    protected $_updated_column = array('column' => 'account_date_modified', 'format' => 'Y-m-d H:i:s');
+	
+	/**
 	 * Rules for the account model
 	 *
 	 * @return array Rules
@@ -118,14 +130,7 @@ class Model_Account extends ORM
 				$this->user_id = $user->id;
 			}
 
-			// Save the date the feed was first added
-			$this->account_date_add = date("Y-m-d H:i:s", time());
-			
 			$this->river_quota_remaining = Model_Setting::get_setting('default_river_quota');
-		}
-		else
-		{
-			$this->account_date_modified = date("Y-m-d H:i:s", time());
 		}
 
 		return parent::save();

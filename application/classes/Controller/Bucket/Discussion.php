@@ -40,8 +40,15 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user)
-			->bind('user_avatar', $user_avatar);
+			->bind('user_avatar', $user_avatar)
+			->bind('anonymous', $this->anonymous);
 		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
+		$comments = $this->bucket->get_comments($this->user->id);
+		foreach ($comments as &$comment)
+		{
+			$comment['comment_content'] = Markdown::instance()->transform($comment['comment_content']);
+		}
+		$this->template->content->comments = json_encode($comments);
 
 		$user_avatar = Swiftriver_Users::gravatar($this->user->email, 80);
 
@@ -60,20 +67,34 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 		$this->template = '';
 		$this->auto_render = FALSE;
 		
+		if ($this->anonymous)
+			throw new HTTP_Exception_403();
+		
 		switch ($this->request->method())
 		{			
 			case "POST":
-
 				$post = json_decode($this->request->body(), TRUE);
-				$comment = ORM::factory('Comment');
-				$valid = $comment->validate($post);
-				if ($valid->check())
+				$comment = ORM::factory('Bucket_Comment');
+				$validation = Validation::factory($post)
+				    ->rule('comment_content', 'not_empty')
+				    ->rule('comment_content', 'min_length', array(':value', 3));
+				if ($validation->check())
   				{
   					$comment->bucket_id = $this->bucket->id;
 					$comment->user_id = $this->user->id;
 					$comment->comment_content = $post['comment_content'];
-					$comment->comment_date_add = date("Y-m-d H:i:s", time());
+					$comment->comment_date_add = gmdate("Y-m-d H:i:s", time());
 					$comment->save();
+					Swiftriver_Mail::notify_new_bucket_comment($comment, $this->bucket);
+					echo json_encode(array(
+						'id' => $comment->id, 
+						'name' => $comment->user->name,
+						'user_id' => $comment->user->id,
+						'comment_content' => Markdown::instance()->transform($comment->comment_content),
+						'date' => $comment->comment_date_add,
+						'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40),
+						'score' => 0
+					));
 				}
   				else
   				{
@@ -83,34 +104,32 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 			break;
 
 			case "PUT":
-
 				$post = json_decode($this->request->body(), TRUE);
 				$comment_id = intval($this->request->param('id', 0));
 				$score = ( isset($post['score']) AND in_array($post['score'], array(1, -1) ) )
 					 ? $post['score'] : 0;
-				$comment = ORM::factory('Comment', $comment_id);
-				// Comment loaded and does not belong to this user
-				// User can't vote on their own comments
-				if ($comment->loaded() AND $comment->user_id != $this->user->id)
+				$comment = ORM::factory('Bucket_Comment', $comment_id);
+				
+				if ( ! $comment->loaded())
 				{
-					$comment_score = ORM::factory('Comment_Score')
-						->where('comment_id', '=', $comment->id)
-						->where('user_id', '=', $this->user->id)
-						->find();
-					$comment_score->comment_id = $comment->id;
-					$comment_score->user_id = $this->user->id;
-					$comment_score->score = $score;
-					$comment_score->save();
+					throw new HTTP_Exception_404();
 				}
-				echo View::factory('profiler/stats');
-			
-			break;
+				
+				if ($comment->user_id == $this->user->id)
+				{
+					// User can't vote on their own comments
+					throw new HTTP_Exception_400();
+				}
 
-			default:
-				echo json_encode($this->bucket->get_comments($this->user->id));
-			
+				$comment_score = ORM::factory('Bucket_Comment_Score')
+					->where('bucket_comment_id', '=', $comment->id)
+					->where('user_id', '=', $this->user->id)
+					->find();
+				$comment_score->bucket_comment_id = $comment->id;
+				$comment_score->user_id = $this->user->id;
+				$comment_score->score = $score;
+				$comment_score->save();		
 			break;
 		}
-	}	
-	
+	}
 }
