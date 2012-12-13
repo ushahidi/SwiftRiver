@@ -46,6 +46,7 @@ Run the following commands from the terminal:
 	$ sudo port install php5-openssl
 	$ sudo port install php5-apc
 	$ sudo port install php5-gd
+	$ sudo pear install Mail_Mime
 
 Restart Apache:
 
@@ -57,6 +58,7 @@ Debian/Ubuntu/Linux Mint Installation
 Run the following command in Terminal:
 
 	$ sudo apt-get install php5-curl php5-mcrypt php5-mysql php5-gd
+	$ sudo pear install Mail_Mime
 
 Restart Apache:
 
@@ -66,6 +68,7 @@ Fedora/CentOS Installation
 --------------------------
 
 	$ sudo yum install php5-curl php5-mcrypt php5-mysql php5-pcntl php5-openssl php5-apc php5-gd
+	$ sudo pear install Mail_Mime
 
 Restart Apache:
 
