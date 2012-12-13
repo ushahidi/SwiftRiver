@@ -131,7 +131,7 @@ class Controller_Trend_Main extends Controller_Swiftriver {
 				$this->bucket_base_url = $this->bucket->get_base_url();					
 				
 				$drops_url = URL::site().$this->bucket->account->account_path.'/bucket/'.$this->bucket->bucket_name_url;
-				$this->more_url = url::site().$this->account->account_path.'/bucket/'.$this->bucket->bucket_name_url.'/more';
+				$this->more_url = URL::site().$this->account->account_path.'/bucket/'.$this->bucket->bucket_name_url.'/more';
 				break;	    
 		}
 	

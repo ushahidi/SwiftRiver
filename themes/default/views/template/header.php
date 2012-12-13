@@ -8,7 +8,7 @@
 	<meta name="keywords" content="SwiftRiver">
 	<?php Swiftriver_Event::run('swiftriver.template.meta'); ?>
 	<link rel="index" title="SwiftRiver" href="<?php echo URL::base(TRUE,TRUE); ?>" /> 
-	<link rel="icon" href="<?php echo url::base(); ?>themes/default/media/img/favicon.png" type="image/png">
+	<link rel="icon" href="<?php echo URL::base(); ?>themes/default/media/img/favicon.png" type="image/png">
 	<?php
 	echo $meta; 
 	
