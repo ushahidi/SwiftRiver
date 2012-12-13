@@ -255,7 +255,7 @@ class Controller_User extends Controller_Swiftriver {
 		$subject = __(':who if now following you of SwiftRiver!',
 						array( ":who" => $this->user->name,
 						));
-		SwiftRiver_Mail::send($user_orm->email, 
+		Swiftriver_Mail::send($user_orm->email, 
 							  $subject, $text->render(), $html->render());
 	}
 	
@@ -579,7 +579,7 @@ class Controller_User extends Controller_Swiftriver {
 			$to .= '"'.$owner['name'].'" '.'<'.$owner['email'].'>';
 		}
 		
-		SwiftRiver_Mail::send($to, $subject, $text->render(), $html->render());
+		Swiftriver_Mail::send($to, $subject, $text->render(), $html->render());
 	}
 	
 	/**

@@ -218,7 +218,7 @@ class Swiftriver_Mail {
 		{
 			if ($email != $comment->user->email) 
 			{
-				SwiftRiver_Mail::send($email, $subject, $text_body, $html_body, $from, array('Reply-To' => $reply_to));
+				Swiftriver_Mail::send($email, $subject, $text_body, $html_body, $from, array('Reply-To' => $reply_to));
 			}
 		}
 	}

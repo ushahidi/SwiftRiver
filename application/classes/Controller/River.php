@@ -419,7 +419,7 @@ class Controller_River extends Controller_Drop_Base {
 					$subject = __(':invitor has invited you to collaborate on a river',
 									array( ":invitor" => $this->user->name,
 									));
-					SwiftRiver_Mail::send($collaborator_orm->user->email, 
+					Swiftriver_Mail::send($collaborator_orm->user->email, 
 										  $subject, $text->render(), $html->render());
 				}
 			break;
