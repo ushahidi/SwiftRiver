@@ -1,6 +1,6 @@
 Unit Testing
 ============
-The SwiftRiver web application uses the [PHPUnit framework](http://www.phpunit.de/manual/current/en/index.html).
+The SwiftRiver web application uses the [PHPUnit testing framework](http://www.phpunit.de/manual/current/en/index.html).
 
 System Requirements
 ====================
