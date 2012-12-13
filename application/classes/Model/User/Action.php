@@ -98,7 +98,7 @@ class Model_User_Action extends ORM {
 			$query->where("id", ">", $since_id);
 		}
 		
-		$results = $query->order_by('action_date_add', 'DESC')
+		$results = $query->order_by('id', 'DESC')
 						 ->limit($limit)
 						 ->execute()
 						 ->as_array();
@@ -139,6 +139,16 @@ class Model_User_Action extends ORM {
 		// Collect the user/bucket/river etc IDs to query in single batches
 		foreach ($user_actions as $key => & $user_action)
 		{
+			// Create all fields in each element
+			$user_action['avatar'] = NULL;
+			$user_action['user_url'] = NULL;
+			$user_action['user_name'] = NULL;
+			$user_action['username'] = NULL;
+			$user_action['email'] = NULL;
+			$user_action['action_to_name'] = NULL;
+			$user_action['action_on_name'] = NULL;
+			$user_action['action_on_url'] = NULL;
+			
 			// Get user IDs
 			$user_id = $user_action['user_id'];
 			if ( ! isset($ids['user_id'][$user_id])) 
