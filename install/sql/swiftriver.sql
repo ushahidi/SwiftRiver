@@ -750,6 +750,34 @@ CREATE TABLE IF NOT EXISTS `droplet_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- -----------------------------------------------------
+-- Table `channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel` varchar(100) NOT NULL DEFAULT '' COMMENT 'Channel on which to apply the quota',
+  `channel_option` varchar(100) NOT NULL,
+  `quota` int(11) NOT NULL DEFAULT 0 COMMENT 'No. of allowable options for the specified channel',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `account_channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) NOT NULL,
+  `channel` varchar(100) NOT NULL DEFAULT '',
+  `channel_option` varchar(100) NOT NULL DEFAULT '',
+  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
+  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
+  KEY `idx_user_id` (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- ----------------------------------------
 -- TABLE 'sequence'
 -- ----------------------------------------
@@ -759,6 +787,7 @@ CREATE TABLE IF NOT EXISTS `seq` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP FUNCTION IF EXISTS NEXTVAL;
 DELIMITER //
 CREATE FUNCTION `NEXTVAL`(v_seq_name varchar(30), v_increment BIGINT) 
 RETURNS INT 
@@ -832,31 +861,12 @@ INSERT INTO `accounts` (`user_id`, `account_path`) VALUES
 (1, 'default'),
 (2, 'public');
 
+-- -----------------------------------------------------
+-- Data for table `plugins`
+-- -----------------------------------------------------
+INSERT INTO `plugins` (`id`, `plugin_path`, `plugin_name`, `plugin_description`, `plugin_enabled`, `plugin_weight`, `plugin_installed`)
+VALUES
+	(1,'rss','RSS','Adds an RSS/Atom channel to SwiftRiver to parse RSS and Atom Feeds.',1,1,0),
+	(2,'twitter','Twitter','Adds a Twitter channel to SwiftRiver.',1,1,0);
+
 COMMIT;
-
--- -----------------------------------------------------
--- Table `channel_quotas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `channel_quotas` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `channel` varchar(100) NOT NULL DEFAULT '' COMMENT 'Channel on which to apply the quota',
-  `channel_option` varchar(100) NOT NULL,
-  `quota` int(11) NOT NULL DEFAULT 0 COMMENT 'No. of allowable options for the specified channel',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `account_channel_quotas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(20) NOT NULL,
-  `channel` varchar(100) NOT NULL DEFAULT '',
-  `channel_option` varchar(100) NOT NULL DEFAULT '',
-  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
-  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
-  KEY `idx_user_id` (`account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -22,7 +22,7 @@ class Model_Channel_Filter_OptionTest extends Unittest_Database_TestCase {
 	/**
 	 * @var  array  data used by this test
 	 */
-	protected $datasets = array('rivers', 'account_channel_quotas');
+	protected $datasets = array('rivers', 'accounts', 'account_channel_quotas', 'channel_filters');
 	
 	
 	/**

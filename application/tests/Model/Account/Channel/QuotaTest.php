@@ -96,7 +96,7 @@ class Model_Account_Channel_QuotaTest extends Unittest_Database_TestCase {
 			Database::SELECT, 
 			"SELECT `account_id`, `channel`, `channel_option`, `quota`, `quota_used` ".
 			"FROM `account_channel_quotas` ".
-			"WHERE `account_id` = 3 ".
+			"WHERE `account_id` = $account_id ".
 			"AND `channel` = 'twitter' ".
 			"AND `channel_option` = 'user'; "
 		)->execute()->as_array();

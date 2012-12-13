@@ -1,4 +1,9 @@
 <?php
+/**
+ * The directory in which application specific resources are located.
+ * The application directory must contain the bootstrap.php file.
+ */
+$application = 'application';
 
 /**
  * The directory in which your modules are located.
@@ -6,7 +11,6 @@
  * @link http://kohanaframework.org/guide/about.install#modules
  */
 $modules = 'modules';
-
 
 /**
  * Themes directory.
@@ -41,6 +45,10 @@ error_reporting(E_ALL | E_STRICT);
 // Set the full path to the docroot
 $docroot = realpath(dirname(__FILE__)).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
 
+// Make the application relative to the docroot, for symlink'd index.php
+if ( ! is_dir($application) AND is_dir($docroot.$application))
+	$application = $docroot.$application;
+
 // Make the modules relative to the docroot, for symlink'd index.php
 if ( ! is_dir($modules) AND is_dir($docroot.$modules))
 	$modules = $docroot.$modules;
@@ -54,6 +62,7 @@ if ( ! is_dir($plugins) AND is_dir($docroot.$plugins))
 	$plugins = $docroot.$plugins;	
 
 // Define the absolute paths for configured directories
+$apppath = realpath($application).DIRECTORY_SEPARATOR;
 $modpath = realpath($modules).DIRECTORY_SEPARATOR;
 define('THEMEPATH', realpath($themes).DIRECTORY_SEPARATOR);
 define('PLUGINPATH', realpath($plugins).DIRECTORY_SEPARATOR);
@@ -61,8 +70,24 @@ define('PLUGINPATH', realpath($plugins).DIRECTORY_SEPARATOR);
 // Flag testing mode is on
 define('TESTING_MODE', TRUE);
 
+// Setup the testing database
+$db_config = include $apppath.'config/database.php';
+$setup_script = $apppath.'tests/setup_db.sh';
+$sql_file = $docroot.'install/sql/swiftriver.sql';
+$db_host = $db_config['unittest']['connection']['hostname'];
+$db_name = $db_config['unittest']['connection']['database'];
+$db_user = $db_config['unittest']['connection']['username'];
+$db_pass = $db_config['unittest']['connection']['password'];
+exec("$setup_script $sql_file $db_host $db_name $db_user $db_pass", $out, $ret);
+
+if ($ret)
+{
+	echo "Error initializing DB\n\n $out";
+	exit;
+}
+
 // Clean up the configuration vars
-unset($modules, $themes, $plugins, $docroot);
+unset($application, $modules, $themes, $plugins, $docroot);
 
 // Bootstrap the application
 require $modpath.'unittest/bootstrap.php';
