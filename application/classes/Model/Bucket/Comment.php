@@ -47,17 +47,19 @@ class Model_Bucket_Comment extends ORM
     protected $_updated_column = array('column' => 'comment_date_modified', 'format' => 'Y-m-d H:i:s');
 
 	/**
-	 * Validation for comments
-	 * @param array $arr
-	 * @return array
+	 * Validation rules for comments
+	 *
+	 * @return array Rules
 	 */
-	public function validate($arr)
+	public function rules()
 	{
-		return Validation::factory($arr)
-			->rule('comment_content', 'min_length', array(':value', 3))
-			->rule('comment_content', 'not_empty');
+		return array(
+			'comment_content' => array(
+				array('not_empty'),
+				array('min_length', array(':value', 3)),
+			),
+		);
 	}
-	
 	
 	/**
 	 * Creates a new comment

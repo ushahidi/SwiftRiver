@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<dataset>
+	<settings key="site_name" value="SwiftRiver" />
+	<settings key="site_theme" value="default" />
+	<settings key="site_locale" value="en" />
+	<settings key="public_registration_enabled" value="0" />
+	<settings key="anonymous_access_enabled" value="0" />
+	<settings key="default_river_lifetime" value="14" />
+	<settings key="river_expiry_notice_period" value="3" />
+	<settings key="general_invites_enabled" value="0" />
+	<settings key="default_river_quota" value="1" />
+	<settings key="default_river_drop_quota" value="10000" />
+	<settings key="site_url" value="http://www.example.com" />
+	<settings key="email_domain" value="example.com" />
+	<settings key="comments_email_domain" value="example.com" />
+</dataset>

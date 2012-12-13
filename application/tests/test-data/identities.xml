@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<dataset>
+	<identities id="1" hash="ab5d2c54f558577e7a8d154ee0f431bb" channel="rss" identity_orig_id="1" identity_username="identity1" identity_name="identity1_name" identity_avatar="identity1_avatar" />
+	<identities id="2" hash="fa0308a21e54795f5244ab4ae17f8782" channel="twitter" identity_orig_id="2" identity_username="identity2" identity_name="identity2_name" identity_avatar="identity2_avatar" />
+</dataset>

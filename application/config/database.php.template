@@ -1,7 +1,7 @@
-<?php defined('SYSPATH') or die('No direct access allowed.');
+<?php (defined('SYSPATH') or defined('TESTING_MODE')) or die('No direct access allowed.');
 
 /**
- * Config for the SwiftRivevr Database
+ * Config for the SwiftRiver Database
  *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
@@ -14,9 +14,26 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL) 
  */
 
-return array
-(
+return array(
+	// Main database
 	'default' => array
+	(
+		'type'       => 'MySQL',
+		'connection' => array(
+			'hostname'   => '',
+			'database'   => '',
+			'username'   => '',
+			'password'   => '',
+			'persistent' => FALSE,
+		),
+		'table_prefix' => '',
+		'charset'      => 'utf8',
+		'caching'      => TRUE,
+		'profiling'    => TRUE,
+	),
+	
+	// Test database
+	'unittest' => array
 	(
 		'type'       => 'MySQL',
 		'connection' => array(

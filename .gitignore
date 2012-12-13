@@ -4,4 +4,3 @@
 application/logs/*
 application/cache/*
 application/config/*.php
-application/tests/phpunit.xml

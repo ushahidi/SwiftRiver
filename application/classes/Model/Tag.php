@@ -52,7 +52,7 @@ class Model_Tag extends ORM
 	 *
 	 * @param string $tag Has containing the tag name and tag type
 	 * @param bool $save Optionally saves the tag if does not exist
-	 * @return mixed Model_Tag if the tag exists, FALSE otherwise
+	 * @return Model_Tag
 	 */
 	public static function get_tag_by_name($tag, $save = FALSE)
 	{
@@ -61,31 +61,15 @@ class Model_Tag extends ORM
 		            ->where('tag_type', '=', $tag['tag_type'])
 		            ->find();
 		
-		if ($result->loaded())
+		if ( ! $result->loaded() AND $save == TRUE)
 		{
-			return $result;
+			// Save the tag
+			$result->tag  = $tag['tag_name'];
+			$result->tag_type = $tag['tag_type'];
+			$result->save();
 		}
-		elseif ( ! $result->loaded() AND $save == TRUE)
-		{
-			try
-			{
-				// Save the tag
-				$orm_tag = new Model_Tag;
-				$orm_tag->tag  = $tag['tag_name'];
-				$orm_tag->tag_type = $tag['tag_type'];
-			
-				return $orm_tag->save();
-			}
-			catch (Database_Exception $e)
-			{
-				Kohana::$log->add(Log::ERROR, $e->getMessage());
-				return FALSE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
+		
+		return $result;
 	}
 	
 	/**

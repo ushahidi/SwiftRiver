@@ -32,6 +32,34 @@ class Model_Channel_Quota extends ORM {
 	}
 
 	/**
+	 * Get site channel quota settings.
+	 *
+	 * Where the site has customized the quota settings, these
+	 * will be read from the channel_quotas table, otherwise
+	 * the default quota provided by the channel plugin will be used.
+	 *
+	 * Returns an array of the form:
+	 *	array(
+	 *		'channel_name' => 'Twitter',
+	 *		'quota_options' => 
+	 *		array(
+	 *			array(
+	 *				'id' => NULL,
+	 *				'channel' => 'twitter',
+	 *				'label' => 'Keyword',
+	 *				'channel_option' => 'keyword',
+	 *				'quota' => 999,
+	 *			),
+	 *			array(
+	 *				'id' => NULL,
+	 *				'channel' => 'twitter',
+	 *				'label' => 'User',
+	 *				'channel_option' => 'user',
+	 *				'quota' => 999,
+	 *			),
+	 *		),
+	 *	),
+	 *
 	 * @return array
 	 */
 	public static function get_quotas_array()
@@ -55,11 +83,8 @@ class Model_Channel_Quota extends ORM {
 				if ($options['type'] !== 'text')
 					continue;
 					
-				// Initialize the quota id and channel quota
-				$default = isset($options['default_quota']) ? $options['default_quota'] : 0;
-				list($quota_id, $quota) = array(NULL, $default);
-
-				// Canonical channel name
+				$quota = isset($options['default_quota']) ? $options['default_quota'] : 0;
+				$quota_id = NULL;
 				$channel_name = $channel['channel'];
 
 				// Get the quota entries stored in the DB

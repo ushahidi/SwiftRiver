@@ -43,7 +43,7 @@ class Model_Auth_Token extends ORM {
 	 * @param $type
 	 * @return mixed
 	 */	
-	public static function get_token($token, $type, $delete = TRUE)
+	public static function get_token($token, $type)
 	{
 		$auth_token = ORM::factory("Auth_Token")
 		                ->where("token", "=", $token)

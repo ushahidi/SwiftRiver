@@ -95,6 +95,7 @@ class Model_User extends Model_Auth_User {
 		return array(
 			'username' => array(
 				array('not_empty'),
+				array('max_length', array(':value', 255)),
 			),
 			'email' => array(
 				array('not_empty'),
@@ -121,103 +122,7 @@ class Model_User extends Model_Auth_User {
 
 		return $user;
 	}
-
-	/**
-	 * Given a string, this function will try to find an unused username by appending a number.
-	 * Ex. username2, username3, username4 ...
-	 *
-	 * @param string $base
-	 */
-	public function generate_username($base = '') 
-	{
-		$base = $this->transcribe($base);
-		$username = $base;
-		$i = 2;
-		// check for existent username
-		while( $this->username_exist($username) ) 
-		{
-			$username = $base.$i;
-			$i++;
-		}
-		return $username;
-	}
-	
-	
-	/**
-	 * Get a list of rivers this user has access to from the given other_user_id
-	 *
-	 * @param int $other_user_id Database ID of the other user
-	 * @return array
-	 */
-	public function get_other_user_visible_rivers($other_user_id)
-	{
-		$other_user_orm = ORM::factory('User', $other_user_id);
 		
-		if ( ! $other_user_orm->loaded())
-		{
-			return array();
-		}
-		
-		$rivers = array();
-		
-		// First the public rivers.		
-		foreach ($other_user_orm->account->rivers->find_all() as $river)
-		{
-			if ($river->river_public OR $river->is_owner($this->id))
-			{
-				$rivers[] = array(
-					'id' => $river->id,
-					'type' => 'river',
-					'river_name' => $river->river_name, 
-					'river_url' => $river->account->account_path."/river/".$river->river_name_url,
-					'subscribed' => $river->is_subscriber($this->id),
-					'subscriber_count' => $river->get_subscriber_count(),
-					'is_owner' => $river->is_owner($this->id)
-				);
-			}
-		}
-		
-		return $rivers;
-	}
-
-
-	/**
-	 * Get a list of buckets this user has access to from the given other_user_id
-	 *
-	 * @param int $other_user_id Database ID of the other user
-	 * @return array
-	 */
-	public function get_other_user_visible_buckets($other_user_id)
-	{
-		$other_user_orm = ORM::factory('User', $other_user_id);
-		
-		if ( ! $other_user_orm->loaded())
-		{
-			return array();
-		}
-		
-		$buckets = array();
-		
-		// First the public rivers.		
-		foreach ($other_user_orm->account->buckets->find_all() as $bucket)
-		{
-			if ($bucket->bucket_publish OR $bucket->is_owner($this->id))
-			{
-				$buckets[] = array(
-					'id' => $bucket->id,
-					'type' => 'bucket',
-					'bucket_name' => $bucket->bucket_name, 
-					'bucket_url' => $bucket->account->account_path."/bucket/".$bucket->bucket_name_url,
-					'subscribed' => $bucket->is_subscriber($this->id),
-					'subscriber_count' => $bucket->get_subscriber_count(),
-					'is_owner' => $bucket->is_owner($this->id)
-				);
-			}
-		}
-		
-		return $buckets;
-	}
-	
 	/**
 	 * Get a list of users whose name/email begins with the provided string
 	 *
@@ -293,7 +198,7 @@ class Model_User extends Model_Auth_User {
 			$rivers[] = $river;
 		}
 		
-		// Add the buckets this user has subscribed to
+		// Add the rivers this user has subscribed to
 		$rivers = array_merge($rivers, 
 			$this->river_subscriptions->order_by('river_name', 'ASC')->find_all()->as_array());
 
@@ -375,6 +280,7 @@ class Model_User extends Model_Auth_User {
 	/**
 	 * Get all a user's bucekts that are visible to $visiting_user
 	 *
+	 * @param Model_User $visiting_user
 	 * @return array
 	 */
 	public function get_buckets_array($visiting_user)
@@ -762,7 +668,7 @@ class Model_User extends Model_Auth_User {
 	
 	public static function get_users($ids)
 	{
-		$users = Array();
+		$users = array();
 		
 		if ( ! empty($ids))
 		{
@@ -770,7 +676,7 @@ class Model_User extends Model_Auth_User {
 						->where('id', 'IN', $ids);
 
 			// Execute query and return results
-			$users = $query->find_all();
+			$users = $query->find_all()->as_array();
 		}
 		
 		return $users;

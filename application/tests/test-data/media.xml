@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<dataset>
+	<media id="1" hash="f0807c04135cf82a482bb24eca691ed4" url="http://gigaom2.files.wordpress.com/2012/10/datacapspercentage.jpeg" type="image" />
+	<media id="2" hash="69804fcea636991422759116c46a7a77" url="http://gigaom2.files.wordpress.com/2012/10/datacapspercentage.jpeg?w=604" type="image" />
+	<media id="3" hash="a08cfd1bb24a848bfac48728b9454b0c" url="http://ak.c.ooyala.com/FhdXV3NjozIS9pEk9lcZ3OFeo_yQhQRM/5SPjETdNCPS-ZANX4xMDoxOmFkOxyVqc" type="image" />
+	<media id="4" hash="b319211777736f5dad82fa152c45cf98" url="http://gigaom2.files.wordpress.com/2012/11/emarketer-rtb.jpg?w=300&#038;h=297" type="image" />
+	<media id="5" hash="d1bb95bf50c6b6b5e1ebc118368cf1be" url="http://gigaom2.files.wordpress.com/2012/11/all-recipes-business-page.jpg?w=262&#038;h=300" type="image" />
+	<media id="6" hash="4eb97dc5f6ba5c0e2894a2d8f4f7b24e" url="http://gigaom2.files.wordpress.com/2012/11/img_0145.jpg?w=300&#038;h=225" type="image" />
+	<media id="7" hash="07beb4162f5ac390a04b8cd1a07261ea" url="http://gigaompaidcontent.files.wordpress.com/2012/11/screen-shot-2012-11-14-at-4-36-12-pm1.png?w=604&#038;h=184" type="image" />
+	<media id="8" hash="11fe4020a183598a53bac2b7ff976e8b" url="http://gigaom2.files.wordpress.com/2012/11/screen-shot-2012-11-14-at-4-25-17-am.png?w=604&#038;h=398" type="image" />
+	<media id="9" hash="75d74004034ed0a83f350d28e41a47a8" url="http://gigaom2.files.wordpress.com/2012/11/percolate.jpg" type="image" />
+	<media id="10" hash="01c656316cdc6b1db8079972e067d645" url="http://gigaom2.files.wordpress.com/2012/11/percolate.jpg?w=604&#038;h=203" type="image" />
+	
+	<media_thumbnails id="1" media_id="1" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/625dd7cb656d258b4effb325253e880631699d80345016e9e755b4a04341cda1.peg" />
+	<media_thumbnails id="2" media_id="2" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/f0e5a6e524eb7837cf7d6849cbc3191e5e6351068d14d4c62fc813f7d85c4a24.peg" />
+	<media_thumbnails id="3" media_id="3" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/5e339f0a60a46c66acd2332261ddb47455152fb8e7adb805a065983209b616e3.vqc" />
+	<media_thumbnails id="4" media_id="4" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/3b2e0f4d92900b3f04583f084f186efb1f65cd0da3e83b5f25037b20d7910e4e.jpg" />
+	<media_thumbnails id="5" media_id="5" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/944ad76260288205c74de254303949f0039f6105ebc1a143ac9ac9051bf61aa0.jpg" />
+	<media_thumbnails id="6" media_id="6" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/fc2635dcd5500639484b40a4e9478815bba58ae63f48b4b7e80e21532e8672e9.jpg" />
+	<media_thumbnails id="7" media_id="7" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/406e0264629434ae9c8e935a2d9be34ea6c258984f994bb9f25bbcc91bfafa6e.png" />
+	<media_thumbnails id="8" media_id="8" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/0fd5ee26829b680040176aa1e0968091e47dc6b1749296fdfc50b5c00b1a9f21.png" />
+	<media_thumbnails id="9" media_id="9" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/913f46a16340fb63d596f7121a697ee3782bc8199df94b5aa0990ce5ea454a60.jpg" />
+	<media_thumbnails id="10" media_id="10" size="200" url="https://2bcbd22fbb0a02d76141-1680e9dfed1be27cdc47787ec5d4ef89.ssl.cf1.rackcdn.com/a32d58f1e286cc52de54a48d04ab5c85311de82edd11cc414cd266d7a1375f27.jpg" />
+</dataset>

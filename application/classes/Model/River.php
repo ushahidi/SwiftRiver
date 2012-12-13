@@ -16,11 +16,6 @@
 class Model_River extends ORM {
 	
 	/**
-	 * Number of droplets to show per page
-	 */
-	const DROPLETS_PER_PAGE = 50;
-	
-	/**
 	 * A river has many channel_filters
 	 * A river has and belongs to many droplets
 	 *
@@ -170,14 +165,18 @@ class Model_River extends ORM {
 	 * Get bucket as an array with subscription and collaboration
 	 * status populated for $visiting_user
 	 *
+	 * @param Model_User $user
+	 * @param Model_User $visiting_user
+	 * @return array
+	 *
 	 */
 	public function get_array($user, $visiting_user) {
 		$collaborator = $visiting_user->has('river_collaborators', $this);
 		return array(
-			"id" => $this->id, 
+			"id" => (int) $this->id, 
 			"name" => $this->river_name,
 			"type" => 'river',
-			"url" => URL::site().$this->account->account_path.'/river/'.$this->river_name_url,
+			"url" => $this->get_base_url(),
 			"account_id" => $this->account->id,
 			"user_id" => $this->account->user->id,
 			"account_path" => $this->account->account_path,
@@ -201,6 +200,7 @@ class Model_River extends ORM {
 
 		if ( ! ($account->get_remaining_river_quota() > 0))
 		{
+			Database::instance()->query(NULL, 'ROLLBACK');
 			throw new Swiftriver_Exception_Quota(__('River quota exceeded'));
 		}
 		
@@ -232,38 +232,7 @@ class Model_River extends ORM {
 	 */
 	public function get_base_url()
 	{
-		return URL::site().$this->account->account_path.'/river/'.$this->river_name_url;
-	}
-	
-	
-	/**
-	 * Adds a droplet to river
-	 *
-	 * @param int $river_id Database ID of the river
-	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
-	 * @return bool TRUE on succeed, FALSE otherwise
-	 */
-	public static function add_droplet($river_id, $droplet)
-	{
-		if ( ! $droplet instanceof Model_Droplet)
-		{
-			// Log the error
-			Kohana::$log->add(Log::ERROR, "Expected Model_Droplet in parameter droplet. Found :type instead.", 
-			    array(":type" => gettype($droplet)));
-			return FALSE;
-		}
-		
-		// Get ORM reference for the river
-		$river = ORM::factory('River', $river_id);
-		
-		// Check if the river exists and if its associated with the current droplet
-		if ($river->loaded() AND ! $river->has('droplets', $droplet))
-		{
-			$river->add('droplets', $droplet);
-			return TRUE;
-		}
-		
-		return FALSE;
+		return URL::site($this->account->account_path.'/river/'.$this->river_name_url);
 	}
 	
 	/**
@@ -287,7 +256,8 @@ class Model_River extends ORM {
 	 * @return array
 	 */
 	public static function get_droplets($user_id, $river_id, $drop_id = 0, $page = 1, 
-		$max_id = PHP_INT_MAX, $sort = 'DESC', $filters = array(), $photos = FALSE)
+		$max_id = PHP_INT_MAX, $photos = FALSE, $filters = array(),
+		$limit = 50)
 	{
 		// Check the cache
 		$request_hash = hash('sha256', $user_id.
@@ -295,7 +265,6 @@ class Model_River extends ORM {
 						$drop_id.
 						$page.
 						$max_id.
-						$sort.
 						var_export($filters,TRUE).
 						($photos ? 1 : 0));
 		$cache_key = 'river_drops_'.$request_hash;
@@ -306,13 +275,7 @@ class Model_River extends ORM {
 			return $droplets;
 		}
 		
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
-
-		// Sanity check for the sorting method
-		$sort = empty($sort) ? 'DESC' : $sort;
+		$droplets = array();
 
 		$river_orm = ORM::factory('River', $river_id);
 		if ($river_orm->loaded())
@@ -321,7 +284,7 @@ class Model_River extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'),
 			                    'droplet_title', 'droplet_content', 
 			                    'droplets.channel','identity_name', 'identity_avatar', 
-			                    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			                    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i:%S UTC")'),'droplet_date_pub'),
 			                    array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 			    ->from('rivers_droplets')
 			    ->join('droplets', 'INNER')
@@ -357,31 +320,29 @@ class Model_River extends ORM {
 			    ->on('links.id', '=', 'droplets.original_url');
 
 			// Ordering and grouping
-			$query->order_by('rivers_droplets.droplet_date_pub', $sort);	   
+			$query->order_by('rivers_droplets.droplet_date_pub', 'DESC');	   
 
 			// Pagination offset
 			if ($page > 0)
 			{
-				$query->limit(self::DROPLETS_PER_PAGE);	
-				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+				$query->limit($limit);	
+				$query->offset($limit * ($page - 1));
+			}
+			else
+			{
+			    $query->limit($limit);
 			}
 
 			// Get our droplets as an Array
-			$droplets['droplets'] = $query->execute()->as_array();
+			$droplets = $query->execute()->as_array();
 
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets['droplets'] as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
-			
 			// Populate the metadata arrays
-			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
+			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
 
 		}
 		
 		// Cache the drops
-		if ( ! empty($droplets['droplets']))
+		if ( ! empty($droplets))
 		{
 			Cache::instance()->set($cache_key, $droplets);
 		}
@@ -397,7 +358,7 @@ class Model_River extends ORM {
 	 * @param int $since_id Lower limit of the droplet id
 	 * @return array
 	 */
-	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array(), $photos = FALSE)
+	public static function get_droplets_since_id($user_id, $river_id, $since_id, $filters = array(), $photos = FALSE, $limit=100)
 	{
 		// Check the cache
 		$request_hash = hash('sha256', $user_id.
@@ -413,17 +374,14 @@ class Model_River extends ORM {
 			return $droplets;
 		}
 		
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
+		$droplets = array();
 		
 		$river_orm = ORM::factory('River', $river_id);
 		if ($river_orm->loaded())
 		{
 			$query = DB::select(array('droplets.id', 'id'), array('rivers_droplets.id', 'sort_id'), 'droplet_title', 
 			    'droplet_content', 'droplets.channel','identity_name', 'identity_avatar', 
-			    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+			    array(DB::expr('DATE_FORMAT(droplets.droplet_date_pub, "%b %e, %Y %H:%i:%S UTC")'),'droplet_date_pub'),
 			    array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 			    ->from('droplets')
 			    ->join('rivers_droplets', 'INNER')
@@ -449,24 +407,18 @@ class Model_River extends ORM {
 
 			// Group, order and limit
 			$query->order_by('rivers_droplets.id', 'ASC')
-			    ->limit(self::DROPLETS_PER_PAGE)
+			    ->limit($limit)
 			    ->offset(0);
 			
-			$droplets['droplets'] = $query->execute()->as_array();
+			$droplets = $query->execute()->as_array();
 			
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets['droplets'] as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
-
 			// Populate the metadata
-			Model_Droplet::populate_metadata($droplets['droplets'], $river_orm->account_id);
+			Model_Droplet::populate_metadata($droplets, $river_orm->account_id);
 		}
 		
 		
 		// Cache the drops
-		if ( ! empty($droplets['droplets']))
+		if ( ! empty($droplets))
 		{
 			Cache::instance()->set($cache_key, $droplets);
 		}
@@ -483,7 +435,8 @@ class Model_River extends ORM {
 	public static function get_max_droplet_id($river_id)
 	{
 		$max_droplet_id = 0;
-		if ( ! ($max_droplet_id = Cache::instance()->get('river_max_id_'.$river_id, FALSE)))
+		$cache_key = 'river_max_id_'.$river_id;
+		if ( ! ($max_droplet_id = Cache::instance()->get($cache_key, FALSE)))
 		{
 			// Build River Query
 			$query = DB::select(array('max_drop_id', 'id'))
@@ -493,7 +446,7 @@ class Model_River extends ORM {
 			$max_droplet_id = $query->execute()->get('id', 0);
 			
 			// Cache for 90s
-			Cache::instance()->set('river_max_id_'.$river_id, $max_droplet_id, 90);
+			Cache::instance()->set($cache_key, 90);
 		}
 	    
 		    
@@ -655,9 +608,9 @@ class Model_River extends ORM {
 		
 		foreach ($query->find_all() as $channel_option)
 		{
-			$option = json_decode($channel_option->value);
-			$option->id = $channel_option->id;
-			$option->key = $channel_option->key;
+			$option = json_decode($channel_option->value, TRUE);
+			$option['id'] = $channel_option->id;
+			$option['key'] = $channel_option->key;
 			
 			if ( ! isset($channel_config['options'][$channel_option->key]))
 				continue;
@@ -726,11 +679,11 @@ class Model_River extends ORM {
 				continue;
 				
 			$collaborators[] = array(
-				'id' => $collaborator->user->id, 
+				'id' => (int) $collaborator->user->id, 
 				'name' => $collaborator->user->name,
 				'email' => $collaborator->user->email,
 				'account_path' => $collaborator->user->account->account_path,
-				'collaborator_active' => $collaborator->collaborator_active,
+				'collaborator_active' => (bool) $collaborator->collaborator_active,
 				'read_only' => (bool) $collaborator->read_only,
 				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
@@ -846,7 +799,7 @@ class Model_River extends ORM {
 	 * @param bool $is_owner Whether the user accessing the river is an owner
 	 * @return bool
 	 */
-	public function is_expired($is_owner)
+	public function is_expired()
 	{
 		if ($this->river_expired)
 			return TRUE;
@@ -922,59 +875,14 @@ class Model_River extends ORM {
 			$expiry_start_date = time();
 		}
 		$expiry_date = strtotime(sprintf("+%d day", $lifetime), $expiry_start_date);
-		Kohana::$log->add(Log::DEBUG, $this->river_date_expiry);
-		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_start_date));
-		Kohana::$log->add(Log::DEBUG, date("Y-m-d H:i:s", $expiry_date));
-
+		$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 		$this->river_expired = 0;
 		$this->river_active = 1;
-		$this->river_date_expiry = date("Y-m-d H:i:s", $expiry_date);
 		$this->extension_count += 1;
 		$this->expiry_notification_sent = 0;
 		parent::save();
 
 		Swiftriver_Event::run('swiftriver.river.enable', $this);
-	}
-
-	/**
-	 * Toggles the status of the channel options for the current river
-	 *
-	 * @param bool $activate When TRUE, activates the channel options for
-	 * the river. When FALSE, removes the channel options from the crawling
-	 * schedule
-	 */
-	private function _toggle_channel_option_status($activate)
-	{
-		// Get all the channel filter options
-		$channel_options = ORM::factory('Channel_Filter_Option')
-		    ->where('channel_filter_id', 'IN', 
-		        DB::select('id')
-		            ->from('channel_filters')
-		            ->where('river_id', '=', $this->id)
-		        )
-		    ->find_all();
-
-		// Status - determines the action to be taken on the channel options
-		$new_status = $activate ? "activate" : "deactivate";
-
-		foreach ($channel_options as $option)
-		{
-			// Run deactivation events for each option
-			Swiftriver_Event::run('swiftriver.channel.option.'.$new_status, $option);
-		}
-
-		// Garbage collection
-		unset ($channel_options);
-	}
-
-	/**
-	 * Gets the owners of the river
-	 * @return array
-	 */
-	public function get_owners()
-	{
-		return $this->river_collaborators
-		           ->where('collaborator_active', '=', 1);
 	}
 	
 	/**
@@ -1003,40 +911,12 @@ class Model_River extends ORM {
 	{
 		return $token == $this->public_token AND isset($this->public_token);
 	}
-
-	/**
-	 * Gets the last date when the river was updated
-	 *
-	 * @param  int $river_id
-	 * @return mixed string on succeed, FALSE otherwise
-	 */
-	public static function get_last_update_date($river_id)
-	{
-		$last_update_date = DB::select('droplets.droplet_date_add')
-			->from('rivers_droplets')
-			->join('rivers', 'INNER')
-			->on('rivers_droplets.river_id', '=', 'rivers.id')
-			->join('droplets', 'INNER')
-			->on('rivers_droplets.droplet_id', '=', 'droplets.id')
-			->where('rivers.max_drop_id', '=', DB::expr('rivers_droplets.id'))
-			->where('rivers_droplets.river_id', '=', $river_id)
-			->execute()
-			->as_array();
-
-		if (count($last_update_date))
-		{
-			return $last_update_date[0]['droplet_date_add'];
-		}
-
-		return FALSE;
-	}
-	
 	
 	/**
 	 * Return the list of rivers that have the given IDs
 	 *
 	 * @param    Array $ids List of river ids
-	 * @return   Database_Result Model_River array
+	 * @return   Array
 	 */
 	
 	public static function get_rivers($ids)
@@ -1049,7 +929,7 @@ class Model_River extends ORM {
 						->where('id', 'IN', $ids);
 
 			// Execute query and return results
-			$rivers = $query->find_all();
+			$rivers = $query->find_all()->as_array();
 		}
 		
 		return $rivers;

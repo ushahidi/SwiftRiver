@@ -16,11 +16,6 @@
 class Model_Bucket extends ORM {
 	
 	/**
-	 * No. of droplets to return on each fetch
-	 */
-	const DROPLETS_PER_PAGE = 50;
-	
-	/**
 	 * One-to-many relationship definitions
 	 * @var array Relationhips
 	 */
@@ -53,7 +48,12 @@ class Model_Bucket extends ORM {
 		'account' => array(),
 		'user' => array()
 	);
-
+	
+	/**
+	 * Auto-update columns for creation
+	 * @var string
+	 */
+    protected $_created_column = array('column' => 'bucket_date_add', 'format' => 'Y-m-d H:i:s');
 
 	/**
 	 * Rules for the bucket model. 
@@ -71,21 +71,13 @@ class Model_Bucket extends ORM {
 				array('in_array', array(':value', array('0', '1')))
 			),
 		);
-	}
-	
+	}	
 	
 	/**
 	 * Override saving to perform additional functions on the bucket
 	 */
 	public function save(Validation $validation = NULL)
 	{
-		// Do this for first time buckets only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the bucket was first added
-			$this->bucket_date_add = date("Y-m-d H:i:s", time());
-		}
-		
 		if ( ! isset($this->public_token))
 		{
 			$this->public_token = $this->get_token();
@@ -131,18 +123,22 @@ class Model_Bucket extends ORM {
 	 * Get bucket as an array with subscription and collaboration
 	 * status populated for $visiting_user
 	 *
+	 * @param Model_User $user
+	 * @param Model_User $visiting_user
+	 * @return array
+	 *
 	 */
 	public function get_array($user, $visiting_user) {
 		$collaborator = $visiting_user->has('bucket_collaborators', $this);
 		return array(
-			"id" => $this->id, 
+			"id" => (int)$this->id, 
 			"name" => $this->bucket_name,
 			"type" => 'bucket',
-			"url" => URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url,
-			"account_id" => $this->account->id,
-			"user_id" => $this->account->user->id,
+			"url" => $this->get_base_url(),
+			"account_id" => (int)$this->account->id,
+			"user_id" => (int)$this->account->user->id,
 			"account_path" => $this->account->account_path,
-			"subscriber_count" => $this->get_subscriber_count(),
+			"subscriber_count" => (int)$this->get_subscriber_count(),
 			"is_owner" => $this->is_owner($user->id),
 			"collaborator" => $collaborator,
 			// A collaborator is also a subscriber
@@ -158,7 +154,7 @@ class Model_Bucket extends ORM {
 	 */
 	public function get_base_url()
 	{
-		return URL::site().$this->account->account_path.'/bucket/'.$this->bucket_name_url;
+		return URL::site($this->account->account_path.'/bucket/'.$this->bucket_name_url);
 	}	
 	
 	/**
@@ -174,7 +170,7 @@ class Model_Bucket extends ORM {
 	 */
 	public static function get_droplets($user_id, $bucket_id = NULL,
 	    $drop_id = 0, $page = NULL, $max_id = PHP_INT_MAX, $photos = FALSE,
-	    $filters = array(), $limit = 0)
+	    $filters = array(), $limit = 50)
 	{
 		// Check the cache
 		$request_hash = hash('sha256', $user_id.
@@ -193,10 +189,7 @@ class Model_Bucket extends ORM {
 			return $droplets;
 		}
 		
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
+		$droplets = array();
 		
 		$bucket_orm = ORM::factory('Bucket', $bucket_id);
 		if ($bucket_orm->loaded())
@@ -205,7 +198,7 @@ class Model_Bucket extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
-								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i:%S UTC")'),'droplet_date_pub'),
 								array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
@@ -243,31 +236,23 @@ class Model_Bucket extends ORM {
 			$query->order_by('droplets.id', 'DESC');
 			if ($page)
 			{
-				$query->limit(self::DROPLETS_PER_PAGE); 
-				$query->offset(self::DROPLETS_PER_PAGE * ($page - 1));
+				$query->limit($limit); 
+				$query->offset($limit * ($page - 1));
 			}
-			
-			// Limit on max results if defined and not using pagination
-			if ( ! $page && $limit > 0)
+			else
+			{
 			    $query->limit($limit);
+			}
 			
 			// Get our droplets as an Array		
-			$droplets['droplets'] = $query->execute()->as_array();
+			$droplets = $query->execute()->as_array();
 			
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets['droplets'] as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
-
 			// Populate the metadata
-			Model_Droplet::populate_metadata($droplets['droplets'], $bucket_orm->account_id);
-			
-			$droplets['total'] = count($droplets['droplets']);
+			Model_Droplet::populate_metadata($droplets, $bucket_orm->account_id);
 		}
 		
 		// Cache the drops
-		if ( ! empty($droplets['droplets']))
+		if ( ! empty($droplets))
 		{
 			Cache::instance()->set($cache_key, $droplets);
 		}
@@ -281,9 +266,11 @@ class Model_Bucket extends ORM {
 	 * @param int $user_id Logged in user id	
 	 * @param int $id ID of the Bucket
 	 * @param int $since_id
+	 * @param bool $photos Return on drops with photos if true
+	 * @param int $limit Maximum number of drops to return
 	 * @return array $droplets Total and Array of Droplets
 	 */
-	public static function get_droplets_since_id($user_id, $bucket_id, $since_id, $photos = FALSE)
+	public static function get_droplets_since_id($user_id, $bucket_id, $since_id, $photos = FALSE, $limit = 100)
 	{
 		// Check the cache
 		$request_hash = hash('sha256', $user_id.
@@ -298,10 +285,7 @@ class Model_Bucket extends ORM {
 			return $droplets;
 		}
 		
-		$droplets = array(
-			'total' => 0,
-			'droplets' => array()
-			);
+		$droplets = array();
 		
 		$bucket_orm = ORM::factory('Bucket', $bucket_id);
 		if ($bucket_orm->loaded())
@@ -310,7 +294,7 @@ class Model_Bucket extends ORM {
 			$query = DB::select(array('droplets.id', 'id'), array('buckets_droplets.id', 'sort_id'),
 								'droplet_title', 'droplet_content', 
 								'droplets.channel','identity_name', 'identity_avatar', 
-								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i UTC")'),'droplet_date_pub'),
+								array(DB::expr('DATE_FORMAT(droplet_date_pub, "%b %e, %Y %H:%i:%S UTC")'),'droplet_date_pub'),
 			                    array('user_scores.score','user_score'), array('links.url','original_url'), 'comment_count')
 				->from('droplets')
 				->join('buckets_droplets', 'INNER')
@@ -324,6 +308,7 @@ class Model_Bucket extends ORM {
 				->where('buckets_droplets.bucket_id', '=', $bucket_id)
 				->where('droplets.parent_id', '=', 0)
 				->where('buckets_droplets.id', '>', $since_id)
+				->limit($limit)
 				->order_by('buckets_droplets.id', 'ASC');
 				
 			if ($photos)
@@ -332,21 +317,14 @@ class Model_Bucket extends ORM {
 			}
 				
 			// Get our droplets as an Array		
-			$droplets['droplets'] = $query->execute()->as_array();
-			$droplets['total'] = count($droplets['droplets']);
-			
-			// Encode content and title as utf8 in case they arent
-			foreach ($droplets['droplets'] as & $droplet) 
-			{
-				Model_Droplet::utf8_encode($droplet);
-			}
+			$droplets = $query->execute()->as_array();
 			
 			// Populate buckets array			
-			Model_Droplet::populate_metadata($droplets['droplets'], $bucket_orm->account_id);
+			Model_Droplet::populate_metadata($droplets, $bucket_orm->account_id);
 		}
 		
 		// Cache the drops
-		if ( ! empty($droplets['droplets']))
+		if ( ! empty($droplets))
 		{
 			Cache::instance()->set($cache_key, $droplets);
 		}
@@ -384,11 +362,11 @@ class Model_Bucket extends ORM {
 				continue;
 			
 			$collaborators[] = array(
-				'id' => $collaborator->user->id, 
+				'id' => (int) $collaborator->user->id, 
 				'name' => $collaborator->user->name,
 				'email' => $collaborator->user->email,
 				'account_path' => $collaborator->user->account->account_path,
-				'collaborator_active' => $collaborator->collaborator_active,
+				'collaborator_active' => (bool) $collaborator->collaborator_active,
 				'read_only' => (bool) $collaborator->read_only,
 				'avatar' => Swiftriver_Users::gravatar($collaborator->user->email, 40)
 			);
@@ -410,9 +388,9 @@ class Model_Bucket extends ORM {
 		foreach ($this->bucket_comments->find_all() as $comment)
 		{
 			$comments[$i] = array(
-				'id' => $comment->id, 
+				'id' => (int) $comment->id, 
 				'name' => $comment->user->name,
-				'user_id' => $comment->user->id,
+				'user_id' => (int) $comment->user->id,
 				'comment_content' => $comment->comment_content,
 				'date' => $comment->comment_date_add,
 				'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40),
@@ -442,40 +420,64 @@ class Model_Bucket extends ORM {
 	 * @param int $id ID of the Bucket
 	 * @return int
 	 */
-	public static function get_max_droplet_id($bucket_id = NULL)
+	public function get_max_droplet_id()
 	{
 		// Build Buckets Query
 		$query = DB::select(array(DB::expr('MAX(buckets_droplets.id)'), 'id'))
 			->from('buckets_droplets')
-			->where('buckets_droplets.bucket_id', '=', $bucket_id);
+			->where('buckets_droplets.bucket_id', '=', $this->id);
 			
 		return $query->execute()->get('id', 0);
 	}
 	
 	/*
-	 * Adds a droplet to bucket
+	 * Adds a drop to bucket
 	 *
-	 * @param int $bucket_id Database ID of the bucket
 	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
 	 * @return bool TRUE on succeed, FALSE otherwise
 	 */
-	public static function add_droplet($bucket_id, $droplet)
+	public function add_drop($drop)
 	{
-		if ( ! $droplet instanceof Model_Droplet)
+		if ( ! $drop instanceof Model_Droplet OR ! $drop->loaded())
 		{
-			// Log the error
-			Kohana::$log->add(Log::ERROR, "Expected Model_Droplet in parameter droplet. Found :type instead.", 
-				array(":type" => gettype($droplet)));
 			return FALSE;
 		}
 		
-		// Get ORM reference for the river
-		$bucket = ORM::factory('Bucket', $bucket_id);
+		// Check if the river exists and if its associated with the current droplet
+		if ($this->loaded() AND ! $this->has('droplets', $drop))
+		{
+			$this->add('droplets', $drop);
+			
+			$event_data = array('droplet_id' => $drop->id, 'bucket_id' => $this->id);
+			Swiftriver_Event::run('swiftriver.bucket.droplet.add', $event_data);
+			
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+	
+	/*
+	 * Remove drop from bucket
+	 *
+	 * @param Model_Droplet $droplet Droplet instance to be associated with the river
+	 * @return bool TRUE on succeed, FALSE otherwise
+	 */
+	public function remove_drop($drop)
+	{
+		if ( ! $drop instanceof Model_Droplet OR ! $drop->loaded())
+		{
+			return FALSE;
+		}
 		
 		// Check if the river exists and if its associated with the current droplet
-		if ($bucket->loaded() AND ! $bucket->has('droplets', $droplet))
+		if ($this->loaded() AND $this->has('droplets', $drop))
 		{
-			$bucket->add('droplets', $droplet);
+			$this->remove('droplets', $drop);
+			
+			$event_data = array('droplet_id' => $drop->id, 'bucket_id' => $this->id);
+			Swiftriver_Event::run('swiftriver.bucket.droplet.remove', $event_data);
+			
 			return TRUE;
 		}
 		
@@ -568,49 +570,6 @@ class Model_Bucket extends ORM {
 		return $this->subscriptions->count_all();
 	}
 
-	/**
-	 * Gets the total no. of droplets added to a bucket in each of the last x days
-	 * where x is a variable parameter but has a seed value of 30
-	 *
-	 * @param int $interval
-	 * @return array
-	 */
-	public function get_droplet_activity($interval = 30)
-	{
-		// Get the interval
-		$interval = (empty($interval) AND intval($interval) > 0) 
-		    ? 30 
-		    : intval($interval);
-
-		// Date arithmetic
-		$minus_str = sprintf('-%d day', $interval);
-		$start_date = date('Y-m-d H:i:s', strtotime($minus_str, time()));
-
-		// Query to fetch the data
-		$query = DB::select(array(DB::expr('DATE_FORMAT(bd.droplet_date_added, "%Y-%m-%d")'), 'droplet_date'),
-			array(DB::expr('COUNT(bd.droplet_id)'), 'droplet_count'))
-		    ->from(array('droplets', 'd'))
-		    ->join(array('buckets_droplets', 'bd'), 'INNER')
-		    ->on('bd.droplet_id', '=', 'd.id')
-		    ->join(array('buckets', 'b'), 'INNER')
-		    ->on('bd.bucket_id', '=', 'b.id')
-		    ->where('bd.bucket_id', '=', $this->id)
-		    ->where('bd.droplet_date_added', '>=', $start_date)
-		    ->group_by('droplet_date')
-		    ->order_by('droplet_date', 'ASC');
-
-		// Execute the query and return a row of data
-		$rows = $query->execute()->as_array();
-
-		$activity = array();
-		foreach ($rows as $row)
-		{
-			$activity[] = $row['droplet_count'];
-		}
-
-		// Return
-		return $activity;
-	}
 	
 	/**
 	 * Verifies whether the user with the specified id has subscribed
@@ -739,10 +698,10 @@ class Model_Bucket extends ORM {
 	}
 	
 	/**
-	 * Return the list of buckets that have the given IDs
+	 * Return the buckets that have the given IDs
 	 *
 	 * @param    Array $ids List of bucket ids
-	 * @return   Database_Result Model_Bucket array
+	 * @return   Array
 	 */
 	
 	public static function get_buckets($ids)
@@ -755,7 +714,7 @@ class Model_Bucket extends ORM {
 						->where('id', 'IN', $ids);
 
 			// Execute query and return results
-			$buckets = $query->find_all();
+			$buckets = $query->find_all()->as_array();
 		}
 		
 		return $buckets;

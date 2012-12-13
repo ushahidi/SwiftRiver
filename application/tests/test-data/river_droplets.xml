@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<dataset>
+	<rivers_droplets id="1" river_id="1" droplet_id="2" droplet_date_pub="2012-11-15 00:00:02" />
+	<rivers_droplets id="2" river_id="1" droplet_id="3" droplet_date_pub="2012-11-15 00:00:03" />
+	<rivers_droplets id="3" river_id="1" droplet_id="4" droplet_date_pub="2012-11-15 00:00:04" />
+	<rivers_droplets id="4" river_id="1" droplet_id="5" droplet_date_pub="2012-11-15 00:00:05" />
+</dataset>

@@ -19,22 +19,13 @@ class Model_User_Action extends ORM {
 	 *
 	 * @var array Relationhips
 	 */
-	protected $_belongs_to = array('user' => array());	
-		
+	protected $_belongs_to = array('user' => array());
+	
 	/**
-	 * Overload saving to perform additional functions on the action
+	 * Auto-update columns for creation
+	 * @var string
 	 */
-	public function save(Validation $validation = NULL)
-	{
-		// Do this for first time actions only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the action was first added
-			$this->action_date_add = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}
+    protected $_created_column = array('column' => 'action_date_add', 'format' => 'Y-m-d H:i:s');
 	
 	/**
 	 * Gets actions and notification for the user's follows or the user's activities
@@ -63,7 +54,7 @@ class Model_User_Action extends ORM {
 		
 		// Notifications
 		$query = DB::select('id',  
-							array(DB::expr('DATE_FORMAT(action_date_add, "%b %e, %Y %H:%i UTC")'),'action_date_add'), 
+							array(DB::expr('DATE_FORMAT(action_date_add, "%b %e, %Y %H:%i:%S UTC")'),'action_date_add'), 
 							'user_id', 'action',
 		                    'action_on', 'action_on_id', 'action_to_id',
 							'confirmed')

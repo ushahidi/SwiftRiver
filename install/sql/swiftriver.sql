@@ -182,20 +182,18 @@ CREATE TABLE IF NOT EXISTS `rivers_droplets` (
 -- Table `bucket_comments`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bucket_comments` (
-  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `bucket_id` INT(11) unsigned NOT NULL DEFAULT 0,  
-  `user_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `parent_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `comment_content` TEXT NOT NULL ,
-  `comment_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  `comment_date_modified` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  `comment_sticky` TINYINT(4) NOT NULL DEFAULT 0 ,
-  `comment_deleted` TINYINT(4) NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`) ,
-  INDEX `bucket_id_idx` (`bucket_id` ASC) ),
-  INDEX `comment_date_add_idx` (`comment_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `bucket_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `comment_content` text NOT NULL,
+  `comment_date_add` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `comment_date_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `comment_sticky` tinyint(4) NOT NULL DEFAULT '0',
+  `comment_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `comment_date_add_idx` (`comment_date_add`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 -- -----------------------------------------------------
@@ -507,21 +505,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `sources`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `sources` (
-  `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `account_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 ,
-  `source_name` VARCHAR(255) NULL DEFAULT NULL ,
-  `source_date_add` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-  `source_date_modified` TIMESTAMP NULL DEFAULT '0000-00-00 00:00:00' ,
-  PRIMARY KEY (`id`) ,
-  INDEX `source_date_add_idx` (`source_date_add` ASC) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `accounts`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `accounts` (
@@ -767,6 +750,34 @@ CREATE TABLE IF NOT EXISTS `droplet_comments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+-- -----------------------------------------------------
+-- Table `channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel` varchar(100) NOT NULL DEFAULT '' COMMENT 'Channel on which to apply the quota',
+  `channel_option` varchar(100) NOT NULL,
+  `quota` int(11) NOT NULL DEFAULT 0 COMMENT 'No. of allowable options for the specified channel',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- -----------------------------------------------------
+-- Table `account_channel_quotas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` bigint(20) NOT NULL,
+  `channel` varchar(100) NOT NULL DEFAULT '',
+  `channel_option` varchar(100) NOT NULL DEFAULT '',
+  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
+  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
+  KEY `idx_user_id` (`account_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- ----------------------------------------
 -- TABLE 'sequence'
 -- ----------------------------------------
@@ -776,6 +787,7 @@ CREATE TABLE IF NOT EXISTS `seq` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP FUNCTION IF EXISTS NEXTVAL;
 DELIMITER //
 CREATE FUNCTION `NEXTVAL`(v_seq_name varchar(30), v_increment BIGINT) 
 RETURNS INT 
@@ -826,7 +838,7 @@ INSERT INTO `settings` (`id`, `key`, `value`) VALUES
 (10, 'default_river_drop_quota', '10000'),
 (11, 'site_url', 'http://www.example.com'),
 (12, 'email_domain', 'example.com'),
-(12, 'comments_email_domain', 'example.com');
+(13, 'comments_email_domain', 'example.com');
 
 -- -----------------------------------------------------
 -- Data for table `users`
@@ -849,31 +861,12 @@ INSERT INTO `accounts` (`user_id`, `account_path`) VALUES
 (1, 'default'),
 (2, 'public');
 
+-- -----------------------------------------------------
+-- Data for table `plugins`
+-- -----------------------------------------------------
+INSERT INTO `plugins` (`id`, `plugin_path`, `plugin_name`, `plugin_description`, `plugin_enabled`, `plugin_weight`, `plugin_installed`)
+VALUES
+	(1,'rss','RSS','Adds an RSS/Atom channel to SwiftRiver to parse RSS and Atom Feeds.',1,1,0),
+	(2,'twitter','Twitter','Adds a Twitter channel to SwiftRiver.',1,1,0);
+
 COMMIT;
-
--- -----------------------------------------------------
--- Table `channel_quotas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `channel_quotas` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `channel` varchar(100) NOT NULL DEFAULT '' COMMENT 'Channel on which to apply the quota',
-  `channel_option` varchar(100) NOT NULL,
-  `quota` int(11) NOT NULL DEFAULT 0 COMMENT 'No. of allowable options for the specified channel',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_channel_option` (`channel`,`channel_option`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- -----------------------------------------------------
--- Table `account_channel_quotas`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `account_channel_quotas` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `account_id` bigint(20) NOT NULL,
-  `channel` varchar(100) NOT NULL DEFAULT '',
-  `channel_option` varchar(100) NOT NULL DEFAULT '',
-  `quota` int(11) NOT NULL DEFAULT '0' COMMENT 'Limit for this type of optin',
-  `quota_used` int(11) NOT NULL DEFAULT '0' COMMENT 'Current no. of options that the user has used up',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `un_channel_option` (`account_id`, `channel`,`channel_option`),
-  KEY `idx_user_id` (`account_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;

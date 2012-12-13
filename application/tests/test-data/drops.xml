@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<dataset>
+	<droplets id="1" identity_id="1" channel="rss" droplet_hash="1" droplet_orig_id="1" droplet_type="original" droplet_title="droplet_1_title" droplet_content="droplet_1_content" droplet_date_pub="2012-11-15 00:00:01" comment_count="2" processing_status="252" />
+	<droplet_comments droplet_id="1" user_id="3" comment_text="Good stuff" date_added="2012-11-20 05:44:23" deleted="" />
+	<droplets_links droplet_id="1" link_id="1" />
+	<droplets_media droplet_id="1" media_id="1" />
+	<droplets_places droplet_id="1" place_id="1" />
+	<droplets_tags droplet_id="1" tag_id="1" />
+	<droplet_scores droplet_id="1" user_id="4" score="1" />
+	
+	<droplets id="2" identity_id="1" channel="rss" droplet_hash="2" droplet_orig_id="2" droplet_type="original" droplet_title="droplet_2_title" droplet_content="droplet_2_content" droplet_date_pub="2012-11-15 00:00:02" comment_count="0" processing_status="255" />
+	<droplets id="3" identity_id="2" channel="twitter" droplet_hash="3" droplet_orig_id="3" droplet_type="original" droplet_title="droplet_3_title" droplet_content="droplet_3_content" droplet_date_pub="2012-11-15 00:00:03" comment_count="0" processing_status="255" />
+	<droplets id="4" identity_id="2" channel="twitter" droplet_hash="4" droplet_orig_id="4" droplet_type="original" droplet_title="droplet_4_title" droplet_content="droplet_4_content" droplet_date_pub="2012-11-15 00:00:04" comment_count="0" processing_status="255" />
+	<droplets id="5" identity_id="1" channel="rss" droplet_hash="5" droplet_orig_id="5" droplet_type="original" droplet_title="droplet_5_title" droplet_content="droplet_5_content" droplet_date_pub="2012-11-15 00:00:05" comment_count="0" processing_status="255" />
+	<droplets id="6" identity_id="2" channel="twitter" droplet_hash="6" droplet_orig_id="6" droplet_type="original" droplet_title="droplet_6_title" droplet_content="droplet_6_content" droplet_date_pub="2012-11-15 00:00:06" comment_count="0" processing_status="255" />
+	<droplets id="7" identity_id="1" channel="rss" droplet_hash="7" droplet_orig_id="7" droplet_type="original" droplet_title="droplet_7_title" droplet_content="droplet_7_content" droplet_date_pub="2012-11-15 00:00:07" comment_count="0" processing_status="255" />
+	<droplets id="8" identity_id="2" channel="twitter" droplet_hash="8" droplet_orig_id="8" droplet_type="original" droplet_title="droplet_8_title" droplet_content="droplet_8_content" droplet_date_pub="2012-11-15 00:00:08" comment_count="0" processing_status="255" />
+	<droplets id="9" identity_id="1" channel="rss" droplet_hash="9" droplet_orig_id="9" droplet_type="original" droplet_title="droplet_9_title" droplet_content="droplet_9_content" droplet_date_pub="2012-11-15 00:00:09" comment_count="0" processing_status="255" />
+	<droplets id="10" identity_id="2" channel="twitter" droplet_hash="10" droplet_orig_id="10" droplet_type="original" droplet_title="droplet_10_title" droplet_content="droplet_10_content" droplet_date_pub="2012-11-15 00:00:10" comment_count="0" processing_status="255" />
+</dataset>

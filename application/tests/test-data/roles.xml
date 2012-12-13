@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<dataset>
+	<roles id="1" name="login" description="login role" />
+	<roles id="2" name="admin" description="admin role" />
+	
+	<roles_users user_id="1" role_id="1" />
+	<roles_users user_id="1" role_id="2" />
+	<roles_users user_id="3" role_id="1" />
+	<roles_users user_id="3" role_id="2" />
+	<roles_users user_id="4" role_id="1" />
+	<roles_users user_id="5" role_id="1" />
+	<roles_users user_id="6" role_id="1" />
+	<roles_users user_id="7" role_id="1" />
+</dataset>

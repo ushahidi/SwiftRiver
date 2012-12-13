@@ -21,19 +21,10 @@ class Model_User_Subscription extends ORM
 	 * @var array Relationhips
 	 */
 	protected $_belongs_to = array('user' => array());	
-		
+	
 	/**
-	 * Overload saving to perform additional functions on the subscription
+	 * Auto-update columns for creation
+	 * @var string
 	 */
-	public function save(Validation $validation = NULL)
-	{
-		// Do this for first time subscriptions only
-		if ($this->loaded() === FALSE)
-		{
-			// Save the date the subscription was first added
-			$this->subscription_date_add = date("Y-m-d H:i:s", time());
-		}
-
-		return parent::save();
-	}
+    protected $_created_column = array('column' => 'subscription_date_add', 'format' => 'Y-m-d H:i:s');
 }

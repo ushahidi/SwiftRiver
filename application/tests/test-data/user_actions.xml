@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<dataset>
+    <user_actions id="1" user_id="3" action="create" action_on="river" action_on_id="1" action_to_id="" action_date_add="2012-11-19 00:00:00" confirmed="0" />
+	<user_actions id="2" user_id="3" action="create" action_on="river" action_on_id="2" action_to_id="" action_date_add="2012-11-19 00:00:01" confirmed="0" />
+    <user_actions id="3" user_id="3" action="create" action_on="bucket" action_on_id="1" action_to_id="" action_date_add="2012-11-19 00:00:02" confirmed="0" />
+	<user_actions id="4" user_id="3" action="create" action_on="bucket" action_on_id="2" action_to_id="" action_date_add="2012-11-19 00:00:03" confirmed="0" />
+	<user_actions id="5" user_id="3" action="invite" action_on="river" action_on_id="1" action_to_id="4" action_date_add="2012-11-19 00:00:04" confirmed="1" />
+	<user_actions id="6" user_id="3" action="invite" action_on="river" action_on_id="1" action_to_id="5" action_date_add="2012-11-19 00:00:05" confirmed="0" />
+	<user_actions id="7" user_id="3" action="invite" action_on="bucket" action_on_id="1" action_to_id="4" action_date_add="2012-11-19 00:00:06" confirmed="1" />
+	<user_actions id="8" user_id="3" action="invite" action_on="bucket" action_on_id="1" action_to_id="5" action_date_add="2012-11-19 00:00:07" confirmed="0" />
+	<user_actions id="9" user_id="7" action="follow" action_on="river" action_on_id="1" action_to_id="" action_date_add="2012-11-19 00:00:08" confirmed="0" />
+	<user_actions id="10" user_id="7" action="follow" action_on="bucket" action_on_id="1" action_to_id="" action_date_add="2012-11-19 00:00:09" confirmed="0" />
+</dataset>

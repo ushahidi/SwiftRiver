@@ -44,26 +44,6 @@ class Model_Place extends ORM
 	}
 	
 	/**
-	 * Returns the droplet's places as an array
-	 */
-	public static function get_droplet_places($orm_droplet)
-	{
-		$query = DB::select('place_name',
-							array(DB::expr('X(place_point)'), 'longitude'),
-							array(DB::expr('Y(place_point)'), 'latitude'),
-							array('place_source', 'source'))
-					->from('droplets')
-					->join('droplets_places', 'INNER')
-					->on('droplets_places.droplet_id', '=', 'droplets.id')
-					->join('places', 'INNER')
-					->on('droplets_places.place_id', '=', 'places.id')
-					->where('droplets.id', '=', $orm_droplet->id);
-		
-		return $query->execute()->as_array();
-	}
-	
-	
-	/**
 	 * Retrives a place using its name
 	 *
 	 * @param string $place_name Name of the place
@@ -78,11 +58,6 @@ class Model_Place extends ORM
 				->where('place_name', '=', $place_name)
 				->find();
 		
-		if ($orm_place->loaded())
-		{
-			return $orm_place;
-		}
-		
 		if ( ! $orm_place->loaded() AND $save)
 		{
 			// Create the place record
@@ -91,7 +66,7 @@ class Model_Place extends ORM
 			return $orm_place->save();
 		}
 		
-		return FALSE;
+		return $orm_place;
 	}
 	
 	/**

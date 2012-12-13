@@ -62,10 +62,10 @@ class Model_Channel_Filter_Option extends ORM {
 									->get_remaining_quota($account->id, $channel_filter->channel, $this->key);
 		if ( ! ($quota_remaining >= 0))
 		{
+			Database::instance()->query(NULL, 'ROLLBACK');
 			throw new Swiftriver_Exception_Channel_Option(__('Channel option quota exceeded'));
 		}
 
-		// Check the quota for this channel option
 		$ret = parent::save();
 		Database::instance()->query(NULL, 'COMMIT');
 		
@@ -108,22 +108,8 @@ class Model_Channel_Filter_Option extends ORM {
 		if (isset($option_data['quota_usage']))
 		{
 			$account_id = $this->channel_filter->river->account->id;
-			$quota_usage += (int)$option_data['quota_usage'];
+			$quota_usage = (int)$option_data['quota_usage'];
 		}
 		return $quota_usage;
-	}
-
-	/**
-	 * Parses the "value" column of the channel filter option and returns it 
-	 * as an array
-	 *
-	 * @return array
-	 */
-	public function get_option_as_array()
-	{
-		// Decode the JSON string for the options
-		$options =  json_decode($this->value, TRUE);
-		
-		return array($this->key => $options);
 	}
 }
