@@ -16,8 +16,6 @@ fi
 MYSQL_OPTIONS="-h $MYSQL_HOST -u $MYSQL_USER $MYSQL_DB"
 
 if [ $MYSQL_PASS ]; then
-	echo "HERE"
-	exit
 	MYSQL_OPTIONS="$MYSQL_OPTIONS -p$MYSQL_PASS"
 fi
 
