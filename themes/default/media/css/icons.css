@@ -1,0 +1,105 @@
+@font-face {
+	font-family: 'swiftriver-icons';
+	src: url('../fonts/swiftriver-icons.eot');
+	src: url('../fonts/swiftriver-icons.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/swiftriver-icons.svg#swiftriver-icons') format('svg'),
+		url('../fonts/swiftriver-icons.woff') format('woff'),
+		url('../fonts/swiftriver-icons.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'swiftriver-icons';
+	content: attr(data-icon);
+	speak: none;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: 'swiftriver-icons';
+	font-style: normal;
+	speak: none;
+}
+.icon-bucket:before {
+	content: "\21";
+}
+.icon-add_to_bucket:before {
+	content: "\22";
+}
+.icon-river:before {
+	content: "\24";
+}
+.icon-twitter:before {
+	content: "\2a";
+}
+.icon-cancel:before {
+	content: "\2d";
+}
+.icon-plus:before {
+	content: "\31";
+}
+.icon-arrow-down:before {
+	content: "\32";
+}
+.icon-arrow-right:before {
+	content: "\33";
+}
+.icon-checkmark:before {
+	content: "\37";
+}
+.icon-close:before {
+	content: "\39";
+}
+.icon-search:before {
+	content: "\3a";
+}
+.icon-users:before {
+	content: "\30";
+}
+.icon-home:before {
+	content: "\34";
+}
+.icon-thumbs-down:before {
+	content: "\e033";
+}
+.icon-thumbs-up:before {
+	content: "\e032";
+}
+.icon-back:before {
+	content: "\e00e";
+}
+.icon-locked:before {
+	content: "\e039";
+}
+.icon-share:before {
+	content: "\e000";
+}
+.icon-rss:before {
+	content: "\e01e";
+}
+.icon-google-plus:before {
+	content: "\e001";
+}
+.icon-mail:before {
+	content: "\e003";
+}
+.icon-comment:before {
+	content: "\e004";
+}
+.icon-settings:before {
+	content: "\e005";
+}
+.icon-facebook:before {
+	content: "\e002";
+}
+.icon-arrow-left:before {
+	content: "\e006";
+}
+.icon-arrow-down-2:before {
+	content: "\e007";
+}
+.icon-remove:before {
+	content: "\e008";
+}

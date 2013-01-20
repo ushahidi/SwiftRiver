@@ -37,17 +37,20 @@
 
 	<article class="container base">
 		<header class="cf">
-			<div class="property-title">
-				<h1><?php echo __('General'); ?></h1>
+			<div class="property-title col_12">
+				<h1><?php echo __('Name'); ?></h1>
 			</div>
 		</header>
 
 		<section class="property-parameters">
 			<div class="parameter">
-				<label for="site_name">
-					<p class="field"><?php echo __("Site Name"); ?></p>
+				<div class="field">
+					<p class="field-label"><?php echo __("Site Name"); ?></p>
 					<?php echo Form::input("site_name", $settings['site_name']); ?>
-				</label>
+				</div>
+				<div class="save-toolbar">
+					<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+				</div>				
 			</div>
 			<div class="parameter">
 				<label for="site_locale">
@@ -59,12 +62,30 @@
 	</article>
 	
 	<article class="container base">
+		<header class="container cf">
+			<div class="property-title col_12">
+				<h1><?php echo __("Locale"); ?></h1>
+			</div>
+		</header>
+		<section class="property-parameters">
+			<div class="parameter">
+				<div class="field">
+					<p class="field-label"><?php echo __("Site Locale"); ?></p>
+					<?php echo Form::input("site_locale", $settings['site_locale']); ?>
+				</div>
+				<div class="save-toolbar">
+					<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+				</div>				
+			</div>
+		</section>
+	</article>
+	
+	<article class="container base">
 		<header class="cf">
 			<div class="property-title">
 				<h1><?php echo __('Email'); ?></h1>
 			</div>
 		</header>
-
 		<section class="property-parameters">
 			<div class="parameter">
 				<label for="email_domain">
@@ -81,25 +102,25 @@
 		</section>
 	</article>
 	
-	
 	<article class="container base">
 		<header class="container cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __("Access"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
-				<label for="public_registration_enabled">
+				<div class="field">
 					<?php echo Form::checkbox('public_registration_enabled', 1,  (bool)$settings['public_registration_enabled']); ?>
 					<?php echo __('Allow public registration'); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label for="anonymous_access_enabled">
+				</div>
+				<div class="field">
 					<?php echo Form::checkbox('anonymous_access_enabled', 1,  (bool)$settings['anonymous_access_enabled']); ?>
 					<?php echo __('Allow anonymous access'); ?>
-				</label>
+				</div>
+				<div class="save-toolbar">
+					<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+				</div>				
 			</div>
 			<div class="parameter">
 				<label for="general_invites_enabled">
@@ -109,24 +130,26 @@
 			</div>
 		</section>
 	</article>
+	
 	<article class="container base">
 		<header class="container cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __("River Lifetime"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
-				<label for="default_river_lifetime">
-					<p class="field"><?php echo __('Default lifetime (days)'); ?></p>
+				<div class="field">
+					<p class="field-label"><?php echo __('Default lifetime (days)'); ?></p>
 					<?php echo Form::input('default_river_lifetime', $settings['default_river_lifetime']); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label for="river_expiry_notice_period">
-					<p class="field"><?php echo __('Expiry notice period (days)'); ?></p>
+				</div>
+				<div class="field">
+					<p class="field-label"><?php echo __('Expiry notice period (days)'); ?></p>
 					<?php echo Form::input('river_expiry_notice_period', $settings['river_expiry_notice_period']); ?>
-				</label>
+				</div>
+				<div class="save-toolbar">
+					<p class="button-blue"><a href="#" onclick="submitForm(this)"><?php echo __("Save Changes"); ?></a></p>
+				</div>			
 			</div>
 		</section>
 	</article>

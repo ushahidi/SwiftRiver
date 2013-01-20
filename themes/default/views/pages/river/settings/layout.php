@@ -1,16 +1,11 @@
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="page-h1 col_9">
-			<h1><?php echo $river->river_name; ?> <em><?php echo __("Settings"); ?></em></h1>
+			<h1><a href="<?php echo $river_base_url; ?>"><?php echo $river->river_name; ?></a> <em><?php echo __("settings"); ?></em></h1>
 		</div>
-		<div class="page-actions col_3">
-			<h2 class="back">
-				<a href="<?php echo $river_base_url; ?>">
-					<span class="icon"></span>
-					Return to river
-				</a>
-			</h2>
-		</div>
+		<div class="page-action col_3">
+			<span class="button-white"><a href="<?php echo $river_base_url; ?>">Return to river</a></span>
+		</div>		
 	</div>
 </hgroup>
 
@@ -19,13 +14,13 @@
 		<div id="page-views" class="settings touchcarousel col_12">
 			<ul class="touchcarousel-container">
 				<li class="touchcarousel-item <?php if ($active == 'channels' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/channels'; ?>">Channels</a>
+					<a href="<?php echo $river_base_url.'/settings/channels'; ?>">Flow</a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'collaborators' OR ! $active) echo 'active'; ?>">
 					<a href="<?php echo $river_base_url.'/settings/collaborators'; ?>">Collaborators</a>
 				</li>
 				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Display</a>
+					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Options</a>
 				</li>
 				<?php
 					// Swiftriver Plugin Hook -- add river settings nav item

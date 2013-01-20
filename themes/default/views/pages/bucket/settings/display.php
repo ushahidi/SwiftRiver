@@ -20,23 +20,27 @@
 			<?php echo Form::open(); ?>
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Name</h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
-						<label for="bucket_name">
-							<p class="field">Display name</p>
+						<div class="field">
+							<p class="field-label">Display name</p>
 							<input type="text" value="<?php echo $bucket->bucket_name ?>" name="bucket_name" />
-						</label>
+						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Default view</h1>
 					</div>
 				</header>
@@ -48,12 +52,16 @@
 							<option value="photos" <?php echo ($bucket->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 			
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Who can view this bucket</h1>
 					</div>
 				</header>
@@ -64,32 +72,37 @@
 							<option value="0" <?php echo $bucket->bucket_publish ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>						
 				</section>
 			</article>
 
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Tokens</h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
-						<label for="public_token">
-							<p class="field">Public Token</p>
+						<div class="field">
+							<p class="field-label">Public Token</p>
 							<input type="text" value="<?php echo $bucket->public_token ?>" name="public_token" id="public_token" disabled="disabled" />
-							<p class="button-blue button-small generate" style="float: right;">
-								<a href="#" title="Generate a new public token. WARNING: The old token will no longer be usable." >Generate</a>
+							<p class="button-blue button-small generate" style="margin-top: 10px;"><a href="#" title="Generate a new public token. WARNING: The old token will no longer be usable." >Generate</a>
 							</p>
-						</label>
+						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
+			
+			<span class="view-results button-white destruct"><a href="#">Delete this bucket</a></span>				
 
-			<div class="save-toolbar">
-				<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-				<p class="button-blank"><a href="#">Cancel</a></p>
-			</div>
 			<?php echo Form::close(); ?>
 		</div>
 	</div>

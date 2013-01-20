@@ -110,36 +110,41 @@ $(function(){
 <?php echo Form::open(); ?>
 <article class="container base">
 	<header class="cf">
-		<div class="property-title">
+		<div class="property-title col_12">
 			<h1>Select a file</h1>
 		</div>
 	</header>
 	<section class="property-parameters">
 		<div class="parameter">
-			<label for="river_name">
-				<p class="field">File</p>
+			<div class="field">
+				<p class="field-label">File</p>
 				<span class="button-blue has_file"><a href="#">Select file</a><input type="file" name="file" id="email_list"></span>
-			</label>
+			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Send invite</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 		</div>
 	</section>
 </article>
 
 <article class="container base">
 	<header class="cf">
-		<div class="property-title">
+		<div class="property-title col_12">
 			<h1>Or enter an email address</h1>
 		</div>
 	</header>
 	<section class="property-parameters">
 		<div class="parameter">
-			<label for="river_name">
-				<p class="field">Email</p>
+			<div class="field">
+				<p class="field-label">Email</p>
 				<input type="email" name="new_email" />
-			</label>
+			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Send invite</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 		</div>
 	</section>
 </article>
-<div class="save-toolbar">
-	<p class="button-blue"><a href="#">Send invite</a></p>
-</div>
 <?php echo Form::close(); ?>

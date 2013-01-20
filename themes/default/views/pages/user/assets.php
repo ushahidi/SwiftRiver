@@ -1,7 +1,7 @@
 <div class="col_12" id="assets">
 	<article class="container action-list base own" style="display:none">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<?php if ($owner): ?>
 					<h1>Your <?php echo $asset; ?>s</h1>
 				<?php else: ?>
@@ -29,7 +29,7 @@
 	
 	<article class="container action-list base collaborating" style="display:none">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<?php if ($owner): ?>
 					<h1><?php echo ucfirst($asset); ?>s you collaborate on</h1>
 				<?php else: ?>
@@ -44,7 +44,7 @@
 
 	<article class="container action-list base following" style="display:none">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<?php if ($owner): ?>
 					<h1><?php echo ucfirst($asset); ?>s you follow</h1>
 				<?php else: ?>
@@ -59,18 +59,23 @@
 </div>
 
 <script type="text/template" id="profile-asset-list-item-template">
+
 <div class="parameter">
-	<div class="actions">
-		<p class="follow-count"><strong><%= subscriber_count %></strong> followers</p>
+	<ul class="button-actions">
+		<li><span class="count"><strong><%= subscriber_count %></strong> followers</span></li>
 		<?php if ( ! $anonymous): ?>
 			<% if (account_id == logged_in_account && logged_in_account == <?php echo $visited_account->id; ?>) { %>
-				<p class="remove-small"><a href="/markup/modal-remove.php" class="modal-trigger"><span class="icon"></span><span class="nodisplay">Remove</span></a></p>
-			<% } else if (account_id != logged_in_account){ %>
-				<% var selected = (subscribed||collaborator) ? "selected" : ""; %>
-				<p class="button-white follow only-icon has-icon <%= selected %>"><a href="#"><span class="icon"></span><span class="nodisplay"></span></a></p>
+			<li class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
+				<ul class="popover-window popover-prompt base">
+					<li class="destruct"><a href="#">Delete</a></li>
+				</ul>							
+			</li>
+		<% } else if (account_id != logged_in_account){ %>
+			<% var selected = (subscribed||collaborator) ? "selected" : ""; %>
+			<li><a href="#" class="<%= selected %>"><i class="icon-checkmark"></i><span class="nodisplay">Following</span></a>
 			<% } %>
-		<?php endif; ?>
-	</div>
+		<?php endif; ?>				
+	</ul>
 	<!-- When viewing another users profile, do not namespace their rivers and buckets. -->
 	<% 
 		var display_name;
@@ -79,7 +84,8 @@
 		} else {
 			display_name = name_namespaced;
 		}
-	%>
-	<h2><a href="<%= url %>"><%= display_name %></a></h2>
+	%>	
+	<h3><a href="<%= url %>"><%= display_name %></a></h3>
 </div>
+
 </script>

@@ -32,58 +32,52 @@
 	<?php echo Form::open(NULL, array('id' => 'account-settings-form')) ?>
 	<article class="container base">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __("About You"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
-				<label>
-					<p class="field"><?php echo __('Full name'); ?></p>
+				<div class="field">
+					<p class="field-label"><?php echo __('Full name'); ?></p>
 					<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label>
-					<p class="field"><?php echo __('Nickname'); ?></p>
+				</div>
+				<div class="field">
+					<p class="field-label"><?php echo __('Nickname'); ?></p>
 					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label>
-					<p class="field"><?php echo __('Email address'); ?></p>
+				</div>
+				<div class="field">
+					<p class="field-label"><?php echo __('Email address'); ?></p>
 					<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
 					<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
-				</label>
+				</div>
 			</div>
 		</section>
 	</article>
 	
 	<article class="container base">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __("Password"); ?></h1>
 			</div>
 		</header>
 		<section class="property-parameters">
 			<div class="parameter">
-				<label>
-					<p class="field"><?php echo __('Password'); ?></p>
+				<div class="field">
+					<p class="field-label"><?php echo __('Password'); ?></p>
 					<?php echo Form::password("password", "", array('id' => 'password')); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label>
-					<p class="field"><?php echo __('Confirm password'); ?></p>
+				</div>
+				<div class="field">
+					<p class="field-label"><?php echo __('Confirm password'); ?></p>
 					<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
-				</label>
+				</div>
 			</div>
 		</section>
 	</article>
 
 	<article class="container base">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __('Photo'); ?></h1>
 			</div>
 		</header>
@@ -111,7 +105,7 @@
 		<div class="page-actions col_3">
 			<h2 class="close">
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>

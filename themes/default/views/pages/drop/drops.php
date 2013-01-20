@@ -25,25 +25,26 @@
 			<ul class="dual-buttons move-drop">
 				<li class="button-blue share">
 					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-					    <span class="icon"></span>
+					    <span class="icon-share"></span>
 					</a>
 				</li>
 				<?php if ( ! $anonymous): ?>
 					<li class="button-blue bucket">
 						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-						    <span class="icon"></span>
+						    <span class="icon-add-to-bucket"></span>
+						    <!--span class="bucket-total">4</span-->
 						</a>
 					</li>
 				<?php endif; ?>
 			</ul>
-			<ul class="dual-buttons score-drop">
-				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+			<ul class="score-drop">
+				<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+					<a href="#"><span class="icon-star"></span></a>
 				</li>
-				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
+				<li class="remove <%= parseInt(user_score) == -1 ? 'scored' : 'selected'  %>">
+					<a href="#"><span class="icon-cancel"></span></a>
 				</li>
-			</ul>
+			</ul>			
 		<?php endif; ?>
 	</div>
 	<section class="drop-source cf">
@@ -52,64 +53,66 @@
 		<% } %>
 		<div class="byline">
 			<h2><%= identity_name %></h2>
-			<p class="drop-source-channel <%= channel %>">
-				<a href="#"><span class="icon"></span>via <%= channel %></a>
+			<p class="drop-source-channel">
+				<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 			</p>
 		</div>
 	</section>
 </script>
 
 <script type="text/template" id="drop-list-view-template">
-	<div class="drop-content">
-		<div class="drop-body">
+	<div class="drop-body">
+		<div class="drop-content">
 			<% if (typeof(droplet_image_url) != "undefined") { %>
 				<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= droplet_image_url %>" class="drop-image" /></a>
-			<% } %>		
+			<% } %>							
 			<h1><a href="#" class="zoom-trigger"><%= droplet_title %></a></h1>
-			<p class="metadata discussion"><%= new Date(droplet_date_pub).toLocaleString() %> 
+		</div>
+		<div class="drop-details">						
+			<p class="metadata"><%= new Date(droplet_date_pub).toLocaleString() %> 
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-comment"></span>
 					<strong><%= comment_count ? comment_count : 0 %></strong> 
 					<?php echo __("comments"); ?>
 				</a>
+			</p>			
+			<div class="drop-actions cf">
+			<?php if ( ! $anonymous): ?>
+				<ul class="score-drop">
+					<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-star"></span></a>
+					</li>
+					<li class="remove <%= parseInt(user_score) == -1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-cancel"></span></a>
+					</li>									
+				</ul>					
+				<ul class="dual-buttons move-drop">
+					<li class="button-blue share">
+						<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
+							<span class="icon-share"></span>
+						</a>
+					</li>
+					<li class="button-blue bucket">
+						<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
+							<span class="icon-add-to-bucket"></span>
+						</a>
+					</li>
+				</ul>
+			<?php endif; ?>	
+			</div>
+		</div>							
+	</div>
+	<section class="drop-source cf">
+		<% if ( identity_avatar) { %>
+			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
+		<% } %>
+		<div class="byline">
+			<h2><%= identity_name %></h2>
+			<p class="drop-source-channel">
+				<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 			</p>
 		</div>
-		<section class="drop-source cf">
-			<% if ( identity_avatar) { %>
-				<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
-			<% } %>
-			<div class="byline">
-				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel <%= channel %>">
-					<a href="#"><span class="icon"></span>via <%= channel %></a>
-				</p>
-			</div>
-		</section>
-	</div>
-	<div class="drop-actions stacked cf">
-		<?php if ( ! $anonymous): ?>
-			<ul class="dual-buttons move-drop">
-				<li class="button-blue share">
-					<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-					    <span class="icon"></span>
-					</a>
-				</li>
-				<li class="button-blue bucket">
-					<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-					    <span class="icon"></span>
-					</a>
-				</li>
-			</ul>		
-			<ul class="dual-buttons score-drop">
-				<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
-				</li>
-				<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-					<a href="#"><span class="icon"></span></a>
-				</li>
-			</ul>
-		<?php endif; ?>
-	</div>
+	</section>	
 </script>
 
 <script type="text/template" id="drop-photos-view-template">
@@ -123,21 +126,21 @@
 						<ul class="dual-buttons move-drop">
 							<li class="button-blue share">
 								<a href="#" class="modal-trigger" title="<?php echo __("Share this drop"); ?>">
-									<span class="icon"></span>
+									<span class="icon-share"></span>
 								</a>
 							</li>
 							<li class="button-blue bucket">
 								<a href="#" class="modal-trigger" title="<?php echo __("Add drop to bucket"); ?>">
-									<span class="icon"></span>
+									<span class="icon-add-to-bucket"></span>
 								</a>
 							</li>
 						</ul>
 						<ul class="dual-buttons score-drop">
 							<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>" >
-								<a href="#"><span class="icon"></span></a>
+								<a href="#"><span class="icon-thumbs-up"></span></a>
 							</li>
 							<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-								<a href="#"><span class="icon"></span></a>
+								<a href="#"><span class="icon-thumbs-down"></span></a>
 							</li>
 						</ul>
 					<?php endif; ?>
@@ -149,8 +152,8 @@
 				<% } %>
 				<div class="byline">
 					<h2><%= identity_name %></h2>
-					<p class="drop-source-channel <%= channel %>">
-						<a href="#"><span class="icon"></span>via <%= channel %></a>
+					<p class="drop-source-channel">
+						<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 					</p>
 				</div>
 			</section>
@@ -189,7 +192,7 @@
 <script type="text/template" id="drop-detail-template">
 	<div class="settings-toolbar base">
 		<p class="button-white close">
-			<a href="#"><span class="icon"></span><?php echo __("Close"); ?></a>
+			<a href="#"><span class="icon-cancel"></span><?php echo __("Close"); ?></a>
 		</p>
 		<p class="button-blue button-big">
 			<a href="#"><?php echo __("Edit this drop"); ?></a>
@@ -202,8 +205,8 @@
 			<a href="#" class="avatar-wrap"><img src="<%= identity_avatar %>" /></a>
 			<div class="byline">
 				<h2><%= identity_name %></h2>
-				<p class="drop-source-channel twitter">
-					<a href="#"><span class="icon"></span>via <%= channel %></a>
+				<p class="drop-source-channel">
+					<a href="#"><span class="icon-<%= channel %>"></span>via <%= channel %></a>
 				</p>
 			</div>
 		</section>
@@ -215,12 +218,12 @@
 			<a href="#" class="button-prev"><div></div></a>
 			<% } %>
 			<?php if ( ! $anonymous): ?>
-				<ul class="dual-buttons score-drop">
-					<li class="button-white like <%= parseInt(user_score) == 1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon"></span></a>
+				<ul class="score-drop">
+					<li class="button-white star <%= parseInt(user_score) == 1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-star"></span></a>
 					</li>
-					<li class="button-white dislike <%= parseInt(user_score) == -1 ? 'scored' : ''  %>">
-						<a href="#"><span class="icon"></span></a>
+					<li class="remove <%= parseInt(user_score) == -1 ? 'selected' : ''  %>">
+						<a href="#"><span class="icon-cancel"></span></a>
 					</li>
 				</ul>
 			<?php endif; ?>
@@ -230,10 +233,10 @@
 			<?php if ( ! $anonymous): ?>
 				<ul class="dual-buttons move-drop">
 					<li class="button-blue share">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger"><span class="icon-share"></span></a>
 					</li>
 					<li class="button-blue bucket">
-						<a href="#" class="modal-trigger"><span class="icon"></span></a>
+						<a href="#" class="modal-trigger"><span class="icon-add-to-bucket"></span></a>
 					</li>
 				</ul>
 			<?php endif; ?>
@@ -249,7 +252,7 @@
 			<%= droplet_content %>
 		</section>
 		<% } %>
-		<% if (media.length > 0 && channel == "twitter") { %>
+		<% if (media.length > 0) { %>
 		<section class="drop-media drop-sub">
 			<h2><?php echo __("Media"); ?></h2>
 			<div>
@@ -328,16 +331,13 @@
 <article class="modal">
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
-			<h1><?php echo __("Add to bucket"); ?></h1>
-		</div>
-		<div class="page-actions col_3">
+			<h1><span class="icon-add-to-bucket"></span><?php echo __("Add to bucket"); ?></h1>
+		</div>		
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 
 	<div class="modal-body select-list">
@@ -353,21 +353,16 @@
 		<form class="following">
 		</form>
 	</div>
-	<div class="modal-body create-new" id="show-create-new">
-		<form>
-			<div class="field">
-				<p class="button-blue" id="show-create-bucket-button"><a href="#" title="<?php echo __("Click here to create a new bucke"); ?>">Create a new bucket</a></p>
-			</div>
-			<div class="system_error"></div>
-		</form>
-	</div>
-	<div class="modal-body create-new nodisplay" id="create-bucket-form">
+	<div class="modal-body create-new">
 		<form>
 			<h2><?php echo __("Create a new bucket"); ?></h2>
 			<div class="field">
 				<input type="text" placeholder="Name your new bucket" class="name" name="new_bucket" />
-				<p class="button-blue"><a href="#">Save and add drop</a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#">Save and add drop</a></p>
+				<p class="button-blank cancel"><a href="#">Cancel</a></p>
+			</div>			
 			<div class="system_error"></div>
 		</form>
 	</div>
@@ -382,7 +377,8 @@
 </script>
 
 <script type="text/template" id="edit-metadata-listitem">
-	<a href="#"><%= label %></a><span class="remove-small"><span class="icon"></span></span>
+	<span class="button-actions"><a href="#"><span class="icon-remove"></span></a></span>
+	<a href="#"><%= label %></a>
 </script>
 
 <script type="text/template" id="add-metadata-template">
@@ -390,14 +386,11 @@
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Edit"); ?> <%= label %></h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 
 	<div class="modal-body link-list"  style="overflow: auto; max-height: 150px">
@@ -411,8 +404,10 @@
 			<h2>Add a new <%= label %></h2>
 			<div class="field">
 				<input type="text" placeholder="Name the <%= label %>" class="name" name="new_metadata" />
-				<p class="button-blue"><a href="#"><?php echo __("Add this"); ?> <%= label %></a></p>
 			</div>
+			<div class="save-toolbar">
+				<p class="button-blue"><a href="#"><i class="icon-plus"></i><?php echo __("Add this"); ?> <%= label %></a></p>
+			</div>			
 			<div class="system_error"></div>
 		</form>
 	</div>
@@ -430,34 +425,31 @@
 	<hgroup class="page-title cf">
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Share this drop"); ?></h1>
-		</div>
-		<div class="page-actions col_3">
+		</div>	
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
-		</div>
+		</div>		
 	</hgroup>
 	<div class="modal-body link-list">
 		<ul>
-			<li class="twitter">
+			<li>
 				<a href="https://twitter.com/share?url=<%= encodeURIComponent(drop_url) %>&text=<%= encodeURIComponent(droplet_title) %>" 
 				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" 
 				    target="_blank">
-					<span class="icon"></span><?php echo __("Twitter"); ?>
+					<i class="icon-twitter"></i><?php echo __("Twitter"); ?>
 				</a>
 			</li>
-			<li class="facebook">
+			<li>
 				<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(droplet_title); %>
 				<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %>" 
 				    onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
 				    target="_blank">
-				    <span class="icon"></span><?php echo __("Facebook"); ?>
+				    <i class="icon-facebook"></i><?php echo __("Facebook"); ?>
 			    <a/>
 			</li>
-			<li class="email"><a href="#"><span class="icon"></span><?php echo __("Email"); ?></a></li>
+			<li><a href="#"><i class="icon-mail"></i><?php echo __("Email"); ?></a></li>
 		</ul>
 	</div>
 	<section class="drop-summary cf">
@@ -478,12 +470,9 @@
 		<div class="page-h1 col_9">
 			<h1><?php echo __("Share via Email"); ?></h1>
 		</div>
-		<div class="page-actions col_3">
+		<div class="page-action col_3">
 			<h2 class="close">
-				<a href="#">
-					<span class="icon"></span>
-					<?php echo __("Close"); ?>
-				</a>
+				<span class="button-white"><a href="#"><i class="icon-cancel"></i><?php echo __("Close"); ?></a></span>
 			</h2>
 		</div>
 	</hgroup>
@@ -553,9 +542,9 @@
 			<h1>Filters</h1>
 		</div>
 		<div class="page-actions col_3">
-			<h2 class="close">
+			<h2>
 				<a href="#">
-					<span class="icon"></span>
+					<span class="icon-cancel"></span>
 					Close
 				</a>
 			</h2>
@@ -567,8 +556,8 @@
 		<article class="container base">
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="channel">
-						<p class="field">Channel</p>
+					<div class="field">
+						<p class="field-label">Channel</p>
 						<select name="channel">
 							<option value="">Any</option>
 							<% for (channel in channels) { %>
@@ -576,28 +565,27 @@
 								<option value="<%= channels[channel]['channel'] %>" <%= selected %>><%= channels[channel]['name'] %></option>
 							<% } %>
 						</select>
-					</label>
+					</div>
 				</div>
 			</section>
 			
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="tags">
-						<p class="field">Tags</p>
+					<div class="field">
+						<p class="field-label">Tags</p>
 						<input type="text" name="tags" value="<%= filters.get('tags') ? decodeURIComponent(filters.get('tags')).replace(',', ', ') : '' %>"/>
-					</label>
+					</div>
 				</div>
 			</section>
 			
 			<section class="property-parameters">
 				<div class="parameter">
-					<label for="date">
-						<p class="field">Date</p>
+					<div class="field">
+						<p class="field-label">Date</p>
 						<input type="date" name="start_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('start_date') %>" />
 						<span class="combine">to</span>
 						<input type="date" name="end_date" placeholder="DD-MM-YYYYY" value="<%= filters.get('end_date') %>" />
-					</label>
-					</label>
+					</div>
 				</div>
 			</section>
 		</article>

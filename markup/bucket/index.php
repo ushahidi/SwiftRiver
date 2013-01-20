@@ -1,209 +1,340 @@
 <?php
-	$page_title = "Ushahidi press coverage";
+	$page_title = "SwiftRiver press coverage";
 	$template_type = "masonry";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="page-title bucket-title cf">
+	<!-- SYSTEM MESSAGE //
+	<article id="system-message">
 		<div class="center">
-			<div class="page-h1 col_9">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><a href="#">13 new drops</a></p>
+		</div>
+	</article>
+	// END SYSTEM MESSAGE -->
+
+	<hgroup class="page-title cf">
+		<div class="center">
+			<div class="col_9">
 				<h1><?php print $page_title; ?></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="/markup/bucket/settings-collaborators.php">
-						<span class="icon"></span>
-						Bucket settings
-					</a>
-				</h2>
-				<h2 class="discussion">
-					<a href="/markup/bucket/discussion.php">
-						<span class="icon"></span>
-						Discussion
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<!-- IF: User manages this river -->
+				<a href="discussion.php" class="button button-white settings"><span class="icon-comment"></span></a>
+				<a href="settings.php" class="button button-white settings"><span class="icon-cog"></span></a>
+				<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>				
+				<!-- ELSE IF: User follows this river
+				<a href="#" class="button-follow selected button-primary"><i class="icon-checkmark"></i>Following</a>
+				! ELSE
+				<a href="#" class="button-follow button-primary"><i class="icon-checkmark"></i>Follow</a>
+				-->
 			</div>
 		</div>
 	</hgroup>
 
-	<!--section class="rundown bucket cf">
-		<div class="center">
-			<div class="rundown-totals col_3">
-				<ul>
-					<li><strong>88</strong> drops</li>
-					<li><a href="/markup/bucket/followers.php"><strong>17</strong> followers</a></li>
-				</ul>
-			</div>
-			<div class="rundown-people col_9">
-				<h2>Collaborators on this bucket</h2>
-				<ul>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-					<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-				</ul>
-			</div>
-		</div>
-	</section-->
-
-	<nav class="page-navigation cf">
-		<div class="center">
-			<div id="page-views" class="river touchcarousel col_9">
-				<ul class="touchcarousel-container">
-					<li class="touchcarousel-item active"><a href="/markup/bucket">Drops</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/view-list.php">List</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/view-photos.php">Photos</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/view-map.php">Map</a></li>
-					<li class="touchcarousel-item"><a href="/markup/bucket/view-timeline.php">Timeline</a></li>
-				</ul>
-			</div>
-			<div class="filter-actions col_3">
-				<p class="button-blue button-small"><a href="/markup//river/filters.php" class="zoom-trigger">Filters</a></p>
-			</div>
-		</div>
-	</nav>
-
-	<div id="content" class="bucket drops cf">
+	<div id="content" class="river drops cf">
 		<div class="center">
 
-			<!-- ALTERNATE MESSAGE TO VIEW NEW DROPS //
-			<article class="alert-message blue col_12 drop">
-				<p><a href="#">13 new drops</a></p>
-			</article>
-			// END MESSAGE -->
+			<section id="filters" class="col_3">
+				<div class="modal-window">
+					<div class="modal">		
+						<div class="modal-title cf">
+							<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+							<h1>Filters</h1>
+						</div>
 
-			<article class="drop col_3 base">
-				<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
-					<div class="byline">
-						<h2>Nanjira Sambuli</h2>
-						<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
-					</div>
-				</section>
-			</article>
-		
-			<article class="drop col_3 base">
-				<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-				<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a>
-					<div class="byline">
-						<h2>The Global Journal</h2>
-						<p class="drop-source-channel rss"><a href="#"><span class="icon"></span>via RSS</a></p>
-					</div>
-				</section>
-			</article>
-		
-			<article class="drop col_3 base">
-				<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar3.png" /></a>
-					<div class="byline">
-						<h2>The Global Journal</h2>
-						<p class="drop-source-channel facebook"><a href="#"><span class="icon"></span>via Facebook</a></p>
-					</div>
-				</section>
-			</article>
+						<ul class="filters-primary">
+							<li class="active"><a href="#" class="modal-close"><span class="total">86</span> Drops</a></li>
+							<li><a href="view-list.php" class="modal-close">List</a></li>
+							<li><a href="view-photos.php" class="modal-close">Photos</a></li>
+							<li><a href="#" class="modal-close">Map</a></li>
+						</ul>
+				
+						<div class="filters-type">
+							<ul>
+								<!--li class="active"><a href="#"><span class="remove icon-cancel"></span><i class="icon-calendar"></i>November 1, 2012 to present</a></li-->
+								<!--li class=""><a href="#"><span class="remove icon-cancel"></span><i class="icon-pencil"></i>hate, robbed</a></li-->
+							</ul>
+							<a href="/markup/_modals/add-search-filter.php" class="button-add modal-trigger"><i class="icon-search"></i>Add search filter</a>				
+						</div>
 
-			<article class="drop col_3 base">
-				<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
-					<div class="byline">
-						<h2>Nanjira Sambuli</h2>
-						<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+						<div class="modal-toolbar">
+							<a href="#" class="button-submit button-primary modal-close">Done</a>				
+						</div>						
 					</div>
-				</section>
-			</article>
-		
-			<article class="drop col_3 base">
-				<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-				<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a>
-					<div class="byline">
-						<h2>The Global Journal</h2>
-						<p class="drop-source-channel rss"><a href="#"><span class="icon"></span>via RSS</a></p>
+				</div>												
+			</section>
+			
+			<div id="stream" class="col_9">
+
+				<article class="drop base">				
+					<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">4</span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>						
 					</div>
-				</section>
-			</article>
-		
-			<article class="drop col_3 base">
-				<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
-				<div class="drop-actions cf">
-					<ul class="dual-buttons score-drop">
-						<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-						<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-					</ul>
-					<ul class="dual-buttons move-drop">
-						<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-						<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-					</ul>
-				</div>
-				<section class="drop-source cf">
-					<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar3.png" /></a>
-					<div class="byline">
-						<h2>The Global Journal</h2>
-						<p class="drop-source-channel facebook"><a href="#"><span class="icon"></span>via Facebook</a></p>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>					
+				</article>
+			
+				<article class="drop base">
+					<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/_img/content/drop-image.png" class="drop-image" /></a>
+					<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>				
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score selected"><a href="#" class="button-white"><span class="icon-star"></span><span class="star-total">57</span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>					
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar2.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
 					</div>
-				</section>
-			</article>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar3.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-facebook"></span>via Facebook</a></p>
+						</div>
+					</section>
+				</article>
+	
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/_img/content/drop-image.png" class="drop-image" /></a>
+					<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar2.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar3.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-facebook"></span>via Facebook</a></p>
+						</div>
+					</section>
+				</article>
+
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/_img/content/drop-image.png" class="drop-image" /></a>
+					<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar2.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar3.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-facebook"></span>via Facebook</a></p>
+						</div>
+					</section>
+				</article>
+	
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar1.png" /></a>
+						<div class="byline">
+							<h2>Nanjira Sambuli</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-twitter"></span>via Twitter</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/_img/content/drop-image.png" class="drop-image" /></a>
+					<h1><a href="/markup/drop/" class="zoom-trigger">The Europe Roundup: Cybercrime in the UK, Ushahidi in Serbia, Big Data in Norway</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar2.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
+						</div>
+					</section>
+				</article>
+			
+				<article class="drop base">
+					<h1><a href="/markup/drop/" class="zoom-trigger">Is there any one here in Egypt who can explain to me how could I used USHAHIDI and Crowdmap for an advocacy campaign to fight illiteracy?</a></h1>
+					<div class="drop-actions cf">
+						<ul class="dual-buttons drop-move">
+							<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+							<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span></a></li>
+						</ul>
+						<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+						<ul class="drop-status cf">
+							<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+							<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+						</ul>
+					</div>
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap"><img src="/markup/_img/content/avatar3.png" /></a>
+						<div class="byline">
+							<h2>The Global Journal</h2>
+							<p class="drop-source-channel"><a href="#"><span class="icon-facebook"></span>via Facebook</a></p>
+						</div>
+					</section>
+				</article>
+			</div>
 		</div>
 	</div>
 

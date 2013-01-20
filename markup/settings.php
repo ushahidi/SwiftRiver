@@ -1,86 +1,107 @@
 <?php
-	$page_title = "SwiftRiver";
-	$template_type = "settings";
+	$page_title = "Summary";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="app-title cf">
+	<hgroup class="page-title cf">
 		<div class="center">
-			<div class="col_12">		
-				<h1>Website name <em>settings</em></h1>
+			<div class="col_9">		
+				<h1>SwiftRiver <em>settings</em></h1>
 			</div>
+			<div class="col_3"></div>			
 		</div>
 	</hgroup>
 
-	<nav class="page-navigation cf">
-		<ul class="center">
-			<li class="active"><a href="/settings.php">General settings</a></li>
-			<li><a href="/settings-users.php">Users</a></li>
-			<li><a href="/settings-plugins.php">Plugins</a></li>
-		</ul>
-	</nav>
+	<div id="content">
+		<div class="center body-tabs-container cf">
 
-	<div id="content" class="settings cf">
-		<div class="center">
-			<div class="col_12">
-				<article class="container base">
-					<header class="cf">
-						<div class="property-title">
-							<h1>Name</h1>
+			<div id="filters" class="col_3">
+				<ul class="body-tabs-menu filters-primary">
+					<li class="active"><a href="#general">General</a></li>
+					<li><a href="#users">Users</a></li>
+					<li><a href="#plugins">Plugins</a></li>
+				</ul>																
+			</div>
+					
+			<div id="settings" class="body-tabs-window col_9">
+			
+				<!-- TAB: General -->
+				<div id="general" class="active">
+					<article class="base settings-category">
+						<h1>Basics</h1>
+						<div class="body-field">
+							<h3 class="label">Website name</h3>
+							<input type="text" value="SwiftRiver" />
 						</div>
-					</header>
-					<section class="property-parameters">
-						<div class="parameter">
-							<label for="website_name">
-								<p class="field">Website name</p>
-								<input type="text" name="website_name" placeholder="Enter name" />
-							</label>
-						</div>
-					</section>
-				</article>
-
-				<article class="container base">
-					<header class="cf">
-						<div class="property-title">
-							<h1>Language</h1>
-						</div>
-					</header>
-					<section class="property-parameters">
-						<div class="parameter">
+						<div class="body-field">
+							<h3 class="label">Language</h3>
 							<select>
 								<option>English</option>
-								<option>other</option>
+								<option>Spanish</option>
 							</select>
 						</div>
-					</section>
-				</article>
-	
-				<article class="container base">
-					<header class="cf">
-						<div class="property-title">
-							<h1>Access</h1>
+					</article>
+
+					<article class="base settings-category">
+						<h1>Access</h1>
+						<div class="body-field">
+							<label><input type="checkbox" /> Allow public registration</label>
 						</div>
-					</header>
-					<section class="property-parameters">
-						<div class="parameter">
-							<label for="public_registration">
-								<input type="checkbox" name="public_registration" />
-								Allow public registration
-							</label>
-							<label for="anonymous">
-								<input type="checkbox" name="anonymous" />
-								Allow anonymous access
-							</label>
-						</div>
-					</section>
-				</article>
+						<div class="body-field">
+							<label><input type="checkbox" /> Allow anonymous access</label>
+						</div>					
+					</article>																			
+				</div>
+
+				<!-- TAB: users -->
+				<div id="users">
+					<article class="base settings-category">
+						<h1>Users</h1>
+						
+						<ul class="view-table">
+							<li class="user cf">
+								<a href="/markup/_modals/settings-user.php" class="modal-trigger">
+								<span class="remove icon-cancel"></span>
+								<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">Juliana Rotich
+								</a>
+							</li>
+							<li class="user cf">
+								<a href="/markup/_modals/settings-user.php" class="modal-trigger">
+								<span class="remove icon-cancel"></span>
+								<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">Nathaniel Manning
+								</a>
+							</li>							
+							<li class="add"><a href="/markup/_modals/add-user.php" class="modal-trigger">Add user</a></li>
+						</ul>
+					</article>			
+				</div>
+				
+				<!-- TAB: Plugins -->
+				<div id="plugins">
+					<article class="base settings-category">
+						<h1>Plugins</h1>
+
+						<ul class="view-table">
+							<li class="static cf">
+								<span class="follow">Activate</span>
+								Plugin 1
+							</li>
+							<li class="static cf">
+								<span class="follow selected icon-checkmark"> On</span>
+								Plugin 2
+							</li>							
+						</ul>
+
+					</article>
+				</div>
+								
 			</div>
 		</div>
 	</div>
 
 <div id="modal-container">
 	<div class="modal-window"></div>
-	<div class="modal-fade"></div>
+	<div class="modal-window-secondary"></div>
 </div>
 
 </body>

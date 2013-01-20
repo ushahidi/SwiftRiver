@@ -20,23 +20,27 @@
 			<?php echo Form::open(); ?>
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Name</h1>
 					</div>
 				</header>
 				<section class="property-parameters">
 					<div class="parameter">
-						<label for="river_name">
-							<p class="field">Display name</p>
+						<div class="field">
+							<p class="field-label">Display name</p>
 							<input type="text" value="<?php echo $river->river_name ?>" name="river_name" />
-						</label>
+						</div>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Default view</h1>
 					</div>
 				</header>
@@ -48,12 +52,16 @@
 							<option value="photos" <?php echo ($river->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>										
 				</section>
 			</article>
 			
 			<article class="container base">
 				<header class="cf">
-					<div class="property-title">
+					<div class="property-title col_12">
 						<h1>Who can view this river</h1>
 					</div>
 				</header>
@@ -64,6 +72,10 @@
 							<option value="0" <?php echo $river->river_public ? '' : 'selected'; ?>>Private (Collaborators only)</option>
 						</select>
 					</div>
+					<div class="save-toolbar">
+						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
+						<p class="button-blank"><a href="#">Cancel</a></p>
+					</div>					
 				</section>
 			</article>
 			

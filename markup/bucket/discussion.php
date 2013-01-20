@@ -1,110 +1,109 @@
 <?php
-	$page_title = "Ushahidi press coverage";
-	$template_type = "bucket-list";
+	$page_title = "SwiftRiver press coverage";
 	include $_SERVER['DOCUMENT_ROOT'].'/markup/_includes/header.php';
 ?>
 
-	<hgroup class="page-title bucket-title cf">
+	<!-- SYSTEM MESSAGE //
+	<article id="system-message">
 		<div class="center">
-			<div class="page-h1 col_9">
-				<h1><?php print $page_title; ?> <em>discussion</em></h1>
-				<div class="rundown-people">
-					<h2>Collaborators on this bucket</h2>
-					<ul>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a></li>
-						<li><a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar2.png" /></a></li>
-					</ul>
-				</div>
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><a href="#">13 new drops</a></p>
+		</div>
+	</article>
+	// END SYSTEM MESSAGE -->
+
+	<hgroup class="page-title cf">
+		<div class="center">
+			<div class="col_9">
+				<h1><a href="/markup/river"><?php print $page_title; ?></a> <em>discussion</em></h1>
 			</div>
-			<div class="page-actions col_3">
-				<h2 class="settings">
-					<a href="/markup/bucket/settings-collaborators.php">
-						<span class="icon"></span>
-						Bucket settings
-					</a>
-				</h2>
-				<h2 class="back">
-					<a href="/markup/bucket/">
-						<span class="icon"></span>
-						Return to bucket
-					</a>
-				</h2>
+			<div class="page-action col_3">
+				<a href="/markup/bucket" class="button-white">Return to bucket</a>
+				<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
 			</div>
 		</div>
 	</hgroup>
 
-	<div id="content" class="list cf">
+	<div id="content" class="river list cf">
 		<div class="center">
-			<div class="col_12">
-				<article class="drop base cf">
-					<div class="drop-content">
-						<div class="drop-body">
-							<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-							<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
+
+			<section id="filters" class="col_3">
+				<div class="modal-window">
+					<div class="modal">		
+						<div class="modal-title cf">
+							<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+							<h1>Filters</h1>
 						</div>
+						<ul class="filters-primary">
+							<li class="active"><a href="#"><span class="total">204</span> All messages</a></li>
+							<li><a href="#">Yours</a></li>
+							<li><a href="#">Mentions</a></li>
+						</ul>
+							
+						<div class="filters-type">
+							<!--ul>
+								<li class="active"><a href="#"><span class="remove icon-cancel"></span><i class="icon-calendar"></i>November 1, 2012 to present</a></li>
+								<li class=""><a href="#"><span class="remove icon-cancel"></span><i class="icon-pencil"></i>hate, robbed</a></li>
+							</ul-->
+							<a href="/markup/_modals/add-search-filter.php" class="button-add modal-trigger"><i class="icon-search"></i>Add search filter</a>				
+						</div>
+
+						<div class="modal-toolbar">
+							<a href="#" class="button-submit button-primary modal-close">Done</a>				
+						</div>
+					</div>
+				</div>
+			</section>
+			
+			<div id="stream" class="col_9">
+
+					<article class="drop base cf">
 						<section class="drop-source cf">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
+							<a href="#" class="avatar-wrap"><img src="http://profile.ak.fbcdn.net/hprofile-ak-prn1/c0.0.80.80/535812_247939241973205_197626713_s.jpg" /></a>
 							<div class="byline">
-								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+								<h2>Fred Aluhondo</h2>
 							</div>
 						</section>
-					</div>
-					<div class="drop-actions stacked cf">
-						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-						</ul>
-						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-						</ul>
-					</div>
-				</article>
-	
-				<article class="drop base cf">
-					<div class="drop-content">
 						<div class="drop-body">
-							<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="/markup/images/content/drop-image.png" class="drop-image" /></a>
-							<h1><a href="/markup/drop/" class="zoom-trigger">Saluting @chiefkariuki and what he's doing for Lanet Umoja Location via Twitter. You restore hope in our leadership sir! cc @ushahidi</a></h1>
-							<p class="metadata discussion">4:30 p.m. Jan. 13, 2012 <a href="#"><span class="icon"></span><strong>3</strong> comments</a></p>
-						</div>
+							<div class="drop-content">
+								<h1><a href="/markup/drop/" class="zoom-trigger">This are terrorists in the making and should be crashed immediately</a></h1>
+							</div>
+							<div class="drop-details">
+								<p class="metadata">2:15 a.m. Sept. 19, 2012</p>
+								<div class="drop-actions cf">
+									<ul class="dual-buttons drop-move">
+										<li class="share"><a href="/markup/_modals/add-to-service.php" class="button-primary modal-trigger"><span class="icon-share"></span></a></li>
+								<li class="bucket"><a href="/markup/_modals/add-to-bucket.php" class="button-primary modal-trigger"><span class="icon-add-to-bucket"></span><span class="bucket-total">4</span></a></li>
+									</ul>
+									<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a></span>
+									<ul class="drop-status cf">
+										<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+										<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a></li>
+									</ul>								
+								</div>
+							</div>
+						</div>				
+					</article>
+
+					<article class="drop base cf">
 						<section class="drop-source cf">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar1.png" /></a>
+							<a href="#" class="avatar-wrap"><img src="http://www.ushahidi.com/uploads/people/team_Emmanuel-Kala.jpg" /></a>
 							<div class="byline">
-								<h2>Nanjira Sambuli</h2>
-								<p class="drop-source-channel twitter"><a href="#"><span class="icon"></span>via Twitter</a></p>
+								<h2>Emmanuel Kala</h2>
 							</div>
 						</section>
-					</div>
-					<div class="drop-actions stacked cf">
-						<ul class="dual-buttons move-drop">
-							<li class="button-blue share"><a href="/markup/modal-share.php" class="modal-trigger"><span class="icon"></span></a></li>
-							<li class="button-blue bucket"><a href="/markup/modal-bucket.php" class="modal-trigger"><span class="icon"></span></a></li>
-						</ul>
-						<ul class="dual-buttons score-drop">
-							<li class="button-white like"><a href="#"><span class="icon"></span></a></li>
-							<li class="button-white dislike"><a href="#"><span class="icon"></span></a></li>
-						</ul>
-					</div>
-				</article>
-	
-				<article class="add-comment drop base cf">
-					<div class="drop-content">
 						<div class="drop-body">
-							<textarea></textarea>
-						</div>
-						<section class="drop-source cf">
-							<a href="#" class="avatar-wrap"><img src="/markup/images/content/avatar4.jpg" /></a>
-							<div class="byline">
-								<h2>Brandon Rosage</h2>
+							<div class="drop-content">
+								<textarea></textarea>
 							</div>
-						</section>
-					</div>
-					<div class="drop-actions cf">
-						<p class="button-blue"><a href="#">Publish</a></p>
-					</div>
-				</article>
+							<div class="drop-details">
+								<div class="drop-actions cf">
+									<a href="#" class="button-primary">Publish</a>								
+								</div>
+							</div>
+						</div>				
+					</article>			
+
 			</div>
 		</div>
 	</div>

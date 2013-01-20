@@ -27,29 +27,28 @@ $(function() {
 <?php echo Form::open(URL::site('login')); ?>
 	<article class="container base">
 		<header class="cf">
-			<div class="property-title">
+			<div class="property-title col_12">
 				<h1><?php echo __("Enter your account information"); ?></h1>
 			</div>
 		</header>
-		<section class="property-parameters">
+		<section class="property-parameters cf">
 			<div class="parameter">
-				<label for="username">
-					<p class="field"><?php echo __('Email'); ?></p>
+				<div class="field">
+					<p class="field-label"><?php echo __('Email'); ?></p>
 					<?php echo Form::input("username", ""); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label for="password">
-					<p class="field"><?php echo __('Password'); ?></p>
+				</div>
+				<div class="field">
+					<p class="field-label"><?php echo __('Password'); ?></p>
 					<?php echo Form::password("password", ""); ?>
-				</label>
-			</div>
-			<div class="parameter">
-				<label for="remember">
+				</div>
+				<div class="field">
 					<?php echo Form::checkbox('remember', 1); ?>
 					<?php echo __('Remember me'); ?>
-				</label>
+				</div>
 			</div>
+			<div class="save-toolbar col_12">
+				<p class="button-blue"><a href="#">Log in</a></p>
+			</div>			
 		</section>
 	</article>
 

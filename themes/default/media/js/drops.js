@@ -182,9 +182,9 @@
 					
 		showDropScore: function(selector) {
 			var el = this.$(selector);
-			el.toggleClass('scored');
-			if (el.hasClass("scored")) {
-				el.siblings("li").removeClass("scored");
+			el.toggleClass('selected');
+			if (el.hasClass("selected")) {
+				el.siblings("li").removeClass("selected");
 			}
 		},
 		
@@ -203,9 +203,9 @@
 			old_score = this.model.previous('user_score');
 			
 			if (new_score == 1 || (new_score == 0 && old_score == 1)) {
-				this.showDropScore("ul.score-drop > li.like");
+				this.showDropScore("ul.score-drop > li.star");
 			} else if (new_score == -1 || (new_score == 0 && old_score == -1)) {
-				this.showDropScore("ul.score-drop > li.dislike");
+				this.showDropScore("ul.score-drop > li.remove");
 			}
 		},
 
@@ -231,8 +231,8 @@
 			"click a.zoom-trigger": "showDetail",
 			"click p.discussion a": "showDetail",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
-			"click ul.score-drop > li.like a": "likeDrop",
-			"click ul.score-drop > li.dislike a": "dislikeDrop",
+			"click ul.score-drop > li.star a": "likeDrop",
+			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop"
 		},
 		
@@ -291,8 +291,8 @@
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click .settings-toolbar .button-big a": "showFullDrop",
-			"click ul.score-drop > li.like a": "likeDrop",
-			"click ul.score-drop > li.dislike a": "dislikeDrop",
+			"click ul.score-drop > li.star a": "likeDrop",
+			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
 			"click #discussions_next_page": "loadComments",
 			"click #new_comments_alert a": "showNewComments",
@@ -578,18 +578,7 @@
 			if (!this.model.isInBucket(bucket)) {
 				this.model.setBucket(bucket);
 			}
-		},
-		
-		saveNewBucket: function() {
-			
-			if (this.$("#create-bucket-form").hasClass("nodisplay")) {
-				this.$("#show-create-new").remove();
-				this.$("#create-bucket-form").removeClass("nodisplay")
-				return false;
-			}
-			
-			return Assets.BaseModalAssetListView.prototype.saveNewBucket.call(this);
-		}	
+		}		
 	});
 		
 	// VIEW: Listing of drops
