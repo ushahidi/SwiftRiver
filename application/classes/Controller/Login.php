@@ -33,8 +33,6 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->riverid_auth = TRUE;
 		}
 
-		$this->template->content = View::factory('pages/login/layout');
-		$this->template->content->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
 	}
 	
 	/**
@@ -44,11 +42,12 @@ class Controller_Login extends Controller_Swiftriver {
 	 */	
 	public function action_index()
 	{
-		$this->template->content->active = 'login';
-		$this->template->content->sub_content = View::factory('pages/login/main')
+		$this->template->content = View::factory('pages/login/main')
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
+		$this->template->content->active = 'login';
+		$this->template->content->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
 
 		if ($this->user)
 		{

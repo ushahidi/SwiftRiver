@@ -24,12 +24,12 @@
 	<script type="text/javascript">
 		// Globals
 		<?php if ( ! empty($user)): ?>
-			<?php if ($user->account->id): ?>
-				window.logged_in_account = <?php echo $user->account->id; ?>;
-				window.logged_in_account_path = "<?php echo $user->account->account_path; ?>";
+			<?php if ($user['id']): ?>
+				window.logged_in_account = <?php echo $user['id']; ?>;
+				window.logged_in_account_path = "<?php echo $user['account_path']; ?>";
 			<?php endif; ?>
 			
-			window.logged_in_user = <?php echo $user->id; ?>;
+			window.logged_in_user = <?php echo $user['id']; ?>;
 		<?php else: ?>
 			window.logged_in_account = null;
 			window.logged_in_account_path = null;

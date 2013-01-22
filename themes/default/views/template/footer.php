@@ -4,6 +4,7 @@
 
 	<div id="modal-container">
 		<div class="modal-window"></div>
+		<div class="modal-window-secondary"></div>
 	</div>
 
 	<div id="confirmation-container">

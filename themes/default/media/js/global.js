@@ -1,4 +1,46 @@
-$(document).ready(function() {	
+$(document).ready(function() { 
+	// DROP SHOW 'REMOVE' ON HOVER
+	if (window.innerWidth > 800) {
+		$('article.drop, .drop-full').hover(
+			function() {
+				$(this).find('.drop-status').fadeIn('fast');		
+			},function() {
+				$(this).find('.drop-status').fadeOut('fast');
+		});
+	}
+
+	// (DEMO) DROP: Create new drop from selection	
+	function getSelected() {
+		if(window.getSelection) {
+			return window.getSelection(); 
+		} else if(document.getSelection) {
+			return document.getSelection(); 
+		} else {
+			var selection = document.selection && document.selection.createRange();
+			if(selection.text) { 
+				return selection.text; 
+			}
+			return false;
+		}
+		return false;
+	}
+			
+	$('article#content').mouseup(function(e) {
+		var selection = getSelected();
+		if (selection && (selection = new String(selection).replace(/^\s+|\s+$/g,''))) {
+			$('#create-new').fadeIn('fast');
+//			alert(selection);
+		}
+	});
+
+	// DEMO: DROP SCORING
+	$('article.drop .drop-score').toggle(function() {
+		$(this).addClass('selected').children('a').append('<span class="star-total">23</span>');	
+	}, function() {
+		$(this).removeClass('selected');
+		$(this).find('.star-total').remove();	
+	});
+
 	// POPOVER WINDOWS
 	function popoverHide () {
 		$(".popover-window").bind( "clickoutside", function(event){
@@ -7,296 +49,157 @@ $(document).ready(function() {
 	}
 	$('a.popover-trigger').live('click', function(e) {
 		$(this).closest('.popover').toggleClass('active');
-		$(this).closest('.popover').find('.popover-window').fadeToggle('fast')
+		$(this).closest('.popover').find('.popover-window').fadeToggle('fast');
 		popoverHide();
 		return false;
+	});	
+ 
+	// FILTERS TOGGLE DISPLAY
+	$('.filters-type .toggle-filters-display').live('click touchstart', function() {
+		$(this).parent().toggleClass('visible');
+		$(this).siblings('.filters-type-details').slideToggle('fast');
 	});
-	
-	// A common object for all window types
-	function Dialog(contents, modal) {
-		// Whether the dialog is modal or not
-		this.modal = (modal == undefined ? false : modal);
-
-		// Overlay  holding the dialog
-		this.container = this.modal ? $("#modal-container") : $("#zoom-container");
-
-		// Contents of the dialog
-		this.contents = contents;
-
-		// The dialog box
-		this.dialogBox = $("div.modal-window", this.container);
-	}
-	
-	// Hides a window
-	Dialog.prototype.hide = function() {
-		// Do nothing if an attempt is made to close a zoom window
-		// when a modal window is open
-		if (!this.modal && $('body').hasClass('has_modal')) {			
-			return;
-		} 
-		
-		this.container.fadeOut('slow');
-
-		if (!this.modal) {			
-			$('body').removeClass("zoomed");
-		} else {			
-			$('body').removeClass("has_modal");
-		}
-		
-		if (!$('body').hasClass('zoomed') && !$('body').hasClass('has_modal')) {
-			$('body').removeClass('noscroll');
-		}
-		
-		this.dialogBox.unbind();
-		return this;
-	};
-	
-	// Bind window close event handlers
-	Dialog.prototype._registerHide = function() {
-		var context = this;
-		
-		// Close when clicked outside
-		this.dialogBox.bind("clickoutside", function(event){
-			context.hide();
-			return false;
-		});
-		
-		// Close the window when the escape key is pressed
-		var keyHandler = function (e) {
-			if(e.keyCode == 27){
-				if (context.hide()) {
-					$(window).unbind("keypress", keyHandler);
-				}
-				return false;
-			}
-		}
-		$(window).bind("keypress", keyHandler);
-		return this;
-	};
-	
-	// Show the window
-	Dialog.prototype.show = function() {
-		this.dialogBox.html(this.contents);
-		this.container.fadeIn(350);
-		saveToolbar();
-		$('body').addClass('noscroll');
-		this._registerHide(); 
-		
-		if (!this.modal) {
-			$('body').addClass('zoomed');
-		} else {
-			$('body').addClass('has_modal');
-		}
-
-		return this;
-	};
-	
-	function loadUrl(url, cssClass, callback, context) {
-		if (!context) {
-			context = this;
-		}
-		$.get(url, function(data) {
-			// jQuery doesn't have a method like closest() that traverses
-			// down the DOM so the below is required to check if the root
-			// node of the data retrieved contains the class we want otherwise
-			// find starting with the children.
-			var content = $(data);
-			if (! content.hasClass(cssClass)) {
-				content = $(data).find("." + cssClass);
-			}
-			callback.call(context, content);
-		})
-	}
 	
 	// MODAL WINDOWS
-	var modalWindow = null;
-	window.modalHide = function () {
-		if(modalWindow) {
-			modalWindow.hide();
-		}
+	function backModal() {		
+		$('a.modal-back').live('click', function(e) {
+			$('#modal-viewport').removeClass('view-secondary');
+			$('#modal-primary > div').fadeIn('fast');
+			$('#modal-secondary .modal-segment').fadeOut('fast');
+			e.preventDefault();
+		});
 	}
-	window.modalShow = function (contents) {
-		modalWindow = new Dialog(contents, true).show();
-	}
-	$('a.modal-trigger').live('click', function() {
-		loadUrl($(this).attr('href'), "modal", modalShow);
-		return false;
-	});
-	$('article.modal .close a').live('click', function(e) {
-		modalWindow.hide();
-		return false;
-	});
-
-	// ZOOM WINDOWS
-	var zoomWindow = null;
-	window.zoomHide = function() {
-		if (zoomWindow) {
-			zoomWindow.hide();
-		}
-	}
-	window.zoomShow = function (contents) {
-		zoomWindow = new Dialog(contents).show();
-	}
-	$('a.zoom-trigger').live('click', function() {
-		loadUrl($(this).attr('href'), "modal", zoomShow);
-		return false;
-	});
-	$('#zoom-container .close a').live('click', function() {
-		zoomHide();
-		return false;
-	});
-	
-
-	// Click handler for the DOM elements that
-	// generate confirmation messages when clicked
-	var clickHandler = function(obj, evt) {
-		var msg = $(obj).data('title');
-		// Only proceed when there's content
-		if (msg != undefined) {
-			var context = $(obj).closest('div.parameter').find('h2').html();
-			if (context == null) {
-				context = '';
-			}
-
-			// Container for the confirmatino messages
-			container = $('#confirmation-container');
-
-			// Build out the HTML
-			var replaceHTML = "<div class=\"modal-window\">" +
-			    "<article class=\"modal base\">" + 
-			    "<p>You are " + msg + " " + context + "</p>" +
-			    "</article>" +
-			    "</div>";
-			
-			$('div.modal-window', container).replaceWith(replaceHTML);
-
-			container.fadeIn('fast').addClass('visible');
-			container.delay(1000).fadeOut('fast').removeClass('visible');
-			evt.stopPropagation();
-		}
-	};
-
-	// CONFIRMATION MESSAGES
-	$('.follow a').live('click', function(e) {
-		clickHandler(this, e);
-	});
-
-	// HIDE OPTION MENU
-	$('.remove a').live('click', function(e) {
-		var optionToHide = $(this).attr("href");
-		$(optionToHide).fadeOut('fast').remove();
-		$(this).parent().fadeOut('fast').remove();
+	$('a.modal-trigger').live('click', function(e) {
+		var urlModal = $(this).attr('href');
+		$('#modal-container div.modal-window').load(urlModal + ' .modal', function(){
+			saveToolbar();
+		});
+		$('#modal-container').fadeIn('fast').addClass('visible');
+		$('body').addClass('noscroll');
+		$('div.modal-window').unbind();
 		e.preventDefault();
 	});
+	$('a.modal-transition').live('click', function(e) {
+		var modalHash = $(this).prop('hash');
+		$('#modal-viewport').addClass('view-secondary');
+		$('#modal-secondary ' + modalHash).fadeIn('fast');
+		$('#modal-primary > div').fadeOut('fast');
+		$('#modal-container').scrollTop(0,0);		
+		backModal();
+		e.preventDefault();
+	});	
+	$('a.modal-close').live('click', function(e) {
+		$('#modal-container, #filters.visible').fadeOut('fast').removeClass('visible');
+		$('body').removeClass('noscroll');
+		$('div.modal-window').unbind();
+		e.preventDefault();
+	});
+	
+	// MODAL WINDOWS: Tabs 
+	$('.modal-tabs-menu a').live('click', function(e) {
+		var modalTabHash = $(this).prop('hash');
+		$('.modal-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
+			$('.modal-tabs-window ' + modalTabHash).fadeIn('fast').addClass('active');		
+		});
+		$('.modal-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});
+	$('.modal-field-tabs-menu a').live('click', function(e) {
+		var modalFieldTabHash = $(this).prop('hash');
+		$('.modal-field-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
+			$('.modal-field-tabs-window ' + modalFieldTabHash).fadeIn('fast').addClass('active');		
+		});
+		$('.modal-field-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});	
 
-	// DISPLAY SAVE TOOLBAR
-	function saveToolbar () {
-		if ($(".save-toolbar").length > 0) {
-			$('select').change(function() {
-				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
-			});
-			$('input, textarea').keypress(function() {
-				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
-			});	
-			$(':radio, :checkbox').click(function() {
-				$(this).closest('section.property-parameters, .modal-body form').find('.save-toolbar').fadeIn('fast');
-			});						
-			$('.save-toolbar .cancel a').live('click', function(e) {
-				$(this).closest('.save-toolbar').fadeOut('fast');
-				e.preventDefault();
-			});
+	// TABS (Body content)	
+	$('.body-tabs-menu a').live('click', function(e) {
+		var bodyTabHash = $(this).prop('hash');
+		$('.body-tabs-window div.active').removeClass('active').fadeOut(100, function(){
+			$('.body-tabs-window ' + bodyTabHash).fadeIn('fast').addClass('active');		
+		});
+		$('.body-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});
+	
+	// DROPDOWN
+	$('.has-dropdown > a').live('click', function(e) {
+		$(this).siblings('.dropdown-menu').fadeToggle('fast');
+		e.preventDefault();
+	});
+	
+	// TABLE TOOLBAR (Container) INTERACTION
+	function toolbarStatus () {
+		if ($('.container input:checkbox:checked').length > 0) {
+			$('.container-toolbar').addClass('toolbar-active');
+		}
+		else {
+			$('.container-toolbar').removeClass('toolbar-active');		
 		}
 	}
-	saveToolbar();
+	$('.container tr input:checkbox').change(function() {
+		if ($(this).is(':checked')) {
+			$(this).closest('tr').addClass('row-selected');			
+			toolbarStatus();
+		}
+		else {
+			$(this).closest('tr').removeClass('row-selected');	
+			toolbarStatus();
+		}
+	});	
+
+	// ZOOM WINDOWS
+	function zoomHide () {
+		$("#zoom-container div.modal-window").bind( "clickoutside", function(event){
+			$(this).parent().fadeOut('fast').removeClass('visible');
+			$('body').removeClass('noscroll zoomed');
+			$(this).unbind();
+		});
+	}
+	$('a.zoom-trigger').live('click', function(e) {
+		var urlZoom = $(this).attr('href');
+		$('#zoom-container div.modal-window').load(urlZoom + ' .modal');
+		$('#zoom-container').fadeIn('fast').addClass('visible');
+		$('body').addClass('noscroll zoomed');
+		zoomHide();
+		e.preventDefault();
+	});
+	$('a.zoom-close').live('click', function(e) {
+		$('#zoom-container').fadeOut('fast').removeClass('visible');
+		$('body').removeClass('noscroll zoomed');
+		$('div.modal-window').unbind();
+		e.preventDefault();
+	});
 	
-	// DROP SHOW 'REMOVE' ON HOVER
-	if (window.innerWidth > 800) {
-		$('article.drop').hover(
-			function() {
-				$(this).find('.remove').fadeIn('fast');		
-			},function() {
-				$(this).find('.remove').fadeOut('fast');
+	// SMALL-SCREEN SCRIPTING
+	if (window.innerWidth < 615) {
+		$('a.filters-trigger').live('click', function(e) {
+			$('#filters').fadeIn('fast').addClass('visible');
+			$('body').addClass('noscroll');
+			$('div.modal-window').unbind();
+			e.preventDefault();
 		});
 	}	
-
-	// ACCORDION MENU
-	$('section.meta-data h3').live('click', function(e) {
-		$(this).toggleClass('open').siblings('div.meta-data-content').slideToggle('fast');
-	});
-
-	// SCROLL TO BUOY
-	if ($("#buoy").length > 0) {
-		scrollToBuoy();
-	}
-
+	
 	// Submit form when enter key hit in a password field
-	$('input[type=password]').keypress(function(e){
+	$('input').keypress(function(e){
 		if(e.which == 13){
 			$(this).parents('form:first').submit();
 			e.preventDefault();
 		}
 	});
-	
-	
-	// Global river and bucket lists
-	if (typeof(logged_in_account) !== 'undefined')
-	{
-		// Header menu button
-		$('header .user-menu .bucket a').live('click', function () {
-			modalShow(new Assets.HeaderBucketsModal({collection: Assets.bucketList}).render().el);
-			return false;
-		});
-		$('header .user-menu .rivers a').live('click', function () {
-			modalShow(new Assets.HeaderRiversModal({collection: Assets.riverList}).render().el);
-			return false;
-		});
-	}
-	
-	// Confirmation window
-	if ($("#confirm-window-template").length) {
-		window.ConfirmationWindow = Backbone.View.extend({
-			tagName: "article",
-			
-			className: "modal",
-			
-			template: _.template($("#confirm-window-template").html()),
-			
-			events: {
-				"click .button-blue a": "confirm"
-			},
-			
-			constructor: function(message, callback, context) {
-				Backbone.View.prototype.constructor.apply( this, arguments);
-				this.message = message;
-				this.callback = callback;
-				this.context = context;
-			},
-			
-			show: function() {
-				modalShow(this.render().el);
-			},
-			
-			render: function() {
-				this.$el.html(this.template({message: this.message}));
-				return this;	
-			},
-			
-			confirm: function() {
-				modalHide();
-				this.callback.call(this.context);
-				return false;
-			}
-		});
-	}
+
 });
 
-// Hide mobile address bar
 window.addEventListener("load",function() {
-	setTimeout(function(){
-		window.scrollTo(0, 1);
-	}, 0);
+  setTimeout(function(){
+	window.scrollTo(0, 1);
+  }, 0);
 });
-
 
 function submitForm(button){
 	// Remove any onclick handler attached to the button
@@ -312,55 +215,3 @@ function submitForm(button){
 	setTimeout(function() { form.submit(); }, 500);
 }
 
-function submitAjax(button){
-	var form = $(button).parents('form:first');
-	form.submit();
-}
-
-function flashMessage(el, text) {
-	var message = "<ul>";
-	message += text;
-	message += "</ul>";
-	// Show message and fade it out slooooowwwwwwlllllyyyy
-	el.html(message).fadeIn("fast").fadeOut(4000).html();
-}
-
-function showConfirmationMessage(message) {
-	var container = $("#confirmation-container");
-
-	// HTML with the message
-	var replaceHTML = "<div class=\"modal-window\">" +
-	    "<article class=\"modal base\">" + 
-	    "<p>" + message + "</p>" +
-	    "</article></div>";
-
-	$('div.modal-window', container).replaceWith(replaceHTML);
-	container.fadeIn('fast').addClass('visible');
-	container.delay(1250).fadeOut('fast').removeClass('visible');
-}
-
-function showDefaultAvatar(source) {
-	source.onerror = "";
-	source.src = window.default_avatar_url;
-	return true;
-}
-
-function scrollToBuoy() {
-	$.getScript('/themes/default/media/js/jquery.scrollto.js', function() {
-		$.scrollTo($('#buoy'), {
-			duration: 300,
-			axis: 'y',
-			easing: 'linear',
-			offset: -100
-		});
-		$('#buoy').prepend("<div class='buoy-message base'><p>Here's where you left off.</p></div>");
-		$('#buoy .buoy-message').fadeIn('fast');
-		$('#buoy .buoy-message').delay(2000).fadeOut('slow');
-	});
-}
-
-// Returns true if the window scrolled to bottomEL
-function nearBottom(bottomEl) {
-	var bufferPixels = 40;
-	return $(document).height() - $(window).scrollTop() - $(window).height() - bufferPixels < $(document).height() - bottomEl.offset().top;
-}

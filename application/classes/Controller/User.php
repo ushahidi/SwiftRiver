@@ -49,25 +49,9 @@ class Controller_User extends Controller_Swiftriver {
 	{
 		// Execute parent::before first
 		parent::before();
-
-		// Anonymous user doesn't have a profile
-		if ( $this->visited_account->user->username == 'public')
-		{
-			$this->redirect('welcome', 302);
-		}
 		
-		// Check if the visiting user is the owner of the account
-		if ( $this->account->is_owner($this->visited_account->user->id))
-		{
-			$this->owner = TRUE;
-		}
+		$this->owner = TRUE;
 		
-		// Is the account private?
-		if ( ! $this->owner AND $this->visited_account->account_private)
-		{
-			$this->redirect($this->dashboard_url, 302);
-		}
-
 		$this->template->content = View::factory('pages/user/layout')
 			->bind('account', $this->visited_account)
 			->bind('owner', $this->owner)
@@ -79,8 +63,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('view_type', $view_type);
 		$this->template->content->nav = $this->get_nav($this->user);
 			
-		$following = $this->visited_account->user->following->find_all();
-		$followers =  $this->visited_account->user->followers->find_all();
+		$following = array(); // $this->visited_account->user->following->find_all();
+		$followers =  array(); //$this->visited_account->user->followers->find_all();
 		$view_type = "dashboard";
 
 		if ( ! $this->owner)
@@ -138,10 +122,9 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('owner', $this->owner)
 		    ->bind('gravatar_view', $gravatar_view);
 
-		$fetch_url = URL::site().$this->visited_account->account_path.'/user/action/actions';
+		$fetch_url = URL::site($this->user['account_path'].'/user/action/actions');
 
-		$activity_list = Model_User_Action::get_activity_stream(
-			$this->visited_account->user->id, $this->user->id, ! $this->owner);
+		$activity_list = array();
 
 		$this->sub_content->has_activity = count($activity_list) > 0;
 		$activities = json_encode($activity_list);

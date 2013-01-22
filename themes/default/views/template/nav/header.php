@@ -1,12 +1,6 @@
 <ul class="global-menu">
 	<li class="home"><a href="/"><span class="icon-home"></span></a></li>
-	<?php if ($user AND $user->account->loaded()): ?>
-		<li class="search">
-			<a href="<?php echo URL::site('search/main'); ?>" class="modal-trigger" title="<?php echo __("Search"); ?>">
-				<span class="icon-search"></span>
-			</a>
-		</li>
-	<?php endif; ?>
+	<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon-search"></span></a></li>
 </ul>
 </div>
 
@@ -14,7 +8,6 @@
 	<ul class="user-menu">	
 		<!-- hide parts of the header menu in the login page and for non registered users -->
 		<?php if ($user AND ! $anonymous): ?>
-			<?php if ($user->account->loaded()): ?>
 				<li class="rivers"><a href="#"><span class="icon-river"></span><span class="label"><?php echo __("Rivers"); ?></span></a></li>
 				<li class="bucket"><a href="#"><span class="icon-bucket"></span><span class="label"><?php echo __("Buckets"); ?></span></a></li>
 				<li class="user popover">
@@ -24,19 +17,19 @@
 							<?php if ($num_notifications): ?>
 								<span class="notification"><?php echo $num_notifications; ?></span>
 							<?php endif ?>
-							<img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" />
+							<img src="<?php echo Swiftriver_Users::gravatar('', 80); ?>" />
 						</span>
-						<span class="nodisplay"><?php echo $user->name; ?></span>
+						<span class="nodisplay">Account Name</span>
 					</a>
 					<ul class="popover-window base header-toolbar">
 						<li>
-							<a href="<?php echo URL::site().$user->account->account_path; ?>">
-								<?php echo __('Dashboard');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
+							<a href="#">
+								<?php echo __('Your Activity');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
 							</a>
 						</li>
 						<li class="group">
-							<a href="<?php echo URL::site().$account->account_path.'/settings'; ?>">
-								<?php echo __("Account settings"); ?>
+							<a href="#">
+								<?php echo __("Account Settings"); ?>
 							</a>
 						</li>
 						<?php if ($admin): ?>
@@ -48,16 +41,15 @@
 						<?php endif; ?>
 						<li>
 							<a href="<?php echo URL::site().'login/done'; ?>">
-								<em><?php echo __('Log out');?></em>
+								<em><?php echo __('Log Out');?></em>
 							</a>
 						</li>
 					</ul>
 				</li>
-			<?php endif; ?>
 		<?php elseif ($controller != 'login'): ?>
 			<li class="login">
 				<a href="<?php echo URL::site('login'); ?>" class="modal-trigger">
-					<span class="label"><?php echo __("Log in"); ?></span>
+					<span class="icon-login"></span><span class="label">Log in</span>
 				</a>
 			</li>
 		<?php endif; ?>
@@ -92,7 +84,7 @@
 	</div>
 
 	<div class="modal-body create-new">
-		<p class="button-blue"><a href="<?php echo URL::site().$user->account->account_path.'/river/create'; ?>">Create a new river</a></p>
+		<p class="button-blue"><a href="#">Create a new river</a></p>
 	</div>
 </script>
 

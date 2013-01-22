@@ -1,122 +1,90 @@
-<div class="col_9">
-	<article id="primer" class="container base">
-		<header class="cf">
-			<div class="property-title col_6">
-				<h1>Get started</h1>
-			</div>
-		</header>
-		<section class="property-parameters cf">
-			<div class="parameter primer-item learn">
-				<h3><a href="#">Learn how SwiftRiver works</a></h3>
-			</div>
-			<div class="parameter primer-item create">
-				<h3><a href="/markup/river/new.php">Create a river</a></h3>
-			</div>
-			<div class="parameter primer-item search">
-				<h3><a href="/markup/modal-search.php" class="modal-trigger">Find stuff that interests you</a></h3>
-			</div>
-		</section>
-	</article>
+<div id="filters-trigger" class="col_12 cf">
+	<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
+</div>
 
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title col_12"><h1><?php echo __("Activity"); ?></h1></div>
-		</header>
-		<section class="property-parameters">			
-			<div id="new_activities_alert" class="parameter activity-item alert cf nodisplay">
-				<a href="#">Click here to show <span id="new_activity_count">0 new activities</span></a>
+<section id="filters" class="col_3">
+	<div class="modal-window">
+		<div class="modal">		
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+				<h1>Filters</h1>
 			</div>
-		</section>
-		<section id="activity_stream" class="property-parameters">
-			<?php echo $activity_stream; ?>
-		</section>
-		<section id="next_page_button" class="property-parameters">
-		</section>
-		<div id="no_activities_alert" class="alert-message blue nodisplay">
-			<p>
-				<strong><?php echo __("Empty activity stream"); ?></strong>
-				<?php echo __("There are no items in your activity stream"); ?>
-			</p>
+
+			<ul class="filters-primary">
+				<li class="active"><a href="#" class="modal-close">Everything</a></li>
+				<li><a href="#" class="modal-close">Pending</a></li>
+				<li><a href="#" class="modal-close">Discussion</a></li>
+			</ul>
 		</div>
-	</article>
-	<?php
-	/*
-	<article class="container action-list base">
-		<header class="cf">
-			<div class="property-title">
-				<h1><?php echo __("Popular this week"); ?></h1>
-			</div>
-		</header>
-		<section class="property-parameters">
-			<!-- List what has taken place this past week -->
-		</section>
-	</article>
-	*/
-	?>
-</div>
+	</div>		
+</section>
 
-<div class="col_3">
-	<article class="container action-list base" id="buckets">
-		<header class="cf">
-			<div class="property-title col_12">
-				<h1>
-					<a href="<?php echo URL::site().$account->account_path.'/buckets'; ?>">
-						<?php echo __("Buckets"); ?>
-					</a>
-				</h1>
+<div class="col_9">
+	<div id="news-feed" class="container base">
+		<!-- NO RESULTS: Clear filters
+		<div class="null-message">
+			<h2>No rivers or buckets to show.</h2>
+			<p>Clear active filters.</p>
+		</div>
+		-->
+					
+		<article class="news-feed-item cf">
+			<div class="item-type">
+				<span class="icon-comment"></span>
 			</div>
-		</header>
-		<section class="property-parameters asset-list" style="display:none;">
-			<h2 class="category own-title" style="display:none;"><?php echo __("Your Buckets"); ?></h2>
-			<!-- Users's buckets go here -->
-			
-			<h2 class="category collaborating-title" style="display:none;"><?php echo __("Buckets You Collaborate On"); ?></h2>
-			<!-- Bucket's user is collaborating on go here -->
-			
-			<h2 class="category following-title" style="display:none;"><?php echo __("Buckets You Follow"); ?></h2>
-			<!-- Buckets user is subscribed to go here -->
-		</section>
-		<section class="property-parameters empty-message" style="display:none">
-			<div class="parameter">
-				<p><a href="#">Create a bucket</a></p>
+			<div class="item-summary">
+				<span class="timestamp">42 minutes ago</span>
+				<h2><a href="#">Juliana Rotich</a> commented on bucket <a href="#">Kenya election hate speech</a></h2>
+				<div class="item-sample">
+					<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_reasonably_small.jpg" /></a>
+					<div class="item-sample-body">
+						<p>Pork andouille tail, jowl ball tip jerky turkey bacon tongue flank strip steak swine pork chop. Sirloin chuck chicken spare ribs kielbasa tenderloin swine sausage leberkas cow.</p>
+					</div>
+				</div>
 			</div>
-		</section>		
-	</article>	
-	
-	<article class="container action-list base" id="rivers">
-		<header class="cf">
-			<div class="property-title col_12">
-				<h1>
-					<a href="<?php echo URL::site().$account->account_path.'/rivers'; ?>">
-						<?php echo __("Rivers"); ?>
-					</a>
-				</h1>
+		</article>
+					
+		<article class="news-feed-item cf">
+			<div class="item-type">
+				<span class="icon-river"></span>
 			</div>
-		</header>
-		<section class="property-parameters asset-list" style="display:none;">
-			<h2 class="category own-title" style="display:none;"><?php echo __("Your Rivers"); ?></h2>
-			<!-- Users's rivers go here -->
-			
-			<h2 class="category collaborating-title" style="display:none;"><?php echo __("Rivers You Collaborate On"); ?></h2>
-			<!-- Rivers's user is collaborating on go here -->
-			
-			<h2 class="category following-title" style="display:none;"><?php echo __("Rivers You Follow"); ?></h2>
-			<!-- Rivers user is subscribed to go here -->
-		</section>
-		<section class="property-parameters empty-message" style="display:none">
-			<div class="parameter">
-				<p><a href="<?php echo URL::site().$account->account_path.'/river/create'; ?>">Click here to create a river</a></p>
+			<div class="item-summary">
+				<span class="timestamp">3 hours ago</span>
+				<h2><a href="/markup/river">Open Source software</a> added <strong>60 new drops</strong></h2>
+				<div class="item-sample">
+					<span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:40%;"></span></span>40% full</span>
+				</div>
 			</div>
-		</section>		
-	</article>
-</div>
+		</article>
 
-<script type="text/template" id="dashboard-asset-list-item-template">
-    <% if (parseInt(account_id) != logged_in_account) { %>
-	<% var selected = (subscribed||collaborator) ? "selected" : ""; %>
-	<div class="actions">
-		<p class="button-white follow only-icon has-icon <%= selected %>"><a href="#" title="now following"><span class="icon"></span><span class="nodisplay"></span></a></p>
+		<article class="news-feed-item cf">
+			<div class="item-type">
+				<span class="icon-comment"></span>
+			</div>
+			<div class="item-summary">
+				<span class="timestamp">1 day ago</span>
+				<h2><a href="#">Rob Baker</a> commented on bucket <a href="#">Web development</a></h2>
+				<div class="item-sample">
+					<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/899724610/profile-me2_normal.jpg" /></a>
+					<div class="item-sample-body">
+						<p>Short loin meatball pork loin leberkas venison pork belly tri-tip short ribs ground round ribeye. Tail pastrami shankle pancetta pork belly ball tip, filet mignon shank.</p>
+					</div>
+				</div>
+			</div>
+		</article>
+					
+		<article class="pending news-feed-item cf">
+			<div class="item-type">
+				<span class="icon-bucket"></span>
+			</div>
+			<div class="item-summary">
+				<span class="timestamp">2 days ago</span>
+				<h2><a href="#">Linda Kamau</a> invited you to collaborate on bucket <a href="#">Skyfall</a></h2>
+				<div class="item-actions">
+					<a href="#" class="button-white"><i class="icon-checkmark"></i>Accept</a>
+					<a href="#" class="button-white">Ignore</a>
+				</div>
+			</div>
+		</article>														
 	</div>
-	<% } %>
-	<h3><a href="<%= url %>"><%= display_name %></a></h3>
-</script>
+</div>

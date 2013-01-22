@@ -160,44 +160,25 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Open session
 		$this->session = Session::instance();
-
-		// If an api key has been provided, login that user
-		$api_key = $this->request->query('api_key');
-		if ($api_key)
-		{
-			$user_orm = ORM::factory('User', array('api_key' => $api_key));
-			if ($user_orm->loaded() AND $user_orm->username != 'public') 
-			{
-				Auth::instance()->force_login($user_orm);
-			}
-			else
-			{
-				// api_keys used by apps. Instead of giving the login page
-				// tell them something went wrong.
-				throw new HTTP_Exception_403();
-			}
-		}
-
-		// In case anonymous setting changed and user had a session,
-		// log out 
-		if
-		(
-			Auth::instance()->logged_in() AND 
-			Auth::instance()->get_user()->username == 'public' AND 
-			! (bool) Model_Setting::get_setting('anonymous_access_enabled')
-		)
-		{
-			Auth::instance()->logout();
-		}
 		
-		// Anonymous logged in and login controller requested, logout
-		if (
-				Auth::instance()->logged_in() AND 
-				Auth::instance()->get_user()->username == 'public' AND 
-					strtolower($this->request->controller()) == 'login'
-			)
+		if (Auth::instance()->logged_in())
 		{
-			Auth::instance()->logout();
+			$this->user = Auth::instance()->get_user();
+			Kohana::$log->add(Log::DEBUG, var_export($this->user, TRUE));
+			
+			if ($this->user['owner']['username'] == 'public')
+			{
+				if 
+				(
+					// Anonymous logged in and login controller requested, logout
+					strtolower($this->request->controller()) == 'login' OR
+					// In case anonymous setting changed and user had a session,
+					! (bool) Model_Setting::get_setting('anonymous_access_enabled')
+				)
+				{
+					Auth::instance()->logout();
+				}
+			}
 		}
 
 		// If we're not logged in, gives us chance to auto login
@@ -246,34 +227,18 @@ class Controller_Swiftriver extends Controller_Template {
 		{
 
 			// Is anonymous logged in?
-			if ($this->user->username == 'public')
+			if ($this->user['owner']['username'] == 'public')
 			{
 				$this->anonymous = TRUE;
 			}
 			
 			// Is this user an admin?
-			$this->admin = $this->user->is_admin();
+			$this->admin = FALSE; // FIXME:$this->user->is_admin();
 			
 			if (strtolower(Kohana::$config->load('auth.driver')) == 'riverid' AND
 	                      ! in_array($this->user->username, Kohana::$config->load('auth.exempt'))) 
 			{
 				$this->riverid_auth = TRUE;
-			}
-
-			// Does this user have an account space?
-			if ( ! ($this->account = $this->cache->get('user_account_'.$this->user->id, FALSE)))
-			{
-				$this->account = ORM::factory('Account')
-					->where('user_id', '=', $this->user->id)
-					->find();
-				$this->cache->set('user_account_'.$this->user->id, $this->account, 3600 + rand(0,3600));
-			}
-			
-				
-			if ( ! $this->account->loaded() AND $this->request->uri() != 'register')
-			{
-				// Make the user create an account
-				$this->redirect('register', 302);
 			}
 			
 			// Logged in user's dashboard url
@@ -283,14 +248,14 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			else
 			{
-				$this->dashboard_url = URL::site().$this->account->account_path;
+				$this->dashboard_url = URL::site().$this->user['account_path'];
 			}
 			
 			// Build the base URL
 			$visited_account_path = $this->request->param('account');
-			if ($visited_account_path AND $visited_account_path != $this->account->account_path) 
+			if ($visited_account_path AND $visited_account_path != $this->user['account_path']) 
 			{
-				$this->base_url = URL::site().$visited_account_path.'/'.strtolower($this->request->controller());
+				$this->base_url = URL::site($visited_account_path.'/'.strtolower($this->request->controller()));
 				$this->visited_account = ORM::factory('Account', 
 					array('account_path' => $visited_account_path));
 				
@@ -302,8 +267,8 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			else
 			{
-				$this->base_url = URL::site().$this->account->account_path.'/'.strtolower($this->request->controller());
-				$this->visited_account = $this->account;
+				$this->base_url = URL::site($this->user['account_path'].'/'.strtolower($this->request->controller()));
+				$this->visited_account = $this->user;
 			}
 		}
 
@@ -332,17 +297,17 @@ class Controller_Swiftriver extends Controller_Template {
 			
 			if ($this->user)
 			{
-				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user->id);
-				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user->id, FALSE)))
+				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
+				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
-					$buckets = json_encode($this->user->get_buckets_array($this->user));
-					Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
+					$buckets = array();
+					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
 				$this->template->header->bucket_list = $buckets;
-				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user->id, FALSE)))
+				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
-					$rivers = json_encode($this->user->get_rivers_array($this->user));
-					Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
+					$rivers = array();
+					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;
 			}

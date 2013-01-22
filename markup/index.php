@@ -55,7 +55,7 @@
 						<h2>No rivers or buckets to show.</h2>
 						<p>Clear active filters.</p>
 					</div>
-					--->
+					-->
 					
 					<article class="news-feed-item cf">
 						<div class="item-type">
