@@ -21,14 +21,12 @@
 
 <div class="col_9">
 	<div id="news-feed" class="container base">
-		<!-- NO RESULTS: Clear filters
 		<div class="null-message">
 			<h2>No rivers or buckets to show.</h2>
 			<p>Clear active filters.</p>
 		</div>
-		-->
 					
-		<article class="news-feed-item cf">
+		<!--article class="news-feed-item cf">
 			<div class="item-type">
 				<span class="icon-comment"></span>
 			</div>
@@ -85,6 +83,6 @@
 					<a href="#" class="button-white">Ignore</a>
 				</div>
 			</div>
-		</article>														
+		</article-->														
 	</div>
 </div>

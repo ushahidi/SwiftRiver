@@ -253,7 +253,7 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
  */
 Route::set('account_pages', '<account>/<action>',
     array(
-    	'action' => '(rivers|buckets|create|settings|share|followers|following|invite)'
+    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)'
     ))
 	->defaults(array(
 		'controller' => 'user',

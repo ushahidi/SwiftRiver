@@ -54,13 +54,8 @@ class Controller_User extends Controller_Swiftriver {
 		
 		$this->template->content = View::factory('pages/user/layout')
 			->bind('account', $this->visited_account)
-			->bind('owner', $this->owner)
-			->bind('active', $this->active)
-			->bind('sub_content', $this->sub_content)
-			->bind('anonymous', $this->anonymous)
-			->bind('followers', $followers)
-			->bind('following', $following)
-			->bind('view_type', $view_type);
+				->bind('sub_content', $this->sub_content)
+			->bind('active', $this->active);
 		$this->template->content->nav = $this->get_nav($this->user);
 			
 		$following = array(); // $this->visited_account->user->following->find_all();
@@ -83,51 +78,19 @@ class Controller_User extends Controller_Swiftriver {
 	
 	public function action_index()
 	{
-		if($this->owner)
-		{
-			$this->template->header->title = __('Dashboard');
-			$this->template->header->js = View::factory('pages/user/js/main');
+		$this->template->header->title = __('Dashboard');
+		$this->active = 'activities-navigation-link';
 			
-			$this->active = 'dashboard-navigation-link';
-			
-			$this->sub_content = View::factory('pages/user/main')
-				->bind('owner', $this->owner)
-				->bind('account', $this->visited_account);
-			$gravatar_view = TRUE;
-		}
-		else
-		{
-			$this->template->header->title = __(':name\'s Profile', array(
-				':name' =>  Text::limit_chars($this->visited_account->user->name)
-				)
-			);
-			$this->template->header->js = View::factory('pages/user/js/profile');
-			$this->template->header->js->visited_account = $this->visited_account;
-			$this->template->header->js->bucket_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
-			$this->template->header->js->river_list = json_encode($this->visited_account->user->get_rivers_array($this->user));
-			
-			$this->sub_content = View::factory('pages/user/profile');
-			$this->sub_content->account = $this->visited_account;
-			$this->sub_content->anonymous = $this->anonymous;
-			
-			$gravatar_view = FALSE;
-			$this->template->content->view_type = "user";
-		}		
-				
-		// Activity stream
-		$this->template->header->js .= HTML::script("themes/default/media/js/activities.js");
-		$this->sub_content->activity_stream = View::factory('template/activities')
-		    ->bind('activities', $activities)
-		    ->bind('fetch_url', $fetch_url)
-		    ->bind('owner', $this->owner)
-		    ->bind('gravatar_view', $gravatar_view);
-
-		$fetch_url = URL::site($this->user['account_path'].'/user/action/actions');
-
-		$activity_list = array();
-
-		$this->sub_content->has_activity = count($activity_list) > 0;
-		$activities = json_encode($activity_list);
+		$this->sub_content = View::factory('pages/user/activity')
+			->bind('owner', $this->owner)
+			->bind('account', $this->visited_account);
+	}
+	
+	public function action_content()
+	{
+		$this->template->header->title = __('Dashboard');
+		$this->sub_content = View::factory('pages/user/content');
+		$this->active = 'content-navigation-link';
 	}
 
 
@@ -776,18 +739,18 @@ class Controller_User extends Controller_Swiftriver {
 	{
 		$nav = array();
 
-		// List
+		// Activity Stream
 		$nav[] = array(
-			'id' => 'dashboard-navigation-link',
+			'id' => 'activities-navigation-link',
 			'url' => '',
-			'label' => __('Dashboard')
+			'label' => __('Activity')
 		);
         
-		// Drops
+		// Content
 		$nav[] = array(
-			'id' => 'settings-navigation-link',
-			'url' => '/settings',
-			'label' => __('Settings')
+			'id' => 'content-navigation-link',
+			'url' => '/content',
+			'label' => __('Content')
 		);
 
 		// Invite

@@ -19,8 +19,13 @@
 <nav class="page-navigation cf">
 	<div class="center">
 		<ul class="col_12">
-			<li class="active"><a href="#">Activity</a></li>
-			<li><a href="#">Content</a></li>
+			<?php foreach ($nav as $item): ?>
+				<li id="<?php echo $item['id']; ?>" class="<?php echo $item['id'] == $active ? 'active' : ''; ?>">
+					<a href="<?php echo URL::site($account['account_path'].$item['url']) ?>">
+						<?php echo $item['label'];?>
+					</a>
+				</li>
+			<?php endforeach; ?>
 		</ul>
 	</div>
 </nav>
