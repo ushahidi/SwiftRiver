@@ -161,10 +161,15 @@ class Controller_Swiftriver extends Controller_Template {
 		// Open session
 		$this->session = Session::instance();
 		
+		// SwiftRiver API
+		$this->api = SwiftRiver_API::instance();
+		
 		if (Auth::instance()->logged_in())
 		{
-			$this->user = Auth::instance()->get_user();
-			Kohana::$log->add(Log::DEBUG, var_export($this->user, TRUE));
+			$auth = Auth::instance()->get_user();
+			$this->api->set_access_token($auth['access_token']);
+			$this->user = $this->api->get_logged_in_account();
+			
 			
 			if ($this->user['owner']['username'] == 'public')
 			{
@@ -220,9 +225,6 @@ class Controller_Swiftriver extends Controller_Template {
 		}
 
 
-		// Get the logged In User
-		$this->user = Auth::instance()->get_user();
-		
 		if ($this->user)
 		{
 

@@ -48,7 +48,7 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('referrer', $referrer);
 		$this->template->content->active = 'login';
 		$this->template->content->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
-
+		
 		if ($this->user)
 		{
 			$this->redirect($this->dashboard_url, 302);

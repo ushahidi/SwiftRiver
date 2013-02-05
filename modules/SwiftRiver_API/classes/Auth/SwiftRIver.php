@@ -25,32 +25,20 @@ class Auth_SwiftRiver extends Kohana_Auth {
 	 */
 	protected function _login($username, $password, $remember)
 	{
-		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/Client' );
-		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/GrantType/IGrantType' );
-		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/GrantType/Password' );
-		
-		$client_id = Kohana::$config->load('auth.client_id');
-		$client_secret = Kohana::$config->load('auth.client_secret');
-		$token_endpoint = Kohana::$config->load('auth.token_endpoint');
-		
-		$client = new OAuth2\Client($client_id, $client_secret, 1);
-		$params = array('username' => $username, 'password' => $password);
-		$response = $client->getAccessToken($token_endpoint, 'password', $params);//
-		
-		if ($response['code'] == 200)
+		try 
 		{
-			$client->setAccessToken($response['result']['access_token']);
-			$response = $client->fetch('http://localhost:8080/swiftriver-core/v1/accounts/me');
-			
-			if ($response['code'] == 200)
-			{
-				$this->complete_login($response['result']);
-			}
-
-			return TRUE;
+			$auth = SwiftRiver_API::instance()->get_access_token(
+				'password', 
+				array('username' => $username, 'password' => $password)
+			);
+			$this->complete_login($auth);
+		}
+		catch (Swiftriver_API_Exception $e)
+		{
+			return FALSE;
 		}
 		
-		return FALSE;
+		return TRUE;
 	}
 	
 	public function password($username)
@@ -59,6 +47,16 @@ class Auth_SwiftRiver extends Kohana_Auth {
 	}
 	
 	public function check_password($user)
+	{
+		return FALSE;
+	}
+	
+	/**
+	 * Logs a user in, based on the authautologin cookie.
+	 *
+	 * @return  mixed
+	 */
+	public function auto_login()
 	{
 		return FALSE;
 	}
