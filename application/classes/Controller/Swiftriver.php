@@ -302,13 +302,13 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
 				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
-					$buckets = array();
+					$buckets = json_encode($this->user['buckets']);
 					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
 				$this->template->header->bucket_list = $buckets;
 				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
-					$rivers = array();
+					$rivers = json_encode($this->user['rivers']);
 					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;

@@ -63,87 +63,26 @@
 				-->
 							
 				<table>
-					<tbody>
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-river"></span>
-							</td>
-							<td class="item-summary">
-								<h2><a href="/markup/river">2012 U.S. Election polling</a></h2>
-								<div class="metadata">81 drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:22%;"></span></span>22% full</span></div>
-							</td>
-							<td class="item-categories">
-								<span class="mark" style="background-color:red;"></span>
-							</td>
-						</tr>	
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-river"></span>
-							</td>
-							<td class="item-summary">
-								<h2><a href="/markup/river">Kenya election speech</a></h2>
-								<div class="metadata">208 drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:42%;"></span></span>42% full</span></div>
-							</td>
-							<td class="item-categories">
-								<span class="mark" style="background-color:red;"></span>
-							</td>
-						</tr>																	
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-bucket"></span>
-							</td>										
-							<td class="item-summary">
-								<h2><a href="/markup/bucket">Kenya election hate speech</a></h2>
-								<div class="metadata">38 drops</div>											
-							</td>
-							<td class="item-categories">
-								<span class="mark" style="background-color:orange;"></span>
-								<span class="mark" style="background-color:green;"></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-river"></span>
-							</td>										
-							<td class="item-summary">
-								<h2><a href="/markup/river">Open Source software</a></h2>
-								<div class="metadata">102 drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:31%;"></span></span>31% full</span></div>										
-							</td>
-							<td class="item-categories">
-							</td>
-						</tr>																										
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-form"></span>
-							</td>										
-							<td class="item-summary">
-								<h2><a href="/markup/_modals/settings-custom-form.php" class="modal-trigger">Speech type</a></h2>
-								<div class="metadata">Custom form fields for drops</div>																				
-							</td>
-							<td class="item-categories">
-								<span class="mark" style="background-color:green;"></span>
-							</td>
-						</tr>
-						<tr>
-							<td class="select-toggle"><input type="checkbox" /></td>
-							<td class="item-type">
-								<span class="icon-bucket"></span>
-							</td>										
-							<td class="item-summary">
-								<h2><a href="/markup/river">Web development</a></h2>
-								<div class="metadata">62 drops</div>											
-							</td>
-							<td class="item-categories">
-							</td>
-						</tr>									
+					<tbody id="asset-list">
+						<!-- List of river, buckets go here -->									
 					</tbody>
 				</table>
 			</div>
 		</div>
 	</div>
 </div>
+
+<script type="text/template" id="asset-template">
+	<td class="select-toggle"><input type="checkbox" /></td>
+	<td class="item-type">
+		<span class="icon-<%= asset_type %>"></span>
+	</td>										
+	<td class="item-summary">
+		<h2><a href="/markup/river"><%= display_name %></a></h2>
+		<% if (asset_type == "river") { %>
+		<div class="metadata"><%= drop_count %> drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:<%= Math.round(drop_count/drop_quota) %>%;"></span></span><%= Math.round(drop_count/drop_quota) %>% full</span></div>										
+		<% } %>
+	</td>
+	<td class="item-categories">
+	</td>
+</script>

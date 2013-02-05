@@ -82,10 +82,7 @@
 		//Preload default avatar
 		var default_avatar_html = '<?php echo HTML::image("themes/default/media/img/avatar_default.gif"); ?>';
 		window.default_avatar = $(default_avatar_html);
-		(new Image()).src = window.default_avatar.attr('src');
-		
-		// Bootstrap the global bucket list		
-		window.accountArray = <?php echo json_encode($user); ?>
+		(new Image()).src = window.default_avatar.attr('src');		
 	</script>
 	
 	<?php if (isset($bucket_list)): ?>
