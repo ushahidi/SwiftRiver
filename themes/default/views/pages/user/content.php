@@ -37,9 +37,9 @@
 	<div class="container base">
 		<div class="container-tabs">
 			<ul class="container-tabs-menu cf">
-				<li class="active"><a href="/_modules/table-rivers.php">All</a></li>
-				<li><a href="/_modules/table-buckets.php">Managing</a></li>
-				<li><a href="/_modules/table-buckets.php">Following</a></li>
+				<li class="active"><a href="#">All</a></li>
+				<li><a href="#">Managing</a></li>
+				<li><a href="#">Following</a></li>
 			</ul>
 			<div class="container-toolbar cf">
 				<span class="button"><a href="#" class="button-white">Delete</a></span>
@@ -78,7 +78,7 @@
 		<span class="icon-<%= asset_type %>"></span>
 	</td>										
 	<td class="item-summary">
-		<h2><a href="/markup/river"><%= display_name %></a></h2>
+		<h2><a href="<%= url %>"><%= display_name %></a></h2>
 		<% if (asset_type == "river") { %>
 		<div class="metadata"><%= drop_count %> drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:<%= Math.round(drop_count/drop_quota) %>%;"></span></span><%= Math.round(drop_count/drop_quota) %>% full</span></div>										
 		<% } %>

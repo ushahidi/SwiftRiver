@@ -87,6 +87,17 @@ class SwiftRiver_API {
 	{
 		return $this->_call('/accounts/me');
 	}
+	
+	/**
+	 * Get account object for the logged in account.
+	 *
+	 * @return Access Token
+	 */
+	public function get_account_by_name($account_path)
+	{
+		return $this->_call('/accounts',  array('account_path' => $account_path));
+	}
+	
 
 	/**
 	 * Send request to an api endpoint
@@ -97,7 +108,7 @@ class SwiftRiver_API {
 	 */
 	private function _call($path, $params = array()) {
 		
-		$response = $this->oauth_client->fetch($this->base_url.$path);
+		$response = $this->oauth_client->fetch($this->base_url.$path, $params);
 			
 		if ($response['code'] != 200)
 		{

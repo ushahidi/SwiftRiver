@@ -15,8 +15,8 @@
 
 		initialize: function() {
 			// Namespace bucket name if the logged in user is not the owner
-			this.set('name_namespaced', this.get("account_path") + " / " + this.get("name"));
-			if (parseInt(this.get("account_id")) != logged_in_account) {
+			this.set('name_namespaced', this.get("account").account_path + " / " + this.get("name"));
+			if (parseInt(this.get("account").id) != logged_in_account) {
 				this.set('display_name', this.get("name_namespaced"));
 			} else  {
 				this.set('display_name', this.get("name"));

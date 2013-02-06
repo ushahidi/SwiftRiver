@@ -89,6 +89,11 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	protected $anonymous = FALSE;
 	
+	/**
+	 * Account Services object.
+	 */
+	protected $accountService = NULL;
+	
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -164,12 +169,13 @@ class Controller_Swiftriver extends Controller_Template {
 		// SwiftRiver API
 		$this->api = SwiftRiver_API::instance();
 		
+		// Services
+		$this->accountService = new Service_Account($this->api);
 		if (Auth::instance()->logged_in())
 		{
 			$auth = Auth::instance()->get_user();
 			$this->api->set_access_token($auth['access_token']);
-			$this->user = $this->api->get_logged_in_account();
-			
+			$this->user = $this->accountService->get_logged_in_account();
 			
 			if ($this->user['owner']['username'] == 'public')
 			{
@@ -258,12 +264,14 @@ class Controller_Swiftriver extends Controller_Template {
 			if ($visited_account_path AND $visited_account_path != $this->user['account_path']) 
 			{
 				$this->base_url = URL::site($visited_account_path.'/'.strtolower($this->request->controller()));
-				$this->visited_account = ORM::factory('Account', 
-					array('account_path' => $visited_account_path));
 				
-				// Visited account doesn't exist?
-				if ( ! $this->visited_account->loaded())
+				try
 				{
+					$this->visited_account = $this->accountService->get_account_by_name($visited_account_path);
+				}
+				catch (Swiftriver_API_Exception $e)
+				{
+					// Visited account doesn't exist?
 					$this->redirect($this->dashboard_url, 302);
 				}
 			}
@@ -302,13 +310,13 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
 				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
-					$buckets = json_encode($this->user['buckets']);
+					$buckets = json_encode($this->accountService->get_buckets($this->user));
 					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
 				$this->template->header->bucket_list = $buckets;
 				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
-					$rivers = json_encode($this->user['rivers']);
+					$rivers = json_encode($this->accountService->get_rivers($this->user));
 					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;

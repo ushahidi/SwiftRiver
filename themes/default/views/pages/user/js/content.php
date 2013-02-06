@@ -19,7 +19,8 @@ $(function() {
 		
 		events: {
 			"click .filters-primary a": "filterByType",
-			"click .filters-type a": "filterByCategory"
+			"click .filters-type a": "filterByCategory",
+			"click .container-tabs-menu a": "filterByRole"
 		},
 		
 		initialize: function(options) {
@@ -53,6 +54,12 @@ $(function() {
 		
 		filterByCategory: function(ev) {
 			$(ev.currentTarget).parent().toggleClass("active");
+			return false;
+		},
+		
+		filterByRole: function(ev) {
+			$(ev.currentTarget).parents("li").siblings().removeClass("active");
+			$(ev.currentTarget).parent().addClass("active");
 			return false;
 		}
 		
