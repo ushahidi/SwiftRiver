@@ -54,48 +54,47 @@ class Controller_River extends Controller_Drop_Base {
 		$river_name_url = $this->request->param('name');
 		$action = $this->request->action();
 		
-		// This check should be made when this controller is accessed
-		// and the database id of the rive is non-zero
-		$this->river = ORM::factory('River')
-			->where('river_name_url', '=', $river_name_url)
-			->where('account_id', '=', $this->visited_account->id)
-			->find();
-			
-		if ($river_name_url AND ! $this->river->loaded() AND $action != 'manage')
+		// Find the matching river from the visited account's rivers.
+		foreach($this->visited_account['rivers'] as $river) {
+			if (URL::title($river['name']) == $river_name_url)
+			{
+				$this->river = $this->riverService->get_river_by_id($river['id'], $this->user);
+			}
+		}
+		
+		if ($river_name_url AND ! $this->river AND $action != 'manage')
 		{
 			$this->redirect($this->dashboard_url, 302);
 		}
 		
 		// Action involves a specific river, check permissions
-		if ($this->river->loaded())
+		if ($this->river)
 		{					
-			$this->owner = $this->river->is_owner($this->user->id);
-			$this->collaborator = $this->river->is_collaborator($this->user->id);
-			$this->public = (bool) $this->river->river_public;
+			$this->owner = $this->river['is_owner'];
+			$this->collaborator = $this->river['is_collaborator'];
+			$this->public = (bool) $this->river['public'];
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->river->river_public AND 
+			if ( ! $this->public AND 
 				 ! $this->owner AND 
-				 ! $this->collaborator AND
-				 ! $this->river->is_valid_token($this->request->query('at')))
+				 ! $this->collaborator)
 			{
 				$this->redirect($this->dashboard_url, 302);
 			}
 
-			$this->river_base_url = $this->river->get_base_url();
+			$this->river_base_url = $this->riverService->get_base_url($river);
 			$this->settings_url = $this->river_base_url.'/settings';
 
 			// Navigation Items
 			$this->nav = Swiftriver_Navs::river($this->river);
 			
-			if ($this->river->account->user->id == $this->user->id OR 
-				$this->river->account->user->username == 'public')
+			if ($this->owner)
 			{
-				$this->page_title = $this->river->river_name;
+				$this->page_title = $this->river['name'];
 			}
 			else
 			{
-				$this->page_title = $this->river->account->account_path.' / '.$this->river->river_name;
+				$this->page_title = $this->river['account']['account_path'].' / '.$this->river['name'];
 			}
 			$this->template->header->title = $this->page_title;
 
@@ -108,15 +107,16 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('anonymous', $this->anonymous)
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
-				->bind('active', $this->active);
+				->bind('active', $this->active)
+				->bind('page_title', $this->page_title);
 			$this->template->content->is_collaborator = $this->collaborator;
 			
 			if ( ! $this->owner)
 			{
-				$follow_button = View::factory('template/follow');
-				$follow_button->data = json_encode($this->river->get_array($this->user, $this->user));
-				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
-				$this->template->content->follow_button = $follow_button;
+				// $follow_button = View::factory('template/follow');
+				// 				$follow_button->data = json_encode($this->river->get_array($this->user, $this->user));
+				// 				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
+				// 				$this->template->content->follow_button = $follow_button;
 			}
 		}
 	}
@@ -127,7 +127,7 @@ class Controller_River extends Controller_Drop_Base {
 	public function action_index()
 	{
 		// Get the id of the current river
-		$river_id = $this->river->id;
+		$river_id = $this->river['id'];
 
 		// Cookies to help determine the search options to display
 		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'river');
@@ -140,14 +140,13 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = Model_River::get_droplets($this->user->id, $river_id, 0, 1, 
-			$max_droplet_id, $this->photos, $filters);
+		$droplets_array = array();
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
 		$droplet_js = View::factory('pages/drop/js/drops');
 		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->default_view = $this->river->default_layout;
+		$droplet_js->default_view = 'drops';
 		$droplet_js->photos = $this->photos ? 1 : 0;
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
@@ -157,7 +156,7 @@ class Controller_River extends Controller_Drop_Base {
 		}
 		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
-		$droplet_js->channels = json_encode($this->river->get_channels());
+		$droplet_js->channels = json_encode($this->river['channels']);
 
 		// Select droplet list view with drops view as the default if list not specified
 		$this->droplets_view = View::factory('pages/drop/drops')
@@ -168,7 +167,7 @@ class Controller_River extends Controller_Drop_Base {
 
 
 		// Show expiry notice to owners only
-		if ($this->owner AND $this->river->is_expired())
+		if ($this->owner AND $this->river['expired'])
 		{
 			$this->droplets_view->nothing_to_display = "";
 
@@ -178,7 +177,7 @@ class Controller_River extends Controller_Drop_Base {
 			$this->droplets_view->river_notice = $expiry_notice;
 
 		}
-		elseif ($this->owner AND $this->river->is_full())
+		elseif ($this->owner AND $this->river['full'])
 		{
 			$this->droplets_view->nothing_to_display = "";
 			$this->droplets_view->river_notice = View::factory('pages/river/full_notice');
@@ -194,7 +193,7 @@ class Controller_River extends Controller_Drop_Base {
 		
 		
 		// Extend rivers accessed by an owner during notice perio
-		if ($this->owner AND ! $this->river->is_expired())
+		if ($this->owner AND ! $this->river['expired'] AND FALSE)
 		{
 		 	$days_remaining = $this->river->get_days_to_expiry();
 			$notice_period = Model_Setting::get_setting('default_river_lifetime');

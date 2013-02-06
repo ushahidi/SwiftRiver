@@ -171,6 +171,8 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		// Services
 		$this->accountService = new Service_Account($this->api);
+		$this->riverService = new Service_River($this->api);
+		
 		if (Auth::instance()->logged_in())
 		{
 			$auth = Auth::instance()->get_user();

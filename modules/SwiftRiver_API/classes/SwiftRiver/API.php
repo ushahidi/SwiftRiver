@@ -69,9 +69,9 @@ class SwiftRiver_API {
 	}
 	
 	/**
-	 * Obtain an access token.
+	 * Set the access token.
 	 *
-	 * @return Access Token
+	 * @return void
 	 */
 	public function set_access_token($access_token)
 	{
@@ -81,7 +81,7 @@ class SwiftRiver_API {
 	/**
 	 * Get account object for the logged in account.
 	 *
-	 * @return Access Token
+	 * @return Array
 	 */
 	public function get_logged_in_account()
 	{
@@ -91,13 +91,22 @@ class SwiftRiver_API {
 	/**
 	 * Get account object for the logged in account.
 	 *
-	 * @return Access Token
+	 * @return Array
 	 */
 	public function get_account_by_name($account_path)
 	{
 		return $this->_call('/accounts',  array('account_path' => $account_path));
 	}
 	
+	/**
+	 * Get river with the given id
+	 *
+	 * @return Array
+	 */
+	public function get_river_by_id($id)
+	{
+		return $this->_call('/rivers/'.$id);
+	}
 
 	/**
 	 * Send request to an api endpoint
