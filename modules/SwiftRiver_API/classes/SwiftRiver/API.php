@@ -107,7 +107,43 @@ class SwiftRiver_API {
 	{
 		return $this->_call('/rivers/'.$id);
 	}
-
+	
+	
+	/**
+	 * Gets and return the bucket with the given id
+	 *
+	 * @return array
+	 */
+	public function get_bucket_by_id($bucket_id)
+	{
+		return $this->_call('/buckets/'.$bucket_id);
+	}
+	
+	/**
+	 * Gets and returns a list of drops for the bucket with the given id
+	 *
+	 * @param  bool  $bucket_id ID of the bucket
+	 * @param  array $params Parameters for filtering the drops
+	 * @return array
+	 */
+	public function get_bucket_drops($bucket_id, $params = array())
+	{
+		$path = sprintf("/buckets/%d/drops", $bucket_id);
+		return $this->_call($path, $params);
+	}
+	
+	/**
+	 * Gets and returns the list of users collaborating on the bucket
+	 * with the specified id
+	 *
+	 * @return array
+	 */
+	public function get_bucket_collaborators($bucket_id)
+	{
+		$path = sprintf("/buckets/%d/collaborators", $bucket_id);
+		return $this->_call($path);
+	}
+	
 	/**
 	 * Send request to an api endpoint
 	 *

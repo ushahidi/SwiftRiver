@@ -26,6 +26,18 @@ class Controller_Bucket extends Controller_Drop_Base {
 	 */
 	protected $photos = FALSE;
 	
+	/**
+	 * Bucket_Service instance
+	 * @var Bucket_Service
+	 */
+	protected $bucket_service = NULL;
+	
+	/**
+	 * Base URL of the bucket
+	 * @var string
+	 */
+	protected $bucket_base_url;
+	
 	
 	/**
 	 * @return	void
@@ -35,58 +47,39 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Execute parent::before first
 		parent::before();
 		
+		// Initialize the bucket service
+		$this->bucket_service = new Service_Bucket($this->api);
+		
 		// Get the river name from the url
-		$bucket_name_url = $this->request->param('name');
-		$action = $this->request->action();
+		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
 		
-		$this->bucket = ORM::factory('Bucket')
-			->where('bucket_name_url', '=', $bucket_name_url)
-			->where('account_id', '=', $this->visited_account->id)
-			->find();
+		// Get the buckets associated with the visited account
+		$visited_account_buckets = $this->accountService->get_buckets($this->visited_account);
 
-		if ($bucket_name_url AND ! $this->bucket->loaded() AND $action != 'manage')
+		foreach ($visited_account_buckets as $k => $bucket)
 		{
-			$this->redirect($this->dashboard_url, 302);
-		}
-		
-		if ($this->bucket->loaded())
-		{
-			$this->owner = $this->bucket->is_owner($this->user->id);
-			$this->collaborator = $this->bucket->is_collaborator($this->user->id);
-			$this->public = (bool) $this->bucket->bucket_publish;
-			
-			// Bucket isn't published and logged in user isn't owner 
-			// and doesn't have a valid token
-			if ( ! $this->bucket->bucket_publish AND 
-				! $this->owner AND 
-				! $this->collaborator AND
-				! $this->bucket->is_valid_token($this->request->query('at')))
+			if ($bucket['url'] === $this->bucket_base_url)
 			{
-				$this->redirect($this->dashboard_url, 302);
-			}
-			
-			// Set the base url for this specific bucket
-			$this->bucket_base_url = $this->bucket->get_base_url();
-
-			// Bucket Page Title
-			$this->page_title = "";
-			if ($this->bucket->account->user->id == $this->user->id)
-			{
-				$this->page_title = $this->bucket->bucket_name;
-			}
-			else
-			{
-				$this->page_title = $this->bucket->account->account_path.' / '.$this->bucket->bucket_name;
+				$this->bucket = $this->bucket_service->get_bucket_by_id($bucket['id'], $this->user);
+				$this->owner = $this->bucket['is_owner'];
+				break;
 			}
 		}
+
+		// Check if the bucket was retrieved
+		if (empty($this->bucket))
+		{
+			Kohana::$log->add(Log::INFO, __("Bucket :name not found", array(":name" => $this->bucket_base_url)));
+			die();
+		}
+		
+		// Set the page title
+		$this->page_title = $this->bucket['name'];
+		
 	}
 
 	public function action_index()
 	{
-		// Cookies to help determine the search options to display
-		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'bucket');
-		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $this->bucket->id);
-
 		$this->template->header->title = $this->page_title;
 		
 		$this->template->content = View::factory('pages/bucket/main')
@@ -95,29 +88,25 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('discussion_url', $discussion_url)
 			->bind('owner', $this->owner);
 
-		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
-		$this->template->content->is_collaborator = $this->collaborator;
+		$this->template->content->is_collaborator = FALSE;
 		$this->template->content->anonymous = $this->anonymous;
 		$this->template->content->bucket = $this->bucket;
 		$this->template->content->user = $this->user;
 			
-        // The maximum droplet id for pagination and polling
-		$max_droplet_id = $this->bucket->get_max_droplet_id($this->bucket->id);
-				
-		//Get Droplets
-		$droplets_array = Model_Bucket::get_droplets($this->user->id, 
-			$this->bucket->id, 0, 1, $max_droplet_id, $this->photos);
+		// The maximum droplet id for pagination and polling
+		$droplet_list = $this->bucket_service->get_drops($this->bucket['id']);
 
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
-		$droplet_js = View::factory('pages/drop/js/drops');
-		$droplet_js->fetch_base_url = $this->bucket_base_url;
-		$droplet_js->default_view = $this->bucket->default_layout;
-		$droplet_js->photos = $this->photos ? 1 : 0;
-		$droplet_js->filters = NULL;
-		$droplet_js->droplet_list = json_encode($droplets_array);
-		$droplet_js->max_droplet_id = $max_droplet_id;
-		$droplet_js->channels = json_encode(array());
+
+		$droplet_js = View::factory('pages/drop/js/drops')
+			->set('fetch_base_url', $this->bucket_base_url)
+			->set('default_view', "list")
+			->set("photos", ($this->photos ? 1 : 0))
+			->set('droplet_list', json_encode($droplet_list))
+			->set('filters', NULL)
+			->set('max_droplet_id', 0)
+			->set('channels', json_encode(array()));
 		
 		// Generate the List HTML
 		$droplets_view = View::factory('pages/drop/drops')
@@ -126,23 +115,23 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 
-		if ( ! $this->owner)
-		{
-			$follow_button = View::factory('template/follow');
-			$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
-			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
-			$this->template->content->follow_button = $follow_button;
-		}
-		
-		// Nothing to display message
-		$droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
-		    ->bind('message', $nothing_to_display_message);
-		$nothing_to_display_message = __('There are no drops in this bucket yet.');
-		if ($this->owner)
-		{
-			$nothing_to_display_message .= __(' Add some from your :rivers', 
-			                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
-		}		
+		// if ( ! $this->owner)
+		// {
+		// 	$follow_button = View::factory('template/follow');
+		// 	$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
+		// 	$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
+		// 	$this->template->content->follow_button = $follow_button;
+		// }
+		// 
+		// // Nothing to display message
+		// $droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
+		//     ->bind('message', $nothing_to_display_message);
+		// $nothing_to_display_message = __('There are no drops in this bucket yet.');
+		// if ($this->owner)
+		// {
+		// 	$nothing_to_display_message .= __(' Add some from your :rivers', 
+		// 	                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
+		// }		
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -201,15 +190,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					
-					$droplets_array = array();
-					if ($since_id)
-					{
-					    $droplets_array = Model_Bucket::get_droplets_since_id($this->user->id, $this->bucket->id, $since_id, $photos == 1);
-					}
-					else
-					{
-					    $droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, 0, $page, $max_id, $photos == 1);
-					}
+					$droplets_array = $this->bucket_service->get_drops_since_id($this->bucket['id'], $since_id);
 				}
 				
 				//Throw a 404 if a non existent page is requested

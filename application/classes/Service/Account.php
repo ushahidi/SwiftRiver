@@ -15,9 +15,14 @@
 
 class Service_Account {
 	
+	/**
+	 * SwiftRiver API instance
+	 * @var SwiftRiver_API
+	 */
 	private $api = NULL;
+
 	
-	function __construct($api)
+	public function __construct($api)
 	{
 		$this->api = $api;
 	}
@@ -27,7 +32,7 @@ class Service_Account {
 	 *
 	 * @return	Array
 	 */
-	function get_logged_in_account()
+	public function get_logged_in_account()
 	{
 		return $this->api->get_logged_in_account();
 	}
@@ -37,7 +42,7 @@ class Service_Account {
 	 *
 	 * @return	Array
 	 */
-	function get_account_by_name($account_path)
+	public function get_account_by_name($account_path)
 	{
 		return $this->api->get_account_by_name($account_path);
 	}
@@ -47,7 +52,7 @@ class Service_Account {
 	 *
 	 * @return	Array
 	 */
-	function get_rivers($account)
+	public function get_rivers($account)
 	{
 		$rivers = array();
 		
@@ -89,7 +94,7 @@ class Service_Account {
 	 *
 	 * @return	Array
 	 */
-	function get_buckets($account)
+	public function get_buckets($account)
 	{
 		$buckets = array();
 		
