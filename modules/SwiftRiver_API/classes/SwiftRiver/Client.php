@@ -81,11 +81,12 @@ class SwiftRiver_Client {
 	/**
 	* Get the accounts API
 	*
-	* @return  SwiftRiver_API_Accounts the accounts API
+	* @return  SwiftRiver_API_Accounts
 	*/
 	public function get_accounts_api()
 	{
-		if (!isset($this->apis['accounts'])) {
+		if ( !isset($this->apis['accounts']))
+		{
 			$this->apis['accounts'] = new SwiftRiver_API_Accounts($this);
 		}
 		
@@ -95,11 +96,12 @@ class SwiftRiver_Client {
 	/**
 	* Get the rivers API
 	*
-	* @return  SwiftRiver_API_Rivers the rivers API
+	* @return  SwiftRiver_API_Rivers
 	*/
 	public function get_rivers_api()
 	{
-		if (!isset($this->apis['rivers'])) {
+		if ( ! isset($this->apis['rivers']))
+		{
 			$this->apis['rivers'] = new SwiftRiver_API_Rivers($this);
 		}
 		
@@ -109,15 +111,31 @@ class SwiftRiver_Client {
 	/**
 	* Get the buckets API
 	*
-	* @return  SwiftRiver_API_Buckets the buckets API
+	* @return  SwiftRiver_API_Buckets
 	*/
 	public function get_buckets_api()
 	{
-		if (!isset($this->apis['buckets'])) {
+		if ( ! isset($this->apis['buckets']))
+		{
 			$this->apis['buckets'] = new SwiftRiver_API_Buckets($this);
 		}
 		
 		return $this->apis['buckets'];
+	}
+	
+	/**
+	 * Gets and returns the drops API
+	 *
+	 * @return SwiftRiver_API_Drops
+	 */
+	public function get_drops_api()
+	{
+		if ( ! isset($this->apis['drops']))
+		{
+			$this->apis['drops'] = new SwiftRiver_API_Drops($this);
+		}
+		
+		return $this->apis['drops'];
 	}
 	
 	
