@@ -1823,7 +1823,6 @@ section.meta-data img.media-image {
 /* ---- DROP: VIEW DROPS */
 
 .drops article.drop {
-   margin: 15px 3.125%;
 }
 
 .drops article.drop div.drop-actions {
@@ -3298,11 +3297,10 @@ hgroup.page-title a.button-follow {
 #content .drops article.drop,
 #content .photos article.drop {
    float: left;
-   margin: 7px 1.041666667% 10px;
 }
 
 #content .drops article.drop {
-   width: 31.25%;
+   width: 28.25%;
 }
 
 article.drop ul.score-drop li.remove {
@@ -3336,10 +3334,6 @@ article.drop ul.score-drop li.remove a {
 
 .drop-full section.drop-discussion h2 {
    padding-left: 1.041666667%;
-}
-
-.drops article.drop {
-   margin: 10px 1.041666667%;
 }
 
 .list article.drop {
