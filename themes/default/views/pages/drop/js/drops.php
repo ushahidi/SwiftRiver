@@ -317,6 +317,7 @@
 				}
 				var fullView = new Drops.DropFullView({model: drop, baseURL: baseURL}).render();
 				fullView.$('.settings-toolbar').remove();
+				// $("hgroup.page-title, #filters").remove();
 				$("#content").append(fullView.el);
 			},
 

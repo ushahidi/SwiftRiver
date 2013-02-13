@@ -294,7 +294,7 @@
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
-			"click .page-action a.button-primary": "showFullDrop",
+			// "click .page-action a.button-primary": "showFullDrop",
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
@@ -1129,10 +1129,11 @@
 		render: function() {
 			// Render the layout
 			this.$el.html(this.template());
+			this.$el.attr("id", "content");
 			
 			// Render the droplet detail
 			var detailView = new DropDetailView({model: this.model, baseURL: this.options.baseURL, router: this.options.router});
-			this.$("article .center .col_3").before(detailView.render().el);
+			this.$el.append(detailView.render().el);
 			
 			window.fullView = this;
 			return this;

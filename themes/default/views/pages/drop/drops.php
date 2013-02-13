@@ -127,6 +127,9 @@
 	</a>
 </script>
 
+<script type="text/template" id="drop-full-view-template">
+</script>
+
 <script type="text/template" id="drop-detail-template">
 	<div class="center cf">
 		<div class="page-action">
@@ -140,7 +143,7 @@
 			</a>
 		</div>
 	</div>
-	<div class="center cf">
+	<div id="drop-content-container" class="center cf">
 		<div class="col_9">
 			<div class="base">
 				<section class="drop-source">
