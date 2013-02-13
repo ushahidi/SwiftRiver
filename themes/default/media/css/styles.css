@@ -3295,13 +3295,13 @@ hgroup.page-title a.button-follow {
    margin: 0 0 0 0.5em;
 }
 
-#content.drops article.drop,
-#content.photos article.drop {
+#content .drops article.drop,
+#content .photos article.drop {
    float: left;
    margin: 7px 1.041666667% 10px;
 }
 
-#content.drops article.drop {
+#content .drops article.drop {
    width: 31.25%;
 }
 

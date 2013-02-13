@@ -145,7 +145,7 @@
 		model: Drop,
 				
 		comparator: function (droplet) {
-			return Date.parse(droplet.get('droplet_date_pub'));
+			return Date.parse(droplet.get('date_published'));
 		},
 		
 		add: function (model, options) {
@@ -224,9 +224,7 @@
 	
 	// Single drop in the drops/list view
 	var DropView = DropBaseView.extend({
-	
-		tagName: "article",
-			
+				
 		events: {
 			"click a.zoom-trigger": "showDetail",
 			"click p.discussion a": "showDetail",
@@ -239,13 +237,13 @@
 		initialize: function(options) {
 			var el = null;
 			if (options.layout == "list") {
-				el = this.make("article", {"class": "drop base cf"})
+				el = this.make("article", {"class": "drop base cf"});
 				this.template = _.template($("#drop-list-view-template").html());
 			} else 	if (options.layout == "photos") {
 				el = this.make("article", {"class": "drop col_3 base"})
 				this.template = _.template($("#drop-photos-view-template").html());	
 			} else {
-				el = this.make("article", {"class": "drop col_3 base"})
+				el = this.make("article", {"class": "drop base masonry-brick"})
 				this.template = _.template($("#drop-drops-view-template").html());
 			}
 			this.setElement(el);
@@ -253,7 +251,13 @@
 			this.model.on("change:user_score", this.updateDropScore, this)
 			this.model.on("change:comment_count", this.render, this)
 		},
-				
+
+		make: function(tagName, attributes) {
+			var el = document.createElement(tagName);
+			if (attributes) $(el).attr(attributes);
+			return el;
+		},
+
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
@@ -269,9 +273,9 @@
 	// Drop detail in zoom view
 	var DropDetailView = Drops.DropDetailView = DropBaseView.extend({
 	
-		tagName: "div",
+		tagName: "article",
 	
-		className: "modal drop drop-full col_9",
+		className: "modal drop drop-full",
 		
 		isFetching: false,
 		
@@ -330,6 +334,23 @@
 				// we need to render the list manually
 				this.discussions.each(this.addDiscussion, this);	
 			}
+
+			// Render metadata
+			var places = new Places;
+			places.url = this.options.baseURL+"/places/"+this.model.get("id");
+			places.reset(this.model.get("places"));
+			this.addMetadataBlock(places, "Places", "name");
+			
+			var links = new Links;
+			links.url = this.options.baseURL+"/links/"+this.model.get("id");
+			links.reset(this.model.get("links"));
+			this.addMetadataBlock(links, "Links", "url");
+			
+			var tags = new Tags;
+			tags.url = this.options.baseURL+"/tags/"+this.model.get("id");
+			tags.reset(this.model.get("tags"));
+			this.addMetadataBlock(tags, "Tags", "tag");
+
 			return this;
 		},
 		
@@ -386,6 +407,14 @@
 			});
 			
 			return false;
+		},
+
+		addMetadataBlock: function (collection, metadataType, propertyName) {
+			var view = new MetadataView({collection: collection, model: this.model, 
+				metadataType: metadataType,
+				propertyName: propertyName});
+
+			this.$("#metadata").append(view.render().el);
 		},
 		
 		doPollComments: function() {
@@ -593,29 +622,30 @@
 		initialize: function(options) {
 			this.template = _.template($("#drop-listing-template").html());
 			
-			// Set this view element programatically
-			if (options.layout == "list") {
-				this.setElement(this.make("article", {"class": "river list"}));
-			} else {
-				this.setElement(this.make("article", {"class": "river drops cf", "style": "position: relative;"}));
-			}
-
 			options.dropsList.on('reset', this.initDrops, this); 
 			options.dropsList.on('destroy', this.checkEmpty, this);
 			
 			if (options.layout == "list") {
 				// For list layout we can add drops directly, no masonry required
 				options.dropsList.on('add', this.addDrop, this);
+				this.setElement(this.make("div", {"class": "river list"}))
 			} else {
 				// Masonry requires all new drops to be added at once for a smooth
 				// animation
 				options.dropsList.on('drops', this.addDrops, this);
+				this.setElement(this.make("div", {"class": "river drops", "style": "position:relative;"}));
 			}
 			
 			options.newDropsList.on('add', this.alertNewDrops, this);
 			options.newDropsList.on('reset', this.resetNewDropsAlert, this);
 		},
 		
+		make: function(tagName, attributes) {
+			var el = document.createElement(tagName);
+			if (attributes) $(el).attr(attributes);
+			return el;
+		},
+
 		render: function() {
 			this.$el.html(this.template());
 			
@@ -642,7 +672,7 @@
 			
 			// Hide the new drops while they are loading
 			var $newElems = $(views).css({ opacity: 0 });
-			var $container = this.$('#drops-view');
+			var $container = this.$("#drops-view");
 			
 			// Add the drops to the view all at once and do masonry
 			if (id > this.options.maxId) {
@@ -723,7 +753,7 @@
 			
 			// When a reset is done after initialization, redo masonry.
 			var doMasonry = false;
-			if (this.$("#drops-view").hasClass("masonry")) {
+			if (this.$("#drops-view").hasClass("masonry-brick")) {
 				this.$("#drops-view").masonry('destroy');
 				doMasonry = true;
 			}
@@ -987,15 +1017,11 @@
 	// VIEW: Metadata block in Drop detail view
 	var MetadataView = Backbone.View.extend({
 		
-		tagName: "section",
+		tagName: "div",
 	
-		className: "meta-data",
+		className: "filters-type",
 		
-		events: {
-			// Show/Hide the edit buttong
-			"mouseover h3": function() { this.$("h3 .button-blue").show(); },
-			"mouseout h3": function() { this.$("h3 .button-blue").hide(); },
-			
+		events: {			
 			"click h3 a": "showEditMetadata"
 		},
 		
@@ -1005,39 +1031,20 @@
 		},
 		
 		render: function() {
-			this.$el.html(this.template());
-			
-			if(this.collection instanceof Tags) {
-				this.$("h3 .icon").after("Tags");
-			} else if(this.collection instanceof Links) {
-				this.$("h3 .icon").after("Links");
-			} else if(this.collection instanceof Places) {
-				this.$("h3 .icon").after("Places");
-			} 
-			
+			var templateData = {
+				metadata_type: this.options.metadataType,
+				metadata_count: this.collection.length
+			};
+
+			this.$el.html(this.template(templateData));
 			this.collection.each(this.addMetadata, this)
 			return this;
 		},
 		
 		addMetadata: function(metadata) {
-			var item = "<li>";
-			
-			if (metadata instanceof Tag) {					
-				item += "<a href=\"#\">" + metadata.get("tag") + "</a>";
-			} else if (metadata instanceof Link) {
-				var url = metadata.get("url");
-				url = url.length > 20 ? url.substr(0, 20) + "..." : url;
-				item += "<a href=\"" + metadata.get("url") + "\" target=\"_blank\" title=\"" + metadata.get("url") + "\">" + url + "</a>";
-			} else if (metadata instanceof Place) {					
-				item += "<a href=\"#\">" + metadata.get("place_name") + "</a>";
-			}
-			
-			item += "</li>";
-			var el = $(item);
-			
-			// Add the item to the list
-			this.$(".meta-data-content .meta-list").append(el);
-			
+			var view = new MetadataItemView({model: metadata, propertyName: this.options.propertyName });
+			this.$(".filters-type-details ul").append(view.render().el);
+
 			// Remove the item when the model is deleted
 			metadata.on("destroy", function() {
 				el.fadeOut("slow");
@@ -1048,6 +1055,22 @@
 			var editMetadataView = new EditMetadataView({model: this.model, collection: this.collection});
 			modalShow(editMetadataView.render().el);
 			return false;
+		}
+	});
+	
+	// VIEW: Single metadata item
+	var MetadataItemView = Backbone.View.extend({
+
+		tagName: "li",
+		
+		initialize: function(options) {
+			this.template = _.template($("#metadata-item-template").html());
+		},
+		
+		render: function() {
+			var metadataItem = this.model.get(this.options.propertyName);
+			this.$el.html(this.template({metadata_item: metadataItem}));
+			return this;
 		}
 	});
 	
@@ -1070,31 +1093,9 @@
 			var detailView = new DropDetailView({model: this.model, baseURL: this.options.baseURL, router: this.options.router});
 			this.$("article .center .col_3").before(detailView.render().el);
 			
-			// Render metadata
-			var places = new Places;
-			places.url = this.options.baseURL+"/places/"+this.model.get("id");
-			places.reset(this.model.get("places"));
-			this.addMetadataBlock(places);
-			
-			var links = new Links;
-			links.url = this.options.baseURL+"/links/"+this.model.get("id");
-			links.reset(this.model.get("links"));
-			this.addMetadataBlock(links);
-			
-			var tags = new Tags;
-			tags.url = this.options.baseURL+"/tags/"+this.model.get("id");
-			tags.reset(this.model.get("tags"));
-			this.addMetadataBlock(tags);
-			
-			
 			window.fullView = this;
 			return this;
-		},
-		
-		addMetadataBlock: function (collection) {
-			var view = new MetadataView({collection: collection, model: this.model});
-			this.$("article .center .col_3").append(view.render().el);
-		}
+		}		
 	});
 
 	// VIEW: Share drop

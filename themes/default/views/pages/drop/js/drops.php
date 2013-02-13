@@ -41,87 +41,87 @@
 		dropsList.url = newDropsList.url = getDropListUrl(true);
 				
 		// Filters modal window
-		var FiltersView = Backbone.View.extend({
-			tagName: "article",
-
-			className: "modal",
-
-			template: _.template($("#filters-modal-template").html()),
-
-			events: {
-				"click .save-toolbar .button-blue a": "applyFilter",
-				"click .save-toolbar .button-blank a": "resetFilter"
-			},
-
-			render: function() {
-				this.$el.html(this.template({filters: filters, channels: <?php echo $channels; ?>}));
-				return this;
-			},
-
-			applyFilter: function() {
-				if (!this.$('.save-toolbar').hasClass('visible'))
-					return false;
-
-				// Prepare a key value pair of data to send to the server
-				var data = {};
-				this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-					var input = $(el);
-					var value = $.trim(input.val());
-					if (value.length) {
-						data[input.attr("name")] = encodeURIComponent(value);
-					}
-				});
-
-				// If there is a filter or a previous filter has been cleared
-				if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
-
-					// Photos view?
-					data['photos'] = photos;
-
-					var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
-					var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
-
-					isSyncing = isPageFetching = true
-					var view = this;
-
-					// Show a loading message if the GET request takes longer than 500ms
-					var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
-					$.get(baseURL + "/droplets", data, function(response) {
-						// Success, replace the drops list with the new data
-						dropsList.reset(response);
-
-						// Update the filter
-						filters = new Filter(data);
-						appRouter.setFilter(filters.getString(), false);
-						dropsList.url = newDropsList.url = getDropListUrl(true);
-
-						// Reset pagination
-						pageNo = 1;
-						isAtLastPage = false;
-
-						modalHide();
-					}, "json")
-					.complete(function() {
-						isSyncing = isPageFetching = false;
-
-						clearTimeout(t);
-						loading_msg.replaceWith(save_toolbar);
-					});
-				}
-
-				return false;
-			},
-
-			resetFilter: function() {
-				this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-					$(el).val("");
-				});	
-
-				this.applyFilter();
-
-				return false;
-			}
-		})
+		// var FiltersView = Backbone.View.extend({
+		// 	tagName: "article",
+		// 
+		// 	className: "modal",
+		// 
+		// 	template: _.template($("#filters-modal-template").html()),
+		// 
+		// 	events: {
+		// 		"click .save-toolbar .button-blue a": "applyFilter",
+		// 		"click .save-toolbar .button-blank a": "resetFilter"
+		// 	},
+		// 
+		// 	render: function() {
+		// 		this.$el.html(this.template({filters: filters, channels: <?php echo $channels; ?>}));
+		// 		return this;
+		// 	},
+		// 
+		// 	applyFilter: function() {
+		// 		if (!this.$('.save-toolbar').hasClass('visible'))
+		// 			return false;
+		// 
+		// 		// Prepare a key value pair of data to send to the server
+		// 		var data = {};
+		// 		this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
+		// 			var input = $(el);
+		// 			var value = $.trim(input.val());
+		// 			if (value.length) {
+		// 				data[input.attr("name")] = encodeURIComponent(value);
+		// 			}
+		// 		});
+		// 
+		// 		// If there is a filter or a previous filter has been cleared
+		// 		if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
+		// 
+		// 			// Photos view?
+		// 			data['photos'] = photos;
+		// 
+		// 			var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
+		// 			var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
+		// 
+		// 			isSyncing = isPageFetching = true
+		// 			var view = this;
+		// 
+		// 			// Show a loading message if the GET request takes longer than 500ms
+		// 			var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
+		// 			$.get(baseURL + "/droplets", data, function(response) {
+		// 				// Success, replace the drops list with the new data
+		// 				dropsList.reset(response);
+		// 
+		// 				// Update the filter
+		// 				filters = new Filter(data);
+		// 				appRouter.setFilter(filters.getString(), false);
+		// 				dropsList.url = newDropsList.url = getDropListUrl(true);
+		// 
+		// 				// Reset pagination
+		// 				pageNo = 1;
+		// 				isAtLastPage = false;
+		// 
+		// 				modalHide();
+		// 			}, "json")
+		// 			.complete(function() {
+		// 				isSyncing = isPageFetching = false;
+		// 
+		// 				clearTimeout(t);
+		// 				loading_msg.replaceWith(save_toolbar);
+		// 			});
+		// 		}
+		// 
+		// 		return false;
+		// 	},
+		// 
+		// 	resetFilter: function() {
+		// 		this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
+		// 			$(el).val("");
+		// 		});	
+		// 
+		// 		this.applyFilter();
+		// 
+		// 		return false;
+		// 	}
+		// })
 
 		// Bind to the filters button
 		$("nav.page-navigation div.filter-actions a").click(function () {
@@ -201,8 +201,7 @@
 		}, 30000 + Math.floor((Math.random()*30000)+1));
 
 		// Bootstrap the droplet list
-		dropsList.reset(<?php echo $droplet_list; ?>
-			);
+		dropsList.reset(<?php echo $droplet_list; ?>);
 
 		// Set the maxId after inital rendering of droplet list
 		maxId = sinceId = <?php echo $max_droplet_id ?>;
@@ -229,9 +228,9 @@
 			resetView: function() {
 				var noticeContent = $("#system_notification", "#content");
 
-				$("#content").empty();
+				$("#stream").empty();
 				if (noticeContent !== null) {
-					$("#content").append(noticeContent);
+					$("#stream").append(noticeContent);
 				}
 				modalHide();
 				zoomHide();
@@ -258,7 +257,7 @@
 				$("#list-navigation-link").removeClass("active");
 				$("#photos-navigation-link").removeClass("active");
 				this.resetView();		
-				$("#content").append(this.getView("drops"));
+				$("#stream").append(this.getView("drops"));
 				this.view.masonry();
 				this.listingDone = true;
 
@@ -273,7 +272,7 @@
 				$("#drops-navigation-link").removeClass("active");
 				$("#photos-navigation-link").removeClass("active");
 				this.resetView();
-				$("#content").append(this.getView("list"));
+				$("#stream").append(this.getView("list"));
 				this.listingDone = true;
 
 				// Apply filter parameters to the navigation if any
@@ -287,7 +286,7 @@
 				$("#drops-navigation-link").removeClass("active");
 				$("#photos-navigation-link").addClass("active");
 				this.resetView();		
-				$("#content").append(this.getView("photos"));
+				$("#stream").append(this.getView("photos"));
 				this.view.masonry();
 				this.listingDone = true;
 
@@ -332,6 +331,9 @@
 					} else {
 						appRouter.navigate(layout);
 					}
+				});
+				$("#zoom-container a.zoom-close").bind("click", function(e) {
+					appRouter.navigate(layout);
 				});
 				return false;
 			},
