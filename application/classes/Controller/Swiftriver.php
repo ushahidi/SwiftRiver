@@ -167,7 +167,7 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->session = Session::instance();
 		
 		// SwiftRiver API
-		$this->api = SwiftRiver_API::instance();
+		$this->api = SwiftRiver_Client::instance();
 		
 		// Services
 		$this->accountService = new Service_Account($this->api);

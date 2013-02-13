@@ -17,7 +17,7 @@ class Service_River {
 	
 	private $api = NULL;
 	
-	function __construct($api)
+	public function __construct($api)
 	{
 		$this->api = $api;
 	}
@@ -27,9 +27,9 @@ class Service_River {
 	 *
 	 * @return	Array
 	 */
-	function get_river_by_id($id, $querying_account)
+	public function get_river_by_id($id, $querying_account)
 	{
-		$river = $this->api->get_river_by_id($id);
+		$river = $this->api->get_rivers_api()->get_river_by_id($id);
 		
 		$river['expired'] = FALSE;
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
@@ -61,8 +61,10 @@ class Service_River {
 	 *
 	 * @return	Array
 	 */
-	static function get_base_url($river)
+	public static function get_base_url($river)
 	{
 		return URL::site($river['account']['account_path'].'/river/'.URL::title($river['name']));
 	}
+	
+	
 }

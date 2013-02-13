@@ -13,7 +13,7 @@
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class SwiftRiver_API {
+class SwiftRiver_Client {
 	
 	private static $_instance;
 	
@@ -39,7 +39,7 @@ class SwiftRiver_API {
 	/**
 	 * Returns singleton class instance.
 	 *
-	 * @return SwiftRiver_API
+	 * @return SwiftRiver_Client
 	 */
 	public static function instance()
 	{
@@ -77,72 +77,49 @@ class SwiftRiver_API {
 	{
 		$this->oauth_client->setAccessToken($access_token);
 	}
-
+	
 	/**
-	 * Get account object for the logged in account.
-	 *
-	 * @return Array
-	 */
-	public function get_logged_in_account()
+	* Get the accounts API
+	*
+	* @return  SwiftRiver_API_Accounts the accounts API
+	*/
+	public function get_accounts_api()
 	{
-		return $this->_call('/accounts/me');
+		if (!isset($this->apis['accounts'])) {
+			$this->apis['accounts'] = new SwiftRiver_API_Accounts($this);
+		}
+		
+		return $this->apis['accounts'];
 	}
 	
 	/**
-	 * Get account object for the logged in account.
-	 *
-	 * @return Array
-	 */
-	public function get_account_by_name($account_path)
+	* Get the rivers API
+	*
+	* @return  SwiftRiver_API_Rivers the rivers API
+	*/
+	public function get_rivers_api()
 	{
-		return $this->_call('/accounts',  array('account_path' => $account_path));
+		if (!isset($this->apis['rivers'])) {
+			$this->apis['rivers'] = new SwiftRiver_API_Rivers($this);
+		}
+		
+		return $this->apis['rivers'];
 	}
 	
 	/**
-	 * Get river with the given id
-	 *
-	 * @return Array
-	 */
-	public function get_river_by_id($id)
+	* Get the buckets API
+	*
+	* @return  SwiftRiver_API_Buckets the buckets API
+	*/
+	public function get_buckets_api()
 	{
-		return $this->_call('/rivers/'.$id);
+		if (!isset($this->apis['buckets'])) {
+			$this->apis['buckets'] = new SwiftRiver_API_Buckets($this);
+		}
+		
+		return $this->apis['buckets'];
 	}
 	
-	
-	/**
-	 * Gets and return the bucket with the given id
-	 *
-	 * @return array
-	 */
-	public function get_bucket_by_id($bucket_id)
-	{
-		return $this->_call('/buckets/'.$bucket_id);
-	}
-	
-	/**
-	 * Gets and returns a list of drops for the bucket with the given id
-	 *
-	 * @param  bool  $bucket_id ID of the bucket
-	 * @param  array $params Parameters for filtering the drops
-	 * @return array
-	 */
-	public function get_bucket_drops($bucket_id, $params = array())
-	{
-		$path = sprintf("/buckets/%d/drops", $bucket_id);
-		return $this->_call($path, $params);
-	}
-	
-	/**
-	 * Gets and returns the list of users collaborating on the bucket
-	 * with the specified id
-	 *
-	 * @return array
-	 */
-	public function get_bucket_collaborators($bucket_id)
-	{
-		$path = sprintf("/buckets/%d/collaborators", $bucket_id);
-		return $this->_call($path);
-	}
 	
 	/**
 	 * Send request to an api endpoint
@@ -165,4 +142,29 @@ class SwiftRiver_API {
 		
 	}
 	
+	/**
+	 * Call any path, GET method
+	 * Ex: $api->get('/v1/rivers/2/drops')
+	 *
+	 * @param   string  $path            the GitHub path
+	 * @param   array   $parameters       GET parameters
+	 * @return  array                     data returned
+	 */
+	public function get($path, array $parameters = array())
+	{
+		return $this->_call($path, $parameters, "GET");
+	}
+
+	/**
+	 * Call any path, POST method
+	 * Ex: $api->post('/v1/rivers/2/drops', array('count' => 10))
+	 *
+	 * @param   string  $path            the GitHub path
+	 * @param   array   $parameters       POST parameters
+	 * @return  array                     data returned
+	 */
+	public function post($path, array $parameters = array())
+	{
+		return $this->_call($path, $parameters, "POST");
+	}
 }

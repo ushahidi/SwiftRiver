@@ -34,7 +34,7 @@ class Service_Account {
 	 */
 	public function get_logged_in_account()
 	{
-		return $this->api->get_logged_in_account();
+		return $this->api->get_accounts_api()->get_logged_in_account();
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class Service_Account {
 	 */
 	public function get_account_by_name($account_path)
 	{
-		return $this->api->get_account_by_name($account_path);
+		return $this->api->get_accounts_api()->get_account_by_name($account_path);
 	}
 	
 	/**

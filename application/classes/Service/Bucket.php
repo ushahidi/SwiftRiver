@@ -38,7 +38,7 @@ class Service_Bucket {
 	 */
 	public function get_drops($bucket_id, $params = array())
 	{
-		return $this->api->get_bucket_drops($bucket_id, $params);
+		return $this->api->get_buckets_api()->get_bucket_drops($bucket_id, $params);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ class Service_Bucket {
 	public function get_bucket_by_id($id, $querying_account)
 	{
 		// Fetch the bucket
-		$bucket =  $this->api->get_bucket_by_id($id);
+		$bucket =  $this->api->get_buckets_api()->get_bucket_by_id($id);
 		
 		// Is the querying account an owner of the river
 		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];
@@ -84,7 +84,7 @@ class Service_Bucket {
 	public function get_drops_since_id($bucket_id, $since_id)
 	{
 		$params = array('since_id' => $since_id);
-		return $this->api->get_bucket_drops($bucket_id, $params);
+		return $this->api->get_buckets_api()->get_bucket_drops($bucket_id, $params);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ class Service_Bucket {
 	 */
 	public function get_collaborators($bucket_id)
 	{
-		$this->api->get_bucket_collaborators($bucket_id);
+		$this->api->get_buckets_api()->get_bucket_collaborators($bucket_id);
 	}
 	
 	

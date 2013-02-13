@@ -27,7 +27,7 @@ class Auth_SwiftRiver extends Kohana_Auth {
 	{
 		try 
 		{
-			$auth = SwiftRiver_API::instance()->get_access_token(
+			$auth = SwiftRiver_Client::instance()->get_access_token(
 				'password', 
 				array('username' => $username, 'password' => $password)
 			);
