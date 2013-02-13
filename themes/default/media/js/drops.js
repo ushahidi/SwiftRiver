@@ -847,13 +847,13 @@
 	});
 
 	
-	// Edit Metadata List Item
+	// VIEW: Edit Metadata List Item
 	var EditMetadataListItemView = Backbone.View.extend({
 	
 		tagName: "li",
 		
 		events: {
-			"click span.remove-small": "removeMeta",
+			"click span.remove": "removeMeta",
 		},
 		
 		initialize: function() {
@@ -863,11 +863,11 @@
 		render: function() {
 			var label = '';
 			metadata = this.model;
-			if (metadata instanceof Tag) {					
+			if (metadata instanceof Tag) {
 				label = metadata.get("tag");
 			} else if (metadata instanceof Link) {
 				label = metadata.get("url");
-			} else if (metadata instanceof Place) {					
+			} else if (metadata instanceof Place) {
 				label = metadata.get("name");
 			}
 			this.$el.html(this.template({label: label}));
@@ -885,7 +885,7 @@
 		}
 	});
 	
-	// Edit Metadata modal
+	// VIEW: Edit Metadata modal dialog
 	var EditMetadataView = Backbone.View.extend({
 	
 		tagName: "article",
@@ -893,8 +893,9 @@
 		className: "modal",
 		
 		events: {
-			"click .create-new a": "saveNewMetadata",
-			"submit": "saveNewMetadata"
+			"click .modal-toolbar a.button-submit": "saveNewMetadata",
+			"submit": "saveNewMetadata",
+			"keyup .modal-field input": "keypressSave"
 		},
 		
 		initialize: function() {
@@ -915,10 +916,19 @@
 		
 		render: function() {
 			var data = this.model.toJSON();
+			var metadataEditForm = null;
+			
+			// Placeholder text for the metadata input field
+			var placeholder = "";
+
 			if(this.collection instanceof Tags) {
 				data.label = 'Tags';
+				metadataEditForm = _.template($("#edit-metadata-item-field-template").html());
+				placeholder = "Enter name";
 			} else if(this.collection instanceof Links) {
 				data.label = 'Links';
+				metadataEditForm = _.template($("#edit-metadata-item-field-template").html());
+				placeholder = "Enter a URL";
 			} else if(this.collection instanceof Places) {
 				data.label = 'Places';
 			}
@@ -928,13 +938,18 @@
 			// Display current meta in the list
 			this.collection.each(this.addMetadata, this);
 			
+			// Add the form for adding a new metadata item
+			if (metadataEditForm != null) {
+				this.$(".modal-tabs-container").prepend(metadataEditForm({placeholder: placeholder}));
+			}
+						
 			return this;
 		},
 		
 		isPageFetching: false,
 		
 		saveNewMetadata: function() {
-			var name = $.trim(this.$(".create-new input[name=new_metadata]").val());
+			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());
 			
 			if (!name.length || this.isPageFetching)
 				return false;
@@ -942,27 +957,28 @@
 			// First check if the metadata already exists in the drop
 			var metadata = this.collection.find(function(metadata) { 
 				if(metadata instanceof Tag) {
-					return metadata.get('tag_canonical') == name.toLowerCase();
+					return metadata.get('tag').toLowerCase() == name.toLowerCase();
 				} else if(metadata instanceof Link) {
-					return metadata.get('url') == name;
+					return metadata.get('url').toLowerCase() == name;
 				} else if(metadata instanceof Place) {
-					return metadata.get('place_name_canonical') == name.toLowerCase();
+					return metadata.get('name').toLowerCase() == name.toLowerCase();
 				}
 			});
 			
 			if (metadata) {
 				// Scroll to the bucket in the list
-				var scrollOffset = metadata.view.$el.offset().top - this.$(".link-list").offset().top;
+				var scrollOffset = metadata.view.$el.offset().top - this.$(".view-table ul").offset().top;
 				
 				// Scroll only if the bucket is outside the view
-				if (scrollOffset < 0 || scrollOffset > this.$(".link-list").height()) {
-					this.$(".link-list").animate({
-						scrollTop: this.$(".link-list").scrollTop() + scrollOffset
+				if (scrollOffset < 0 || scrollOffset > this.$(".view-table ul").height()) {
+					this.$(".view-table ul").animate({
+						scrollTop: this.$(".view-table ul").scrollTop() + scrollOffset
 						}, 600);
 				}
-
+				
+				this.$("a.modal-back").trigger("click");
 				metadata.view.setSelected();
-				this.$(".create-new input[name=new_metadata]").val("");				
+				this.$(".modal-field input[name=new_metadata]").val("");
 				this.isPageFetching = false;				
 				return false;
 			}
@@ -971,12 +987,12 @@
 			var create_el = this.$(".create-new .field").clone();
 			this.$(".create-new .field").replaceWith(loading_msg);
 						
-			if(this.collection instanceof Tags) {
+			if (this.collection instanceof Tags) {
 				metadata = new Tag({tag: name});
-			} else if(this.collection instanceof Links) {
+			} else if (this.collection instanceof Links) {
 				metadata = new Link({url: name});
-			} else if(this.collection instanceof Places) {
-				metadata = new Place({place_name: name});
+			} else if (this.collection instanceof Places) {
+				metadata = new Place({name: name});
 			}
 			
 			var view = this;
@@ -998,15 +1014,28 @@
 				},
 				success: function() {
 					// Scroll to the new item in the list
-					view.$(".link-list").animate({
-						scrollTop: view.$(".link-list").scrollTop() + (view.$(".link-list li").last().offset().top - view.$(".link-list").offset().top)
-						}, 600);
+					view.$(".view-table ul").animate({
+						scrollTop: view.$(".view-table ul").scrollTop() + (view.$(".view-table ul li").last().offset().top - view.$(".view-table ul").offset().top)
+					}, 600);
+					
+					// Go back to the list mode
+					view.$("a.modal-back").trigger("click");
+					view.$(".view-table ul li").removeClass("selected");
 					metadata.view.setSelected();
-					view.$(".create-new input[name=new_metadata]").val("");
+
+					// Clear the input field
+					view.$(".modal-field input[name=new_metadata]").val("");
 				}
 			});
 			return false;
-		}
+		},
+		
+		keypressSave: function(e) {
+			if (e.which == 13) {
+				this.saveNewMetadata();
+				return false;
+			}
+		},
 	});
 	
 		
@@ -1047,22 +1076,8 @@
 		},
 		
 		addMetadata: function(metadata) {
-			var metadataText = "";
-			if (metadata instanceof Tag) {
-				metadataText = metadata.get("tag");
-			} else if (metadata instanceof Place) {
-				metadataText = metadata.get("name");
-			} else if (metadata instanceof Link) {
-				metadataText = metadata.get("url");
-			}
-
-			var view = new MetadataItemView({metadataText: metadataText});
+			var view = new MetadataItemView({model: metadata});
 			this.$(".filters-type-details ul").append(view.render().el);
-
-			// Remove the item when the model is deleted
-			metadata.on("destroy", function() {
-				el.fadeOut("slow");
-			});
 		},
 		
 		showEditMetadata: function() {
@@ -1079,10 +1094,22 @@
 		
 		initialize: function(options) {
 			this.template = _.template($("#metadata-item-template").html());
+			var view = this;
+			this.model.on("destroy", function() {
+				view.$el.fadeOut("slow");
+			});
 		},
 		
 		render: function() {
-			this.$el.html(this.template({metadataText: this.options.metadataText}));
+			var metadataText = "";
+			if (this.model instanceof Tag) {
+				metadataText = this.model.get("tag");
+			} else if (this.model instanceof Place) {
+				metadataText = this.model.get("name");
+			} else if (this.model instanceof Link) {
+				metadataText = this.model.get("url");
+			}
+			this.$el.html(this.template({metadataText: metadataText}));
 			return this;
 		}
 	});

@@ -198,7 +198,7 @@
 </script>
 
 <script type="text/template" id="edit-metadata-template">
-	<div class="modal-viewport">
+	<div id="modal-viewport">
 		<div id="modal-primary" class="modal-view">
 			<div class="modal-title cf">
 				<a href="#" class="modal-close button-white">
@@ -219,10 +219,23 @@
 					</ul>
 				</div>
 			</div>
-			<div id="modal-secondary" class="modal-view">
-				<!-- Content to be displayed when the dialog transitions into "Edit" mode (After the add button is clicked) -->
+		</div>
+
+		<div id="modal-secondary" class="modal-view">
+			<div class="modal-segment">
+				<div class="modal-title cf">
+					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+					<h1><?php echo __("Add"); ?> <%= label.substring(0, label.length-1) %></h1>
+				</div>
+				<div class="modal-body modal-tabs-container">
+					<!-- Input fields for adding metadata go here-->
+					<div class="modal-toolbar">
+						<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
+					</div>
+				</div>
 			</div>
 		</div>
+
 	</div>
 </script>
 
@@ -235,6 +248,17 @@
 			<%= label %>
 		<% } %>
 	</a>
+</script>
+
+<script type="text/template" id="edit-metadata-item-field-template">
+	<div class="base">
+		<div class="modal-field">
+			<a href="#" class="add-field">
+				<span class="icon-plus"></span>
+			</a>
+			<input type="text" name="new_metadata" placeholder="<%= placeholder %>"/>
+		</div>
+	</div>
 </script>
 
 <?php echo $droplet_js; ?>
