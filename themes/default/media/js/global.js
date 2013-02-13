@@ -88,9 +88,8 @@ $(document).ready(function() {
 	// Show the window
 	Dialog.prototype.show = function() {
 		this.dialogBox.html(this.contents);
-		if (!this.modal) {
-			this.container.addClass("visible");
-		}
+		
+		this.container.addClass("visible");
 		this.container.fadeIn(350);
 		$('body').addClass('noscroll');
 		this._registerHide(); 
@@ -101,6 +100,41 @@ $(document).ready(function() {
 			$('body').addClass('has_modal');
 		}
 
+		return this;
+	};
+	
+	Dialog.prototype.transition = function(hash) {
+		var root = $(this.container);
+		
+		$('#modal-viewport', root).addClass('view-secondary');
+		$('#modal-secondary ' + hash, root).fadeIn('fast');
+		$('#modal-primary > div', root).fadeOut('fast');
+		root.scrollTop(0,0);		
+		this._registerBackHandler(); 
+		
+		return this;
+	};
+	
+	Dialog.prototype.back = function(hash) {
+		var root = $(this.container);
+		
+		$('#modal-viewport', root).removeClass('view-secondary');
+		$('#modal-primary > div', root).fadeIn('fast');
+		$('#modal-secondary .modal-segment', root).fadeOut('fast');
+		
+		return this;
+	};
+	
+	Dialog.prototype._registerBackHandler = function() {
+		
+		var root = $(this.container);
+		$('a.modal-back', root).bind('click', function() {
+			$('#modal-viewport', root).removeClass('view-secondary');
+			$('#modal-primary > div', root).fadeIn('fast');
+			$('#modal-secondary .modal-segment', root).fadeOut('fast');
+			return false;
+		});
+		
 		return this;
 	};
 	
@@ -137,6 +171,11 @@ $(document).ready(function() {
 	});
 	$('article.modal a.modal-close').live('click', function(e) {
 		modalWindow.hide();
+		return false;
+	});
+	$('a.modal-transition').live('click', function(e) {
+		var modalHash = $(this).prop('hash');
+		modalWindow.transition(modalHash);
 		return false;
 	});
 

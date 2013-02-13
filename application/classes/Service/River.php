@@ -35,22 +35,23 @@ class Service_River {
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the river?
-		$river['is_collaborator'] = FALSE;
+		$river['collaborator'] = FALSE;
 		foreach($querying_account['collaborating_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['is_collaborating'] = TRUE;
+				$river['is_owner'] = TRUE;
+				$river['collaborator'] = TRUE;
 			}
 		}
 		
 		// Is the querying account following the river?
-		$river['is_follower'] = FALSE;
+		$river['subscribed'] = FALSE;
 		foreach($querying_account['following_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['is_following'] = TRUE;
+				$river['subscribed'] = TRUE;
 			}
 		}
 		return $river;

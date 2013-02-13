@@ -60,8 +60,8 @@ class Service_Account {
 		foreach ($account['rivers'] as $river)
 		{
 			$river['is_owner'] = TRUE;
-			$river['is_collaborating'] = FALSE;
-			$river['is_following'] = FALSE;
+			$river['collaborator'] = FALSE;
+			$river['subscribed'] = FALSE;
 			$river['url'] = Service_River::get_base_url($river);
 			$rivers[] = $river;
 		}
@@ -69,9 +69,9 @@ class Service_Account {
 		// Collaborating rivers
 		foreach ($account['collaborating_rivers'] as $river)
 		{
-			$river['is_owner'] = FALSE;
-			$river['is_collaborating'] = TRUE;
-			$river['is_following'] = FALSE;
+			$river['is_owner'] = TRUE;
+			$river['collaborator'] = TRUE;
+			$river['subscribed'] = FALSE;
 			$river['url'] = Service_River::get_base_url($river);
 			$rivers[] = $river;
 		}
@@ -80,8 +80,8 @@ class Service_Account {
 		foreach ($account['following_rivers'] as $river)
 		{
 			$river['is_owner'] = FALSE;
-			$river['is_collaborating'] = FALSE;
-			$river['is_following'] = TRUE;
+			$river['collaborator'] = FALSE;
+			$river['subscribed'] = TRUE;
 			$river['url'] = Service_River::get_base_url($river);
 			$rivers[] = $river;
 		}
@@ -102,8 +102,8 @@ class Service_Account {
 		foreach ($account['buckets'] as $bucket)
 		{
 			$bucket['is_owner'] = TRUE;
-			$bucket['is_collaborating'] = FALSE;
-			$bucket['is_following'] = FALSE;
+			$bucket['collaborator'] = FALSE;
+			$bucket['subscribed'] = FALSE;
 			$bucket['url'] = Service_Bucket::get_base_url($bucket);
 			$buckets[] = $bucket;
 		}
@@ -111,9 +111,9 @@ class Service_Account {
 		// Collaborating buckets
 		foreach ($account['collaborating_buckets'] as $bucket)
 		{
-			$bucket['is_owner'] = FALSE;
-			$bucket['is_collaborating'] = TRUE;
-			$bucket['is_following'] = FALSE;
+			$bucket['is_owner'] = TRUE;
+			$bucket['collaborator'] = TRUE;
+			$bucket['subscribed'] = FALSE;
 			$bucket['url'] = Service_Bucket::get_base_url($bucket);
 			$buckets[] = $bucket;
 		}
@@ -122,8 +122,8 @@ class Service_Account {
 		foreach ($account['following_buckets'] as $bucket)
 		{
 			$bucket['is_owner'] = FALSE;
-			$bucket['is_collaborating'] = FALSE;
-			$bucket['is_following'] = TRUE;
+			$bucket['collaborator'] = FALSE;
+			$bucket['subscribed'] = TRUE;
 			$bucket['url'] = Service_Bucket::get_base_url($bucket);
 			$buckets[] = $bucket;
 		}

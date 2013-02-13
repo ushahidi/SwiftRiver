@@ -284,17 +284,17 @@
 
 		renderOwn: function(view) {
 			this.$(".own").append(view.render().el);
-			this.$("p.own-title").show();
+			this.$(".own-title").show();
 		},
 
 		renderCollaborating: function(view) {
 			this.$(".collaborating").append(view.render().el);
-			this.$("p.collaborating-title").show();
+			this.$(".collaborating-title").show();
 		},
 
 		renderFollowing: function(view) {
 			this.$(".following").append(view.render().el);
-			this.$("p.following-title").show();
+			this.$(".following-title").show();
 		},
 
 		saveNewBucket: function() {
@@ -406,7 +406,18 @@
 
 		onSaveNewBucket: function(bucket) {
 			// Do nothing
-		}
+		},
+		
+		// Assets in the header are listed before the create button
+		renderOwn: function(view) {
+			this.$(".own").prepend(view.render().el);
+			this.$(".own-title").show();
+		},
+		
+		// Collaborating assets are managed assets
+		renderCollaborating: function(view) {
+			this.renderOwn(view);
+		},
 	});
 
 	var HeaderBucketsModal = Assets.HeaderBucketsModal = HeaderAssetsModal.extend({

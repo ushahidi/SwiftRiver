@@ -71,7 +71,7 @@ class Controller_River extends Controller_Drop_Base {
 		if ($this->river)
 		{					
 			$this->owner = $this->river['is_owner'];
-			$this->collaborator = $this->river['is_collaborator'];
+			$this->collaborator = $this->river['subscribed'];
 			$this->public = (bool) $this->river['public'];
 			
 			// If this river is not public and no ownership...
