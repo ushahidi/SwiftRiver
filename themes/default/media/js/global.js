@@ -49,10 +49,10 @@ $(document).ready(function() {
 
 		if (!this.modal) {			
 			$('body').removeClass("zoomed");
-			this.container.removeClass("visible")
 		} else {			
 			$('body').removeClass("has_modal");
 		}
+		this.container.removeClass("visible");
 		
 		if (!$('body').hasClass('zoomed') && !$('body').hasClass('has_modal')) {
 			$('body').removeClass('noscroll');
@@ -88,9 +88,7 @@ $(document).ready(function() {
 	// Show the window
 	Dialog.prototype.show = function() {
 		this.dialogBox.html(this.contents);
-		if (!this.modal) {
-			this.container.addClass("visible");
-		}
+		this.container.addClass("visible");
 		this.container.fadeIn(350);
 		$('body').addClass('noscroll');
 		this._registerHide(); 

@@ -294,7 +294,7 @@
 		events: {
 			"click .add-comment .drop-actions a": "addReply",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
-			"click .settings-toolbar .button-big a": "showFullDrop",
+			"click .page-action a.button-primary": "showFullDrop",
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
@@ -339,17 +339,17 @@
 			var places = new Places;
 			places.url = this.options.baseURL+"/places/"+this.model.get("id");
 			places.reset(this.model.get("places"));
-			this.addMetadataBlock(places, "Places", "name");
+			this.addMetadataBlock(places);
 			
 			var links = new Links;
 			links.url = this.options.baseURL+"/links/"+this.model.get("id");
 			links.reset(this.model.get("links"));
-			this.addMetadataBlock(links, "Links", "url");
+			this.addMetadataBlock(links);
 			
 			var tags = new Tags;
 			tags.url = this.options.baseURL+"/tags/"+this.model.get("id");
 			tags.reset(this.model.get("tags"));
-			this.addMetadataBlock(tags, "Tags", "tag");
+			this.addMetadataBlock(tags);
 
 			return this;
 		},
@@ -410,10 +410,7 @@
 		},
 
 		addMetadataBlock: function (collection, metadataType, propertyName) {
-			var view = new MetadataView({collection: collection, model: this.model, 
-				metadataType: metadataType,
-				propertyName: propertyName});
-
+			var view = new MetadataView({collection: collection, model: this.model});
 			this.$("#metadata").append(view.render().el);
 		},
 		
@@ -860,7 +857,7 @@
 		},
 		
 		initialize: function() {
-			this.template = _.template($("#edit-metadata-listitem").html());
+			this.template = _.template($("#edit-metadata-item-template").html());
 		},
 						
 		render: function() {
@@ -869,11 +866,9 @@
 			if (metadata instanceof Tag) {					
 				label = metadata.get("tag");
 			} else if (metadata instanceof Link) {
-				var url = metadata.get("url");
-				url = url.length > 30 ? url.substr(0, 30) + "..." : url;
-				label = url;
+				label = metadata.get("url");
 			} else if (metadata instanceof Place) {					
-				label = metadata.get("place_name");
+				label = metadata.get("name");
 			}
 			this.$el.html(this.template({label: label}));
 			return this;
@@ -903,13 +898,13 @@
 		},
 		
 		initialize: function() {
-			this.template = _.template($("#add-metadata-template").html());
+			this.template = _.template($("#edit-metadata-template").html());
 			this.collection.on("add", this.addMetadata, this);
 		},
 		
 		addMetadata: function(metadata) {
 			var editMetadataView = new EditMetadataListItemView({model: metadata});
-			this.$(".link-list ul").append(editMetadataView.render().el);
+			this.$(".view-table ul").prepend(editMetadataView.render().el);
 			
 			// Store this view in the model to facilitate finding its view 
 			// when only the model is available.
@@ -921,12 +916,13 @@
 		render: function() {
 			var data = this.model.toJSON();
 			if(this.collection instanceof Tags) {
-				data.label = 'tag';
+				data.label = 'Tags';
 			} else if(this.collection instanceof Links) {
-				data.label = 'link';
+				data.label = 'Links';
 			} else if(this.collection instanceof Places) {
-				data.label = 'location';
+				data.label = 'Places';
 			}
+
 			this.$el.html(this.template(data));
 			
 			// Display current meta in the list
@@ -1022,7 +1018,7 @@
 		className: "filters-type",
 		
 		events: {			
-			"click h3 a": "showEditMetadata"
+			"click .filters-type-settings a": "showEditMetadata"
 		},
 		
 		initialize: function() {
@@ -1031,9 +1027,18 @@
 		},
 		
 		render: function() {
+			var typeLabel = "";
+			if (this.collection instanceof Places) {
+				typeLabel = "Places"
+			} else if (this.collection instanceof Tags) {
+				typeLabel = "Tags";
+			} else if (this.collection instanceof Links) {
+				typeLabel = "Links";
+			}
+
 			var templateData = {
-				metadata_type: this.options.metadataType,
-				metadata_count: this.collection.length
+				label: typeLabel,
+				count: this.collection.length
 			};
 
 			this.$el.html(this.template(templateData));
@@ -1042,7 +1047,16 @@
 		},
 		
 		addMetadata: function(metadata) {
-			var view = new MetadataItemView({model: metadata, propertyName: this.options.propertyName });
+			var metadataText = "";
+			if (metadata instanceof Tag) {
+				metadataText = metadata.get("tag");
+			} else if (metadata instanceof Place) {
+				metadataText = metadata.get("name");
+			} else if (metadata instanceof Link) {
+				metadataText = metadata.get("url");
+			}
+
+			var view = new MetadataItemView({metadataText: metadataText});
 			this.$(".filters-type-details ul").append(view.render().el);
 
 			// Remove the item when the model is deleted
@@ -1068,8 +1082,7 @@
 		},
 		
 		render: function() {
-			var metadataItem = this.model.get(this.options.propertyName);
-			this.$el.html(this.template({metadata_item: metadataItem}));
+			this.$el.html(this.template({metadataText: this.options.metadataText}));
 			return this;
 		}
 	});

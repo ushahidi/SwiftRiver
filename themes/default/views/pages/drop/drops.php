@@ -102,7 +102,7 @@
 
 <script type="text/template" id="metadata-template">
 	<span class="toggle-filters-display">
-		<span class="total"><%= metadata_count %></span>
+		<span class="total"><%= count %></span>
 		<span class="icon-arrow-down"></span>
 		<span class="icon-arrow-up"></span>	
 	</span>
@@ -111,14 +111,20 @@
 			<span class="icon-cog"></span>
 		</a>
 	</span>
-	<h2><%= metadata_type %></h2>
+	<h2><%= label %></h2>
 	<div class="filters-type-details">
 		<ul></ul>
 	</div>
 </script>
 
 <script type="text/template" id="metadata-item-template">
-	<a href="#"><%= metadata_item %></a>
+	<a href="#" title="<%= metadataText %>">
+	<% if (metadataText.length > 20) { %>
+		<%= metadataText.substring(0, 20) + "..." %>
+	<% } else { %>
+		<%= metadataText %>
+	<% } %>
+	</a>
 </script>
 
 <script type="text/template" id="drop-detail-template">
@@ -189,6 +195,46 @@
 
 		<div id="metadata" class="col_3"></div>
 	</div>
+</script>
+
+<script type="text/template" id="edit-metadata-template">
+	<div class="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i><?php echo __("Close"); ?>
+				</a>
+				<h1>
+					<a href="#group-name" class="modal-transition">
+						<?php echo __("Edit"); ?> <%= label %>
+					</a>
+				</h1>
+			</div>
+			<div class="modal-body">
+				<div class="view-table base">
+					<ul>
+						<li class="add">
+							<a href="#" class="modal-transition"><?php echo __("Add"); ?> <%= label %></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div id="modal-secondary" class="modal-view">
+				<!-- Content to be displayed when the dialog transitions into "Edit" mode (After the add button is clicked) -->
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="edit-metadata-item-template">
+	<a href="#" class="modal-transition" title="<%= label %>">
+		<span class="remove icon-cancel"></span>
+		<% if (label.length > 50) { %>
+			<%= label.substring(0, 50) %>
+		<% }  else { %>
+			<%= label %>
+		<% } %>
+	</a>
 </script>
 
 <?php echo $droplet_js; ?>
