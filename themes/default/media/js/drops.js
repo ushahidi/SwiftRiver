@@ -882,6 +882,7 @@
 			// Delete on the server
 			this.model.destroy();
 			this.$el.fadeOut("slow");
+			return false;
 		}
 	});
 	
