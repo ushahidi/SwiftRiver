@@ -33,7 +33,7 @@ class Auth_SwiftRiver extends Kohana_Auth {
 			);
 			$this->complete_login($auth);
 		}
-		catch (Swiftriver_API_Exception $e)
+		catch (Exception $e)
 		{
 			return FALSE;
 		}
