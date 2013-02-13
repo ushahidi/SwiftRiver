@@ -15,7 +15,7 @@
 class SwiftRiver_API_Drops extends SwiftRiver_API {
 	
 	/**
-	 * Adds a tag to the specified drop
+	 * Adds a tag to the specified drop via the API
 	 *
 	 * @param  int     $drop_id ID of the drop
 	 * @param  string  $tag  Name of the tag to be added
@@ -26,10 +26,10 @@ class SwiftRiver_API_Drops extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Addsa a place to the specified drop via the API
+	 *
 	 * @param  int     $drop_id
 	 * @param  string  $place_name
-	 *
-	 * Adds a place to the specified drop
 	 */
 	public function add_drop_place($drop_id, $place_name)
 	{
@@ -37,12 +37,51 @@ class SwiftRiver_API_Drops extends SwiftRiver_API {
 	}
 	
 	/**
-	 * Adds a link(URL) to the specfieid drop
+	 * Adds a link to the specified drop via the API
 	 *
 	 * @param   int     $drop_id
 	 * @param   string  $url
 	 */
 	public function add_drop_link($drop_id, $url)
+	{
+		
+	}
+	
+	/**
+	 * Deletes the tag with the specified tag_id from the drop
+	 * with the id specified drop_id 
+	 *
+	 * @param   int $drop_id
+	 * @param   int  $tag_id
+	 * @return  bool
+	 */
+	public function delete_drop_tag($drop_id, $tag_id)
+	{
+		
+	}
+	
+	/**
+	 * Deletes the place with the specified placed_id from the drop
+	 * with the id specified in drop_id
+	 *
+	 * @param  int  $drop_id
+	 * @param  int  $place_id
+	 * @return bool
+	 */
+	public function delete_drop_place($drop_id, $place_id)
+	{
+		
+	}
+	
+	/**
+	 * Deletes the link specified in $link_id from the drop
+	 * specified in $drop_id
+	 *
+	 * @param  int   $drop_id
+	 * @param  int   $link_id
+	 * @return bool 
+	 */
+	public function delete_drop_link($drop_id, $link_id)
 	{
 		
 	}

@@ -27,6 +27,19 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	protected $public = FALSE; 
 	
+	/**
+	 * @var Service_Drop
+	 */
+	private $drop_service;
+	
+	
+	public function before()
+	{
+		parent::before();
+		
+		$this->drop_service = new Service_Drop($this->api);
+	}
+	
 	 /**
 	  * Tags restful api
 	  */ 
@@ -49,11 +62,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				
 				$tag_array = json_decode($this->request->body(), true);
 				$tag_name = $tag_array['tag'];
-				$account_id = $this->visited_account->id;
-				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
-				echo json_encode(array('id' => $tag_orm->tag->id, 
-										'tag' => $tag_orm->tag->tag, 
-										'tag_canonical' => $tag_orm->tag->tag_canonical));
+				$this->drop_service->add_drop_tag($droplet_id, $tag_name);
 			break;
 
 			case "DELETE":
@@ -63,7 +72,8 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					throw new HTTP_Exception_403();
 				}
 				
-				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+				// Delete the drop from the list of tags for the currently logged in user
+				$this->drop_service->delete_drop_tag($droplet_id, $tag_id);
 			break;
 		}
 	}
@@ -104,7 +114,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			break;
 
 			case "DELETE":
-				Model_Droplet::delete_link($droplet_id, $link_id, $this->visited_account->id);
+				$this->drop_service->delete_drop_link($droplet_id, $link_id);
 			break;
 		}
 	}
@@ -148,7 +158,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			break;
 
 			case "DELETE":
-				Model_Droplet::delete_place($droplet_id, $place_id, $this->visited_account->id);
+				$this->drop_service->delete_drop_place($droplet_id, $place_id);
 			break;
 		}
 	}
