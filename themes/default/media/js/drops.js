@@ -364,7 +364,7 @@
 			}
 			
 			if (this.discussions.length >= 20) {
-				this.$("section.drop-discussion p.button-white").parent().show();
+				this.$(".drop-discussion-list").parent().show();
 			}
 			
 			var view = new DiscussionView({model: discussion});
@@ -375,7 +375,7 @@
 				this.discussions.at(index-1).view.$el.before(view.render().el);
 			} else {
 				// First comment is simply appended to the view
-				this.$("section.drop-discussion p.button-white").parent().before(view.render().el);
+				this.$(".drop-discussion-list").parent().before(view.render().el);
 			}
 		},
 				
@@ -1147,17 +1147,16 @@
 		className: "modal",
 
 		events: {
-			"click li.email > a": "showEmailDialog",
+			"click a#share-email": "showEmailForm",
 		},
 		
 		initialize: function(options) {
 			this.template = _.template($("#share-drop-template").html());
 		},
 
-		showEmailDialog: function() {
+		showEmailForm: function() {
 			var emailView = new EmailDropView({model: this.model, baseURL: this.options.baseURL});
-			modalShow(emailView.render().el);
-			return false;
+			this.$("#modal-secondary").html(emailView.render().el);
 		},
 
 		render: function() {
@@ -1169,23 +1168,23 @@
 	});
 
 	var EmailDropView = Backbone.View.extend({
-		tagName: "article",
+		tagName: "div",
 
-		className: "modal",
+		className: "modal-segment",
 
 		events: {
-			"click p.button-blue a": "sendEmail"
+			"click .modal-toolbar a.button-submit": "sendEmail"
 		},
 		
 		initialize: function(options) {
-			this.template = _.template($("#email-dialog-template").html());
+			this.template = _.template($("#email-share-template").html());
 			this.dropURL = site_url.substring(0, site_url.length-1) + this.options.baseURL + '/drop/' + this.model.get("id");
 			this.hasSubmitted = false;
 		},
 
 		sendEmail: function() {
 			var postData = {
-				drop_title: this.model.get("droplet_title"),
+				drop_title: this.model.get("title"),
 				drop_url: this.dropURL
 			};
 			$(":input", this.$("form")).each(function(index){
@@ -1200,8 +1199,8 @@
 
 				// Show the loading icon
 				var loading_msg = window.loading_message.clone();
-				var submitButton = this.$("p.button-blue");
-				this.$("p.button-blue").replaceWith(loading_message);
+				var submitButton = this.$(".modal-toolbar a.button-submit");
+				this.$(".modal-toolbar a.button-submit").replaceWith(loading_message);
 
 				var context = this;
 
@@ -1219,8 +1218,7 @@
 						context.$(loading_message).replaceWith(submitButton);
 						context.hasSubmitted = false;
 
-						// Close the dialog
-						setTimeout(function(){context.$("h2.close a").trigger("click");}, 1800);
+						setTimeout(function() { context.$("a.modal-back").trigger("click"); }, 1800);
 					},
 
 					error: function() {

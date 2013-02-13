@@ -190,13 +190,54 @@
 					<%= content %>
 				</article>
 			</div>
+
 			<h2 class="label"><?php echo __("Related discussion"); ?></h2>
 			<section class="drop-discussion list">
 				<!-- TODO: Fetch the comments for the current drop via the API -->
+				<article class="drop base cf">
+					<section class="drop-source cf">
+						<a href="#" class="avatar-wrap">
+							<img src="<?php echo Swiftriver_Users::gravatar($user['owner']['email'], 55); ?>" />
+						</a>
+						<div class="byline">
+							<h2><?php echo __($user['owner']['name']); ?></h2>
+						</div>
+					</section>
+					<div class="drop-body">
+						<div class="drop-content">
+							<textarea name="drop_comment"></textarea>
+						</div>
+						<div class="drop-details">
+							<div class="drop-actions cf">
+								<a href="#" class="button-primary"><?php echo __("Publish"); ?></a>
+							</div>
+						</div>
+					</div>
+				</article>
 			</section>
+
 		</div>
 
 		<div id="metadata" class="col_3"></div>
+	</div>
+</script>
+
+<script type="tex/template" id="discussion-template">
+	<section class="drop-source">
+		<a href="#" class="avatar-wrap">
+			<img src="<%= account.gravatar %>" />
+		</a>
+		<div class="byline"><h2><%= account.name %></h2>/div>
+	</section>
+	<div class="drop-body">
+		<div class="drop-content">
+			<h1><%= comment_text %></h1>
+		</div>
+		<div class="drop-details">
+			<p class="metadata"><%= date_added %></p>
+			<!-- TODO: Review the action buttons for this section -->
+			<div class="drop-actions cf"></div>
+		</div>
 	</div>
 </script>
 
@@ -262,6 +303,99 @@
 			<input type="text" name="new_metadata" placeholder="<%= placeholder %>"/>
 		</div>
 	</div>
+</script>
+
+<script type="text/template" id="share-drop-template">
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i><?php echo __("Close"); ?>
+				</a>
+				<h1><?php echo __("Share"); ?></h1>
+			</div>
+			<div class="modal-body">
+				<div class="base">
+					<ul class="view-table">
+						<li>
+							<a href="https://twitter.com/share?url=<%= encodeURIComponent(drop_url) %>&text=<%= encodeURIComponent(title) %>"
+								onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
+								target="_blank">
+								<span class="transition icon-arrow-right"></span>
+								<i class="channel-icon icon-twitter"></i>
+								<?php echo __("Twitter"); ?>
+							</a>
+						</li>
+						<li>
+							<% var FBShareURL = encodeURIComponent(drop_url) + '&t' + encodeURIComponent(title); %>
+							<a href="http://www.facebook.com/share.php?u=<%= FBShareURL %"
+								onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"
+								target="_blank">
+								<span class="transition icon-arrow-right"></span>
+								<i class="channel-icon icon-facebook"></i>
+								<?php echo __("Facebook"); ?>
+							</a>
+						</li>
+						<li>
+							<a href="#email" id="share-email" class="modal-transition">
+								<span class="transition icon-arrow-right"></span>
+								<?php echo __("Email"); ?>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<div id="modal-secondary" class="modal-view"></div>
+
+	</div>
+</script>
+
+<script type="text/template" id="email-share-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-back button-white">
+			<span class="icon-arrow-left"></span>
+		</a>
+		<h1><?php echo __("Share via Email"); ?></h1>
+	</div>
+
+	<?php
+	/*
+	<div id="success" style="display: none;">
+		<p><?php echo __("The drop has been successfully shared via email!"); ?></p>
+	</div>
+	*/
+	?>
+
+	<?php echo Form::open(); ?>
+		<div class="modal-body">
+			<div class="base">
+				<div class="modal-field">
+					<h3 class="label">
+						<img class="avatar" src="<%= source.avatar %>"/>
+						<%= source.name %>
+					</h3>
+					<textarea readonly="true" rows="4"><%= title %></textarea>
+				</div>
+				<div class="modal-field">
+					<h3 class="label"><?php echo __("Send To"); ?></h3>
+					<?php echo Form::input('recipient', '', array('placeholder' => __('me@example.com'))); ?>
+				</div>
+				<div class="modal-field">
+					<h3 class="label"><?php echo __("Security Image"); ?></h3>
+					<h3 class="label"><?php echo Captcha::instance()->render(); ?></h3>
+					<?php echo Form::input('security_code', '', array('placeholder' => __('Enter the text in the image above'))); ?>
+				</div>
+			</div>
+			<div class="modal-toolbar">
+				<a href="#" class="button-submit button-primary modal-close">
+					<?php echo __("Send"); ?>
+				</a>
+			</div>
+		</div>
+	<?php echo Form::close(); ?>
+
 </script>
 
 <?php echo $droplet_js; ?>
