@@ -157,6 +157,25 @@ $(document).ready(function() {
 		return false;
 	});
 	
+	// DIALOG TRANSITIONS
+	var backModal = function() {
+		$("a.modal-back").live('click', function(e) {
+			$("#modal-viewport").removeClass("view-secondary");
+			$("#modal-primary > div").fadeIn('fast');
+			$("#modal-secondary .modal-segment").fadeOut('fast');
+			e.preventDefault();
+		});
+	};
+
+	$("a.modal-transition").live("click", function(e) {
+		$("#modal-viewport").addClass("view-secondary");
+		$("#modal-primary > div ").fadeOut('fast');
+		$("#modal-secondary .modal-segment").fadeIn('fast');		
+		$("#modal-container").scrollTop(0, 0);
+		backModal();
+		e.preventDefault();
+	});
+	
 
 	// Click handler for the DOM elements that
 	// generate confirmation messages when clicked
