@@ -181,12 +181,12 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				if (isset($params['since_id']))
 				{
 					$since_id = intval($this->request->query('since_id')); 
-					$comments = Model_Droplet::get_comments($droplet_id, $since_id, TRUE);
+					$comments = $this->drop_service->get_drop_comments_since_id($droplet_id, $since_id);
 				}
 				else
 				{
 					$last_id = $this->request->query('last_id') ? intval($this->request->query('last_id')) : PHP_INT_MAX;
-					$comments = Model_Droplet::get_comments($droplet_id, $last_id);
+					$comments = $this->drop_service->get_drop_comments($droplet_id);
 					
 					if (empty($comments))
 					{
@@ -194,12 +194,13 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					}
 				}
 				
-				foreach ($comments as &$comment)
+				foreach ($comments as & $comment)
 				{
 					$comment['comment_text'] = Markdown::instance()->transform($comment['comment_text']);
 				}
 				echo json_encode($comments);
 			break;
+
 			case "POST":
 				// Is the logged in user an owner?
 				if ( ! $this->owner AND ! $this->collaborator AND ! $this->public)
@@ -210,29 +211,19 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				// Get the POST data
 				$body = json_decode($this->request->body(), TRUE);
 				
-				$comment = Model_Droplet_Comment::create_new(
-					$body['comment_text'],
-					intval($this->request->param('id', 0)),
-					$this->user->id
-				);
+				$comment = $this->drop_service->add_drop_comment($droplet_id, $body['comment_text']);
 								
-				if ( ! $comment->loaded()) 
+				if (empty($comment)) 
 					throw new HTTP_Exception_400();
 				
-				$context_obj = ($this instanceof Controller_River) ? $this->river : $this->bucket;
-				Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
+				// NOTES: ekala
+				// Disabling email notification for now
+				// $context_obj = ($this instanceof Controller_River) ? $this->river : $this->bucket;
+				// Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
 				
-				echo json_encode(array(
-					'id' => $comment->id,
-					'droplet_id' => $comment->droplet_id,
-					'comment_text' => Markdown::instance()->transform($comment->comment_text),
-					'identity_user_id' => $this->user->id,
-					'identity_name' => $this->user->name,
-					'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
-					'deleted' => FALSE,
-					'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
-				));
+				echo json_encode($comment);
 			break;
+
 			case "PUT":
 				$comment_id = intval($this->request->param('id2', 0));
 				$comment = ORM::factory('Droplet_Comment', $comment_id);
@@ -289,7 +280,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			// Modify the mail body to include the email address of the
 			// use sharing content
 			$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
-			    array(':user' => $this->user->username, ':url' => $post['drop_url']));
+			    array(':user' => $this->user['owner']['username'], ':url' => $post['drop_url']));
 
 			// Send the email
 			Swiftriver_Mail::send($recipient, $subject, $mail_body);

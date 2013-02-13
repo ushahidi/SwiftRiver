@@ -85,4 +85,22 @@ class SwiftRiver_API_Drops extends SwiftRiver_API {
 	{
 		
 	}
+	
+	public function get_drop_comments($drop_id, $params = array())
+	{
+		
+	}
+	
+	/**
+	 * Adds the comment in $comment_text to the drop with the id specified
+	 * in $drop_id
+	 *
+	 * @param  int     $drop_id
+	 * @param  string  $comment_text
+	 * @return array
+	 */
+	public function add_drop_comment($drop_id, $comment_text)
+	{
+		$params = array("comment_text" => $comment_text);
+	}
 }

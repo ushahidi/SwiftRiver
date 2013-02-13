@@ -97,5 +97,43 @@ class Service_Drop {
 		return $this->drops_api->delete_drop_link($drop_id, $link_id);
 	}
 	
+	/**
+	 * Gets and returns the comments for the specified drop
+	 *
+	 * @param  int $drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($drop_id)
+	{
+		return $this->drops_api->get_drop_comments($drop_id);
+	}
+
+	/**
+	 * Gets and returns the drop comments whose id is greater
+	 * than the since_id
+	 *
+	 * @param   int $drop_id
+	 * @param   int $since_id
+	 * @return  array
+	 */
+	public function get_drop_comments_since_id($drop_id, $since_id)
+	{
+		$params = array("since_id" => $since_id);
+		return $this->drops_api->get_drop_comments($drop_id, $since_id);
+	}
+	
+	/**
+	 * Adds the comment in $comment_text to the drop with specified
+	 * in $drop_id
+	 *
+	 * @param  int     $drop_id
+	 * @param  string  $comment_text
+	 * @return array
+	 */
+	public function add_drop_comment($drop_id, $comment_text)
+	{
+		return $this->drops_api->add_drop_comment($drop_id, $comment_text);
+	}
+	
 	
 }
