@@ -140,7 +140,7 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = array();
+		$droplets_array = $this->api->get_rivers_api()->get_drops($river_id);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -204,7 +204,6 @@ class Controller_River extends Controller_Drop_Base {
 				$this->river->extend_lifetime();
 			}
 		}
-
 	}
 	
 	/**
