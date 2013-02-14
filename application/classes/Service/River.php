@@ -68,4 +68,25 @@ class Service_River {
 	}
 	
 	
+	/**
+	 * Create a river
+	 *
+	 * @param   string  $river_name
+	 * @return Array
+	 */
+	public function create_river_from_array($river_array) {
+		
+		$river_array = $this->api->get_rivers_api()->create_river(
+			$river_array['name'], 
+			$river_array['description'], 
+			$river_array['public']
+		);
+		
+		$river_array['url'] = self::get_base_url($river_array);
+		$river_array['is_owner'] = TRUE;
+		$river_array['collaborator'] = FALSE;
+		$river_array['subscribed'] = FALSE;
+		
+		return $river_array;
+	}
 }

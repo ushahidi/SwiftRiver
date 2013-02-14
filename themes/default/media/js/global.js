@@ -165,6 +165,11 @@ $(document).ready(function() {
 	window.modalShow = function (contents) {
 		modalWindow = new Dialog(contents, true).show();
 	}
+	window.modalTransition = function (contents) {
+		if(modalWindow) {
+			modalWindow.transition(contents);
+		}
+	}
 	$('a.modal-trigger').live('click', function() {
 		loadUrl($(this).attr('href'), "modal", modalShow);
 		return false;

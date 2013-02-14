@@ -31,12 +31,12 @@ abstract class SwiftRiver_API {
 	 * Ex: $api->get('/v1/rivers/2/drops')
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   array   $parameters       GET parameters
+	 * @param   mixed   $parameters       GET parameters
 	 * @return  array                     data returned
 	 */
-	 protected function get($path, array $parameters = array())
+	 protected function get($path, $parameters = array(), $headers = array())
 	 {
-		 return $this->client->get($path, $parameters);
+		 return $this->client->get($path, $parameters, $headers);
 	 }
 
 	/**
@@ -44,11 +44,11 @@ abstract class SwiftRiver_API {
 	 * Ex: $api->post('/v1/rivers/2/drops', array('count' => 10))
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   array   $parameters       POST parameters
+	 * @param   mixed   $parameters       POST parameters
 	 * @return  array                     data returned
 	 */
-	protected function post($path, array $parameters = array())
+	protected function post($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
 	{
-		return $this->client->post($path, $parameters);
+		return $this->client->post($path, $parameters, $headers);
 	}
 }

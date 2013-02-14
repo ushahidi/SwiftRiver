@@ -100,21 +100,28 @@ class Controller_User extends Controller_Swiftriver {
 	 */
 	public function action_rivers()
 	{
-		$this->template->content->view_type = "";
-		$this->sub_content = View::factory('pages/user/assets');
-		$this->sub_content->owner = $this->owner;
-		$this->sub_content->asset = 'river';
-		$this->sub_content->visited_account = $this->visited_account;
-		$this->sub_content->anonymous = $this->anonymous;
-		$this->template->header->js = View::factory('pages/user/js/assets');
-		$this->template->header->js->owner = $this->owner;
-		$this->template->header->js->visited_account = $this->visited_account;
-		$this->template->header->js->asset = 'river';
+		$this->template = "";
+		$this->auto_render = FALSE;
 		
-		if ( ! $this->owner)
+		switch ($this->request->method())
 		{
-			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_rivers_array($this->user));
+			case "POST":
+				$river_array = json_decode($this->request->body(), TRUE);
+				
+				$post = Validation::factory($river_array)
+				            ->rule('name', 'not_empty');
+				
+				if ( ! $post->check())
+				{
+					throw new HTTP_Exception_400();
+				}
+				
+				$response = $this->riverService->create_river_from_array($river_array);
+				
+				echo json_encode($response);
+			break;
 		}
+		
 	}
 
 	/**

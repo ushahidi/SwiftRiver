@@ -14,12 +14,14 @@
 		},
 
 		initialize: function() {
-			// Namespace bucket name if the logged in user is not the owner
-			this.set('name_namespaced', this.get("account").account_path + " / " + this.get("name"));
-			if (parseInt(this.get("account").id) != logged_in_account) {
-				this.set('display_name', this.get("name_namespaced"));
-			} else  {
-				this.set('display_name', this.get("name"));
+			if (this.get("account")) {
+				// Namespace bucket name if the logged in user is not the owner
+				this.set('name_namespaced', this.get("account").account_path + " / " + this.get("name"));
+				if (parseInt(this.get("account").id) != logged_in_account) {
+					this.set('display_name', this.get("name_namespaced"));
+				} else  {
+					this.set('display_name', this.get("name"));
+				}
 			}
 		},
 
@@ -427,12 +429,90 @@
 			HeaderAssetsModal.prototype.initialize.call(this, options);
 		}
 	});
+	
+	var CreateRiverModalView = Backbone.View.extend({
+		
+		tagName: "div",
+
+		className: "modal-segment",
+		
+		events: {
+			"click .modal-toolbar a.button-submit": "doCreateRiver",
+		},
+		
+		isFetching: false,
+		
+		initialize: function(options) {
+			this.template = _.template($("#create-river-modal-template").html());
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		doCreateRiver: function() {
+			var riverName = this.$('input[name=river_name]').val();
+			var description = this.$('input[name=river_description]').val();
+			var isPublic = Boolean(this.$('select[name=public]').val());
+			
+			if (!riverName.length || this.isFetching)
+				return false;
+			
+			this.isFetching = true;
+			var view = this;
+				
+			// Disable form elements	
+			this.$("input,select").attr("disabled", "disabled");
+			
+			this.model.save({
+				name: riverName,
+				description: description,
+				public: isPublic,
+			},{
+				error: function() {
+					view.$("input,select").removeAttr("disabled");
+				},
+				success: function(model) {
+					window.location = model.get("url");
+				},
+				complete: function() {
+					view.isFetching = false;
+				}
+			});
+			return false;
+		}
+		
+	});
 
 	var HeaderRiversModal  = Assets.HeaderRiversModal = HeaderAssetsModal.extend({
+		
+		constructor: function(message, callback, context) {
+			Backbone.View.prototype.constructor.apply(this, arguments);
+
+			this.delegateEvents({
+				"click li.add a": "showCreateRiver",
+			});
+		},
 		
 		initialize: function(options) {
 			this.template = _.template($("#header-rivers-modal-template").html());
 			HeaderAssetsModal.prototype.initialize.call(this, options);
+		},
+		
+		showCreateRiver: function() {
+			var river = new River();
+			river.urlRoot =  site_url + logged_in_account_path + "/rivers";
+			
+			this.$('#modal-viewport').addClass('view-secondary');
+			var view = new CreateRiverModalView({model: river}).render().$el;		
+			this.$('#modal-secondary').html(view);
+			view.fadeIn('fast');
+			this.$('#modal-primary > div').fadeOut('fast');
+			this.$('#modal-container').scrollTop(0,0);		
+			//this._registerBackHandler(); 
+			
+			return false;
 		}
 	});
 	

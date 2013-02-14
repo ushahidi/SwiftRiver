@@ -25,6 +25,13 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 		return $this->get('/rivers/'.$id);
 	}
 	
+	/**
+	 * Get drops from a river
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       POST parameters
+	 * @return Array
+	 */
 	public function get_drops($id, $max_id = NULL, $since_id = NULL, $count = NULL)
 	{
 		return $this->get('/rivers/'.$id.'/drops', array(
@@ -32,5 +39,23 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 			'since_id' => $since_id,
 			'count' => $count
 		));
+	}
+	
+	/**
+	 * Create a river
+	 *
+	 * @param   string  $river_name
+	 * @param   string  $river_description
+	 * @param   string  $public
+	 * @return Array
+	 */
+	public function create_river($river_name, $river_description = NULL, $public = FALSE) {
+		
+		$request_body = json_encode(array(
+			"name" => $river_name,
+			"description" => $river_description,
+			"public" => (bool) $public
+		));
+		return $this->post('/rivers', $request_body);
 	}
 }

@@ -76,6 +76,7 @@ class SwiftRiver_Client {
 	public function set_access_token($access_token)
 	{
 		$this->oauth_client->setAccessToken($access_token);
+		$this->oauth_client->setAccessTokenType(1);
 	}
 	
 	/**
@@ -125,12 +126,14 @@ class SwiftRiver_Client {
 	 * Send request to an api endpoint
 	 *
 	 * @param   string   url
-	 * @param   array    params
+	 * @param   mixed    params
+	 * @param   mixed    method
+	 * @param   mixed    headers	 	 
 	 * @return  mixed    The api response.
 	 */
-	private function _call($path, $params = array()) {
+	private function _call($path, $params = array(), $method = "GET", $headers = array()) {
 		
-		$response = $this->oauth_client->fetch($this->base_url.$path, $params);
+		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
 			
 		if ($response['code'] != 200)
 		{
@@ -146,25 +149,25 @@ class SwiftRiver_Client {
 	 * Call any path, GET method
 	 * Ex: $api->get('/v1/rivers/2/drops')
 	 *
-	 * @param   string  $path            the GitHub path
-	 * @param   array   $parameters       GET parameters
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       GET parameters
 	 * @return  array                     data returned
 	 */
-	public function get($path, array $parameters = array())
+	public function get($path, $parameters = array(), $headers = array())
 	{
-		return $this->_call($path, $parameters, "GET");
+		return $this->_call($path, $parameters, "GET", $headers);
 	}
 
 	/**
 	 * Call any path, POST method
-	 * Ex: $api->post('/v1/rivers/2/drops', array('count' => 10))
+	 * Ex: $api->post('/v1/rivers')
 	 *
-	 * @param   string  $path            the GitHub path
-	 * @param   array   $parameters       POST parameters
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       POST parameters
 	 * @return  array                     data returned
 	 */
-	public function post($path, array $parameters = array())
+	public function post($path, $parameters = array(), $headers = array())
 	{
-		return $this->_call($path, $parameters, "POST");
+		return $this->_call($path, $parameters, "POST", $headers);
 	}
 }
