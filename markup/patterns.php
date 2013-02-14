@@ -5,7 +5,7 @@
     <meta charset="utf-8"> 
 	<title>SwiftRiver ~ Pattern portfolio</title> 
 	<link rel="shortcut icon" href="#">
-	<link type="text/css" href="/themes/default/media/css/styles.css" rel="stylesheet" />
+	<link type="text/css" href="/markup/_css/styles.css" rel="stylesheet" />
 	<style>
 header {
    text-align: left;
@@ -78,22 +78,38 @@ body > nav li {
 		<li><a href="#containers-modal">Modal containers</a></li>
 		<li><a href="#drop-drops">Drop: In 'drops' view</a></li>
 		<li><a href="#drop-list">Drop: In 'list' view</a></li>
+		<li><a href="#stream-message">Stream message</a></li>
+		<li><a href="#system-message">System message</a></li>
 	</ul>
 </nav>
 
-<div class="sample">
+<div class="sample cf">
 	<a name="buttons"></a>
 	<h2>Buttons: <em>Various styles for different functions</em></h2>
-	<div class="col_3">
+
+	<script>
+	$(document).ready(function() { 
+		// (DEMO) BUTTON: Show loader graphic on submit	
+		$('a.button-submit').live('click', function(e) {
+			$(this).html('<img src="/markup/_img/loader.gif" />');
+			e.preventDefault();
+		});	
+	});	
+	</script>
+	
+	<div class="col_2">
 		<a href="#" class="button-primary">Button primary</a></p>
 	</div>
-	<div class="col_3">
+	<div class="col_2">
 		<a href="#" class="button-primary"><i class="icon-plus"></i>Button primary, icon</a></p>
 	</div>
-	<div class="col_3">
+	<div class="col_2">
+		<a href="#" class="button-submit button-primary"><i class="icon-plus"></i>Button primary, submit</a></p>
+	</div>	
+	<div class="col_2">
 		<a href="#" class="button-primary selected">Button primary, selected</a></p>
 	</div>
-	<div class="col_3">
+	<div class="col_2">
 		<a href="#" class="button-white">Button secondary</a>
 	</div>
 </div>
@@ -686,6 +702,83 @@ body > nav li {
 			</div>
 		</article>
 	</div>
+</div>
+
+<div class="sample cf">
+	<a name="stream-message"></a>
+	<h2>Stream message: <em>Messages seen in any river or bucket view</em></h2>
+	<div class="col_9">
+
+		<!--// STREAM MESSAGE: No content //-->
+		<article class="stream-message">
+			<p><strong>Message.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+		</article>
+		
+		<!--// STREAM MESSAGE: Temporary, loading more //-->
+		<article class="stream-message waiting">
+			<p><em>Loading more drops</em></p>
+		</article>
+	</div>
+</div>
+
+<div class="sample cf">
+	<a name="system-message"></a>
+	<h2>System message: <em>Application feedback after users' interaction</em></h2>
+
+	<script>
+	$(document).ready(function() { 
+		// (DEMO) SYSTEM MESSAGE: Show system message after interaction	
+		function sysmessageClose () {
+			$('a.system-message-close').live('click', function(e) {
+				$(this).closest('article.system-message').slideUp('fast');
+				e.preventDefault();
+			});
+		}
+		$('a.system-feedback').live('click', function(e) {
+			var feedbackHash = $(this).prop('hash');
+			if(feedbackHash == '#failure') {
+				$(feedbackHash + '.system-message').slideDown('fast', function(){
+					sysmessageClose();
+				});
+			}
+			else {
+				$(feedbackHash + '.system-message').slideDown('fast').delay(2000).slideUp('fast');
+			}
+			e.preventDefault();
+		});	
+	});	
+	</script>
+	
+	<div class="col_4">
+		<a href="#confirmation" class="system-feedback button-primary">Trigger system confirmation</a>
+	</div>
+	<div class="col_4">
+		<a href="#success" class="system-feedback button-primary">Trigger system success</a>	
+	</div>
+	<div class="col_4">
+		<a href="#failure" class="system-feedback button-primary">Trigger system failure</a>
+	</div>
+
+	<article id="confirmation" class="system-message">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><strong>Confirmation.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+		</div>
+	</article>
+
+	<article id="success" class="system-message success">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><strong>Success.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+		</div>
+	</article>
+	
+	<article id="failure" class="system-message failure">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><strong>Failure.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+		</div>
+	</article>	
 </div>
 
 </body>
