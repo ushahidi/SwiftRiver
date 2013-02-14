@@ -24,4 +24,13 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	{
 		return $this->get('/rivers/'.$id);
 	}
+	
+	public function get_drops($id, $max_id = NULL, $since_id = NULL, $count = NULL)
+	{
+		return $this->get('/rivers/'.$id.'/drops', array(
+			'max_id' => $max_id,
+			'since_id' => $since_id,
+			'count' => $count
+		));
+	}
 }

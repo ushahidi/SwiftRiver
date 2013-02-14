@@ -88,6 +88,7 @@ $(document).ready(function() {
 	// Show the window
 	Dialog.prototype.show = function() {
 		this.dialogBox.html(this.contents);
+		
 		this.container.addClass("visible");
 		this.container.fadeIn(350);
 		$('body').addClass('noscroll');
@@ -99,6 +100,41 @@ $(document).ready(function() {
 			$('body').addClass('has_modal');
 		}
 
+		return this;
+	};
+	
+	Dialog.prototype.transition = function() {
+		var root = $(this.container);
+		
+		$('#modal-viewport', root).addClass('view-secondary');
+		$('#modal-primary > div', root).fadeOut('fast');
+		$('#modal-secondary .modal-segment', root).fadeIn('fast');
+		root.scrollTop(0,0);		
+		this._registerBackHandler(); 
+		
+		return this;
+	};
+	
+	Dialog.prototype.back = function(hash) {
+		var root = $(this.container);
+		
+		$('#modal-viewport', root).removeClass('view-secondary');
+		$('#modal-secondary .modal-segment', root).fadeOut('fast');
+		$('#modal-primary > div', root).fadeIn('fast');
+		
+		return this;
+	};
+	
+	Dialog.prototype._registerBackHandler = function() {
+		
+		var root = $(this.container);
+		$('a.modal-back', root).bind('click', function() {
+			$('#modal-viewport', root).removeClass('view-secondary');
+			$('#modal-primary > div', root).fadeIn('fast');
+			$('#modal-secondary .modal-segment', root).fadeOut('fast');
+			return false;
+		});
+		
 		return this;
 	};
 	
@@ -137,6 +173,10 @@ $(document).ready(function() {
 		modalWindow.hide();
 		return false;
 	});
+	$('a.modal-transition').live('click', function(e) {
+		modalWindow.transition();
+		return false;
+	});
 
 	// ZOOM WINDOWS
 	var zoomWindow = null;
@@ -156,26 +196,6 @@ $(document).ready(function() {
 		zoomHide();
 		return false;
 	});
-	
-	// DIALOG TRANSITIONS
-	var backModal = function() {
-		$("a.modal-back").live('click', function(e) {
-			$("#modal-viewport").removeClass("view-secondary");
-			$("#modal-primary > div").fadeIn('fast');
-			$("#modal-secondary .modal-segment").fadeOut('fast');
-			e.preventDefault();
-		});
-	};
-
-	$("a.modal-transition").live("click", function(e) {
-		$("#modal-viewport").addClass("view-secondary");
-		$("#modal-primary > div ").fadeOut('fast');
-		$("#modal-secondary .modal-segment").fadeIn('fast');		
-		$("#modal-container").scrollTop(0, 0);
-		backModal();
-		e.preventDefault();
-	});
-	
 
 	// Click handler for the DOM elements that
 	// generate confirmation messages when clicked

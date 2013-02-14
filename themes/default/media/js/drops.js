@@ -778,7 +778,7 @@
 							itemSelector: 'article.drop',
 							isAnimated: !Modernizr.csstransitions,
 							columnWidth: function( containerWidth ) {
-								return containerWidth / 3;
+								return containerWidth / 2;
 							}
 						});
 					}
@@ -787,7 +787,7 @@
 							itemSelector: 'article.drop',
 							isAnimated: !Modernizr.csstransitions,
 							columnWidth: function( containerWidth ) {
-								return containerWidth / 4;
+								return containerWidth / 3;
 							}
 						});
 					}

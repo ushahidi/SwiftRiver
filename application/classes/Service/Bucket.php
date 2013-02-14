@@ -59,20 +59,23 @@ class Service_Bucket {
 		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the fetched bucket?
+		$bucket['collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_buckets'] as $b)
 		{
 			if ($b['id'] === $bucket['id'])
 			{
-				$bucket['is_collaborating'] = TRUE;
+				$bucket['is_owner'] = TRUE;
+				$bucket['collaborator'] = TRUE;
 			}
 		}
 		
 		// Is the querying account following the fetched bucket?
+		$bucket['subscribed'] = FALSE;
 		foreach ($querying_account['following_buckets'] as $b)
 		{
 			if ($b['id'] === $bucket['id'])
 			{
-				$bucket['is_following'] = TRUE;
+				$bucket['subscribed'] = TRUE;
 			}
 		}
 		
