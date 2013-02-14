@@ -287,7 +287,7 @@
 	<a href="#" class="modal-transition" title="<%= label %>">
 		<span class="remove icon-cancel"></span>
 		<% if (label.length > 50) { %>
-			<%= label.substring(0, 50) %>
+			<%= label.substring(0, 50) + " ..." %>
 		<% }  else { %>
 			<%= label %>
 		<% } %>
@@ -297,9 +297,6 @@
 <script type="text/template" id="edit-metadata-item-field-template">
 	<div class="base">
 		<div class="modal-field">
-			<a href="#" class="add-field">
-				<span class="icon-plus"></span>
-			</a>
 			<input type="text" name="new_metadata" placeholder="<%= placeholder %>"/>
 		</div>
 	</div>
