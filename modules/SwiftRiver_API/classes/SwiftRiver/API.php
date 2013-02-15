@@ -47,8 +47,48 @@ abstract class SwiftRiver_API {
 	 * @param   array   $parameters       POST parameters
 	 * @return  array                     data returned
 	 */
-	protected function post($path, array $parameters = array())
+	protected function post($path, $parameters = array())
 	{
-		return $this->client->post($path, $parameters);
+		$headers = array('Content-Type' => 'application/json;charset=UTF-8');
+		
+		if ( ! empty($parameters))
+		{
+			$parameters = json_encode($parameters);
+		}
+
+		return $this->client->post($path, $parameters, $headers);
+	}
+	
+	
+	/**
+	 * Call any path, PUT method
+	 * Ex: $api->post('/v1/rivers/2', array('name' => 'New River Name'))
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   array   $parameters       PUT parameters
+	 * @return  array                     data returned
+	 */
+	protected function put($path, $parameters = array())
+	{
+		$headers = array('Content-Type' => 'application/json;charset=UTF-8');
+
+		if ( ! empty($parameters))
+		{
+			$parameters = json_encode($parameters);
+		}
+
+		return $this->client->put($path, $parameters, $headers);		
+	}
+	
+	/**
+	 * Call any path, DELETE method
+	 * Example: $api->delete('/v1/rivers/1')
+	 *
+	 * @param  string   $path The resource path
+	 * @return bool
+	 */
+	protected function delete($path)
+	{
+		return $this->client->delete($path);
 	}
 }

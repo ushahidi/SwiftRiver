@@ -76,6 +76,7 @@ class SwiftRiver_Client {
 	public function set_access_token($access_token)
 	{
 		$this->oauth_client->setAccessToken($access_token);
+		$this->oauth_client->setAccessTokenType(1);
 	}
 	
 	/**
@@ -144,12 +145,16 @@ class SwiftRiver_Client {
 	 *
 	 * @param   string   url
 	 * @param   array    params
+	 * @param   string   http_method
+	 * @param   array    $headers
 	 * @return  mixed    The api response.
 	 */
-	private function _call($path, $params = array()) {
+	private function _call($path, $params = array(), $http_method = "GET", $headers = array())
+	{
+		Kohana::$log->add(Log::DEBUG, $this->base_url.$path);
 		
-		$response = $this->oauth_client->fetch($this->base_url.$path, $params);
-			
+		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $http_method, $headers);
+
 		if ($response['code'] != 200)
 		{
 			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
@@ -168,7 +173,7 @@ class SwiftRiver_Client {
 	 * @param   array   $parameters       GET parameters
 	 * @return  array                     data returned
 	 */
-	public function get($path, array $parameters = array())
+	public function get($path, $parameters = array())
 	{
 		return $this->_call($path, $parameters, "GET");
 	}
@@ -181,8 +186,33 @@ class SwiftRiver_Client {
 	 * @param   array   $parameters       POST parameters
 	 * @return  array                     data returned
 	 */
-	public function post($path, array $parameters = array())
+	public function post($path, $parameters = array(), $headers = array())
 	{
-		return $this->_call($path, $parameters, "POST");
+		return $this->_call($path, $parameters, "POST", $headers);
+	}
+	
+	/**
+	 * Call any path, PUT method
+	 * Example: $api->put('/v1/rivers/1')
+	 *
+	 * @param  string   $path The resource path
+	 * @param  array    $parameters PUT parameters
+	 * @return array
+	 */
+	public function put($path, array $parameters = array(), $headers = array())
+	{
+		return $this->_call($path, $parameters, "PUT", $headers = array());
+	}
+
+	/**
+	 * Call any path, DELETE method
+	 * Example: $api->delete('/v1/rivers/1')
+	 *
+	 * @param  string   $path The resource path
+	 * @return bool
+	 */
+	public function delete($path)
+	{
+		$this->_call($path, NULL, "DELETE");
 	}
 }
