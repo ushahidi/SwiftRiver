@@ -907,10 +907,9 @@
 			var editMetadataView = new EditMetadataListItemView({model: metadata});
 			this.$(".view-table ul").prepend(editMetadataView.render().el);
 			
-			// Store this view in the model to facilitate finding its view 
-			// when only the model is available.
+			// Store this view in the model so that it is accessible when
+			// the model is available
 			metadata.view = editMetadataView;
-			
 			return false;
 		},
 		
@@ -1046,6 +1045,8 @@
 	
 		className: "filters-type",
 		
+		isInitialRender: true,
+		
 		events: {			
 			"click .filters-type-settings a": "showEditMetadata"
 		},
@@ -1053,6 +1054,14 @@
 		initialize: function() {
 			this.template = _.template($("#metadata-template").html());
 			this.collection.on("add", this.addMetadata, this);
+			this.collection.on("remove", this.removeMetadata, this);
+
+			// For each model in this collection, remove it from the collection
+			// when the model is deleted i.e. on model.destroy()
+			var context = this;
+			this.collection.each(function(model) {
+				model.on("destroy", function() { context.collection.remove(model); });
+			}, this);
 		},
 		
 		render: function() {
@@ -1071,19 +1080,37 @@
 			};
 
 			this.$el.html(this.template(templateData));
-			this.collection.each(this.addMetadata, this)
+			this.collection.each(this.addMetadata, this);
+			this.initialRender = false;
 			return this;
 		},
 		
 		addMetadata: function(metadata) {
-			var view = new MetadataItemView({model: metadata});
-			this.$(".filters-type-details ul").append(view.render().el);
+			var itemView = new MetadataItemView({model: metadata});			
+			this.$(".filters-type-details ul").append(itemView.render().el);
+			metadata.itemView = itemView;
+			if (!this.initialRender) {
+				this.updateMetadataCount();
+			}
 		},
 		
 		showEditMetadata: function() {
-			var editMetadataView = new EditMetadataView({model: this.model, collection: this.collection});
-			modalShow(editMetadataView.render().el);
+			var editView = new EditMetadataView({model: this.model, collection: this.collection});
+			
+			modalShow(editView.render().el);
 			return false;
+		},
+		
+		updateMetadataCount: function() {
+			this.$("span.total").html(this.collection.length);
+		},
+		
+		// When a model is removed from the collection associated
+		// with this view
+		removeMetadata: function(metadata) {
+			metadata.itemView.$el.fadeOut("slow");
+			// Update the count
+			this.updateMetadataCount();
 		}
 	});
 	
