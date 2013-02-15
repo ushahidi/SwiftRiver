@@ -30,12 +30,13 @@ class Service_Drop {
 	 * Adds the tag specified in $tag_name to the drop specified
 	 * in $drop_id
 	 *
-	 * @param  int     $drop_id
-	 * @param  string  $tag_name
+	 * @param  int     drop_id
+	 * @param  string  tag_name
+	 * @param  string  tag_type
 	 */
-	public function add_drop_tag($drop_id, $tag_name)
+	public function add_drop_tag($drop_id, $tag_name, $tag_type)
 	{
-		return $this->drops_api->add_drop_tag($drop_id, $tag_name);
+		return $this->drops_api->add_drop_tag($drop_id, $tag_name, $tag_type);
 	}
 	
 	/**

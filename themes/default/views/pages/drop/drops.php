@@ -297,10 +297,27 @@
 	</a>
 </script>
 
-<script type="text/template" id="edit-metadata-item-field-template">
+<script type="text/template" id="add-link-template">
 	<div class="base">
 		<div class="modal-field">
-			<input type="text" name="new_metadata" placeholder="<%= placeholder %>"/>
+			<input type="text" name="new_metadata" placeholder="<?php echo  __("Enter a URL"); ?>"/>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="add-tag-template">
+	<div class="base">
+		<div class="modal-field">
+			<input type="text" name="new_metadata" placeholder="<?php echo __("Enter a name"); ?>"/>
+		</div>
+		<div class="modal-field">
+			<h3 class="label"><?php echo __("Type of Tag"); ?></h3>
+			<?php 
+				echo Form::select('tag_type', array(
+					'organization' => __('Organization'),
+					'person' => __('Person'),
+					'general' => __('General'))); 
+			?>
 		</div>
 	</div>
 </script>

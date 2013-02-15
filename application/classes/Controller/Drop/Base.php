@@ -62,7 +62,10 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				
 				$tag_array = json_decode($this->request->body(), true);
 				$tag_name = $tag_array['tag'];
-				$this->drop_service->add_drop_tag($droplet_id, $tag_name);
+				$tag_type = $tag_array['tag_type'];
+				$tag = $this->drop_service->add_drop_tag($droplet_id, $tag_name, $tag_type);
+
+				echo json_encode($tag);
 			break;
 
 			case "DELETE":

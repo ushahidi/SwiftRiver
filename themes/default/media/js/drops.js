@@ -917,17 +917,12 @@
 			var data = this.model.toJSON();
 			var metadataEditForm = null;
 			
-			// Placeholder text for the metadata input field
-			var placeholder = "";
-
 			if(this.collection instanceof Tags) {
 				data.label = 'Tags';
-				metadataEditForm = _.template($("#edit-metadata-item-field-template").html());
-				placeholder = "Enter name";
+				metadataEditForm = _.template($("#add-tag-template").html());
 			} else if(this.collection instanceof Links) {
 				data.label = 'Links';
-				metadataEditForm = _.template($("#edit-metadata-item-field-template").html());
-				placeholder = "Enter a URL";
+				metadataEditForm = _.template($("#add-link-template").html());
 			} else if(this.collection instanceof Places) {
 				data.label = 'Places';
 			}
@@ -939,7 +934,7 @@
 			
 			// Add the form for adding a new metadata item
 			if (metadataEditForm != null) {
-				this.$(".modal-tabs-container").prepend(metadataEditForm({placeholder: placeholder}));
+				this.$(".modal-tabs-container").prepend(metadataEditForm());
 			}
 						
 			return this;
@@ -948,15 +943,16 @@
 		isPageFetching: false,
 		
 		saveNewMetadata: function() {
-			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());
-			
+			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());			
+			var tagType = this.$(".modal-field select[name=tag_type]").val();;
+
 			if (!name.length || this.isPageFetching)
 				return false;
 				
 			// First check if the metadata already exists in the drop
 			var metadata = this.collection.find(function(metadata) { 
 				if(metadata instanceof Tag) {
-					return metadata.get('tag').toLowerCase() == name.toLowerCase();
+					return (metadata.get('tag').toLowerCase() == name.toLowerCase()) && (metadata.get('type').toLowerCase == tagType.toLowerCase());
 				} else if(metadata instanceof Link) {
 					return metadata.get('url').toLowerCase() == name;
 				} else if(metadata instanceof Place) {
@@ -987,7 +983,7 @@
 			this.$(".create-new .field").replaceWith(loading_msg);
 						
 			if (this.collection instanceof Tags) {
-				metadata = new Tag({tag: name});
+				metadata = new Tag({tag: name, tag_type: tagType});
 			} else if (this.collection instanceof Links) {
 				metadata = new Link({url: name});
 			} else if (this.collection instanceof Places) {
