@@ -108,9 +108,9 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					echo json_encode(array('errors' => $errors));
 					return;
 				}
-				$account_id = $this->visited_account->id;
-				$link_orm = Model_Account_Droplet_Link::get_link($url, $droplet_id, $account_id);
-				echo json_encode(array('id' => $link_orm->link->id, 'tag' => $link_orm->link->url));
+
+				$link = $this->drop_service->add_drop_link($droplet_id, $url);
+				echo json_encode($link);
 			break;
 
 			case "DELETE":
@@ -139,22 +139,20 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "POST":
-				$places_array = json_decode($this->request->body(), true);
+				$places_array = json_decode($this->request->body(), TRUE);
 				$place_name = $places_array['place_name'];
+				$this->response->headers('Content-Type');
 				if ( ! Valid::not_empty($place_name))
 				{
 					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
 					$errors = array(__("Invalid location"));
 					echo json_encode(array('errors' => $errors));
 					return;
 				}
-				$account_id = $this->visited_account->id;
-				$place_orm = Model_Account_Droplet_Place::get_place($place_name, $droplet_id, $account_id);
-				echo json_encode(array(
-					'id' => $place_orm->place->id, 
-					'place_name' => $place_orm->place->place_name,
-					'place_name_canonical' => $place_orm->place->place_name_canonical));
+
+				// TODO Use geocoder to determine the latitude & longitude
+				// $place = $this->drop_service->add_drop_place($droplet_id, $place_name, $latitude, $longitude);
+				// echo json_encode($place);
 			break;
 
 			case "DELETE":
@@ -164,40 +162,31 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 	}
 	
 	 /**
-	  * Replies restful api
+	  * Comments restful api
 	  */ 
-	public function action_reply()
+	public function action_comments()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
 		$droplet_id = intval($this->request->param('id', 0));
 		
+		// Set the response headers		
+		$this->response->headers('Content-Type', 'application/json');
+
 		switch ($this->request->method())
 		{
 			case "GET":
 				$params = $this->request->query();
 				
-				if (isset($params['since_id']))
-				{
-					$since_id = intval($this->request->query('since_id')); 
-					$comments = $this->drop_service->get_drop_comments_since_id($droplet_id, $since_id);
-				}
-				else
-				{
-					$last_id = $this->request->query('last_id') ? intval($this->request->query('last_id')) : PHP_INT_MAX;
-					$comments = $this->drop_service->get_drop_comments($droplet_id);
+				$since_id = isset($params['since_id']) ? intval($this->request->query('since_id')) : NULL;
+				$comments = $this->drop_service->get_drop_comments($droplet_id, $since_id);
 					
-					if (empty($comments))
-					{
-					    throw new HTTP_Exception_404('The requested page was not found on this server.');
-					}
+				if (empty($comments))
+				{
+				    throw new HTTP_Exception_404('The requested page was not found on this server.');
 				}
 				
-				foreach ($comments as & $comment)
-				{
-					$comment['comment_text'] = Markdown::instance()->transform($comment['comment_text']);
-				}
 				echo json_encode($comments);
 			break;
 
@@ -226,18 +215,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 
 			case "PUT":
 				$comment_id = intval($this->request->param('id2', 0));
-				$comment = ORM::factory('Droplet_Comment', $comment_id);
-				
-				// Does the comment exist?
-				if ( ! $comment->loaded())
-					throw new HTTP_Exception_404();
-					
-				// Is owner of the comment logged in?
-				if ($comment->user->id != $this->user->id)
-					throw new HTTP_Exception_403();
-				
-				$comment->deleted = TRUE;
-				$comment->save();
+				$this->drop_service->delete_drop_comment($droplet_id, $comment_id);
 			break;
 		}
 	}

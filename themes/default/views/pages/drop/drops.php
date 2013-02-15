@@ -206,13 +206,13 @@
 							<h2><?php echo __($user['owner']['name']); ?></h2>
 						</div>
 					</section>
-					<div class="drop-body">
+					<div class="drop-body" id="add-comment">
 						<div class="drop-content">
 							<textarea name="drop_comment"></textarea>
 						</div>
 						<div class="drop-details">
 							<div class="drop-actions cf">
-								<a href="#" class="button-primary"><?php echo __("Publish"); ?></a>
+								<a href="#" id="add-comment" class="button-primary"><?php echo __("Publish"); ?></a>
 							</div>
 						</div>
 					</div>
@@ -225,12 +225,12 @@
 	</div>
 </script>
 
-<script type="tex/template" id="discussion-template">
+<script type="text/template" id="discussion-template">
 	<section class="drop-source">
 		<a href="#" class="avatar-wrap">
-			<img src="<%= account.gravatar %>" />
+			<img src="<%= account.avatar %>" />
 		</a>
-		<div class="byline"><h2><%= account.name %></h2>/div>
+		<div class="byline"><h2><%= account.name %></h2></div>
 	</section>
 	<div class="drop-body">
 		<div class="drop-content">
@@ -287,7 +287,7 @@
 </script>
 
 <script type="text/template" id="edit-metadata-item-template">
-	<a href="#" class="modal-transition" title="<%= label %>">
+	<a href="#" title="<%= label %>">
 		<span class="remove icon-cancel"></span>
 		<% if (label.length > 50) { %>
 			<%= label.substring(0, 50) + " ..." %>

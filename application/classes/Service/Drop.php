@@ -103,25 +103,19 @@ class Service_Drop {
 	 * @param  int $drop_id
 	 * @return array
 	 */
-	public function get_drop_comments($drop_id)
+	public function get_drop_comments($drop_id, $since_id = NULL)
 	{
-		return $this->drops_api->get_drop_comments($drop_id);
+		$comments = $this->drops_api->get_drop_comments($drop_id, $since_id);
+
+		foreach ($comments as & $comment)
+		{
+			$comment['comment_text'] = Markdown::instance()->transform($comment['comment_text']);
+			$comment['account']['avatar'] = Swiftriver_Users::gravatar($comment['account']['email'], 55);
+		}
+
+		return $comments;
 	}
 
-	/**
-	 * Gets and returns the drop comments whose id is greater
-	 * than the since_id
-	 *
-	 * @param   int $drop_id
-	 * @param   int $since_id
-	 * @return  array
-	 */
-	public function get_drop_comments_since_id($drop_id, $since_id)
-	{
-		$params = array("since_id" => $since_id);
-		return $this->drops_api->get_drop_comments($drop_id, $since_id);
-	}
-	
 	/**
 	 * Adds the comment in $comment_text to the drop with specified
 	 * in $drop_id
@@ -132,7 +126,14 @@ class Service_Drop {
 	 */
 	public function add_drop_comment($drop_id, $comment_text)
 	{
-		return $this->drops_api->add_drop_comment($drop_id, $comment_text);
+		$comment = $this->drops_api->add_drop_comment($drop_id, $comment_text);
+		$comment['account']['avatar'] = Swiftriver_Users::gravatar($comment['account']['email'], 55);
+		return $comment;
+	}
+	
+	public function delete_drop_comment($drop_id, $comment_id)
+	{
+		return $this->drops_api->delete_drop_comment($drop_id, $comment_id);
 	}
 	
 	

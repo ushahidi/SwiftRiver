@@ -151,8 +151,6 @@ class SwiftRiver_Client {
 	 */
 	private function _call($path, $params = array(), $http_method = "GET", $headers = array())
 	{
-		Kohana::$log->add(Log::DEBUG, $this->base_url.$path);
-		
 		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $http_method, $headers);
 
 		if ($response['code'] != 200)

@@ -292,7 +292,7 @@
 		isSyncing: false,
 		
 		events: {
-			"click .add-comment .drop-actions a": "addReply",
+			"click #add-comment a.button-primary": "addComment",
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			// "click .page-action a.button-primary": "showFullDrop",
 			"click ul.score-drop > li.star a": "likeDrop",
@@ -306,14 +306,13 @@
 		
 		initialize: function(options) {
 			this.template = _.template($("#drop-detail-template").html());
-			
 			// Create a single discussion collection per drop
 			if (this.model.has("discussion_collection")) {
 				this.discussions = this.model.get("discussion_collection");
 				this.renderDiscussionCollection = true;
 			} else {
 				this.discussions = new Discussions();
-				this.discussions.url = options.baseURL+"/reply/"+this.model.get("id");
+				this.discussions.url = options.baseURL+"/comments/"+this.model.get("id");
 				this.model.set("discussion_collection", this.discussions);
 				this.loadComments();
 			}
@@ -321,14 +320,13 @@
 			this.model.on("change:user_score", this.updateDropScore, this);
 			
 			this.newComments = new Discussions();
-			this.newComments.url = options.baseURL + "/reply/" + this.model.get("id");
+			this.newComments.url = options.baseURL + "/comments/" + this.model.get("id");
 			this.newComments.on('add', this.alertNewComments, this);
 			this.newComments.on('reset', this.resetNewCommentsAlert, this);
 		},
 						
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
-			
 			if (this.renderDiscussionCollection) {
 				// Pre-existing so no add event therefore
 				// we need to render the list manually
@@ -364,9 +362,10 @@
 			}
 			
 			if (this.discussions.length >= 20) {
-				this.$(".drop-discussion-list").parent().show();
+				this.$(".drop-discussion").parent().show();
 			}
 			
+
 			var view = new DiscussionView({model: discussion});
 			discussion.view = view;
 			var index = this.discussions.indexOf(discussion);
@@ -375,20 +374,20 @@
 				this.discussions.at(index-1).view.$el.before(view.render().el);
 			} else {
 				// First comment is simply appended to the view
-				this.$(".drop-discussion-list").parent().before(view.render().el);
+				this.$(".drop-discussion").prepend(view.render().el);
 			}
 		},
 				
 		// When add reply is clicked
-		addReply: function(e) {
-			var textarea = this.$(".add-comment textarea");
+		addComment: function(e) {
+			var textarea = this.$("#add-comment textarea");
 			
 			if (!$(textarea).val().length)
 				return false;
 
-			var publishButton = this.$(".add-comment .drop-actions p").clone();            
+			var publishButton = this.$("#add-comment .drop-actions a").clone();            
 			var loading_msg = window.loading_message.clone();
-			this.$(".add-comment .drop-actions p").replaceWith(loading_msg);
+			this.$("#add-comment .drop-actions a").replaceWith(loading_msg);
             
 			//var error_el = this.$("section.discussion div.system_error");
 			var drop = this.model;
@@ -486,7 +485,7 @@
 				data: {
 					last_id: view.lastId
 				}, 
-				add: true,
+				update: true,
 				complete: function(model, response) {
 					// Re-enable scrolling after a delay
 					setTimeout(function(){ view.isFetching = false; }, 700);
