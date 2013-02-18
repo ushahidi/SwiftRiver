@@ -170,4 +170,17 @@ class SwiftRiver_Client {
 	{
 		return $this->_call($path, $parameters, "POST", $headers);
 	}
+	
+	/**
+	 * Call any path, DELETE method
+	 * Ex: $api->delete('/v1/rivers/2/channels/1')
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       DELETE parameters
+	 * @return  array                     data returned
+	 */
+	public function delete($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	{
+		return $this->_call($path, $parameters, "DELETE", $headers);
+	}
 }

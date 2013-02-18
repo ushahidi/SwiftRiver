@@ -51,4 +51,17 @@ abstract class SwiftRiver_API {
 	{
 		return $this->client->post($path, $parameters, $headers);
 	}
+	
+	/**
+	 * Call any path, DE:ETE method
+	 * Ex: $api->delete('/v1/rivers/2/channels/1')
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       DELETE parameters
+	 * @return  array                     data returned
+	 */
+	protected function delete($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	{
+		return $this->client->delete($path, $parameters, $headers);
+	}
 }

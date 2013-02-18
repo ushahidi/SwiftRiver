@@ -455,15 +455,29 @@
 		
 		tagName: "li",
 		
+		events: {
+			"click .remove": "removeChannel",
+		},
+		
 		initialize: function() {
             this.template = _.template($("#channel-modal-template").html());
 		},
 				
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
-			
 			return this;	
 		},
+		
+		removeChannel: function() {
+			view = this;
+			this.model.destroy({
+				wait: true,
+				success: function() {
+					view.$el.fadeOut("slow");
+				}
+			});
+			return false;
+		}
 		
 	});
 	
@@ -482,8 +496,9 @@
 			});
 		},
 		
-		initialize: function() {
+		initialize: function(options) {
 			this.template = _.template($("#channels-modal-template").html());
+			this.collection.url = options.baseUrl;
 			this.collection.on("reset", this.addChannels, this);
 			this.collection.on("add", this.addChannel, this);
 		},

@@ -114,7 +114,7 @@ class Controller_River extends Controller_Drop_Base {
 			// Channels
 			$this->template->content->channels_config = json_encode(Swiftriver_Plugins::channels());
 			$this->template->content->channels = json_encode($this->river['channels']);
-			$this->template->content->channels_base_url = $this->river_base_url.'/settings/channels';
+			$this->template->content->channels_base_url = $this->river_base_url.'/settings/channels/options';
 			$this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
 			
 			if ( ! $this->owner)

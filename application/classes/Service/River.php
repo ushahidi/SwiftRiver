@@ -101,8 +101,8 @@ class Service_River {
 	 * @param   string  $river_name
 	 * @return Array
 	 */
-	public function create_river_from_array($river_array) {
-		
+	public function create_river_from_array($river_array) 
+	{
 		$river_array = $this->api->get_rivers_api()->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
@@ -115,6 +115,17 @@ class Service_River {
 		$river_array['subscribed'] = FALSE;
 		
 		return $river_array;
+	}
+	
+	/**
+	 * Delete channel
+	 *
+	 * @param   string  $river_name
+	 * @return Array
+	 */
+	public function delete_channel($river_id, $channel_id)
+	{
+		$this->api->get_rivers_api()->delete_channel($river_id, $channel_id);
 	}
 	
 	/**

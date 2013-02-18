@@ -23,8 +23,23 @@ class Controller_River_Channels extends Controller_River_Settings {
 		$this->template = "";
 		$this->auto_render = FALSE;
 
+	 }
+	
+	/**
+	  * Channel options restful api
+	  */
+	public function action_options()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+
 		switch ($this->request->method())
 		{
+			case "DELETE":			
+				$channel_id = intval($this->request->param('id', 0));
+				
+				$channel_array = $this->riverService->delete_channel($this->river['id'], $channel_id);
+			break;
 			case "POST":			
 				$channel_array = json_decode($this->request->body(), TRUE);
 				
@@ -43,66 +58,6 @@ class Controller_River_Channels extends Controller_River_Settings {
 					$this->response->headers('Content-Type', 'application/json');
 					echo json_encode(array('error' => $e->getMessage()));
 				}
-			break;
-		}
-	 }
-	
-	/**
-	  * Channel options restful api
-	  */
-	public function action_options()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-
-		if ($this->river->is_expired())
-		{
-			$this->response->status(400);
-			$this->response->headers('Content-Type', 'application/json');
-			echo json_encode(array("error" => __("Oops! Your river has already expired.")));
-
-			return;
-		}
-	
-		$channel_id = intval($this->request->param('id', 0));
-		$option_id = intval($this->request->param('id2', 0));
-				
-		$channel = $this->river->get_channel_by_id($channel_id);
-		
-		if ( ! $channel)
-		{
-			throw new HTTP_Exception_404();
-		}
-
-		switch ($this->request->method())
-		{
-			case "POST":
-			case "PUT":
-				try
-				{
-					$channel_option_array = json_decode($this->request->body(), TRUE);
-					
-					// Validate option data first
-					$channel_option_array['channel'] = $channel->channel;
-					Swiftriver_Event::run('swiftriver.channel.option.pre_save', $channel_option_array);
-					unset($channel_option_array['channel']);
-					
-					// Validation passed, save the option
-					$channel_option = $channel->update_option($channel_option_array, $option_id);
-					
-					// Return the new id + updated values
-					$option_array = $this->river->get_channel_options($channel, $channel_option->id);
-					echo(json_encode($option_array[0]));
-				}
-				catch (Swiftriver_Exception_Channel_Option $e)
-				{
-					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
-					echo json_encode(array('error' => $e->getMessage()));
-				}
-			break;
-			case "DELETE":
-				$channel->delete_option($option_id);
 			break;
 		}
 	}
