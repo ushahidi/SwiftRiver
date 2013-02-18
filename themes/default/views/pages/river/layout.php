@@ -1,3 +1,21 @@
+<script type="text/javascript">
+
+$(function() {
+	var channelsConfig = new Channels.ChannelsConfig();
+	channelsConfig.reset(<?php echo $channels_config; ?>);
+	Channels.channelList.reset(<?php echo $channels; ?>);	
+	
+	$('.filters-type-settings a').live('click', function () {
+		modalShow(new Channels.ChannelsModalView({
+			collection: Channels.channelList, 
+			config: channelsConfig,
+		}).render().el);
+		return false;
+	});
+});
+
+</script>
+
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="col_9">
@@ -45,6 +63,7 @@
 					<div class="filters-type">
 						<span class="toggle-filters-display"><span class="total">5</span><span class="icon-arrow-down"></span><span class="icon-arrow-up"></span></span>				
 						<span class="filters-type-settings"><a href="/markup/_modals/settings-channels.php" class="modal-trigger"><span class="icon-cog"></span></a></span>
+						<span class="filters-type-settings"><a href="#"><span class="icon-cog"></span></a></span>
 						<h2>Channels</h2>
 						<div class="filters-type-details">
 							<ul>
@@ -74,4 +93,153 @@
 			
 		<?php echo $droplets_view; ?>
 	</div>
-</div>
+</div></div>
+
+<script type="text/template" id="channels-modal-template">
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+				<h1>Channels</h1>
+			</div>
+			
+			<div class="modal-body">
+				<div class="view-table base">
+					<ul>										
+						<li class="add"><a href="#">Add channel</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div id="modal-secondary" class="modal-view">
+			<!-- START: Edit channel 1 -->				
+			<div id="edit-channel-1" class="modal-segment">
+				<div class="modal-title cf">
+					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+					<h1>Edit channel</h1>
+				</div>
+				
+				<div class="modal-body">
+					<div class="base">
+						<h2 class="label">Twitter</h2>
+
+						<div class="modal-field modal-field-tabs-container">
+							<ul class="modal-field-tabs-menu">
+								<li class="active"><a href="#input-keywords">Keywords</a></li>
+								<li><a href="#input-users">Users</a></li>
+								<li><a href="#input-location">Location</a></li>
+							</ul>
+							<div class="modal-field-tabs-window">
+								<div id="input-keywords" class="active">
+									<a href="#" class="add-field"><span class="icon-plus"></span></a>									
+									<input type="text" placeholder="Enter keywords, separated by commas" />
+								</div>
+								<div id="input-users">
+									<a href="#" class="add-field"><span class="icon-plus"></span></a>									
+									<input type="text" placeholder="Enter usernames, separated by commas" />
+								</div>
+								<div id="input-location">
+									<a href="#" class="add-field"><span class="icon-plus"></span></a>									
+									<input type="text" placeholder="Enter location" />
+									<select style="display:block;">
+										<option>within 100km</option>
+										<option>within 1000km</option>
+									</select>
+								</div>																				
+							</div>
+							
+							<!-- IF: Parameter added -->
+							<div class="modal-field-parameter">									
+								<select style="display:block;">
+									<option>AND</option>
+									<option>OR</option>
+								</select>
+								
+								<input type="text" value="SXSW" />
+							</div>
+	
+							<div class="modal-field-parameter">									
+								<select style="display:block;">
+									<option>AND</option>
+									<option>OR</option>
+								</select>
+								
+								<input type="text" value="Austin, TX" />
+								<select style="display:block;">
+									<option>within 100km</option>
+									<option>within 1000km</option>
+								</select>
+							</div>														
+							<!-- -->
+						</div>
+					</div>			
+				</div>
+			</div>
+			
+			<!-- START: Edit channel 2 -->				
+			<div id="edit-channel-2" class="modal-segment">
+				<div class="modal-title cf">
+					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+					<h1>Edit channel</h1>
+				</div>
+				
+				<div class="modal-body">
+					<div class="base">
+						<h2 class="label">Facebook</h2>
+						<div class="modal-field">
+							<h3 class="label">Facebook Page name</h3>
+							<a href="#" class="add-field"><span class="icon-plus"></span></a>
+							<input type="text" placeholder="Enter the name of a Facebook page" />
+							<!-- IF: Parameter added -->
+							<div class="modal-field-parameter">									
+								<select style="display:block;">
+									<option>AND</option>
+									<option>OR</option>
+								</select>
+								
+								<input type="text" value="SwiftRiver" />
+							</div>
+	
+							<div class="modal-field-parameter">									
+								<select style="display:block;">
+									<option>AND</option>
+									<option>OR</option>
+								</select>
+								
+								<input type="text" value="SXSW" />
+							</div>													
+							<!-- -->
+						</div>
+					</div>			
+				</div>
+			</div>
+			
+			<!-- START: Edit channel 3 -->				
+			<div id="edit-channel-3" class="modal-segment">
+				<div class="modal-title cf">
+					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+					<h1>Edit channel</h1>
+				</div>
+				
+				<div class="modal-body">
+					<div class="base">
+						<h2 class="label">RSS</h2>
+						<div class="modal-field">
+							<h3 class="label">RSS URL</h3>
+							<input type="text" value="http://mashable.com/rss" />
+						</div>
+					</div>			
+				</div>
+			</div>						
+		
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="channel-modal-template">
+	<a href="#edit-channel-1" class="modal-transition">
+	<span class="remove icon-cancel"></span>
+	<i class="channel-icon icon-<%= channel %>"></i>
+	<%= display_name %>
+	</a>
+</script>

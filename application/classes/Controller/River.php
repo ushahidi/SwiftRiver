@@ -111,6 +111,11 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('page_title', $this->page_title);
 			$this->template->content->is_collaborator = $this->collaborator;
 			
+			// Channels
+			$this->template->content->channels_config = json_encode(Swiftriver_Plugins::channels());
+			$this->template->content->channels = json_encode($this->river['channels']);
+			$this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
+			
 			if ( ! $this->owner)
 			{
 				// $follow_button = View::factory('template/follow');

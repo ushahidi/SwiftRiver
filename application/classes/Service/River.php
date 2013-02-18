@@ -23,14 +23,16 @@ class Service_River {
 	}
 	
 	/**
-	 * Return the Account array for the given account path
+	 * Return a river array with subscription and collaboration
+	 * status populated for $querying_account
 	 *
-	 * @return	Array
+	 * @param Model_User $user
+	 * @param Model_User $querying_account
+	 * @return array
+	 *
 	 */
-	public function get_river_by_id($id, $querying_account)
-	{
-		$river = $this->api->get_rivers_api()->get_river_by_id($id);
-		
+	public static function get_array($river, $querying_account) {
+		$river['url'] = self::get_base_url($river);
 		$river['expired'] = FALSE;
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
@@ -54,7 +56,32 @@ class Service_River {
 				$river['subscribed'] = TRUE;
 			}
 		}
+		
+		// Get display name from channel plugins
+		if (isset($river['channels']))
+		{
+			foreach($river['channels'] as & $channel) {
+				$channel['display_name'] = '';
+				$channel['parameters'] = json_decode($channel['parameters'], TRUE);
+				Swiftriver_Event::run('swiftriver.channel.format', $channel);
+			}
+		}
+		
+		
 		return $river;
+	}
+	
+	/**
+	 * Return the Account array for the given account path
+	 *
+	 * @return	Array
+	 */
+	public function get_river_by_id($id, $querying_account)
+	{
+		$river = $this->api->get_rivers_api()->get_river_by_id($id);
+		
+		
+		return $this->get_array($river, $querying_account);
 	}
 	
 	/**

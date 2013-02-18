@@ -92,10 +92,10 @@ $(document).ready(function() {
 		this.container.addClass("visible");
 		this.container.fadeIn(350);
 		$('body').addClass('noscroll');
-		this._registerHide(); 
 		
 		if (!this.modal) {
 			$('body').addClass('zoomed');
+			this._registerHide();
 		} else {
 			$('body').addClass('has_modal');
 		}
