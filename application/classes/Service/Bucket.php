@@ -43,7 +43,11 @@ class Service_Bucket {
 	 */
 	public function get_drops($bucket_id, $params = array())
 	{
-		return $this->buckets_api->get_bucket_drops($bucket_id, $params);
+		$drops = $this->buckets_api->get_bucket_drops($bucket_id, $params);
+		
+		$this->marshall_drops($drops);
+
+		return $drops;
 	}
 	
 	/**
@@ -92,7 +96,10 @@ class Service_Bucket {
 	public function get_drops_since_id($bucket_id, $since_id)
 	{
 		$params = array('since_id' => $since_id);
-		return $this->buckets_api->get_bucket_drops($bucket_id, $params);
+		$drops = $this->buckets_api->get_bucket_drops($bucket_id, $params);
+		
+		$this->marshall_drops($drops);
+		return $drops;
 	}
 	
 	/**
@@ -105,5 +112,39 @@ class Service_Bucket {
 		$this->buckets_api->get_bucket_collaborators($bucket_id);
 	}
 	
+	private function marshall_drops(array & $drops)
+	{
+		foreach ($drops as & $drop)
+		{
+			if (empty($drop['buckets']))
+			{
+				$drop['buckets'] = array();
+			}
+		}
+	}
+	
+	/**
+	 * Adds the drop specified in $drop_id to the bucket specified
+	 * in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 */
+	public function add_drop($bucket_id, $drop_id)
+	{
+		$this->buckets_api->add_drop($bucket_id, $drop_id);
+	}
+	
+	/**
+	 * Removes the drop specified in $drop_id from the bucket specified
+	 * in $bucket_id
+	 *
+	 * @param  int  bucket_id
+	 * @param  int  drop_id
+	 */
+	public function delete_drop($bucket_id, $drop_id)
+	{
+		$this->buckets_api->delete_drop($bucket_id, $drop_id);
+	}
 	
 }

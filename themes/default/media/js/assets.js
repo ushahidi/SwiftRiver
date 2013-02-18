@@ -283,7 +283,7 @@
 		},
 
 		renderOwn: function(view) {
-			this.$(".own").append(view.render().el);
+			this.$(".own").prepend(view.render().el);
 			this.$(".own-title").show();
 		},
 

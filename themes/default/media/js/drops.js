@@ -106,17 +106,30 @@
 		
 		// Add/Remove a droplet from a bucket
 		setBucket: function(changeBucket) {
-			// Is this droplet already in the bucket?
-			buckets = this.get("buckets");
+			// Clone the buckets lit - Backbone JS appears to be using
+			// reference equality so when the buckets list/array is altered via
+			// buckets.push, the Backbone JS reference will remain the same - hence
+			// the change event won't be triggered
+			buckets = _.clone(this.get("buckets"));
+			
+			bucketId = changeBucket.get("id");
+			// The task to be performed - add/remove from bucket
+			var command = "";
+
+			// Is the drop already in the bucket
 			if (this.isInBucket(changeBucket)) {
 				// Remove the bucket from the list
-				buckets = _.filter(buckets, function(bucket) { return bucket["id"] != changeBucket.get("id"); });
-				this.set('buckets', buckets);
+				buckets = _.filter(buckets, function(bucket) { return bucket["id"] != bucketId; });
+				command = "remove";
 			} else {
-				buckets.push({id: changeBucket.get("id"), bucket_name: changeBucket.get("bucket_name")});
+				buckets.push({id: bucketId, name: changeBucket.get("name")});
+				command = "add";
 			}
 			
-			this.save({buckets: buckets}, {wait: true});
+			this.save({
+				buckets: buckets,
+				command: command,
+				bucket_id: bucketId}, {patch: true, wait: true});
 		},
 		
 		// Return boolean of whether this droplet is in the provided bucket
@@ -218,6 +231,17 @@
 				modalShow(shareView.render().el);
 			}
 		    return false;
+		},
+		
+		updateBucketCount: function() {
+			var bucketCount = this.model.get("buckets").length;
+			var selector = this.$(".bucket .bucket-total");
+			selector.html(bucketCount);
+			if (bucketCount > 0)
+				selector.show();
+			} else {
+				selector.hide();
+			}
 		}
 	})
 	
@@ -248,8 +272,9 @@
 			}
 			this.setElement(el);
 			
-			this.model.on("change:user_score", this.updateDropScore, this)
-			this.model.on("change:comment_count", this.render, this)
+			this.model.on("change:user_score", this.updateDropScore, this);
+			this.model.on("change:comment_count", this.render, this);
+			this.model.on("change:buckets", this.updateBucketCount, this);
 		},
 
 		make: function(tagName, attributes) {
@@ -268,6 +293,7 @@
 			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
 		}
+
 	});
 	
 	// Drop detail in zoom view
@@ -532,10 +558,12 @@
 	// Bucket in modal view
 	var BucketView = Drops.BucketView = Backbone.View.extend({
 	
-		tagName: "label",
+		tagName: "li",
+		
+		className: "static cf",
 		
 		events: {
-			"click input": "toggleBucket"
+			"click span.select": "toggleBucket"
 		},
 		
 		initialize: function() {
@@ -547,7 +575,9 @@
 			var bucket = this.model
 			var droplet_buckets = this.options.drop.get('buckets');
 			var containsDrop = typeof _.find(droplet_buckets, function(droplet_bucket) { return droplet_bucket['id'] == bucket.get('id') }) !== 'undefined';
-			bucket.set('containsDrop', containsDrop);
+			if (containsDrop) {
+				this.$el.addClass("selected");
+			}
 			
 			// Render the bucket
 			this.$el.html(this.template(bucket.toJSON()));
@@ -557,12 +587,11 @@
 		
 		setSelected: function() {
 			this.$el.addClass("selected");
-			this.$("input[type=checkbox]").prop("checked", true);
 		},
 		
 		toggleBucket: function() {
 			this.options.drop.setBucket(this.model);
-			if (this.$("input[type=checkbox]").is(':checked')) {
+			if (!this.$el.hasClass("selected")) {
 				this.$el.addClass('selected');
 			} else {
 				this.$el.removeClass('selected');

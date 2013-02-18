@@ -177,21 +177,13 @@ class Controller_Bucket extends Controller_Drop_Base {
 			case "GET":
 				$drop_id = $this->request->param('id');
 				$page = 1;
-				if ($drop_id)
-				{
-					// Specific drop requested
-					$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, $drop_id);
-					$droplets = array_pop($droplets_array['droplets']);
-				}
-				else
-				{
-					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
+
+				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					
-					$droplets_array = $this->bucket_service->get_drops_since_id($this->bucket['id'], $since_id);
-				}
+				$droplets_array = $this->bucket_service->get_drops_since_id($this->bucket['id'], $since_id);
 				
 				//Throw a 404 if a non existent page is requested
 				if (($page > 1 OR $drop_id) AND empty($droplets_array))
@@ -206,39 +198,41 @@ class Controller_Bucket extends Controller_Drop_Base {
 				echo json_encode($droplets_array);
 			break;
 			
-			case "PUT":
+			case "PATCH":
 				// No anonymous actions
 				if ($this->anonymous)
 				{
 					throw new HTTP_Exception_403();
 				}
 			
-				$droplet_array = json_decode($this->request->body(), TRUE);
+				$payload = json_decode($this->request->body(), TRUE);
+				if ( ! isset($payload['command']) OR ! isset($payload['bucket_id']))
+				{
+					throw new HTTP_Exception_400();
+				}
+
+				$bucket_id = intval($payload['bucket_id']);
 				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				$droplet_orm->update_from_array($droplet_array, $this->user->id);
+				if ($payload['command'] === 'add')
+				{
+					$this->bucket_service->add_drop($bucket_id, $droplet_id);
+				}
+				elseif ($payload['command'] === 'remove')
+				{
+					$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+				}
 			break;
 			
 			case "DELETE":
-				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				
-				// Does the user exist
-				if ( ! $droplet_orm->loaded())
-				{
-					throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
-				}
 				
 				// Is the logged in user an owner?
 				if ( ! $this->owner)
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				ORM::factory('Bucket', $this->bucket->id)->remove('droplets', $droplet_orm);
+
+				$droplet_id = intval($this->request->param('id', 0));
+				// $this->bucket_service->delete_drop($bucket_id, $droplet_id);
 		}
 	}
 	

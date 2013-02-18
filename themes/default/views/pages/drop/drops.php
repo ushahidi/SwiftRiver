@@ -22,6 +22,8 @@
 					<span class="icon-add-to-bucket"></span>
 					<% if (buckets != null && buckets.length > 0) { %>
 					<span class="bucket-total"><%= buckets.length %></a>
+					<% } else { %>
+					<span class="bucket-total" style="display:none">0</span>
 					<% } %>
 				</a>
 			</li>	
@@ -413,6 +415,55 @@
 		</div>
 	<?php echo Form::close(); ?>
 
+</script>
+
+<script type="text/template" id="add-to-bucket-template">
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i><?php echo __("Close"); ?></a>
+				<h1><?php echo __("Add to Bucket"); ?></h1>
+			</div>
+			<div class="modal-body">
+				<div class="base">
+					<ul class="view-table base own">
+						<li class="add">
+							<a href="#create-bucket" class="modal-transition"><?php echo __("Create a new bucket"); ?></a>
+						</li>
+					</ul>
+				</div>
+				<div class="modal-toolbar">
+					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
+				</div>
+			</div>
+		</div>
+		<div id="modal-secondary" class="modal-view">
+			<div id="create-bucket" class="modal-segment">
+				<div class="modal-title cf">
+					<a href="#" class="modal-back button-white">
+						<span class="icon-arrow-left"></span>
+					</a>
+					<h1><?php echo __("Create a new bucket"); ?></h1>
+				</div>
+				<div class="modal-body">
+					<div class="base">
+						<div class="modal-field">
+							<h3 class="label"><?php echo __("Name"); ?></h3>
+							<?php echo Form::input("bucket_name", "", array('placeholder' => __("Name your bucket"))); ?>
+						</div>
+					</div>
+				</div>
+				<div class="modal-toolbar">
+					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Save and add drop"); ?></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="bucket-template">
+	<span class="select icon-plus"></span>
+	<%= name %>
 </script>
 
 <?php echo $droplet_js; ?>

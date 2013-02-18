@@ -49,4 +49,25 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 		$path = sprintf("/buckets/%d/collaborators", $bucket_id);
 		return $this->get($path);
 	}
+	
+	/**
+	 * Adds the drop specified in $drop_id to the bucket in
+	 * @param $bucket_id
+	 */
+	public function add_drop($bucket_id, $drop_id)
+	{
+		$this->put("/buckets/".$bucket_id."/drops/".$drop_id);
+	}
+	
+	/**
+	 * Removes the drop specified in $drop_id from the bucket specified
+	 * in $bucket_id
+	 *
+	 * @param   int bucket_id
+	 * @param   int drop_id
+	 */
+	public function delete_drop($bucket_id, $drop_id)
+	{
+		$this->delete("/buckets/".$bucket_id."/drops/".$drop_id);
+	}
 }
