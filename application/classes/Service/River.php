@@ -116,4 +116,25 @@ class Service_River {
 		
 		return $river_array;
 	}
+	
+	/**
+	 * Add a channal to the given river
+	 *
+	 * @return Array
+	 */
+	public function create_channel_from_array($river_id, $channel_array)
+	{
+		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
+		
+		$channel_array = $this->api->get_rivers_api()->create_channel(
+					$river_id, 
+					$channel_array["channel"], 
+					json_encode($channel_array["parameters"])
+				);
+				
+		$channel_array['parameters'] = json_decode($channel_array['parameters'], TRUE);
+		$channel_array['display_name'] = '';
+		Swiftriver_Event::run('swiftriver.channel.format', $channel_array);
+		return $channel_array;
+	}
 }

@@ -82,7 +82,7 @@ class Controller_River extends Controller_Drop_Base {
 				$this->redirect($this->dashboard_url, 302);
 			}
 
-			$this->river_base_url = $this->riverService->get_base_url($river);
+			$this->river_base_url = $this->riverService->get_base_url($this->river);
 			$this->settings_url = $this->river_base_url.'/settings';
 
 			// Navigation Items
@@ -114,6 +114,7 @@ class Controller_River extends Controller_Drop_Base {
 			// Channels
 			$this->template->content->channels_config = json_encode(Swiftriver_Plugins::channels());
 			$this->template->content->channels = json_encode($this->river['channels']);
+			$this->template->content->channels_base_url = $this->river_base_url.'/settings/channels';
 			$this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
 			
 			if ( ! $this->owner)

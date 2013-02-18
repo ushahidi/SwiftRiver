@@ -16,25 +16,9 @@
 class Controller_River_Channels extends Controller_River_Settings {
 	
 	/**
-	 * @return	void
-	 */
-	public function action_index()
-	{
-		$this->template->header->title = $this->river->river_name.' ~ '.__('Channel Settings');
-        $this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
-		
-		$this->active = 'channels';
-		$this->settings_content = View::factory('pages/river/settings/channels');		
-		$this->settings_content->channels_config = json_encode(Swiftriver_Plugins::channels());
-		$this->settings_content->channels = json_encode($this->river->get_channels(TRUE));
-		$this->settings_content->base_url = $this->river->get_base_url().'/settings/channels';
-		$this->settings_content->river = $this->river;
-	}
-	
-	/**
 	  * Channels restful api
 	  */
-	public function action_manage()
+	public function action_index()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
@@ -47,38 +31,17 @@ class Controller_River_Channels extends Controller_River_Settings {
 				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);			
 				if ( ! $channel_config)
 					throw new HTTP_Exception_400();
-					
-				$channel_orm = $this->river->get_channel($channel_array['channel']);
 				
-				// Make sure the channel is enabled for the case where a disabled
-				// channel is being re-added.
-				if ( ! (bool) $channel_orm->filter_enabled)
+				try 
 				{
-					$channel_orm->filter_enabled = TRUE;
-					$channel_orm->save();
-				}
-				
-				echo json_encode(array(
-					'id' => $channel_orm->id,
-					'channel' => $channel_orm->channel,
-					'name' => $channel_config['name'],
-					'enabled' => (bool) $channel_orm->filter_enabled,
-					'options' => $this->river->get_channel_options($channel_orm)
-				));
-			break;
-			case "PUT":
-				$channel_array = json_decode($this->request->body(), TRUE);
-				$channel_orm = $this->river->get_channel($channel_array['channel']);
-				$channel_orm->filter_enabled = $channel_array['enabled'];
-				$channel_orm->save();
-			break;
-			case "DELETE":
-				$channel_id = intval($this->request->param('id', 0));
-				$channel_orm = $this->river->get_channel_by_id($channel_id);
-				
-				if ($channel_orm)
+					$channel_array = $this->riverService->create_channel_from_array($this->river['id'], $channel_array);
+					echo json_encode($channel_array);
+				} 
+				catch (Swiftriver_Exception_Channel_Option $e)
 				{
-					$channel_orm->delete();
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					echo json_encode(array('error' => $e->getMessage()));
 				}
 			break;
 		}

@@ -258,6 +258,27 @@ ul.dual-buttons li a span[class^="icon-"] strong {
    margin-left: -10px;
 }
 
+.has_file {
+    position: relative;
+    overflow: hidden;  
+}
+.button-primary input[type=file] {
+  -moz-border-bottom-colors: none;
+  -moz-border-image: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: black;
+  border-style: solid;
+  cursor: pointer;
+  direction: ltr;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 /* --------------------------- ICONS */
 
 @font-face {

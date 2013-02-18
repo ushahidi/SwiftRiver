@@ -9,6 +9,7 @@ $(function() {
 		modalShow(new Channels.ChannelsModalView({
 			collection: Channels.channelList, 
 			config: channelsConfig,
+			baseUrl: "<?php echo $channels_base_url ?>"
 		}).render().el);
 		return false;
 	});
@@ -62,7 +63,6 @@ $(function() {
 				
 					<div class="filters-type">
 						<span class="toggle-filters-display"><span class="total">5</span><span class="icon-arrow-down"></span><span class="icon-arrow-up"></span></span>				
-						<span class="filters-type-settings"><a href="/markup/_modals/settings-channels.php" class="modal-trigger"><span class="icon-cog"></span></a></span>
 						<span class="filters-type-settings"><a href="#"><span class="icon-cog"></span></a></span>
 						<h2>Channels</h2>
 						<div class="filters-type-details">
@@ -93,7 +93,7 @@ $(function() {
 			
 		<?php echo $droplets_view; ?>
 	</div>
-</div></div>
+</div>
 
 <script type="text/template" id="channels-modal-template">
 	<div id="modal-viewport">
@@ -242,4 +242,94 @@ $(function() {
 	<i class="channel-icon icon-<%= channel %>"></i>
 	<%= display_name %>
 	</a>
+</script>
+
+<script type="text/template" id="channel-config-template">
+	<a href="#"><span class="channel-icon icon-<%=channel%>"></span></a>
+</script>
+
+<script type="text/template" id="channel-option-config-template">
+	<a href="#"><%=label%></a>
+</script>
+
+<script type="text/template" id="edit-group-channel-template">
+	<div class="active">
+		<span class="modal-field">
+			<h4 class="label">Keywords</h3>
+			<input type="text" placeholder="Enter keywords, separated by commas" />
+		</span>
+		<span class="modal-field">
+			<h4 class="label">Users</h3>
+			<input type="text" placeholder="Enter usernames, separated by commas" />
+		</span>
+		<span class="modal-field">
+			<h4 class="label">Locations</h3>
+			<input type="text" placeholder="Enter location" />
+			<select style="display:block;">
+				<option>within 100km</option>
+				<option>within 1000km</option>
+			</select>
+		</span>
+	</div>
+</script>
+
+<script type="text/template" id="edit-channel-template">
+	<div class="active">
+	</div>
+</script>
+
+<script type="text/template" id="edit-channel-text-template">
+	<span class="modal-field">
+		<% if (isGroup) { %>
+			<h4 class="label"><%= label %></h3>
+		<% } %>
+		<input type="text" name="<%= key %>" placeholder="<%= placeholder %>" />
+	</span>
+</script>
+
+<script type="text/template" id="edit-channel-geo-template">
+	<span class="modal-field">
+		<h4 class="label"><%= label %></h3>
+		<input type="text" name="<%= key %>" placeholder="<%= placeholder %>" />
+		<select style="display:block;">
+			<option>within 100km</option>
+			<option>within 1000km</option>
+		</select>
+	</span>
+</script>
+
+<script type="text/template" id="edit-channel-file-template">
+	<span class="modal-field has_file">
+		<a class="button-primary" href="#">Select file
+		<input type="file" name="file">
+		</a>
+	</span>
+</script>
+
+<script type="text/template" id="add-channel-modal-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+		<h1>Add channel</h1>
+	</div>
+				
+	<div class="modal-body modal-tabs-container">
+		<div class="base">
+			<ul class="modal-tabs-menu">
+			<!-- List of available channels goes here -->
+			</ul>
+			<div class="modal-tabs-window">
+				<div id="add-twitter" class="active">
+					<div class="modal-field modal-field-tabs-container">
+						<ul class="modal-field-tabs-menu">
+						</ul>
+						<div class="modal-field-tabs-window">
+						</div>
+					</div>
+				</div>														
+			</div>
+		</div>
+		<div class="modal-toolbar">
+			<a href="#" class="button-submit button-primary modal-back">Add channel</a>				
+		</div>					
+	</div>
 </script>

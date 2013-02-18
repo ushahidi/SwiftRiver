@@ -58,4 +58,13 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 		));
 		return $this->post('/rivers', $request_body);
 	}
+	
+	
+	public function create_channel($river_id, $channel, $parameters = NULL) {
+		$request_body = json_encode(array(
+			"channel" => $channel,
+			"parameters" => $parameters
+		));
+			return $this->post('/rivers/'.$river_id.'/channels', $request_body);
+	}
 }
