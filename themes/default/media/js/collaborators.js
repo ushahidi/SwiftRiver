@@ -20,12 +20,12 @@
 
 	var CollaboratorView = Backbone.View.extend({
 
-		tagName: "article",
+		tagName: "li",
 
-		className: "item cf",
+		className: "static user cf",
 
 		events: {
-			"click a.remove-large": "removeCollaborator",
+			"click span.remove": "removeCollaborator",
 			"click .actions .editor": "makeEditor",
 			"click .actions .viewer": "makeViewer",
 		},
@@ -263,10 +263,10 @@
 
 	var CollaboratorsControl = Collaborators.CollaboratorsControl = Backbone.View.extend({
 
-		el: "div.collaborators",
+		el: "div#collaborators",
 
 		events: {
-			"click .settings-toolbar p.create a": "showAddCollaboratorsModal"
+			"click li.add a": "showAddCollaboratorsModal"
 		},
 
 		initialize: function(options) {
@@ -287,7 +287,7 @@
 
 		addCollaborator: function(collaborator) {
 			var view = new CollaboratorView({model: collaborator});	
-			this.$(".col_12").append(view.render().el);
+			this.$("ul.view-table").prepend(view.render().el);
 		},
 
 		addCollaborators: function() {
