@@ -4,13 +4,32 @@ $(document).ready(function() {
 		$.getScript('/markup/_js/jquery.masonry.js');
 	}
 
-	// DROP SHOW 'REMOVE' ON HOVER
 	if (window.innerWidth > 800) {
+		// SCROLL TO TOP
+		$('a#scroll-top').live('click', function(e) {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 800);
+			return false;
+		});	
+	
+		// DROP SHOW 'REMOVE' ON HOVER
 		$('article.drop, .drop-full').hover(
 			function() {
 				$(this).find('.drop-status').fadeIn('fast');		
 			},function() {
 				$(this).find('.drop-status').fadeOut('fast');
+		});
+
+		// SHOW 'VIEW FILTERS' BUTTON
+		$.getScript("/markup/_js/jquery.waypoints.js", function() {
+			$('section#filters .modal-window').waypoint(function() {
+			  $('section#filters a#scroll-top').fadeToggle('fast');
+			}, {
+			  offset: function() {
+				return -$(this).height();
+			  }
+			});
 		});
 	}
 
