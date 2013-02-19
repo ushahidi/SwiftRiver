@@ -34,6 +34,45 @@ class Controller_River_Settings extends Controller_River {
 			->bind('settings_content', $this->settings_content)
 			->bind('river_base_url', $this->river_base_url)
 			->bind('river', $this->river);
+		$this->template->content->nav = $this->get_nav();
+	}
+	
+	/**
+	 * River Settings Navs
+	 * 
+	 * @param obj $river - the loaded river object
+	 * @param string $active - the active menu
+	 * @return	array $nav
+	 */
+	public static function get_nav()
+	{
+		$nav = array();
+
+		// List
+		$nav[] = array(
+			'id' => 'options-navigation-link',
+			'active' => 'options',
+			'url' => '/settings',
+			'label' => __('Options')
+		);
+
+		// Rules
+		$nav[] = array(
+			'id' => 'rules-navigation-link',
+			'active' => 'rules',
+			'url' => '/settings/rules',
+			'label' => __('Rules')
+		);
+
+		// Collaborators
+		$nav[] = array(
+			'id' => 'collaborators-navigation-link',
+			'active' => 'collaborators',
+			'url' => '/settings/collaborators',
+			'label' => __('Collaborators')
+		);
+			
+		return $nav;
 	}
 	
 	
@@ -42,8 +81,7 @@ class Controller_River_Settings extends Controller_River {
 	 */
 	public function action_index()
 	{
-		// Default view is channel settings
-		$this->redirect($this->river_base_url.'/settings/channels', 302);
+		$this->template->content->active = "options";
+		$this->template->content->settings_content = View::factory('pages/river/settings/options');
 	}
-	
 }

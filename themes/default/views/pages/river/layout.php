@@ -26,7 +26,7 @@ $(function() {
 		</div>
 		<div class="page-action col_3">
 			<!-- IF: User manages this river -->
-			<a href="settings.php" class="button button-white settings"><span class="icon-cog"></span></a>
+			<a href="<?php echo $settings_url ?>" class="button button-white settings"><span class="icon-cog"></span></a>
 			<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
 			<!-- ELSE IF: User follows this river
 			<a href="#" class="button-follow selected button-primary"><i class="icon-checkmark"></i>Following</a>

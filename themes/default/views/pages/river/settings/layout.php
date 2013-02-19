@@ -1,34 +1,43 @@
 <hgroup class="page-title cf">
 	<div class="center">
-		<div class="page-h1 col_9">
-			<h1><a href="<?php echo $river_base_url; ?>"><?php echo $river->river_name; ?></a> <em><?php echo __("settings"); ?></em></h1>
+		<div class="col_9">
+			<h1><a href="/markup/river">Title Goes Here</a> <em>settings</em></h1>
 		</div>
 		<div class="page-action col_3">
-			<span class="button-white"><a href="<?php echo $river_base_url; ?>">Return to river</a></span>
-		</div>		
+			<a href="<?php echo $river_base_url?>" class="button button-white">Return to river</a>
+			<a href="#" class="button button-primary filters-trigger"><i class="icon-menu"></i>More</a>
+		</div>
 	</div>
 </hgroup>
 
-<nav class="page-navigation cf">
-	<div class="center">
-		<div id="page-views" class="settings touchcarousel col_12">
-			<ul class="touchcarousel-container">
-				<li class="touchcarousel-item <?php if ($active == 'channels' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/channels'; ?>">Flow</a>
-				</li>
-				<li class="touchcarousel-item <?php if ($active == 'collaborators' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/collaborators'; ?>">Collaborators</a>
-				</li>
-				<li class="touchcarousel-item <?php if ($active == 'display' OR ! $active) echo 'active'; ?>">
-					<a href="<?php echo $river_base_url.'/settings/display'; ?>">Options</a>
-				</li>
-				<?php
-					// Swiftriver Plugin Hook -- add river settings nav item
-					Swiftriver_Event::run('swiftriver.river.settings.nav', $active);
-				?>
-			</ul>
+<div id="content">
+	<div class="center body-tabs-container cf">
+
+		<section id="filters" class="col_3">
+			<div class="modal-window">
+				<div class="modal">		
+					<div class="modal-title cf">
+						<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+						<h1>Filters</h1>
+					</div>
+						
+					<ul class="body-tabs-menu filters-primary">
+						<?php foreach ($nav as $item): ?>
+						<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
+							<a href="<?php echo $river_base_url.$item['url']; ?>">
+								<?php echo $item['label'];?>
+							</a>
+						</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			</div>															
+		</section>
+					
+		<div id="settings" class="body-tabs-window col_9">
+			
+		<?php echo $settings_content ?>			
+								
 		</div>
 	</div>
-</nav>
-
-<?php echo $settings_content; ?>
+</div>
