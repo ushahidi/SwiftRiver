@@ -61,7 +61,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		if (empty($this->bucket))
 		{
 			Kohana::$log->add(Log::INFO, __("Bucket :name not found", array(":name" => $this->bucket_base_url)));
-			die();
+			throw new HTTP_Exception_404();
 		}
 		
 		// Set the page title
@@ -92,7 +92,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		$droplet_js = View::factory('pages/drop/js/drops')
 			->set('fetch_base_url', $this->bucket_base_url)
-			->set('default_view', "list")
+			->set('default_view', $this->bucket['default_layout'])
 			->set("photos", ($this->photos ? 1 : 0))
 			->set('droplet_list', json_encode($droplet_list))
 			->set('filters', NULL)
@@ -255,18 +255,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 				
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				if ( ! $user_orm->loaded()) 
-					return;
-					
-				$collaborator_orm = $this->bucket->bucket_collaborators->where('user_id', '=', $user_orm->id)->find();
-				if ($collaborator_orm->loaded())
-				{
-					$collaborator_orm->delete();
-					Model_User_Action::delete_invite($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
-				}
 			break;
 			
 			case "PUT":
@@ -276,98 +264,28 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 				
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				$collaborator_array = json_decode($this->request->body(), TRUE);
-				
-				$collaborator_orm = ORM::factory("Bucket_Collaborator")
-									->where('bucket_id', '=', $this->bucket->id)
-									->where('user_id', '=', $user_orm->id)
-									->find();
-				
-				$exists = $collaborator_orm->loaded();
-				if ( ! $exists)
-				{
-					$collaborator_orm->bucket = $this->bucket;
-					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'bucket', 'invite', $this->bucket->id, $user_orm->id);
-				}
-				
-				if (isset($collaborator_array['read_only']))
-				{
-					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
-				}
-				
-				$collaborator_orm->save();
-				
-				if ( ! $exists)
-				{
-					// Send email notification after successful save
-					$html = View::factory('emails/html/collaboration_invite');
-					$text = View::factory('emails/text/collaboration_invite');
-					$html->invitor = $text->invitor = $this->user->name;
-					$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
-					$html->asset = $text->asset = 'bucket';
-					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
-					$html->asset_link = URL::site($this->bucket_base_url, TRUE);
-					$subject = __(':invitor has invited you to collaborate on a bucket',
-									array( ":invitor" => $this->user->name,
-									));
-					Swiftriver_Mail::send($collaborator_orm->user->email, 
-										  $subject, $text->render(), $html->render());
-				}
+				// if ( ! $exists)
+				// {
+				// 	// Send email notification after successful save
+				// 	$html = View::factory('emails/html/collaboration_invite');
+				// 	$text = View::factory('emails/text/collaboration_invite');
+				// 	$html->invitor = $text->invitor = $this->user->name;
+				// 	$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+				// 	$html->asset = $text->asset = 'bucket';
+				// 	$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+				// 	$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+				// 	$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
+				// 	$html->asset_link = URL::site($this->bucket_base_url, TRUE);
+				// 	$subject = __(':invitor has invited you to collaborate on a bucket',
+				// 					array( ":invitor" => $this->user->name,
+				// 					));
+				// 	Swiftriver_Mail::send($collaborator_orm->user->email, 
+				// 						  $subject, $text->render(), $html->render());
+				// }
 			break;
 		}
 	}
 
-	/**
-	 * Bucket management restful API
-	 * 
-	 */
-	public function action_manage()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-				
-		switch ($this->request->method())
-		{
-			case "GET":
-			break;
-
-			case "PUT":
-				// No anonymous buckets
-				if ($this->anonymous)
-				{
-					throw new HTTP_Exception_403();
-				}
-				$bucket_array = json_decode($this->request->body(), TRUE);
-			break;
-
-			case "POST":
-			
-				// No anonymous buckets
-				if ($this->anonymous)
-				{
-					throw new HTTP_Exception_403();
-				}
-			break;
-	
-			case "DELETE":
-				$bucket_id = intval($this->request->param('id', 0));
-				$this->bucket_service->delete_bucket($bucket_id);
-				Cache::instance()->delete('user_buckets_'.$this->user->id);
-			break;
-		}
-		
-		// Force refresh of cached buckets
-		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
-		{
-			Cache::instance()->delete('user_buckets_'.$this->user->id);
-		}
-	}
 	
 	/**
 	 * Comments Posting API

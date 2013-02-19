@@ -197,9 +197,9 @@ class SwiftRiver_Client {
 	 * @param  array    $parameters PUT parameters
 	 * @return array
 	 */
-	public function put($path, array $parameters = array(), $headers = array())
+	public function put($path, $parameters = array(), $headers = array())
 	{
-		return $this->_call($path, $parameters, "PUT", $headers = array());
+		return $this->_call($path, $parameters, "PUT", $headers);
 	}
 
 	/**

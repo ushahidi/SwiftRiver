@@ -49,7 +49,10 @@ abstract class SwiftRiver_API {
 	 */
 	protected function post($path, $parameters = array())
 	{
-		$headers = array('Content-Type' => 'application/json;charset=UTF-8');
+		$headers = array(
+			'Content-Type' => 'application/json;charset=UTF-8',
+			'Accept' => 'application/json'
+		);
 		
 		if ( ! empty($parameters))
 		{
@@ -65,19 +68,22 @@ abstract class SwiftRiver_API {
 	 * Ex: $api->post('/v1/rivers/2', array('name' => 'New River Name'))
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   array   $parameters       PUT parameters
-	 * @return  array                     data returned
+	 * @param   array   $parameters      PUT parameters
+	 * @return  array                    data returned
 	 */
 	protected function put($path, $parameters = array())
 	{
-		$headers = array('Content-Type' => 'application/json;charset=UTF-8');
-
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'Accept' => 'application/json'
+		);
+		
 		if ( ! empty($parameters))
 		{
 			$parameters = json_encode($parameters);
 		}
 
-		return $this->client->put($path, $parameters, $headers);		
+		return $this->client->put($path, $parameters, $headers);
 	}
 	
 	/**

@@ -28,7 +28,10 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 		{
 			throw new HTTP_Exception_403();
 		}
-		
+
+		$this->template->header->title = $this->bucket['name'].' '.__("Settings");
+		$this->template->header->js .= HTML::script('themes/default/media/js/collaborators.js');
+
 		$this->template->content = View::factory('pages/bucket/settings/layout')
 			->bind('active', $this->active)
 			->bind('settings_content', $this->settings_content)
@@ -42,8 +45,71 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 	 */
 	public function action_index()
 	{
-		// Default view is collaborator settings
-		$this->redirect($this->bucket_base_url.'/settings/collaborators', 302);
+		$session = Session::instance();
+
+		// Check for post
+		if ($this->request->method() === "POST")
+		{
+			$bucket_name = trim($this->request->post('bucket_name'));
+
+			// Check for updates to the bucket name
+			if (Valid::not_empty($bucket_name) AND strcmp($bucket_name, $this->bucket['name']) !== 0)
+			{
+				$bucket_id = $this->bucket['id'];
+				$parameters = array('name' => $bucket_name);
+				if (($bucket = $this->bucket_service->modify_bucket($bucket_id, $parameters, $this->user)) != FALSE)
+				{
+					$session->set('messages', __("The bucket name was successfully changed"));
+					$this->redirect($bucket['url'].'/settings', 302);
+				}
+			}
+			elseif
+			(
+				// Only the display settings are being updated
+				Valid::not_empty($this->request->post('default_layout')) AND 
+				Valid::not_empty($this->request->post('bucket_publish'))
+			)
+			{
+				// Update parameters
+				$parameters = array(
+					// Use the current bucket name
+					'name' => $this->bucket['name'],
+					'default_layout' => $this->request->post('default_layout'),
+					'published' => (bool) $this->request->post('bucket_publish')
+				);
+		
+				// Get thet bucket id
+				$bucket_id = $this->bucket['id'];
+				
+				// Update the display settings
+				if (($bucket = $this->bucket_service->modify_bucket($bucket_id, $parameters, $this->user)) != FALSE)
+				{
+					$this->bucket = $bucket;
+					$session->set('messages', __("The display settings have been successfully updated"));
+				}
+				else
+				{
+					$session->set('errors', __("The display settings could not be updated"));
+				}
+			}
+			
+		}
+
+		$this->settings_content  = View::factory('pages/bucket/settings/display')
+			->set('message', $session->get('messages'))
+			->bind('bucket', $this->bucket)
+			->bind('collaborators_view', $collaborators_view);
+		
+		// Collaboraotors view
+		$collaborators_view = View::factory('/template/collaborators')
+			->bind('fetch_url', $fetch_url)
+			->bind('collaborator_list', $collaborators);
+		
+		$fetch_url = $this->bucket_base_url.'/collaborators';
+		$collaborators = json_encode($this->bucket_service->get_collaborators($this->bucket['id']));
+		
+		$session->delete('messages');
+		
 	}
-	
+		
 }

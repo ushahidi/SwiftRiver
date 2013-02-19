@@ -44,7 +44,7 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 *
 	 * @return array
 	 */
-	public function get_bucket_collaborators($bucket_id)
+	public function get_collaborators($bucket_id)
 	{
 		$path = sprintf("/buckets/%d/collaborators", $bucket_id);
 		return $this->get($path);
@@ -91,5 +91,23 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	public function delete_bucket($bucket_id)
 	{
 		$this->delete("/buckets/".$bucket_id);
+	}
+	
+	/**
+	 * Sets the properties of the bucket specified in $bucket_id
+	 * to the ones in $parameters. The return value is the modified
+	 * bucket returned by the API
+	 *
+	 * @param  int     bucket_id
+	 * @param  array   parameters
+	 * @return array
+	 */
+	public function modify_bucket($bucket_id, array $parameters)
+	{
+		if ( ! array_key_exists('name', $parameters))
+		{
+			throw new SwiftRiver_API_Exception(__("The 'name' parameter must be specified"));
+		}
+		return $this->put("/buckets/".$bucket_id, $parameters);
 	}
 }

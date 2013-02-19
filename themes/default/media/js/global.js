@@ -320,6 +320,25 @@ $(document).ready(function() {
 			}
 		});
 	}
+	
+	// TABS (Body content)
+	$('.body-tabs-menu a').live('click', function(e) {
+		var bodyTabHash = $(this).prop('hash');
+		$('.body-tabs-window div.active').removeClass('active').fadeOut(100, function() {
+			$('.body-tabs-window ' + bodyTabHash).fadeIn('fast').addClass('active');
+		});
+		$('.body-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});
+	
+	// FORM Submission
+	$("a.button-submit").live('click', function(e) {
+		if ($(this).parents('form')) {
+			$(this).parents('form')[0].submit();
+			e.preventDefault();
+		}
+	});
 });
 
 // Hide mobile address bar
