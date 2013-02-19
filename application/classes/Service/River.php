@@ -57,14 +57,20 @@ class Service_River {
 			}
 		}
 		
-		// Get display name from channel plugins
+		// Get display name from channel plugins and disabled channels
 		if (isset($river['channels']))
 		{
-			foreach($river['channels'] as & $channel) {
+			$channels = array();
+			foreach($river['channels'] as $channel) {
+				if (! Swiftriver_Plugins::get_channel_config($channel['channel']))
+					continue;
+				
 				$channel['display_name'] = '';
 				$channel['parameters'] = json_decode($channel['parameters'], TRUE);
 				Swiftriver_Event::run('swiftriver.channel.format', $channel);
+				$channels[] = $channel;
 			}
+			$river['channels'] = $channels;
 		}
 		
 		

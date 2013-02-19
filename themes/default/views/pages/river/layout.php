@@ -13,6 +13,8 @@ $(function() {
 		}).render().el);
 		return false;
 	});
+	
+	new Channels.DroplistChannelsView({collection: Channels.channelList});
 });
 
 </script>
@@ -61,17 +63,13 @@ $(function() {
 						</ul>
 					</div>
 				
-					<div class="filters-type">
+					<div class="filters-type" id="drops-channel-list">
 						<span class="toggle-filters-display"><span class="total">5</span><span class="icon-arrow-down"></span><span class="icon-arrow-up"></span></span>				
 						<span class="filters-type-settings"><a href="#"><span class="icon-cog"></span></a></span>
 						<h2>Channels</h2>
 						<div class="filters-type-details">
 							<ul>
-								<li class="active"><a href="#"><i class="icon-twitter"></i><span class="total">28</span> @Mainamshy, @rkulei...</a></li>
-								<li class="active"><a href="#"><i class="icon-facebook"></i><span class="total">61</span> DailyNation, KTNKenya</a></li>
-								<li class="active"><a href="#"><i class="icon-rss"></i><span class="total">83</span> The Kenyan Post</a></li>
-								<li class="active"><a href="#"><i class="icon-rss"></i><span class="total">14</span> African Press</a></li>
-								<li class="active"><a href="#"><i class="icon-rss"></i><span class="total">19</span> Standard Media</a></li>
+								<!-- List of channels goes here -->
 							</ul>
 						</div>
 					</div>
@@ -115,6 +113,10 @@ $(function() {
 		<!-- secondary view goes here -->
 		</div>
 	</div>
+</script>
+
+<script type="text/template" id="channel-drop-list-template">
+	<a href="#" style="text-overflow:ellipsis;"><i class="icon-<%= channel %>"></i><span class="total"><%= drop_count %></span><%= display_name %></a>
 </script>
 
 <script type="text/template" id="channel-modal-template">

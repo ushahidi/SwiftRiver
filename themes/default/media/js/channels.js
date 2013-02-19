@@ -808,4 +808,69 @@
 		}
 	});
 	
+	// Single channel in the drops channel listing
+	var DroplistChannelView = Backbone.View.extend({
+		
+		tagName: "li",
+		
+		className: "active",
+		
+		events: {
+			"click": "toggleChannel"
+		},
+		
+		initialize: function() {
+            this.template = _.template($("#channel-drop-list-template").html());
+			this.model.on("change", this.render, this);
+			this.model.on("destroy", this.removeChannel, this);
+		},
+				
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;	
+		},
+		
+		toggleChannel: function() {
+			this.$el.toggleClass("active");
+			return false;
+		},
+		
+		removeChannel: function() {
+			this.$el.fadeOut("slow");
+		}
+	});
+	
+	
+	// List of channels in the drop listing
+	var DroplistChannelsView = Channels.DroplistChannelsView = Backbone.View.extend({
+		
+		el: "#drops-channel-list",
+		
+		initialize: function() {
+			this.collection.on("reset", this.addChannels, this);
+			this.collection.on("add", this.addChannel, this);
+			this.collection.on("add remove reset destroy", this.renderCount, this);
+			this.render();
+		},
+		
+		addChannels: function() {
+			this.collection.each(this.addChannel, this);
+		},
+		
+		addChannel: function(channel) {
+			var view = new DroplistChannelView({model: channel});
+			this.$(".filters-type-details ul").append(view.render().el);
+		},
+		
+		render: function(eventName) {
+			this.renderCount();
+			this.addChannels();
+			return this;
+		},
+		
+		renderCount: function() {
+			this.$(".total").html(this.collection.size());
+		}
+	});
+	
 }(this));
