@@ -183,4 +183,18 @@ class SwiftRiver_Client {
 	{
 		return $this->_call($path, $parameters, "DELETE", $headers);
 	}
+	
+	/**
+	 * Call any path, PUT method
+	 * Ex: $api->put('/v1/rivers/2/channels/1')
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       DELETE parameters
+	 * @return  array                     data returned
+	 */
+	public function put($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	{
+		Kohana::$log->add(Log::DEBUG, "URL is ".$path);
+		return $this->_call($path, $parameters, "PUT", $headers);
+	}
 }

@@ -36,9 +36,8 @@ class Controller_River_Channels extends Controller_River_Settings {
 		switch ($this->request->method())
 		{
 			case "DELETE":			
-				$channel_id = intval($this->request->param('id', 0));
-				
-				$channel_array = $this->riverService->delete_channel($this->river['id'], $channel_id);
+				$channel_id = intval($this->request->param('id', 0));				
+				$this->riverService->delete_channel($this->river['id'], $channel_id);
 			break;
 			case "POST":			
 				$channel_array = json_decode($this->request->body(), TRUE);
@@ -59,6 +58,28 @@ class Controller_River_Channels extends Controller_River_Settings {
 					echo json_encode(array('error' => $e->getMessage()));
 				}
 			break;
+			case "PUT":
+				$channel_id = intval($this->request->param('id', 0));				
+				$channel_array = json_decode($this->request->body(), TRUE);
+				
+				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);			
+				if ( ! $channel_config)
+					throw new HTTP_Exception_400();
+				
+				try 
+				{
+					$channel_array = $this->riverService->update_channel_from_array($this->river['id'], $channel_id, $channel_array);
+					echo json_encode($channel_array);
+				} 
+				catch (Swiftriver_Exception_Channel_Option $e)
+				{
+					$this->response->status(400);
+					$this->response->headers('Content-Type', 'application/json');
+					echo json_encode(array('error' => $e->getMessage()));
+				}
+			break;
+			default:
+				throw new HTTP_Exception_405();
 		}
 	}
 	

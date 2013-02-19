@@ -53,7 +53,7 @@ abstract class SwiftRiver_API {
 	}
 	
 	/**
-	 * Call any path, DE:ETE method
+	 * Call any path, DEPETE method
 	 * Ex: $api->delete('/v1/rivers/2/channels/1')
 	 *
 	 * @param   string  $path            the resource path
@@ -63,5 +63,18 @@ abstract class SwiftRiver_API {
 	protected function delete($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
 	{
 		return $this->client->delete($path, $parameters, $headers);
+	}
+	
+	/**
+	 * Call any path, PUT method
+	 * Ex: $api->put('/v1/rivers/2/channels/1')
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       PUT parameters
+	 * @return  array                     data returned
+	 */
+	protected function put($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	{
+		return $this->client->put($path, $parameters, $headers);
 	}
 }

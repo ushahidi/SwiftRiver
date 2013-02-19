@@ -406,47 +406,6 @@
 	});
 	
 	
-	var ChannelsControl = Channels.ChannelsControl = Backbone.View.extend({
-		el: "div.channels",
-		
-		events: {
-			"click .settings-toolbar p.create a": "showAddChannelsModal"
-		},
-		
-		initialize: function() {
-			this.collection.on("add", this.addChannel, this);
-			this.collection.on("reset", this.addChannels, this);
-			
-			this.collection.on('reset', this.checkEmpty, this);
-			this.collection.on('add', this.checkEmpty, this);
-			this.collection.on('change:enabled', this.checkEmpty, this);
-			this.collection.on('remove', this.checkEmpty, this);
-		},
-		
-		addChannel: function(channel) {
-			var view = new ChannelView({model: channel, baseURL: this.options.baseURL});
-			this.$("div.col_12").append(view.render().el);
-		},
-		
-		addChannels: function() {
-			this.collection.each(this.addChannel, this);
-		},
-
-		showAddChannelsModal: function() {
-			var addChannelsView = new AddChannelsView({collection: this.collection});
-			modalShow(addChannelsView.render().el);
-			return false;
-		},
-		
-		checkEmpty: function(model) {
-			if (this.collection.length && this.collection.numActive()) {
-				this.$(".alert-message").fadeOut('slow');
-			} else {
-				this.$(".alert-message").fadeIn('slow');
-			}
-		}
-	});
-	
 	// Global channel list
 	var channelList = Channels.channelList = new ChannelList();
 	
@@ -457,6 +416,7 @@
 		
 		events: {
 			"click .remove": "removeChannel",
+			"click": "editChannel",
 		},
 		
 		initialize: function() {
@@ -477,6 +437,11 @@
 				}
 			});
 			return false;
+		},
+		
+		editChannel: function() {
+			this.trigger("edit", this.model);
+			return false;
 		}
 		
 	});
@@ -493,6 +458,7 @@
 
 			this.delegateEvents({
 				"click li.add a": "showAddChannel",
+				"click .modal-back": "showPrimaryView"
 			});
 		},
 		
@@ -509,6 +475,8 @@
 		
 		addChannel: function(channel) {
 			var view = new ChannelModalView({model: channel});
+			channel.view = view;
+			view.on("edit", this.showEditChannel, this);
 			this.$(".view-table ul").prepend(view.render().el);
 		},
 		
@@ -524,22 +492,39 @@
 				collection: this.options.config,
 				baseUrl: this.options.baseUrl
 			});
-			view.on("add", this.channelAdded, this);
-			
-			view.render();
-			this.$('#modal-secondary').html(view.$el);
-			view.$el.fadeIn('fast');
-			this.$('#modal-primary > div').fadeOut('fast');
-			this.$('#modal-container').scrollTop(0,0);		
-			
+			view.on("add", this.channelAdded, this);			
+			this.showSecondaryView(view.render().$el);
 			return false;
+		},
+		
+		showEditChannel: function(channel) {
+			var view = new EditChannelModalView({config: this.options.config, model: channel});
+			view.on("change", this.channelUpdated, this);
+			this.showSecondaryView(view.render().$el);
 		},
 		
 		channelAdded: function(channel) {
 			this.collection.add(channel);
+			this.showPrimaryView();
+		},
+		
+		channelUpdated: function(channel) {
+			channel.view.render();
+			this.showPrimaryView();
+		},
+		
+		showSecondaryView: function(contentEl) {
+			this.$('#modal-secondary').html(contentEl);
+			contentEl.fadeIn('fast');
+			this.$('#modal-primary > div').fadeOut('fast');
+			this.$('#modal-container').scrollTop(0,0);	
+		},
+		
+		showPrimaryView: function() {
 			this.$('#modal-viewport').removeClass('view-secondary');
 			this.$('#modal-primary > div').fadeIn('fast');
 			this.$('#modal-secondary .modal-segment').fadeOut('fast');
+			return false;
 		}
 	});
 	
@@ -623,9 +608,26 @@
 			}
 		},
 		
+		getModelValue: function(config, isGroup) {
+			var key = config.get("key");
+			var parameters = this.model.get("parameters");
+			var val = null;
+			if (parameters) {
+				if (!isGroup && parameters.key == key) {
+					val = parameters.value;
+				} else {
+					if (_.has(parameters.value, key)) {
+						val = parameters.value[key];
+					}
+				}
+			}
+			return val;
+		},
+		
 		getTextView: function(config, isGroup) {
 			var data = config.toJSON();
 			data.isGroup = isGroup;
+			data.val = this.getModelValue(config, isGroup);
 			return this.textTemplate(data);
 		},
 		
@@ -673,7 +675,7 @@
 		className: "modal-segment",
 		
 		events: {
-			"click .button-submit": "doAddChannel",
+			"click .button-submit": "saveChannel",
 		},
 		
 		channelView: null,
@@ -731,7 +733,7 @@
 			}, this);
 		},
 		
-		doAddChannel: function() {
+		saveChannel: function() {
 			if (this.channelView == null || this.isFetching)
 				return false;
 				
@@ -744,6 +746,59 @@
 				},
 				success: function() {
 					view.trigger("add", view.channelView.model);
+				},
+				error: function() {
+					console.log("Channel save error");
+				}
+			});
+			return false;
+		}
+	});
+	
+	var EditChannelModalView = Channels.EditChannelModalView = Backbone.View.extend({
+		
+		tagName: "div",
+
+		className: "modal-segment",
+		
+		channelView: null,
+		
+		isFetching: false,
+		
+		events: {
+			"click .button-submit": "saveChannel",
+		},
+				
+		initialize: function() {
+			this.template = _.template($("#edit-channel-modal-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			
+			var parameters = this.model.get("parameters");
+			var channel = this.model.get("channel");			
+			var optionConfig = this.options.config.getChannelOptionConfig(channel, parameters.key);			
+			optionConfig = new Backbone.Model(optionConfig);
+			var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: this.model});					
+			this.$(".modal-field-tabs-window").replaceWith(channelView.render().el);
+			
+			return this;
+		},
+		
+		saveChannel: function() {
+			if (this.channelView == null || this.isFetching)
+				return false;
+				
+			this.isFetching = true;
+			view = this;
+			
+			this.channelView.save({
+				complete: function() {
+					view.isFetching = false;
+				},
+				success: function() {
+					view.trigger("change", view.channelView.model);
 				},
 				error: function() {
 					console.log("Channel save error");
