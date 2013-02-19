@@ -232,14 +232,14 @@
 			<div id="create-bucket" class="modal-segment">
 				<div class="modal-title cf">
 					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
-					<h1>Create a new bucket</h1>
+					<h1><?php echo __("Create a new bucket"); ?></h1>
 				</div>
 				
 				<div class="modal-body">
 					<div class="base">
 						<div class="modal-field">
 							<h3 class="label">Name</h3>
-							<input type="text" placeholder="Name your new bucket" />
+							<?php echo Form::input('bucket_name', '', array('placeholder' => __("Name your new bucket"))); ?>
 						</div>
 					</div>
 					<div class="modal-toolbar">

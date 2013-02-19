@@ -237,7 +237,7 @@
 			var bucketCount = this.model.get("buckets").length;
 			var selector = this.$(".bucket .bucket-total");
 			selector.html(bucketCount);
-			if (bucketCount > 0)
+			if (bucketCount > 0) {
 				selector.show();
 			} else {
 				selector.hide();

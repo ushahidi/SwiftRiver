@@ -147,4 +147,36 @@ class Service_Bucket {
 		$this->buckets_api->delete_drop($bucket_id, $drop_id);
 	}
 	
+	/**
+	 * Creates the bucket with the specified $bucket_name
+	 *
+	 * @param  string  bucket_name
+	 * @param  array   account Account of of the user creating the bucket
+	 * @return array
+	 */
+	public function create_bucket($bucket_name, $account)
+	{
+		$bucket = $this->buckets_api->create_bucket($bucket_name);
+		if ($bucket['account']['id'] == $account['id'])
+		{
+			$bucket['is_owner'] = TRUE;
+		}
+		
+		// Additional properties required by the UI
+		$bucket['url'] = self::get_base_url($bucket);
+		$bucket['name_namespaced'] = $bucket['account']['account_path'].'/'.$bucket['name'];
+		$bucket['display_name'] = $bucket['name'];
+		
+		return $bucket;
+	}
+	
+	/**
+	 * Deletes the bucket specified in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 */
+	public function delete_bucket($bucket_id)
+	{
+		$this->buckets_api->delete_bucket($bucket_id);
+	}
 }

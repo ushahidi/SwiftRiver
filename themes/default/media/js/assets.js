@@ -15,11 +15,13 @@
 
 		initialize: function() {
 			// Namespace bucket name if the logged in user is not the owner
-			this.set('name_namespaced', this.get("account").account_path + " / " + this.get("name"));
-			if (parseInt(this.get("account").id) != logged_in_account) {
-				this.set('display_name', this.get("name_namespaced"));
-			} else  {
-				this.set('display_name', this.get("name"));
+			if (this.get("account") !== undefined) {
+				this.set('name_namespaced', this.get("account").account_path + " / " + this.get("name"));
+				if (parseInt(this.get("account").id) != logged_in_account) {
+					this.set('display_name', this.get("name_namespaced"));
+				} else  {
+					this.set('display_name', this.get("name"));
+				}
 			}
 		},
 
@@ -265,7 +267,7 @@
 			BaseAssetListView.prototype.constructor.apply(this, arguments);
 
 			this.delegateEvents({
-				"click .create-new a": "saveNewBucket",
+				"click .modal-toolbar a.button-submit": "saveNewBucket",
 				"submit": "saveNewBucket",
 			});
 		},
@@ -301,7 +303,7 @@
 			if (!(this.collection instanceof BucketList))
 				return;
 
-			var bucketName = $.trim(this.$(".create-new input[name=new_bucket]").val());
+			var bucketName = $.trim(this.$("#create-bucket input[name=bucket_name]").val());
 
 			if (!bucketName.length || this.isPageFetching)
 				return false;
@@ -312,9 +314,10 @@
 			var bucket = this.collection.find(function(bucket) { 
 				return bucket.get('name').toLowerCase() == bucketName.toLowerCase() 
 			});
+
 			if (bucket) {
-				this.onSaveNewBucket(bucket);
-				bucket.getView(this).setSelected();
+				this.onSaveNewBucket(bucketCopy);
+				bucketCopy.getView(this).setSelected();
 
 				// Scroll to the bucket in the list
 				var scrollOffset = bucket.getView(this).$el.offset().top - this.$(this.listSelector).offset().top;
@@ -325,16 +328,20 @@
 					}, 600);
 				}
 
-				this.$(".create-new input[name=new_bucket]").val("");
+				this.$("#create-bucket input[name=bucket_name]").val("");
 				this.isPageFetching = false;				
 
 				return false;
 			}
 
 			var loading_msg = window.loading_message.clone();
-			var create_el = this.$(".create-new .field").clone();
-			this.$(".create-new .field").replaceWith(loading_msg);
-			bucket = new Bucket({name: bucketName});
+			var create_el = this.$("#create-bucket .modal-field").clone();
+			this.$("#create-bucket .modal-field").replaceWith(loading_msg);
+			
+			bucket = new Bucket();
+			bucket.urlRoot = site_url + logged_in_account_path + "/buckets";
+			bucket.set("name", bucketName);
+			
 			var view = this;
 			this.collection.create(bucket, {
 				wait: true,
@@ -355,12 +362,9 @@
 				success: function() {
 					view.onSaveNewBucket(bucket);
 					bucket.getView(view).setSelected();
-
-					// Scroll to the new bucket in the list
-					view.$(view.listSelector).animate({
-						scrollTop: view.$(view.listSelector).scrollTop() + (view.$(view.listItemSelector).last().offset().top - view.$(view.listSelector).offset().top)
-					}, 600);
-					create_el.find("input[name=new_bucket]").val("");
+					
+					view.$(".modal-back").trigger("click");
+					create_el.find("input[name=bucket_name]").val("");
 				}
 			});
 

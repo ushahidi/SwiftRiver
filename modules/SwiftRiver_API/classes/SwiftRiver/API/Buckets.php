@@ -70,4 +70,26 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	{
 		$this->delete("/buckets/".$bucket_id."/drops/".$drop_id);
 	}
+	
+	/**
+	 * Creates a bucket with the specified $bucket_name via the API and
+	 * returns an array representing the created bucket
+	 *
+	 * @param   string bucket_name
+	 * @return  array
+	 */
+	public function create_bucket($bucket_name)
+	{
+		return $this->post("/buckets", array('name' => $bucket_name));
+	}
+	
+	/**
+	 * Deletes the bucket with the specified $bucket_id via the API
+	 *
+	 * @param  int bucket_id
+	 */
+	public function delete_bucket($bucket_id)
+	{
+		$this->delete("/buckets/".$bucket_id);
+	}
 }

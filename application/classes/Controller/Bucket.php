@@ -27,12 +27,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	protected $photos = FALSE;
 	
 	/**
-	 * Bucket_Service instance
-	 * @var Bucket_Service
-	 */
-	protected $bucket_service = NULL;
-	
-	/**
 	 * Base URL of the bucket
 	 * @var string
 	 */
@@ -46,9 +40,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	{
 		// Execute parent::before first
 		parent::before();
-		
-		// Initialize the bucket service
-		$this->bucket_service = new Service_Bucket($this->api);
 		
 		// Get the river name from the url
 		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
@@ -344,8 +335,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 		switch ($this->request->method())
 		{
 			case "GET":
-				echo json_encode($this->user->get_buckets_array($this->user));
 			break;
+
 			case "PUT":
 				// No anonymous buckets
 				if ($this->anonymous)
@@ -353,52 +344,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 				$bucket_array = json_decode($this->request->body(), TRUE);
-				$bucket_orm = ORM::factory('Bucket', $bucket_array['id']);
-				
-				if ( ! $bucket_orm->loaded())
-				{
-					throw new HTTP_Exception_404();
-				}
-				
-				if ( ! $bucket_array['subscribed'])
-				{
-					// Unsubscribing
-					
-					// Unfollow
-					if ($this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}
-					
-					// Stop collaborating
-					$collaborator_orm = $bucket_orm->bucket_collaborators
-					                        ->where('user_id', '=', $this->user->id)
-					                        ->where('collaborator_active', '=', 1)
-					                        ->find();
-					if ($collaborator_orm->loaded())
-					{
-						$collaborator_orm->delete();
-						$bucket_array['is_owner'] = FALSE;
-						$bucket_array['collaborator'] = FALSE;
-					}
-
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				else
-				{
-					// Subscribing
-					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->add('bucket_subscriptions', $bucket_orm);
-						Model_User_Action::create_action($this->user->id, 'bucket', 'follow', $bucket_orm->id);
-					}
-
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-
-				// Return updated bucket
-				echo json_encode($bucket_array);
 			break;
+
 			case "POST":
 			
 				// No anonymous buckets
@@ -406,57 +353,12 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				$bucket_array = json_decode($this->request->body(), TRUE);
-				try
-				{
-					$bucket_array['user_id'] = $this->user->id;
-					$bucket_array['account_id'] = $this->account->id;
-					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
-					Model_User_Action::create_action($this->user->id, 'bucket', 'create', $bucket_orm->id);
-					echo json_encode($bucket_orm->get_array($this->user, $this->user));
-				}
-				catch (ORM_Validation_Exception $e)
-				{
-					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
-					$errors = array();
-					foreach ($e->errors('validation') as $message)
-					{
-						$errors[] = $message;
-					}
-					echo json_encode(array('errors' => $errors));
-				}
-				catch (Database_Exception $e)
-				{
-					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
-					$errors = array(__("A bucket with the name ':name' already exists",
-						array(':name' => $bucket_array['bucket_name'])
-					));
-					echo json_encode(array('errors' => $errors));
-				}
 			break;
-
+	
 			case "DELETE":
 				$bucket_id = intval($this->request->param('id', 0));
-				$bucket_orm = ORM::factory('Bucket', $bucket_id);
-				
-				if ($bucket_orm->loaded())
-				{
-					if ( ! $bucket_orm->is_creator($this->user->id))
-					{
-						// Only creator can delete
-						throw new HTTP_Exception_403();
-					}
-					
-					$bucket_orm->delete();
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				else
-				{
-					throw new HTTP_Exception_404();
-				}
+				$this->bucket_service->delete_bucket($bucket_id);
+				Cache::instance()->delete('user_buckets_'.$this->user->id);
 			break;
 		}
 		

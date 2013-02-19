@@ -1,7 +1,7 @@
 <script type="text/javascript">
 $(function() {
 	
-	var visited_account = <?php echo $visited_account->id; ?>;
+	var visited_account = <?php echo $visited_account['id']; ?>;
 	
 	var AssetView = Assets.BaseAssetView.extend({
 		template: _.template($("#profile-asset-list-item-template").html())
