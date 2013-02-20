@@ -60,6 +60,24 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Modify a river
+	 *
+	 * @param   string  $river_name
+	 * @param   string  $river_description
+	 * @param   string  $river_public
+	 * @return Array
+	 */
+	public function update_river($river_id, $river_name, $river_description, $river_public) {
+		
+		$request_body = json_encode(array(
+			"name" => $river_name,
+			"description" => $river_description,
+			"public" => (bool) $river_public
+		));
+		return $this->put('/rivers/'.$river_id, $request_body);
+	}
+	
+	/**
 	 * Create a channel
 	 *
 	 * @param   int  $river_id

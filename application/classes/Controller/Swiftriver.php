@@ -299,6 +299,9 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->show_nav = TRUE;
 			$site_name = Model_Setting::get_setting('site_name');
 			
+			// System messages
+			$this->template->header->messages = json_encode($this->session->get_once('messages'));
+			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header')
 			    ->bind('user', $this->user)

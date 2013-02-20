@@ -124,6 +124,16 @@ class Service_River {
 	}
 	
 	/**
+	 * Modify the given river
+	 *
+	 * @return Array
+	 */
+	public function update_river($river_id, $river_name, $river_description, $river_public)
+	{
+		return $this->api->get_rivers_api()->update_river($river_id, $river_name, $river_description, $river_public);
+	}
+	
+	/**
 	 * Delete channel
 	 *
 	 * @param   string  $river_name

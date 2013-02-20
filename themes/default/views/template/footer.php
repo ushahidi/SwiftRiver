@@ -10,7 +10,15 @@
 	<div id="confirmation-container">
 		<div class="modal-window"></div>
 	</div>
-
+	
+	<article class="system-message" id="system-message-template">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p><strong>.</strong> </p>
+		</div>
+	</article>
+	
+	
 	<footer class="center"></footer>
 	<?php
 	// SwiftRiver Plugin Hook

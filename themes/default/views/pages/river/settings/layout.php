@@ -1,7 +1,7 @@
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="col_9">
-			<h1><a href="/markup/river">Title Goes Here</a> <em>settings</em></h1>
+			<h1><a href="<?php echo $river_base_url?>"><?php echo $river['name']; ?></a> <em>settings</em></h1>
 		</div>
 		<div class="page-action col_3">
 			<a href="<?php echo $river_base_url?>" class="button button-white">Return to river</a>

@@ -43,7 +43,7 @@
 									<?php echo __('Remember me'); ?>
 								</div>
 								<div class="modal-base-toolbar">
-									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this)">Log in</a>
+									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this); return false;">Log in</a>
 									<a href="#" class="button-destruct button-secondary modal-transition">Forgot your password?</a>
 								</div>
 								<?php echo Form::hidden('referrer', $referrer); ?>

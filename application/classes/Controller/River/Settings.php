@@ -83,5 +83,41 @@ class Controller_River_Settings extends Controller_River {
 	{
 		$this->template->content->active = "options";
 		$this->template->content->settings_content = View::factory('pages/river/settings/options');
+		$this->template->content->settings_content->river = $this->river;
+		
+		$session = Session::instance();		
+		if ($this->request->method() == "POST")
+		{
+			try 
+			{
+				$river_name = $this->request->post('river_name');
+				$river_description = $this->request->post('river_description');
+				$river_public = $this->request->post('river_public');
+				$river = $this->riverService->update_river(
+						$this->river['id'], 
+						$river_name, 
+						$river_description, 
+						$river_public
+					);
+				
+				// Redirect to the new URL with a success messsage
+				Swiftriver_Messages::add_message(
+					'success', 
+					'Success', 
+					__("River display settings were saved successfully.")
+				);
+				$this->redirect($this->riverService->get_base_url($river).'/settings', 302);
+			}
+			catch (Swiftriver_API_Exception $e)
+			{
+				Swiftriver_Messages::add_message(
+					'failure', 
+					'Failure', 
+					__("There was a problem updating the river settings."),
+					false
+				);
+				$this->redirect($this->river_base_url.'/settings', 302);
+			}
+		}
 	}
 }

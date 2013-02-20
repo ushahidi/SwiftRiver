@@ -37,6 +37,7 @@
 		<?php endif; ?>
 		window.public_registration_enabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>;
 		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
+		window.system_messages = <?php echo $messages; ?>;
 	</script>
 	
 	<?php

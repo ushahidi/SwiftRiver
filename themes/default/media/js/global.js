@@ -327,6 +327,13 @@ $(document).ready(function() {
 			}
 		});
 	}
+	
+	// Display any queued system messages
+	if (window.system_messages) {
+		_.each(window.system_messages, function(m) {
+			showSysMessage(m['type'], m['title'], m['message'], m['flash']);
+		});
+	}
 });
 
 // Hide mobile address bar
@@ -362,6 +369,24 @@ function flashMessage(el, text) {
 	message += "</ul>";
 	// Show message and fade it out slooooowwwwwwlllllyyyy
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
+}
+
+function showSysMessage(type, title, message, flash) {
+	var container = $("#system-message-template").clone().appendTo($("body"));
+	container.addClass(type);
+	$("p strong", container).prepend(title);
+	$("p", container).append(message);
+	
+	if(flash) {
+		container.slideDown('fast').delay(2000).slideUp('fast');
+	} else {
+		container.slideDown('fast', function(){
+			$('a.system-message-close', container).on('click', function(e) {
+				container.slideUp('fast');
+				return false;
+			});
+		});
+	}
 }
 
 function showConfirmationMessage(message) {
