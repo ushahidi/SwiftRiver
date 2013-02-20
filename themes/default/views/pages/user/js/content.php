@@ -43,12 +43,43 @@ $(function() {
 				asset.set("asset_type", "river");
 			}
 			var view = new DashboardAssetView({model: asset});
-			this.$("#asset-list").after(view.render().el);
+			this.$("#asset-list").prepend(view.render().el);
 		},
 		
 		filterByType: function(ev) {
+			var parentEl = $(ev.currentTarget).parent();
+			if (parentEl.hasClass("active"))
+				return false;
+
 			$(ev.currentTarget).parents("li").siblings().removeClass("active");
-			$(ev.currentTarget).parent().addClass("active");
+			parentEl.addClass("active");
+
+			// Clone the bucket and river lists
+			var riverList = this.options.riverList.clone(),
+				bucketList = this.options.bucketList.clone();
+
+			// Get the hash
+			var propHash = $(ev.currentTarget).prop('hash');
+			this.$("#asset-list").fadeOut('fast').empty();
+			switch (propHash) {
+				// Show rivers only
+				case "#river":
+					this.options.riverList.reset(riverList.models);
+				break;
+				
+				// Show buckets only
+				case "#bucket":
+					this.options.bucketList.reset(bucketList.models);
+				break;
+				
+				// Show all the assets
+				default:
+					this.options.bucketList.reset(bucketList.models);
+					this.options.riverList.reset(riverList.models);
+			}
+
+			this.$("#asset-list").fadeIn('slow');
+
 			return false;
 		},
 		
