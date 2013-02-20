@@ -5,6 +5,12 @@
 <div id="drops-view"></div>
 </script>
 
+<script type="text/template" id="new-drops-alert-template">
+	<article class="stream-message drops">
+		<p><%= message %></p>
+	</article>
+</script>
+
 <script type="text/template" id="drop-drops-view-template">
 	<h1>
 		<a href="#" class="zoom-trigger"><%= title %></a>
@@ -25,8 +31,10 @@
 				</a>
 			</li>	
 		</ul>
-		<span class="drop-score"><a href="#" class="button-white"><span class="icon-star"></span></a>
-		<ul class="drop-status cf">
+		<span class="drop-score">
+			<a href="#" class="button-white"><span class="icon-star"></span></a>
+		</span>
+		<ul class="drop-status cf" style="display: none;">
 			<li class="drop-status-read">
 				<a href="#"><span class="icon-checkmark"></span></a>
 			</li>
@@ -93,7 +101,7 @@
 						<span class="icon-star"></span>
 					</a>
 				</span>
-				<ul class="drop-status cf">
+				<ul class="drop-status cf" style="display: none;">
 					<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
 					<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a><li>
 				</ul>

@@ -297,11 +297,13 @@
 				}
 			} else if (this.options.layout == "photos") {
 				// Show the drop content after the image
-				if (this.model.get("image") != null) {
-					var dropTemplate = _.template($("#drop-drops-view-template").html());
-					dropContent = dropTemplate(this.model.toJSON());
+				var dropTemplate = _.template($("#drop-drops-view-template").html());
+				dropContent = dropTemplate(this.model.toJSON());
 
+				if (this.model.get("image") != null) {
 					$(viewContent).after(dropContent);
+				} else {
+					viewContent = dropContent;
 				}
 			}
 			
@@ -664,7 +666,7 @@
 		noContentElHidden: false,
 		
 		events: {
-			"click article.alert-message a": "showNewDrops"
+			"click article.stream-message a": "showNewDrops"
 		},
 				
 		initialize: function(options) {
@@ -688,9 +690,11 @@
 			options.newDropsList.on('reset', this.resetNewDropsAlert, this);
 		},
 		
-		make: function(tagName, attributes) {
+		make: function(tagName, attributes, text) {
 			var el = document.createElement(tagName);
 			if (attributes) $(el).attr(attributes);
+			if (text) $(el).html(text);
+
 			return el;
 		},
 
@@ -867,22 +871,14 @@
 			var count = this.options.newDropsList.size();
 			if (count > 0) {
 				// Alert message to show
-				var message = "<p style=\"text-align:center\">" +
-				    "<a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") +". "+
-				    "Click here to refresh the view</a></p>";
+				var message = "<a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") +". "+
+				    "Click here to refresh the view</a>";
 
-				if (this.$("article.alert-message").length == 0) {
-
-					// Construct the HTML for the DOM containing the alert message
-					var alertContainer = "<div class=\"center cf\">" +
-					    "<article class=\"container base alert-message\">" + message +
-					    "</article>" +
-					    "</div>";
-					
-					// Attach to the drops view
-					this.$el.prepend(alertContainer).fadeIn(350);
+				if (this.$("article.stream-message.drops").length == 0) {
+					var dropsAlertTemplate = _.template($("#new-drops-alert-template").html());
+					this.$el.prepend(dropsAlertTemplate({message: message})).fadeIn('slow');
 				} else {
-					this.$("article.alert-message").html(message);
+					this.$("article.stream-message.drops p").html(message);
 				}
 			}
 		},
@@ -893,7 +889,7 @@
 		},
 		
 		resetNewDropsAlert: function() {
-			this.$("article.alert-message").fadeOut("slow").remove();
+			this.$("article.stream-message.drops").fadeOut("slow").remove();
 		}
 	});
 
