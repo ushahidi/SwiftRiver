@@ -3,6 +3,10 @@
 
 <script type="text/template" id="drop-listing-template">
 <div id="drops-view"></div>
+<div id="drop_listing_bottom"></div>
+<article class="stream-message waiting">
+	<p><em>Loading more drops</em></p>
+</article>
 </script>
 
 <script type="text/template" id="drop-drops-view-template">

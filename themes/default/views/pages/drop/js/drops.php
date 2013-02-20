@@ -25,7 +25,7 @@
 		var filters = new Filter(<?php echo $filters; ?>);
 		
 		// Global drop lists
-		var dropsList = new Drops.DropsList;
+		var dropsList = window.dropsList = new Drops.DropsList;
 		var newDropsList = new Drops.DropsList;
 		
 		// Set drop list urls optionally applying filters
@@ -142,7 +142,7 @@
 		var loading_msg = window.loading_message.clone();
 
 		$(window).bind("scroll", function() {
-			bottomEl = $("#next_page_button");
+			bottomEl = $("#drop_listing_bottom");
 
 			if (!bottomEl.length)
 				return;
@@ -152,8 +152,8 @@
 				isPageFetching = true;
 				pageNo += 1;		
 
-				// Hide the navigation selector and show a loading message				
-				loading_msg.appendTo(bottomEl).show();
+				// Show a loading message				
+				$(".stream-message.waiting").fadeIn("slow");
 
 				dropsList.fetch({
 				    data: {
@@ -161,11 +161,12 @@
 				        max_id: maxId,
 				        photos: photos
 				    }, 
-				    add: true,
+				    update: true,
+					remove: false,
 				    complete: function(model, response) {
-						// Reanable scrolling after a delay
+						// Re-enable scrolling after a delay
 						setTimeout(function(){ isPageFetching = false; }, 700);
-				        loading_msg.fadeOut('normal');
+				        $(".stream-message.waiting").fadeOut("normal");
 				    },
 				    error: function(model, response) {
 				        if (response.status == 404) {
@@ -192,7 +193,7 @@
 			if (!isSyncing) {
 				isSyncing = true;
 				newDropsList.fetch({data: {since_id: sinceId, photos: photos}, 
-				    add: true, 
+				    update: true, 
 				    complete: function () {
 				        isSyncing = false;
 				    }
@@ -302,7 +303,7 @@
 				if (!drop) {
 					// Drop not in the local collection, request it from the server
 					drop = new Drop({id: id});
-					drop.urlRoot = getDropletListUrl(false);
+					drop.urlRoot = getDropListUrl(false);
 					var context = this;
 					var callback = this.dropFullView;
 					drop.fetch({

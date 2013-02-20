@@ -1008,6 +1008,7 @@ header.toolbar ul.user-menu > li.user a:hover {
 }
 
 .stream-message {
+   display: none;
    clear: both;
    font-size: 1.2em;
    text-align: center;

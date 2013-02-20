@@ -29,14 +29,14 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * Get drops from a river
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       POST parameters
+	 * @param   mixed   $parameters       GET parameters
 	 * @return Array
 	 */
-	public function get_drops($id, $max_id = NULL, $since_id = NULL, $count = NULL)
+	public function get_drops($id, $max_id, $page, $count)
 	{
 		return $this->get('/rivers/'.$id.'/drops', array(
 			'max_id' => $max_id,
-			'since_id' => $since_id,
+			'page' => $page,
 			'count' => $count
 		));
 	}

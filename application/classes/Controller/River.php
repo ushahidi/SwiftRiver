@@ -140,13 +140,13 @@ class Controller_River extends Controller_Drop_Base {
 		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
 				
 		// The maximum droplet id for pagination and polling
-		$max_droplet_id = Model_River::get_max_droplet_id($river_id);
+		$max_droplet_id = $this->river['max_drop_id'];
 
 		// River filters
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->api->get_rivers_api()->get_drops($river_id);
+		$droplets_array = $this->riverService->get_drops($river_id);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -274,8 +274,7 @@ class Controller_River extends Controller_Drop_Base {
 					}
 					else
 					{
-					    $droplets = Model_River::get_droplets($this->user->id, 
-					    	$this->river->id, 0, $page, $max_id, $photos == 1, $filters);
+						$droplets = $this->riverService->get_drops($this->river['id'], $max_id, $page);
 					}
 				}				
 				

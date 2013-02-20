@@ -145,7 +145,7 @@
 		model: Drop,
 				
 		comparator: function (droplet) {
-			return Date.parse(droplet.get('date_published'));
+			return -Date.parse(droplet.get('date_published'));
 		},
 		
 		add: function (model, options) {
@@ -729,7 +729,7 @@
 					// Newer drops are added in the view before drops
 					// they follow in the list i.e. newer drops are added
 					// on top
-					this.options.dropsList.at(index-1).view.$el.before(view.render().el);
+					this.options.dropsList.at(index-1).view.$el.after(view.render().el);
 				} else {
 					// First drop is simply appended to the view
 					this.$("#drops-view").append(view.render().el);

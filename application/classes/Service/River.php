@@ -186,4 +186,16 @@ class Service_River {
 		Swiftriver_Event::run('swiftriver.channel.format', $channel_array);
 		return $channel_array;
 	}
+	
+	/**
+	 * Get drops from a river
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       GET parameters
+	 * @return Array
+	 */
+	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20)
+	{
+		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count);
+	}
 }
