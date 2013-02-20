@@ -32,7 +32,7 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * @param  array $params Parameters for filtering the drops
 	 * @return array
 	 */
-	public function get_bucket_drops($bucket_id, $params = array())
+	public function get_drops($bucket_id, $params = array())
 	{
 		$path = sprintf("/buckets/%d/drops", $bucket_id);
 		return $this->get($path, $params);

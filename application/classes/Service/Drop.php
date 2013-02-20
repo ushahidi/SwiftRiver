@@ -136,6 +136,28 @@ class Service_Drop {
 	{
 		return $this->drops_api->delete_drop_comment($drop_id, $comment_id);
 	}
-	
-	
+
+	/**
+	 * Adds missing properties that are consumed by the UI to each of the
+	 * drops in $drops.
+	 *
+	 * @param array drops
+	 */
+	public static function marshall_drops(array & $drops)
+	{
+		foreach ($drops as & $drop)
+		{
+			// Buckets
+			if (empty($drop['buckets']))
+			{
+				$drop['buckets'] = array();
+			}
+			
+			// Drop image
+			if ( ! array_key_exists('image', $drop))
+			{
+				$drop['image'] = NULL;
+			}
+		}
+	}
 }

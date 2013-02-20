@@ -85,7 +85,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template->content->user = $this->user;
 			
 		// The maximum droplet id for pagination and polling
-		$droplet_list = $this->bucket_service->get_drops($this->bucket['id']);
+		$droplet_list = $this->bucket_service->get_drops($this->bucket['id'], NULL, $this->photos);
 
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -105,24 +105,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
-
-		// if ( ! $this->owner)
-		// {
-		// 	$follow_button = View::factory('template/follow');
-		// 	$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
-		// 	$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
-		// 	$this->template->content->follow_button = $follow_button;
-		// }
-		// 
-		// // Nothing to display message
-		// $droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
-		//     ->bind('message', $nothing_to_display_message);
-		// $nothing_to_display_message = __('There are no drops in this bucket yet.');
-		// if ($this->owner)
-		// {
-		// 	$nothing_to_display_message .= __(' Add some from your :rivers', 
-		// 	                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
-		// }		
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -173,8 +155,9 @@ class Controller_Bucket extends Controller_Drop_Base {
 				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
-					
-				$droplets_array = $this->bucket_service->get_drops_since_id($this->bucket['id'], $since_id);
+
+				// Get the drops
+				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos);
 				
 				//Throw a 404 if a non existent page is requested
 				if (($page > 1 OR $drop_id) AND empty($droplets_array))

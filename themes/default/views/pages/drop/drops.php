@@ -6,9 +6,6 @@
 </script>
 
 <script type="text/template" id="drop-drops-view-template">
-	<% if (image != null) { %>
-		<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="<%= image.thumbnails[0].url %>" class="drop-image" /></a>
-	<% } %>
 	<h1>
 		<a href="#" class="zoom-trigger"><%= title %></a>
 	</h1>
@@ -103,6 +100,12 @@
 			</div>
 		</div>
 	</div>
+</script>
+
+<script type="text/template" id="drop-photos-view-template">
+<% if (image != null) { %>
+	<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= image.thumbnails[0].url %>" class="drop-image" /></a>
+<% } %>
 </script>
 
 <script type="text/template" id="metadata-template">
@@ -437,6 +440,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div id="modal-secondary" class="modal-view">
 			<div id="create-bucket" class="modal-segment">
 				<div class="modal-title cf">

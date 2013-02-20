@@ -38,18 +38,36 @@ class Service_Bucket {
 	}
 	
 	/**
-	 * Gets the drops for the bucket with the specified id
+	 * Gets the drops for the bucket with the specified $bucket_id
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   since_id
+	 * @param  bool  photos
 	 * @return array
 	 */
-	public function get_drops($bucket_id, $params = array())
+	public function get_drops($bucket_id, $since_id = 0, $photos = FALSE)
 	{
-		$drops = $this->buckets_api->get_bucket_drops($bucket_id, $params);
+		$parameters = array();
 		
-		$this->marshall_drops($drops);
+		// Build the API request parameter list
+		if (isset($since_id) AND $since_id > 0)
+		{
+			$parameters['since_id'] = $since_id;
+		}
+
+		if ($photos)
+		{
+			$parameters['photos'] = TRUE;
+		}
+
+		// Fetch the drops
+		$drops = $this->buckets_api->get_drops($bucket_id, $parameters);
+		
+		Service_Drop::marshall_drops($drops);
 
 		return $drops;
 	}
-	
+
 	/**
 	 * Gets the bucket with the specified id
 	 * @return array
@@ -61,34 +79,7 @@ class Service_Bucket {
 		
 		return $this->marshall_bucket($bucket, $querying_account);		
 	}
-	
-	/**
-	 * Get the drops added to the bucket since the specified id ($since_id)
-	 *
-	 * @param  int $bucket_id
-	 * @param  int $since_id
-	 * @return array
-	 */
-	public function get_drops_since_id($bucket_id, $since_id)
-	{
-		$params = array('since_id' => $since_id);
-		$drops = $this->buckets_api->get_bucket_drops($bucket_id, $params);
-		
-		$this->marshall_drops($drops);
-		return $drops;
-	}
-	
-	private function marshall_drops(array & $drops)
-	{
-		foreach ($drops as & $drop)
-		{
-			if (empty($drop['buckets']))
-			{
-				$drop['buckets'] = array();
-			}
-		}
-	}
-	
+
 	/**
 	 * Adds the drop specified in $drop_id to the bucket specified
 	 * in $bucket_id
