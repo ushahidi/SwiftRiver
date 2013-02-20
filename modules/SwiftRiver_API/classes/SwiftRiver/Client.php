@@ -134,13 +134,29 @@ class SwiftRiver_Client {
 	private function _call($path, $params = array(), $method = "GET", $headers = array()) {
 		
 		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
-			
-		if ($response['code'] != 200)
+		
+		$exception_map = array(
+			400 => "SwiftRiver_API_Exception_BadRequest",
+			403 => "SwiftRiver_API_Exception_Forbidden",
+			404 => "SwiftRiver_API_Exception_NotFound"
+		)	
+		;
+		
+		if 	(in_array($response['code'], array_keys($exception_map)))
 		{
 			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-			throw new SwiftRiver_API_Exception($response['result']['error_description']);
+			throw new $exception_map[$response['code']]($response['result']);
 		}
-
+		else if ($response['code'] == 401)
+		{
+			throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
+		}
+		else if ($response['code'] != 200)
+		{
+			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
+			throw new SwiftRiver_API_Exception_Unknown();
+		}
+		
 		return $response['result'];
 		
 	}
@@ -194,7 +210,6 @@ class SwiftRiver_Client {
 	 */
 	public function put($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
 	{
-		Kohana::$log->add(Log::DEBUG, "URL is ".$path);
 		return $this->_call($path, $parameters, "PUT", $headers);
 	}
 }

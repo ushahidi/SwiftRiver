@@ -108,14 +108,20 @@ class Controller_River_Settings extends Controller_River {
 				);
 				$this->redirect($this->riverService->get_base_url($river).'/settings', 302);
 			}
-			catch (Swiftriver_API_Exception $e)
+			catch (SwiftRiver_API_Exception_BadRequest $e)
 			{
-				Swiftriver_Messages::add_message(
-					'failure', 
-					'Failure', 
-					__("There was a problem updating the river settings."),
-					false
-				);
+				Kohana::$log->add(Log::DEBUG, var_export($e->get_errors(), TRUE));
+				
+				foreach ($e->get_errors() as $error) {
+					if ($error['field'] == 'name' && $error['code'] == 'duplicate') {
+						Swiftriver_Messages::add_message(
+							'failure', 
+							'Failure', 
+							__("A river with the name ':name' already exists.", array(':name' => $river_name)),
+							false
+						);
+					}
+				}
 				$this->redirect($this->river_base_url.'/settings', 302);
 			}
 		}

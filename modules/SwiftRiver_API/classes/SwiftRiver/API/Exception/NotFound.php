@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Forbidden Exception
+ * Not Found Exception
  *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
@@ -13,24 +13,5 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-abstract class Swiftriver_API_Exception extends Exception {
-	
-	protected $message = NULL;
-	
-	protected $errors = NULL;
-	
-	function __construct(array $error) 
-	{
-		$this->message = $error['message'];
-		
-		if (isset($error['errors']))
-		{
-			$this->errors = $error['errors'];
-		}
-	}
-	
-	public function get_errors()
-	{
-		return $this->errors;
-	}
+class Swiftriver_API_Exception_NotFound extends Exception {
 }
