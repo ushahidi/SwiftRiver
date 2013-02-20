@@ -27,3 +27,24 @@
 		</div>
 	</div>
 </div>
+
+<!-- System messages -->
+<?php if (isset($message)): ?>
+	<article id="success" class="system-message success">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p>
+			<strong><?php echo __("Success!"); ?></strong> <?php echo $message; ?>
+			</p>
+		</div>
+	</article>
+<?php elseif (isset($error)): ?>
+	<article id="failure" class="system-message failure">
+		<div class="center">
+			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+			<p>
+			<strong><?php echo __("Error."); ?></strong> <?php echo $error; ?>
+			</p>
+		</div>
+	</article>	
+<?php endif; ?>

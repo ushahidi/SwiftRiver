@@ -12,7 +12,7 @@
 			<?php echo Form::input('bucket_url', URL::site($bucket['url'], TRUE), array('readonly' =>' readonly')); ?>
 		</div>
 		<div class="settings-category-toolbar" id="update-bucket-name">
-			<a href="#" class="button-submit button-primary modal-close"><?php echo __("Change Bucket Name"); ?></a>
+			<a href="#" class="button-submit button-primary modal-close" onClick="submitForm(this);"><?php echo __("Change Bucket Name"); ?></a>
 		</div>
 	</article>
 	<?php echo Form::close(); ?>
@@ -36,7 +36,7 @@
 			</select>
 		</div>
 		<div class="settings-category-toolbar" id="update-bucket-display">
-			<a href="#" class="button-submit button-primary modal-close"><?php echo __("Update Display Settings"); ?></a>
+			<a href="#" class="button-submit button-primary modal-close" onClick="submitForm(this);"><?php echo __("Update Display Settings"); ?></a>
 		</div>
 	</article>
 	<?php echo Form::close(); ?>

@@ -59,7 +59,10 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 				$parameters = array('name' => $bucket_name);
 				if (($bucket = $this->bucket_service->modify_bucket($bucket_id, $parameters, $this->user)) != FALSE)
 				{
-					$session->set('messages', __("The bucket name was successfully changed"));
+					$session->set('message', __("The bucket has been renamed to \":name\"",
+						array(':name' => $bucket_name)));
+
+					// Reload the settings page using the updated bucket name
 					$this->redirect($bucket['url'].'/settings', 302);
 				}
 			}
@@ -75,7 +78,7 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 					// Use the current bucket name
 					'name' => $this->bucket['name'],
 					'default_layout' => $this->request->post('default_layout'),
-					'published' => (bool) $this->request->post('bucket_publish')
+					'public' => (bool) $this->request->post('bucket_publish')
 				);
 		
 				// Get thet bucket id
@@ -85,18 +88,21 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 				if (($bucket = $this->bucket_service->modify_bucket($bucket_id, $parameters, $this->user)) != FALSE)
 				{
 					$this->bucket = $bucket;
-					$session->set('messages', __("The display settings have been successfully updated"));
+					$session->set('message', __("The display settings have been successfully updated"));
 				}
 				else
 				{
-					$session->set('errors', __("The display settings could not be updated"));
+					$session->set('error', __("The display settings could not be updated"));
 				}
 			}
 			
 		}
+		
+		// Set the messages and/or error messages
+		$this->template->content->set('message', $session->get('message'))
+			->set('error', $session->get('error'));
 
-		$this->settings_content  = View::factory('pages/bucket/settings/display')
-			->set('message', $session->get('messages'))
+		$this->settings_content = View::factory('pages/bucket/settings/display')
 			->bind('bucket', $this->bucket)
 			->bind('collaborators_view', $collaborators_view);
 		
@@ -108,7 +114,8 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 		$fetch_url = $this->bucket_base_url.'/collaborators';
 		$collaborators = json_encode($this->bucket_service->get_collaborators($this->bucket['id']));
 		
-		$session->delete('messages');
+		$session->delete('message');
+		$session->delete('error');
 		
 	}
 		

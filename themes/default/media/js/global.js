@@ -330,14 +330,12 @@ $(document).ready(function() {
 		$('.body-tabs-menu li').removeClass('active');
 		$(this).parent().addClass('active');
 		e.preventDefault();
-	});
+	});	
 	
-	// FORM Submission
-	$("a.button-submit").live('click', function(e) {
-		if ($(this).parents('form')) {
-			$(this).parents('form')[0].submit();
-			e.preventDefault();
-		}
+	// SYSTEM Messages
+	$("a.system-message-close").live('click', function(e) {
+		$(this).closest('article.system-message').slideUp('fast');
+		e.preventDefault();
 	});
 });
 
