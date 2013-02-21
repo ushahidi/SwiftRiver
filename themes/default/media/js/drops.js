@@ -290,25 +290,24 @@
 			if (this.options.layout == "drops") {
 				// Show the image before the drop content
 				if (this.model.get("image") != null) {
-					var imageTemplate = _.template($("#photos-view-template").html());
-					var imageContent  = imageTemplate({image: this.get("image")});
+					var imageTemplate = _.template($("#drop-photos-view-template").html());
+					var imageContent  = imageTemplate({image: this.model.get("image")});
 
-					$(viewContent).before(imageContent);
+					this.$el.html(imageContent);
 				}
 			} else if (this.options.layout == "photos") {
 				// Show the drop content after the image
 				var dropTemplate = _.template($("#drop-drops-view-template").html());
 				dropContent = dropTemplate(this.model.toJSON());
-
+				
 				if (this.model.get("image") != null) {
-					$(viewContent).after(dropContent);
-				} else {
-					viewContent = dropContent;
+					this.$el.html(viewContent);
 				}
+				viewContent = dropContent;
 			}
 			
 			// Set the content for the view
-			this.$el.html(viewContent);
+			this.$el.append(viewContent);
 			
 			return this;
 		},
