@@ -1,46 +1,18 @@
-<div id="content" class="settings collaborators cf">
-	<div class="center">
-		<div class="col_12">
-			<div class="button-actions">
-				<span><a href="#" class="modal-trigger"><i class="icon-users"></i>Add collaborator</a></span>
-			</div>
-							
-			<div class="alert-message blue" style="display:none;">
-				<p><strong>No collaborators.</strong> You can add collaborators by selecting the "Add collaborator" button above.</p>
-			</div>
-			
-		</div>
-	</div>
+<div id="collaborators">
+	<article class="base settings-category">
+		<h1><?php echo __("Collaborators"); ?></h1>
+		<ul class="view-table">
+			<li class="add">
+				<a href="#" class="modal-trigger"><?php echo __("Add collaborator"); ?></a>
+			</li>
+		</ul>
+	</article>
 </div>
 
 <script type="text/template" id="collaborator-template">
-
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title col_8">
-				<a href="#" class="avatar-wrap"><img src="<%= avatar %>" /></a>
-				<% if (read_only) { %>
-					<h1><%= name %> (Viewer) </h1>
-				<% } else { %>
-					<h1><%= name %> (Editor) </h1>
-				<% } %>							
-			</div>
-			<% if (id != logged_in_user) { %>
-			<ul class="button-actions col_4">
-				<% if (read_only) { %>
-				<li class="button-blue button-small editor"><a href="#" title="<?php echo __('Editors have full access and can change settings.'); ?>">Make editor</a></li>
-				<% } else { %>
-				<li class="button-blue button-small viewer"><a href="#" title="<?php echo __('Viewers have read only access and cannot change settings.'); ?>">Make viewer</a></li>							
-				<% } %>
-				<li class="popover"><a href="#" class="popover-trigger"><span class="icon-remove"></span><span class="nodisplay">Remove</span></a>
-					<ul class="popover-window popover-prompt base">
-						<li class="destruct"><a href="#">Remove collaborator from river</a></li>
-					</ul>							
-				</li>
-			</div>
-			<% } %>						
-		</header>				
-	</article>
+	<span class="remove icon-cancel"></span>
+	<img src="<%= avatar %>" class="avatar" />
+	<%= name %>
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
@@ -61,36 +33,28 @@
 </script>
 
 <script type="text/template" id="collaborator-modal-template">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1>Add collaborator</h1>
-		</div>
-		<div class="page-actions col_3">
-			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i><?php echo __("Close"); ?>
 				</a>
-			</h2>
-		</div>
-	</hgroup>
-
-	<div class="modal-body create-new">
-		<form>
-			<h2>Invite a person to collaborate on this river</h2>
-			<div class="field">
-				<input type="text" placeholder="Type name or email address" class="name" name="search_box" />
-				<div class="livesearch">
-					<ul></ul>
+				<h1><?php echo __("Add collaborator"); ?></h1>
+			</div>
+			<div class="modal-body">
+				<div class="base">
+					<div class="modal-search-field">
+						<?php echo Form::input('search_box', '', array('placeholder' => __("Find a user..."))); ?>
+					</div>
+					<div class="modal-search-results">
+						<ul class="view-table"></ul>
+					</div>
+				</div>
+				<div class="modal-toolbar">
+					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
 				</div>
 			</div>
-		</form>
-	</div>
-
-	<div class="modal-body link-list">
-		<h2 style="display:none">Added collaborators</h2>
-		<ul>
-		</ul>
+		</div>
 	</div>
 </script>
 

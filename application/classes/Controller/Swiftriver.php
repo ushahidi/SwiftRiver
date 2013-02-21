@@ -94,6 +94,12 @@ class Controller_Swiftriver extends Controller_Template {
 	 */
 	protected $accountService = NULL;
 	
+	/**
+	 * Bucket Services object
+	 * @var Service_Bucket
+	 */
+	protected $bucket_service = NULL;
+	
 	
 	/**
 	 * Called from before() when the user is not logged in but they should.
@@ -172,6 +178,7 @@ class Controller_Swiftriver extends Controller_Template {
 		// Services
 		$this->accountService = new Service_Account($this->api);
 		$this->riverService = new Service_River($this->api);
+		$this->bucket_service = new Service_Bucket($this->api);
 		
 		if (Auth::instance()->logged_in())
 		{

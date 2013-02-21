@@ -9,11 +9,11 @@
  * http://www.gnu.org/licenses/agpl.html
  * @author     Ushahidi Team <team@ushahidi.com> 
  * @package	   SwiftRiver - http://github.com/ushahidi/Swiftriver_v2
- * @subpackage Auth config
+ * @category   Config
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL) 
  */
 
 return array(
-	'base_url' => 'http://api.swiftapp.com/v1',
+	'base_url' => 'https://api.swiftapp.com/v1',
 );

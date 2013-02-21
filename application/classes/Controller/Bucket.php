@@ -27,12 +27,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	protected $photos = FALSE;
 	
 	/**
-	 * Bucket_Service instance
-	 * @var Bucket_Service
-	 */
-	protected $bucket_service = NULL;
-	
-	/**
 	 * Base URL of the bucket
 	 * @var string
 	 */
@@ -46,9 +40,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 	{
 		// Execute parent::before first
 		parent::before();
-		
-		// Initialize the bucket service
-		$this->bucket_service = new Service_Bucket($this->api);
 		
 		// Get the river name from the url
 		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
@@ -70,7 +61,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		if (empty($this->bucket))
 		{
 			Kohana::$log->add(Log::INFO, __("Bucket :name not found", array(":name" => $this->bucket_base_url)));
-			die();
+			throw new HTTP_Exception_404();
 		}
 		
 		// Set the page title
@@ -86,7 +77,9 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
 			->bind('discussion_url', $discussion_url)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+			->bind('drop_count', $drop_count)
+			->bind('photos_drop_count', $photos_drop_count);
 
 		$this->template->content->is_collaborator = FALSE;
 		$this->template->content->anonymous = $this->anonymous;
@@ -94,14 +87,17 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template->content->user = $this->user;
 			
 		// The maximum droplet id for pagination and polling
-		$droplet_list = $this->bucket_service->get_drops($this->bucket['id']);
+		$droplet_list = $this->bucket_service->get_drops($this->bucket['id'], NULL, $this->photos);
+
+		$drop_count = count($droplet_list);
+		$photos_drop_count = ($this->photos) ? $drop_count : 0;
 
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
 
 		$droplet_js = View::factory('pages/drop/js/drops')
 			->set('fetch_base_url', $this->bucket_base_url)
-			->set('default_view', "list")
+			->set('default_view', $this->bucket['default_layout'])
 			->set("photos", ($this->photos ? 1 : 0))
 			->set('droplet_list', json_encode($droplet_list))
 			->set('filters', NULL)
@@ -114,24 +110,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
-
-		// if ( ! $this->owner)
-		// {
-		// 	$follow_button = View::factory('template/follow');
-		// 	$follow_button->data = json_encode($this->bucket->get_array($this->user, $this->user));
-		// 	$follow_button->action_url = URL::site().$this->visited_account->account_path.'/bucket/buckets/manage';
-		// 	$this->template->content->follow_button = $follow_button;
-		// }
-		// 
-		// // Nothing to display message
-		// $droplets_view->nothing_to_display = View::factory('pages/bucket/nothing_to_display')
-		//     ->bind('message', $nothing_to_display_message);
-		// $nothing_to_display_message = __('There are no drops in this bucket yet.');
-		// if ($this->owner)
-		// {
-		// 	$nothing_to_display_message .= __(' Add some from your :rivers', 
-		// 	                                      array(':rivers' => HTML::anchor($this->dashboard_url.'/rivers', __('rivers'))));
-		// }		
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -177,21 +155,14 @@ class Controller_Bucket extends Controller_Drop_Base {
 			case "GET":
 				$drop_id = $this->request->param('id');
 				$page = 1;
-				if ($drop_id)
-				{
-					// Specific drop requested
-					$droplets_array = Model_Bucket::get_droplets($this->user->id, $this->bucket->id, $drop_id);
-					$droplets = array_pop($droplets_array['droplets']);
-				}
-				else
-				{
-					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
-					
-					$droplets_array = $this->bucket_service->get_drops_since_id($this->bucket['id'], $since_id);
-				}
+
+				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
+
+				// Get the drops
+				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos);
 				
 				//Throw a 404 if a non existent page is requested
 				if (($page > 1 OR $drop_id) AND empty($droplets_array))
@@ -206,39 +177,41 @@ class Controller_Bucket extends Controller_Drop_Base {
 				echo json_encode($droplets_array);
 			break;
 			
-			case "PUT":
+			case "PATCH":
 				// No anonymous actions
 				if ($this->anonymous)
 				{
 					throw new HTTP_Exception_403();
 				}
 			
-				$droplet_array = json_decode($this->request->body(), TRUE);
+				$payload = json_decode($this->request->body(), TRUE);
+				if ( ! isset($payload['command']) OR ! isset($payload['bucket_id']))
+				{
+					throw new HTTP_Exception_400();
+				}
+
+				$bucket_id = intval($payload['bucket_id']);
 				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				$droplet_orm->update_from_array($droplet_array, $this->user->id);
+				if ($payload['command'] === 'add')
+				{
+					$this->bucket_service->add_drop($bucket_id, $droplet_id);
+				}
+				elseif ($payload['command'] === 'remove')
+				{
+					$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+				}
 			break;
 			
 			case "DELETE":
-				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				
-				// Does the user exist
-				if ( ! $droplet_orm->loaded())
-				{
-					throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
-				}
 				
 				// Is the logged in user an owner?
 				if ( ! $this->owner)
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				ORM::factory('Bucket', $this->bucket->id)->remove('droplets', $droplet_orm);
+
+				$droplet_id = intval($this->request->param('id', 0));
+				// $this->bucket_service->delete_drop($bucket_id, $droplet_id);
 		}
 	}
 	
@@ -270,18 +243,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 				
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				if ( ! $user_orm->loaded()) 
-					return;
-					
-				$collaborator_orm = $this->bucket->bucket_collaborators->where('user_id', '=', $user_orm->id)->find();
-				if ($collaborator_orm->loaded())
-				{
-					$collaborator_orm->delete();
-					Model_User_Action::delete_invite($this->user->id, 'bucket', $this->bucket->id, $user_orm->id);
-				}
 			break;
 			
 			case "PUT":
@@ -291,187 +252,28 @@ class Controller_Bucket extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 				
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				$collaborator_array = json_decode($this->request->body(), TRUE);
-				
-				$collaborator_orm = ORM::factory("Bucket_Collaborator")
-									->where('bucket_id', '=', $this->bucket->id)
-									->where('user_id', '=', $user_orm->id)
-									->find();
-				
-				$exists = $collaborator_orm->loaded();
-				if ( ! $exists)
-				{
-					$collaborator_orm->bucket = $this->bucket;
-					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'bucket', 'invite', $this->bucket->id, $user_orm->id);
-				}
-				
-				if (isset($collaborator_array['read_only']))
-				{
-					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
-				}
-				
-				$collaborator_orm->save();
-				
-				if ( ! $exists)
-				{
-					// Send email notification after successful save
-					$html = View::factory('emails/html/collaboration_invite');
-					$text = View::factory('emails/text/collaboration_invite');
-					$html->invitor = $text->invitor = $this->user->name;
-					$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
-					$html->asset = $text->asset = 'bucket';
-					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
-					$html->asset_link = URL::site($this->bucket_base_url, TRUE);
-					$subject = __(':invitor has invited you to collaborate on a bucket',
-									array( ":invitor" => $this->user->name,
-									));
-					Swiftriver_Mail::send($collaborator_orm->user->email, 
-										  $subject, $text->render(), $html->render());
-				}
+				// if ( ! $exists)
+				// {
+				// 	// Send email notification after successful save
+				// 	$html = View::factory('emails/html/collaboration_invite');
+				// 	$text = View::factory('emails/text/collaboration_invite');
+				// 	$html->invitor = $text->invitor = $this->user->name;
+				// 	$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
+				// 	$html->asset = $text->asset = 'bucket';
+				// 	$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
+				// 	$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+				// 	$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
+				// 	$html->asset_link = URL::site($this->bucket_base_url, TRUE);
+				// 	$subject = __(':invitor has invited you to collaborate on a bucket',
+				// 					array( ":invitor" => $this->user->name,
+				// 					));
+				// 	Swiftriver_Mail::send($collaborator_orm->user->email, 
+				// 						  $subject, $text->render(), $html->render());
+				// }
 			break;
 		}
 	}
 
-	/**
-	 * Bucket management restful API
-	 * 
-	 */
-	public function action_manage()
-	{
-		$this->template = "";
-		$this->auto_render = FALSE;
-				
-		switch ($this->request->method())
-		{
-			case "GET":
-				echo json_encode($this->user->get_buckets_array($this->user));
-			break;
-			case "PUT":
-				// No anonymous buckets
-				if ($this->anonymous)
-				{
-					throw new HTTP_Exception_403();
-				}
-				$bucket_array = json_decode($this->request->body(), TRUE);
-				$bucket_orm = ORM::factory('Bucket', $bucket_array['id']);
-				
-				if ( ! $bucket_orm->loaded())
-				{
-					throw new HTTP_Exception_404();
-				}
-				
-				if ( ! $bucket_array['subscribed'])
-				{
-					// Unsubscribing
-					
-					// Unfollow
-					if ($this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->remove('bucket_subscriptions', $bucket_orm);
-					}
-					
-					// Stop collaborating
-					$collaborator_orm = $bucket_orm->bucket_collaborators
-					                        ->where('user_id', '=', $this->user->id)
-					                        ->where('collaborator_active', '=', 1)
-					                        ->find();
-					if ($collaborator_orm->loaded())
-					{
-						$collaborator_orm->delete();
-						$bucket_array['is_owner'] = FALSE;
-						$bucket_array['collaborator'] = FALSE;
-					}
-
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				else
-				{
-					// Subscribing
-					if ( ! $this->user->has('bucket_subscriptions', $bucket_orm))
-					{
-						$this->user->add('bucket_subscriptions', $bucket_orm);
-						Model_User_Action::create_action($this->user->id, 'bucket', 'follow', $bucket_orm->id);
-					}
-
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-
-				// Return updated bucket
-				echo json_encode($bucket_array);
-			break;
-			case "POST":
-			
-				// No anonymous buckets
-				if ($this->anonymous)
-				{
-					throw new HTTP_Exception_403();
-				}
-				
-				$bucket_array = json_decode($this->request->body(), TRUE);
-				try
-				{
-					$bucket_array['user_id'] = $this->user->id;
-					$bucket_array['account_id'] = $this->account->id;
-					$bucket_orm = Model_Bucket::create_from_array($bucket_array);
-					Model_User_Action::create_action($this->user->id, 'bucket', 'create', $bucket_orm->id);
-					echo json_encode($bucket_orm->get_array($this->user, $this->user));
-				}
-				catch (ORM_Validation_Exception $e)
-				{
-					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
-					$errors = array();
-					foreach ($e->errors('validation') as $message)
-					{
-						$errors[] = $message;
-					}
-					echo json_encode(array('errors' => $errors));
-				}
-				catch (Database_Exception $e)
-				{
-					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
-					$errors = array(__("A bucket with the name ':name' already exists",
-						array(':name' => $bucket_array['bucket_name'])
-					));
-					echo json_encode(array('errors' => $errors));
-				}
-			break;
-
-			case "DELETE":
-				$bucket_id = intval($this->request->param('id', 0));
-				$bucket_orm = ORM::factory('Bucket', $bucket_id);
-				
-				if ($bucket_orm->loaded())
-				{
-					if ( ! $bucket_orm->is_creator($this->user->id))
-					{
-						// Only creator can delete
-						throw new HTTP_Exception_403();
-					}
-					
-					$bucket_orm->delete();
-					Cache::instance()->delete('user_buckets_'.$this->user->id);
-				}
-				else
-				{
-					throw new HTTP_Exception_404();
-				}
-			break;
-		}
-		
-		// Force refresh of cached buckets
-		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
-		{
-			Cache::instance()->delete('user_buckets_'.$this->user->id);
-		}
-	}
 	
 	/**
 	 * Comments Posting API

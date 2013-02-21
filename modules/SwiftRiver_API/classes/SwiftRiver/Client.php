@@ -82,11 +82,12 @@ class SwiftRiver_Client {
 	/**
 	* Get the accounts API
 	*
-	* @return  SwiftRiver_API_Accounts the accounts API
+	* @return  SwiftRiver_API_Accounts
 	*/
 	public function get_accounts_api()
 	{
-		if (!isset($this->apis['accounts'])) {
+		if ( ! isset($this->apis['accounts']))
+		{
 			$this->apis['accounts'] = new SwiftRiver_API_Accounts($this);
 		}
 		
@@ -96,11 +97,12 @@ class SwiftRiver_Client {
 	/**
 	* Get the rivers API
 	*
-	* @return  SwiftRiver_API_Rivers the rivers API
+	* @return  SwiftRiver_API_Rivers
 	*/
 	public function get_rivers_api()
 	{
-		if (!isset($this->apis['rivers'])) {
+		if ( ! isset($this->apis['rivers']))
+		{
 			$this->apis['rivers'] = new SwiftRiver_API_Rivers($this);
 		}
 		
@@ -110,15 +112,31 @@ class SwiftRiver_Client {
 	/**
 	* Get the buckets API
 	*
-	* @return  SwiftRiver_API_Buckets the buckets API
+	* @return  SwiftRiver_API_Buckets
 	*/
 	public function get_buckets_api()
 	{
-		if (!isset($this->apis['buckets'])) {
+		if ( ! isset($this->apis['buckets']))
+		{
 			$this->apis['buckets'] = new SwiftRiver_API_Buckets($this);
 		}
 		
 		return $this->apis['buckets'];
+	}
+	
+	/**
+	 * Gets and returns the drops API
+	 *
+	 * @return SwiftRiver_API_Drops
+	 */
+	public function get_drops_api()
+	{
+		if ( ! isset($this->apis['drops']))
+		{
+			$this->apis['drops'] = new SwiftRiver_API_Drops($this);
+		}
+		
+		return $this->apis['drops'];
 	}
 	
 	
@@ -131,8 +149,8 @@ class SwiftRiver_Client {
 	 * @param   mixed    headers	 	 
 	 * @return  mixed    The api response.
 	 */
-	private function _call($path, $params = array(), $method = "GET", $headers = array()) {
-		
+	private function _call($path, $params = array(), $method = "GET", $headers = array())
+	{
 		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
 		
 		$exception_map = array(
@@ -157,8 +175,7 @@ class SwiftRiver_Client {
 			throw new SwiftRiver_API_Exception_Unknown();
 		}
 		
-		return $response['result'];
-		
+		return $response['result'];		
 	}
 	
 	/**
@@ -175,11 +192,11 @@ class SwiftRiver_Client {
 	}
 
 	/**
-	 * Call any path, POST method
-	 * Ex: $api->post('/v1/rivers')
+	 * Call any path, PUT method
+	 * Ex: $api->put('/v1/rivers/2/channels/1')
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       POST parameters
+	 * @param   mixed   $parameters       DELETE parameters
 	 * @return  array                     data returned
 	 */
 	public function post($path, $parameters = array(), $headers = array())
@@ -188,28 +205,27 @@ class SwiftRiver_Client {
 	}
 	
 	/**
-	 * Call any path, DELETE method
-	 * Ex: $api->delete('/v1/rivers/2/channels/1')
-	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       DELETE parameters
-	 * @return  array                     data returned
-	 */
-	public function delete($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
-	{
-		return $this->_call($path, $parameters, "DELETE", $headers);
-	}
-	
-	/**
 	 * Call any path, PUT method
-	 * Ex: $api->put('/v1/rivers/2/channels/1')
+	 * Example: $api->put('/v1/rivers/1')
 	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       DELETE parameters
-	 * @return  array                     data returned
+	 * @param  string   $path The resource path
+	 * @param  array    $parameters PUT parameters
+	 * @return array
 	 */
-	public function put($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	public function put($path, $parameters = array(), $headers = array())
 	{
 		return $this->_call($path, $parameters, "PUT", $headers);
+	}
+
+	/**
+	 * Call any path, DELETE method
+	 * Example: $api->delete('/v1/rivers/1')
+	 *
+	 * @param  string   $path The resource path
+	 * @return bool
+	 */
+	public function delete($path)
+	{
+		$this->_call($path, NULL, "DELETE");
 	}
 }
