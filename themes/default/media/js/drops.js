@@ -662,6 +662,7 @@
 			
 			options.newDropsList.on('add', this.alertNewDrops, this);
 			options.newDropsList.on('reset', this.resetNewDropsAlert, this);
+			options.filters.on('change', this.filtersUpdated, this);
 		},
 		
 		make: function(tagName, attributes) {
@@ -865,7 +866,12 @@
 		
 		resetNewDropsAlert: function() {
 			this.$("article.alert-message").fadeOut("slow").remove();
-		}
+		},
+		
+		getFilters: function() {
+			return this.options.filters;
+		},
+		
 	});
 
 	

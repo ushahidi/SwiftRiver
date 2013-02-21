@@ -32,15 +32,27 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * @param   long  $max_id      The maximum of drops to be returned
 	 * @param   int   $page        Page relative from max_id and count
 	 * @param   int   $count       Number of drops to return per page
+	 * @param   array $filters     Drop filters
 	 * @return Array
 	 */
-	public function get_drops($id, $max_id, $page, $count)
+	public function get_drops($id, $max_id, $page, $count, $filters)
 	{
-		return $this->get('/rivers/'.$id.'/drops', array(
+		$parameters = array(
 			'max_id' => $max_id,
 			'page' => $page,
 			'count' => $count
-		));
+		);
+		
+		$filter_keys = array('keywords', 'channels');
+		foreach ($filter_keys as $key) 
+		{
+			if (isset($filters[$key])) 
+			{
+				$parameters[$key] = implode(',', $filters[$key]);
+			}
+		}
+		
+		return $this->get('/rivers/'.$id.'/drops', $parameters);
 	}
 	
 	/**
@@ -51,12 +63,23 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * @param   int   $count       Number of drops to return per page
 	 * @return Array
 	 */
-	public function get_drops_since($id, $since_id, $count)
+	public function get_drops_since($id, $since_id, $count, $filters)
 	{
-		return $this->get('/rivers/'.$id.'/drops', array(
+		$parameters = array(
 			'since_id' => $since_id,
 			'count' => $count
-		));
+		);
+		
+		$filter_keys = array('keywords', 'channels');
+		foreach ($filter_keys as $key) 
+		{
+			if (isset($filters[$key])) 
+			{
+				$parameters[$key] = implode(',', $filters[$key]);
+			}
+		}
+		
+		return $this->get('/rivers/'.$id.'/drops', $parameters);
 	}
 	
 	/**

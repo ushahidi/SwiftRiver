@@ -20,6 +20,16 @@
 
 			isEmpty: function() {
 				return _.keys(this.attributes).length == 0;
+			},
+			
+			getDropListUrl: function(applyFilters) {
+				var f = "";
+
+				if (applyFilters) {
+					f = filters.getString();
+				}
+
+				return baseURL + "/droplets" + (f.length > 0 ? '?' + f : '');
 			}
 		});
 		var filters = new Filter(<?php echo $filters; ?>);
@@ -28,108 +38,8 @@
 		var dropsList = window.dropsList = new Drops.DropsList;
 		var newDropsList = window.newDropsList = new Drops.DropsList;
 		
-		// Set drop list urls optionally applying filters
-		function getDropListUrl(applyFilters) {
-			var f = "";
-
-			if (applyFilters) {
-				f = filters.getString();
-			}
-
-			return baseURL + "/droplets" + (f.length > 0 ? '?' + f : '');
-		}
-		dropsList.url = newDropsList.url = getDropListUrl(true);
-				
-		// Filters modal window
-		// var FiltersView = Backbone.View.extend({
-		// 	tagName: "article",
-		// 
-		// 	className: "modal",
-		// 
-		// 	template: _.template($("#filters-modal-template").html()),
-		// 
-		// 	events: {
-		// 		"click .save-toolbar .button-blue a": "applyFilter",
-		// 		"click .save-toolbar .button-blank a": "resetFilter"
-		// 	},
-		// 
-		// 	render: function() {
-		// 		this.$el.html(this.template({filters: filters, channels: <?php echo $channels; ?>}));
-		// 		return this;
-		// 	},
-		// 
-		// 	applyFilter: function() {
-		// 		if (!this.$('.save-toolbar').hasClass('visible'))
-		// 			return false;
-		// 
-		// 		// Prepare a key value pair of data to send to the server
-		// 		var data = {};
-		// 		this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-		// 			var input = $(el);
-		// 			var value = $.trim(input.val());
-		// 			if (value.length) {
-		// 				data[input.attr("name")] = encodeURIComponent(value);
-		// 			}
-		// 		});
-		// 
-		// 		// If there is a filter or a previous filter has been cleared
-		// 		if (_.keys(data).length || (!_.keys(data).length  && !filters.isEmpty())) {
-		// 
-		// 			// Photos view?
-		// 			data['photos'] = photos;
-		// 
-		// 			var loading_msg = window.loading_message.clone().append("<span>Applying filter, please wait...</span>");
-		// 			var save_toolbar = this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").clone();
-		// 
-		// 			isSyncing = isPageFetching = true
-		// 			var view = this;
-		// 
-		// 			// Show a loading message if the GET request takes longer than 500ms
-		// 			var t = setTimeout(function() { this.$(".save-toolbar .button-blue, .save-toolbar .button-blank").replaceWith(loading_msg); }, 500);
-		// 			$.get(baseURL + "/droplets", data, function(response) {
-		// 				// Success, replace the drops list with the new data
-		// 				dropsList.reset(response);
-		// 
-		// 				// Update the filter
-		// 				filters = new Filter(data);
-		// 				appRouter.setFilter(filters.getString(), false);
-		// 				dropsList.url = newDropsList.url = getDropListUrl(true);
-		// 
-		// 				// Reset pagination
-		// 				pageNo = 1;
-		// 				isAtLastPage = false;
-		// 
-		// 				modalHide();
-		// 			}, "json")
-		// 			.complete(function() {
-		// 				isSyncing = isPageFetching = false;
-		// 
-		// 				clearTimeout(t);
-		// 				loading_msg.replaceWith(save_toolbar);
-		// 			});
-		// 		}
-		// 
-		// 		return false;
-		// 	},
-		// 
-		// 	resetFilter: function() {
-		// 		this.$("form").find("input[type=text], input[type=date], select").each( function(index, el) {
-		// 			$(el).val("");
-		// 		});	
-		// 
-		// 		this.applyFilter();
-		// 
-		// 		return false;
-		// 	}
-		// })
-
-		// Bind to the filters button
-		$("nav.page-navigation div.filter-actions a").click(function () {
-			var view = new FiltersView();
-			modalShow(view.render().el);
-			return false;
-		})
-		
+		dropsList.url = newDropsList.url = filters.getDropListUrl(true);
+						
 		// Boolean that is true when in photos view
 		var photos = <?php echo $photos; ?>;
 		
@@ -220,6 +130,7 @@
 				this.route(/^drops(\?.+)?$/, "dropsView");
 				this.route(/^list(\?.+)?$/, "listView");
 				this.route(/^photos(\?.+)?$/, "photosView");
+				filters.on("change", this.filterUpdated, this);
 			},
 
 			listingDone: false,
@@ -243,12 +154,13 @@
 
 			getView: function (layout) {
 				if (!this.view) {
-					this.view = new Drops.DropsView({layout: layout, 
+					this.view = window.dropsView = new Drops.DropsView({layout: layout, 
 													dropsList: dropsList, 
 													newDropsList: newDropsList,
 													baseURL: baseURL,
 													maxId: maxId,
-													router: this});
+													router: this,
+													filters: filters});
 					this.view.render();
 					this.view.initDrops();
 				}
@@ -266,7 +178,7 @@
 
 				// Apply filter parameters to the navigation if any
 				if (!filters.isEmpty()) {
-					this.setFilter(filters.getString(), true);
+					this.setFilter(filters.getString(), true, false);
 				}
 			},
 
@@ -280,7 +192,7 @@
 
 				// Apply filter parameters to the navigation if any
 				if (!filters.isEmpty()) {
-					this.setFilter(filters.getString(), true);
+					this.setFilter(filters.getString(), true, false);
 				}
 			},
 
@@ -295,7 +207,7 @@
 
 				// Apply filter parameters to the navigation if any
 				if (!filters.isEmpty()) {
-					this.setFilter(filters.getString(), true);
+					this.setFilter(filters.getString(), true, false);
 				}
 			},		
 
@@ -305,7 +217,7 @@
 				if (!drop) {
 					// Drop not in the local collection, request it from the server
 					drop = new Drop({id: id});
-					drop.urlRoot = getDropListUrl(false);
+					drop.urlRoot = filters.getDropListUrl(false);
 					var context = this;
 					var callback = this.dropFullView;
 					drop.fetch({
@@ -356,7 +268,7 @@
 				}
 			},
 
-			setFilter: function(query, repl) {
+			setFilter: function(query, repl, trigger) {
 				var fragment = "list";
 				if (this.view.options.layout !=  undefined) {
 					fragment = this.view.options.layout;
@@ -364,7 +276,18 @@
 				if (query) {
 					fragment += '?' + query;
 				}
-				this.navigate(fragment, {replace: repl});
+				this.navigate(fragment, {trigger: true, replace: repl});
+			},
+			
+			filterUpdated: function(filter) {
+				var router = this;
+				dropsList.url = newDropsList.url = filters.getDropListUrl(true);
+				dropsList.fetch({
+					silent: true,
+					success: function() {
+						router.setFilter(filter.getString(), true, true);
+					}
+				});
 			}
 		});
 

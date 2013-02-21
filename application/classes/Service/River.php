@@ -190,13 +190,16 @@ class Service_River {
 	/**
 	 * Get drops from a river
 	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       GET parameters
+	 * @param   long    $id
+	 * @param   long    $max_id
+	 * @param   int     $page
+	 * @param   int     $count
+	 * @param   array   $filters
 	 * @return Array
 	 */
-	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20)
+	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count);
+		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count, $filters);
 	}
 	
 	/**
@@ -206,8 +209,8 @@ class Service_River {
 	 * @param   mixed   $parameters       GET parameters
 	 * @return Array
 	 */
-	public function get_drops_since($id, $since_id, $count = 20)
+	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count);
+		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
 	}
 }
