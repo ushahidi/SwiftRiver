@@ -4,4 +4,3 @@
 application/logs/*
 application/cache/*
 application/config/*.php
-modules/SwiftRiver_API/config/*.php

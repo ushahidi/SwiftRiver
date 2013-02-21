@@ -15,5 +15,5 @@
  */
 
 return array(
-	'base_url' => 'https://api.swiftapp.com/v1',
+	'base_url' => 'https:/api.swiftapp.com/v1',
 );
