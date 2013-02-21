@@ -165,7 +165,16 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$validation->error('password', 'invalid');
 					}
-					$this->errors = $validation->errors('login');
+					
+					foreach ($validation->errors('login') as $error) {
+						Swiftriver_Messages::add_message(
+							'failure', 
+							__('Failure'), 
+							$error,
+							false
+						);
+					}
+					$this->redirect(URL::site('login'), 302);
 				}
 			}
 			else

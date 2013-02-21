@@ -1,16 +1,3 @@
-<?php if (isset($errors)): ?>
-	<?php foreach ($errors as $message): ?>
-		<article id="system-message">
-			<div class="center">
-				<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
-				<p><?php echo $message; ?></p>
-			</div>
-		</article>
-	<?php endforeach; ?>
-<?php endif; ?>
-
-
-
 <div id="content">
 	<div class="center">
 		

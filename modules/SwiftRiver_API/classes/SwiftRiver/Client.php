@@ -62,7 +62,7 @@ class SwiftRiver_Client {
 		
 		if ($response['code'] != 200)
 		{
-			throw new SwiftRiver_API_Exception("Authorization Failed");
+			throw new SwiftRiver_API_Exception_Authorization("Authorization Failed");
 		}
 		
 		return $response['result'];
