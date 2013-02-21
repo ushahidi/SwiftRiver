@@ -26,7 +26,7 @@
 		
 		// Global drop lists
 		var dropsList = window.dropsList = new Drops.DropsList;
-		var newDropsList = new Drops.DropsList;
+		var newDropsList = window.newDropsList = new Drops.DropsList;
 		
 		// Set drop list urls optionally applying filters
 		function getDropListUrl(applyFilters) {
@@ -152,8 +152,8 @@
 				isPageFetching = true;
 				pageNo += 1;		
 
-				// Show a loading message				
-				$(".stream-message.waiting").fadeIn("slow");
+				// Show a loading message after a delay if fetch takes long.
+				var t = setTimeout(function() { $(".stream-message.waiting").fadeIn("slow"); }, 500);
 
 				dropsList.fetch({
 				    data: {
@@ -166,6 +166,7 @@
 				    complete: function(model, response) {
 						// Re-enable scrolling after a delay
 						setTimeout(function(){ isPageFetching = false; }, 700);
+						clearTimeout(t);
 				        $(".stream-message.waiting").fadeOut("normal");
 				    },
 				    error: function(model, response) {
@@ -183,8 +184,8 @@
 
 		// New drops via polling will queue in this list
 		newDropsList.on('add', function (droplet) {
-			if (parseInt(droplet.get("sort_id")) > sinceId) {
-				sinceId = parseInt(droplet.get("sort_id"));
+			if (parseInt(droplet.get("id")) > sinceId) {
+				sinceId = parseInt(droplet.get("id"));
 			}
 		}, this);
 
@@ -193,7 +194,8 @@
 			if (!isSyncing) {
 				isSyncing = true;
 				newDropsList.fetch({data: {since_id: sinceId, photos: photos}, 
-				    update: true, 
+				    update: true,
+					remove: false,
 				    complete: function () {
 				        isSyncing = false;
 				    }

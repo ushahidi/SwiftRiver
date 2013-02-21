@@ -9,6 +9,10 @@
 </article>
 </script>
 
+<script type="text/template" id="new-drops-template">
+	<p><em><a href="#"><%= count %> new drops. Click here to refresh the view</a></em></p>
+</script>
+
 <script type="text/template" id="drop-drops-view-template">
 	<% if (image != null) { %>
 		<a href="/markup/drop" class="drop-image-wrap zoom-trigger"><img src="<%= image.thumbnails[0].url %>" class="drop-image" /></a>

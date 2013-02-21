@@ -145,7 +145,7 @@
 		model: Drop,
 				
 		comparator: function (droplet) {
-			return -Date.parse(droplet.get('date_published'));
+			return Date.parse(droplet.get('date_published'));
 		},
 		
 		add: function (model, options) {
@@ -609,16 +609,40 @@
 			}
 		}		
 	});
+	
+	// New drops alert message
+	var AlertNewDropsView = Backbone.View.extend({
+		
+		tagName: "article",
+	
+		className: "stream-message",
+		
+		events: {
+			"click a": "onClick"
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#new-drops-template").html());
+		},
+		
+		render: function() {
+			var data = {count: this.collection.size()};
+			this.$el.html(this.template(data)).show();
+			return this;
+		},
+		
+		onClick: function() {
+			this.trigger("click");
+			return false;
+		}
+		
+	});
 		
 	// VIEW: Listing of drops
 	var DropsView = Drops.DropsView = Backbone.View.extend({
 		
 		noContentElHidden: false,
 		
-		events: {
-			"click article.alert-message a": "showNewDrops"
-		},
-				
 		initialize: function(options) {
 			this.template = _.template($("#drop-listing-template").html());
 			
@@ -663,7 +687,7 @@
 			var views = [];
 			var id = this.options.maxId;
 			_.each(drops, function(drop) {
-				id = Math.max(id, drop.get("sort_id"));
+				id = Math.max(id, drop.get("id"));
 				views.push(new DropView({model: drop, 
 										layout: this.options.layout, 
 										baseURL: context.options.baseURL,
@@ -729,7 +753,7 @@
 					// Newer drops are added in the view before drops
 					// they follow in the list i.e. newer drops are added
 					// on top
-					this.options.dropsList.at(index-1).view.$el.after(view.render().el);
+					this.options.dropsList.at(index-1).view.$el.before(view.render().el);
 				} else {
 					// First drop is simply appended to the view
 					this.$("#drops-view").append(view.render().el);
@@ -818,30 +842,25 @@
 		alertNewDrops: function() {
 			var count = this.options.newDropsList.size();
 			if (count > 0) {
-				// Alert message to show
-				var message = "<p style=\"text-align:center\">" +
-				    "<a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") +". "+
-				    "Click here to refresh the view</a></p>";
-
-				if (this.$("article.alert-message").length == 0) {
-
-					// Construct the HTML for the DOM containing the alert message
-					var alertContainer = "<div class=\"center cf\">" +
-					    "<article class=\"container base alert-message\">" + message +
-					    "</article>" +
-					    "</div>";
-					
-					// Attach to the drops view
-					this.$el.prepend(alertContainer).fadeIn(350);
-				} else {
-					this.$("article.alert-message").html(message);
+				if (this.alertView == undefined) {
+					this.alertView = new AlertNewDropsView({collection: this.options.newDropsList});
+					this.alertView.on("click", this.showNewDrops, this);
 				}
+				this.alertView.render().$el.prependTo(this.$el).fadeIn("slow");
 			}
 		},
 		
 		showNewDrops: function() {
-			this.options.dropsList.add(this.options.newDropsList.models);
-			this.options.newDropsList.reset();
+			var view = this;
+			var dropsList = this.options.dropsList;
+			var newDropsList = this.options.newDropsList;
+			view.alertView.$el.fadeOut("slow", function() {
+				view.alertView.$el.remove();
+				delete view.alertView;
+				
+				dropsList.add(newDropsList.models);
+				newDropsList.reset();
+			})
 		},
 		
 		resetNewDropsAlert: function() {

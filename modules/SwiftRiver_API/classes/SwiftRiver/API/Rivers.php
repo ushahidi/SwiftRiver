@@ -26,10 +26,12 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	}
 	
 	/**
-	 * Get drops from a river
+	 * Get drops from a river with id less than the given max_id
 	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       GET parameters
+	 * @param   long  $id          The id of the river
+	 * @param   long  $max_id      The maximum of drops to be returned
+	 * @param   int   $page        Page relative from max_id and count
+	 * @param   int   $count       Number of drops to return per page
 	 * @return Array
 	 */
 	public function get_drops($id, $max_id, $page, $count)
@@ -37,6 +39,22 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 		return $this->get('/rivers/'.$id.'/drops', array(
 			'max_id' => $max_id,
 			'page' => $page,
+			'count' => $count
+		));
+	}
+	
+	/**
+	 * Get drops from a river with id greater than the given since_id
+	 *
+	 * @param   long  $id          The id of the river
+	 * @param   long  $since_id      The maximum of drops to be returned
+	 * @param   int   $count       Number of drops to return per page
+	 * @return Array
+	 */
+	public function get_drops_since($id, $since_id, $count)
+	{
+		return $this->get('/rivers/'.$id.'/drops', array(
+			'since_id' => $since_id,
 			'count' => $count
 		));
 	}

@@ -146,7 +146,7 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->riverService->get_drops($river_id);
+		$droplets_array = $this->riverService->get_drops($river_id, $max_droplet_id);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -269,12 +269,19 @@ class Controller_River extends Controller_Drop_Base {
 					$droplets = array();
 					if ($since_id)
 					{
-					    $droplets = Model_River::get_droplets_since_id($this->user->id, 
-					    	$this->river->id, $since_id, $photos == 1, $filters);
+						try 
+						{
+							$droplets = $this->riverService->get_drops_since($this->river['id'], $since_id);
+							
+						} 
+						catch (Swiftriver_API_Exception_NotFound $e)
+						{
+							// Do nothing
+						}
 					}
 					else
 					{
-						$droplets = $this->riverService->get_drops($this->river['id'], $max_id, $page);
+						$droplets = array_reverse($this->riverService->get_drops($this->river['id'], $max_id, $page));
 					}
 				}				
 				
@@ -285,7 +292,7 @@ class Controller_River extends Controller_Drop_Base {
 				    throw new HTTP_Exception_404('The requested page was not found on this server.');
 				}
 
-				echo @json_encode($droplets);
+				echo json_encode($droplets);
 
 			break;
 			

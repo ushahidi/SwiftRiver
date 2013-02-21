@@ -198,4 +198,16 @@ class Service_River {
 	{
 		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count);
 	}
+	
+	/**
+	 * Get drops from a river
+	 *
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       GET parameters
+	 * @return Array
+	 */
+	public function get_drops_since($id, $since_id, $count = 20)
+	{
+		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count);
+	}
 }

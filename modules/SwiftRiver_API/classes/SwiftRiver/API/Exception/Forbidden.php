@@ -13,5 +13,5 @@
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-class Swiftriver_API_Exception_Forbidden extends Exception {
+class Swiftriver_API_Exception_Forbidden extends Swiftriver_API_Exception {
 }
