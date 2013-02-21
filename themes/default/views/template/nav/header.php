@@ -104,7 +104,7 @@
 				<div class="base">
 					<h2 class="label own-title" style="display:none">Managing</h2>
 					<ul class="view-table own">
-						<li class="add"><a href="#create-river">Create a new river</a></li>
+						<li class="add"><a href="#create-river" class="modal-transition">Create a new river</a></li>
 					</ul>													
 				</div>
 				<div class="base">

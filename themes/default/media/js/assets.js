@@ -512,15 +512,8 @@
 			var river = new River();
 			river.urlRoot =  site_url + logged_in_account_path + "/rivers";
 			
-			this.$('#modal-viewport').addClass('view-secondary');
-			var view = new CreateRiverModalView({model: river}).render().$el;		
-			this.$('#modal-secondary').html(view);
-			view.fadeIn('fast');
-			this.$('#modal-primary > div').fadeOut('fast');
-			this.$('#modal-container').scrollTop(0,0);		
-			//this._registerBackHandler(); 
-			
-			return false;
+			var view = new CreateRiverModalView({model: river});		
+			this.$('#modal-secondary').html(view.render().el);
 		}
 	});
 	

@@ -115,18 +115,7 @@ $(document).ready(function() {
 		return this;
 	};
 	
-	Dialog.prototype.back = function(hash) {
-		var root = $(this.container);
-		
-		$('#modal-viewport', root).removeClass('view-secondary');
-		$('#modal-secondary .modal-segment', root).fadeOut('fast');
-		$('#modal-primary > div', root).fadeIn('fast');
-		
-		return this;
-	};
-	
-	Dialog.prototype._registerBackHandler = function() {
-		
+	Dialog.prototype._registerBackHandler = function() {		
 		var root = $(this.container);
 		$('a.modal-back', root).bind('click', function() {
 			$('#modal-viewport', root).removeClass('view-secondary');
@@ -332,7 +321,6 @@ $(document).ready(function() {
 	// 		showSysMessage(m['type'], m['title'], m['message'], m['flash']);
 	// 	});
 	// }
-
 	// System message
 	window.SystemMessage = Backbone.View.extend({
 		tagName: "article",
