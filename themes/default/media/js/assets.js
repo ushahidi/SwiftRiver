@@ -64,14 +64,20 @@
 	// Base collection for rivers and buckets
 	var AssetList = Assets.AssetList = Backbone.Collection.extend({
 		own: function() {
-			return this.filter(function(bucket) { 
-				return !bucket.get('subscribed') && bucket.get('is_owner'); 
+			return this.filter(function(asset) { 
+				return !asset.get('subscribed') && asset.get('is_owner'); 
+			});
+		},
+		
+		following: function() {
+			return this.filter(function(asset) {
+				return !asset.get('collaborator') && asset.get('subscribed');
 			});
 		},
 
 		collaborating: function() {
-			return this.filter(function(bucket) { 
-				return bucket.get('subscribed') && bucket.get('collaborator'); 
+			return this.filter(function(asset) { 
+				return !asset.get('subscribed') && asset.get('collaborator'); 
 			});
 		}
 	});

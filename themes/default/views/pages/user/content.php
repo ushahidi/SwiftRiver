@@ -27,9 +27,9 @@
 	<div class="container base">
 		<div class="container-tabs">
 			<ul class="container-tabs-menu cf">
-				<li class="active"><a href="#"><?php echo __("All"); ?></a></li>
-				<li><a href="#"><?php echo __("Managing"); ?></a></li>
-				<li><a href="#"><?php echo __("Following"); ?></a></li>
+				<li class="active"><a href="#all"><?php echo __("All"); ?></a></li>
+				<li><a href="#managing"><?php echo __("Managing"); ?></a></li>
+				<li><a href="#following"><?php echo __("Following"); ?></a></li>
 			</ul>
 
 			<div class="container-toolbar cf">
