@@ -33,8 +33,12 @@
 			</ul>
 
 			<div class="container-toolbar cf">
-				<span class="button"><a href="#" class="button-white">Delete</a></span>
-				<span class="button" class="button-white"><a href="#" class="button-white">Duplicate</a></span>
+				<span class="button">
+					<a href="#" class="button-white delete-asset"><?php echo __("Delete"); ?></a>
+				</span>
+				<span class="button" class="button-white">
+					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
+				</span>
 				<span class="button create-new">
 					<a href="/markup/_modals/create.php" class="button-primary modal-trigger">
 						<i class="icon-plus"></i>

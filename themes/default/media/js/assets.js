@@ -96,7 +96,7 @@
 	var BucketList = Assets.BucketList = AssetList.extend({
 		model: Bucket,
 
-		url: site_url + logged_in_account_path + "/bucket/buckets/manage"
+		url: site_url + logged_in_account_path + "/buckets"
 	});
 	// Global bucket list
 	var bucketList = Assets.bucketList = new BucketList();

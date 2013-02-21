@@ -118,7 +118,7 @@ class Controller_User extends Controller_Swiftriver {
 	}
 
 	/**
-	 * XHR endpoint for mananging a user's buckets
+	 * XHR endpoint for managing a user's buckets
 	 */
 	public function action_buckets()
 	{
@@ -136,7 +136,12 @@ class Controller_User extends Controller_Swiftriver {
 					
 					$this->response->headers("Content-Type", "application/json;charset=UTF-8");
 					echo json_encode($bucket);
-				}
+				}				
+			break;
+			
+			case "DELETE";
+				$bucket_id = $this->request->param('id', 0);
+				$this->bucket_service->delete_bucket($bucket_id);
 			break;
 		}
 	}

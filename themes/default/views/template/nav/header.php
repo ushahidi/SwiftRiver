@@ -259,21 +259,31 @@
 <?php endif; ?>
 
 <script type="text/template" id="confirm-window-template">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1><%= message %></h1>
-		</div>
-		<div class="page-action col_3">
-			<h2 class="close">
-				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
-			</h2>
-		</div>
-	</hgroup>
+	<div id="modal-viewport">
+		<div class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i>
+					<?php echo __("Close"); ?>
+				</a>
+				<h2><%= message %></h2>
+			</div>
 
-	<div class="modal-body">
-		<div class="settings-toolbar">
-			<p class="button-blue"><a href="#">Yes</a></p>
-			<p class="button-blank close"><a href="#">Nope, nevermind</a></p>
+			<div class="modal-body">
+				<div class="settings-category-toolbar">
+					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Yes"); ?></a>
+					<a href="#" class="button-destruct button-secondary modal-close"><?php echo __("Nope, nevermind"); ?></a>
+				</div>
+			</div>
 		</div>
+	</div>
+</script>
+
+<script type="text/template" id="system-message-template">
+	<div class="center">
+		<a href="#" class="system-message-close">
+			<span class="icon-cancel"></span>
+		</a>
+		<p><%= message %></p>
 	</div>
 </script>

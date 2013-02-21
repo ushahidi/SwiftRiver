@@ -251,21 +251,16 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
 /**
  * Account Route
  */
-Route::set('account_pages', '<account>/<action>',
+Route::set('account_pages', '<account>/<action>(/<id>)',
     array(
-    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)'
+    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)',
+		'id' => '\d+'
     ))
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'index'
 	));
 
-
-Route::set('account_bucket_new', '<account>/bucket/new')
-	->defaults(array(
-		'controller' => 'bucket',
-		'action'     => 'new'
-	));
 
 /**
  * Trends

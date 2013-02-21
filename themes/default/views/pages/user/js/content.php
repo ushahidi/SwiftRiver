@@ -4,11 +4,26 @@ $(function() {
 	var DashboardAssetView = Backbone.View.extend({
 		tagName: "tr",
 		
+		events: {
+			"change .select-toggle input[type=checkBox]": "setSelected"
+		},
+		
 		template: _.template($("#asset-template").html()),
 		
 		render: function(eventName) {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
+		},
+		
+		setSelected: function() {
+			this.$el.toggleClass("row-selected", "");
+			if (this.$el.hasClass("row-selected")) {
+				this.options.listView.addSelected(this);
+			} else {
+				this.options.listView.removeSelected(this);
+			}
+
+			return false;
 		}
 	});
 	
@@ -17,14 +32,20 @@ $(function() {
 		
 		el: '#content',
 		
+		// Selected asset type
 		selectedType: "all",
 		
+		// Selected role
 		selectedRole: "all",
+		
+		// Hashmap of selected assets
+		selectedAssets: {},
 		
 		events: {
 			"click .filters-primary a": "filterByType",
 			"click .filters-type a": "filterByCategory",
-			"click .container-tabs-menu a": "filterByRole"
+			"click .container-tabs-menu a": "filterByRole",
+			"click .container-toolbar a.delete-asset": "deleteAssets"
 		},
 		
 		initialize: function(options) {
@@ -67,8 +88,12 @@ $(function() {
 			} else if (asset instanceof Assets.River) {
 				asset.set("asset_type", "river");
 			}
-			var view = new DashboardAssetView({model: asset});
+			var view = new DashboardAssetView({model: asset, listView: this});
 			this.$("#asset-list").prepend(view.render().el);
+
+			asset.on("destroy", function() {
+				view.$el.fadeOut().remove();
+			});
 		},
 		
 		filterByType: function(ev) {
@@ -134,7 +159,45 @@ $(function() {
 			}
 			
 			this.$("#asset-list").fadeIn('slow');
-		}
+		},
+		
+		addSelected: function(view) {
+			if (this.selectedAssets[view.cid] == undefined) {
+				this.selectedAssets[view.cid] = view.model;
+			}
+		},
+		
+		removeSelected: function(view) {
+			if (this.selectedAssets[view.cid]) {
+				delete this.selectedAssets[view.cid];
+			}
+		},
+		
+		// Deletes all currently selected assets
+		deleteAssets: function() {
+			if (_.size(this.selectedAssets) == 0)
+				return false;
+
+			// Show confirmation window
+			new ConfirmationWindow("<?php echo __("Are you sure you want to delete the selected items?"); ?>", 
+				this.confirmDelete, this).show();
+			
+			return false;
+		},
+		
+		confirmDelete: function() {
+			_.each(this.selectedAssets, function(asset, id) {
+				asset.destroy();
+			}, this);
+			
+			var message = _.size(this.selectedAssets) + " <?php echo __("item(s) successfully deleted!"); ?>";
+
+			// Show success message
+			new SystemMessage(message, "success").show();
+			
+			// Clear the list of selected items
+			this.selectedAssets = {};
+		},
 		
 	});
 	

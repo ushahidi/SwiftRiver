@@ -1,4 +1,4 @@
-$(document).ready(function() {	
+$(document).ready(function() {
 	// BUTTON CHECK FOR ICON
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
@@ -294,11 +294,11 @@ $(document).ready(function() {
 			template: _.template($("#confirm-window-template").html()),
 			
 			events: {
-				"click .button-blue a": "confirm"
+				"click a.button-submit": "confirm"
 			},
 			
 			constructor: function(message, callback, context) {
-				Backbone.View.prototype.constructor.apply( this, arguments);
+				Backbone.View.prototype.constructor.apply(this);
 				this.message = message;
 				this.callback = callback;
 				this.context = context;
@@ -320,6 +320,46 @@ $(document).ready(function() {
 			}
 		});
 	}
+	
+	// System message
+	window.SystemMessage = Backbone.View.extend({
+		tagName: "article",
+		
+		className: "system-message",
+		
+		messageTypes: ["failure", "success", "confirmation"],
+		
+		template: _.template($("#system-message-template").html()),
+		
+		constructor: function(message, messageType) {
+			Backbone.View.prototype.constructor.apply(this);
+			if (_.indexOf(this.messageTypes, messageType) == -1) {
+				throw messageType + "is an invalid message type";
+			}
+			this.message = message;
+			this.messageType = messageType;
+		},
+		
+		render: function() {
+			this.$el.attr("id", this.messageType);
+			this.$el.addClass(this.messageType);
+			
+			this.$el.html(this.template({message: this.message}));
+			this.$el.hide();
+			return this;
+		},
+		
+		show: function() {
+			// Remove any existing messages
+			var selector = "article#" +  this.messageType;
+			if ($(selector, "#content")) {
+				$(selector).remove();
+			}
+			$("#content").append(this.render().el);
+			this.$el.show();
+		},
+		
+	});
 	
 	// TABS (Body content)
 	$('.body-tabs-menu a').live('click', function(e) {
