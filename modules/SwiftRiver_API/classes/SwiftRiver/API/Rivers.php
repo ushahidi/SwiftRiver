@@ -43,12 +43,23 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 			'count' => $count
 		);
 		
-		$filter_keys = array('keywords', 'channels', 'channel_ids');
-		foreach ($filter_keys as $key) 
+		$filter_keys = array(
+			'keywords' => 'list', 
+			'channels' => 'list', 
+			'channel_ids' => 'list', 
+			'state' => 'string');
+		foreach ($filter_keys as $key => $type) 
 		{
 			if (isset($filters[$key])) 
 			{
-				$parameters[$key] = implode(',', $filters[$key]);
+				$value = $filters[$key];
+				
+				if ($type == 'list')
+				{
+					$value = implode(',', $value);	
+				} 
+				
+				$parameters[$key] = $value;
 			}
 		}
 		

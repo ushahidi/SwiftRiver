@@ -299,6 +299,12 @@
 		var appRouter = new AppRouter;
 		// Start Backbone history
 		Backbone.history.start({pushState: true, root: baseURL + "/"});
+		
+		// Drop state filter
+		new Drops.DropsStateFilterView({
+			dropFilters: filters,
+			dropsList: dropsList
+		});
 
 		// Onclick Handlers for Drops/List
 		if ( ! photos)

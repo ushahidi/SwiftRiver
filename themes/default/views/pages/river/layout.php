@@ -36,10 +36,10 @@
 						</li>
 						<?php endforeach; ?>
 					</ul>
-					<div class="filters-type">
+					<div class="filters-type" id="drops-state-filter">
 						<ul>
-							<li><a href="#"><span class="total">39</span> Unread</a></li>
-							<li><a href="#"><span class="total">165</span> Read</a></li>
+							<li class="unread"><a href="#"><span class="total">39</span> Unread</a></li>
+							<li class="read"><a href="#"><span class="total">165</span> Read</a></li>
 						</ul>
 					</div>
 				
