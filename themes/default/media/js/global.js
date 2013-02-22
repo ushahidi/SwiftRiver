@@ -1,4 +1,4 @@
-$(document).ready(function() {	
+$(document).ready(function() {
 	// BUTTON CHECK FOR ICON
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
@@ -92,10 +92,10 @@ $(document).ready(function() {
 		this.container.addClass("visible");
 		this.container.fadeIn(350);
 		$('body').addClass('noscroll');
-		this._registerHide(); 
 		
 		if (!this.modal) {
 			$('body').addClass('zoomed');
+			this._registerHide();
 		} else {
 			$('body').addClass('has_modal');
 		}
@@ -115,18 +115,7 @@ $(document).ready(function() {
 		return this;
 	};
 	
-	Dialog.prototype.back = function(hash) {
-		var root = $(this.container);
-		
-		$('#modal-viewport', root).removeClass('view-secondary');
-		$('#modal-secondary .modal-segment', root).fadeOut('fast');
-		$('#modal-primary > div', root).fadeIn('fast');
-		
-		return this;
-	};
-	
-	Dialog.prototype._registerBackHandler = function() {
-		
+	Dialog.prototype._registerBackHandler = function() {		
 		var root = $(this.container);
 		$('a.modal-back', root).bind('click', function() {
 			$('#modal-viewport', root).removeClass('view-secondary');
@@ -164,6 +153,11 @@ $(document).ready(function() {
 	}
 	window.modalShow = function (contents) {
 		modalWindow = new Dialog(contents, true).show();
+	}
+	window.modalTransition = function (contents) {
+		if(modalWindow) {
+			modalWindow.transition(contents);
+		}
 	}
 	$('a.modal-trigger').live('click', function() {
 		loadUrl($(this).attr('href'), "modal", modalShow);
@@ -294,11 +288,11 @@ $(document).ready(function() {
 			template: _.template($("#confirm-window-template").html()),
 			
 			events: {
-				"click .button-blue a": "confirm"
+				"click a.button-submit": "confirm"
 			},
 			
 			constructor: function(message, callback, context) {
-				Backbone.View.prototype.constructor.apply( this, arguments);
+				Backbone.View.prototype.constructor.apply(this);
 				this.message = message;
 				this.callback = callback;
 				this.context = context;
@@ -318,6 +312,13 @@ $(document).ready(function() {
 				this.callback.call(this.context);
 				return false;
 			}
+		});
+	}
+	
+	// Display any queued system messages
+	if (window.system_messages) {
+		_.each(window.system_messages, function(m) {
+			showSysMessage(m['type'], m['title'], m['message'], m['flash']);
 		});
 	}
 	
@@ -372,6 +373,24 @@ function flashMessage(el, text) {
 	message += "</ul>";
 	// Show message and fade it out slooooowwwwwwlllllyyyy
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
+}
+
+function showSysMessage(type, title, message, flash) {
+	var container = $("#system-message-template").clone().appendTo($("body"));
+	container.addClass(type);
+	$("p strong", container).prepend(title);
+	$("p", container).append(message);
+	
+	if(flash) {
+		container.slideDown('fast').delay(2000).slideUp('fast');
+	} else {
+		container.slideDown('fast', function(){
+			$('a.system-message-close', container).on('click', function(e) {
+				container.slideUp('fast');
+				return false;
+			});
+		});
+	}
 }
 
 function showConfirmationMessage(message) {

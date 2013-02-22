@@ -182,22 +182,29 @@ class Controller_Swiftriver extends Controller_Template {
 		
 		if (Auth::instance()->logged_in())
 		{
-			$auth = Auth::instance()->get_user();
-			$this->api->set_access_token($auth['access_token']);
-			$this->user = $this->accountService->get_logged_in_account();
-			
-			if ($this->user['owner']['username'] == 'public')
+			try
 			{
-				if 
-				(
-					// Anonymous logged in and login controller requested, logout
-					strtolower($this->request->controller()) == 'login' OR
-					// In case anonymous setting changed and user had a session,
-					! (bool) Model_Setting::get_setting('anonymous_access_enabled')
-				)
+				$auth = Auth::instance()->get_user();
+				$this->api->set_access_token($auth['access_token']);
+				$this->user = $this->accountService->get_logged_in_account();
+			
+				if ($this->user['owner']['username'] == 'public')
 				{
-					Auth::instance()->logout();
+					if 
+					(
+						// Anonymous logged in and login controller requested, logout
+						strtolower($this->request->controller()) == 'login' OR
+						// In case anonymous setting changed and user had a session,
+						! (bool) Model_Setting::get_setting('anonymous_access_enabled')
+					)
+					{
+						Auth::instance()->logout();
+					}
 				}
+			}
+			catch (Swiftriver_API_Exception_Authorization $e)
+			{
+				Auth::instance()->logout();
 			}
 		}
 
@@ -305,6 +312,9 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->meta = '';
 			$this->template->header->show_nav = TRUE;
 			$site_name = Model_Setting::get_setting('site_name');
+			
+			// System messages
+			$this->template->header->messages = json_encode($this->session->get_once('messages'));
 			
 			// Header Nav
 			$this->template->header->nav_header = View::factory('template/nav/header')

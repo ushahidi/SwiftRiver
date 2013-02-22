@@ -13,16 +13,15 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Controller_River_Collaborators extends Controller_River_Settings {
+class Controller_River_Rules extends Controller_River_Settings {
 	
 	/**
 	 * @return	void
 	 */
 	public function action_index()
 	{
-		$this->template->content->active = "collaborators";
-		$this->template->content->settings_content = View::factory('pages/river/settings/collaborators');
-		
+		$this->template->content->active = "rules";
+		$this->template->content->settings_content = View::factory('pages/river/settings/rules');
 	}
 	
 }

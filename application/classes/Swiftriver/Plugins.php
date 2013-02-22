@@ -268,9 +268,9 @@ class Swiftriver_Plugins {
 				$option['placeholder'] = htmlentities($option['placeholder']);
 			}
 			
-			if(isset($option['group_options'])) {
+			if(isset($option['options'])) {
 				// Has group options, set the key for each
-				foreach ($option['group_options'] as $key =>  & $opt)
+				foreach ($option['options'] as $key =>  & $opt)
 				{
 					$opt['key'] = $key;
 				}

@@ -3,12 +3,14 @@
 
 <script type="text/template" id="drop-listing-template">
 <div id="drops-view"></div>
+<div id="drop_listing_bottom"></div>
+<article class="stream-message waiting">
+	<p><em>Loading more drops</em></p>
+</article>
 </script>
 
-<script type="text/template" id="new-drops-alert-template">
-	<article class="stream-message drops">
-		<p><%= message %></p>
-	</article>
+<script type="text/template" id="new-drops-template">
+	<p><em><a href="#"><%= count %> new drops. Click here to refresh the view</a></em></p>
 </script>
 
 <script type="text/template" id="drop-drops-view-template">
@@ -390,14 +392,6 @@
 		<h1><?php echo __("Share via Email"); ?></h1>
 	</div>
 
-	<?php
-	/*
-	<div id="success" style="display: none;">
-		<p><?php echo __("The drop has been successfully shared via email!"); ?></p>
-	</div>
-	*/
-	?>
-
 	<?php echo Form::open(); ?>
 		<div class="modal-body">
 			<div class="base">
@@ -450,25 +444,7 @@
 		</div>
 
 		<div id="modal-secondary" class="modal-view">
-			<div id="create-bucket" class="modal-segment">
-				<div class="modal-title cf">
-					<a href="#" class="modal-back button-white">
-						<span class="icon-arrow-left"></span>
-					</a>
-					<h1><?php echo __("Create a new bucket"); ?></h1>
-				</div>
-				<div class="modal-body">
-					<div class="base">
-						<div class="modal-field">
-							<h3 class="label"><?php echo __("Name"); ?></h3>
-							<?php echo Form::input("bucket_name", "", array('placeholder' => __("Name your bucket"))); ?>
-						</div>
-					</div>
-				</div>
-				<div class="modal-toolbar">
-					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Save and add drop"); ?></a>
-				</div>
-			</div>
+		
 		</div>
 	</div>
 </script>

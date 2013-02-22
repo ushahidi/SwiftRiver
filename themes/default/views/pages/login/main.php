@@ -1,16 +1,3 @@
-<?php if (isset($errors)): ?>
-	<?php foreach ($errors as $message): ?>
-		<article id="system-message">
-			<div class="center">
-				<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
-				<p><?php echo $message; ?></p>
-			</div>
-		</article>
-	<?php endforeach; ?>
-<?php endif; ?>
-
-
-
 <div id="content">
 	<div class="center">
 		
@@ -43,7 +30,7 @@
 									<?php echo __('Remember me'); ?>
 								</div>
 								<div class="modal-base-toolbar">
-									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this)">Log in</a>
+									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this); return false;">Log in</a>
 									<a href="#" class="button-destruct button-secondary modal-transition">Forgot your password?</a>
 								</div>
 								<?php echo Form::hidden('referrer', $referrer); ?>

@@ -111,6 +111,9 @@
 			// buckets.push, the Backbone JS reference will remain the same - hence
 			// the change event won't be triggered
 			buckets = _.clone(this.get("buckets"));
+			if (buckets == null) {
+				buckets = [];
+			}
 			
 			bucketId = changeBucket.get("id");
 			// The task to be performed - add/remove from bucket
@@ -656,7 +659,36 @@
 			if (!this.model.isInBucket(bucket)) {
 				this.model.setBucket(bucket);
 			}
-		}		
+		}
+
+	});
+	
+	// New drops alert message
+	var AlertNewDropsView = Backbone.View.extend({
+		
+		tagName: "article",
+	
+		className: "stream-message",
+		
+		events: {
+			"click a": "onClick"
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#new-drops-template").html());
+		},
+		
+		render: function() {
+			var data = {count: this.collection.size()};
+			this.$el.html(this.template(data)).show();
+			return this;
+		},
+		
+		onClick: function() {
+			this.trigger("click");
+			return false;
+		}
+		
 	});
 		
 	// VIEW: Listing of drops
@@ -664,10 +696,6 @@
 		
 		noContentElHidden: false,
 		
-		events: {
-			"click article.stream-message a": "showNewDrops"
-		},
-				
 		initialize: function(options) {
 			this.template = _.template($("#drop-listing-template").html());
 			
@@ -714,7 +742,7 @@
 			var views = [];
 			var id = this.options.maxId;
 			_.each(drops, function(drop) {
-				id = Math.max(id, drop.get("sort_id"));
+				id = Math.max(id, drop.get("id"));
 				views.push(new DropView({model: drop, 
 										layout: this.options.layout, 
 										baseURL: context.options.baseURL,
@@ -869,22 +897,25 @@
 		alertNewDrops: function() {
 			var count = this.options.newDropsList.size();
 			if (count > 0) {
-				// Alert message to show
-				var message = "<a href=\"#\">" + count + " new drop" + (count == 1 ? "" : "s") +". "+
-				    "Click here to refresh the view</a>";
-
-				if (this.$("article.stream-message.drops").length == 0) {
-					var dropsAlertTemplate = _.template($("#new-drops-alert-template").html());
-					this.$el.prepend(dropsAlertTemplate({message: message})).fadeIn('slow');
-				} else {
-					this.$("article.stream-message.drops p").html(message);
+				if (this.alertView == undefined) {
+					this.alertView = new AlertNewDropsView({collection: this.options.newDropsList});
+					this.alertView.on("click", this.showNewDrops, this);
 				}
+				this.alertView.render().$el.prependTo(this.$el).fadeIn("slow");
 			}
 		},
 		
 		showNewDrops: function() {
-			this.options.dropsList.add(this.options.newDropsList.models);
-			this.options.newDropsList.reset();
+			var view = this;
+			var dropsList = this.options.dropsList;
+			var newDropsList = this.options.newDropsList;
+			view.alertView.$el.fadeOut("slow", function() {
+				view.alertView.$el.remove();
+				delete view.alertView;
+				
+				dropsList.add(newDropsList.models);
+				newDropsList.reset();
+			})
 		},
 		
 		resetNewDropsAlert: function() {

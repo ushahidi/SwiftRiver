@@ -76,27 +76,27 @@
 							<div id="add-twitter">
 								<div class="modal-field modal-field-tabs-container">
 									<ul class="modal-field-tabs-menu">
-										<li class="active"><a href="#input-keywords">Keywords</a></li>
-										<li><a href="#input-users">Users</a></li>
-										<li><a href="#input-location">Location</a></li>
+										<li class="active"><a href="#input-keywords">Track</a></li>
 									</ul>
 									<div class="modal-field-tabs-window">
 										<div id="input-keywords" class="active">
-											<a href="#" class="add-field"><span class="icon-plus"></span></a>									
-											<input type="text" placeholder="Enter keywords, separated by commas" />
+											<span class="modal-field">
+												<h4 class="label">Keywords</h3>
+												<input type="text" placeholder="Enter keywords, separated by commas" />
+											</span>
+											<span class="modal-field">
+												<h4 class="label">Users</h3>
+												<input type="text" placeholder="Enter usernames, separated by commas" />
+											</span>
+											<span class="modal-field">
+												<h4 class="label">Locations</h3>
+												<input type="text" placeholder="Enter location" />
+												<select style="display:block;">
+													<option>within 100km</option>
+													<option>within 1000km</option>
+												</select>
+											</span>
 										</div>
-										<div id="input-users">
-											<a href="#" class="add-field"><span class="icon-plus"></span></a>									
-											<input type="text" placeholder="Enter usernames, separated by commas" />
-										</div>
-										<div id="input-location">
-											<a href="#" class="add-field"><span class="icon-plus"></span></a>									
-											<input type="text" placeholder="Enter location" />
-											<select style="display:block;">
-												<option>within 100km</option>
-												<option>within 1000km</option>
-											</select>
-										</div>																				
 									</div>
 									
 									<!-- IF: Parameter added
@@ -116,7 +116,6 @@
 							<div id="add-facebook">
 								<div class="modal-field">
 									<h3 class="label">Facebook Page name</h3>
-									<a href="#" class="add-field"><span class="icon-plus"></span></a>
 									<input type="text" placeholder="Enter the name of a Facebook page" />
 									<!-- IF: Parameter added
 									<div class="modal-field-parameter">									
@@ -135,7 +134,6 @@
 							<div id="add-rss">
 								<div class="modal-field">
 									<h3 class="label">RSS URL</h3>
-									<a href="#" class="add-field"><span class="icon-plus"></span></a>
 									<input type="text" placeholder="Enter the address to an RSS feed" />
 								</div>
 							</div>

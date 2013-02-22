@@ -62,7 +62,7 @@ class SwiftRiver_Client {
 		
 		if ($response['code'] != 200)
 		{
-			throw new SwiftRiver_API_Exception("Authorization Failed");
+			throw new SwiftRiver_API_Exception_Authorization("Authorization Failed");
 		}
 		
 		return $response['result'];
@@ -86,7 +86,7 @@ class SwiftRiver_Client {
 	*/
 	public function get_accounts_api()
 	{
-		if ( !isset($this->apis['accounts']))
+		if ( ! isset($this->apis['accounts']))
 		{
 			$this->apis['accounts'] = new SwiftRiver_API_Accounts($this);
 		}
@@ -144,44 +144,67 @@ class SwiftRiver_Client {
 	 * Send request to an api endpoint
 	 *
 	 * @param   string   url
-	 * @param   array    params
-	 * @param   string   http_method
-	 * @param   array    $headers
+	 * @param   mixed    params
+	 * @param   mixed    method
+	 * @param   mixed    headers	 	 
 	 * @return  mixed    The api response.
 	 */
-	private function _call($path, $params = array(), $http_method = "GET", $headers = array())
+	private function _call($path, $params = array(), $method = "GET", $headers = array())
 	{
-		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $http_method, $headers);
-
-		if ($response['code'] != 200)
+		try 
 		{
-			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-			throw new SwiftRiver_API_Exception($response['result']['error_description']);
-		}
-
-		return $response['result'];
+			$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
 		
+			$exception_map = array(
+				400 => "SwiftRiver_API_Exception_BadRequest",
+				403 => "SwiftRiver_API_Exception_Forbidden",
+				404 => "SwiftRiver_API_Exception_NotFound"
+			)	
+			;
+		
+			if 	(in_array($response['code'], array_keys($exception_map)))
+			{
+				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
+				throw new $exception_map[$response['code']]($response['result']);
+			}
+			else if ($response['code'] == 401)
+			{
+				throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
+			}
+			else if ($response['code'] != 200)
+			{
+				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
+				throw new SwiftRiver_API_Exception_Unknown();
+			}
+		
+			return $response['result'];		
+		}
+		catch (OAuth2\Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, "OAuth2\Exception :message", array(':message' => $e->getMessage()));
+			throw new SwiftRiver_API_Exception_Authorization($e->getMessage());
+		}	
 	}
 	
 	/**
 	 * Call any path, GET method
 	 * Ex: $api->get('/v1/rivers/2/drops')
 	 *
-	 * @param   string  $path            the GitHub path
-	 * @param   array   $parameters       GET parameters
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       GET parameters
 	 * @return  array                     data returned
 	 */
-	public function get($path, $parameters = array())
+	public function get($path, $parameters = array(), $headers = array())
 	{
-		return $this->_call($path, $parameters, "GET");
+		return $this->_call($path, $parameters, "GET", $headers);
 	}
 
 	/**
-	 * Call any path, POST method
-	 * Ex: $api->post('/v1/rivers/2/drops', array('count' => 10))
+	 * Call any path, PUT method
+	 * Ex: $api->put('/v1/rivers/2/channels/1')
 	 *
-	 * @param   string  $path            the GitHub path
-	 * @param   array   $parameters       POST parameters
+	 * @param   string  $path            the resource path
+	 * @param   mixed   $parameters       DELETE parameters
 	 * @return  array                     data returned
 	 */
 	public function post($path, $parameters = array(), $headers = array())

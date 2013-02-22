@@ -9,7 +9,7 @@
 	// Channel plugin configuration model and collection
 	var ChannelConfig = Backbone.Model.extend();
 	
-	var ChannelsConfig = Backbone.Collection.extend({
+	var ChannelsConfig = Channels.ChannelsConfig = Backbone.Collection.extend({
 		model: ChannelConfig,
 		
 		// Get all parameters in a channel
@@ -26,8 +26,6 @@
 		}
 	});
     
-	var channelsConfig = Channels.channelsConfig = new ChannelsConfig();
-	
 	// Channels model and collection for channels in this river
 	var Channel = Backbone.Model.extend({
 		
@@ -407,119 +405,471 @@
 		}
 	});
 	
-	// Single channel view
-	var ChannelView = Backbone.View.extend({
+	
+	// Global channel list
+	var channelList = Channels.channelList = new ChannelList();
+	
+	// Single channel in the modal listing
+	var ChannelModalView = Backbone.View.extend({
 		
-		tagName: "article",
-		
-		className: "container base",
+		tagName: "li",
 		
 		events: {
-			"click a.remove-large": "confirmDeleteChannel"
+			"click .remove": "removeChannel",
+			"click": "editChannel",
 		},
 		
 		initialize: function() {
-            this.template = _.template($("#channel-template").html());
-			this.model.on("change:enabled", this.activeChanged, this);
-			
-			// Add channel options
-			this.channelOptions = new ChannelOptions();
-			this.channelOptions.url = this.options.baseURL + "/options/" + this.model.get("id");
-			this.channelOptions.on("add", this.addChannelOption, this);
-			this.channelOptions.reset(this.model.get('options'));
+            this.template = _.template($("#channel-modal-template").html());
 		},
-		
-		activeChanged: function() {
-			if (!this.model.get("enabled")) {
-				// Channel no longer active, remove from view
-				this.$el.fadeOut('slow');
-			} else {
-				this.$el.fadeIn('slow');
-			}
-		},
-		
-		addChannelOption: function(option) {
-			var view = new ChannelOptionView({
-					model: option,
-					collection: this.channelOptions,
-					channel: this.model,
-                    baseURL: this.options.baseURL
-				});
-			this.$("section.channel-options").prepend(view.render().el);
-		},
-		
+				
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
-			
-			// Populate the parameter list
-			var config = channelsConfig.getChannelConfig(this.model.get("channel"));
-			_.each(config.get("options"), function(option) {
-				var view = new ParameterView({model: option, channelView: this});
-				this.$("div.add-parameter ul").append(view.render().el);
-			}, this);
-			
-			// Render channel options
-			this.channelOptions.each(this.addChannelOption, this);
-			
-			if (!_.size(config.get("options"))) {
-				// Hide the 'Add parameter' button
-				this.$("div.add-parameter").hide();
-			}
-			
 			return this;	
 		},
 		
-		confirmDeleteChannel: function() {
-			new ConfirmationWindow("Remove this channel?", this.deleteChannel, this).show();
+		removeChannel: function() {
+			view = this;
+			this.model.destroy({
+				wait: true,
+				success: function() {
+					view.$el.fadeOut("slow");
+				}
+			});
 			return false;
 		},
 		
-		deleteChannel: function() {
-			var view = this;
-			this.model.destroy();
-			view.$el.fadeOut("slow");
+		editChannel: function() {
+			this.trigger("edit", this.model);
+			return false;
 		}
+		
 	});
 	
-	// The channels app
-	var ChannelsControl = Channels.ChannelsControl = Backbone.View.extend({
-		el: "div.channels",
+	// List of channels in a modal view
+	var ChannelsModalView = Channels.ChannelsModalView = Backbone.View.extend({
 		
-		events: {
-			"click .settings-toolbar p.create a": "showAddChannelsModal"
+		tagName: "article",
+
+		className: "modal",
+		
+		constructor: function(message, callback, context) {
+			Backbone.View.prototype.constructor.apply(this, arguments);
+
+			this.delegateEvents({
+				"click li.add a": "showAddChannel",
+				"click .modal-back": "showPrimaryView"
+			});
 		},
 		
-		initialize: function() {
-			this.collection.on("add", this.addChannel, this);
+		initialize: function(options) {
+			this.template = _.template($("#channels-modal-template").html());
+			this.collection.url = options.baseUrl;
 			this.collection.on("reset", this.addChannels, this);
-			
-			this.collection.on('reset', this.checkEmpty, this);
-			this.collection.on('add', this.checkEmpty, this);
-			this.collection.on('change:enabled', this.checkEmpty, this);
-			this.collection.on('remove', this.checkEmpty, this);
-		},
-		
-		addChannel: function(channel) {
-			var view = new ChannelView({model: channel, baseURL: this.options.baseURL});
-			this.$("div.col_12").append(view.render().el);
+			this.collection.on("add", this.addChannel, this);
 		},
 		
 		addChannels: function() {
 			this.collection.each(this.addChannel, this);
 		},
-
-		showAddChannelsModal: function() {
-			var addChannelsView = new AddChannelsView({collection: this.collection});
-			modalShow(addChannelsView.render().el);
+		
+		addChannel: function(channel) {
+			var view = new ChannelModalView({model: channel});
+			channel.view = view;
+			view.on("edit", this.showEditChannel, this);
+			this.$(".view-table ul").prepend(view.render().el);
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			this.addChannels();
+			return this;
+		},
+		
+		showAddChannel: function() {
+			this.$('#modal-viewport').addClass('view-secondary');
+			var view = new AddChannelModalView({
+				collection: this.options.config,
+				baseUrl: this.options.baseUrl
+			});
+			view.on("add", this.channelAdded, this);			
+			this.showSecondaryView(view.render().$el);
 			return false;
 		},
 		
-		checkEmpty: function(model) {
-			if (this.collection.length && this.collection.numActive()) {
-				this.$(".alert-message").fadeOut('slow');
-			} else {
-				this.$(".alert-message").fadeIn('slow');
+		showEditChannel: function(channel) {
+			var view = new EditChannelModalView({config: this.options.config, model: channel});
+			view.on("change", this.channelUpdated, this);
+			this.showSecondaryView(view.render().$el);
+		},
+		
+		channelAdded: function(channel) {
+			this.collection.add(channel);
+			this.showPrimaryView();
+		},
+		
+		channelUpdated: function(channel) {
+			channel.view.render();
+			this.showPrimaryView();
+		},
+		
+		showSecondaryView: function(contentEl) {
+			this.$('#modal-secondary').html(contentEl);
+			contentEl.fadeIn('fast');
+			this.$('#modal-primary > div').fadeOut('fast');
+			this.$('#modal-container').scrollTop(0,0);	
+		},
+		
+		showPrimaryView: function() {
+			this.$('#modal-viewport').removeClass('view-secondary');
+			this.$('#modal-primary > div').fadeIn('fast');
+			this.$('#modal-secondary .modal-segment').fadeOut('fast');
+			return false;
+		}
+	});
+	
+	var ChannelTypeConfigView = Backbone.View.extend({
+		
+		tagName: "li",
+		
+		events: {
+			"click": "setSelected",
+		},
+		
+		initialize: function() {
+			this.template = _.template($("#channel-config-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		},
+		
+		setSelected: function() {
+			this.trigger("click", this.model);
+			return false;
+		}
+	});
+	
+	var ChannelOptionConfigView = Backbone.View.extend({
+		
+		tagName: "li",
+		
+		events: {
+			"click": "setSelected",
+		},
+		
+		initialize: function() {
+			this.template = _.template($("#channel-option-config-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		},
+		
+		setSelected: function() {
+			this.trigger("click", this.model);
+			return false;
+		}
+		
+	});
+	
+	var EditChannelParametersView = Backbone.View.extend({
+		
+		tagName: "div",
+		
+		className: "modal-field-tabs-window",
+		
+		initialize: function() {
+			this.template = _.template($("#edit-channel-template").html());
+			this.textTemplate =  _.template($("#edit-channel-text-template").html());
+			this.geoTemplate =  _.template($("#edit-channel-geo-template").html());
+			this.fileTemplate = _.template($("#edit-channel-file-template").html());
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			this.renderOption(this.options.config, false);
+			return this;
+		},
+		
+		renderOption: function(option, isGroup) {
+			if (option.get("type") == "text") {
+				this.$("div").append(this.getTextView(option, isGroup));
+			} else if (option.get("type") == "geo") {
+				this.$("div").append(this.getGeoView(option, isGroup));
+			} else if (option.get("type") == "file") {
+				this.$("div").append(this.getFileView(option, isGroup));
+			} else if (option.get("type") == "group") {
+				_.each(option.get("options"), function(groupOption) {
+					this.renderOption(new Backbone.Model(groupOption), true);
+				},this);
 			}
+		},
+		
+		getModelValue: function(config, isGroup) {
+			var key = config.get("key");
+			var parameters = this.model.get("parameters");
+			var val = null;
+			if (parameters) {
+				if (!isGroup && parameters.key == key) {
+					val = parameters.value;
+				} else {
+					if (_.has(parameters.value, key)) {
+						val = parameters.value[key];
+					}
+				}
+			}
+			return val;
+		},
+		
+		getTextView: function(config, isGroup) {
+			var data = config.toJSON();
+			data.isGroup = isGroup;
+			data.val = this.getModelValue(config, isGroup);
+			return this.textTemplate(data);
+		},
+		
+		getGeoView: function(config, isGroup) {
+			return this.geoTemplate(config.toJSON());
+		},
+		
+		getFileView: function(config, isGroup) {
+			return this.fileTemplate(config.toJSON());
+		},
+		
+		save: function(options) {
+			var config = this.options.config;
+			parameters = {
+				"key": config.get("key"),
+				"value": this.getValue(config)
+			};		
+			this.model.set("parameters", parameters);
+			this.model.save({
+				"parameters": parameters
+			}, options);
+		},
+		
+		getValue: function(option) {
+			if (option.get("type") == "text") { 
+				return this.$("input[name=" + option.get("key") + "]").val();
+			} else if (option.get("type") == "group") { 
+				var groupOptions = {};
+				_.each(option.get("options"), function(groupOption) {
+					var val = this.getValue(new Backbone.Model(groupOption));
+					
+					if (val != undefined && val.length) {
+						groupOptions[groupOption["key"]] = val;
+					}
+				},this);
+				return groupOptions;
+			}
+		}
+	});
+	
+	var AddChannelModalView = Channels.AddChannelModalView = Backbone.View.extend({
+		
+		tagName: "div",
+
+		className: "modal-segment",
+		
+		events: {
+			"click .button-submit": "saveChannel",
+		},
+		
+		channelView: null,
+		
+		isFetching: false,
+		
+		initialize: function() {
+			this.template = _.template($("#add-channel-modal-template").html());
+			this.channelConfigTemplate = _.template($("#channel-config-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			this.addChannelTypes();
+			return this;
+		},
+		
+		// Show a list of available channels
+		addChannelTypes: function() {
+			this.collection.each(function(config) {
+				var view = new ChannelTypeConfigView({model: config});
+				view.on("click", function(config) {
+					// Show available options for the selected channel
+					// Clear the view
+					this.$(".modal-field-tabs-window").html("");
+					this.$(".modal-field-tabs-menu li").remove();
+					view.$el.siblings().removeClass("active");
+					
+					// Set the this channel as selected and render the options
+					view.$el.addClass("active");
+					this.addChannelOptionTypes(config);
+				}, this);
+				
+				this.$(".modal-tabs-menu").append(view.render().el);
+			}, this);
+		},
+		
+		// Show a list of available options for a channel
+		addChannelOptionTypes: function(channelConfig) {
+			_.each(channelConfig.get("options"), function(optionConfig) {
+				var view = new ChannelOptionConfigView({model: new Backbone.Model(optionConfig)});
+				
+				view.on("click", function(optionConfig) {
+					view.$el.siblings().removeClass("active");
+					view.$el.addClass("active");
+					
+					var channel = new Channel();
+					channel.urlRoot = this.options.baseUrl;
+					channel.set("channel", channelConfig.get("channel"));
+					var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: channel});					
+					this.$(".modal-field-tabs-window").replaceWith(channelView.render().el);
+				}, this);
+				
+				this.$(".modal-field-tabs-menu").append(view.render().el);
+			}, this);
+		},
+		
+		saveChannel: function() {
+			if (this.channelView == null || this.isFetching)
+				return false;
+				
+			this.isFetching = true;
+			view = this;
+			
+			this.channelView.save({
+				complete: function() {
+					view.isFetching = false;
+				},
+				success: function() {
+					view.trigger("add", view.channelView.model);
+				},
+				error: function() {
+					console.log("Channel save error");
+				}
+			});
+			return false;
+		}
+	});
+	
+	var EditChannelModalView = Channels.EditChannelModalView = Backbone.View.extend({
+		
+		tagName: "div",
+
+		className: "modal-segment",
+		
+		channelView: null,
+		
+		isFetching: false,
+		
+		events: {
+			"click .button-submit": "saveChannel",
+		},
+				
+		initialize: function() {
+			this.template = _.template($("#edit-channel-modal-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			
+			var parameters = this.model.get("parameters");
+			var channel = this.model.get("channel");			
+			var optionConfig = this.options.config.getChannelOptionConfig(channel, parameters.key);			
+			optionConfig = new Backbone.Model(optionConfig);
+			var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: this.model});					
+			this.$(".modal-field-tabs-window").replaceWith(channelView.render().el);
+			
+			return this;
+		},
+		
+		saveChannel: function() {
+			if (this.channelView == null || this.isFetching)
+				return false;
+				
+			this.isFetching = true;
+			view = this;
+			
+			this.channelView.save({
+				complete: function() {
+					view.isFetching = false;
+				},
+				success: function() {
+					view.trigger("change", view.channelView.model);
+				},
+				error: function() {
+					console.log("Channel save error");
+				}
+			});
+			return false;
+		}
+	});
+	
+	// Single channel in the drops channel listing
+	var DroplistChannelView = Backbone.View.extend({
+		
+		tagName: "li",
+		
+		className: "active",
+		
+		events: {
+			"click": "toggleChannel"
+		},
+		
+		initialize: function() {
+            this.template = _.template($("#channel-drop-list-template").html());
+			this.model.on("change", this.render, this);
+			this.model.on("destroy", this.removeChannel, this);
+		},
+				
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;	
+		},
+		
+		toggleChannel: function() {
+			this.$el.toggleClass("active");
+			return false;
+		},
+		
+		removeChannel: function() {
+			this.$el.fadeOut("slow");
+		}
+	});
+	
+	
+	// List of channels in the drop listing
+	var DroplistChannelsView = Channels.DroplistChannelsView = Backbone.View.extend({
+		
+		el: "#drops-channel-list",
+		
+		initialize: function() {
+			this.collection.on("reset", this.addChannels, this);
+			this.collection.on("add", this.addChannel, this);
+			this.collection.on("add remove reset destroy", this.renderCount, this);
+			this.render();
+		},
+		
+		addChannels: function() {
+			this.collection.each(this.addChannel, this);
+		},
+		
+		addChannel: function(channel) {
+			var view = new DroplistChannelView({model: channel});
+			this.$(".filters-type-details ul").append(view.render().el);
+		},
+		
+		render: function(eventName) {
+			this.renderCount();
+			this.addChannels();
+			return this;
+		},
+		
+		renderCount: function() {
+			this.$(".total").html(this.collection.size());
 		}
 	});
 	

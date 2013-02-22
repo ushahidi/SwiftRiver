@@ -59,30 +59,21 @@ class Service_Account {
 		// Own rivers
 		foreach ($account['rivers'] as $river)
 		{
-			$river['is_owner'] = TRUE;
-			$river['collaborator'] = FALSE;
-			$river['subscribed'] = FALSE;
-			$river['url'] = Service_River::get_base_url($river);
+			$river = Service_River::get_array($river, $account);
 			$rivers[] = $river;
 		}
 		
 		// Collaborating rivers
 		foreach ($account['collaborating_rivers'] as $river)
 		{
-			$river['is_owner'] = TRUE;
-			$river['collaborator'] = TRUE;
-			$river['subscribed'] = FALSE;
-			$river['url'] = Service_River::get_base_url($river);
+			$river = Service_River::get_array($river, $account);
 			$rivers[] = $river;
 		}
 		
 		// Following rivers
 		foreach ($account['following_rivers'] as $river)
 		{
-			$river['is_owner'] = FALSE;
-			$river['collaborator'] = FALSE;
-			$river['subscribed'] = TRUE;
-			$river['url'] = Service_River::get_base_url($river);
+			$river = Service_River::get_array($river, $account);
 			$rivers[] = $river;
 		}
 		
