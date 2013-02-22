@@ -151,31 +151,39 @@ class SwiftRiver_Client {
 	 */
 	private function _call($path, $params = array(), $method = "GET", $headers = array())
 	{
-		$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
-		
-		$exception_map = array(
-			400 => "SwiftRiver_API_Exception_BadRequest",
-			403 => "SwiftRiver_API_Exception_Forbidden",
-			404 => "SwiftRiver_API_Exception_NotFound"
-		)	
-		;
-		
-		if 	(in_array($response['code'], array_keys($exception_map)))
+		try 
 		{
-			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-			throw new $exception_map[$response['code']]($response['result']);
-		}
-		else if ($response['code'] == 401)
-		{
-			throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
-		}
-		else if ($response['code'] != 200)
-		{
-			Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-			throw new SwiftRiver_API_Exception_Unknown();
-		}
+			$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
 		
-		return $response['result'];		
+			$exception_map = array(
+				400 => "SwiftRiver_API_Exception_BadRequest",
+				403 => "SwiftRiver_API_Exception_Forbidden",
+				404 => "SwiftRiver_API_Exception_NotFound"
+			)	
+			;
+		
+			if 	(in_array($response['code'], array_keys($exception_map)))
+			{
+				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
+				throw new $exception_map[$response['code']]($response['result']);
+			}
+			else if ($response['code'] == 401)
+			{
+				throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
+			}
+			else if ($response['code'] != 200)
+			{
+				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
+				throw new SwiftRiver_API_Exception_Unknown();
+			}
+		
+			return $response['result'];		
+		}
+		catch (OAuth2\Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, "OAuth2\Exception :message", array(':message' => $e->getMessage()));
+			throw new SwiftRiver_API_Exception_Authorization($e->getMessage());
+		}	
 	}
 	
 	/**
