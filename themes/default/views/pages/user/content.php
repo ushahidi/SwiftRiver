@@ -73,7 +73,16 @@
 	<td class="item-summary">
 		<h2><a href="<%= url %>"><%= display_name %></a></h2>
 		<% if (asset_type == "river") { %>
-		<div class="metadata"><%= drop_count %> drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:<%= Math.round(drop_count/drop_quota) %>%;"></span></span><%= Math.round(drop_count/drop_quota) %>% full</span></div>										
+		<div class="metadata">
+			<%= drop_count %> drops
+			<% percent_full = (drop_count >0) ? Math.round(drop_count/drop_quota) : 0 %>			
+			<span class="quota-meter">
+				<span class="quota-meter-capacity">
+					<span class="quota-total" style="width:<%= percent_full %>%;"></span>
+				</span>
+				<%= percent_full %>% full
+			</span>
+		</div>	
 		<% } %>
 	</td>
 	<td class="item-categories">
