@@ -198,12 +198,3 @@
 		</div>
 	</div>
 </script>
-
-<script type="text/template" id="system-message-template">
-	<div class="center">
-		<a href="#" class="system-message-close">
-			<span class="icon-cancel"></span>
-		</a>
-		<p><%= message %></p>
-	</div>
-</script>
