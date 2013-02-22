@@ -58,8 +58,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('active', $this->active);
 		$this->template->content->nav = $this->get_nav($this->user);
 			
-		$following = array(); // $this->visited_account->user->following->find_all();
-		$followers =  array(); //$this->visited_account->user->followers->find_all();
+		$following = array();
+		$followers =  array();
 		$view_type = "dashboard";
 
 		if ( ! $this->owner)
@@ -125,24 +125,31 @@ class Controller_User extends Controller_Swiftriver {
 	}
 
 	/**
-	 * Loads the bucket view page
+	 * XHR endpoint for managing a user's buckets
 	 */
 	public function action_buckets()
 	{
-		$this->template->content->view_type = "";
-		$this->sub_content = View::factory('pages/user/assets');
-		$this->sub_content->owner = $this->owner;
-		$this->sub_content->asset = 'bucket';
-		$this->sub_content->visited_account = $this->visited_account;
-		$this->sub_content->anonymous = $this->anonymous;
-		$this->template->header->js = View::factory('pages/user/js/assets');
-		$this->template->header->js->owner = $this->owner;
-		$this->template->header->js->visited_account = $this->visited_account;
-		$this->template->header->js->asset = 'bucket';
+		$this->template = "";
+		$this->auto_render = FALSE;
 		
-		if ( ! $this->owner)
+		switch ($this->request->method())
 		{
-			$this->template->header->js->asset_list = json_encode($this->visited_account->user->get_buckets_array($this->user));
+			case "POST";
+				$payload = json_decode($this->request->body(), TRUE);
+				if (Valid::not_empty($payload['name']))
+				{
+					$bucket_name = $payload['name'];
+					$bucket = $this->bucket_service->create_bucket($bucket_name, $this->user);
+					
+					$this->response->headers("Content-Type", "application/json;charset=UTF-8");
+					echo json_encode($bucket);
+				}				
+			break;
+			
+			case "DELETE";
+				$bucket_id = $this->request->param('id', 0);
+				$this->bucket_service->delete_bucket($bucket_id);
+			break;
 		}
 	}
 	

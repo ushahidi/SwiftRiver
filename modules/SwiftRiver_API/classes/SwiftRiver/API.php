@@ -47,34 +47,54 @@ abstract class SwiftRiver_API {
 	 * @param   mixed   $parameters       POST parameters
 	 * @return  array                     data returned
 	 */
-	protected function post($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	protected function post($path, $parameters = array())
 	{
+		$headers = array(
+			'Content-Type' => 'application/json;charset=UTF-8',
+			'Accept' => 'application/json'
+		);
+		
+		if ( ! empty($parameters))
+		{
+			$parameters = json_encode($parameters);
+		}
+
 		return $this->client->post($path, $parameters, $headers);
 	}
 	
-	/**
-	 * Call any path, DEPETE method
-	 * Ex: $api->delete('/v1/rivers/2/channels/1')
-	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       DELETE parameters
-	 * @return  array                     data returned
-	 */
-	protected function delete($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
-	{
-		return $this->client->delete($path, $parameters, $headers);
-	}
 	
 	/**
 	 * Call any path, PUT method
-	 * Ex: $api->put('/v1/rivers/2/channels/1')
+	 * Ex: $api->post('/v1/rivers/2', array('name' => 'New River Name'))
 	 *
 	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       PUT parameters
-	 * @return  array                     data returned
+	 * @param   array   $parameters      PUT parameters
+	 * @return  array                    data returned
 	 */
-	protected function put($path, $parameters = array(), $headers = array("Content-Type" => "application/json; charset=UTF-8"))
+	protected function put($path, $parameters = array())
 	{
+		$headers = array(
+			'Content-Type' => 'application/json',
+			'Accept' => 'application/json'
+		);
+		
+		if ( ! empty($parameters))
+		{
+			$parameters = json_encode($parameters);
+		}
+
 		return $this->client->put($path, $parameters, $headers);
+	}
+	
+	/**
+	 * Call any path, DELETE method
+	 * Example: $api->delete('/v1/rivers/1')
+	 *
+	 * @param  string   $path The resource path
+	 * @return bool
+	 */
+	protected function delete($path)
+	{
+		return $this->client->delete($path);
 	}
 }

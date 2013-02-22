@@ -104,7 +104,7 @@
 				<div class="base">
 					<h2 class="label own-title" style="display:none">Managing</h2>
 					<ul class="view-table own">
-						<li class="add"><a href="#create-river">Create a new river</a></li>
+						<li class="add"><a href="#create-river" class="modal-transition">Create a new river</a></li>
 					</ul>													
 				</div>
 				<div class="base">
@@ -152,14 +152,14 @@
 			<div id="create-bucket" class="modal-segment">
 				<div class="modal-title cf">
 					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
-					<h1>Create a new bucket</h1>
+					<h1><?php echo __("Create a new bucket"); ?></h1>
 				</div>
 				
 				<div class="modal-body">
 					<div class="base">
 						<div class="modal-field">
 							<h3 class="label">Name</h3>
-							<input type="text" placeholder="Name your new bucket" />
+							<?php echo Form::input('bucket_name', '', array('placeholder' => __("Name your new bucket"))); ?>
 						</div>
 					</div>
 					<div class="modal-toolbar">
@@ -179,21 +179,22 @@
 <?php endif; ?>
 
 <script type="text/template" id="confirm-window-template">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1><%= message %></h1>
-		</div>
-		<div class="page-action col_3">
-			<h2 class="close">
-				<span class="button-white"><a href="#"><i class="icon-cancel"></i>Close</a></span>
-			</h2>
-		</div>
-	</hgroup>
+	<div id="modal-viewport">
+		<div class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i>
+					<?php echo __("Close"); ?>
+				</a>
+				<h2><%= message %></h2>
+			</div>
 
-	<div class="modal-body">
-		<div class="settings-toolbar">
-			<p class="button-blue"><a href="#">Yes</a></p>
-			<p class="button-blank close"><a href="#">Nope, nevermind</a></p>
+			<div class="modal-body">
+				<div class="settings-category-toolbar">
+					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Yes"); ?></a>
+					<a href="#" class="button-destruct button-secondary modal-close"><?php echo __("Nope, nevermind"); ?></a>
+				</div>
+			</div>
 		</div>
 	</div>
 </script>

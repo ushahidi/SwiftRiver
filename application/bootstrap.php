@@ -251,21 +251,16 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
 /**
  * Account Route
  */
-Route::set('account_pages', '<account>/<action>',
+Route::set('account_pages', '<account>/<action>(/<id>)',
     array(
-    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)'
+    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)',
+		'id' => '\d+'
     ))
 	->defaults(array(
 		'controller' => 'user',
 		'action'     => 'index'
 	));
 
-
-Route::set('account_bucket_new', '<account>/bucket/new')
-	->defaults(array(
-		'controller' => 'bucket',
-		'action'     => 'new'
-	));
 
 /**
  * Trends
@@ -304,19 +299,6 @@ Route::set('river_bucket_discussion', '<account>/<directory>/<name>/discussion(/
 		'controller' => 'discussion',
 		'action'     => 'index'
 	));	
-
-/**
- * River and bucket create
- */
-Route::set('river_bucket_create', '<account>/<directory>/create(/<action>(/<id>))',
-	array(
-		'directory' => '(river|bucket)',
-		'id' => '\d+'
-	))
-	->defaults(array(
-		'controller' => 'create',
-		'action'     => 'index'
-	));
 
 /**
  * Rivers and Buckets

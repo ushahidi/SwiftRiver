@@ -1,4 +1,4 @@
-$(document).ready(function() {	
+$(document).ready(function() {
 	// BUTTON CHECK FOR ICON
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');
@@ -49,10 +49,10 @@ $(document).ready(function() {
 
 		if (!this.modal) {			
 			$('body').removeClass("zoomed");
-			this.container.removeClass("visible")
 		} else {			
 			$('body').removeClass("has_modal");
 		}
+		this.container.removeClass("visible");
 		
 		if (!$('body').hasClass('zoomed') && !$('body').hasClass('has_modal')) {
 			$('body').removeClass('noscroll');
@@ -103,30 +103,19 @@ $(document).ready(function() {
 		return this;
 	};
 	
-	Dialog.prototype.transition = function(hash) {
+	Dialog.prototype.transition = function() {
 		var root = $(this.container);
 		
 		$('#modal-viewport', root).addClass('view-secondary');
-		$('#modal-secondary ' + hash, root).fadeIn('fast');
 		$('#modal-primary > div', root).fadeOut('fast');
+		$('#modal-secondary .modal-segment', root).fadeIn('fast');
 		root.scrollTop(0,0);		
 		this._registerBackHandler(); 
 		
 		return this;
 	};
 	
-	Dialog.prototype.back = function(hash) {
-		var root = $(this.container);
-		
-		$('#modal-viewport', root).removeClass('view-secondary');
-		$('#modal-primary > div', root).fadeIn('fast');
-		$('#modal-secondary .modal-segment', root).fadeOut('fast');
-		
-		return this;
-	};
-	
-	Dialog.prototype._registerBackHandler = function() {
-		
+	Dialog.prototype._registerBackHandler = function() {		
 		var root = $(this.container);
 		$('a.modal-back', root).bind('click', function() {
 			$('#modal-viewport', root).removeClass('view-secondary');
@@ -179,8 +168,7 @@ $(document).ready(function() {
 		return false;
 	});
 	$('a.modal-transition').live('click', function(e) {
-		var modalHash = $(this).prop('hash');
-		modalWindow.transition(modalHash);
+		modalWindow.transition();
 		return false;
 	});
 
@@ -202,7 +190,6 @@ $(document).ready(function() {
 		zoomHide();
 		return false;
 	});
-	
 
 	// Click handler for the DOM elements that
 	// generate confirmation messages when clicked
@@ -301,11 +288,11 @@ $(document).ready(function() {
 			template: _.template($("#confirm-window-template").html()),
 			
 			events: {
-				"click .button-blue a": "confirm"
+				"click a.button-submit": "confirm"
 			},
 			
 			constructor: function(message, callback, context) {
-				Backbone.View.prototype.constructor.apply( this, arguments);
+				Backbone.View.prototype.constructor.apply(this);
 				this.message = message;
 				this.callback = callback;
 				this.context = context;
@@ -334,6 +321,23 @@ $(document).ready(function() {
 			showSysMessage(m['type'], m['title'], m['message'], m['flash']);
 		});
 	}
+	
+	// TABS (Body content)
+	$('.body-tabs-menu a').live('click', function(e) {
+		var bodyTabHash = $(this).prop('hash');
+		$('.body-tabs-window div.active').removeClass('active').fadeOut(100, function() {
+			$('.body-tabs-window ' + bodyTabHash).fadeIn('fast').addClass('active');
+		});
+		$('.body-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});	
+	
+	// SYSTEM Messages
+	$("a.system-message-close").live('click', function(e) {
+		$(this).closest('article.system-message').slideUp('fast');
+		e.preventDefault();
+	});
 });
 
 // Hide mobile address bar

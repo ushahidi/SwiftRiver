@@ -49,11 +49,7 @@ class CSRF {
 	 */
 	public static function valid($token)
 	{
-		// Get the current token and destroy the session value
-		$current_token = self::token();
-		Session::instance()->delete(self::$_csrf_session_key);
-
-		return $token == $current_token;
+		return $token == self::token();
 	}
 }
 

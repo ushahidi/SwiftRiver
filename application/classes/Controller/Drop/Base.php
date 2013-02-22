@@ -27,6 +27,19 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	protected $public = FALSE; 
 	
+	/**
+	 * @var Service_Drop
+	 */
+	private $drop_service;
+	
+	
+	public function before()
+	{
+		parent::before();
+		
+		$this->drop_service = new Service_Drop($this->api);
+	}
+	
 	 /**
 	  * Tags restful api
 	  */ 
@@ -49,11 +62,10 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				
 				$tag_array = json_decode($this->request->body(), true);
 				$tag_name = $tag_array['tag'];
-				$account_id = $this->visited_account->id;
-				$tag_orm = Model_Account_Droplet_Tag::get_tag($tag_name, $droplet_id, $account_id);
-				echo json_encode(array('id' => $tag_orm->tag->id, 
-										'tag' => $tag_orm->tag->tag, 
-										'tag_canonical' => $tag_orm->tag->tag_canonical));
+				$tag_type = $tag_array['tag_type'];
+				$tag = $this->drop_service->add_drop_tag($droplet_id, $tag_name, $tag_type);
+
+				echo json_encode($tag);
 			break;
 
 			case "DELETE":
@@ -63,7 +75,8 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					throw new HTTP_Exception_403();
 				}
 				
-				Model_Droplet::delete_tag($droplet_id, $tag_id, $this->visited_account->id);
+				// Delete the drop from the list of tags for the currently logged in user
+				$this->drop_service->delete_drop_tag($droplet_id, $tag_id);
 			break;
 		}
 	}
@@ -98,13 +111,13 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 					echo json_encode(array('errors' => $errors));
 					return;
 				}
-				$account_id = $this->visited_account->id;
-				$link_orm = Model_Account_Droplet_Link::get_link($url, $droplet_id, $account_id);
-				echo json_encode(array('id' => $link_orm->link->id, 'tag' => $link_orm->link->url));
+
+				$link = $this->drop_service->add_drop_link($droplet_id, $url);
+				echo json_encode($link);
 			break;
 
 			case "DELETE":
-				Model_Droplet::delete_link($droplet_id, $link_id, $this->visited_account->id);
+				$this->drop_service->delete_drop_link($droplet_id, $link_id);
 			break;
 		}
 	}
@@ -129,67 +142,57 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 		switch ($this->request->method())
 		{
 			case "POST":
-				$places_array = json_decode($this->request->body(), true);
+				$places_array = json_decode($this->request->body(), TRUE);
 				$place_name = $places_array['place_name'];
+				$this->response->headers('Content-Type');
 				if ( ! Valid::not_empty($place_name))
 				{
 					$this->response->status(400);
-					$this->response->headers('Content-Type', 'application/json');
 					$errors = array(__("Invalid location"));
 					echo json_encode(array('errors' => $errors));
 					return;
 				}
-				$account_id = $this->visited_account->id;
-				$place_orm = Model_Account_Droplet_Place::get_place($place_name, $droplet_id, $account_id);
-				echo json_encode(array(
-					'id' => $place_orm->place->id, 
-					'place_name' => $place_orm->place->place_name,
-					'place_name_canonical' => $place_orm->place->place_name_canonical));
+
+				// TODO Use geocoder to determine the latitude & longitude
+				// $place = $this->drop_service->add_drop_place($droplet_id, $place_name, $latitude, $longitude);
+				// echo json_encode($place);
 			break;
 
 			case "DELETE":
-				Model_Droplet::delete_place($droplet_id, $place_id, $this->visited_account->id);
+				$this->drop_service->delete_drop_place($droplet_id, $place_id);
 			break;
 		}
 	}
 	
 	 /**
-	  * Replies restful api
+	  * Comments restful api
 	  */ 
-	public function action_reply()
+	public function action_comments()
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
 		$droplet_id = intval($this->request->param('id', 0));
 		
+		// Set the response headers		
+		$this->response->headers('Content-Type', 'application/json');
+
 		switch ($this->request->method())
 		{
 			case "GET":
 				$params = $this->request->query();
 				
-				if (isset($params['since_id']))
-				{
-					$since_id = intval($this->request->query('since_id')); 
-					$comments = Model_Droplet::get_comments($droplet_id, $since_id, TRUE);
-				}
-				else
-				{
-					$last_id = $this->request->query('last_id') ? intval($this->request->query('last_id')) : PHP_INT_MAX;
-					$comments = Model_Droplet::get_comments($droplet_id, $last_id);
+				$since_id = isset($params['since_id']) ? intval($this->request->query('since_id')) : NULL;
+				$comments = $this->drop_service->get_drop_comments($droplet_id, $since_id);
 					
-					if (empty($comments))
-					{
-					    throw new HTTP_Exception_404('The requested page was not found on this server.');
-					}
+				if (empty($comments))
+				{
+				    throw new HTTP_Exception_404('The requested page was not found on this server.');
 				}
 				
-				foreach ($comments as &$comment)
-				{
-					$comment['comment_text'] = Markdown::instance()->transform($comment['comment_text']);
-				}
 				echo json_encode($comments);
 			break;
+
 			case "POST":
 				// Is the logged in user an owner?
 				if ( ! $this->owner AND ! $this->collaborator AND ! $this->public)
@@ -200,43 +203,22 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 				// Get the POST data
 				$body = json_decode($this->request->body(), TRUE);
 				
-				$comment = Model_Droplet_Comment::create_new(
-					$body['comment_text'],
-					intval($this->request->param('id', 0)),
-					$this->user->id
-				);
+				$comment = $this->drop_service->add_drop_comment($droplet_id, $body['comment_text']);
 								
-				if ( ! $comment->loaded()) 
+				if (empty($comment)) 
 					throw new HTTP_Exception_400();
 				
-				$context_obj = ($this instanceof Controller_River) ? $this->river : $this->bucket;
-				Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
+				// NOTES: ekala
+				// Disabling email notification for now
+				// $context_obj = ($this instanceof Controller_River) ? $this->river : $this->bucket;
+				// Swiftriver_Mail::notify_new_drop_comment($comment, $context_obj);
 				
-				echo json_encode(array(
-					'id' => $comment->id,
-					'droplet_id' => $comment->droplet_id,
-					'comment_text' => Markdown::instance()->transform($comment->comment_text),
-					'identity_user_id' => $this->user->id,
-					'identity_name' => $this->user->name,
-					'identity_avatar' => Swiftriver_Users::gravatar($this->user->email, 80),
-					'deleted' => FALSE,
-					'date_added' => date_format(date_create($comment->date_added), 'M d, Y H:i').' UTC'
-				));
+				echo json_encode($comment);
 			break;
+
 			case "PUT":
 				$comment_id = intval($this->request->param('id2', 0));
-				$comment = ORM::factory('Droplet_Comment', $comment_id);
-				
-				// Does the comment exist?
-				if ( ! $comment->loaded())
-					throw new HTTP_Exception_404();
-					
-				// Is owner of the comment logged in?
-				if ($comment->user->id != $this->user->id)
-					throw new HTTP_Exception_403();
-				
-				$comment->deleted = TRUE;
-				$comment->save();
+				$this->drop_service->delete_drop_comment($droplet_id, $comment_id);
 			break;
 		}
 	}
@@ -279,7 +261,7 @@ class Controller_Drop_Base extends Controller_Swiftriver {
 			// Modify the mail body to include the email address of the
 			// use sharing content
 			$mail_body = __(":user has shared a drop with you via SwiftRiver\n\n:url",
-			    array(':user' => $this->user->username, ':url' => $post['drop_url']));
+			    array(':user' => $this->user['owner']['username'], ':url' => $post['drop_url']));
 
 			// Send the email
 			Swiftriver_Mail::send($recipient, $subject, $mail_body);

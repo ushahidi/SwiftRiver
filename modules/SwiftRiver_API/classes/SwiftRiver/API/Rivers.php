@@ -92,11 +92,11 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 */
 	public function create_river($river_name, $river_description = NULL, $public = FALSE) {
 		
-		$request_body = json_encode(array(
+		$request_body = array(
 			"name" => $river_name,
 			"description" => $river_description,
 			"public" => (bool) $public
-		));
+		);
 		return $this->post('/rivers', $request_body);
 	}
 	
@@ -108,13 +108,14 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * @param   string  $river_public
 	 * @return Array
 	 */
-	public function update_river($river_id, $river_name, $river_description, $river_public) {
-		
-		$request_body = json_encode(array(
+	public function update_river($river_id, $river_name, $river_description, $river_public)
+	{
+		$request_body = array(
 			"name" => $river_name,
 			"description" => $river_description,
 			"public" => (bool) $river_public
-		));
+		);
+
 		return $this->put('/rivers/'.$river_id, $request_body);
 	}
 	
@@ -126,12 +127,14 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * @param   string  $parameters
 	 * @return Array
 	 */
-	public function create_channel($river_id, $channel, $parameters = NULL) {
-		$request_body = json_encode(array(
+	public function create_channel($river_id, $channel, $parameters = NULL)
+	{
+		$request_body = array(
 			"channel" => $channel,
 			"parameters" => $parameters
-		));
-			return $this->post('/rivers/'.$river_id.'/channels', $request_body);
+		);
+
+		return $this->post('/rivers/'.$river_id.'/channels', $request_body);
 	}
 	
 	/**
@@ -154,11 +157,13 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * @param   string  $parameters
 	 * @return Array
 	 */
-	public function update_channel($river_id, $channel_id, $channel, $parameters = NULL) {
-		$request_body = json_encode(array(
+	public function update_channel($river_id, $channel_id, $channel, $parameters = NULL)
+	{
+		$request_body = array(
 			"channel" => $channel,
 			"parameters" => $parameters
-		));
-			return $this->put('/rivers/'.$river_id.'/channels/'.$channel_id, $request_body);
+		);
+
+		return $this->put('/rivers/'.$river_id.'/channels/'.$channel_id, $request_body);
 	}
 }

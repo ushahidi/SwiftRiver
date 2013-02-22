@@ -9,51 +9,44 @@
 				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
 				<h1>Filters</h1>
 			</div>
-						
+
 			<ul class="filters-primary">
-				<li class="active"><a href="#" class="modal-close">All your stuff</a></li>
-				<li><a href="#" class="modal-close">Rivers</a></li>
-				<li><a href="#" class="modal-close">Buckets</a></li>
-				<li><a href="#" class="modal-close">Custom forms</a></li>
+				<li class="active"><a href="#all" class="modal-close"><?php echo __("All your stuff"); ?></a></li>
+				<li><a href="#river" class="modal-close"><?php echo __("Rivers"); ?></a></li>
+				<li><a href="#bucket" class="modal-close"><?php echo __("Buckets"); ?></a></li>
 			</ul>
 
-			<div class="filters-type">
-				<h2 class="">Categories</h2>
-				<ul>
-					<li><a href="#"><span class="mark" style="background-color:red;"></span><span class="total">1</span>Project 1</a></li>
-					<li><a href="#"><span class="mark" style="background-color:orange;"></span><span class="total">10</span>Project 2</a></li>
-					<li><a href="#"><span class="mark" style="background-color:green;"></span><span class="total">3</span>Project 3</a></li>
-				</ul>
-			</div>
-
 			<div class="modal-toolbar">
-				<a href="#" class="button-submit button-primary modal-close">Done</a>				
-			</div>						
+				<a href="#" class="button-submit button-primary modal-close">Done</a>
+			</div>
 		</div>
-	</div>					
+	</div>
 </section>
 
 <div class="col_9">
 	<div class="container base">
 		<div class="container-tabs">
 			<ul class="container-tabs-menu cf">
-				<li class="active"><a href="#">All</a></li>
-				<li><a href="#">Managing</a></li>
-				<li><a href="#">Following</a></li>
+				<li class="active"><a href="#all"><?php echo __("All"); ?></a></li>
+				<li><a href="#managing"><?php echo __("Managing"); ?></a></li>
+				<li><a href="#following"><?php echo __("Following"); ?></a></li>
 			</ul>
+
 			<div class="container-toolbar cf">
-				<span class="button"><a href="#" class="button-white">Delete</a></span>
-				<span class="button" class="button-white"><a href="#" class="button-white">Duplicate</a></span>
-				<span class="button has-dropdown">
-					<a href="#" class="button-white">Category<i class="icon-arrow-down"></i></a>
-					<ul class="dropdown-menu">
-						<li class="selected"><a href="#"><span class="mark" style="background-color:red;"></span>Project 1</a></li>
-						<li><a href="#"><span class="mark" style="background-color:orange;"></span>Project 2</a></li>
-						<li><a href="#"><span class="mark" style="background-color:green;"></span>Project 3</a></li>
-					</ul>
+				<span class="button">
+					<a href="#" class="button-white delete-asset"><?php echo __("Delete"); ?></a>
 				</span>
-				<span class="button create-new"><a href="/markup/_modals/create.php" class="button-primary modal-trigger"><i class="icon-plus"></i>Create new</a></span>
+				<span class="button" class="button-white">
+					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
+				</span>
+				<span class="button create-new">
+					<a href="/markup/_modals/create.php" class="button-primary modal-trigger">
+						<i class="icon-plus"></i>
+						<?php echo __("Create new"); ?>
+					</a>
+				</span>
 			</div>
+
 			<div class="container-tabs-window">
 				<!-- NO RESULTS: Clear filters
 				<div class="null-message">
@@ -61,10 +54,10 @@
 					<p>Clear active filters.</p>
 				</div>
 				-->
-							
+
 				<table>
 					<tbody id="asset-list">
-						<!-- List of river, buckets go here -->									
+						<!-- List of river, buckets go here -->
 					</tbody>
 				</table>
 			</div>

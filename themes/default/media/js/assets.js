@@ -64,14 +64,20 @@
 	// Base collection for rivers and buckets
 	var AssetList = Assets.AssetList = Backbone.Collection.extend({
 		own: function() {
-			return this.filter(function(bucket) { 
-				return !bucket.get('subscribed') && bucket.get('is_owner'); 
+			return this.filter(function(asset) { 
+				return !asset.get('subscribed') && asset.get('is_owner'); 
+			});
+		},
+		
+		following: function() {
+			return this.filter(function(asset) {
+				return !asset.get('collaborator') && asset.get('subscribed');
 			});
 		},
 
 		collaborating: function() {
-			return this.filter(function(bucket) { 
-				return bucket.get('subscribed') && bucket.get('collaborator'); 
+			return this.filter(function(asset) { 
+				return !asset.get('subscribed') && asset.get('collaborator'); 
 			});
 		}
 	});
@@ -90,7 +96,7 @@
 	var BucketList = Assets.BucketList = AssetList.extend({
 		model: Bucket,
 
-		url: site_url + logged_in_account_path + "/bucket/buckets/manage"
+		url: site_url + logged_in_account_path + "/buckets"
 	});
 	// Global bucket list
 	var bucketList = Assets.bucketList = new BucketList();
@@ -267,7 +273,7 @@
 			BaseAssetListView.prototype.constructor.apply(this, arguments);
 
 			this.delegateEvents({
-				"click .create-new a": "saveNewBucket",
+				"click .modal-toolbar a.button-submit": "saveNewBucket",
 				"submit": "saveNewBucket",
 			});
 		},
@@ -285,7 +291,7 @@
 		},
 
 		renderOwn: function(view) {
-			this.$(".own").append(view.render().el);
+			this.$(".own").prepend(view.render().el);
 			this.$(".own-title").show();
 		},
 
@@ -303,7 +309,7 @@
 			if (!(this.collection instanceof BucketList))
 				return;
 
-			var bucketName = $.trim(this.$(".create-new input[name=new_bucket]").val());
+			var bucketName = $.trim(this.$("#create-bucket input[name=bucket_name]").val());
 
 			if (!bucketName.length || this.isPageFetching)
 				return false;
@@ -314,9 +320,10 @@
 			var bucket = this.collection.find(function(bucket) { 
 				return bucket.get('name').toLowerCase() == bucketName.toLowerCase() 
 			});
+
 			if (bucket) {
-				this.onSaveNewBucket(bucket);
-				bucket.getView(this).setSelected();
+				this.onSaveNewBucket(bucketCopy);
+				bucketCopy.getView(this).setSelected();
 
 				// Scroll to the bucket in the list
 				var scrollOffset = bucket.getView(this).$el.offset().top - this.$(this.listSelector).offset().top;
@@ -327,16 +334,20 @@
 					}, 600);
 				}
 
-				this.$(".create-new input[name=new_bucket]").val("");
+				this.$("#create-bucket input[name=bucket_name]").val("");
 				this.isPageFetching = false;				
 
 				return false;
 			}
 
 			var loading_msg = window.loading_message.clone();
-			var create_el = this.$(".create-new .field").clone();
-			this.$(".create-new .field").replaceWith(loading_msg);
-			bucket = new Bucket({name: bucketName});
+			var create_el = this.$("#create-bucket .modal-field").clone();
+			this.$("#create-bucket .modal-field").replaceWith(loading_msg);
+			
+			bucket = new Bucket();
+			bucket.urlRoot = site_url + logged_in_account_path + "/buckets";
+			bucket.set("name", bucketName);
+			
 			var view = this;
 			this.collection.create(bucket, {
 				wait: true,
@@ -357,12 +368,9 @@
 				success: function() {
 					view.onSaveNewBucket(bucket);
 					bucket.getView(view).setSelected();
-
-					// Scroll to the new bucket in the list
-					view.$(view.listSelector).animate({
-						scrollTop: view.$(view.listSelector).scrollTop() + (view.$(view.listItemSelector).last().offset().top - view.$(view.listSelector).offset().top)
-					}, 600);
-					create_el.find("input[name=new_bucket]").val("");
+					
+					view.$(".modal-back").trigger("click");
+					create_el.find("input[name=bucket_name]").val("");
 				}
 			});
 
@@ -504,15 +512,8 @@
 			var river = new River();
 			river.urlRoot =  site_url + logged_in_account_path + "/rivers";
 			
-			this.$('#modal-viewport').addClass('view-secondary');
-			var view = new CreateRiverModalView({model: river}).render().$el;		
-			this.$('#modal-secondary').html(view);
-			view.fadeIn('fast');
-			this.$('#modal-primary > div').fadeOut('fast');
-			this.$('#modal-container').scrollTop(0,0);		
-			//this._registerBackHandler(); 
-			
-			return false;
+			var view = new CreateRiverModalView({model: river});		
+			this.$('#modal-secondary').html(view.render().el);
 		}
 	});
 	

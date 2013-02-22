@@ -1,120 +1,45 @@
-<div id="content" class="settings cf">
-	<div class="center">
-		<div class="col_12">
-			<?php if (isset($errors)): ?>
-				<div class="alert-message blue">
-				<?php foreach ($errors as $message): ?>
-					<p><strong>Uh oh.</strong> <?php echo $message; ?></p>
-				<?php endforeach; ?>
-				</div>
-			<?php endif; ?>
-			
-			<?php if (isset($messages)): ?>
-				<div class="alert-message blue">
-				<?php foreach ($messages as $message): ?>
-					<p><strong>Success</strong> <?php echo $message; ?></p>
-				<?php endforeach; ?>
-				</div>
-			<?php endif; ?>
-			
-			<?php echo Form::open(); ?>
-			<article class="container base">
-				<header class="cf">
-					<div class="property-title col_12">
-						<h1>Name</h1>
-					</div>
-				</header>
-				<section class="property-parameters">
-					<div class="parameter">
-						<div class="field">
-							<p class="field-label">Display name</p>
-							<input type="text" value="<?php echo $bucket->bucket_name ?>" name="bucket_name" />
-						</div>
-					</div>
-					<div class="save-toolbar">
-						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-						<p class="button-blank"><a href="#">Cancel</a></p>
-					</div>					
-				</section>
-			</article>
-
-			<article class="container base">
-				<header class="cf">
-					<div class="property-title col_12">
-						<h1>Default view</h1>
-					</div>
-				</header>
-				<section class="property-parameters">
-					<div class="parameter">
-						<select name="default_layout">
-							<option value="drops" <?php echo ($bucket->default_layout == "drops") ? 'selected' : ''; ?>>Drops</option>
-							<option value="list" <?php echo ($bucket->default_layout == "list") ? 'selected' : ''; ?>>List</option>
-							<option value="photos" <?php echo ($bucket->default_layout == "photos") ? 'selected' : ''; ?>>Photos</option>
-						</select>
-					</div>
-					<div class="save-toolbar">
-						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-						<p class="button-blank"><a href="#">Cancel</a></p>
-					</div>					
-				</section>
-			</article>
-			
-			<article class="container base">
-				<header class="cf">
-					<div class="property-title col_12">
-						<h1>Who can view this bucket</h1>
-					</div>
-				</header>
-				<section class="property-parameters">
-					<div class="parameter">
-						<select name="bucket_publish">
-							<option value="1" <?php echo $bucket->bucket_publish ? 'selected' : ''; ?>>Public (Anyone)</option>
-							<option value="0" <?php echo $bucket->bucket_publish ? '' : 'selected'; ?>>Private (Collaborators only)</option>
-						</select>
-					</div>
-					<div class="save-toolbar">
-						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-						<p class="button-blank"><a href="#">Cancel</a></p>
-					</div>						
-				</section>
-			</article>
-
-			<article class="container base">
-				<header class="cf">
-					<div class="property-title col_12">
-						<h1>Tokens</h1>
-					</div>
-				</header>
-				<section class="property-parameters">
-					<div class="parameter">
-						<div class="field">
-							<p class="field-label">Public Token</p>
-							<input type="text" value="<?php echo $bucket->public_token ?>" name="public_token" id="public_token" disabled="disabled" />
-							<p class="button-blue button-small generate" style="margin-top: 10px;"><a href="#" title="Generate a new public token. WARNING: The old token will no longer be usable." >Generate</a>
-							</p>
-						</div>
-					</div>
-					<div class="save-toolbar">
-						<p class="button-blue"><a href="#" onclick="if ($(this).parents('.save-toolbar').hasClass('visible')) submitForm(this); return false;">Save changes</a></p>
-						<p class="button-blank"><a href="#">Cancel</a></p>
-					</div>					
-				</section>
-			</article>
-			
-			<span class="view-results button-white destruct"><a href="#">Delete this bucket</a></span>				
-
-			<?php echo Form::close(); ?>
+<!-- TAB: Options -->
+<div id="options" class="active">
+	<?php echo Form::open(); ?>
+	<article class="base settings-category">
+		<h1><?php echo __("General"); ?></h1>
+		<div class="body-field">
+			<h3 class="label"><?php echo __("Bucket name"); ?></h3>
+			<?php echo Form::input("bucket_name", $bucket['name']); ?>
 		</div>
-	</div>
+		<div class="body-field">
+			<h3 class="label"><?php echo __("Bucket URL"); ?></h3>
+			<?php echo Form::input('bucket_url', URL::site($bucket['url'], TRUE), array('readonly' =>' readonly')); ?>
+		</div>
+		<div class="settings-category-toolbar" id="update-bucket-name">
+			<a href="#" class="button-submit button-primary modal-close" onClick="submitForm(this);"><?php echo __("Change Bucket Name"); ?></a>
+		</div>
+	</article>
+	<?php echo Form::close(); ?>
+
+	<?php echo Form::open(); ?>
+	<article class="base settings-category">
+		<h1><?php echo __("Display"); ?></h1>
+		<div class="body-field">
+			<h3 class="label"><?php echo __("Default view"); ?></h3>
+			<select name="default_layout">
+				<option value="drops" <?php echo $bucket['default_layout'] == 'drops' ? "selected": ''; ?>>Drops</option>
+				<option value="list" <?php echo $bucket['default_layout'] == 'list' ? "selected": ''; ?>>List</option>
+				<option value="photos" <?php echo $bucket['default_layout'] == 'photos' ? "selected" : ''; ?>>Photos</option>
+			</select>
+		</div>
+		<div class="body-field">
+			<h3 class="label"><?php echo __("Who can view this bucket") ?></h3>
+			<select name="bucket_publish">
+				<option value="1" <?php echo $bucket['public'] ? 'selected' : ''; ?>>Public (Anyone)</option>
+				<option value="0" <?php echo $bucket['public'] ? '' : 'selected'; ?>>Private (Collaborators only)</option>
+			</select>
+		</div>
+		<div class="settings-category-toolbar" id="update-bucket-display">
+			<a href="#" class="button-submit button-primary modal-close" onClick="submitForm(this);"><?php echo __("Update Display Settings"); ?></a>
+		</div>
+	</article>
+	<?php echo Form::close(); ?>
 </div>
 
-<script type="text/javascript">
-	$(function() {
-		$('.generate a').click(function() {
-			$.getJSON('<?php echo $bucket->get_base_url(); ?>/settings/display/create_token', function(result) {
-				$('#public_token').val(result);
-			});
-			return false;
-		});
-	});
-</script>
+<?php echo $collaborators_view; ?>
