@@ -1,6 +1,42 @@
 <script type="text/javascript">
 $(function() {
 	
+	var CreateAssetModal = Backbone.View.extend({
+		tagName: "article",
+		
+		className: "modal",
+		
+		template: _.template($("#create-asset-modal-template").html()),
+		
+		events: {
+			"click a.modal-transition": "showCreateView"
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		showCreateView: function(e) {
+			var hash = $(e.currentTarget).prop('hash');
+			var view = null;
+			
+			switch(hash) {
+				case "#river":
+					view = new CreateRiverModalView();
+				break;
+				
+				case "#bucket":
+					view = new CreateBucketModalView();
+				break;
+			}
+			
+			if (view != null) {
+				this.$("#modal-secondary").html(view.render().el);
+			}
+		}
+	});
+
 	var DashboardAssetView = Backbone.View.extend({
 		tagName: "tr",
 		
@@ -45,12 +81,15 @@ $(function() {
 			"click .filters-primary a": "filterByType",
 			"click .filters-type a": "filterByCategory",
 			"click .container-tabs-menu a": "filterByRole",
-			"click .container-toolbar a.delete-asset": "deleteAssets"
+			"click .container-toolbar a.delete-asset": "deleteAssets",
+			"click .create-new a.button-primary": "showCreateAsset"
 		},
 		
 		initialize: function(options) {
 			options.bucketList.on("reset", this.addBuckets, this);
 			options.riverList.on("reset", this.addRivers, this);
+			options.bucketList.on("add", this.addAsset, this);
+			options.riverList.on("add", this.addAsset, this);
 			
 			this.typeMap = {"#all":"all", "#river":"river", "#bucket":"bucket"};
 			this.roleMap = {"#all":"all", "#managing":"managing", "#following":"following"};
@@ -198,6 +237,11 @@ $(function() {
 			// Clear the list of selected items
 			this.selectedAssets = {};
 		},
+		
+		showCreateAsset: function() {
+			modalShow(new CreateAssetModal().render().el);
+			return false;
+		}
 		
 	});
 	

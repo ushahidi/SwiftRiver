@@ -40,7 +40,7 @@
 					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
 				</span>
 				<span class="button create-new">
-					<a href="/markup/_modals/create.php" class="button-primary modal-trigger">
+					<a href="#" class="button-primary modal-trigger">
 						<i class="icon-plus"></i>
 						<?php echo __("Create new"); ?>
 					</a>
@@ -78,4 +78,55 @@
 	</td>
 	<td class="item-categories">
 	</td>
+</script>
+
+<script type="text/template" id="create-asset-modal-template">
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i>
+					<?php echo __("Close"); ?>
+				</a>
+				<h1><?php echo __("Create new"); ?></h1>
+			</div>
+			
+			<div class="modal-body">
+				<div class="base">
+					<ul class="view-table">
+						<li>
+							<a href="#river" class="modal-transition">
+								<span class="transition icon-arrow-right"></span>
+								<i class="icon-river"></i>
+								<?php echo __("River"); ?>
+							</a>
+						</li>
+						<li>
+							<a href="#bucket" class="modal-transition">
+								<span class="transition icon-arrow-right"></span>
+								<i class="icon-bucket"></i>
+								<?php echo __("Bucket"); ?>
+							</a>
+						</li>
+						<?php 
+						/** 
+						 * Custom forms not yet implemented
+						 * <li>
+						 * 	<a href="#create-custom-form" class="modal-transition">
+						 * 		<span class="transition icon-arrow-right"></span>
+						 * 		<i class="icon-form"></i>
+						 * 		<?php echo __("Custom form"); ?>
+						 * 	</a>
+						 * </li>
+						 */
+						?>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<div id="modal-secondary" class="modal-view">
+	
+		</div>
+	</div>
 </script>
