@@ -32,7 +32,7 @@
 				return baseURL + "/droplets" + (f.length > 0 ? '?' + f : '');
 			}
 		});
-		var filters = new Filter(<?php echo $filters; ?>);
+		var filters = window.filters = new Filter(<?php echo $filters; ?>);
 		
 		// Global drop lists
 		var dropsList = window.dropsList = new Drops.DropsList;

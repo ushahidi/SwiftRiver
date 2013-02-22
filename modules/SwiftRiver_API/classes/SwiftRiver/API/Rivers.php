@@ -43,7 +43,7 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 			'count' => $count
 		);
 		
-		$filter_keys = array('keywords', 'channels');
+		$filter_keys = array('keywords', 'channels', 'channel_ids');
 		foreach ($filter_keys as $key) 
 		{
 			if (isset($filters[$key])) 

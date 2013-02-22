@@ -830,8 +830,8 @@
 			var model = this.model;
 			var filters = this.options.dropFilters;
 			var view = this;
-			if (filters.has("channels")) {
-				var channelFilters = filters.get("channels");
+			if (filters.has("channel_ids")) {
+				var channelFilters = filters.get("channel_ids");
 				if (_.find(channelFilters, function(channelId) { return channelId == model.get("id"); })) {
 					view.$el.addClass("active");
 				}
@@ -846,8 +846,8 @@
 			// Update the drop filter by adding this model's channel id to the filter
 			var model = this.model;
 			var filters = this.options.dropFilters;
-			if (filters.has("channels")) {
-				var channelFilters = filters.get("channels");
+			if (filters.has("channel_ids")) {
+				var channelFilters = filters.get("channel_ids");
 				var newChannelFilters = [];
 				if (_.find(channelFilters, function(channelId) { return channelId == model.get("id"); })) {
 					// Removing a channel that is part of the filter
@@ -858,12 +858,12 @@
 				}
 				
 				if (_.size(newChannelFilters) > 0) {
-					filters.set("channels", newChannelFilters);
+					filters.set("channel_ids", newChannelFilters);
 				} else {
-					filters.unset("channels");
+					filters.unset("channel_ids");
 				}
 			} else {
-				filters.set("channels", [model.get("id")]);
+				filters.set("channel_ids", [model.get("id")]);
 			}
 			
 			return false;

@@ -534,20 +534,33 @@ class Controller_River extends Controller_Drop_Base {
 	private function _get_filters()
 	{
 		$filters = array();
-		$parameters = array('keywords', 'places', 'channels', 'start_date', 'end_date');
+		$parameters = array(
+			'keywords' => 'list', 
+			'places' => 'list', 
+			'channels' => 'list', 
+			'channel_ids' => 'list', 
+			'start_date' => 'string', 
+			'end_date' => 'string', 
+			'state' => 'string'
+		);
 		
-		foreach ($parameters as $parameter)
+		foreach ($parameters as $parameter => $type)
 		{
 			$values = $this->request->query($parameter);
 			if ($values)
 			{
-				$filters[$parameter] = array();				
-				// Parameters are array strings that are comma delimited
-				// The below converts them into a php array, trimming each
-				// value
-				foreach (explode(',', urldecode($values)) as $value)
+				if ($type == 'list')
 				{
-					$filters[$parameter][] = strtolower(trim($value));
+					$filters[$parameter] = array();				
+					// Parameters are array strings that are comma delimited
+					foreach (explode(',', urldecode($values)) as $value)
+					{
+						$filters[$parameter][] = strtolower(trim($value));
+					}
+				}
+				else
+				{
+					$filters[$parameter] = $values;
 				}
 			}
 		}
