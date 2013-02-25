@@ -34,4 +34,14 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	{
 		return $this->get('/accounts',  array('account_path' => $account_path));
 	}
+	
+	/**
+	* Search accounts
+	*
+	* @return Array
+	*/
+	public function search($query)
+	{
+		return $this->get('/accounts',  array('q' => $query));
+	}
 }

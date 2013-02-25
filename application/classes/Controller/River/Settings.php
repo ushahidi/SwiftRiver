@@ -82,6 +82,7 @@ class Controller_River_Settings extends Controller_River {
 	public function action_index()
 	{
 		$this->template->content->active = "options";
+		$this->template->header->title = $this->river['name'].' ~ '.__('Settings');
 		$this->template->content->settings_content = View::factory('pages/river/settings/options');
 		$this->template->content->settings_content->river = $this->river;
 		

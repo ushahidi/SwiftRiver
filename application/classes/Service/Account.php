@@ -48,6 +48,16 @@ class Service_Account {
 	}
 	
 	/**
+	 * Search accounts
+	 *
+	 * @return	Array
+	 */
+	public function search($query)
+	{
+		return $this->api->get_accounts_api()->search($query);
+	}
+	
+	/**
 	 * Get a single rivers array for the given account.
 	 *
 	 * @return	Array

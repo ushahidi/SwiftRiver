@@ -393,19 +393,19 @@ function showSysMessage(type, title, message, flash) {
 	}
 }
 
-function showConfirmationMessage(message) {
-	var container = $("#confirmation-container");
-
-	// HTML with the message
-	var replaceHTML = "<div class=\"modal-window\">" +
-	    "<article class=\"modal base\">" + 
-	    "<p>" + message + "</p>" +
-	    "</article></div>";
-
-	$('div.modal-window', container).replaceWith(replaceHTML);
-	container.fadeIn('fast').addClass('visible');
-	container.delay(1250).fadeOut('fast').removeClass('visible');
+function showConfirmationMessage(message, flash) {
+	showSysMessage("confirmation", "Confirmation", message, flash);
 }
+
+function showSuccessMessage(message, flash) {
+	showSysMessage("success", "Success", message, flash);
+}
+
+function showFailureMessage(message, flash) {
+	showSysMessage("failure", "Failure.", message, flash);
+}
+
+
 
 function showDefaultAvatar(source) {
 	source.onerror = "";

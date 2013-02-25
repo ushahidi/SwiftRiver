@@ -54,7 +54,7 @@
 					view.render();
 				},
 				error: function() {
-					showConfirmationMessage("Unable to change collaboration level. Try again later.");
+					showFailureMessage("Unable to change collaboration level. Try again later.");
 					loading_msg.replaceWith(button);
 				}
 			});
@@ -72,12 +72,15 @@
 
 		removeCollaborator: function() {
 			var viewItem = this;
-			var message = this.model.get("name") + " is no longer a collaborator.";
+			var message = this.model.get("account").owner.name + " is no longer a collaborator.";
 			this.model.destroy({
 				wait: true,
 				success: function() {
 					$(viewItem.el).fadeOut("slow");
-					showConfirmationMessage(message);
+					showSuccessMessage(message, true);
+				},
+				error: function() {
+					showFailureMessage("Unable to remove collaborator. Try again later.");
 				}
 			});
 			return false;
@@ -88,9 +91,11 @@
 	var SearchResultView = Backbone.View.extend({
 
 		tagName: "li",
+		
+		className: "static user cf",
 
 		events: {
-			"click .actions .editor a": "addAsEditor",
+			"click .editor": "addAsEditor",
 			"click .actions .viewer a": "addAsViewer"
 		},
 		
@@ -98,7 +103,7 @@
 			this.template = _.template($("#collaborator-search-result-template").html());
 		},
 		
-		addCollaborator: function(collaborator) {
+		addCollaborator: function(account) {
 			var viewItem = this.$el;
 			
 			var buttons = this.$(".actions .dual-buttons");
@@ -106,17 +111,22 @@
 			// Show loading icon if there is a delay
 			var t = setTimeout(function() { buttons.replaceWith(loading_msg); }, 500);
 			
-			this.collection.create(collaborator.toJSON(),{
+			var Collaborator = {
+				"account": {
+					"id": account.get("id")
+				}
+			};	
+			this.collection.create(Collaborator,{
 				wait: true,
 				complete: function() {
 					clearTimeout(t);
+					loading_msg.replaceWith(buttons);
 				},
 				success: function() {
 					viewItem.fadeOut();
 				},
 				error: function() {
-					showConfirmationMessage("Unable to add collaborator. Try again later.");
-					loading_msg.replaceWith(buttons);
+					showFailureMessage("Unable to add collaborator. Try again later.");
 				}
 			});
 		},
@@ -239,7 +249,7 @@
 						// Remove already existing collaborators					
 						var results = _.filter(response, function(searchResult) {						
 							return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
-								return collaborator.get('id') == searchResult["id"]
+								return collaborator.get('account').id == searchResult["id"]
 							});
 						});
 
@@ -286,6 +296,7 @@
 		},
 
 		addCollaborator: function(collaborator) {
+			window.collaborator = collaborator;
 			var view = new CollaboratorView({model: collaborator});	
 			this.$("ul.view-table").prepend(view.render().el);
 		},

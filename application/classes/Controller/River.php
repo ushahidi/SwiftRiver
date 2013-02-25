@@ -355,12 +355,26 @@ class Controller_River extends Controller_Drop_Base {
 		
 		if ($query)
 		{
-			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->river->account->user->id)));
+			echo json_encode($this->accountService->search($query));
 			return;
 		}
 		
 		switch ($this->request->method())
 		{
+			case "POST":
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				try
+				{
+					$collaborator = $this->riverService->add_collaborator($this->river['id'], $collaborator_array);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}
+				echo json_encode($collaborator);
+				break;
+			break;
+			
 			case "DELETE":
 				// Is the logged in user an owner?
 				if ( ! $this->owner)
@@ -368,17 +382,14 @@ class Controller_River extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 							
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
+				$collaborator_id = intval($this->request->param('id', 0));
 				
-				if ( ! $user_orm->loaded()) 
-					return;
-					
-				$collaborator_orm = $this->river->river_collaborators->where('user_id', '=', $user_orm->id)->find();
-				if ($collaborator_orm->loaded())
+				try
 				{
-					$collaborator_orm->delete();
-					Model_User_Action::delete_invite($this->user->id, 'river', $this->river->id, $user_orm->id);
+					$this->riverService->delete_collaborator($this->river['id'], $collaborator_id);
+				} catch (Swiftriver_API_Exception_NotFound $e)
+				{
+					throw new HTTP_Exception_403();
 				}
 			break;
 			
@@ -388,6 +399,7 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_403();
 				}
+				
 			
 				$user_id = intval($this->request->param('id', 0));
 				$user_orm = ORM::factory('User', $user_id);

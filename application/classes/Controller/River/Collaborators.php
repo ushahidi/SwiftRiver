@@ -20,8 +20,15 @@ class Controller_River_Collaborators extends Controller_River_Settings {
 	 */
 	public function action_index()
 	{
+		$this->template->header->title = $this->river['name'].' ~ '.__('Collaborator Settings');
+		$this->template->header->js .= HTML::script("themes/default/media/js/collaborators.js");
 		$this->template->content->active = "collaborators";
-		$this->template->content->settings_content = View::factory('pages/river/settings/collaborators');
+		$this->template->content->settings_content = View::factory('template/collaborators')
+							->bind('fetch_url', $fetch_url)
+							->bind('collaborator_list', $collaborators);
+
+		$fetch_url = $this->river_base_url.'/collaborators';		
+		$collaborators = json_encode($this->riverService->get_collaborators($this->river['id']));
 		
 	}
 	

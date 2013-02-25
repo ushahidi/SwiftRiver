@@ -213,4 +213,39 @@ class Service_River {
 	{
 		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
 	}
+	
+	/**
+	 * Get the river's collaborators
+	 *
+	 * @param   logn  $river_id
+	 * @return Array
+	 */
+	public function get_collaborators($river_id)
+	{
+		return $this->api->get_rivers_api()->get_collaborators($river_id);
+	}
+	
+	/**
+	 * Remove collaborator
+	 *
+	 * @param   long  $river_id
+	 * @param   long  $collaborator_id	 
+	 * @return Array
+	 */
+	public function delete_collaborator($river_id, $collaborator_id)
+	{
+		return $this->api->get_rivers_api()->delete_collaborator($river_id, $collaborator_id);
+	}
+	
+	/**
+	 * Add a collaborator
+	 *
+	 * @param   long  $river_id
+	 * @param   long  $collaborator_array
+	 * @return Array
+	 */
+	public function add_collaborator($river_id, $collaborator_array)
+	{
+		return $this->api->get_rivers_api()->add_collaborator($river_id, $collaborator_array);
+	}
 }
