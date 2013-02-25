@@ -117,63 +117,120 @@ body > nav li {
 <div class="sample cf">
 	<a name="view-table"></a>
 	<h2>Table view: <em>Various patterns for listing items</em></h2>
-	<div class="col_4">
-		<!-- List of links -->
-		<div class="base">
-			<ul class="view-table">
-				<li><a href="#">First item</a></li>
-				<li><a href="#">Second item</a></li>
-				<li><a href="#">Third item</a></li>
-				<li class="add"><a href="#add-item">Add item</a></li>
-			</ul>
+	<div class="cf">
+		<div class="col_4">
+			<!-- List of links -->
+			<div class="base">
+				<ul class="view-table">
+					<li><a href="#">First item</a></li>
+					<li><a href="#">Second item</a></li>
+					<li><a href="#">Third item</a></li>
+					<li class="add"><a href="#add-item">Add item</a></li>
+				</ul>
+			</div>
 		</div>
+		<div class="col_4">
+			<!-- List static items that are selectable -->
+			<div class="base">
+				<ul class="view-table">
+					<li class="static cf">
+						<span class="select icon-plus"></span>
+						First item
+					</li>
+					<li class="static selected cf">
+						<span class="select icon-plus"></span>
+						Second item, selected
+					</li>
+					<li class="static cf">
+						<span class="select icon-plus"></span>
+						Third item
+					</li>				
+					<li class="add"><a href="#add-item">Add item</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col_4">
+			<!-- List of links with optional 'remove' target -->
+			<div class="base">
+				<ul class="view-table">
+					<li>
+						<a href="#">
+						<span class="remove icon-cancel"></span>
+						First item
+						</a>
+					</li>
+					<li>
+						<a href="#">
+						<span class="remove icon-cancel"></span>
+						Second item
+						</a>
+					</li>
+					<li>
+						<a href="#">
+						<span class="remove icon-cancel"></span>
+						Third item
+						</a>
+					</li>								
+					<li class="add"><a href="#add-item">Add item</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>	
+
+	<div class="cf" style="margin-top:2em;">
+		<div class="col_4">
+			<!-- List of items that are selectable, with options and avatars -->
+			<div class="base">
+				<ul class="view-table">
+					<li class="static selected user cf">
+						<span class="select select-box icon-plus">
+							<select>
+								<option>Option 1</option>
+								<option>Option 2</option>
+							</select>
+						</span>
+						<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">First item
+					</li>
+					<li class="static user cf">
+						<span class="select select-box icon-plus">
+							<select>
+								<option>Option 1</option>
+								<option selected="selected">Option 2</option>
+							</select>
+						</span>
+						<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">Second item
+					</li>
+				</ul>													
+			</div>		
+		</div>
+		<div class="col_4">
+			<!-- List of items that are removable, with options and avatars -->
+			<div class="base">
+				<ul class="view-table">
+					<li class="static selected user cf">
+						<span class="remove icon-cancel"></span>
+						<span class="select-box">
+							<select>
+								<option>Viewer</option>
+								<option>Editor</option>
+							</select>
+						</span>
+						<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">First item
+					</li>
+					<li class="static user cf">
+						<span class="remove icon-cancel"></span>
+						<span class="select-box">
+							<select>
+								<option>Viewer</option>
+								<option selected="selected">Editor</option>
+							</select>
+						</span>
+						<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">Second item
+					</li>
+				</ul>													
+			</div>			
+		</div>			
 	</div>
-	<div class="col_4">
-		<!-- List static items that are selectable -->
-		<div class="base">
-			<ul class="view-table">
-				<li class="static cf">
-					<span class="select icon-plus"></span>
-					First item
-				</li>
-				<li class="static selected cf">
-					<span class="select icon-plus"></span>
-					Second item, selected
-				</li>
-				<li class="static cf">
-					<span class="select icon-plus"></span>
-					Third item
-				</li>				
-				<li class="add"><a href="#add-item">Add item</a></li>
-			</ul>
-		</div>
-	</div>
-	<div class="col_4">
-		<!-- List of links with optional 'remove' target -->
-		<div class="base">
-			<ul class="view-table">
-				<li>
-					<a href="#">
-					<span class="remove icon-cancel"></span>
-					First item
-					</a>
-				</li>
-				<li>
-					<a href="#">
-					<span class="remove icon-cancel"></span>
-					Second item
-					</a>
-				</li>
-				<li>
-					<a href="#">
-					<span class="remove icon-cancel"></span>
-					Third item
-					</a>
-				</li>								
-				<li class="add"><a href="#add-item">Add item</a></li>
-			</ul>
-		</div>
-	</div>		
 </div>
 
 <div class="sample">

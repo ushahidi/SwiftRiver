@@ -613,6 +613,7 @@ form .field .label {
    float: right;
    color: #999;
    font-size: 0.8em;
+   margin-left: 1em;
 }
 
 .view-table li .remove:hover {
@@ -652,6 +653,19 @@ form .field .label {
    cursor: pointer;
    color: #2195ae;
    background: #eeeeee;
+}
+
+.view-table li .select-box {
+   float: right;
+}
+
+.view-table li .select.select-box {
+   width: auto;
+   padding: 0.5em;
+}
+
+.view-table li .select-box select {
+   margin-left: 0.3em;
 }
 
 .view-table li.selected {

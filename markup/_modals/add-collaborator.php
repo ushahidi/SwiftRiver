@@ -16,11 +16,21 @@
 					<div class="modal-search-results">
 						<ul class="view-table">
 							<li class="static selected user cf">
-								<span class="select icon-plus"></span>
+								<span class="select select-box icon-plus">
+									<select>
+										<option>Viewer</option>
+										<option>Editor</option>
+									</select>
+								</span>
 								<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">Juliana Rotich
 							</li>
 							<li class="static user cf">
-								<span class="select icon-plus"></span>
+								<span class="select select-box icon-plus">
+									<select>
+										<option>Viewer</option>
+										<option selected="selected">Editor</option>
+									</select>
+								</span>
 								<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">Nathaniel Manning
 							</li>
 						</ul>													
