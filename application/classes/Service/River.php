@@ -31,14 +31,15 @@ class Service_River {
 	 * @return array
 	 *
 	 */
-	public static function get_array($river, $querying_account) {
+	public static function get_array($river, $querying_account)
+	{
 		$river['url'] = self::get_base_url($river);
 		$river['expired'] = FALSE;
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the river?
 		$river['collaborator'] = FALSE;
-		foreach($querying_account['collaborating_rivers'] as $r)
+		foreach ($querying_account['collaborating_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
@@ -48,12 +49,12 @@ class Service_River {
 		}
 		
 		// Is the querying account following the river?
-		$river['subscribed'] = FALSE;
+		$river['following'] = FALSE;
 		foreach($querying_account['following_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['subscribed'] = TRUE;
+				$river['following'] = TRUE;
 			}
 		}
 		
@@ -61,7 +62,8 @@ class Service_River {
 		if (isset($river['channels']))
 		{
 			$channels = array();
-			foreach($river['channels'] as $channel) {
+			foreach ($river['channels'] as $channel)
+			{
 				if (! Swiftriver_Plugins::get_channel_config($channel['channel']))
 					continue;
 				

@@ -77,7 +77,7 @@ class Service_Bucket {
 		// Fetch the bucket
 		$bucket =  $this->buckets_api->get_bucket_by_id($id);
 		
-		return $this->marshall_bucket($bucket, $querying_account);		
+		return self::get_array($bucket, $querying_account);		
 	}
 
 	/**
@@ -182,14 +182,14 @@ class Service_Bucket {
 	 * @param  array  querying_account  Account that requested for the bucket
 	 * @return array
 	 */
-	private function marshall_bucket($bucket, $querying_account)
+	public static function get_array($bucket, $querying_account)
 	{
 		// Set the bucket url
 		$bucket['url'] = self::get_base_url($bucket);
 
 		// Is the querying account an owner of the river
 		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];		
-		
+
 		// Is the querying account collaborating on the fetched bucket?
 		$bucket['collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_buckets'] as $b)
@@ -200,18 +200,18 @@ class Service_Bucket {
 				$bucket['collaborator'] = TRUE;
 			}
 		}
-		
+
 		// Is the querying account following the fetched bucket?
-		$bucket['subscribed'] = FALSE;
+		$bucket['following'] = FALSE;
 		foreach ($querying_account['following_buckets'] as $b)
 		{
 			if ($b['id'] === $bucket['id'])
 			{
-				$bucket['subscribed'] = TRUE;
+				$bucket['following'] = TRUE;
 			}
 		}
-		
+
 		return $bucket;
-		
+
 	}
 }

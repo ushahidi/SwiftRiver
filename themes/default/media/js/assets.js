@@ -25,8 +25,8 @@
 			}
 		},
 
-		toggleSubscription: function (success_callback, error_callback, complete_callback) {
-			this.save({subscribed: !this.get('subscribed')}, {
+		toggleFollowing: function (success_callback, error_callback, complete_callback) {
+			this.save({following: !this.get('following')}, {
 				wait: true,
 				success: success_callback,
 				error: error_callback,
@@ -34,8 +34,8 @@
 				});
 		},
 
-		toggleSubscriptionNoSync: function () {
-			this.set('subscribed', !this.get('subscribed'));
+		toggleFollowingNoSync: function () {
+			this.set('following', !this.get('following'));
 
 			// Since we cannot toggle subscription for our buckets
 			// because a delete button is shown or nothing at all
@@ -65,19 +65,19 @@
 	var AssetList = Assets.AssetList = Backbone.Collection.extend({
 		own: function() {
 			return this.filter(function(asset) { 
-				return !asset.get('subscribed') && asset.get('is_owner'); 
+				return !asset.get('following') && asset.get('is_owner'); 
 			});
 		},
 		
 		following: function() {
 			return this.filter(function(asset) {
-				return !asset.get('collaborator') && asset.get('subscribed');
+				return !asset.get('collaborator') && asset.get('following');
 			});
 		},
 
 		collaborating: function() {
 			return this.filter(function(asset) { 
-				return !asset.get('subscribed') && asset.get('collaborator'); 
+				return !asset.get('following') && asset.get('collaborator'); 
 			});
 		}
 	});
@@ -109,7 +109,7 @@
 		className: "parameter",
 
 		events: {
-			"click div.actions .button-white a": "toggleSubscription",
+			"click div.actions .button-white a": "toggleFollowing",
 			"click div.actions .remove-small a": "deleteAsset"
 		},
 
@@ -142,12 +142,12 @@
 			return false;
 		},
 
-		doToggleSubscription: function(successMessage) {
+		doToggleFollowing: function(successMessage) {
 			// Toggle the model's subscription status and provide visual feedback
 			var loading_msg = window.loading_image.clone();
 			var button = this.$("p.button-white");
 			var t = setTimeout(function() { button.replaceWith(loading_msg); }, 500);
-			this.model.toggleSubscription(function() {
+			this.model.toggleFollowing(function() {
 				button.toggleClass("selected");
 				showConfirmationMessage(successMessage);
 			}, function() {
@@ -158,20 +158,20 @@
 			});
 		},
 
-		toggleSubscription: function() {
+		toggleFollowing: function() {
 			if (this.model.get("collaborator")) {
 				// Collaborator
 				var message = 'Stop collaborating on <a href="#">' + this.model.get('display_name') + "</a>?";
 				new ConfirmationWindow(message, function() {
 					message = 'You are no longer collaborating on <a href="#">' + this.model.get('display_name') + "</a>";
-					this.doToggleSubscription(message);
+					this.doToggleFollowing(message);
 				}, this).show();
 			} else {
 				var message = 'You are no longer following <a href="#">' + this.model.get('display_name') + "</a>";
-				if (!this.model.get('subscribed')) {
+				if (!this.model.get('following')) {
 					message = 'You are now following <a href="#">' + this.model.get('display_name') + "</a>";
 				}
-				this.doToggleSubscription(message);
+				this.doToggleFollowing(message);
 			}
 			return false;
 		}
@@ -192,7 +192,7 @@
 		initialize: function(options) {
 			this.collection.on("reset", this.addAssets, this);
 			this.collection.on("add", this.addAsset, this);
-			this.collection.on("change:subscribed", this.subscriptionChanged, this);
+			this.collection.on("change:following", this.followingChanged, this);
 			this.collection.on("destroy", this.assetDeleted, this);
 
 			if (this.collection instanceof BucketList) {
@@ -240,13 +240,13 @@
 			return asset.get("collaborator");
 		},
 
-		subscriptionChanged: function(model, subscribed) {
+		followingChanged: function(model, following) {
 			if (this.collection != this.globalCollection) {
 				// Update the global bucket list when we are not
 				// using the global list.
 				var globalAsset = this.globalCollection.get(model.get("id"));
 				if (globalAsset != undefined) {
-					globalAsset.toggleSubscriptionNoSync();
+					globalAsset.toggleFollowingNoSync();
 				} else {
 					modelCopy = model.clone();
 					modelCopy.set("is_owner", false);
@@ -294,7 +294,7 @@
 
 		// Override default determination for assets to be rendered
 		renderAsset: function(asset) {
-			return asset.get("is_owner") || asset.get("subscribed");
+			return asset.get("is_owner") || asset.get("following");
 		},
 
 		renderOwn: function(view) {
@@ -393,19 +393,21 @@
 		save: function() {
 			var bucketName = $.trim(this.$("#bucket_name").val());
 			if (!bucketName) {
-				// TODO: Notify user that they need to provide a bucket name
 				return false;
 			}
-			
+
+			var message = "";
+
 			// Check if the bucket exists in the list of buckets owned by
 			// the current user
-			var bucket = Assets.bucketList.find(function(bucket) { 
+			var bucket = _.find(Assets.bucketList.own(), function(bucket) { 
 				return bucket.get('name').toLowerCase() == bucketName.toLowerCase();
 			});
 
 			if (bucket) {
-				// TODO: Show failure system message
-					
+				// message = "You already own a bucket named \"" + bucketName + "\"";
+				// showSysMessage("failure", "Error", message, false);
+
 				this.$("#bucket_name").val("");
 				return false;
 			}
@@ -420,6 +422,8 @@
 				},
 				success: function() {
 					// Show success message
+					// message = "Bucket \"" + bucketName + "\" successfully created!"
+					// showSysMessage("success", "Success",message, true);
 
 					if (context.listView) {
 						context.listView.onSaveNewBucket(bucket);
@@ -515,10 +519,11 @@
 	
 	// View for the Follow Button
 	var FollowButtonView = Assets.FollowButtonView = Backbone.View.extend({
-		el: "#follow_button",
+		el: "#follow-button",
 
 		events: {
-			'click p.button-white > a': 'toggleSubscription'
+			'click a.button-white': 'toggleFollowing',
+			"click a.button-primary.selected": "toggleFollowing"
 		},
 			
 		initialize: function() {
@@ -526,28 +531,28 @@
 			this.model.on('change', this.render, this);
 		},
 
-		toggleSubscription: function(e) {
+		toggleFollowing: function(e) {
 			var loading_msg = window.loading_message.clone();
-			var button = this.$("p.button-white");
+			var button = this.$("a.button-white");
 			var t = setTimeout(function() { button.replaceWith(loading_msg); }, 500);
 				
 			var view = this;
-			var action = this.model.get("subscribed") ? "unfollow" : "follow";
+			var action = this.model.get("following") ? "unfollow" : "follow";
 			var name = this.model.get("name");
-			this.model.toggleSubscription(function(model, response, options) {
+			this.model.toggleFollowing(function(model, response, options) {
 				var message = "You are now following '" + name + "'";
 				if (action == "unfollow") {
 					message = "You are no longer following '" + name + "'";
 				}
-				showConfirmationMessage(message);
+				showSysMessage("success", "Success", message, true);
 				
 				// Update the global collection
 				if (view.collection != null)
 				{
 					var globalAsset = view.collection.get(model.get("id"));
-
+		
 					if (globalAsset != undefined) {
-						globalAsset.toggleSubscriptionNoSync();
+						globalAsset.toggleFollowingNoSync();
 					} else {
 						modelCopy = model.clone();
 						modelCopy.set("is_owner", false);
@@ -556,7 +561,7 @@
 				}
 			}, function() {
 					
-				showConfirmationMessage("Oops, unable to " + action + ". Try again later.");
+				showSysMessage("failure", "Failure", "Oops, unable to " + action + ". Try again later.", false);
 			}, function() {
 				clearTimeout(t);
 				loading_msg.replaceWith(button);
