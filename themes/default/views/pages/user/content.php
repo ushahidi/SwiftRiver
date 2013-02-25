@@ -39,12 +39,14 @@
 				<span class="button" class="button-white">
 					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
 				</span>
+				<?php if ($owner): ?>
 				<span class="button create-new">
 					<a href="#" class="button-primary modal-trigger">
 						<i class="icon-plus"></i>
 						<?php echo __("Create new"); ?>
 					</a>
 				</span>
+				<?php endif; ?>
 			</div>
 
 			<div class="container-tabs-window">

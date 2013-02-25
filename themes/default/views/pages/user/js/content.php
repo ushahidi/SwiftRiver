@@ -99,7 +99,7 @@ $(function() {
 			this.applyRolesFilter(this.options.bucketList);
 		},
 		
-		addRivers: function() {
+		addRivers: function() {			
 			this.applyRolesFilter(this.options.riverList);
 		},
 
@@ -245,9 +245,15 @@ $(function() {
 		
 	});
 	
+	var bucketList = new Assets.BucketList(),
+		riverList = new Assets.RiverList();
+
 	new DashboardAssetListView({
-		bucketList: Assets.bucketList,
-		riverList: Assets.riverList
+		bucketList: bucketList,
+		riverList: riverList
 	});
+	
+	bucketList.reset(<?php echo $buckets; ?>);
+	riverList.reset(<?php echo $rivers; ?>);
 });
 </script>

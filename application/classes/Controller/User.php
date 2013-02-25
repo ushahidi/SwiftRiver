@@ -91,8 +91,16 @@ class Controller_User extends Controller_Swiftriver {
 	public function action_content()
 	{
 		$this->template->header->title = __('Content');
-		$this->template->header->js = View::factory('pages/user/js/content');
-		$this->sub_content = View::factory('pages/user/content');
+		$this->template->header->js = View::factory('pages/user/js/content')
+			->bind('rivers', $rivers)
+			->bind('buckets', $buckets);
+		
+		$rivers = json_encode($this->accountService->get_rivers($this->visited_account));
+		$buckets = json_encode($this->accountService->get_buckets($this->visited_account));
+
+		$this->sub_content = View::factory('pages/user/content')
+			->bind('owner', $this->owner);
+
 		$this->active = 'content-navigation-link';
 	}
 
