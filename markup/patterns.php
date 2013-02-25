@@ -91,7 +91,7 @@ body > nav li {
 	$(document).ready(function() { 
 		// (DEMO) BUTTON: Show loader graphic on submit	
 		$('a.button-submit').live('click', function(e) {
-			$(this).html('<img src="/markup/_img/loader.gif" />');
+			$(this).html('<em>Adding collaborator</em><img src="/markup/_img/loader.gif" />');
 			e.preventDefault();
 		});	
 	});	

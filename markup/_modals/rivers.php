@@ -8,6 +8,18 @@
 			
 			<div class="modal-body">			
 				<div class="base">
+					<div class="modal-search-field">
+						<input type="text" placeholder="Find a river..." />
+						<a href="#" class="button-submit"><span class="icon-search"></span></a>
+					</div>		
+					<div class="modal-search-results">
+						<ul class="view-table">
+							<li><a href="#">River A</a></li>
+							<li><a href="#">River B</a></li>
+						</ul>													
+					</div>
+				</div>	
+				<div class="base">	
 					<h2 class="label">Managing</h2>
 					<ul class="view-table">
 						<li><a href="/markup/river">Ushahidi at SXSW</a></li>

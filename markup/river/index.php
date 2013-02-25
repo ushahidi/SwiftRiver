@@ -4,7 +4,7 @@
 ?>
 
 	<!-- SYSTEM MESSAGE //-->
-	<article id="system-message" class="failure">
+	<article class="system-message failure">
 		<div class="center">
 			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
 			<p><strong>Confirmation.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
@@ -42,7 +42,7 @@
 						</div>
 						<ul class="filters-primary">
 							<li class="active"><a href="#"><span class="total">204</span> Drops</a></li>
-							<li><a href="view-list.php" class="system-message">List</a></li>
+							<li><a href="view-list.php">List</a></li>
 							<li><a href="view-photos.php">Photos</a></li>
 							<li><a href="#">Map</a></li>
 						</ul>
