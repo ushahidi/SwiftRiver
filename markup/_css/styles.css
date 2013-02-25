@@ -66,6 +66,14 @@ header.toolbar .label {
 
 /* --------------------------- BUTTON */
 
+a[class^="button-"],
+a[class*="button-"] {
+   transition: .3s all ease;
+   -moz-transition: .3s all ease;
+   -webkit-transition: .3s all ease;
+   -o-transition: .3s all ease;
+}
+
 a.button-primary {
    display: inline-block;
    color: #fff;
@@ -1015,10 +1023,37 @@ header.toolbar ul.user-menu > li.user a:hover {
    margin-top: 0.8em;
 }
 
+#stream .stream-message {
+   margin: 0.8em 3.125%;
+}
+
 .stream-message.waiting {
    border: 2px solid #3faec0;
-   padding: 1em;
+   padding: 1em 0;
    -webkit-animation: border-pulsate 2s infinite;
+   margin-top: 1em;
+   margin-bottom: 1em;
+}
+
+.stream-message h1 {
+   color: #444;
+}
+
+.stream-message p {
+   padding: 1em 0;
+}
+
+.stream-message ul {
+   width: ;
+}
+
+.stream-message ul li {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background-color: #fff;
+   padding: 0.5em;
+   margin: 0.5em 0;
 }
 
 /* --------------------------- PAGE TITLE */
@@ -3391,6 +3426,14 @@ article.drop ul.score-drop li.remove {
 article.drop ul.score-drop li.remove a {
    box-shadow: -1px 1px 3px rgba(0,0,0,.1);
    padding: 0.6em 0.5em;
+}
+
+#stream .stream-message {
+   margin: 0.8em 1.041666667%;
+}
+
+.stream-message.waiting {
+   float: right;
 }
 
 /* ---- DROP: VIEW FULL */
