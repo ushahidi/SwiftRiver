@@ -34,4 +34,75 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	{
 		return $this->get('/accounts',  array('account_path' => $account_path));
 	}
+	
+	/**
+	 * Verifies whether the account specified in $query_account_id is following
+	 * the account specified in $id
+	 *
+	 * @param  int id
+	 * @param  int query_account_id
+	 * @return bool
+	 */
+	public function is_account_follower($id, $query_account_id)
+	{
+		try
+		{
+			$this->get('/accounts/'.$id.'/followers', array('follower' => $query_account_id));
+		}
+		catch (SwiftRiver_API_Exception_NotFound $e)
+		{
+			Kohana::$log->add(Log::INFO, __("Account :query does not follow account :id",
+				array(":query" => $query_account_id, ":id" => $id)));
+
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds the account with the specified follower_account_id to the list of followers
+	 * for the account specified by id
+	 *
+	 * @param  int id
+	 * @param  int follower_account_id
+	 * @return bool
+	 */
+	public function add_follower($id, $follower_account_id)
+	{
+		try
+		{
+			$this->put('/accounts/'.$id.'/followers/'.$follower_account_id);
+		}
+		catch (Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Removes the account specified in $follower_account_id from the list of followers
+	 * for the account specified in $id
+	 *
+	 * @param  int  id
+	 * @param  int follower_account_id
+	 * @return bool
+	 */
+	public function remove_follower($id, $follower_account_id)
+	{
+		try
+		{
+			$this->delete('/accounts/'.$id.'/followers/'.$follower_account_id);
+		}
+		catch (Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
 }

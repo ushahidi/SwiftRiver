@@ -19,7 +19,7 @@ abstract class Swiftriver_API_Exception extends Exception {
 	
 	protected $errors = NULL;
 	
-	function __construct(array $error) 
+	public function __construct(array $error) 
 	{
 		$this->message = $error['message'];
 		

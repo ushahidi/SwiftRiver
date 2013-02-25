@@ -16,15 +16,15 @@
 class Service_Account {
 	
 	/**
-	 * SwiftRiver API instance
-	 * @var SwiftRiver_API
+	 * SwiftRiver_API_Accounts instance
+	 * @var SwiftRiver_API_Accounts
 	 */
-	private $api = NULL;
+	private $accounts_api;
 
 	
 	public function __construct($api)
 	{
-		$this->api = $api;
+		$this->accounts_api = $api->get_accounts_api();
 	}
 	
 	/**
@@ -34,7 +34,7 @@ class Service_Account {
 	 */
 	public function get_logged_in_account()
 	{
-		return $this->api->get_accounts_api()->get_logged_in_account();
+		return $this->accounts_api->get_logged_in_account();
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class Service_Account {
 	 */
 	public function get_account_by_name($account_path)
 	{
-		return $this->api->get_accounts_api()->get_account_by_name($account_path);
+		return $this->accounts_api->get_account_by_name($account_path);
 	}
 	
 	/**
@@ -59,22 +59,19 @@ class Service_Account {
 		// Own rivers
 		foreach ($account['rivers'] as $river)
 		{
-			$river = Service_River::get_array($river, $account);
-			$rivers[] = $river;
+			$rivers[] = Service_River::get_array($river, $account);
 		}
 		
 		// Collaborating rivers
 		foreach ($account['collaborating_rivers'] as $river)
 		{
-			$river = Service_River::get_array($river, $account);
-			$rivers[] = $river;
+			$rivers[] = Service_River::get_array($river, $account);
 		}
 		
 		// Following rivers
 		foreach ($account['following_rivers'] as $river)
 		{
-			$river = Service_River::get_array($river, $account);
-			$rivers[] = $river;
+			$rivers[] = Service_River::get_array($river, $account);
 		}
 		
 		return $rivers;
@@ -92,34 +89,60 @@ class Service_Account {
 		// Own buckets
 		foreach ($account['buckets'] as $bucket)
 		{
-			$bucket['is_owner'] = TRUE;
-			$bucket['collaborator'] = FALSE;
-			$bucket['subscribed'] = FALSE;
-			$bucket['url'] = Service_Bucket::get_base_url($bucket);
-			$buckets[] = $bucket;
+			$buckets[] = Service_Bucket::get_array($bucket, $account);
 		}
 		
 		// Collaborating buckets
 		foreach ($account['collaborating_buckets'] as $bucket)
 		{
-			$bucket['is_owner'] = TRUE;
-			$bucket['collaborator'] = TRUE;
-			$bucket['subscribed'] = FALSE;
-			$bucket['url'] = Service_Bucket::get_base_url($bucket);
-			$buckets[] = $bucket;
+			$buckets[] = Service_Bucket::get_array($bucket, $account);
 		}
 		
 		// Following buckets
 		foreach ($account['following_buckets'] as $bucket)
 		{
-			$bucket['is_owner'] = FALSE;
-			$bucket['collaborator'] = FALSE;
-			$bucket['subscribed'] = TRUE;
-			$bucket['url'] = Service_Bucket::get_base_url($bucket);
-			$buckets[] = $bucket;
+			$buckets[] = Service_Bucket::get_array($bucket, $account);
 		}
 		
 		return $buckets;
+	}
+	
+	/**
+	 * Verifies where the account in $query_account_id is following the account in $id
+	 *
+	 * @param  int  id
+	 * @param  int  query_account_id
+	 * @return bool
+	 */
+	public function is_account_follower($id, $query_account_id)
+	{
+		return $this->accounts_api->is_account_follower($id, $query_account_id);
+	}
+	
+	/**
+	 * Adds the account with the specified follower_account_id to the list of followers
+	 * for the account specified by id
+	 *
+	 * @param  int id ID of the account to be followed
+	 * @param  int follower_account_id ID of the Account to be added to the list of followers
+	 * @return bool TRUE on success, FALSE otherwise
+	 */
+	public function add_follower($id, $follower_account_id)
+	{
+		return $this->accounts_api->add_follower($id, $follower_account_id);
+	}
+	
+	/**
+	 * Removes the account specified in $follower_account_id from the list of followers
+	 * for the account specifid in $id
+	 *
+	 * @param  int id
+	 * @param  int follower_account_id
+	 * @return bool TRUE on success, FALSE otherwise
+	 */
+	public function remove_follower($id, $follower_account_id)
+	{
+		return $this->accounts_api->remove_follower($id, $follower_account_id);
 	}
 	
 }

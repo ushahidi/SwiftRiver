@@ -12,6 +12,11 @@
 				<a href="#" class="modal-trigger"><strong><?php echo $account['follower_count']; ?></strong> followers</a>, 
 				<a href="#"><strong><?php echo $account['following_count']; ?></strong> following</a>
 			</span>
+			<?php if (isset($follow_button)): ?>
+			<span class='button-follow' id="follow-button">
+				<?php echo $follow_button; ?>
+			</span>
+			<?php endif; ?>
 		</div>
 	</div>
 </hgroup>

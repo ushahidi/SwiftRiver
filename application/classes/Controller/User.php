@@ -50,11 +50,11 @@ class Controller_User extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->owner = TRUE;
+		$this->owner = $this->visited_account['id'] == $this->user['id'];
 		
 		$this->template->content = View::factory('pages/user/layout')
 			->bind('account', $this->visited_account)
-				->bind('sub_content', $this->sub_content)
+			->bind('sub_content', $this->sub_content)
 			->bind('active', $this->active);
 		$this->template->content->nav = $this->get_nav($this->user);
 			
@@ -64,14 +64,16 @@ class Controller_User extends Controller_Swiftriver {
 
 		if ( ! $this->owner)
 		{
+			$is_following = $this->accountService->is_account_follower($this->visited_account['id'], $this->user['id']);
+		
 			$follow_button = View::factory('template/follow');
 			$follow_button->data = json_encode(array(
-				'id' => $this->visited_account->user->id,
-				'name' => $this->visited_account->user->name,
+				'id' => $this->user['id'],
+				'name' => $this->visited_account['owner']['name'],
 				'type' => 'user',
-				'subscribed' => $this->user->has('following', $this->visited_account->user)
+				'following' => $is_following
 			));
-			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+			$follow_button->action_url = URL::site($this->visited_account['account_path'].'/user/followers/manage');
 			$this->template->content->follow_button = $follow_button;
 		}
 	}
@@ -154,6 +156,7 @@ class Controller_User extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * XHR endopint for adding/removing followers
 	 * @return	void
 	 */
 	public function action_manage()
@@ -172,31 +175,17 @@ class Controller_User extends Controller_Swiftriver {
 			case "PUT":
 				$item_array = json_decode($this->request->body(), TRUE);
 				
-				// Stalking!
-				$user_orm = ORM::factory('User', $item_array['id']);
-				if ( ! $user_orm->loaded())
+				// Follow/Unfollow
+				if ($item_array['following'])
 				{
-					throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
+					// Follow
+					$this->accountService->add_follower($this->visited_account['id'], $item_array['id']);
 				}
-				if ($user_orm->id == $this->user->id)
-					throw new HTTP_Exception_400(); // Do not follow self
-				
-				// Are following
-				if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
+				elseif ( ! $item_array['following'])
 				{
-					$this->user->add('following', $user_orm);
-					Model_User_Action::create_action($this->user->id, 'user', 'follow', $user_orm->id);
-					$this->notify_new_follower($user_orm);
+					// Unfollow
+					$this->accountService->remove_follower($this->visited_account['id'], $item_array['id']);
 				}
-				
-				// Are unfollowing
-				if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
-				{
-					$this->user->remove('following', $user_orm);
-				}					
 			break;
 		}
 	}
