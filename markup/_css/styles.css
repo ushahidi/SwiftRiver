@@ -258,6 +258,11 @@ ul.dual-buttons li a span[class^="icon-"] strong {
    margin-left: -10px;
 }
 
+a[class^="button-"] em {
+   font-weight: normal;
+   margin-right: 1em;
+}
+
 /* --------------------------- ICONS */
 
 @font-face {
@@ -958,6 +963,10 @@ header.toolbar ul.user-menu > li.user a:hover {
    padding: 1.3em 0;
 }
 
+#modal-container .system-message {
+   position: absolute;
+}
+
 .system-message.success {
    border-bottom: 1px solid #b5daba;
    background-color: #e2f1e4;
@@ -966,6 +975,10 @@ header.toolbar ul.user-menu > li.user a:hover {
 .system-message.failure {
    border-bottom: 1px solid #dfc2c2;
    background-color: #efd9d9;
+}
+
+.system-message p {
+   padding: 0 1em;
 }
 
 .system-message .system-message-close {
@@ -2568,6 +2581,7 @@ div#zoom-container .drop-discussion article.drop {
 }
 
 #modal-viewport .modal-view {
+   position: relative;
    float: left;
    width: 50%;
    transition: .3s all ease;
@@ -2763,6 +2777,10 @@ article.modal .modal-body .modal-search-field .button-submit {
    right: 0.9em;
    color: #444;
    font-size: 24px;
+}
+
+article.modal .modal-body .modal-search-field .button-submit:hover {
+   text-decoration: none;
 }
 
 article.modal .modal-body .modal-search-results {
