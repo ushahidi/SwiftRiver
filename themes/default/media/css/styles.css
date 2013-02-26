@@ -721,6 +721,11 @@ form .field .label {
    max-height: 300px;
 }
 
+.view-table li .loading_image {
+	max-height: 25px;
+	max-width: 25px;
+}
+
 /* --------------------------- POPOVER */
 
 ul.popover-window {

@@ -41,5 +41,3 @@
 	</article>
 	<?php echo Form::close(); ?>
 </div>
-
-<?php echo $collaborators_view; ?>

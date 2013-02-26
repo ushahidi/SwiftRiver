@@ -17,8 +17,8 @@
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
-	<span class="select icon-plus editor"></span>
-	<img src="<%= owner.avatar %>" class="avatar"><%= owner.name %>
+	<span class="select editor icon-plus"></span>
+	<img src="<%= owner.avatar %>" class="avatar" ><%= owner.name %>
 </script>
 
 <script type="text/template" id="collaborator-modal-template">
@@ -39,6 +39,13 @@
 						<ul class="view-table"></ul>
 					</div>
 				</div>
+				
+				<div class="modal-search-results added nodisplay">
+					<h2 class="label">People you have just made collaborators...</h2>
+					<ul class="view-table">
+					</ul>													
+				</div>
+			</div>
 				<div class="modal-toolbar">
 					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
 				</div>

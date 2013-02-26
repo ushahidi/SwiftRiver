@@ -391,60 +391,7 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_403();
 				}
-			break;
-			
-			case "PUT":
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-				
-			
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				$collaborator_array = json_decode($this->request->body(), TRUE);
-				
-				$collaborator_orm = ORM::factory("River_Collaborator")
-									->where('river_id', '=', $this->river->id)
-									->where('user_id', '=', $user_orm->id)
-									->find();
-				
-				$exists = $collaborator_orm->loaded();
-				if ( ! $exists)
-				{
-					$collaborator_orm->river = $this->river;
-					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'river', 'invite', $this->river->id, $user_orm->id);
-				}
-				
-				if (isset($collaborator_array['read_only']))
-				{
-					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
-				}
-				
-				$collaborator_orm->save();
-				
-				if ( ! $exists)
-				{
-					// Send email notification after successful save
-					$html = View::factory('emails/html/collaboration_invite');
-					$text = View::factory('emails/text/collaboration_invite');
-					$html->invitor = $text->invitor = $this->user->name;
-					$html->asset_name = $text->asset_name = $this->river->river_name;
-					$html->asset = $text->asset = 'river';
-					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
-					$html->asset_link = URL::site($this->river_base_url, TRUE);
-					$subject = __(':invitor has invited you to collaborate on a river',
-									array( ":invitor" => $this->user->name,
-									));
-					Swiftriver_Mail::send($collaborator_orm->user->email, 
-										  $subject, $text->render(), $html->render());
-				}
-			break;
+			break;			
 		}
 	}
 	

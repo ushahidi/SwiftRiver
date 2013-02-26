@@ -146,15 +146,31 @@ class Service_Bucket {
 	 */
 	public function get_collaborators($bucket_id)
 	{
-		$collaborators = $this->buckets_api->get_collaborators($bucket_id);
-		
-		// Set each user's gravatar
-		foreach ($collaborators as & $collaborator)
-		{
-			$collaborator['avatar'] = Swiftriver_Users::gravatar($collaborator['email'], 55);
-		}
-
-		return $collaborators;
+		return $this->buckets_api->get_collaborators($bucket_id);
+	}
+	
+	/**
+	 * Remove collaborator
+	 *
+	 * @param   long  $bucket_id
+	 * @param   long  $collaborator_id	 
+	 * @return Array
+	 */
+	public function delete_collaborator($bucket_id, $collaborator_id)
+	{
+		return $this->buckets_api->delete_collaborator($bucket_id, $collaborator_id);
+	}
+	
+	/**
+	 * Add a collaborator
+	 *
+	 * @param   long  $bucket_id
+	 * @param   long  $collaborator_array
+	 * @return Array
+	 */
+	public function add_collaborator($bucket_id, $collaborator_array)
+	{
+		return $this->buckets_api->add_collaborator($bucket_id, $collaborator_array);
 	}
 	
 	/**

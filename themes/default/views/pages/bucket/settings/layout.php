@@ -14,10 +14,14 @@
 		<section id-"filters" class="col_3">
 			<div class="modal-window">
 				<div class="modal">
-					<ul class="body-tabs-menu filters-primary">
-						<li class="active"><a href="#options" class="modal-close"><?php echo __("Options"); ?></a></li>
-						<li><a href="#collaborators" class="modal-close"><?php echo __("Collaborators"); ?></a></li>
-					</ul>
+					<ul class="filters-primary">
+						<?php foreach ($nav as $item): ?>
+						<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
+							<a href="<?php echo $bucket_base_url.$item['url']; ?>">
+								<?php echo $item['label'];?>
+							</a>
+						</li>
+						<?php endforeach; ?>
 				</div>
 			</div>
 		</section>
