@@ -213,7 +213,7 @@ $(function() {
 			</div>
 		</div>
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary">Add channel</a>				
+			<a href="#" class="button-submit button-primary"><span>Add channel</span></a>				
 		</div>					
 	</div>
 </script>

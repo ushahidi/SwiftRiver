@@ -32,6 +32,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
+		sleep(5);
 
 		switch ($this->request->method())
 		{

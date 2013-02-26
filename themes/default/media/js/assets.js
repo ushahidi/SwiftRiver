@@ -457,8 +457,6 @@
 			"click .modal-toolbar a.button-submit": "doCreateRiver",
 		},
 		
-		isFetching: false,
-		
 		initialize: function(options) {
 			this.template = _.template($("#create-river-modal-template").html());
 			this.model = new River();
@@ -475,11 +473,16 @@
 			var description = this.$('input[name=river_description]').val();
 			var isPublic = Boolean(this.$('select[name=public]').val());
 			
-			if (!riverName.length || this.isFetching)
+			var view = this;
+			if (!riverName.length || view.isFetching)
 				return false;
 			
-			this.isFetching = true;
-			var view = this;
+			view.isFetching = true;
+			var button = this.$(".button-submit");
+			var originalButton = button.clone();
+			var t = setTimeout(function() {
+				button.children("span").html("<em>Creating river</em>").append(loading_image_squares);
+			}, 500);
 				
 			// Disable form elements	
 			this.$("input,select").attr("disabled", "disabled");
@@ -489,7 +492,13 @@
 				description: description,
 				public: isPublic,
 			},{
-				error: function() {
+				error: function(model, response) {
+					if (response.status == 400) {
+						showFailureMessage("A river with the name '" + riverName + "' already exists.");
+					} else {
+						showFailureMessage("There was a problem creating the river. Try again later.");
+					}
+					
 					view.$("input,select").removeAttr("disabled");
 				},
 				success: function(model) {
@@ -497,6 +506,7 @@
 				},
 				complete: function() {
 					view.isFetching = false;
+					button.replaceWith(originalButton);
 				}
 			});
 			return false;

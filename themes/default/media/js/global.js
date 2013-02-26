@@ -406,7 +406,7 @@ function showSuccessMessage(message, options) {
 }
 
 function showFailureMessage(message, options) {
-	showSysMessage("failure", "Failure.", message, options);
+	showSysMessage("failure", "Failure", message, options);
 }
 
 
