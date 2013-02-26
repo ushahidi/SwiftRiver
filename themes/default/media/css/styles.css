@@ -3371,10 +3371,11 @@ hgroup.page-title a.button-follow {
 #content .drops article.drop,
 #content .photos article.drop {
    float: left;
+   margin: 7px 1.021666667% 10px;
 }
 
 #content .drops article.drop {
-   width: 28.25%;
+   width: 31.25%;
 }
 
 article.drop ul.score-drop li.remove {
