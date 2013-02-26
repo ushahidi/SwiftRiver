@@ -4,15 +4,17 @@
 			<h1><?php print $page_title; ?></h1>
 		</div>
 		<div class="page-action col_3">
-			<?php if($owner): ?>
+			<?php if ($owner): ?>
 				<a href="<?php echo $settings_url ?>" class="button button-white settings"><span class="icon-cog"></span></a>
 			<?php endif; ?>
 			<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
-			<!-- ELSE IF: User follows this river
-			<a href="#" class="button-follow selected button-primary"><i class="icon-checkmark"></i>Following</a>
-			! ELSE
-			<a href="#" class="button-follow button-primary"><i class="icon-checkmark"></i>Follow</a>
-			-->				
+
+			<?php if (isset($follow_button)): ?>
+			<span class="button-follow" id="follow-button">
+				<?php echo $follow_button; ?>
+			</span>
+			<?php endif; ?>
+
 		</div>
 	</div>
 </hgroup>

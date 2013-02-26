@@ -174,7 +174,7 @@ class SwiftRiver_Client {
 			else if ($response['code'] != 200)
 			{
 				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-				throw new SwiftRiver_API_Exception_Unknown();
+				throw new SwiftRiver_API_Exception_Unknown($response['result']);
 			}
 		
 			return $response['result'];		

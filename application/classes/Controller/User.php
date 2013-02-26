@@ -126,7 +126,7 @@ class Controller_User extends Controller_Swiftriver {
 					throw new HTTP_Exception_400();
 				}
 				
-				$response = $this->riverService->create_river_from_array($river_array);
+				$response = $this->river_service->create_river_from_array($river_array);
 				
 				echo json_encode($response);
 			break;

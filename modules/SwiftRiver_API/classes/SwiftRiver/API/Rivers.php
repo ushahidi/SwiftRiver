@@ -166,4 +166,48 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 
 		return $this->put('/rivers/'.$river_id.'/channels/'.$channel_id, $request_body);
 	}
+	
+	/**
+	 * @param  int
+	 * @param  int
+	 * @return bool
+	 */
+	public function is_follower($river_id, $account_id)
+	{
+		try
+		{
+			$this->get('/rivers/'.$river_id.'/followers', array('follower' => $account_id));
+		}
+		catch (SwiftRiver_API_Exception_NotFound $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds the account specified in $account_id to the list of followers
+	 * for the river specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 */
+	public function add_follower($river_id, $account_id)
+	{
+		$this->put('/rivers/'.$river_id.'/followers/'.$account_id);
+	}
+	
+	/**
+	 * Removes the account specified in $account_id from the list of followers
+	 * for the river specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 */
+	public function delete_follower($river_id, $account_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/followers/'.$account_id);
+	}
 }

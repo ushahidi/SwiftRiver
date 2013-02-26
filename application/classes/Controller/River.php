@@ -55,10 +55,11 @@ class Controller_River extends Controller_Drop_Base {
 		$action = $this->request->action();
 		
 		// Find the matching river from the visited account's rivers.
-		foreach($this->visited_account['rivers'] as $river) {
+		foreach($this->visited_account['rivers'] as $river)
+		{
 			if (URL::title($river['name']) == $river_name_url)
 			{
-				$this->river = $this->riverService->get_river_by_id($river['id'], $this->user);
+				$this->river = $this->river_service->get_river_by_id($river['id'], $this->user);
 			}
 		}
 		
@@ -71,7 +72,7 @@ class Controller_River extends Controller_Drop_Base {
 		if ($this->river)
 		{					
 			$this->owner = $this->river['is_owner'];
-			$this->collaborator = $this->river['subscribed'];
+			$this->collaborator = $this->river['collaborator'];
 			$this->public = (bool) $this->river['public'];
 			
 			// If this river is not public and no ownership...
@@ -82,7 +83,7 @@ class Controller_River extends Controller_Drop_Base {
 				$this->redirect($this->dashboard_url, 302);
 			}
 
-			$this->river_base_url = $this->riverService->get_base_url($this->river);
+			$this->river_base_url = $this->river_service->get_base_url($this->river);
 			$this->settings_url = $this->river_base_url.'/settings';
 
 			// Navigation Items
@@ -99,7 +100,6 @@ class Controller_River extends Controller_Drop_Base {
 			$this->template->header->title = $this->page_title;
 
 			$this->template->content = View::factory('pages/river/layout')
-				->bind('river', $this->river)
 				->bind('droplets_view', $this->droplets_view)
 				->bind('river_base_url', $this->river_base_url)
 				->bind('settings_url', $this->settings_url)
@@ -108,21 +108,37 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('user', $this->user)
 				->bind('nav', $this->nav)
 				->bind('active', $this->active)
-				->bind('page_title', $this->page_title);
-			$this->template->content->is_collaborator = $this->collaborator;
-			
-			// Channels
-			$this->template->content->channels_config = json_encode(Swiftriver_Plugins::channels());
-			$this->template->content->channels = json_encode($this->river['channels']);
-			$this->template->content->channels_base_url = $this->river_base_url.'/settings/channels/options';
+				->bind('page_title', $this->page_title)
+				->bind('follow_button', $follow_button);
+
+			$view_data = array(
+				'channels_config' => json_encode(Swiftriver_Plugins::channels()),
+				'channels' => json_encode($this->river['channels']),
+				'channels_base_url' => $this->river_base_url.'/settings/channels/options',
+				'river' => $this->river
+			);
+
+			$this->template->content->set($view_data);
+
 			$this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
 			
+			// Show the follow button?
 			if ( ! $this->owner)
 			{
-				// $follow_button = View::factory('template/follow');
-				// 				$follow_button->data = json_encode($this->river->get_array($this->user, $this->user));
-				// 				$follow_button->action_url = URL::site().$this->visited_account->account_path.'/river/rivers/manage';
-				// 				$this->template->content->follow_button = $follow_button;
+				$is_following = $this->river_service->is_follower($this->river['id'], $this->user['id']);
+
+				$river_data = json_encode(array(
+					'id' => $this->river['id'],
+					'name' => $this->river['name'],
+					'type' => 'river',
+					'following' => $is_following
+				));
+
+				$follow_button = View::factory('template/follow')
+					->bind('data', $river_data)
+					->bind('action_url', $action_url);
+					
+				$action_url = URL::site($this->river['url'].'/manage');
 			}
 		}
 	}
@@ -135,10 +151,6 @@ class Controller_River extends Controller_Drop_Base {
 		// Get the id of the current river
 		$river_id = $this->river['id'];
 
-		// Cookies to help determine the search options to display
-		Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'river');
-		Cookie::set(Swiftriver::COOKIE_SEARCH_ITEM_ID, $river_id);
-				
 		// The maximum droplet id for pagination and polling
 		$max_droplet_id = $this->river['max_drop_id'];
 
@@ -146,7 +158,7 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->riverService->get_drops($river_id, $max_droplet_id, 1, 20, $filters);
+		$droplets_array = $this->river_service->get_drops($river_id, $max_droplet_id, 1, 20, $filters);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -271,7 +283,7 @@ class Controller_River extends Controller_Drop_Base {
 					{
 						try 
 						{
-							$droplets = $this->riverService->get_drops_since($this->river['id'], $since_id, 20, $filters);
+							$droplets = $this->river_service->get_drops_since($this->river['id'], $since_id, 20, $filters);
 							
 						} 
 						catch (Swiftriver_API_Exception_NotFound $e)
@@ -281,7 +293,7 @@ class Controller_River extends Controller_Drop_Base {
 					}
 					else
 					{
-						$droplets = array_reverse($this->riverService->get_drops($this->river['id'], $max_id, $page, 20, $filters));
+						$droplets = array_reverse($this->river_service->get_drops($this->river['id'], $max_id, $page, 20, $filters));
 					}
 				}				
 				
@@ -453,77 +465,29 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					throw new HTTP_Exception_403();
 				}
-				$river_array = json_decode($this->request->body(), TRUE);
-				$river_orm = ORM::factory('River', $river_array['id']);
 				
-				if ( ! $river_orm->loaded())
+				$river_id = intval($this->request->param('id', 0));
+				$request_body = json_decode($this->request->body(), TRUE);
+				
+				if ($request_body['following'])
 				{
-					throw new HTTP_Exception_404();
+					$this->river_service->add_follower($river_id, $this->user['id']);
+				}
+				elseif ( ! $request_body['following'])
+				{
+					$this->river_service->delete_follower($river_id, $this->user['id']);
 				}
 
-				if ( ! $river_array['subscribed'])
-				{
-					// Unsubscribe					
-					if ($this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->remove('river_subscriptions', $river_orm);
-					}
-					
-					// Stop collaborating
-					$collaborator_orm = $river_orm->river_collaborators
-					                        ->where('user_id', '=', $this->user->id)
-					                        ->where('collaborator_active', '=', 1)
-					                        ->find();
-					if ($collaborator_orm->loaded())
-					{
-						$collaborator_orm->delete();
-						$river_array['is_owner'] = FALSE;
-						$river_array['collaborator'] = FALSE;
-					}
-
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				else
-				{
-					// Subscribing				
-					if ( ! $this->user->has('river_subscriptions', $river_orm))
-					{
-						$this->user->add('river_subscriptions', $river_orm);
-						Model_User_Action::create_action($this->user->id, 'river', 'follow', $river_orm->id);
-					}
-
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				// Return updated bucket
-				echo json_encode($river_array);
 			break;
 
 			case "DELETE":
-				$river_id = intval($this->request->param('id', 0));
-				$river_orm = ORM::factory('River', $river_id);
-				
-				if ($river_orm->loaded())
-				{
-					if ( ! $river_orm->is_creator($this->user->id))
-					{
-						// Only creator can delete
-						throw new HTTP_Exception_403();
-					}
-					
-					$river_orm->delete();
-					Cache::instance()->delete('user_rivers_'.$this->user->id);
-				}
-				else
-				{
-					throw new HTTP_Exception_404();
-				}
 			break;
 		}
 		
 		// Force refresh of cached rivers
 		if (in_array($this->request->method(), array('DELETE', 'PUT', 'POST')))
 		{
-			Cache::instance()->delete('user_rivers_'.$this->user->id);
+			// Cache::instance()->delete('user_rivers_'.$this->user->id);
 		}
 	}
 	

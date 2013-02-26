@@ -15,11 +15,15 @@
 
 class Service_River {
 	
-	private $api = NULL;
+	/**
+	 * SwiftRiver_API_River object
+	 * @var SwiftRiver_API_River
+	 */
+	private $rivers_api = NULL;
 	
 	public function __construct($api)
 	{
-		$this->api = $api;
+		$this->rivers_api = $api->get_rivers_api();
 	}
 	
 	/**
@@ -86,9 +90,8 @@ class Service_River {
 	 */
 	public function get_river_by_id($id, $querying_account)
 	{
-		$river = $this->api->get_rivers_api()->get_river_by_id($id);
-		
-		
+		$river = $this->rivers_api->get_river_by_id($id);
+
 		return $this->get_array($river, $querying_account);
 	}
 	
@@ -111,7 +114,7 @@ class Service_River {
 	 */
 	public function create_river_from_array($river_array) 
 	{
-		$river_array = $this->api->get_rivers_api()->create_river(
+		$river_array = $this->rives_api->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
 			$river_array['public']
@@ -132,7 +135,7 @@ class Service_River {
 	 */
 	public function update_river($river_id, $river_name, $river_description, $river_public)
 	{
-		return $this->api->get_rivers_api()->update_river($river_id, $river_name, $river_description, $river_public);
+		return $this->rivers_api->update_river($river_id, $river_name, $river_description, $river_public);
 	}
 	
 	/**
@@ -143,7 +146,7 @@ class Service_River {
 	 */
 	public function delete_channel($river_id, $channel_id)
 	{
-		$this->api->get_rivers_api()->delete_channel($river_id, $channel_id);
+		$this->rivers_api->delete_channel($river_id, $channel_id);
 	}
 	
 	/**
@@ -155,7 +158,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->api->get_rivers_api()->create_channel(
+		$channel_array = $this->rivers_api->create_channel(
 					$river_id, 
 					$channel_array["channel"], 
 					json_encode($channel_array["parameters"])
@@ -176,7 +179,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->api->get_rivers_api()->update_channel(
+		$channel_array = $this->rivers_api->update_channel(
 					$river_id, 
 					$channel_id, 
 					$channel_array["channel"], 
@@ -201,7 +204,7 @@ class Service_River {
 	 */
 	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count, $filters);
+		return $this->rivers_api->get_drops($id, $max_id, $page, $count, $filters);
 	}
 	
 	/**
@@ -213,6 +216,36 @@ class Service_River {
 	 */
 	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
+		return $this->rivers_api->get_drops_since($id, $since_id, $count, $filters);
 	}
+	
+	/**
+	 * Checks whether the account specified in $account_id is following the river
+	 * specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function is_follower($river_id, $account_id)
+	{
+		return $this->rivers_api->is_follower($river_id, $account_id);
+	}
+	
+	/**
+	 * Adds an account to the list of river followers
+	 */
+	public function add_follower($river_id, $account_id)
+	{
+		$this->rivers_api->add_follower($river_id, $account_id);
+	}
+	
+	/**
+	 * Deletes an account from the list of river followers
+	 */
+	public function delete_follower($river_id, $account_id)
+	{
+		$this->rivers_api->delete_follower($river_id, $account_id);
+	}
+
 }
