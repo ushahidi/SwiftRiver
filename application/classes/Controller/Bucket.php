@@ -79,7 +79,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('discussion_url', $discussion_url)
 			->bind('owner', $this->owner)
 			->bind('drop_count', $drop_count)
-			->bind('photos_drop_count', $photos_drop_count);
+			->bind('photos_drop_count', $photos_drop_count)
+			->bind('follow_button', $follow_button);
 
 		$this->template->content->is_collaborator = FALSE;
 		$this->template->content->anonymous = $this->anonymous;
@@ -114,6 +115,29 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
 		$discussion_url = $this->bucket_base_url.'/discussion';
+		
+		// Follow button
+		if ( ! $this->owner)
+		{
+			// Is the current user following the visited bucket?
+			$is_following = $this->bucket_service->is_bucket_follower($this->bucket['id'], 
+				$this->user['id']);
+
+			// Bucket data
+			$bucket_data = json_encode(array(
+				'id' => $this->bucket['id'],
+				'name' => $this->bucket['name'],
+				'type' => 'bucket',
+				'following' => $is_following
+			));
+			
+			// xHR endpoint for follow/unfollow actions
+			$action_url = URL::site($this->bucket['url'].'/manage');
+
+			$follow_button = View::factory('template/follow')
+				->bind('data', $bucket_data)
+				->bind('action_url', $action_url);
+		}
 	}
 	
 	/**
@@ -270,6 +294,37 @@ class Controller_Bucket extends Controller_Drop_Base {
 				// 	Swiftriver_Mail::send($collaborator_orm->user->email, 
 				// 						  $subject, $text->render(), $html->render());
 				// }
+			break;
+		}
+	}
+	
+	/**
+	 * Endpoint for bucket follow/unfollow actions
+	 */
+	public function action_manage()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+
+		switch ($this->request->method())
+		{
+			case "PUT";
+				$request_body = json_decode($this->request->body(), TRUE);
+			
+				$bucket_id = intval($this->request->param('id', 0));
+
+				// Follow/unfollow
+				if ($request_body['following'])
+				{
+					// Follow bucket
+					$this->bucket_service->add_follower($bucket_id, $this->user['id']);
+				}
+				elseif ( ! $request_body['following'])
+				{
+					// Unfollow bucket
+					$this->bucket_service->delete_follower($bucket_id, $this->user['id']);
+				}
+
 			break;
 		}
 	}

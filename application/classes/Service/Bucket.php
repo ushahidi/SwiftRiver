@@ -212,6 +212,42 @@ class Service_Bucket {
 		}
 
 		return $bucket;
-
+	}
+	
+	/**
+	 * Verifies whether the account specified in $account_id is following
+	 * the bucket specified in $id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function is_bucket_follower($bucket_id,  $account_id)
+	{
+		return $this->buckets_api->is_bucket_follower($bucket_id, $account_id);
+	}
+	
+	/**
+	 * Adds a user to the list of bucket followers
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function add_follower($bucket_id, $account_id)
+	{
+		return $this->buckets_api->add_follower($bucket_id, $account_id);
+	}
+	
+	/**
+	 * Removes a user from the list of bucket followers
+	 *
+	 * @param int bucket_id
+	 * @param int account_id
+	 * @return bool
+	 */
+	public function delete_follower($bucket_id, $account_id)
+	{
+		return $this->buckets_api->delete_follower($bucket_id, $account_id);
 	}
 }

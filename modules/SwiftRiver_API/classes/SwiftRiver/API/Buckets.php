@@ -110,4 +110,73 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 		}
 		return $this->put("/buckets/".$bucket_id, $parameters);
 	}
+
+	/**
+	 * Verifies whether the account specified in $account_id is following
+	 * the bucket specified in $id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */	
+	public function is_bucket_follower($bucket_id, $account_id)
+	{
+		try
+		{
+			$result = $this->get('/buckets/'.$bucket_id.'/followers', array('follower' => $account_id));
+		}
+		catch (SwiftRiver_API_Exception_NotFound $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds the account in $account_id to the list of followers for
+	 * the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function add_follower($bucket_id, $account_id)
+	{
+		try
+		{
+			$this->put('/buckets/'.$bucket_id.'/followers/'.$account_id);
+		}
+		catch (SwiftRiver_API_Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Removes the account in $account_id from the list of followers for
+	 * the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function delete_follower($bucket_id, $account_id)
+	{
+		try
+		{
+			$this->delete('/buckets/'.$bucket_id.'/followers/'.$account_id);
+		}
+		catch (SwiftRiver_API_Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
 }

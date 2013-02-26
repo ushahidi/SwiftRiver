@@ -560,7 +560,6 @@
 					}
 				}
 			}, function() {
-					
 				showSysMessage("failure", "Failure", "Oops, unable to " + action + ". Try again later.", false);
 			}, function() {
 				clearTimeout(t);
