@@ -1,4 +1,4 @@
-<hgroup class="page-title cf">
+	<hgroup class="page-title cf">
 	<div class="center">
 		<div class="col_9">
 			<h1>
@@ -14,8 +14,8 @@
 		</div>
 		<?php if ($bucket['is_owner']): ?>
 		<div class="page-action col_3">
-			<a href="<?php echo $discussion_url; ?>" class="button button-white-settings"><span class="icon-comment"></span></a>
-			<a href="<?php echo $settings_url; ?>" class="button button-white-settings"><span class="icon-cog"></span></a>
+			<a href="<?php echo $discussion_url; ?>" class="button button-white settings"><span class="icon-comment"></span></a>
+			<a href="<?php echo $settings_url; ?>" class="button button-white settings"><span class="icon-cog"></span></a>
 		</div>		
 		<?php endif; ?>
 	</div>

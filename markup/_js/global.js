@@ -95,8 +95,15 @@ $(document).ready(function() {
 	}
 	$('a.modal-trigger').live('click', function(e) {
 		var urlModal = $(this).attr('href');
+		var hashModal = $(this).prop('hash');		
 		$('#modal-container div.modal-window').load(urlModal + ' .modal', function(){
-			saveToolbar();
+			if (hashModal != '') {
+				$('#modal-viewport').addClass('view-secondary');
+				$('#modal-secondary ' + hashModal).fadeIn('fast');
+				$('#modal-primary > div').fadeOut('fast');
+				$('#modal-container').scrollTop(0,0);		
+				backModal();			
+			}
 		});
 		$('#modal-container').fadeIn('fast').addClass('visible');
 		$('body').addClass('noscroll');

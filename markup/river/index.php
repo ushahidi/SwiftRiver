@@ -4,7 +4,7 @@
 ?>
 
 	<!-- SYSTEM MESSAGE //-->
-	<article id="system-message" class="failure">
+	<article class="system-message failure">
 		<div class="center">
 			<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
 			<p><strong>Confirmation.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
@@ -42,7 +42,7 @@
 						</div>
 						<ul class="filters-primary">
 							<li class="active"><a href="#"><span class="total">204</span> Drops</a></li>
-							<li><a href="view-list.php" class="system-message">List</a></li>
+							<li><a href="view-list.php">List</a></li>
 							<li><a href="view-photos.php">Photos</a></li>
 							<li><a href="#">Map</a></li>
 						</ul>
@@ -86,15 +86,12 @@
 			</section>
 			
 			<div id="stream" class="col_9">
-
-				<!-- STREAM MESSAGE //
+				<!--// IF: Channels, but no drops //
 				<article class="stream-message">
-					<p><strong>Message.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+					<h1>No drops, yet.</h1>
+					<p>SwiftRiver is trying to add drops from your channels. It's best to either wait, <a href="/markup/_modals/settings-channels.php" class="modal-trigger">adjust your channels' parameters</a> or change the filters you've applied to your river.</p>
 				</article>
-				<article class="stream-message waiting">
-					<p><em>Loading more drops</em></p>
-				</article>
-				// END STREAM MESSAGE -->				
+				// ENDIF //-->			
 
 				<article class="drop base">				
 					<h1><a href="/markup/drop/" class="zoom-trigger">This are terrorists in the making and should be crashed immediately</a></h1>
@@ -408,9 +405,14 @@
 							<p class="drop-source-channel"><a href="#"><span class="icon-rss"></span>via RSS</a></p>
 						</div>
 					</section>
-				</article>				
-
+				</article>
 			</div>
+
+			<!--// IF: Loading more drops //-->
+			<article class="stream-message waiting col_9">
+				<p><em>Loading more drops</em></p>
+			</article>
+			<!--// END STREAM MESSAGE -->
 		</div>
 	</div>
 

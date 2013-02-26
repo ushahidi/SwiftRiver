@@ -184,7 +184,8 @@
 			Backbone.View.prototype.constructor.apply(this, arguments);
 
 			this.delegateEvents({
-				"click .empty-message a": "showAddBucketsModal"
+				"click .empty-message a": "showAddBucketsModal",
+				"click li.add a": "showAddAsset"
 			});
 		},
 
@@ -263,6 +264,17 @@
 				modalShow(new HeaderBucketsModal({collection: bucketList}).render().el);
 				return false;
 			}
+		},
+		
+		showAddAsset: function() {
+			var view = null;
+			if (this.collection instanceof BucketList) {
+				view = new CreateBucketModalView({listView: this});
+			} else if (this.collection instanceof RiverList) {
+				view = new CreateRiverModalView();
+			}
+			
+			this.$("#modal-secondary").html(view.render().el);
 		}
 	});
 
@@ -271,11 +283,6 @@
 
 		constructor: function(message, callback, context) {
 			BaseAssetListView.prototype.constructor.apply(this, arguments);
-
-			this.delegateEvents({
-				"click .modal-toolbar a.button-submit": "saveNewBucket",
-				"submit": "saveNewBucket",
-			});
 		},
 
 		isPageFetching: false,
@@ -303,80 +310,7 @@
 		renderFollowing: function(view) {
 			this.$(".following").append(view.render().el);
 			this.$(".following-title").show();
-		},
-
-		saveNewBucket: function() {
-			if (!(this.collection instanceof BucketList))
-				return;
-
-			var bucketName = $.trim(this.$("#create-bucket input[name=bucket_name]").val());
-
-			if (!bucketName.length || this.isPageFetching)
-				return false;
-
-			this.isPageFetching = true;
-
-			// First check if the bucket exists
-			var bucket = this.collection.find(function(bucket) { 
-				return bucket.get('name').toLowerCase() == bucketName.toLowerCase() 
-			});
-
-			if (bucket) {
-				this.onSaveNewBucket(bucketCopy);
-				bucketCopy.getView(this).setSelected();
-
-				// Scroll to the bucket in the list
-				var scrollOffset = bucket.getView(this).$el.offset().top - this.$(this.listSelector).offset().top;
-				// Scroll only if the bucket is outside the view
-				if (scrollOffset < 0 || scrollOffset > this.$(this.listSelector).height()) {
-					this.$(this.listSelector).animate({
-						scrollTop: this.$(this.listSelector).scrollTop() + scrollOffset
-					}, 600);
-				}
-
-				this.$("#create-bucket input[name=bucket_name]").val("");
-				this.isPageFetching = false;				
-
-				return false;
-			}
-
-			var loading_msg = window.loading_message.clone();
-			var create_el = this.$("#create-bucket .modal-field").clone();
-			this.$("#create-bucket .modal-field").replaceWith(loading_msg);
-			
-			bucket = new Bucket();
-			bucket.urlRoot = site_url + logged_in_account_path + "/buckets";
-			bucket.set("name", bucketName);
-			
-			var view = this;
-			this.collection.create(bucket, {
-				wait: true,
-				complete: function() {
-					view.isPageFetching = false;
-					loading_msg.replaceWith(create_el);
-				},
-				error: function(model, response) {
-					var message = "";
-					if (response.status == 400) {
-						errors = JSON.parse(response.responseText)["errors"];
-						_.each(errors, function(error) { message += "<li>" + error + "</li>"; });
-					} else {
-						message = "An error occurred while saving the bucket. Try again later.";
-					}
-					flashMessage(view.$(".system_error"), message);
-				},
-				success: function() {
-					view.onSaveNewBucket(bucket);
-					bucket.getView(view).setSelected();
-					
-					view.$(".modal-back").trigger("click");
-					create_el.find("input[name=bucket_name]").val("");
-				}
-			});
-
-			return false;
 		}
-
 	});
 
 	// Single river or bucket view in the header modal
@@ -430,15 +364,90 @@
 		},
 	});
 
-	var HeaderBucketsModal = Assets.HeaderBucketsModal = HeaderAssetsModal.extend({
+	// 
+	// View for creating a new bucket via the modal dialog
+	// 
+	var CreateBucketModalView = window.CreateBucketModalView = Backbone.View.extend({
 		
+		tagName: "div",
+		
+		className: "modal-segment",
+		
+		events: {
+			"click .modal-toolbar a.button-submit": "save",
+			"submit": "save",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#create-bucket-modal-template").html());
+			if (options && options.listView !== undefined) {
+				this.listView = options.listView;
+			}
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		save: function() {
+			var bucketName = $.trim(this.$("#bucket_name").val());
+			if (!bucketName) {
+				// TODO: Notify user that they need to provide a bucket name
+				return false;
+			}
+			
+			// Check if the bucket exists in the list of buckets owned by
+			// the current user
+			var bucket = Assets.bucketList.find(function(bucket) { 
+				return bucket.get('name').toLowerCase() == bucketName.toLowerCase();
+			});
+
+			if (bucket) {
+				// TODO: Show failure system message
+					
+				this.$("#bucket_name").val("");
+				return false;
+			}
+
+			bucket = new Bucket({name: bucketName});
+
+			var context = this;
+			Assets.bucketList.create(bucket, {
+				wait: true,
+				error: function(model, response){
+					// Show failure message
+				},
+				success: function() {
+					// Show success message
+
+					if (context.listView) {
+						context.listView.onSaveNewBucket(bucket);
+						bucket.getView(context.listView).setSelected();
+					}
+
+					context.$("a.modal-back").trigger("click");
+					context.$("#bucket_name").val("");
+				}
+			});
+
+			return false;
+		}
+	});
+
+	// 
+	// Buckets modal view in the header
+	// 
+	var HeaderBucketsModal = Assets.HeaderBucketsModal = HeaderAssetsModal.extend({
+
 		initialize: function(options) {
 			this.template = _.template($("#header-buckets-modal-template").html());
 			HeaderAssetsModal.prototype.initialize.call(this, options);
-		}
+		},
+		
 	});
 	
-	var CreateRiverModalView = Backbone.View.extend({
+	var CreateRiverModalView = window.CreateRiverModalView = Backbone.View.extend({
 		
 		tagName: "div",
 
@@ -452,6 +461,8 @@
 		
 		initialize: function(options) {
 			this.template = _.template($("#create-river-modal-template").html());
+			this.model = new River();
+			this.model.urlRoot = site_url + logged_in_account_path + "/rivers";
 		},
 		
 		render: function() {
@@ -495,26 +506,11 @@
 
 	var HeaderRiversModal  = Assets.HeaderRiversModal = HeaderAssetsModal.extend({
 		
-		constructor: function(message, callback, context) {
-			Backbone.View.prototype.constructor.apply(this, arguments);
-
-			this.delegateEvents({
-				"click li.add a": "showCreateRiver",
-			});
-		},
-		
 		initialize: function(options) {
 			this.template = _.template($("#header-rivers-modal-template").html());
 			HeaderAssetsModal.prototype.initialize.call(this, options);
-		},
-		
-		showCreateRiver: function() {
-			var river = new River();
-			river.urlRoot =  site_url + logged_in_account_path + "/rivers";
-			
-			var view = new CreateRiverModalView({model: river});		
-			this.$('#modal-secondary').html(view.render().el);
 		}
+		
 	});
 	
 	// View for the Follow Button

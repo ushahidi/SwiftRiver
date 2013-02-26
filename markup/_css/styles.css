@@ -66,6 +66,14 @@ header.toolbar .label {
 
 /* --------------------------- BUTTON */
 
+a[class^="button-"],
+a[class*="button-"] {
+   transition: .3s all ease;
+   -moz-transition: .3s all ease;
+   -webkit-transition: .3s all ease;
+   -o-transition: .3s all ease;
+}
+
 a.button-primary {
    display: inline-block;
    color: #fff;
@@ -256,6 +264,11 @@ ul.dual-buttons li a span[class^="icon-"] strong {
    background: #fff;
    padding: 2px 3px;
    margin-left: -10px;
+}
+
+a[class^="button-"] em {
+   font-weight: normal;
+   margin-right: 1em;
 }
 
 /* --------------------------- ICONS */
@@ -600,6 +613,7 @@ form .field .label {
    float: right;
    color: #999;
    font-size: 0.8em;
+   margin-left: 1em;
 }
 
 .view-table li .remove:hover {
@@ -639,6 +653,19 @@ form .field .label {
    cursor: pointer;
    color: #2195ae;
    background: #eeeeee;
+}
+
+.view-table li .select-box {
+   float: right;
+}
+
+.view-table li .select.select-box {
+   width: auto;
+   padding: 0.5em;
+}
+
+.view-table li .select-box select {
+   margin-left: 0.3em;
 }
 
 .view-table li.selected {
@@ -958,6 +985,10 @@ header.toolbar ul.user-menu > li.user a:hover {
    padding: 1.3em 0;
 }
 
+#modal-container .system-message {
+   position: absolute;
+}
+
 .system-message.success {
    border-bottom: 1px solid #b5daba;
    background-color: #e2f1e4;
@@ -966,6 +997,10 @@ header.toolbar ul.user-menu > li.user a:hover {
 .system-message.failure {
    border-bottom: 1px solid #dfc2c2;
    background-color: #efd9d9;
+}
+
+.system-message p {
+   padding: 0 1em;
 }
 
 .system-message .system-message-close {
@@ -1002,10 +1037,37 @@ header.toolbar ul.user-menu > li.user a:hover {
    margin-top: 0.8em;
 }
 
+#stream .stream-message {
+   margin: 0.8em 3.125%;
+}
+
 .stream-message.waiting {
    border: 2px solid #3faec0;
-   padding: 1em;
+   padding: 1em 0;
    -webkit-animation: border-pulsate 2s infinite;
+   margin-top: 1em;
+   margin-bottom: 1em;
+}
+
+.stream-message h1 {
+   color: #444;
+}
+
+.stream-message p {
+   padding: 1em 0;
+}
+
+.stream-message ul {
+   width: ;
+}
+
+.stream-message ul li {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background-color: #fff;
+   padding: 0.5em;
+   margin: 0.5em 0;
 }
 
 /* --------------------------- PAGE TITLE */
@@ -2568,6 +2630,7 @@ div#zoom-container .drop-discussion article.drop {
 }
 
 #modal-viewport .modal-view {
+   position: relative;
    float: left;
    width: 50%;
    transition: .3s all ease;
@@ -2763,6 +2826,10 @@ article.modal .modal-body .modal-search-field .button-submit {
    right: 0.9em;
    color: #444;
    font-size: 24px;
+}
+
+article.modal .modal-body .modal-search-field .button-submit:hover {
+   text-decoration: none;
 }
 
 article.modal .modal-body .modal-search-results {
@@ -3373,6 +3440,14 @@ article.drop ul.score-drop li.remove {
 article.drop ul.score-drop li.remove a {
    box-shadow: -1px 1px 3px rgba(0,0,0,.1);
    padding: 0.6em 0.5em;
+}
+
+#stream .stream-message {
+   margin: 0.8em 1.041666667%;
+}
+
+.stream-message.waiting {
+   float: right;
 }
 
 /* ---- DROP: VIEW FULL */

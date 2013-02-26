@@ -111,6 +111,9 @@
 			// buckets.push, the Backbone JS reference will remain the same - hence
 			// the change event won't be triggered
 			buckets = _.clone(this.get("buckets"));
+			if (buckets == null) {
+				buckets = [];
+			}
 			
 			bucketId = changeBucket.get("id");
 			// The task to be performed - add/remove from bucket
@@ -664,7 +667,8 @@
 			if (!this.model.isInBucket(bucket)) {
 				this.model.setBucket(bucket);
 			}
-		}		
+		}
+
 	});
 	
 	// New drops alert message

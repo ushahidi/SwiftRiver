@@ -7,11 +7,11 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
- * @subpackage  Exceptions
+ * @package     SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category    Exception
  * @copyright   Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
+ * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-class Swiftriver_API_Exception_Authorization extends Exception {
+class SwiftRiver_API_Exception_Authorization extends Exception {
 }
