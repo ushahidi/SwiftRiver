@@ -232,11 +232,10 @@ class Service_Bucket {
 	 *
 	 * @param  int bucket_id
 	 * @param  int account_id
-	 * @return bool
 	 */
 	public function add_follower($bucket_id, $account_id)
 	{
-		return $this->buckets_api->add_follower($bucket_id, $account_id);
+		$this->buckets_api->add_follower($bucket_id, $account_id);
 	}
 	
 	/**
@@ -244,10 +243,9 @@ class Service_Bucket {
 	 *
 	 * @param int bucket_id
 	 * @param int account_id
-	 * @return bool
 	 */
 	public function delete_follower($bucket_id, $account_id)
 	{
-		return $this->buckets_api->delete_follower($bucket_id, $account_id);
+		$this->buckets_api->delete_follower($bucket_id, $account_id);
 	}
 }

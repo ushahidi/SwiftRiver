@@ -140,21 +140,10 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 *
 	 * @param  int bucket_id
 	 * @param  int account_id
-	 * @return bool
 	 */
 	public function add_follower($bucket_id, $account_id)
 	{
-		try
-		{
-			$this->put('/buckets/'.$bucket_id.'/followers/'.$account_id);
-		}
-		catch (SwiftRiver_API_Exception $e)
-		{
-			Kohana::$log->add(Log::ERROR, $e->getMessage());
-			return FALSE;
-		}
-		
-		return TRUE;
+		$this->put('/buckets/'.$bucket_id.'/followers/'.$account_id);
 	}
 	
 	/**
@@ -163,20 +152,9 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 *
 	 * @param  int bucket_id
 	 * @param  int account_id
-	 * @return bool
 	 */
 	public function delete_follower($bucket_id, $account_id)
 	{
-		try
-		{
-			$this->delete('/buckets/'.$bucket_id.'/followers/'.$account_id);
-		}
-		catch (SwiftRiver_API_Exception $e)
-		{
-			Kohana::$log->add(Log::ERROR, $e->getMessage());
-			return FALSE;
-		}
-		
-		return TRUE;
+		$this->delete('/buckets/'.$bucket_id.'/followers/'.$account_id);
 	}
 }
