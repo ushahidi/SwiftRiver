@@ -1,6 +1,16 @@
 <article class="modal">
 	<div id="modal-viewport">
 		<div id="modal-primary" class="modal-view">
+
+		<!-- SYSTEM MESSAGE //-->
+		<article class="system-message failure">
+			<div class="center">
+				<a href="#" class="system-message-close"><span class="icon-cancel"></span></a>
+				<p><strong>Confirmation.</strong> Pig shank andouille, meatball salami pancetta corned beef.</p>
+			</div>
+		</article>
+		<!--// END SYSTEM MESSAGE -->		
+		
 			<div class="modal-title cf">
 				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
 				<h1>Channels</h1>

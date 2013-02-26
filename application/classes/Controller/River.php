@@ -146,7 +146,7 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->riverService->get_drops($river_id, $max_droplet_id);
+		$droplets_array = $this->riverService->get_drops($river_id, $max_droplet_id, 1, 20, $filters);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
@@ -271,7 +271,7 @@ class Controller_River extends Controller_Drop_Base {
 					{
 						try 
 						{
-							$droplets = $this->riverService->get_drops_since($this->river['id'], $since_id);
+							$droplets = $this->riverService->get_drops_since($this->river['id'], $since_id, 20, $filters);
 							
 						} 
 						catch (Swiftriver_API_Exception_NotFound $e)
@@ -281,7 +281,7 @@ class Controller_River extends Controller_Drop_Base {
 					}
 					else
 					{
-						$droplets = array_reverse($this->riverService->get_drops($this->river['id'], $max_id, $page));
+						$droplets = array_reverse($this->riverService->get_drops($this->river['id'], $max_id, $page, 20, $filters));
 					}
 				}				
 				
@@ -534,7 +534,7 @@ class Controller_River extends Controller_Drop_Base {
 	private function _get_filters()
 	{
 		$filters = array();
-		$parameters = array('tags', 'places', 'channel', 'start_date', 'end_date');
+		$parameters = array('keywords', 'places', 'channels', 'start_date', 'end_date');
 		
 		foreach ($parameters as $parameter)
 		{

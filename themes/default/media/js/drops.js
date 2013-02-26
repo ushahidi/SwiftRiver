@@ -715,6 +715,7 @@
 			
 			options.newDropsList.on('add', this.alertNewDrops, this);
 			options.newDropsList.on('reset', this.resetNewDropsAlert, this);
+			options.filters.on('change', this.filtersUpdated, this);
 		},
 		
 		make: function(tagName, attributes, text) {
@@ -919,8 +920,13 @@
 		},
 		
 		resetNewDropsAlert: function() {
-			this.$("article.stream-message.drops").fadeOut("slow").remove();
-		}
+			this.$("article.alert-message").fadeOut("slow").remove();
+		},
+		
+		getFilters: function() {
+			return this.options.filters;
+		},
+		
 	});
 
 	

@@ -812,9 +812,7 @@
 	var DroplistChannelView = Backbone.View.extend({
 		
 		tagName: "li",
-		
-		className: "active",
-		
+				
 		events: {
 			"click": "toggleChannel"
 		},
@@ -827,11 +825,47 @@
 				
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
+			
+			// Set class to active if this model is part of a drop filter
+			var model = this.model;
+			var filters = this.options.dropFilters;
+			var view = this;
+			if (filters.has("channels")) {
+				var channelFilters = filters.get("channels");
+				if (_.find(channelFilters, function(channelId) { return channelId == model.get("id"); })) {
+					view.$el.addClass("active");
+				}
+			}
+			
 			return this;	
 		},
 		
 		toggleChannel: function() {
 			this.$el.toggleClass("active");
+			
+			// Update the drop filter by adding this model's channel id to the filter
+			var model = this.model;
+			var filters = this.options.dropFilters;
+			if (filters.has("channels")) {
+				var channelFilters = filters.get("channels");
+				var newChannelFilters = [];
+				if (_.find(channelFilters, function(channelId) { return channelId == model.get("id"); })) {
+					// Removing a channel that is part of the filter
+					newChannelFilters = _.filter(channelFilters, function(channelId) {return channelId != model.get("id");});
+				} else {
+					// Adding a channel to the filter
+					newChannelFilters = _.union([model.get("id")], channelFilters);
+				}
+				
+				if (_.size(newChannelFilters) > 0) {
+					filters.set("channels", newChannelFilters);
+				} else {
+					filters.unset("channels");
+				}
+			} else {
+				filters.set("channels", [model.get("id")]);
+			}
+			
 			return false;
 		},
 		
@@ -858,7 +892,7 @@
 		},
 		
 		addChannel: function(channel) {
-			var view = new DroplistChannelView({model: channel});
+			var view = new DroplistChannelView({model: channel, dropFilters: this.options.dropFilters});
 			this.$(".filters-type-details ul").append(view.render().el);
 		},
 		

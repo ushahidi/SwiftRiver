@@ -1,24 +1,3 @@
-<script type="text/javascript">
-
-$(function() {
-	var channelsConfig = new Channels.ChannelsConfig();
-	channelsConfig.reset(<?php echo $channels_config; ?>);
-	Channels.channelList.reset(<?php echo $channels; ?>);	
-	
-	$('.filters-type-settings a').live('click', function () {
-		modalShow(new Channels.ChannelsModalView({
-			collection: Channels.channelList, 
-			config: channelsConfig,
-			baseUrl: "<?php echo $channels_base_url ?>"
-		}).render().el);
-		return false;
-	});
-	
-	new Channels.DroplistChannelsView({collection: Channels.channelList});
-});
-
-</script>
-
 <hgroup class="page-title cf">
 	<div class="center">
 		<div class="col_9">
@@ -93,6 +72,27 @@ $(function() {
 		<?php echo $droplets_view; ?>
 	</div>
 </div>
+
+<script type="text/javascript">
+$(function() {
+	var channelsConfig = new Channels.ChannelsConfig();
+	channelsConfig.reset(<?php echo $channels_config; ?>);
+	Channels.channelList.reset(<?php echo $channels; ?>);	
+	
+	$('.filters-type-settings a').live('click', function () {
+		modalShow(new Channels.ChannelsModalView({
+			collection: Channels.channelList, 
+			config: channelsConfig,
+			baseUrl: "<?php echo $channels_base_url ?>"
+		}).render().el);
+		return false;
+	});
+	
+	new Channels.DroplistChannelsView({
+		collection: Channels.channelList,
+		dropFilters: window.dropsView.getFilters()});
+});
+</script>
 
 <script type="text/template" id="channels-modal-template">
 	<div id="modal-viewport">

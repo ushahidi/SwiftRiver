@@ -6,7 +6,19 @@
 				<h1><i class="icon-bucket"></i>Buckets</h1>
 			</div>
 			
-			<div class="modal-body">			
+			<div class="modal-body">
+				<div class="base">
+					<div class="modal-search-field">
+						<input type="text" placeholder="Find a bucket..." />
+						<a href="#" class="button-submit"><span class="icon-search"></span></a>
+					</div>		
+					<div class="modal-search-results">
+						<ul class="view-table">
+							<li><a href="#">Bucket A</a></li>
+							<li><a href="#">Bucket B</a></li>
+						</ul>													
+					</div>
+				</div>
 				<div class="base">
 					<h2 class="label">Managing</h2>
 					<ul class="view-table">
