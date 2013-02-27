@@ -647,6 +647,7 @@ form .field .label {
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
+	border: 1px solid #eee;
 }
 
 .view-table li .select:hover {
@@ -656,7 +657,9 @@ form .field .label {
 }
 
 .view-table li .select-box {
-   float: right;
+   display: block;
+   float: none;
+   margin-top: 1em;
 }
 
 .view-table li .select.select-box {
@@ -665,7 +668,7 @@ form .field .label {
 }
 
 .view-table li .select-box select {
-   margin-left: 0.3em;
+   margin: 0 0.3em;
 }
 
 .view-table li.selected {
@@ -704,23 +707,24 @@ form .field .label {
    background-color: #c93425;
 }
 
-.view-table li.user img.avatar {
-   float: left;
-   width: 2.5em;
-   margin-right: 0.7em;
-}
-
-.view-table li.user {
-   line-height: 2.3em;
-}
-
 .view-table li.user.static {
    padding: 1em;
 }
 
-.view-table li.user .select {
-   margin-top: 0.5em;
+.view-table li.user img.avatar {
+   float: left;
+   width: 2.3em;
+   margin-right: 0.7em;
 }
+
+.view-table li.user > .label {
+   display: inline-block;
+   padding: 0.5em 0;
+}
+
+/*.view-table li.user .select {
+   margin-top: 0.5em;
+}*/
 
 .view-table img.metadata-media {
    max-width: 80%;
@@ -3286,6 +3290,16 @@ a.filters-trigger {
 
 .col_9 [class^="col_"], .col_9 [class*=" col_"] {
    margin: 0 1.4285714%;
+}
+
+.view-table li .select-box {
+   display: inline;
+   float: right;
+   margin-top: 0;
+}
+
+.view-table li.user > .label {
+   float: left;
 }
 
 header.toolbar .label {display: block;}
