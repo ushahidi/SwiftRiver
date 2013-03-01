@@ -105,7 +105,7 @@
 		},
 		
 		// Add/Remove a droplet from a bucket
-		setBucket: function(changeBucket) {
+		setBucket: function(changeBucket, success_callback, error_callback) {
 			// Clone the buckets lit - Backbone JS appears to be using
 			// reference equality so when the buckets list/array is altered via
 			// buckets.push, the Backbone JS reference will remain the same - hence
@@ -129,10 +129,17 @@
 				command = "add";
 			}
 			
+			// Save the changes
 			this.save({
 				buckets: buckets,
 				command: command,
-				bucket_id: bucketId}, {patch: true, wait: true});
+				bucket_id: bucketId
+			},{
+				patch: true,
+				wait: true,
+				success: success_callback,
+				error: error_callback
+			});
 		},
 		
 		// Return boolean of whether this droplet is in the provided bucket
@@ -625,12 +632,19 @@
 		},
 		
 		toggleBucket: function() {
-			this.options.drop.setBucket(this.model);
+			var bucketName = this.model.get("name");
+			this.options.drop.setBucket(this.model, this.toggleSelected, function(){
+				var message = "The drop could not be added to the \"" + bucketName + "\" bucket";
+				showSysMessage("failure", "Failure", message, false);
+			});
+		},
+		
+		toggleSelected: function() {
 			if (!this.$el.hasClass("selected")) {
 				this.$el.addClass('selected');
 			} else {
 				this.$el.removeClass('selected');
-			}
+			}			
 		}
 	});
 	

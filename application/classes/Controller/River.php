@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Controller_River extends Controller_Drop_Base {
+class Controller_River extends Controller_Drop_Container {
 
 	/**
 	 * Channels
@@ -286,7 +286,7 @@ class Controller_River extends Controller_Drop_Base {
 							$droplets = $this->river_service->get_drops_since($this->river['id'], $since_id, 20, $filters);
 							
 						} 
-						catch (Swiftriver_API_Exception_NotFound $e)
+						catch (SwiftRiver_API_Exception_NotFound $e)
 						{
 							// Do nothing
 						}
@@ -308,17 +308,30 @@ class Controller_River extends Controller_Drop_Base {
 
 			break;
 			
-			case "PUT":
+			case "PATCH":
 				// No anonymous actions
 				if ($this->anonymous)
 				{
 					throw new HTTP_Exception_403();
 				}
-			
-				$droplet_array = json_decode($this->request->body(), TRUE);
+
+				$payload = json_decode($this->request->body(), TRUE);
+				if ( ! isset($payload['command']) OR ! isset($payload['bucket_id']))
+				{
+					throw new HTTP_Exception_400();
+				}
+
+				$bucket_id = intval($payload['bucket_id']);
 				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				$droplet_orm->update_from_array($droplet_array, $this->user->id);
+				if ($payload['command'] === 'add')
+				{
+					$this->bucket_service->add_drop($bucket_id, $droplet_id);
+				}
+				elseif ($payload['command'] === 'remove')
+				{
+					$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+				}
+			
 			break;
 			
 			case "DELETE":
@@ -379,7 +392,7 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					$collaborator = $this->riverService->add_collaborator($this->river['id'], $collaborator_array);
 				}
-				catch (Swiftriver_API_Exception_BadRequest $e)
+				catch (SwiftRiver_API_Exception_BadRequest $e)
 				{
 					throw new HTTP_Exception_400();
 				}
@@ -399,7 +412,7 @@ class Controller_River extends Controller_Drop_Base {
 				try
 				{
 					$this->riverService->delete_collaborator($this->river['id'], $collaborator_id);
-				} catch (Swiftriver_API_Exception_NotFound $e)
+				} catch (SwiftRiver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();
 				}
@@ -584,5 +597,89 @@ class Controller_River extends Controller_Drop_Base {
 		$this->template = "";
 		$this->river->extend_lifetime();
 		$this->redirect($this->river_base_url, 302);
+	}
+	
+	public function action_tags()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_data = json_decode($this->request->body(), TRUE);
+				$tag = $this->river_service->add_drop_tag($this->river['id'], $drop_id, $tag_data);
+			
+				echo json_encode($tag);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_id = intval($this->request->param('id2', 0));
+
+				$this->river_service->delete_drop_tag($this->river['id'], $drop_id, $tag_id);
+			break;
+		}
+		
+	}
+	
+	public function action_places()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$place_id = intval($this->request->param('id2', 0));
+
+				$this->river_service->delete_drop_place($this->river['id'], $drop_id, $place_id);
+			break;
+		}
+		
+	}
+	
+	public function action_links()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_data = json_decode($this->request->body(), TRUE);
+				$link = $this->river_service->add_drop_link($this->river['id'], $drop_id, $link_data);
+			
+				echo json_encode($link);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_id = intval($this->request->param('id2', 0));
+
+				$this->river_service->delete_drop_link($this->river['id'], $drop_id, $link_id);
+			break;
+		}
+	}
+	
+	public function action_comments()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+			break;
+			
+			case "DELETE":
+			break;
+		}
 	}
 }

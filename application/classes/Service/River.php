@@ -282,4 +282,104 @@ class Service_River {
 	{
 		return $this->rivers_api->add_collaborator($river_id, $collaborator_array);
 	}
+	
+	/**
+	 * Adds a tag to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($river_id, $drop_id, $tag_data)
+	{
+		// Validation
+		$validation = Validation::factory($tag_data)
+			->rule('tag', 'not_empty')
+			->rule('tag_type', 'not_empty');
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_tag($river_id, $drop_id, $tag_data);
+		}
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($river_id, $drop_id, $tag_id)
+	{
+		$this->rivers_api->delete_drop_tag($river_id, $drop_id, $tag_id);
+	}
+
+	/**
+	 * Adds a link to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($river_id, $drop_id, $link_data)
+	{
+		// Validation
+		$validation = Validation::factory($link_data)
+			->rule('url', 'url');
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_link($river_id, $drop_id, $link_data);
+		}
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($river_id, $drop_id, $link_id)
+	{
+		$this->rivers_api->delete_drop_link($river_id, $drop_id, $link_id);
+	}
+
+	/**
+	 * Adds a place to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($river_id, $drop_id, $place_data)
+	{
+		// Validation
+		$validation = Validation::factory($place_data)
+			->rule('name', 'not_empty')
+			->rule('longitude', 'range', -90, 90)
+			->rule('latitude', 'range', -180, 180);
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_place($river_id, $drop_id, $place_data);
+		}
+	}
+
+	/**
+	 * Removes a place from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  place_id
+	 */
+	public function delete_drop_place($river_id, $drop_id, $place_id)
+	{
+		$this->rivers_api->delete_drop_place($river_id, $drop_id, $place_id);
+	}
+
 }

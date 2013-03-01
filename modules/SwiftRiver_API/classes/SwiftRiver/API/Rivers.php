@@ -258,4 +258,79 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	{
 		return $this->post('/rivers/'.$river_id.'/collaborators', $collaborator_array);
 	}
+
+	/**
+	 * Adds a tag to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($river_id, $drop_id, $tag_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/tags', $tag_data);
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($river_id, $drop_id, $tag_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/tags/'.$tag_id);
+	}
+
+	/**
+	 * Adds a link to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($river_id, $drop_id, $link_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/links', $link_data);
+	}
+
+	/**
+	 * Removes a link from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($river_id, $drop_id, $link_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/links/'.$link_id);
+	}
+
+	/**
+	 * Adds a place to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($river_id, $drop_id, $place_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/places', $place_data);
+	}
+
+	/**
+	 * Removes a place from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_place($river_id, $drop_id, $place_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/places/'.$place_id);
+	}	
 }

@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Controller_Bucket extends Controller_Drop_Base {
+class Controller_Bucket extends Controller_Drop_Container {
 
 	/**
 	 * Bucket currently being viewed
@@ -41,7 +41,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Execute parent::before first
 		parent::before();
 		
-		// Get the river name from the url
+		// Get the bucket name from the url
 		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
 		
 		// Get the buckets associated with the visited account
@@ -266,7 +266,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$collaborator = $this->bucket_service->add_collaborator($this->bucket['id'], $collaborator_array);
 				}
-				catch (Swiftriver_API_Exception_BadRequest $e)
+				catch (SwiftRiver_API_Exception_BadRequest $e)
 				{
 					throw new HTTP_Exception_400();
 				}
@@ -287,7 +287,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				try
 				{
 					$this->bucket_service->delete_collaborator($this->bucket['id'], $collaborator_id);
-				} catch (Swiftriver_API_Exception_NotFound $e)
+				} catch (SwiftRiver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();
 				}
@@ -371,4 +371,89 @@ class Controller_Bucket extends Controller_Drop_Base {
  			)
 		);
 	}
+
+	public function action_tags()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_data = json_decode($this->request->body(), TRUE);
+				$tag = $this->bucket_service->add_drop_tag($this->bucket['id'], $drop_id, $tag_data);
+			
+				echo json_encode($tag);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_id = intval($this->request->param('id2', 0));
+
+				$this->bucket_service->delete_drop_tag($this->bucket['id'], $drop_id, $tag_id);
+			break;
+		}
+		
+	}
+	
+	public function action_places()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$place_id = intval($this->request->param('id2', 0));
+
+				$this->bucket_service->delete_drop_place($this->bucket['id'], $drop_id, $place_id);
+			break;
+		}
+		
+	}
+	
+	public function action_links()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_data = json_decode($this->request->body(), TRUE);
+				$link = $this->bucket_service->add_drop_link($this->bucket['id'], $drop_id, $link_data);
+			
+				echo json_encode($link);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_id = intval($this->request->param('id2', 0));
+
+				$this->bucket_service->delete_drop_link($this->bucket['id'], $drop_id, $link_id);
+			break;
+		}
+	}
+
+	public function action_comments()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+			break;
+			
+			case "DELETE":
+			break;
+		}
+	}
+
 }

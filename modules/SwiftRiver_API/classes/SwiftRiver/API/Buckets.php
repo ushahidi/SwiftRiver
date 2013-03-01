@@ -8,7 +8,7 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com>
- * @package     Swiftriver - http://github.com/ushahidi/Swiftriver_v2
+ * @package     SwiftRiver - http://github.com/ushahidi/Swiftbucket_v2
  * @subpackage  Libraries
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
@@ -181,4 +181,80 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	{
 		$this->delete('/buckets/'.$bucket_id.'/followers/'.$account_id);
 	}
+
+	/**
+	 * Adds a tag to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($bucket_id, $drop_id, $tag_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/tags', $tag_data);
+	}
+
+	/**
+	 * Removes a tag from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($bucket_id, $drop_id, $tag_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/tags/'.$tag_id);
+	}
+
+	/**
+	 * Adds a link to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($bucket_id, $drop_id, $link_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/links', $link_data);
+	}
+
+	/**
+	 * Removes a link from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($bucket_id, $drop_id, $link_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/links/'.$link_id);
+	}
+
+	/**
+	 * Adds a place to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($bucket_id, $drop_id, $place_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/places', $place_data);
+	}
+
+	/**
+	 * Removes a place from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_place($bucket_id, $drop_id, $place_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/places/'.$place_id);
+	}
+
 }
