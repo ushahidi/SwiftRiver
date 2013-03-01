@@ -37,6 +37,7 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 			->bind('settings_content', $this->settings_content)
 			->bind('bucket_base_url', $this->bucket_base_url)
 			->bind('bucket', $this->bucket);
+		$this->template->content->nav = $this->get_nav();
 	}
 	
 	
@@ -45,6 +46,7 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 	 */
 	public function action_index()
 	{
+		$this->template->content->active = "options";
 		$session = Session::instance();
 
 		// Check for post
@@ -117,6 +119,34 @@ class Controller_Bucket_Settings extends Controller_Bucket {
 		$session->delete('message');
 		$session->delete('error');
 		
+	}
+	
+	/**
+	 * Bucket Settings Navigation
+	 * 
+	 * @return	array $nav
+	 */
+	public static function get_nav()
+	{
+		$nav = array();
+
+		// List
+		$nav[] = array(
+			'id' => 'options-navigation-link',
+			'active' => 'options',
+			'url' => '/settings',
+			'label' => __('Options')
+		);
+
+		// Collaborators
+		$nav[] = array(
+			'id' => 'collaborators-navigation-link',
+			'active' => 'collaborators',
+			'url' => '/settings/collaborators',
+			'label' => __('Collaborators')
+		);
+			
+		return $nav;
 	}
 		
 }

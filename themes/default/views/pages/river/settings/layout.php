@@ -21,7 +21,7 @@
 						<h1>Filters</h1>
 					</div>
 						
-					<ul class="body-tabs-menu filters-primary">
+					<ul class="filters-primary">
 						<?php foreach ($nav as $item): ?>
 						<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
 							<a href="<?php echo $river_base_url.$item['url']; ?>">

@@ -248,4 +248,38 @@ class Service_River {
 		$this->rivers_api->delete_follower($river_id, $account_id);
 	}
 
+	/**
+	 * Get the river's collaborators
+	 *
+	 * @param   logn  $river_id
+	 * @return Array
+	 */
+	public function get_collaborators($river_id)
+	{
+		return $this->rivers_api->get_collaborators($river_id);
+	}
+	
+	/**
+	 * Remove collaborator
+	 *
+	 * @param   long  $river_id
+	 * @param   long  $collaborator_id	 
+	 * @return Array
+	 */
+	public function delete_collaborator($river_id, $collaborator_id)
+	{
+		return $this->rivers_api->delete_collaborator($river_id, $collaborator_id);
+	}
+	
+	/**
+	 * Add a collaborator
+	 *
+	 * @param   long  $river_id
+	 * @param   long  $collaborator_array
+	 * @return Array
+	 */
+	public function add_collaborator($river_id, $collaborator_array)
+	{
+		return $this->rivers_api->add_collaborator($river_id, $collaborator_array);
+	}
 }

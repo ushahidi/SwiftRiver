@@ -16,22 +16,28 @@
 					<div class="modal-search-results">
 						<ul class="view-table">
 							<li class="static selected user cf">
-								<span class="select select-box icon-plus">
-									<select>
-										<option>Viewer</option>
-										<option>Editor</option>
-									</select>
-								</span>
-								<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">Juliana Rotich
-							</li>
-							<li class="static user cf">
-								<span class="select select-box icon-plus">
+								<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">
+								<span class="label">Juliana Rotich</span>
+								<span class="select select-box">
+									<span class="label">Added as</span>
 									<select>
 										<option>Viewer</option>
 										<option selected="selected">Editor</option>
 									</select>
+									<i class="icon-checkmark"></i>
 								</span>
-								<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">Nathaniel Manning
+							</li>
+							<li class="static user cf">
+								<img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_normal.jpeg" class="avatar">
+								<span class="label">Nathaniel Manning</span>
+								<span class="select select-box">
+									<span class="label">Add as</span>
+									<select>
+										<option selected="selected">Viewer</option>
+										<option>Editor</option>
+									</select>
+									<i class="icon-plus"></i>
+								</span>
 							</li>
 						</ul>													
 					</div>

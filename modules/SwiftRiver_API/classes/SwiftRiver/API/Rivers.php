@@ -43,12 +43,23 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 			'count' => $count
 		);
 		
-		$filter_keys = array('keywords', 'channels');
-		foreach ($filter_keys as $key) 
+		$filter_keys = array(
+			'keywords' => 'list', 
+			'channels' => 'list', 
+			'channel_ids' => 'list', 
+			'state' => 'string');
+		foreach ($filter_keys as $key => $type) 
 		{
 			if (isset($filters[$key])) 
 			{
-				$parameters[$key] = implode(',', $filters[$key]);
+				$value = $filters[$key];
+				
+				if ($type == 'list')
+				{
+					$value = implode(',', $value);	
+				} 
+				
+				$parameters[$key] = $value;
 			}
 		}
 		
@@ -168,6 +179,8 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Check whether an account is following a river
+	 *
 	 * @param  int
 	 * @param  int
 	 * @return bool
@@ -209,5 +222,40 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	public function delete_follower($river_id, $account_id)
 	{
 		$this->delete('/rivers/'.$river_id.'/followers/'.$account_id);
+	}
+
+	/**
+	 * Get a river's collaborators
+	 *
+	 * @param   string  $river_id
+	 * @return Array
+	 */
+	public function get_collaborators($river_id)
+	{
+		return $this->get('/rivers/'.$river_id.'/collaborators');
+	}
+	
+	/**
+	 * Delete collaborator
+	 *
+	 * @param   long  $river_name
+	 * @param   long  $collaborator_id
+	 * @return Array
+	 */
+	public function delete_collaborator($river_id, $collaborator_id)
+	{
+		return $this->delete('/rivers/'.$river_id.'/collaborators/'.$collaborator_id);
+	}
+	
+	/**
+	 * Add a collaborator
+	 *
+	 * @param   long  $river_name
+	 * @param   long  $collaborator_array
+	 * @return Array
+	 */
+	public function add_collaborator($river_id, $collaborator_array)
+	{
+		return $this->post('/rivers/'.$river_id.'/collaborators', $collaborator_array);
 	}
 }

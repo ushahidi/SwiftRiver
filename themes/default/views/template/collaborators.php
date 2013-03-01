@@ -1,35 +1,24 @@
-<div id="collaborators">
+<div id="collaborators" class="active">
 	<article class="base settings-category">
-		<h1><?php echo __("Collaborators"); ?></h1>
+		<h1>Collaborators</h1>
+
 		<ul class="view-table">
-			<li class="add">
-				<a href="#" class="modal-trigger"><?php echo __("Add collaborator"); ?></a>
-			</li>
+			<li class="add"><a href="/markup/_modals/add-collaborator.php" class="modal-trigger">Add collaborator</a></li>
 		</ul>
+
 	</article>
 </div>
 
+
 <script type="text/template" id="collaborator-template">
 	<span class="remove icon-cancel"></span>
-	<img src="<%= avatar %>" class="avatar" />
-	<%= name %>
+	<img src="<%= account.owner.avatar %>" class="avatar" />
+	<%= account.owner.name %>
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title">
-				<a class="avatar-wrap"><img src="<%= avatar %>" /></span></a>
-				<h1><%= name %> </h1>
-			</div>
-			<div class="actions">
-				<ul class="dual-buttons">
-					<li class="button-blue button-small editor"><a href="#" title="<?php echo __('Editors have full access and can change settings.'); ?>"><?php echo __('Add as editor'); ?></a></li>
-					<li class="button-blue button-small viewer"><a href="#" title="<?php echo __('Viewers have read only access and cannot change settings.'); ?>"><?php echo __('Add as viewer'); ?></a></li>
-				</ul>
-			</div>
-		</header>
-	</article>
+	<span class="select editor icon-plus"></span>
+	<img src="<%= owner.avatar %>" class="avatar" ><%= owner.name %>
 </script>
 
 <script type="text/template" id="collaborator-modal-template">
@@ -46,10 +35,17 @@
 					<div class="modal-search-field">
 						<?php echo Form::input('search_box', '', array('placeholder' => __("Find a user..."))); ?>
 					</div>
-					<div class="modal-search-results">
+					<div class="modal-search-results livesearch">
 						<ul class="view-table"></ul>
 					</div>
 				</div>
+				
+				<div class="modal-search-results added nodisplay">
+					<h2 class="label">People you have just made collaborators...</h2>
+					<ul class="view-table">
+					</ul>													
+				</div>
+			</div>
 				<div class="modal-toolbar">
 					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
 				</div>

@@ -254,46 +254,43 @@ class Controller_Bucket extends Controller_Drop_Base {
 		
 		if ($query)
 		{
-			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->bucket->account->user->id)));
+			echo json_encode($this->accountService->search($query));
 			return;
 		}
 		
 		switch ($this->request->method())
 		{
+			case "POST":
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				try
+				{
+					$collaborator = $this->bucket_service->add_collaborator($this->bucket['id'], $collaborator_array);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}
+				
+				echo json_encode($collaborator);
+				break;
+			break;
+			
 			case "DELETE":
 				// Is the logged in user an owner?
 				if ( ! $this->owner)
 				{
 					throw new HTTP_Exception_403();
 				}
+							
+				$collaborator_id = intval($this->request->param('id', 0));
 				
-			break;
-			
-			case "PUT":
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
+				try
+				{
+					$this->bucket_service->delete_collaborator($this->bucket['id'], $collaborator_id);
+				} catch (Swiftriver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();
 				}
-				
-				// if ( ! $exists)
-				// {
-				// 	// Send email notification after successful save
-				// 	$html = View::factory('emails/html/collaboration_invite');
-				// 	$text = View::factory('emails/text/collaboration_invite');
-				// 	$html->invitor = $text->invitor = $this->user->name;
-				// 	$html->asset_name = $text->asset_name = $this->bucket->bucket_name;
-				// 	$html->asset = $text->asset = 'bucket';
-				// 	$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-				// 	$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-				// 	$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
-				// 	$html->asset_link = URL::site($this->bucket_base_url, TRUE);
-				// 	$subject = __(':invitor has invited you to collaborate on a bucket',
-				// 					array( ":invitor" => $this->user->name,
-				// 					));
-				// 	Swiftriver_Mail::send($collaborator_orm->user->email, 
-				// 						  $subject, $text->render(), $html->render());
-				// }
 			break;
 		}
 	}

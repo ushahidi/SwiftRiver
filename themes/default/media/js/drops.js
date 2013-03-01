@@ -184,6 +184,14 @@
 				// array of all the models that were added at once.
 				this.trigger("drops", models);
 			}
+		},
+		
+		getUnread: function() {
+			return this.filter(function(drop) { return !drop.get("read"); })
+		},
+		
+		getRead: function() {
+			return this.filter(function(drop) { return drop.get("read"); })
 		}
 	});
 	
@@ -1345,6 +1353,69 @@
 			return this;
 		}
 
+	});
+	
+	// List of channels in the drop listing
+	var DropsStateFilterView = Drops.DropsStateFilterView = Backbone.View.extend({
+		
+		el: "#drops-state-filter",
+		
+		events: {
+			"click a": "onClick"
+		},
+		
+		initialize: function(options) {
+			options.dropsList.on("all", this.renderTotals, this);
+			options.dropFilters.on("all", this.renderTotals, this);
+			
+			this.render();
+		},
+		
+		onClick: function(ev) {
+			var el = $(ev.target);
+			
+			if (!el.parents("li").hasClass("active")) {
+				// Currently no state selected
+				
+				el.parents("li").addClass("active");
+				el.parents("li").siblings("li").removeClass("active");
+			
+				// Update the filter
+				if (el.parents("li").hasClass("read")) {
+					filters.set("state", "read");
+				} else {
+					filters.set("state", "unread");
+				}
+			} else {
+				// Deselecting a read state
+				
+				el.parents("li").removeClass("active");
+				filters.unset("state");
+			}
+			
+			return false;
+		},
+		
+		render: function() {
+			var dropFilters = this.options.dropFilters;
+			
+			// Reset read/unread selection
+			this.$(".read,.unread").removeClass("active");
+			
+			if (dropFilters.has("state")) {
+				var state = dropFilters.get("state")
+				this.$("." + state).addClass("active");
+			}
+			
+			this.renderTotals();
+			
+			return this;
+		},
+		
+		renderTotals: function() {
+			this.$("li.read .total").html(this.options.dropsList.getRead().length);
+			this.$("li.unread .total").html(this.options.dropsList.getUnread().length);
+		}
 	});
 	
 }(this));

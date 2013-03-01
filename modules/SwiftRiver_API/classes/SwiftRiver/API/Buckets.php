@@ -51,6 +51,30 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Delete collaborator
+	 *
+	 * @param   long  $bucket_id
+	 * @param   long  $collaborator_id
+	 * @return Array
+	 */
+	public function delete_collaborator($bucket_id, $collaborator_id)
+	{
+		return $this->delete('/buckets/'.$bucket_id.'/collaborators/'.$collaborator_id);
+	}
+	
+	/**
+	 * Add a collaborator
+	 *
+	 * @param   long  $bucket_id
+	 * @param   long  $collaborator_array
+	 * @return Array
+	 */
+	public function add_collaborator($bucket_id, $collaborator_array)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/collaborators', $collaborator_array);
+	}
+	
+	/**
 	 * Adds the drop specified in $drop_id to the bucket in
 	 * @param $bucket_id
 	 */

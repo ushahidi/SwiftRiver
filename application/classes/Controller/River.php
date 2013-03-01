@@ -367,12 +367,26 @@ class Controller_River extends Controller_Drop_Base {
 		
 		if ($query)
 		{
-			echo json_encode(Model_User::get_like($query, array($this->user->id, $this->river->account->user->id)));
+			echo json_encode($this->accountService->search($query));
 			return;
 		}
 		
 		switch ($this->request->method())
 		{
+			case "POST":
+				$collaborator_array = json_decode($this->request->body(), TRUE);
+				try
+				{
+					$collaborator = $this->riverService->add_collaborator($this->river['id'], $collaborator_array);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}
+				echo json_encode($collaborator);
+				break;
+			break;
+			
 			case "DELETE":
 				// Is the logged in user an owner?
 				if ( ! $this->owner)
@@ -380,71 +394,16 @@ class Controller_River extends Controller_Drop_Base {
 					throw new HTTP_Exception_403();
 				}
 							
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
+				$collaborator_id = intval($this->request->param('id', 0));
 				
-				if ( ! $user_orm->loaded()) 
-					return;
-					
-				$collaborator_orm = $this->river->river_collaborators->where('user_id', '=', $user_orm->id)->find();
-				if ($collaborator_orm->loaded())
+				try
 				{
-					$collaborator_orm->delete();
-					Model_User_Action::delete_invite($this->user->id, 'river', $this->river->id, $user_orm->id);
-				}
-			break;
-			
-			case "PUT":
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
+					$this->riverService->delete_collaborator($this->river['id'], $collaborator_id);
+				} catch (Swiftriver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();
 				}
-			
-				$user_id = intval($this->request->param('id', 0));
-				$user_orm = ORM::factory('User', $user_id);
-				
-				$collaborator_array = json_decode($this->request->body(), TRUE);
-				
-				$collaborator_orm = ORM::factory("River_Collaborator")
-									->where('river_id', '=', $this->river->id)
-									->where('user_id', '=', $user_orm->id)
-									->find();
-				
-				$exists = $collaborator_orm->loaded();
-				if ( ! $exists)
-				{
-					$collaborator_orm->river = $this->river;
-					$collaborator_orm->user = $user_orm;
-					Model_User_Action::create_action($this->user->id, 'river', 'invite', $this->river->id, $user_orm->id);
-				}
-				
-				if (isset($collaborator_array['read_only']))
-				{
-					$collaborator_orm->read_only = (bool) $collaborator_array['read_only'];
-				}
-				
-				$collaborator_orm->save();
-				
-				if ( ! $exists)
-				{
-					// Send email notification after successful save
-					$html = View::factory('emails/html/collaboration_invite');
-					$text = View::factory('emails/text/collaboration_invite');
-					$html->invitor = $text->invitor = $this->user->name;
-					$html->asset_name = $text->asset_name = $this->river->river_name;
-					$html->asset = $text->asset = 'river';
-					$html->link = $text->link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-					$html->avatar = Swiftriver_Users::gravatar($this->user->email, 80);
-					$html->invitor_link = URL::site($this->user->account->account_path, TRUE);
-					$html->asset_link = URL::site($this->river_base_url, TRUE);
-					$subject = __(':invitor has invited you to collaborate on a river',
-									array( ":invitor" => $this->user->name,
-									));
-					Swiftriver_Mail::send($collaborator_orm->user->email, 
-										  $subject, $text->render(), $html->render());
-				}
-			break;
+			break;			
 		}
 	}
 	
@@ -498,20 +457,33 @@ class Controller_River extends Controller_Drop_Base {
 	private function _get_filters()
 	{
 		$filters = array();
-		$parameters = array('keywords', 'places', 'channels', 'start_date', 'end_date');
+		$parameters = array(
+			'keywords' => 'list', 
+			'places' => 'list', 
+			'channels' => 'list', 
+			'channel_ids' => 'list', 
+			'start_date' => 'string', 
+			'end_date' => 'string', 
+			'state' => 'string'
+		);
 		
-		foreach ($parameters as $parameter)
+		foreach ($parameters as $parameter => $type)
 		{
 			$values = $this->request->query($parameter);
 			if ($values)
 			{
-				$filters[$parameter] = array();				
-				// Parameters are array strings that are comma delimited
-				// The below converts them into a php array, trimming each
-				// value
-				foreach (explode(',', urldecode($values)) as $value)
+				if ($type == 'list')
 				{
-					$filters[$parameter][] = strtolower(trim($value));
+					$filters[$parameter] = array();				
+					// Parameters are array strings that are comma delimited
+					foreach (explode(',', urldecode($values)) as $value)
+					{
+						$filters[$parameter][] = strtolower(trim($value));
+					}
+				}
+				else
+				{
+					$filters[$parameter] = $values;
 				}
 			}
 		}

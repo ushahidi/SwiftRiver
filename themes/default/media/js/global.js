@@ -318,7 +318,7 @@ $(document).ready(function() {
 	// Display any queued system messages
 	if (window.system_messages) {
 		_.each(window.system_messages, function(m) {
-			showSysMessage(m['type'], m['title'], m['message'], m['flash']);
+			showSysMessage(m['type'], m['title'], m['message'], {flash: m['flash']});
 		});
 	}
 	
@@ -375,13 +375,17 @@ function flashMessage(el, text) {
 	el.html(message).fadeIn("fast").fadeOut(4000).html();
 }
 
-function showSysMessage(type, title, message, flash) {
+function showSysMessage(type, title, message, options) {
+	options = options || {};
 	var container = $("#system-message-template").clone().appendTo($("body"));
+	if (options.container) {
+		container = options.container;
+	}
 	container.addClass(type);
 	$("p strong", container).prepend(title);
 	$("p", container).append(message);
 	
-	if(flash) {
+	if(options.flash) {
 		container.slideDown('fast').delay(2000).slideUp('fast');
 	} else {
 		container.slideDown('fast', function(){
@@ -393,19 +397,19 @@ function showSysMessage(type, title, message, flash) {
 	}
 }
 
-function showConfirmationMessage(message) {
-	var container = $("#confirmation-container");
-
-	// HTML with the message
-	var replaceHTML = "<div class=\"modal-window\">" +
-	    "<article class=\"modal base\">" + 
-	    "<p>" + message + "</p>" +
-	    "</article></div>";
-
-	$('div.modal-window', container).replaceWith(replaceHTML);
-	container.fadeIn('fast').addClass('visible');
-	container.delay(1250).fadeOut('fast').removeClass('visible');
+function showConfirmationMessage(message, options) {
+	showSysMessage("confirmation", "Confirmation", message, options);
 }
+
+function showSuccessMessage(message, options) {
+	showSysMessage("success", "Success", message, options);
+}
+
+function showFailureMessage(message, options) {
+	showSysMessage("failure", "Failure", message, options);
+}
+
+
 
 function showDefaultAvatar(source) {
 	source.onerror = "";

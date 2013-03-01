@@ -721,6 +721,11 @@ form .field .label {
    max-height: 300px;
 }
 
+.view-table li .loading_image {
+	max-height: 25px;
+	max-width: 25px;
+}
+
 /* --------------------------- POPOVER */
 
 ul.popover-window {
@@ -966,7 +971,7 @@ header.toolbar ul.user-menu > li.user a:hover {
    display: none;
    position: fixed;
    top: 0;
-   z-index: 1000;
+   z-index: 999999;
    width: 100%;
    font-size: 1.2em;
    text-align: center;

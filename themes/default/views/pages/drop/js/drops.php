@@ -32,7 +32,7 @@
 				return baseURL + "/droplets" + (f.length > 0 ? '?' + f : '');
 			}
 		});
-		var filters = new Filter(<?php echo $filters; ?>);
+		var filters = window.filters = new Filter(<?php echo $filters; ?>);
 		
 		// Global drop lists
 		var dropsList = window.dropsList = new Drops.DropsList;
@@ -299,6 +299,12 @@
 		var appRouter = new AppRouter;
 		// Start Backbone history
 		Backbone.history.start({pushState: true, root: baseURL + "/"});
+		
+		// Drop state filter
+		new Drops.DropsStateFilterView({
+			dropFilters: filters,
+			dropsList: dropsList
+		});
 
 		// Onclick Handlers for Drops/List
 		if ( ! photos)

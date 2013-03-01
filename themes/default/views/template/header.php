@@ -76,6 +76,11 @@
 		// Loading image
 		var loading_image_html = '<?php echo HTML::image("themes/default/media/img/loading.gif", array("class"=>"loading_image")); ?>';
 		window.loading_image = $(loading_image_html);
+		
+		// Squares loading image
+		loading_image_html = '<?php echo HTML::image("themes/default/media/img/loader.gif", array("class"=>"loading_image")); ?>';
+		window.loading_image_squares = $(loading_image_html);
+		
 		window.loading_message = $('<div class="loading"></div>').append(loading_image);
 		// Preload loading_image
 		(new Image()).src = window.loading_image.attr('src');
