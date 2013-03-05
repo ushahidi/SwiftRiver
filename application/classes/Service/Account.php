@@ -28,6 +28,21 @@ class Service_Account {
 	}
 	
 	/**
+	 * Register an account.
+	 *
+	 * @return	Array
+	 */
+	public function create_account($fullname, $email, $username, $password)
+	{
+		return $this->api->get_accounts_api()->create_account(
+					$fullname, 
+					$email, 
+					$username, 
+					$password
+				);
+	}
+	
+	/**
 	 * Return the Account array for the logged in user.
 	 *
 	 * @return	Array
@@ -48,6 +63,16 @@ class Service_Account {
 	}
 	
 	/**
+	 * Return the Account array for the given email
+	 *
+	 * @return	Array
+	 */
+	public function get_account_by_email($email)
+	{
+		return $this->api->get_accounts_api()->get_account_by_email($email);
+	}
+	
+	/**
 	 * Search accounts
 	 *
 	 * @return	Array
@@ -55,6 +80,16 @@ class Service_Account {
 	public function search($query)
 	{
 		return $this->api->get_accounts_api()->search($query);
+	}
+	
+	/**
+	* Activate a newly created account
+	*
+	* @return Array
+	*/
+	public function activate_account($email, $token) {
+		$account = $this->get_account_by_email($email);
+		$this->api->get_accounts_api()->update_account($account['id'], array('token' => $token));
 	}
 	
 	/**

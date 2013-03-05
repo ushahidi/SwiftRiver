@@ -206,6 +206,10 @@ class Controller_Swiftriver extends Controller_Template {
 			{
 				Auth::instance()->logout();
 			}
+			catch (Swiftriver_API_Exception_Forbidden $e)
+			{
+				Auth::instance()->logout();
+			}
 		}
 
 		// If we're not logged in, gives us chance to auto login

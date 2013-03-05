@@ -164,7 +164,9 @@ $(document).ready(function() {
 		return false;
 	});
 	$('article.modal a.modal-close').live('click', function(e) {
-		modalWindow.hide();
+		if (modalWindow != null) {
+			modalWindow.hide();
+		}
 		return false;
 	});
 	$('a.modal-transition').live('click', function(e) {
@@ -321,6 +323,26 @@ $(document).ready(function() {
 			showSysMessage(m['type'], m['title'], m['message'], {flash: m['flash']});
 		});
 	}
+	
+	// MODAL WINDOWS: Tabs 
+	$('.modal-tabs-menu a').live('click', function(e) {
+		var modalTabHash = $(this).prop('hash');
+		$('.modal-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
+			$('.modal-tabs-window ' + modalTabHash).fadeIn('fast').addClass('active');		
+		});
+		$('.modal-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});
+	$('.modal-field-tabs-menu a').live('click', function(e) {
+		var modalFieldTabHash = $(this).prop('hash');
+		$('.modal-field-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
+			$('.modal-field-tabs-window ' + modalFieldTabHash).fadeIn('fast').addClass('active');		
+		});
+		$('.modal-field-tabs-menu li').removeClass('active');
+		$(this).parent().addClass('active');
+		e.preventDefault();
+	});	
 	
 	// TABS (Body content)
 	$('.body-tabs-menu a').live('click', function(e) {

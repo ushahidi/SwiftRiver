@@ -36,6 +36,16 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	}
 	
 	/**
+	* Get account object for the logged in account.
+	*
+	* @return Array
+	*/
+	public function get_account_by_email($email)
+	{
+		return $this->get('/accounts',  array('email' => $email));
+	}
+	
+	/**
 	* Search accounts
 	*
 	* @return Array
@@ -43,5 +53,33 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	public function search($query)
 	{
 		return $this->get('/accounts',  array('q' => $query));
+	}
+	
+	/**
+	* Create account
+	*
+	* @return Array
+	*/
+	public function create_account($fullname, $email, $username, $password)
+	{
+		$request_body = array(
+			"name" => $fullname,
+			"account_path" => $username,
+			"email" => $email,
+			"password" => $password
+		);
+		return $this->post('/accounts', $request_body);
+	}
+	
+	/**
+	 * Modify a river
+	 *
+	 * @param   string  $account_id
+	 * @param   string  $parameters
+	 * @return Array
+	 */
+	public function update_account($account_id, $parameters)
+	{
+		return $this->put('/accounts/'.$account_id, $parameters);
 	}
 }

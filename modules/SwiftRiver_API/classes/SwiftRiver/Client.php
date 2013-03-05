@@ -21,6 +21,7 @@ class SwiftRiver_Client {
 	private $oauth_client;
 	private $base_url;
 	private $token_endpoint;
+	private $access_token;
 	
 	private function __construct()
 	{
@@ -32,6 +33,7 @@ class SwiftRiver_Client {
 		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/Client' );
 		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/GrantType/IGrantType' );
 		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/GrantType/Password' );
+		include_once Kohana::find_file( 'vendor', 'PHP-OAuth2/GrantType/ClientCredentials' );
 		
 		$this->oauth_client = new OAuth2\Client($client_id, $client_secret, 1);
 	}
@@ -75,6 +77,7 @@ class SwiftRiver_Client {
 	 */
 	public function set_access_token($access_token)
 	{
+		$this->access_token = $access_token;
 		$this->oauth_client->setAccessToken($access_token);
 		$this->oauth_client->setAccessTokenType(1);
 	}
@@ -153,6 +156,13 @@ class SwiftRiver_Client {
 	{
 		try 
 		{
+			// If no access token, try a client credentials authorization
+			if ( ! $this->access_token)
+			{
+				$this->access_token = $this->get_access_token('client_credentials', array());
+				$this->set_access_token($this->access_token['access_token']);
+			}
+			
 			$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
 		
 			$exception_map = array(
