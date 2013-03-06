@@ -40,9 +40,16 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	*
 	* @return Array
 	*/
-	public function get_account_by_email($email)
+	public function get_account_by_email($email, $token)
 	{
-		return $this->get('/accounts',  array('email' => $email));
+		$parameters = array('email' => $email);
+		
+		if ($token)
+		{
+			$parameters['token'] = 1;
+		}
+		
+		return $this->get('/accounts',  $parameters);
 	}
 	
 	/**

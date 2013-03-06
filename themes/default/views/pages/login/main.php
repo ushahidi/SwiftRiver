@@ -31,9 +31,40 @@
 								</div>
 								<div class="modal-base-toolbar">
 									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this); return false;">Log in</a>
-									<a href="#" class="button-destruct button-secondary modal-transition">Forgot your password?</a>
+									<a href="<?php echo URL::site('login/request_reset'); ?>" class="button-destruct button-secondary modal-transition">Forgot your password?</a>
 								</div>
 								<?php echo Form::hidden('referrer', $referrer); ?>
+							<?php echo Form::close(); ?>
+						</div>
+						
+						<!-- Reset password (Request token) -->
+						<div id="request_reset" class="<?php echo 'request_reset'== $active ? 'active' : ''; ?>">
+							<?php echo Form::open(URL::site('login/request_reset')); ?>
+								<div class="modal-field">
+									<h3 class="label">Email address</h3>
+									<?php echo Form::input("email", "", array("placeholer" => "Enter your email address...")); ?>
+								</div>
+								<div class="modal-base-toolbar">
+									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this); return false;">Reset my password</a>
+								</div>
+								<?php echo Form::hidden('referrer', $referrer); ?>
+							<?php echo Form::close(); ?>
+						</div>
+						
+						<!-- Reset password -->
+						<div id="reset" class="<?php echo 'reset'== $active ? 'active' : ''; ?>">
+							<?php echo Form::open(); ?>
+								<div class="modal-field">
+									<h3 class="label">Enter a new password</h3>
+									<?php echo Form::password("password", ""); ?>
+								</div>	
+								<div class="modal-field">
+									<h3 class="label">Confirm your password</h3>
+									<?php echo Form::password("password_confirm", ""); ?>
+								</div>	
+								<div class="modal-base-toolbar">
+									<a href="#" class="button-submit button-primary modal-close" onclick="submitForm(this); return false;">Reset my password</a>
+								</div>
 							<?php echo Form::close(); ?>
 						</div>
 							

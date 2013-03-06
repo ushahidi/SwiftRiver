@@ -67,9 +67,9 @@ class Service_Account {
 	 *
 	 * @return	Array
 	 */
-	public function get_account_by_email($email)
+	public function get_account_by_email($email, $token = FALSE)
 	{
-		return $this->api->get_accounts_api()->get_account_by_email($email);
+		return $this->api->get_accounts_api()->get_account_by_email($email, $token);
 	}
 	
 	/**
@@ -87,9 +87,37 @@ class Service_Account {
 	*
 	* @return Array
 	*/
-	public function activate_account($email, $token) {
+	public function activate_account($email, $token) 
+	{
 		$account = $this->get_account_by_email($email);
-		$this->api->get_accounts_api()->update_account($account['id'], array('token' => $token));
+		return $this->api->get_accounts_api()->update_account($account['id'], array('token' => $token));
+	}
+	
+	/**
+	* Request an activation token for the given account.
+	*
+	* @return Array
+	*/
+	public function get_token($email)
+	{
+		return $this->get_account_by_email($email, TRUE);
+	}
+	
+	/**
+	* Reset password
+	*
+	* @return Array
+	*/
+	public function reset_password($email, $token, $password)
+	{
+		$parameters = array(
+			'token' => $token,
+			'owner' => array(
+				'password' => $password
+			)
+		);
+		$account = $this->get_account_by_email($email);
+		return $this->api->get_accounts_api()->update_account($account['id'], $parameters);
 	}
 	
 	/**

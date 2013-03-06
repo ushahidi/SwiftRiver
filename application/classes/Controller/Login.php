@@ -293,105 +293,183 @@ class Controller_Login extends Controller_Swiftriver {
 	}
 	
 	
-	public function action_register_ajax()
-	{
-		$this->auto_render = FALSE;
-
-		if ($this->request->post('new_email'))
-		{
-			$messages = Model_User::new_user($this->request->post('new_email'), $this->riverid_auth, (bool) $this->request->post('invite'));
-			$ret = array();
-        
-			if (isset($messages['errors']))
-			{
-				$ret['status'] = 'ERROR';
-				$ret['errors'] = $messages['errors'];
-			}
-			if (isset($messages['messages']))
-			{
-				$ret['status'] = 'OK';
-				$ret['messages'] = $messages['messages'];
-			}
-        
-			echo json_encode($ret);
-		}
-	}
-		
-	
 	/**
-	* Reset password
+	* Request a reset password url on mail
 	* 
 	* @return void
 	*/	
-	public function action_reset()
+	public function action_request_reset()
 	{
-		$this->template->content = View::factory('pages/login/reset')
-		                                 ->bind('errors', $errors);
-        
-		$email = $this->request->param('email');
-		$token = $this->request->param('token');
+		$this->template->content = View::factory('pages/login/main')
+		    ->bind('messages', $this->messages)
+		    ->bind('errors', $this->errors)
+		    ->bind('referrer', $referrer);
+		$this->template->content->active = 'request_reset';	
 		
-		$user = ORM::factory('User', array('email' => $email));
-		
-		// If the form has been filled in and submitted
-		if ($user->loaded() AND $this->request->post('password_confirm') AND $this->request->post('password'))
+		if ($this->request->method() == 'POST')
 		{
-			// Validate the passwords
-			$post = Model_Auth_User::get_password_validation($this->request->post());
-			if ( ! $post->check())
+			$validation = Validation::factory($this->request->post())
+				->rule('email', 'not_empty')
+				->rule('email', 'email');
+			
+			if ( ! $validation->check())
 			{
-				$errors = $post->errors('user');
+				foreach ($validation->errors('login') as $error) 
+				{
+					Swiftriver_Messages::add_message(
+						'failure', 
+						__('Failure'), 
+						$error,
+						false
+					);
+				}
+				$this->session->set("email", $this->request->post('email'));
+				$this->redirect(URL::site('login/request_reset'), 302);
+				
 			}
 			else
 			{
-				// Do a RiverID password reset
-				if ($this->riverid_auth)
+				try
 				{
-					$riverid_api = RiverID_API::instance();
-					$resp = $riverid_api->set_password($email, $token, $this->request->post('password'));
-        
-					if ( ! $resp['status']) 
-					{
-						$errors = array($resp['error']);
-					}
+					$account = $this->accountService->get_token(
+						$this->request->post('email')
+					);
+					
+					
+					// Send an email verification email.
+					$email = $this->request->post('email');
+					$token = $account['token'];
+
+					//Send an email with a secret token URL
+					$mail_body = View::factory('emails/text/resetpassword')
+								 ->bind('secret_url', $secret_url);		            
+					$secret_url = URL::site('login/reset/'.urlencode($email).'/'.$token, TRUE, TRUE);
+					$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+					Swiftriver_Mail::send($email, $mail_subject, $mail_body);
+					
+					
+					Swiftriver_Messages::add_message(
+						'success', 
+						__('Success'), 
+						__('An email has been sent with instructions to reset your password.'),
+						false
+					);
+					$this->redirect(URL::site('login/request_reset'), 302);
 				}
-				else
-				{
-					// Do an ORM password reset
-					$token = Model_Auth_Token::get_token($token, 'password_reset');
-					if ($token)
-					{
-						$data = json_decode($token->data);
-						$token->delete();
-						if ($email != $data->email)
-						{
-							// The email in the request does not match
-							// the email in the token
-							$errors = array(__('Invalid email'));
-						}
-						else
-						{
-							$user->password = $this->request->post('password');
-							$user->save();
-						}                    
-					}
-					else
-					{
-						$errors = array(__('Error'));
-					}
+				catch (SwiftRiver_API_Exception_NotFound  $e)
+				{		
+					Swiftriver_Messages::add_message(
+						'failure', 
+						__('Failure'), 
+						__('There is no account registered with that email address.'),
+						false
+					);	
+					
+					$this->session->set("fullname", $this->request->post('fullname'));
+					$this->session->set("email", $this->request->post('email'));
+					$this->session->set("username", $this->request->post('username'));
+					$this->redirect(URL::site('login/request_reset'), 302);
 				}
 			}
-			
-			if ( ! $errors)
-			{
-				// Auto login
-				Auth::instance()->login($user->username, $this->request->post('password'), FALSE);
+							
+		}
+		
+		$this->template->content->email = $this->session->get_once("email");
+	}
+	
+	/**
+	* Reset account password
+	* 
+	* @return void
+	*/
+	public function action_reset()
+	{		
+		$this->template->content = View::factory('pages/login/main')
+		    ->bind('messages', $this->messages)
+		    ->bind('errors', $this->errors)
+		    ->bind('referrer', $referrer);
+		$this->template->content->active = 'reset';
+		
+		if ($this->request->method() == 'POST')
+		{
+			$validation = Validation::factory($this->request->post())
+				->rule('password', 'not_empty')
+				->rule('password', 'min_length', array(':value', '6'))
+				->rule('password_confirm',  'matches', array(':validation', ':field', 'password'));
 				
-				// Show a message and redirect to swift
-				$this->template->content = View::factory('pages/login/landing');
-				$this->template->content->messages = array(__('Password reset was successful.'));
-				$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
+			
+			if ( ! $validation->check())
+			{
+				foreach ($validation->errors('login') as $error) 
+				{
+					Swiftriver_Messages::add_message(
+						'failure', 
+						__('Failure'), 
+						$error,
+						false
+					);
+				}
+				$this->redirect(URL::site($this->request->uri()), 302);
+				
 			}
+			else
+			{
+				try
+				{
+					$email = $this->request->param('email');
+					$token = $this->request->param('token');
+					$password = $this->request->post('password');
+					$this->accountService->reset_password(
+						$email,
+						$token,
+						$password
+					);
+										
+					Swiftriver_Messages::add_message(
+						'success', 
+						__('Success'), 
+						__('Password reset successfully.'),
+						false
+					);
+					$this->redirect(URL::site('login'), 302);
+				}
+				catch (SwiftRiver_API_Exception_BadRequest  $e)
+				{
+					foreach ($e->get_errors() as $error)
+					{
+						$message = "Error";
+						
+						if ($error['field'] == 'token' && $error['code'] == 'invalid')
+						{
+							$message = __('Account not found.');
+						}
+						
+						Swiftriver_Messages::add_message(
+							'failure', 
+							__('Failure'), 
+							$message,
+							false
+						);	
+					}
+					
+					$this->redirect(URL::site($this->request->uri()), 302);
+				}
+				catch (SwiftRiver_API_Exception_NotFound  $e)
+				{		
+					Swiftriver_Messages::add_message(
+						'failure', 
+						__('Failure'), 
+						__('There is no account registered with that email address.'),
+						false
+					);	
+					
+					$this->session->set("fullname", $this->request->post('fullname'));
+					$this->session->set("email", $this->request->post('email'));
+					$this->session->set("username", $this->request->post('username'));
+					$this->redirect(URL::site($this->request->uri()), 302);
+				}
+			}
+							
 		}
 	}
 	
