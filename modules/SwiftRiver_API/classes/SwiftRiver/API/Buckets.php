@@ -78,9 +78,9 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * Adds the drop specified in $drop_id to the bucket in
 	 * @param $bucket_id
 	 */
-	public function add_drop($bucket_id, $drop_id)
+	public function add_drop($bucket_id, $drop_id, $source_data)
 	{
-		$this->put("/buckets/".$bucket_id."/drops/".$drop_id);
+		$this->put("/buckets/".$bucket_id."/drops/".$drop_id, $source_data);
 	}
 	
 	/**
@@ -255,6 +255,41 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	public function delete_drop_place($bucket_id, $drop_id, $place_id)
 	{
 		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/places/'.$place_id);
+	}
+
+	/**
+	 * Adds a comment to a bucket drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($bucket_id, $drop_id, $comment_text)
+	{
+		$parameters = array('comment_text' => $comment_text);
+
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments', $parameters);
+	}
+	
+	/**
+	 * Get the comments for the bucket drop specified in $drop_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($bucket_id, $drop_id)
+	{
+		return $this->get('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments');
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the bucket drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($bucket_id, $drop_id, $comment_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments/'.$commenti_id);
 	}
 
 }

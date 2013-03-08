@@ -243,9 +243,9 @@
 <script type="text/template" id="discussion-template">
 	<section class="drop-source">
 		<a href="#" class="avatar-wrap">
-			<img src="<%= account.avatar %>" />
+			<img src="<%= account.owner.avatar %>" />
 		</a>
-		<div class="byline"><h2><%= account.name %></h2></div>
+		<div class="byline"><h2><%= account.owner.name %></h2></div>
 	</section>
 	<div class="drop-body">
 		<div class="drop-content">

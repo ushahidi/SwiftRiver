@@ -445,8 +445,7 @@
 				this.$(".drop-discussion").prepend(view.render().el);
 			}
 		},
-				
-		// When add reply is clicked
+
 		addComment: function(e) {
 			var textarea = this.$("#add-comment textarea");
 			
@@ -469,7 +468,7 @@
 					drop.set("comment_count", parseInt(drop.get("comment_count")) + 1);
 				},
 				error: function(model, response) {
-					showConfirmationMessage("Unable to add comment. Try again later.");
+					showSysMessage("failure", "Error", "Unable to add comment. Try again later.", false);
 				}
 			});
 			
@@ -633,19 +632,21 @@
 		
 		toggleBucket: function() {
 			var bucketName = this.model.get("name");
-			this.options.drop.setBucket(this.model, this.toggleSelected, function(){
+			var view = this;
+
+			this.options.drop.setBucket(this.model, function() {
+				if (!view.$el.hasClass("selected")) {
+					view.$el.addClass('selected');
+				} else {
+					view.$el.removeClass('selected');
+				}			
+				
+			}, function(){
 				var message = "The drop could not be added to the \"" + bucketName + "\" bucket";
 				showSysMessage("failure", "Failure", message, false);
 			});
-		},
-		
-		toggleSelected: function() {
-			if (!this.$el.hasClass("selected")) {
-				this.$el.addClass('selected');
-			} else {
-				this.$el.removeClass('selected');
-			}			
 		}
+		
 	});
 	
 	

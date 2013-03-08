@@ -218,7 +218,7 @@ class Controller_Bucket extends Controller_Drop_Container {
 				$droplet_id = intval($this->request->param('id', 0));
 				if ($payload['command'] === 'add')
 				{
-					$this->bucket_service->add_drop($bucket_id, $droplet_id);
+					$this->bucket_service->add_drop($bucket_id, $droplet_id, "bucket");
 				}
 				elseif ($payload['command'] === 'remove')
 				{
@@ -448,10 +448,23 @@ class Controller_Bucket extends Controller_Drop_Container {
 		
 		switch ($this->request->method())
 		{
+			case "GET":
+				$drop_id = $this->request->param('id', 0);
+				$drop_comments = $this->bucket_service->get_drop_comments($this->bucket['id'], $drop_id);
+				echo json_encode($drop_comments);
+			break;
+
 			case "POST":
+				$drop_id = $this->request->param('id', 0);
+				$request_body = json_decode($this->request->body(), TRUE);
+				$comment = $this->bucket_service->add_drop_comment($this->bucket['id'], $drop_id, $request_body['comment_text']);
+				echo json_encode($comment);
 			break;
 			
 			case "DELETE":
+				$drop_id = $this->requst->param('id', 0);
+				$comment_id = $this->request->param('id2', 0);
+				$this->bucket_service->delete_drop_comment($this->bucket['id'], $drop_id, $comment_id);
 			break;
 		}
 	}

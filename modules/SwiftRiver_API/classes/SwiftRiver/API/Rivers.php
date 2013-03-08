@@ -332,5 +332,41 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	public function delete_drop_place($river_id, $drop_id, $place_id)
 	{
 		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/places/'.$place_id);
-	}	
+	}
+
+	/**
+	 * Adds a comment to a river drop
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($river_id, $drop_id, $comment_text)
+	{
+		$parameters = array('comment_text' => $comment_text);
+
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments', $parameters);
+	}
+	
+	/**
+	 * Get the comments for the river drop specified in $drop_id
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($river_id, $drop_id)
+	{
+		return $this->get('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments');
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the river drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($river_id, $drop_id, $comment_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments/'.$commenti_id);
+	}
+
 }

@@ -63,7 +63,7 @@ class Service_Bucket {
 		// Fetch the drops
 		$drops = $this->buckets_api->get_drops($bucket_id, $parameters);
 		
-		Service_Drop::marshall_drops($drops);
+		Service_Drop::format_drops($drops);
 
 		return $drops;
 	}
@@ -87,9 +87,13 @@ class Service_Bucket {
 	 * @param  int bucket_id
 	 * @param  int drop_id
 	 */
-	public function add_drop($bucket_id, $drop_id)
+	public function add_drop($bucket_id, $drop_id, $source)
 	{
-		$this->buckets_api->add_drop($bucket_id, $drop_id);
+		if (Valid::not_empty($source))
+		{
+			$source_data = array('source' => $source);
+			$this->buckets_api->add_drop($bucket_id, $drop_id, $source_data);
+		}
 	}
 	
 	/**
@@ -362,6 +366,39 @@ class Service_Bucket {
 	public function delete_drop_place($bucket_id, $drop_id, $place_id)
 	{
 		$this->buckets_api->delete_drop_place($bucket_id, $drop_id, $place_id);
+	}
+
+	/**
+	 * Adds a comment to a bucket drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($bucket_id, $drop_id, $comment_text)
+	{
+		return $this->buckets_api->add_drop_comment($bucket_id, $drop_id, $comment_text);
+	}
+	
+	/**
+	 * Get the comments for the bucket drop specified in $drop_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($bucket_id, $drop_id)
+	{
+		return $this->buckets_api->get_drop_comments($bucket_id, $drop_id);
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the bucket drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($bucket_id, $drop_id, $comment_id)
+	{
+		$this->buckets_api->delete_drop_comment($bucket_id, $drop_id, $comment_id);
 	}
 
 }
