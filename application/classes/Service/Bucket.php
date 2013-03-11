@@ -400,5 +400,37 @@ class Service_Bucket {
 	{
 		$this->buckets_api->delete_drop_comment($bucket_id, $drop_id, $comment_id);
 	}
+	
+	/**
+	 * Adds a comment to a bucket
+	 * @param  int    bucket_id
+	 * @param  string comment_text
+	 * @return array
+	 */
+	public function add_bucket_comment($bucket_id, $comment_text)
+	{
+		return $this->buckets_api->add_bucket_comment($bucket_id, $comment_text);
+	}
+	
+	/**
+	 * Gets the list of comments for the bucket specified in $bucket_id
+	 * @param  int bucket_id
+	 * @return array
+	 */
+	public function get_bucket_comments($bucket_id)
+	{
+		return $this->buckets_api->get_bucket_comments($bucket_id);
+	}
+	
+	/**
+	 * Deletes a comment from a bucket
+	 *
+	 * @param int bucket_id
+	 * @param int comment_id
+	 */
+	public function delete_bucket_comment($bucket_id, $comment_id)
+	{
+		$this->buckets_api->delete_bucket_comment($bucket_id, $comment_id);
+	}
 
 }

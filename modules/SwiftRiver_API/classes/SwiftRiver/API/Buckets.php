@@ -292,4 +292,36 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments/'.$commenti_id);
 	}
 
+	/**
+	 * Adds a comment to a bucket
+	 * @param  int    bucket_id
+	 * @param  string comment_text
+	 * @return array
+	 */
+	public function add_bucket_comment($bucket_id, $comment_text)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/comments', array('comment_text' => $comment_text));
+	}
+	
+	/**
+	 * Gets the list of comments for the bucket specified in $bucket_id
+	 * @param  int bucket_id
+	 * @return array
+	 */
+	public function get_bucket_comments($bucket_id)
+	{
+		return $this->get('/buckets/'.$bucket_id.'/comments');
+	}
+	
+	/**
+	 * Deletes a comment from a bucket
+	 *
+	 * @param int bucket_id
+	 * @param int comment_id
+	 */
+	public function delete_bucket_comment($bucket_id, $comment_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/comments/'.$comment_id);
+	}
+
 }

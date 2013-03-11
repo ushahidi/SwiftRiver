@@ -25,8 +25,8 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 
 		$this->template->header->title = $this->page_title.' | '.__('Discussion');
 	}
-	
-	
+
+
 	/**
 	 * @return	void
 	 */
@@ -34,23 +34,19 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 	{
 		$this->template->header->title = $this->page_title;
 		$this->template->content = View::factory('pages/bucket/discussion')
+			->bind('bucket', $this->bucket)
+			->bind('bucket_base_url', $this->bucket_base_url)
 			->bind('settings_url', $settings_url)
 			->bind('fetch_url', $fetch_url)
-			->bind('bucket_url', $this->bucket_base_url)
-			->bind('page_title', $this->page_title)
 			->bind('owner', $this->owner)
 			->bind('user', $this->user)
-			->bind('user_avatar', $user_avatar)
-			->bind('anonymous', $this->anonymous);
-		$this->template->content->collaborators = $this->bucket->get_collaborators(TRUE);
-		$comments = $this->bucket->get_comments($this->user->id);
-		foreach ($comments as &$comment)
-		{
-			$comment['comment_content'] = Markdown::instance()->transform($comment['comment_content']);
-		}
-		$this->template->content->comments = json_encode($comments);
+			->bind('anonymous', $this->anonymous)
+			->bind('comments', $comments);
 
-		$user_avatar = Swiftriver_Users::gravatar($this->user->email, 80);
+		$comments = json_encode($this->bucket_service->get_bucket_comments($this->bucket['id']));
+		
+		$this->template->content->set('nav', $this->get_discussion_nav())
+			->set('active', 'all');
 
 		// Links to ajax rendered menus
 		$settings_url = $this->bucket_base_url.'/settings';
@@ -74,62 +70,38 @@ class Controller_Bucket_Discussion extends Controller_Bucket {
 		{			
 			case "POST":
 				$post = json_decode($this->request->body(), TRUE);
-				$comment = ORM::factory('Bucket_Comment');
-				$validation = Validation::factory($post)
-				    ->rule('comment_content', 'not_empty')
-				    ->rule('comment_content', 'min_length', array(':value', 3));
-				if ($validation->check())
-  				{
-  					$comment->bucket_id = $this->bucket->id;
-					$comment->user_id = $this->user->id;
-					$comment->comment_content = $post['comment_content'];
-					$comment->comment_date_add = gmdate("Y-m-d H:i:s", time());
-					$comment->save();
-					Swiftriver_Mail::notify_new_bucket_comment($comment, $this->bucket);
-					echo json_encode(array(
-						'id' => $comment->id, 
-						'name' => $comment->user->name,
-						'user_id' => $comment->user->id,
-						'comment_content' => Markdown::instance()->transform($comment->comment_content),
-						'date' => $comment->comment_date_add,
-						'avatar' => Swiftriver_Users::gravatar($comment->user->email, 40),
-						'score' => 0
-					));
-				}
-  				else
-  				{
-  					throw new HTTP_Exception_400();
-  				}
-
+				$comment_text = $post['comment_text'];
+				
+				$comment = $this->bucket_service->add_bucket_comment($this->bucket['id'], $comment_text);
+				
+				echo json_encode($comment);
 			break;
 
-			case "PUT":
-				$post = json_decode($this->request->body(), TRUE);
-				$comment_id = intval($this->request->param('id', 0));
-				$score = ( isset($post['score']) AND in_array($post['score'], array(1, -1) ) )
-					 ? $post['score'] : 0;
-				$comment = ORM::factory('Bucket_Comment', $comment_id);
-				
-				if ( ! $comment->loaded())
-				{
-					throw new HTTP_Exception_404();
-				}
-				
-				if ($comment->user_id == $this->user->id)
-				{
-					// User can't vote on their own comments
-					throw new HTTP_Exception_400();
-				}
-
-				$comment_score = ORM::factory('Bucket_Comment_Score')
-					->where('bucket_comment_id', '=', $comment->id)
-					->where('user_id', '=', $this->user->id)
-					->find();
-				$comment_score->bucket_comment_id = $comment->id;
-				$comment_score->user_id = $this->user->id;
-				$comment_score->score = $score;
-				$comment_score->save();		
+			case "DELETE":
+				$comment_id = $this->request->param('id', 0);
+				$this->bucket_service->delete_bucket_comment($this->bucket['id'], $comment_id);
 			break;
 		}
+	}
+	
+	/**
+	 * Gets the nagivation items for the discussions view
+	 */
+	private function get_discussion_nav()
+	{
+		return array(
+			array(
+				'id' => 'all-comments-link',
+				'url'=> '/discussion#all',
+				'active' => 'all',
+				'label' => __('All comments')
+			),
+			array(
+				'id' => 'my-comments-link',
+				'url' => '/discussion#mine',
+				'active' => 'mine',
+				'label' => __("Yours")
+			)
+		);
 	}
 }
