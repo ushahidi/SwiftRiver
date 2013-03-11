@@ -45,9 +45,9 @@ class Service_Bucket {
 	 * @param  bool  photos
 	 * @return array
 	 */
-	public function get_drops($bucket_id, $since_id = 0, $photos = FALSE)
+	public function get_drops($bucket_id, $since_id = 0, $photos = FALSE, $page = 1)
 	{
-		$parameters = array();
+		$parameters = array('page' => $page);
 		
 		// Build the API request parameter list
 		if (isset($since_id) AND $since_id > 0)

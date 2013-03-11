@@ -104,7 +104,12 @@ class Controller_Bucket extends Controller_Drop_Container {
 			->set('filters', NULL)
 			->set('max_droplet_id', 0)
 			->set('channels', json_encode(array()));
-		
+
+		if (count($droplet_list) > 0)
+		{
+			$droplet_js->set('max_droplet_id', $droplet_list[0]['id']);
+		}
+
 		// Generate the List HTML
 		$droplets_view = View::factory('pages/drop/drops')
 			->bind('droplet_js', $droplet_js)
@@ -186,17 +191,7 @@ class Controller_Bucket extends Controller_Drop_Container {
 				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 
 				// Get the drops
-				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos);
-				
-				//Throw a 404 if a non existent page is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets_array))
-				{
-				    throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
-				}
-				
+				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos, $page);
 				
 				echo json_encode($droplets_array);
 			break;
