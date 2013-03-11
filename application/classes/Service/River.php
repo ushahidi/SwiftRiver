@@ -114,7 +114,7 @@ class Service_River {
 	 */
 	public function create_river_from_array($river_array) 
 	{
-		$river_array = $this->rives_api->create_river(
+		$river_array = $this->rivers_api->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
 			$river_array['public']
