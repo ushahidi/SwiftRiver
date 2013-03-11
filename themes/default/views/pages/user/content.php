@@ -68,7 +68,11 @@
 </div>
 
 <script type="text/template" id="asset-template">
-	<td class="select-toggle"><input type="checkbox" /></td>
+	<td class="select-toggle">
+	<% if (is_owner) { %>
+		<input type="checkbox" />
+	<% } %>
+	</td>
 	<td class="item-type">
 		<span class="icon-<%= asset_type %>"></span>
 	</td>										
