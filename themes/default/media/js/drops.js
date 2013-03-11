@@ -267,10 +267,10 @@
 				wait: true,
 				success: function() {
 					view.$el.fadeOut();
-					showSysMessage("success", "Success!", "The drop has been successfully deleted.", {flash: true});
+					showSuccessMessage("The drop has been successfully deleted.", {flash: true});
 				},
 				error: function(model, response) {
-					showSysMessage("failure", "Error!", "Unable to delete the drop");
+					showFailureMssage("Unable to delete the drop");
 				}
 			});
 			return false;
@@ -483,7 +483,7 @@
 					drop.set("comment_count", parseInt(drop.get("comment_count")) + 1);
 				},
 				error: function(model, response) {
-					showSysMessage("failure", "Error", "Unable to add comment. Try again later.", false);
+					showFailureMessage("Unable to add comment. Try again later.");
 				}
 			});
 			
@@ -658,7 +658,7 @@
 				
 			}, function(){
 				var message = "The drop could not be added to the \"" + bucketName + "\" bucket";
-				showSysMessage("failure", "Failure", message, false);
+				showFailureMessage(message);
 			});
 		}
 		

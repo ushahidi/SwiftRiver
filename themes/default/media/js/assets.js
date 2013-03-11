@@ -396,8 +396,6 @@
 				return false;
 			}
 
-			var message = "";
-
 			// Check if the bucket exists in the list of buckets owned by
 			// the current user
 			var bucket = _.find(Assets.bucketList.own(), function(bucket) { 
@@ -405,8 +403,8 @@
 			});
 
 			if (bucket) {
-				// message = "You already own a bucket named \"" + bucketName + "\"";
-				// showSysMessage("failure", "Error", message, false);
+				var message = "You already own a bucket named \"" + bucketName + "\"";
+				showFailureMessage(message);
 
 				this.$("#bucket_name").val("");
 				return false;
@@ -422,8 +420,8 @@
 				},
 				success: function() {
 					// Show success message
-					// message = "Bucket \"" + bucketName + "\" successfully created!"
-					// showSysMessage("success", "Success",message, true);
+					var message = "Bucket \"" + bucketName + "\" successfully created!"
+					showSuccessMessage(message, {flash: true});
 
 					if (context.listView) {
 						context.listView.onSaveNewBucket(bucket);
@@ -554,7 +552,8 @@
 				if (action == "unfollow") {
 					message = "You are no longer following '" + name + "'";
 				}
-				showSysMessage("success", "Success", message, true);
+
+				showSuccessMessage(message, {flash:true});
 				
 				// Update the global collection
 				if (view.collection != null)
@@ -570,7 +569,7 @@
 					}
 				}
 			}, function() {
-				showSysMessage("failure", "Failure", "Oops, unable to " + action + ". Try again later.", false);
+				showFailureMessage("Oops, unable to " + action + ". Try again later.");
 			}, function() {
 				clearTimeout(t);
 				loading_msg.replaceWith(button);
