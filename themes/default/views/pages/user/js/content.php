@@ -232,7 +232,7 @@ $(function() {
 			var message = _.size(this.selectedAssets) + " <?php echo __("item(s) successfully deleted!"); ?>";
 
 			// Show success message
-			showSysMessage("success", "Success", message, true);
+			showSuccessMessage(message, {flash: true});
 			
 			// Clear the list of selected items
 			this.selectedAssets = {};

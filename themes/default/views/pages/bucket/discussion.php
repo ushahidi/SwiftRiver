@@ -151,11 +151,11 @@ $(function() {
 			this.model.destroy({
 				wait: true,
 				success: function(){
-					showSysMessage("success", "Success!", "Comment successfully deleted!", {flash: true});
+					showSuccessMessage("Comment successfully deleted!", {flash: true});
 					view.$el.fadeOut('slow');
 				},
 				error: function(){
-					showSysMessage("failure", "Error", "The comment could not be deleted");
+					showFailureMessage("The comment could not be deleted");
 				}
 			});
 			return false;
@@ -194,7 +194,7 @@ $(function() {
 			
 		addComment: function(comment) {
 			var view = new CommentView({model: comment});
-			this.$("#stream").append(view.render().el);
+			this.$("#stream").prepend(view.render().el);
 		},
 			
 		publishComment: function() {
@@ -216,10 +216,10 @@ $(function() {
 				success: function(model, response) {
 					textarea.val("");
 					view.$(".no-content").hide();
-					showSysMessage("success", "Success!", "Your comment has been successfully posted.", true);
+					showSuccessMessage("Your comment has been successfully posted.", {flash: true});
 				},
 				error: function(model, response) {
-					showSysMessage("failure", "Error", "Unable to add comment. Try again later.", false);
+					showFailureMessage("failure", "Error", "Unable to add comment. Try again later.", false);
 				}
 			});
 			
