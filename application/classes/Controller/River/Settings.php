@@ -94,7 +94,7 @@ class Controller_River_Settings extends Controller_River {
 				$river_name = $this->request->post('river_name');
 				$river_description = $this->request->post('river_description');
 				$river_public = $this->request->post('river_public');
-				$river = $this->riverService->update_river(
+				$river = $this->river_service->update_river(
 						$this->river['id'], 
 						$river_name, 
 						$river_description, 
@@ -107,7 +107,7 @@ class Controller_River_Settings extends Controller_River {
 					'Success', 
 					__("River display settings were saved successfully.")
 				);
-				$this->redirect($this->riverService->get_base_url($river).'/settings', 302);
+				$this->redirect($this->river_service->get_base_url($river).'/settings', 302);
 			}
 			catch (SwiftRiver_API_Exception_BadRequest $e)
 			{

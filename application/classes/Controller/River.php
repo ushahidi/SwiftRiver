@@ -373,7 +373,7 @@ class Controller_River extends Controller_Drop_Container {
 				$collaborator_array = json_decode($this->request->body(), TRUE);
 				try
 				{
-					$collaborator = $this->riverService->add_collaborator($this->river['id'], $collaborator_array);
+					$collaborator = $this->river_service->add_collaborator($this->river['id'], $collaborator_array);
 				}
 				catch (SwiftRiver_API_Exception_BadRequest $e)
 				{
@@ -394,7 +394,7 @@ class Controller_River extends Controller_Drop_Container {
 				
 				try
 				{
-					$this->riverService->delete_collaborator($this->river['id'], $collaborator_id);
+					$this->river_service->delete_collaborator($this->river['id'], $collaborator_id);
 				} catch (SwiftRiver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();

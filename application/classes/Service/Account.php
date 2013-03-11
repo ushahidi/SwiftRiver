@@ -54,7 +54,7 @@ class Service_Account {
 	 */
 	public function search($query)
 	{
-		return $this->api->get_accounts_api()->search($query);
+		return $this->accounts_api->search($query);
 	}
 	
 	/**
