@@ -414,5 +414,15 @@ class Service_River {
 	{
 		$this->rivers_api->delete_drop_comment($river_id, $drop_id, $comment_id);
 	}
+	
+	/**
+	 * Deletes a drop from a river
+	 * @param int river_id
+	 * @param int drop_id
+	 */
+	public function delete_drop($river_id, $drop_id)
+	{
+		$this->rivers_api->delete_drop($river_id, $drop_id);
+	}
 
 }

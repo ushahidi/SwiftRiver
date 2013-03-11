@@ -336,24 +336,7 @@ class Controller_River extends Controller_Drop_Container {
 			
 			case "DELETE":
 				$droplet_id = intval($this->request->param('id', 0));
-				$droplet_orm = ORM::factory('Droplet', $droplet_id);
-				
-				// Does the user exist
-				if ( ! $droplet_orm->loaded())
-				{
-					throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
-				}
-				
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-				
-				ORM::factory('River', $this->river->id)->remove('droplets', $droplet_orm);
+				$this->river_service->delete_drop($this->river['id'], $droplet_id);
 			break;
 		}
 	}

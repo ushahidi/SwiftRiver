@@ -260,6 +260,20 @@
 			} else {
 				selector.hide();
 			}
+		},
+		removeDrop: function() {
+			var view = this;
+			this.model.destroy({
+				wait: true,
+				success: function() {
+					view.$el.fadeOut();
+					showSysMessage("success", "Success!", "The drop has been successfully deleted.", {flash: true});
+				},
+				error: function(model, response) {
+					showSysMessage("failure", "Error!", "Unable to delete the drop");
+				}
+			});
+			return false;
 		}
 	})
 	
@@ -273,7 +287,8 @@
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
-			"click li.share > a": "shareDrop"
+			"click li.share > a": "shareDrop",
+			"click li.drop-status-remove > a": "removeDrop"
 		},
 		
 		initialize: function(options) {
@@ -292,7 +307,7 @@
 			
 			this.model.on("change:user_score", this.updateDropScore, this);
 			this.model.on("change:comment_count", this.render, this);
-			this.model.on("change:buckets", this.updateBucketCount, this);
+			this.model.on("change:buckets", this.updateBucketCount, this);			
 		},
 
 		make: function(tagName, attributes) {
@@ -334,7 +349,7 @@
 		showDetail: function() {
 			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
-		}
+		},
 
 	});
 	
@@ -733,6 +748,7 @@
 				// Masonry requires all new drops to be added at once for a smooth
 				// animation
 				options.dropsList.on('drops', this.addDrops, this);
+				options.dropsList.on('remove', this.masonry, this);
 				this.setElement(this.make("div", {"class": "river drops", "style": "position:relative;"}));
 			}
 			
@@ -770,7 +786,13 @@
 				views.push(new DropView({model: drop, 
 										layout: this.options.layout, 
 										baseURL: context.options.baseURL,
-										router: context.options.router}).render().el);
+										router: context.options.router,
+										dropsList: context.options.dropsList}).render().el);
+
+				if (context.options.layout != 'list') {
+					drop.on("destroy", context.masonry, context);
+				}
+
 			}, this)
 			
 			// Hide the new drops while they are loading
@@ -807,7 +829,11 @@
 									baseURL: this.options.baseURL,
 									router: this.options.router});
 			drop.view = view;
-			
+
+			if (this.options.layout != 'list') {
+				drop.on("destroy", this.masonry, this);
+			}
+
 			// Create a circular linked list of drops
 			var i = this.options.dropsList.indexOf(drop);
 			// Last index
