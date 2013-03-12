@@ -7,10 +7,10 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
- * @subpackage  Exceptions
+ * @package     SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category    Services
  * @copyright   Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
+ * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
 class Service_Account {
@@ -58,30 +58,32 @@ class Service_Account {
 	}
 	
 	/**
-	 * Get a single rivers array for the given account.
+	 * Get a single rivers array for the specified $account
 	 *
-	 * @return	Array
+	 * @param   array account          Account that owns the rivers to be returned
+	 * @param   array querying_account Account requesting for the rivers
+	 * @return	array
 	 */
-	public function get_rivers($account)
+	public function get_rivers($account, $querying_account)
 	{
 		$rivers = array();
 		
 		// Own rivers
 		foreach ($account['rivers'] as $river)
 		{
-			$rivers[] = Service_River::get_array($river, $account);
+			$rivers[] = Service_River::get_array($river, $querying_account);
 		}
 		
 		// Collaborating rivers
 		foreach ($account['collaborating_rivers'] as $river)
 		{
-			$rivers[] = Service_River::get_array($river, $account);
+			$rivers[] = Service_River::get_array($river, $querying_account);
 		}
 		
 		// Following rivers
 		foreach ($account['following_rivers'] as $river)
 		{
-			$rivers[] = Service_River::get_array($river, $account);
+			$rivers[] = Service_River::get_array($river, $querying_account);
 		}
 		
 		return $rivers;
@@ -90,28 +92,30 @@ class Service_Account {
 	/**
 	 * Get a single buckets array for the given account.
 	 *
-	 * @return	Array
+	 * @param   array   account          Account that owns the buckets to be returned
+	 * @param   array   querying_account Account requesting for the buckets
+	 * @return	array
 	 */
-	public function get_buckets($account)
+	public function get_buckets($account, $querying_account)
 	{
 		$buckets = array();
 		
 		// Own buckets
 		foreach ($account['buckets'] as $bucket)
 		{
-			$buckets[] = Service_Bucket::get_array($bucket, $account);
+			$buckets[] = Service_Bucket::get_array($bucket, $querying_account);
 		}
 		
 		// Collaborating buckets
 		foreach ($account['collaborating_buckets'] as $bucket)
 		{
-			$buckets[] = Service_Bucket::get_array($bucket, $account);
+			$buckets[] = Service_Bucket::get_array($bucket, $querying_account);
 		}
 		
 		// Following buckets
 		foreach ($account['following_buckets'] as $bucket)
 		{
-			$buckets[] = Service_Bucket::get_array($bucket, $account);
+			$buckets[] = Service_Bucket::get_array($bucket, $querying_account);
 		}
 		
 		return $buckets;

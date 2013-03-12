@@ -8,7 +8,7 @@
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com> 
  * @package     SwiftRiver - https://github.com/ushahidi/SwiftRiver
- * @category    Service
+ * @category    Services
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */

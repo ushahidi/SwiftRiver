@@ -64,7 +64,7 @@ class Controller_User extends Controller_Swiftriver {
 
 		if ( ! $this->owner)
 		{
-			$is_following = $this->accountService->is_account_follower($this->visited_account['id'], $this->user['id']);
+			$is_following = $this->account_service->is_account_follower($this->visited_account['id'], $this->user['id']);
 		
 			$follow_button = View::factory('template/follow');
 			$follow_button->data = json_encode(array(
@@ -95,8 +95,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('rivers', $rivers)
 			->bind('buckets', $buckets);
 		
-		$rivers = json_encode($this->accountService->get_rivers($this->visited_account));
-		$buckets = json_encode($this->accountService->get_buckets($this->visited_account));
+		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
+		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
 
 		$this->sub_content = View::factory('pages/user/content')
 			->bind('owner', $this->owner);
@@ -135,6 +135,11 @@ class Controller_User extends Controller_Swiftriver {
 				{
 					throw new HTTP_Exception_400();
 				}
+			break;
+			
+			case "DELETE":
+				$river_id = $this->request->param('id', 0);
+				$this->river_service->delete_river($river_id);
 			break;
 		}
 		
@@ -193,12 +198,12 @@ class Controller_User extends Controller_Swiftriver {
 				if ($item_array['following'])
 				{
 					// Follow
-					$this->accountService->add_follower($this->visited_account['id'], $item_array['id']);
+					$this->account_service->add_follower($this->visited_account['id'], $item_array['id']);
 				}
 				elseif ( ! $item_array['following'])
 				{
 					// Unfollow
-					$this->accountService->remove_follower($this->visited_account['id'], $item_array['id']);
+					$this->account_service->remove_follower($this->visited_account['id'], $item_array['id']);
 				}
 			break;
 		}
