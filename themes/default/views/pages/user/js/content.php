@@ -90,7 +90,11 @@ $(function() {
 			options.riverList.on("reset", this.addRivers, this);
 			options.bucketList.on("add", this.addAsset, this);
 			options.riverList.on("add", this.addAsset, this);
-			
+
+			// When the list of assets in the nav changes
+			Assets.riverList.on("add", this.addAsset, this);
+			Assets.bucketList.on("add", this.addAsset, this);
+
 			this.typeMap = {"#all":"all", "#river":"river", "#bucket":"bucket"};
 			this.roleMap = {"#all":"all", "#managing":"managing", "#following":"following"};
 		},
@@ -225,7 +229,12 @@ $(function() {
 		},
 		
 		confirmDelete: function() {
-			_.each(this.selectedAssets, function(asset, id) {
+			_.each(this.selectedAssets, function(asset, id) {				
+				if (asset.get("asset_type") == "bucket") {
+					Assets.bucketList.remove(asset);
+				} else if (asset.get("asset_type") == "river"){
+					Assets.riverList.remove(asset);
+				}
 				asset.destroy();
 			}, this);
 			

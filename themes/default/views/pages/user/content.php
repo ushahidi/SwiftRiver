@@ -81,7 +81,7 @@
 		<% if (asset_type == "river") { %>
 		<div class="metadata">
 			<%= drop_count %> drops
-			<% percent_full = (drop_count >0) ? Math.round(drop_count/drop_quota) : 0 %>			
+			<% percent_full = (drop_count > 0) ? Math.round(drop_count/drop_quota) : 0 %>
 			<span class="quota-meter">
 				<span class="quota-meter-capacity">
 					<span class="quota-total" style="width:<%= percent_full %>%;"></span>
