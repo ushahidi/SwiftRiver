@@ -45,7 +45,7 @@ class Controller_Bucket extends Controller_Drop_Container {
 		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
 		
 		// Get the buckets associated with the visited account
-		$visited_account_buckets = $this->accountService->get_buckets($this->visited_account);
+		$visited_account_buckets = $this->account_service->get_buckets($this->visited_account, $this->user);
 
 		foreach ($visited_account_buckets as $k => $bucket)
 		{
@@ -249,7 +249,7 @@ class Controller_Bucket extends Controller_Drop_Container {
 		
 		if ($query)
 		{
-			echo json_encode($this->accountService->search($query));
+			echo json_encode($this->account_service->search($query));
 			return;
 		}
 		
