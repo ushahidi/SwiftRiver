@@ -86,7 +86,7 @@
 	var RiverList = Assets.RiverList = AssetList.extend({
 		model: River,
 
-		url: site_url + logged_in_account_path + "/river/rivers/manage"
+		url: site_url + logged_in_account_path + "/rivers"
 	});
 	// Global river list
 	var riverList = Assets.riverList = new RiverList();

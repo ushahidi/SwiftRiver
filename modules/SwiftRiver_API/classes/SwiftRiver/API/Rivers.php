@@ -379,4 +379,14 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	{
 		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id);
 	}
+	
+	/**
+	 * Deletes the river specified in $river_id
+	 *
+	 * @param int river_id
+	 */
+	public function delete_river($river_id)
+	{
+		$this->delete('/rivers/'.$river_id);
+	}
 }
