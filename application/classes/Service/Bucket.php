@@ -190,7 +190,7 @@ class Service_Bucket {
 	{
 		$bucket = $this->buckets_api->modify_bucket($bucket_id, $parameters);
 
-		return $this->marshall_bucket($bucket, $querying_account);
+		return self::get_array($bucket, $querying_account);
 	}
 	
 
