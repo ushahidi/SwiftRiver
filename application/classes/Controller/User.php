@@ -256,7 +256,10 @@ class Controller_User extends Controller_Swiftriver {
 		
 		if ( ! empty($_POST))
 		{
-			$this->account_service->update_profile($this->user['id'], $_POST);
+			if (($account = $this->account_service->update_profile($this->user['id'], $_POST)) != FALSE)
+			{
+				$this->user = $account;
+			}
 		}
 		
 		$session = Session::instance();

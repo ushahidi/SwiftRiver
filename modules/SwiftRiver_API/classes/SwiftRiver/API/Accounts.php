@@ -114,4 +114,9 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	{
 		return $this->get('/accounts',  array('q' => $query));
 	}
+	
+	public function update_profile($account_id, $profile_data)
+	{
+		return $this->put('/accounts/'.$account_id, $profile_data);
+	}
 }

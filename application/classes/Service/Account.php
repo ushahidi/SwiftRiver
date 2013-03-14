@@ -159,4 +159,36 @@ class Service_Account {
 		return $this->accounts_api->remove_follower($id, $follower_account_id);
 	}
 	
+	/**
+	 * Updates the profile information for the specified account
+	 *
+	 * @param int account_id
+	 * @param array profile_data
+	 * @return array
+	 */
+	public function update_profile($account_id, $profile_data)
+	{
+		// Validate the profile data
+		$validation = Validation::factory($profile_data)
+			->rule('name', 'not_empty')
+			->rule('account_path', 'not_empty')
+			->rule('email', 'email');
+		
+		if ( ! $validation->check())
+		{
+			return FALSE;
+		}
+		
+		// Marshall the request data for consumption by the API
+		$account_data = array(
+			'account_path' => $profile_data['account_path'],
+			'owner' => array(
+				'name' => $profile_data['name'],
+				'email' => $profile_data['email']
+			)
+		);
+
+		// Execute API request
+		return $this->accounts_api->update_profile($account_id, $account_data);
+	}
 }

@@ -25,7 +25,7 @@
 			</div>
 			<div class="body-field">
 				<h3 class="label"><?php echo __('Nickname'); ?></h3>
-				<?php echo Form::input("nickname", $user['account_path'], array('id' => 'nickname')); ?>
+				<?php echo Form::input("account_path", $user['account_path'], array('id' => 'nickname')); ?>
 			</div>
 			<div class="body-field">
 				<h3 class="label"><?php echo __('Email'); ?></h3>
