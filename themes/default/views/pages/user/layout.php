@@ -21,6 +21,7 @@
 	</div>
 </hgroup>
 
+<?php if ($show_navigation): ?>
 <nav class="page-navigation cf">
 	<div class="center">
 		<ul class="col_12">
@@ -34,6 +35,7 @@
 		</ul>
 	</div>
 </nav>
+<?php endif; ?>
 
 <div id="content" class="cf">
 	<div class="center">

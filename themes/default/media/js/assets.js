@@ -410,7 +410,7 @@
 				return false;
 			}
 
-			bucket = new Bucket({name: bucketName});
+			bucket = new Bucket({name: bucketName, urlRoot: site_url + logged_in_account_path + "/buckets"});
 
 			var context = this;
 			Assets.bucketList.create(bucket, {

@@ -28,9 +28,7 @@
 							</a>
 						</li>
 						<li class="group">
-							<a href="#">
-								<?php echo __("Account Settings"); ?>
-							</a>
+							<?php echo HTML::anchor(URL::site().$user['account_path'].'/settings', __('Account Settings')); ?>
 						</li>
 						<?php if ($admin): ?>
 							<li>

@@ -1,142 +1,63 @@
-<div class="col_12">
-	<?php if (isset($errors)): ?>
-		<div class="alert-message red">
-		<p><strong>Uh oh.</strong></p>
-		<ul>
-			<?php if (is_array($errors)): ?>
-				<?php foreach ($errors as $error): ?>
-					<li><?php echo $error; ?></li>
-				<?php endforeach; ?>
-			<?php else: ?>
-				<li><?php echo $errors; ?></li>
-			<?php endif; ?>
-		</ul>
+<section id="filters" class="col_3">
+	<div class="modal-window">
+		<div class="modal">		
+			<ul class="body-tabs-menu filters-primary">
+				<li class="active"><a href="#account" class="modal-close">Account</a></li>
+				<!--
+				<li><a href="#notifications" class="modal-close">Notifications</a></li>
+				<li><a href="#services" class="modal-close">Services</a></li>
+				-->
+			</ul>
 		</div>
-	<?php endif; ?>
-	
-	<?php if (isset($messages)): ?>
-		<div class="alert-message blue">
-		<p><strong>Success.</strong></p>
-		<ul>
-			<?php if (is_array($messages)): ?>
-				<?php foreach ($messages as $message): ?>
-					<li><?php echo $message; ?></li>
-				<?php endforeach; ?>
-			<?php else: ?>
-				<li><?php echo $messages; ?></li>
-			<?php endif; ?>
-		</ul>
-		</div>
-	<?php endif; ?>
-
-	<?php echo Form::open(NULL, array('id' => 'account-settings-form')) ?>
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title col_12">
-				<h1><?php echo __("About You"); ?></h1>
-			</div>
-		</header>
-		<section class="property-parameters">
-			<div class="parameter">
-				<div class="field">
-					<p class="field-label"><?php echo __('Full name'); ?></p>
-					<?php echo Form::input("name", $user->name, array('id' => 'name')); ?>
-				</div>
-				<div class="field">
-					<p class="field-label"><?php echo __('Nickname'); ?></p>
-					<?php echo Form::input("nickname", $user->account->account_path, array('id' => 'nickname')); ?>
-				</div>
-				<div class="field">
-					<p class="field-label"><?php echo __('Email address'); ?></p>
-					<?php echo Form::input("email", $user->email, array('id' => 'email')); ?>
-					<?php echo Form::hidden("orig_email", $user->email, array('id' => 'orig_email')); ?>
-				</div>
-			</div>
-		</section>
-	</article>
-	
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title col_12">
-				<h1><?php echo __("Password"); ?></h1>
-			</div>
-		</header>
-		<section class="property-parameters">
-			<div class="parameter">
-				<div class="field">
-					<p class="field-label"><?php echo __('Password'); ?></p>
-					<?php echo Form::password("password", "", array('id' => 'password')); ?>
-				</div>
-				<div class="field">
-					<p class="field-label"><?php echo __('Confirm password'); ?></p>
-					<?php echo Form::password("password_confirm", "", array('id' => 'password_confirm')); ?>
-				</div>
-			</div>
-		</section>
-	</article>
-
-	<article class="container base">
-		<header class="cf">
-			<div class="property-title col_12">
-				<h1><?php echo __('Photo'); ?></h1>
-			</div>
-		</header>
-		<section class="property-parameters">
-			<div class="parameter cf">
-				<a class="avatar-wrap"><img src="<?php echo Swiftriver_Users::gravatar($user->email, 80); ?>" /></a>
-				<p class="button-blue button-small no-icon">
-					<a href="http://www.gravatar.com" target="_blank"><?php echo __('Use a different photo'); ?></a>
-				</p>
-			</div>
-		</section>
-	</article>
-	<div class="save-toolbar">
-		<p class="button-blue"><a href="#"><?php echo __("Save Changes"); ?></a></p>
 	</div>
-	<?php echo Form::hidden("current_password"); ?>
-	<?php echo Form::close(); ?>
-</div>
+</section>
 
-<article class="modal" style="display: none;" id="password_prompt">
-	<hgroup class="page-title cf">
-		<div class="page-h1 col_9">
-			<h1>Enter your current password</h1>
-		</div>
-		<div class="page-actions col_3">
-			<h2 class="close">
-				<a href="#">
-					<span class="icon-cancel"></span>
-					Close
-				</a>
-			</h2>
-		</div>
-	</hgroup>
-	
-	<div class="modal-body">
-		
-		<div class="alert-message red" style="display:none">
-			<p><strong>Uh oh.</strong> <span class="message"></span></p>
-		</div>
+<div id="settings" class="body-tabs-window col_9">
 
-		<div class="alert-message blue" style="display:none">
-			<p><strong>Success</strong> <span class="message"></span></p>
-		</div>
-		
-		<?php echo Form::open() ?>
-		<article class="container base">
-			<section class="property-parameters">
-				<div class="parameter">
-					<label for="current_password_prompt">
-						<p class="field">Current Password</p>
-						<?php echo Form::password("current_password_prompt"); ?>
-					</label>
-				</div>
-			</section>
+	<!-- TAB: Account -->
+	<div id="account" class="active">
+		<article class="base settings-category">
+			<?php echo Form::open(); ?>
+			<h1><?php echo __("Profile"); ?></h1>
+			<div class="body-field">
+				<h3 class="label"><?php echo __('Full name'); ?></h3>
+				<?php echo Form::input("name", $user['owner']['name'], array('id' => 'name')); ?>
+			</div>
+			<div class="body-field">
+				<h3 class="label"><?php echo __('Nickname'); ?></h3>
+				<?php echo Form::input("nickname", $user['account_path'], array('id' => 'nickname')); ?>
+			</div>
+			<div class="body-field">
+				<h3 class="label"><?php echo __('Email'); ?></h3>
+				<?php echo Form::input("email", $user['owner']['email'], array('id' => 'email')); ?>
+			</div>
+			<div class="settings-category-toolbar">
+				<a href="#" class="button-submit button-primary" onClick="submitForm(this);"><?php echo __("Update Profile"); ?></a>
+			</div>
+			<?php echo Form::close(); ?>
 		</article>
 
-		<div class="save-toolbar">
-			<p class="button-blue"><a href="#"><?php echo __("Save"); ?></a></p>
-		</div>
-		<?php echo Form::close(); ?>
+		<article class="base settings-category">
+			<?php echo Form::close(); ?>
+			<h1><?php echo __("Change password"); ?></h1>
+			<div class="body-field">
+				<h3 class="label"><?php echo __("Old password"); ?></h3>
+				<?php echo Form::password('old_password'); ?>
+			</div>
+			<div class="body-field">
+				<h3 class="label"><?php echo __("New password"); ?></h3>
+				<?php echo Form::password('new_password'); ?>
+			</div>
+			<div class="body-field">
+				<h3 class="label"><?php echo __("Confirm new password"); ?></h3>
+				<?php echo Form::password('new_password_confirm')?>
+			</div>
+			<div class="settings-category-toolbar">
+				<a href="#" class="button-submit button-primary"><?php echo __("Update Password"); ?></a>
+			</div>
+			<?php echo Form::close(); ?>
+		</article>
+
 	</div>
-</article>
+	
+</div>
