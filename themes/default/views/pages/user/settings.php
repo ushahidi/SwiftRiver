@@ -38,7 +38,7 @@
 		</article>
 
 		<article class="base settings-category">
-			<?php echo Form::close(); ?>
+			<?php echo Form::open(); ?>
 			<h1><?php echo __("Change password"); ?></h1>
 			<div class="body-field">
 				<h3 class="label"><?php echo __("Old password"); ?></h3>
@@ -53,7 +53,7 @@
 				<?php echo Form::password('new_password_confirm')?>
 			</div>
 			<div class="settings-category-toolbar">
-				<a href="#" class="button-submit button-primary"><?php echo __("Update Password"); ?></a>
+				<a href="#" class="button-submit button-primary" onClick="submitForm(this);"><?php echo __("Update Password"); ?></a>
 			</div>
 			<?php echo Form::close(); ?>
 		</article>

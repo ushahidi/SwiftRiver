@@ -2,7 +2,7 @@
 	<div class="center">
 		<div class="col_9">
 			<a class="avatar-wrap" href="#">
-				<img src="<?php echo Swiftriver_Users::gravatar($account['owner']['email'], 131); ?>" class="avatar"/>
+				<img src="<?php echo $account['owner']['avatar']; ?>" class="avatar"/>
 			</a>
 			<h1><?php echo $account['owner']['name']; ?></h1>
 			<h2 class="label"><?php echo $account['account_path']; ?></h2>

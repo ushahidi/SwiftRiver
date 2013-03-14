@@ -254,12 +254,24 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('errors', $this->errors);
 		
-		if ( ! empty($_POST))
+		if ($this->request->method() === 'POST' AND CSRF::valid($this->request->post('form_auth_id')))
 		{
-			if (($account = $this->account_service->update_profile($this->user['id'], $_POST)) != FALSE)
+			if ( ! isset($_POST['old_password']))
 			{
-				$this->user = $account;
+				if (($account = $this->account_service->update_profile($this->user['id'], $_POST)) != FALSE)
+				{
+					$this->user = $account;
+					$this->visited_account  = $account;
+				}
 			}
+			elseif (isset($_POST['old_password']))
+			{
+				// The change password form has been submitted
+				Kohana::$log->add(Log::DEBUG, __("Password changing not implemented"));
+
+				// TODO Change password
+			}
+				
 		}
 		
 		$session = Session::instance();
