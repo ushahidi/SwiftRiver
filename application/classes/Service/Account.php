@@ -191,4 +191,31 @@ class Service_Account {
 		// Execute API request
 		return $this->accounts_api->update_profile($account_id, $account_data);
 	}
+	
+	/**
+	 * Change password
+	 */
+	public function change_password($account_id, $password_data)
+	{
+		$validation = Validation::factory($password_data)
+			->rule('current_password', 'not_empty')
+			->rule('new_password', 'matches', array(':validation', 'new_password', 'confirm_password'));
+		
+		if ($validation->check())
+		{
+			$params = array(
+				'owner' => array(
+					'current_password' => $password_data['current_password'],
+					'password' => $password_data['new_password']
+				)
+			);
+
+			$this->accounts_api->change_password($account_id, $params);
+		}
+		else
+		{
+			throw new Validation_Exception($validation);
+		}
+		
+	}
 }

@@ -115,8 +115,25 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 		return $this->get('/accounts',  array('q' => $query));
 	}
 	
+	/**
+	 * Update user's display profile
+	 * @param  int    account_id
+	 * @param  array  profile_data
+	 */
 	public function update_profile($account_id, $profile_data)
 	{
 		return $this->put('/accounts/'.$account_id, $profile_data);
+	}
+	
+	/**
+	 * Change user password
+	 *
+	 * @param  int    account_id
+	 * @param  array  parameters
+	 * @return array
+	 */
+	public function change_password($account_id, $parameters)
+	{
+		return $this->put('/accounts/'.$account_id, $parameters);
 	}
 }

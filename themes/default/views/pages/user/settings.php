@@ -42,7 +42,7 @@
 			<h1><?php echo __("Change password"); ?></h1>
 			<div class="body-field">
 				<h3 class="label"><?php echo __("Old password"); ?></h3>
-				<?php echo Form::password('old_password'); ?>
+				<?php echo Form::password('current_password'); ?>
 			</div>
 			<div class="body-field">
 				<h3 class="label"><?php echo __("New password"); ?></h3>
@@ -50,7 +50,7 @@
 			</div>
 			<div class="body-field">
 				<h3 class="label"><?php echo __("Confirm new password"); ?></h3>
-				<?php echo Form::password('new_password_confirm')?>
+				<?php echo Form::password('confirm_password')?>
 			</div>
 			<div class="settings-category-toolbar">
 				<a href="#" class="button-submit button-primary" onClick="submitForm(this);"><?php echo __("Update Password"); ?></a>
