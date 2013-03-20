@@ -118,19 +118,20 @@ $(document).ready(function() {
 		return this;
 	};
 	
-	Dialog.prototype.transition = function() {
+	Dialog.prototype.transition = function(hash) {
 		var root = $(this.container);
-		
+		var viewSelector = (!$(hash).is('div')) ? '.modal-segment' : hash;
+
 		$('#modal-viewport', root).addClass('view-secondary');
 		$('#modal-primary > div', root).fadeOut('fast');
-		$('#modal-secondary .modal-segment', root).fadeIn('fast');
+		$('#modal-secondary ' + viewSelector, root).fadeIn('fast');
 		root.scrollTop(0,0);		
 		this._registerBackHandler(); 
 		
 		return this;
 	};
 	
-	Dialog.prototype._registerBackHandler = function() {		
+	Dialog.prototype._registerBackHandler = function() {
 		var root = $(this.container);
 		$('a.modal-back', root).bind('click', function() {
 			$('#modal-viewport', root).removeClass('view-secondary');
@@ -183,7 +184,8 @@ $(document).ready(function() {
 		return false;
 	});
 	$('a.modal-transition').live('click', function(e) {
-		modalWindow.transition();
+		var hash = $(this).prop('hash');
+		modalWindow.transition(hash);
 		return false;
 	});
 

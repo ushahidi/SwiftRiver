@@ -389,4 +389,53 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	{
 		$this->delete('/rivers/'.$river_id);
 	}
+	
+	/**
+	 * Gets and returns the rules for the specified river
+	 *
+	 * @param  int  river_id
+	 * @return array
+	 */
+	public function get_rules($river_id)
+	{
+		return $this->get('/rivers/'.$river_id.'/rules');
+	}
+	
+	/**
+	 * Adds a rule to the river with the specified river_id
+	 *
+	 * @param int    river_id
+	 * @param array  rule_data	
+	 * @return array
+	 */
+	public function add_rule($river_id, $rule_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/rules', $rule_data);
+	}
+	
+	/**
+	 * Modifies the rule with the specified $rule_id in the river specified
+	 * by $river_id
+	 *
+	 * @param   int    river_id
+	 * @param   int    rule_id
+	 * @param   array  rule_data
+	 * @return  array
+	 */
+	public function modify_rule($river_id, $rule_id, $rule_data)
+	{
+		return $this->put('/rivers/'.$river_id.'/rules/'.$rule_id, $rule_data);
+	}
+	
+	/**
+	 * Deletes the rule specified in $rule_id from the river with the
+	 * specified $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int rule_id
+	 */
+	public function delete_rule($river_id, $rule_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/rules/'.$rule_id);
+	}
 }

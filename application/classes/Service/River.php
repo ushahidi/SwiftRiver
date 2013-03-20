@@ -435,4 +435,59 @@ class Service_River {
 		$this->rivers_api->delete_river($river_id);
 	}
 
+	/**
+	 * Gets and returns the rules for the specified river
+	 *
+	 * @param  int river_id ID of the river with the rules
+	 * @return array
+	 */
+	public function get_rules($river_id)
+	{
+		return $this->rivers_api->get_rules($river_id);
+	}
+	
+	/**
+	 * Adds a rule to the river with the specified river_id
+	 *
+	 * @param  int   river_id
+	 * @param  array rule_data
+	 * @return array
+	 */
+	public function add_rule($river_id, $rule_data)
+	{
+		$validation = Validation::factory($rule_data)
+			->rule('name', 'not_empty')
+			->rule('conditions', 'not_empty')
+			->rule('actions', 'not_empty');
+		
+		if ( ! $validation->check())
+		{
+			throw new Validation_Exception($validation);
+		}
+		return $this->rivers_api->add_rule($river_id, $rule_data);
+	}
+	
+	/**
+	 * Modify a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 * @param array rule_data
+	 */
+	public function modify_rule($river_id, $rule_id, $rule_data)
+	{
+		return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+	}
+	
+	/**
+	 * Deletes a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 */
+	public function delete_rule($river_id, $rule_id)
+	{
+		$this->rivers_api->delete_rule($river_id, $rule_id);
+	}
+
 }
