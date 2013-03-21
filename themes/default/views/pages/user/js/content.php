@@ -23,11 +23,11 @@ $(function() {
 			
 			switch(hash) {
 				case "#river":
-					view = new CreateRiverModalView();
+					view = new Assets.CreateRiverModalView();
 				break;
 				
 				case "#bucket":
-					view = new CreateBucketModalView();
+					view = new Assets.CreateBucketModalView();
 				break;
 			}
 			

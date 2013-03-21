@@ -367,7 +367,7 @@
 	// 
 	// View for creating a new bucket via the modal dialog
 	// 
-	var CreateBucketModalView = window.CreateBucketModalView = Backbone.View.extend({
+	var CreateBucketModalView = Assets.CreateBucketModalView = Backbone.View.extend({
 		
 		tagName: "div",
 		
@@ -449,7 +449,7 @@
 		
 	});
 	
-	var CreateRiverModalView = window.CreateRiverModalView = Backbone.View.extend({
+	var CreateRiverModalView = Assets.CreateRiverModalView = Backbone.View.extend({
 		
 		tagName: "div",
 
