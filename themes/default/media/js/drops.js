@@ -288,7 +288,9 @@
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
-			"click li.drop-status-remove > a": "removeDrop"
+			"click li.drop-status-remove > a": "removeDrop",
+			"mouseenter": function() {this.$('.drop-status').fadeIn('fast');},
+			"mouseleave": function() {this.$('.drop-status').fadeOut('fast');},
 		},
 		
 		initialize: function(options) {
