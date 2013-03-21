@@ -2,7 +2,7 @@
 	<div class="center">
 		<div class="col_9">
 			<a class="avatar-wrap" href="#">
-				<img src="<?php echo Swiftriver_Users::gravatar($account['owner']['email'], 131); ?>" class="avatar"/>
+				<img src="<?php echo $account['owner']['avatar']; ?>" class="avatar"/>
 			</a>
 			<h1><?php echo $account['owner']['name']; ?></h1>
 			<h2 class="label"><?php echo $account['account_path']; ?></h2>
@@ -12,10 +12,16 @@
 				<a href="#" class="modal-trigger"><strong><?php echo $account['follower_count']; ?></strong> followers</a>, 
 				<a href="#"><strong><?php echo $account['following_count']; ?></strong> following</a>
 			</span>
+			<?php if (isset($follow_button)): ?>
+			<span class='button-follow' id="follow-button">
+				<?php echo $follow_button; ?>
+			</span>
+			<?php endif; ?>
 		</div>
 	</div>
 </hgroup>
 
+<?php if ($show_navigation): ?>
 <nav class="page-navigation cf">
 	<div class="center">
 		<ul class="col_12">
@@ -29,6 +35,7 @@
 		</ul>
 	</div>
 </nav>
+<?php endif; ?>
 
 <div id="content" class="cf">
 	<div class="center">

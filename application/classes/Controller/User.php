@@ -50,13 +50,15 @@ class Controller_User extends Controller_Swiftriver {
 		// Execute parent::before first
 		parent::before();
 		
-		$this->owner = TRUE;
+		$this->owner = $this->visited_account['id'] == $this->user['id'];
 		
 		$this->template->content = View::factory('pages/user/layout')
 			->bind('account', $this->visited_account)
-				->bind('sub_content', $this->sub_content)
+			->bind('sub_content', $this->sub_content)
 			->bind('active', $this->active);
-		$this->template->content->nav = $this->get_nav($this->user);
+
+		$this->template->content->set('show_navigation', TRUE)
+				->set('nav', $this->get_nav($this->user));
 			
 		$following = array();
 		$followers =  array();
@@ -64,14 +66,16 @@ class Controller_User extends Controller_Swiftriver {
 
 		if ( ! $this->owner)
 		{
+			$is_following = $this->account_service->is_account_follower($this->visited_account['id'], $this->user['id']);
+		
 			$follow_button = View::factory('template/follow');
 			$follow_button->data = json_encode(array(
-				'id' => $this->visited_account->user->id,
-				'name' => $this->visited_account->user->name,
+				'id' => $this->user['id'],
+				'name' => $this->visited_account['owner']['name'],
 				'type' => 'user',
-				'subscribed' => $this->user->has('following', $this->visited_account->user)
+				'following' => $is_following
 			));
-			$follow_button->action_url = URL::site().$this->visited_account->account_path.'/user/user/manage';
+			$follow_button->action_url = URL::site($this->visited_account['account_path'].'/user/followers/manage');
 			$this->template->content->follow_button = $follow_button;
 		}
 	}
@@ -89,8 +93,16 @@ class Controller_User extends Controller_Swiftriver {
 	public function action_content()
 	{
 		$this->template->header->title = __('Content');
-		$this->template->header->js = View::factory('pages/user/js/content');
-		$this->sub_content = View::factory('pages/user/content');
+		$this->template->header->js = View::factory('pages/user/js/content')
+			->bind('rivers', $rivers)
+			->bind('buckets', $buckets);
+		
+		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
+		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
+
+		$this->sub_content = View::factory('pages/user/content')
+			->bind('owner', $this->owner);
+
 		$this->active = 'content-navigation-link';
 	}
 
@@ -118,13 +130,18 @@ class Controller_User extends Controller_Swiftriver {
 				
 				try
 				{
-					$response = $this->riverService->create_river_from_array($river_array);
+					$response = $this->river_service->create_river_from_array($river_array);
 					echo json_encode($response);
 				}
 				catch (Swiftriver_API_Exception_BadRequest $e)
 				{
 					throw new HTTP_Exception_400();
 				}
+			break;
+			
+			case "DELETE":
+				$river_id = $this->request->param('id', 0);
+				$this->river_service->delete_river($river_id);
 			break;
 		}
 		
@@ -160,6 +177,7 @@ class Controller_User extends Controller_Swiftriver {
 	}
 	
 	/**
+	 * XHR endopint for adding/removing followers
 	 * @return	void
 	 */
 	public function action_manage()
@@ -178,31 +196,17 @@ class Controller_User extends Controller_Swiftriver {
 			case "PUT":
 				$item_array = json_decode($this->request->body(), TRUE);
 				
-				// Stalking!
-				$user_orm = ORM::factory('User', $item_array['id']);
-				if ( ! $user_orm->loaded())
+				// Follow/Unfollow
+				if ($item_array['following'])
 				{
-					throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
+					// Follow
+					$this->account_service->add_follower($this->visited_account['id'], $item_array['id']);
 				}
-				if ($user_orm->id == $this->user->id)
-					throw new HTTP_Exception_400(); // Do not follow self
-				
-				// Are following
-				if ($item_array['subscribed']  AND ! $this->user->has('following', $user_orm))
+				elseif ( ! $item_array['following'])
 				{
-					$this->user->add('following', $user_orm);
-					Model_User_Action::create_action($this->user->id, 'user', 'follow', $user_orm->id);
-					$this->notify_new_follower($user_orm);
+					// Unfollow
+					$this->account_service->remove_follower($this->visited_account['id'], $item_array['id']);
 				}
-				
-				// Are unfollowing
-				if (! $item_array['subscribed'] AND $this->user->has('following', $user_orm))
-				{
-					$this->user->remove('following', $user_orm);
-				}					
 			break;
 		}
 	}
@@ -238,6 +242,8 @@ class Controller_User extends Controller_Swiftriver {
 			$this->redirect($this->dashboard_url, 302);
 		}
 		
+		$this->template->content->show_navigation = FALSE;
+
 		// Set the current page
 		$this->active = 'settings-navigation-link';
 		$this->template->content->view_type = 'settings';
@@ -248,169 +254,30 @@ class Controller_User extends Controller_Swiftriver {
 		    ->bind('user', $this->user)
 		    ->bind('errors', $this->errors);
 		
-		if ( ! empty($_POST))
+		if ($this->request->method() === 'POST' AND CSRF::valid($this->request->post('form_auth_id')))
 		{
-			$this->_update_settings();
+			if ( ! isset($_POST['old_password']))
+			{
+				if (($account = $this->account_service->update_account($this->user['id'], $_POST)) != FALSE)
+				{
+					$this->user = $account;
+					$this->visited_account  = $account;
+				}
+			}
+			elseif (isset($_POST['old_password']))
+			{
+				// The change password form has been submitted
+				Kohana::$log->add(Log::DEBUG, __("Password changing not implemented"));
+
+				// TODO Change password
+			}
+				
 		}
 		
 		$session = Session::instance();
 		$this->sub_content->messages = $session->get('messages');
 		$session->delete('messages');
 	}
-	
-	private function _update_settings()
-	{	
-		// Validate current password
-		$validated = FALSE;
-		$current_password = $_POST['current_password'];
-		if ($this->riverid_auth)
-		{
-			$response = RiverID_API::instance()->signin($this->user->email, $_POST['current_password']);
-			$validated = ($response AND $response['status']);
-		}
-		else
-		{
-			$validated =  (Auth::instance()->hash($current_password) == $this->user->password);
-		}
-        
-		if ( ! $validated)
-		{
-			$this->errors = __('Current password is incorrect');
-			return;
-		}
-		
-		$messages = array();
-        
-		// Password is changing and we are using RiverID authentication
-		if ( ! empty($_POST['password']) OR ! empty($_POST['password_confirm']))
-		{
-			$post = Model_Auth_User::get_password_validation($_POST);
-			if ( ! $post->check())
-			{
-				$this->errors = $post->errors('user');
-				return;
-			}
-        
-			// Are we using RiverID?
-			if ($this->riverid_auth)
-			{
-				$resp = RiverID_API::instance()
-						   ->change_password($this->user->email, $_POST['current_password'], $_POST['password']);
-        
-				if ( ! $resp['status'])
-				{
-					$this->errors = $resp['error'];
-					return;
-				}
-        
-				// For API calls below, use this new password
-				$current_password = $_POST['password'];
-				unset($_POST['password'], $_POST['password_confirm']);
-			}			        
-		}
-        
-		// Email address is changing
-		if ($_POST['email'] != $this->user->email)
-		{
-			$new_email = $_POST['email'];
-        
-			if ( ! Valid::email($new_email))
-			{
-				$this->errors = __('Invalid email address');
-				return;
-			}
-        
-			if ($this->riverid_auth)
-			{
-				// RiverID email change process
-				$mail_body = View::factory('emails/text/changeemail')
-							 ->bind('secret_url', $secret_url);		            
-        
-				$secret_url = URL::site('login/changeemail/'.urlencode($this->user->email).'/'.urlencode($new_email).'/%token%', TRUE, TRUE);
-				$site_email = Swiftriver_Mail::get_default_address();
-				$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
-				$resp = RiverID_API::instance()
-						    ->change_email($this->user->email, $new_email, $current_password,
-						    	$mail_body, $mail_subject, $site_email);
-        
-				if ( ! $resp['status'])
-				{
-					$this->errors = $resp['error'];
-					return;
-				}    
-			}
-			else
-			{
-				// Make sure the new email address is not yet registered
-				$user = ORM::factory('User',array('email'=>$new_email));
-        
-				if ($user->loaded())
-				{
-					$this->errors = __('The new email address has already been registered');
-					return;
-				}
-        
-				$auth_token = Model_Auth_Token::create_token('change_email', array(
-					'new_email' => $new_email,
-					'old_email' => $this->user->email
-					));
-				if ($auth_token->loaded())
-				{
-					// Send an email with a secret token URL
-					$mail_body = View::factory('emails/text/changeemail')
-									   ->bind('secret_url', $secret_url);		            
-        
-					$secret_url = URL::site('login/changeemail/'
-											.urlencode($this->user->email)
-											.'/'
-											.urlencode($new_email)
-											.'/'
-											.$auth_token->token, TRUE, TRUE);
-        
-					// Send email to the user using the new address
-					$mail_subject = __(':sitename: Email Change', array(':sitename' => Model_Setting::get_setting('site_name')));
-					Swiftriver_Mail::send($new_email, $mail_subject, $mail_body);
-				}
-				else
-				{
-					$this->errors = __('Error');
-					return;
-				}
-				
-				$messages[] = __("A confirmation email has been sent to :email", array(':email' => $new_email));
-			}
-        
-			// Don't change email address immediately.
-			// Only do so after the tokens sent above are validated
-			unset($_POST['email']);
-        
-		} // END if - email address change
-        
-		// Nickname is changing
-		if ($_POST['nickname'] != $this->user->account->account_path)
-		{
-			$nickname = $_POST['nickname'];
-			// Make sure the account path is not already taken
-			$account = ORM::factory('Account',array('account_path' => $nickname));
-			if ($account->loaded())
-			{
-				$this->errors = __('Nickname is already taken');
-				return;
-			}
-        
-			// Update
-			$this->user->account->account_path = $nickname;
-			$this->user->account->save();
-		}
-        
-        
-		$this->user->update_user($_POST, array('name', 'password', 'email'));
-        
-		$messages[] = __("Account settings were saved successfully.");
-		Session::instance()->set("messages", $messages);
-		$this->redirect(URL::site($this->user->account->account_path.'/settings'), 302);
-	}
-	
 	
 	/**
 	 * Actions restful api
@@ -598,20 +465,6 @@ class Controller_User extends Controller_Swiftriver {
 				$this->template->content->errors = $post->errors("validation");
 			}
 		}
-	}
-
-	/**
-	 * Loads the dialog for creating a new item (bucket|river|drop)
-	 */
-	public function action_create()
-	{
-		$this->template = '';
-		$this->auto_render = FALSE;
-
-		$modal_create =  View::factory('dialogs/modal_create')
-		    ->bind('account', $this->account);
-
-		echo $modal_create;
 	}
 
 

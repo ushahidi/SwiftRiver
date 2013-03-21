@@ -1,4 +1,4 @@
-	<hgroup class="page-title cf">
+<hgroup class="page-title cf">
 	<div class="center">
 		<div class="col_9">
 			<h1>
@@ -7,17 +7,23 @@
 					<span><?php echo $bucket_name; ?></span>
 				<?php else: ?>
 					<a href="<?php echo URL::site().$bucket['account']['account_path'] ?>">
-						<?php $bucket_name = $bucket['account']['account_path'].'/'.$bucket_name; ?>
-						<span><?php echo $bucket_name; ?></span>
+							<?php echo $bucket['account']['account_path']; ?>
+					</a>
+					<span><?php echo "/".$bucket_name; ?></span>
 				<?php endif; ?>
 			</h1>		
 		</div>
-		<?php if ($bucket['is_owner']): ?>
 		<div class="page-action col_3">
+			<?php if ($bucket['is_owner']): ?>
 			<a href="<?php echo $discussion_url; ?>" class="button button-white settings"><span class="icon-comment"></span></a>
 			<a href="<?php echo $settings_url; ?>" class="button button-white settings"><span class="icon-cog"></span></a>
+			<?php endif; ?>
+			<?php if (isset($follow_button)): ?>
+			<span class="button-follow" id="follow-button">
+				<?php echo $follow_button; ?>
+			</span>
+			<?php endif; ?>
 		</div>		
-		<?php endif; ?>
 	</div>
 </hgroup>
 

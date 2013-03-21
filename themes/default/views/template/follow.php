@@ -1,14 +1,12 @@
 <script type="text/template" id="follow-button-template">
-	<p class="button-white follow has-icon <% if (subscribed) { %> selected <% } %> ">
-		<a href="#">
-			<span class="icon"></span>
-			<% if (subscribed) { %> 
-				Following 
-			<% } else { %>
-				Follow
-			<% } %>
-		</a>
-	</p>
+	<a href="#" class="<% if (following) { %>button-primary selected<% } else { %>button-white<% } %>">
+		<% if (following) { %>
+			<i class="icon-checkmark"></i>
+			<?php echo __("Following"); ?>
+		<% } else { %>
+			<?php echo __("Follow"); ?>
+		<% } %>
+	</a>
 </script>
 
 <script type="text/javascript">
@@ -34,7 +32,7 @@ $(function() {
 		asset = new Assets.Asset(data);
 		asset.on("change", function() {
 			var count = parseInt($("#follower_count > strong").html());
-			if (asset.get("subscribed")) {
+			if (asset.get("following")) {
 				count += 1;
 			} else {
 				count -= 1;

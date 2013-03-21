@@ -211,11 +211,10 @@
 
 			<h2 class="label"><?php echo __("Related discussion"); ?></h2>
 			<section class="drop-discussion list">
-				<!-- TODO: Fetch the comments for the current drop via the API -->
 				<article class="drop base cf">
 					<section class="drop-source cf">
 						<a href="#" class="avatar-wrap">
-							<img src="<?php echo Swiftriver_Users::gravatar($user['owner']['email'], 55); ?>" />
+							<img src="<?php echo $user['owner']['avatar']; ?>" />
 						</a>
 						<div class="byline">
 							<h2><?php echo __($user['owner']['name']); ?></h2>
@@ -243,9 +242,9 @@
 <script type="text/template" id="discussion-template">
 	<section class="drop-source">
 		<a href="#" class="avatar-wrap">
-			<img src="<%= account.avatar %>" />
+			<img src="<%= account.owner.avatar %>" />
 		</a>
-		<div class="byline"><h2><%= account.name %></h2></div>
+		<div class="byline"><h2><%= account.owner.name %></h2></div>
 	</section>
 	<div class="drop-body">
 		<div class="drop-content">

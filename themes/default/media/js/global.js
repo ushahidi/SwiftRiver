@@ -1,4 +1,19 @@
 $(document).ready(function() {
+	
+	if (window.innerWidth > 800) {
+		// DROP SHOW 'REMOVE' ON HOVER
+		$('article.drop, .drop-full').live({
+			mouseenter: function() {
+				$(this).find('.drop-status').fadeIn('fast');
+				return false;
+			},
+			mouseleave: function() {
+				$(this).find('.drop-status').fadeOut('fast');
+				return false;
+			}
+		});
+	}
+	
 	// BUTTON CHECK FOR ICON
 	$('.button-blue a, .button-white a').has('span.icon' && 'span.nodisplay').parents('p').addClass('only-icon');
 	$('.button-blue a, .button-white a').has('span.icon').parents('p, li').addClass('has-icon');

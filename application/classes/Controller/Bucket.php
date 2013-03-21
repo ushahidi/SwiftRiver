@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Controller_Bucket extends Controller_Drop_Base {
+class Controller_Bucket extends Controller_Drop_Container {
 
 	/**
 	 * Bucket currently being viewed
@@ -41,11 +41,11 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Execute parent::before first
 		parent::before();
 		
-		// Get the river name from the url
+		// Get the bucket name from the url
 		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
 		
 		// Get the buckets associated with the visited account
-		$visited_account_buckets = $this->accountService->get_buckets($this->visited_account);
+		$visited_account_buckets = $this->account_service->get_buckets($this->visited_account, $this->user);
 
 		foreach ($visited_account_buckets as $k => $bucket)
 		{
@@ -79,7 +79,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('discussion_url', $discussion_url)
 			->bind('owner', $this->owner)
 			->bind('drop_count', $drop_count)
-			->bind('photos_drop_count', $photos_drop_count);
+			->bind('photos_drop_count', $photos_drop_count)
+			->bind('follow_button', $follow_button);
 
 		$this->template->content->is_collaborator = FALSE;
 		$this->template->content->anonymous = $this->anonymous;
@@ -103,7 +104,12 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->set('filters', NULL)
 			->set('max_droplet_id', 0)
 			->set('channels', json_encode(array()));
-		
+
+		if (count($droplet_list) > 0)
+		{
+			$droplet_js->set('max_droplet_id', $droplet_list[0]['id']);
+		}
+
 		// Generate the List HTML
 		$droplets_view = View::factory('pages/drop/drops')
 			->bind('droplet_js', $droplet_js)
@@ -114,6 +120,29 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';
 		$discussion_url = $this->bucket_base_url.'/discussion';
+		
+		// Follow button
+		if ( ! $this->owner)
+		{
+			// Is the current user following the visited bucket?
+			$is_following = $this->bucket_service->is_bucket_follower($this->bucket['id'], 
+				$this->user['id']);
+
+			// Bucket data
+			$bucket_data = json_encode(array(
+				'id' => $this->bucket['id'],
+				'name' => $this->bucket['name'],
+				'type' => 'bucket',
+				'following' => $is_following
+			));
+			
+			// xHR endpoint for follow/unfollow actions
+			$action_url = URL::site($this->bucket['url'].'/manage');
+
+			$follow_button = View::factory('template/follow')
+				->bind('data', $bucket_data)
+				->bind('action_url', $action_url);
+		}
 	}
 	
 	/**
@@ -162,17 +191,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 
 				// Get the drops
-				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos);
-				
-				//Throw a 404 if a non existent page is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets_array))
-				{
-				    throw new HTTP_Exception_404(
-				        'The requested page :page was not found on this server.',
-				        array(':page' => $page)
-				        );
-				}
-				
+				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos, $page);
 				
 				echo json_encode($droplets_array);
 			break;
@@ -194,7 +213,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				$droplet_id = intval($this->request->param('id', 0));
 				if ($payload['command'] === 'add')
 				{
-					$this->bucket_service->add_drop($bucket_id, $droplet_id);
+					$this->bucket_service->add_drop($bucket_id, $droplet_id, "bucket");
 				}
 				elseif ($payload['command'] === 'remove')
 				{
@@ -230,7 +249,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		
 		if ($query)
 		{
-			echo json_encode($this->accountService->search($query));
+			echo json_encode($this->account_service->search($query));
 			return;
 		}
 		
@@ -242,7 +261,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 				{
 					$collaborator = $this->bucket_service->add_collaborator($this->bucket['id'], $collaborator_array);
 				}
-				catch (Swiftriver_API_Exception_BadRequest $e)
+				catch (SwiftRiver_API_Exception_BadRequest $e)
 				{
 					throw new HTTP_Exception_400();
 				}
@@ -263,57 +282,140 @@ class Controller_Bucket extends Controller_Drop_Base {
 				try
 				{
 					$this->bucket_service->delete_collaborator($this->bucket['id'], $collaborator_id);
-				} catch (Swiftriver_API_Exception_NotFound $e)
+				} catch (SwiftRiver_API_Exception_NotFound $e)
 				{
 					throw new HTTP_Exception_403();
 				}
 			break;
 		}
 	}
-
 	
 	/**
-	 * Comments Posting API
-	 * 
-	 * Used for email replies at the moment.
-	 *
+	 * Endpoint for bucket follow/unfollow actions
 	 */
-	public function action_comment_api()
+	public function action_manage()
 	{
- 		$this->template = "";
+		$this->template = "";
+		$this->auto_render = FALSE;
+
+		switch ($this->request->method())
+		{
+			case "PUT";
+				$request_body = json_decode($this->request->body(), TRUE);
+			
+				$bucket_id = intval($this->request->param('id', 0));
+
+				// Follow/unfollow
+				if ($request_body['following'])
+				{
+					// Follow bucket
+					$this->bucket_service->add_follower($bucket_id, $this->user['id']);
+				}
+				elseif ( ! $request_body['following'])
+				{
+					// Unfollow bucket
+					$this->bucket_service->delete_follower($bucket_id, $this->user['id']);
+				}
+
+			break;
+		}
+	}
+	
+	public function action_tags()
+	{
+		$this->template = "";
 		$this->auto_render = FALSE;
 		
- 		if ( ! $this->admin)
- 			throw new HTTP_Exception_403();
-		
-		if ($this->request->method() != "POST")
-			throw HTTP_Exception::factory(405)->allowed('POST');
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_data = json_decode($this->request->body(), TRUE);
+				$tag = $this->bucket_service->add_drop_tag($this->bucket['id'], $drop_id, $tag_data);
+			
+				echo json_encode($tag);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$tag_id = intval($this->request->param('id2', 0));
 
- 		// Get the POST data
- 		$data = json_decode($this->request->body(), TRUE);
-		$user = Model_User::get_user_by_email($data['from_email']);
-		$bucket_id = intval($this->request->param('id', 0));
-		$bucket = ORM::factory('Bucket', $bucket_id);
+				$this->bucket_service->delete_drop_tag($this->bucket['id'], $drop_id, $tag_id);
+			break;
+		}
 		
-		if ( ! $user->loaded())
-			throw HTTP_Exception::factory(404);		
-		
-		if ( ! $bucket->loaded())
-			throw HTTP_Exception::factory(404);
-		
-		$comment = Model_Bucket_Comment::create_new(
-			$data['comment_text'],
-			$bucket_id,
-			$user->id
-		);
-		
-	    Swiftriver_Mail::notify_new_bucket_comment($comment, $bucket);
-		
- 		Kohana::$log->add(Log::DEBUG, "New comment for bucket id :id from :email", 
-			array(
- 				':id' => $bucket_id, 
-				':email' => $data['from_email']
- 			)
-		);
 	}
+	
+	public function action_places()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$place_id = intval($this->request->param('id2', 0));
+
+				$this->bucket_service->delete_drop_place($this->bucket['id'], $drop_id, $place_id);
+			break;
+		}
+		
+	}
+	
+	public function action_links()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_data = json_decode($this->request->body(), TRUE);
+				$link = $this->bucket_service->add_drop_link($this->bucket['id'], $drop_id, $link_data);
+			
+				echo json_encode($link);
+			break;
+			
+			case "DELETE":
+				$drop_id = intval($this->request->param('id', 0));
+				$link_id = intval($this->request->param('id2', 0));
+
+				$this->bucket_service->delete_drop_link($this->bucket['id'], $drop_id, $link_id);
+			break;
+		}
+	}
+
+	public function action_comments()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "GET":
+				$drop_id = $this->request->param('id', 0);
+				$drop_comments = $this->bucket_service->get_drop_comments($this->bucket['id'], $drop_id);
+				echo json_encode($drop_comments);
+			break;
+
+			case "POST":
+				$drop_id = $this->request->param('id', 0);
+				$request_body = json_decode($this->request->body(), TRUE);
+				$comment = $this->bucket_service->add_drop_comment($this->bucket['id'], $drop_id, $request_body['comment_text']);
+				echo json_encode($comment);
+			break;
+			
+			case "DELETE":
+				$drop_id = $this->requst->param('id', 0);
+				$comment_id = $this->request->param('id2', 0);
+				$this->bucket_service->delete_drop_comment($this->bucket['id'], $drop_id, $comment_id);
+			break;
+		}
+	}
+
 }

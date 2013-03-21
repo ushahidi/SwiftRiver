@@ -17,7 +17,7 @@
 							<?php if ($num_notifications): ?>
 								<span class="notification"><?php echo $num_notifications; ?></span>
 							<?php endif ?>
-							<img src="<?php echo Swiftriver_Users::gravatar('', 80); ?>" />
+							<img src="<?php echo Swiftriver_Users::gravatar($user['owner']['email'], 80); ?>" />
 						</span>
 						<span class="nodisplay">Account Name</span>
 					</a>
@@ -28,9 +28,7 @@
 							</a>
 						</li>
 						<li class="group">
-							<a href="#">
-								<?php echo __("Account Settings"); ?>
-							</a>
+							<?php echo HTML::anchor(URL::site().$user['account_path'].'/settings', __('Account Settings')); ?>
 						</li>
 						<?php if ($admin): ?>
 							<li>

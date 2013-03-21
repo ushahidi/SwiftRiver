@@ -179,6 +179,52 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Check whether an account is following a river
+	 *
+	 * @param  int
+	 * @param  int
+	 * @return bool
+	 */
+	public function is_follower($river_id, $account_id)
+	{
+		try
+		{
+			$this->get('/rivers/'.$river_id.'/followers', array('follower' => $account_id));
+		}
+		catch (SwiftRiver_API_Exception_NotFound $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds the account specified in $account_id to the list of followers
+	 * for the river specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 */
+	public function add_follower($river_id, $account_id)
+	{
+		$this->put('/rivers/'.$river_id.'/followers/'.$account_id);
+	}
+	
+	/**
+	 * Removes the account specified in $account_id from the list of followers
+	 * for the river specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 */
+	public function delete_follower($river_id, $account_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/followers/'.$account_id);
+	}
+
+	/**
 	 * Get a river's collaborators
 	 *
 	 * @param   string  $river_id
@@ -211,5 +257,136 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	public function add_collaborator($river_id, $collaborator_array)
 	{
 		return $this->post('/rivers/'.$river_id.'/collaborators', $collaborator_array);
+	}
+
+	/**
+	 * Adds a tag to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($river_id, $drop_id, $tag_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/tags', $tag_data);
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($river_id, $drop_id, $tag_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/tags/'.$tag_id);
+	}
+
+	/**
+	 * Adds a link to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($river_id, $drop_id, $link_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/links', $link_data);
+	}
+
+	/**
+	 * Removes a link from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($river_id, $drop_id, $link_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/links/'.$link_id);
+	}
+
+	/**
+	 * Adds a place to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($river_id, $drop_id, $place_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/places', $place_data);
+	}
+
+	/**
+	 * Removes a place from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_place($river_id, $drop_id, $place_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/places/'.$place_id);
+	}
+
+	/**
+	 * Adds a comment to a river drop
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($river_id, $drop_id, $comment_text)
+	{
+		$parameters = array('comment_text' => $comment_text);
+
+		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments', $parameters);
+	}
+	
+	/**
+	 * Get the comments for the river drop specified in $drop_id
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($river_id, $drop_id)
+	{
+		return $this->get('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments');
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the river drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($river_id, $drop_id, $comment_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/comments/'.$commenti_id);
+	}
+
+	/**
+	 * Deletes the drop with the specified $drop_id from the river in $river_id
+	 *
+	 * @param int river_d
+	 * @param int drop_id
+	 */
+	public function delete_drop($river_id, $drop_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/drops/'.$drop_id);
+	}
+	
+	/**
+	 * Deletes the river specified in $river_id
+	 *
+	 * @param int river_id
+	 */
+	public function delete_river($river_id)
+	{
+		$this->delete('/rivers/'.$river_id);
 	}
 }
