@@ -360,7 +360,7 @@
 	
 		tagName: "article",
 	
-		className: "modal drop drop-full",
+		className: "modal modal-view drop drop-full",
 		
 		isFetching: false,
 		
@@ -672,7 +672,7 @@
 	
 		tagName: "article",
 	
-		className: "modal",
+		className: "modal modal-view",
 		
 		listSelector: '.select-list',
 
@@ -1025,7 +1025,7 @@
 	
 		tagName: "article",
 	
-		className: "modal",
+		className: "modal modal-view",
 		
 		events: {
 			"click .modal-toolbar a.button-submit": "saveNewMetadata",
@@ -1106,7 +1106,7 @@
 						}, 600);
 				}
 				
-				this.$("a.modal-back").trigger("click");
+				modalBack();
 				metadata.view.setSelected();
 				this.$(".modal-field input[name=new_metadata]").val("");
 				this.isPageFetching = false;				
@@ -1301,7 +1301,7 @@
 	var ShareDropView = Backbone.View.extend({
 		tagName: "article",
 
-		className: "modal",
+		className: "modal modal-view",
 
 		events: {
 			"click a#share-email": "showEmailForm",
@@ -1313,7 +1313,8 @@
 
 		showEmailForm: function() {
 			var emailView = new EmailDropView({model: this.model, baseURL: this.options.baseURL});
-			this.$("#modal-secondary").html(emailView.render().el);
+			modalShow(emailView.render().el);
+			return false;
 		},
 
 		render: function() {
@@ -1325,9 +1326,9 @@
 	});
 
 	var EmailDropView = Backbone.View.extend({
-		tagName: "div",
+		tagName: "article",
 
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 
 		events: {
 			"click .modal-toolbar a.button-submit": "sendEmail"
@@ -1375,7 +1376,7 @@
 						context.$(loading_message).replaceWith(submitButton);
 						context.hasSubmitted = false;
 
-						setTimeout(function() { context.$("a.modal-back").trigger("click"); }, 1800);
+						setTimeout(function() { modalBack(); }, 1800);
 					},
 
 					error: function() {

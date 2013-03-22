@@ -115,7 +115,7 @@
 		
 		tagName: "article",
 
-		className: "modal",
+		className: "modal modal-view",
 		
 		constructor: function(message, callback, context) {
 			Backbone.View.prototype.constructor.apply(this, arguments);
@@ -151,31 +151,30 @@
 		},
 		
 		showAddChannel: function() {
-			this.$('#modal-viewport').addClass('view-secondary');
 			var view = new AddChannelModalView({
 				collection: this.options.config,
 				baseUrl: this.options.baseUrl
 			});
 			view.on("add", this.channelAdded, this);			
-			this.showSecondaryView(view.render().$el);
+			modalShow(view.render().$el);
 			return false;
 		},
 		
 		showEditChannel: function(channel) {
 			var view = new EditChannelModalView({config: this.options.config, model: channel});
 			view.on("change", this.channelUpdated, this);
-			this.showSecondaryView(view.render().$el);
+			modalShow(view.render().$el);
 		},
 		
 		channelAdded: function(channel) {
 			this.collection.add(channel);
-			this.showPrimaryView();
+			modalBack();
 			showSuccessMessage("Channel added successfully.", {flash:true});
 		},
 		
 		channelUpdated: function(channel) {
 			channel.view.render();
-			this.showPrimaryView();
+			modalBack();
 			showSuccessMessage("Channel updated successfully.", {flash:true});
 		},
 		
@@ -336,9 +335,9 @@
 	
 	var AddChannelModalView = Channels.AddChannelModalView = Backbone.View.extend({
 		
-		tagName: "div",
+		tagName: "article",
 
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 		
 		events: {
 			"click .button-submit": "saveChannel",
@@ -431,9 +430,9 @@
 	
 	var EditChannelModalView = Channels.EditChannelModalView = Backbone.View.extend({
 		
-		tagName: "div",
+		tagName: "article",
 
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 		
 		channelView: null,
 		

@@ -183,7 +183,7 @@
 
 		tagName: "article",
 
-		className: "modal",
+		className: "modal modal-view",
 
 		events: {
 			"focus input[name=search_box]": "liveSearch",

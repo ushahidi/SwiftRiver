@@ -259,44 +259,24 @@
 </script>
 
 <script type="text/template" id="edit-metadata-template">
-	<div id="modal-viewport">
-		<div id="modal-primary" class="modal-view">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white">
-					<i class="icon-cancel"></i><?php echo __("Close"); ?>
-				</a>
-				<h1>
-					<a href="#group-name" class="modal-transition">
-						<?php echo __("Edit"); ?> <%= label %>
-					</a>
-				</h1>
-			</div>
-			<div class="modal-body">
-				<div class="view-table base">
-					<ul>
-						<li class="add">
-							<a href="#" class="modal-transition"><?php echo __("Add"); ?> <%= label %></a>
-						</li>
-					</ul>
-				</div>
-			</div>
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white">
+			<i class="icon-cancel"></i><?php echo __("Close"); ?>
+		</a>
+		<h1>
+			<a href="#group-name" class="modal-transition">
+				<?php echo __("Edit"); ?> <%= label %>
+			</a>
+		</h1>
+	</div>
+	<div class="modal-body">
+		<div class="view-table base">
+			<ul>
+				<li class="add">
+					<a href="#" class="modal-transition"><?php echo __("Add"); ?> <%= label %></a>
+				</li>
+			</ul>
 		</div>
-
-		<div id="modal-secondary" class="modal-view">
-			<div class="modal-segment">
-				<div class="modal-title cf">
-					<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
-					<h1><?php echo __("Add"); ?> <%= label.substring(0, label.length-1) %></h1>
-				</div>
-				<div class="modal-body modal-tabs-container">
-					<!-- Input fields for adding metadata go here-->
-					<div class="modal-toolbar">
-						<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
-					</div>
-				</div>
-			</div>
-		</div>
-
 	</div>
 </script>
 

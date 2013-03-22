@@ -2596,7 +2596,7 @@ div#zoom-container .drop-discussion article.drop {
    -o-transition: .3s all ease;   
 }
 
-#modal-viewport.view-secondary #modal-primary {
+#modal-viewport .modal-view.view-secondary {
    margin-left: -50%;
 }
 

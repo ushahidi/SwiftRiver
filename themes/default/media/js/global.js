@@ -32,10 +32,13 @@ $(document).ready(function() {
 		this.container = this.modal ? $("#modal-container") : $("#zoom-container");
 
 		// Contents of the dialog
-		this.contents = contents;
+		this.contents = $(contents);
 
 		// The dialog box
-		this.dialogBox = $("div.modal-window", this.container);
+		this.dialogBox = $("div.modal-window #modal-viewport", this.container);
+		
+		// Stack of hidden views in this dialog
+		this.views = [];
 	}
 	
 	// Hides a window
@@ -59,6 +62,7 @@ $(document).ready(function() {
 			$('body').removeClass('noscroll');
 		}
 		
+		this.dialogBox.html("");
 		this.dialogBox.unbind();
 		return this;
 	};
@@ -88,7 +92,7 @@ $(document).ready(function() {
 	
 	// Show the window
 	Dialog.prototype.show = function() {
-		this.dialogBox.html(this.contents);
+		this.dialogBox.append(this.contents);
 		
 		this.container.addClass("visible");
 		this.container.fadeIn(350);
@@ -100,28 +104,40 @@ $(document).ready(function() {
 		} else {
 			$('body').addClass('has_modal');
 		}
+		
+		this._registerBackHandler();
 
 		return this;
 	};
 	
-	Dialog.prototype.transition = function() {
-		var root = $(this.container);
+	Dialog.prototype.transition = function(newContent) {
+		var oldContent = this.contents; 
+		this.views.push(oldContent);
+		this.contents = $(newContent);
+		this.dialogBox.append(this.contents);
+		oldContent.addClass("view-secondary").fadeOut("fast");		
+		this.contents.fadeIn("fast");
+		$(this.container).scrollTop(0,0);
 		
-		$('#modal-viewport', root).addClass('view-secondary');
-		$('#modal-primary > div', root).fadeOut('fast');
-		$('#modal-secondary .modal-segment', root).fadeIn('fast');
-		root.scrollTop(0,0);		
-		this._registerBackHandler(); 
+		return this;
+	};
+	
+	Dialog.prototype.back = function() {
+		var oldContent = this.contents;
+		var newContent = this.contents = this.views.pop();
+		newContent.fadeIn("fast", function() {
+			$(this).removeClass('view-secondary');
+			oldContent.fadeOut("fast", function() {$(this).remove();});
+		});
 		
 		return this;
 	};
 	
 	Dialog.prototype._registerBackHandler = function() {		
 		var root = $(this.container);
-		$('a.modal-back', root).bind('click', function() {
-			$('#modal-viewport', root).removeClass('view-secondary');
-			$('#modal-primary > div', root).fadeIn('fast');
-			$('#modal-secondary .modal-segment', root).fadeOut('fast');
+		var dialog = this;
+		$('a.modal-back', root).live('click', function() {
+			dialog.back();
 			return false;
 		});
 		
@@ -150,14 +166,19 @@ $(document).ready(function() {
 	window.modalHide = function () {
 		if(modalWindow) {
 			modalWindow.hide();
+			modalWindow = null;
 		}
 	}
 	window.modalShow = function (contents) {
-		modalWindow = new Dialog(contents, true).show();
-	}
-	window.modalTransition = function (contents) {
 		if(modalWindow) {
 			modalWindow.transition(contents);
+		} else {
+			modalWindow = new Dialog(contents, true).show();
+		}
+	}
+	window.modalBack = function (contents) {
+		if(modalWindow) {
+			modalWindow.back();
 		}
 	}
 	$('a.modal-trigger').live('click', function() {
@@ -165,13 +186,7 @@ $(document).ready(function() {
 		return false;
 	});
 	$('article.modal a.modal-close').live('click', function(e) {
-		if (modalWindow != null) {
-			modalWindow.hide();
-		}
-		return false;
-	});
-	$('a.modal-transition').live('click', function(e) {
-		modalWindow.transition();
+		modalHide();
 		return false;
 	});
 

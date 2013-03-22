@@ -6,6 +6,11 @@
 	// Init the module
 	Assets = root.Assets = {};
 	
+	// Base view for all modal views
+	var BaseModalView = Backbone.View.extend({
+		
+	});
+	
 	// Base object for rivers and buckets
 	var Asset = Assets.Asset = Backbone.Model.extend({
 
@@ -274,7 +279,7 @@
 				view = new CreateRiverModalView();
 			}
 			
-			this.$("#modal-secondary").html(view.render().el);
+			modalShow(view.render().el);
 		}
 	});
 
@@ -333,7 +338,7 @@
 
 		tagName: "article",
 
-		className: "modal",
+		className: "modal modal-view",
 
 		listSelector: '.link-list',
 
@@ -369,9 +374,9 @@
 	// 
 	var CreateBucketModalView = Assets.CreateBucketModalView = Backbone.View.extend({
 		
-		tagName: "div",
+		tagName: "article",
 		
-		className: "modal-segment",
+		className: "modal modal-view",
 		
 		events: {
 			"click .modal-toolbar a.button-submit": "save",
@@ -451,9 +456,9 @@
 	
 	var CreateRiverModalView = Assets.CreateRiverModalView = Backbone.View.extend({
 		
-		tagName: "div",
+		tagName: "article",
 
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 		
 		events: {
 			"click .modal-toolbar a.button-submit": "doCreateRiver",

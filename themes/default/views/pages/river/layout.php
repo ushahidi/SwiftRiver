@@ -97,23 +97,16 @@ $(function() {
 </script>
 
 <script type="text/template" id="channels-modal-template">
-	<div id="modal-viewport">
-		<div id="modal-primary" class="modal-view">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
-				<h1>Channels</h1>
-			</div>
-			
-			<div class="modal-body">
-				<div class="view-table base">
-					<ul>										
-						<li class="add"><a href="#">Add channel</a></li>
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div id="modal-secondary" class="modal-view">
-		<!-- secondary view goes here -->
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+		<h1>Channels</h1>
+	</div>
+
+	<div class="modal-body">
+		<div class="view-table base">
+			<ul>										
+				<li class="add"><a href="#">Add channel</a></li>
+			</ul>
 		</div>
 	</div>
 </script>

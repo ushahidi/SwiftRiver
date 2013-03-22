@@ -4,7 +4,7 @@ $(function() {
 	var CreateAssetModal = Backbone.View.extend({
 		tagName: "article",
 		
-		className: "modal",
+		className: "modal modal-view",
 		
 		template: _.template($("#create-asset-modal-template").html()),
 		
@@ -20,7 +20,6 @@ $(function() {
 		showCreateView: function(e) {
 			var hash = $(e.currentTarget).prop('hash');
 			var view = null;
-			
 			switch(hash) {
 				case "#river":
 					view = new Assets.CreateRiverModalView();
@@ -32,8 +31,9 @@ $(function() {
 			}
 			
 			if (view != null) {
-				this.$("#modal-secondary").html(view.render().el);
+				modalShow(view.render().el);
 			}
+			return(false);
 		}
 	});
 

@@ -1,9 +1,15 @@
 	<div id="zoom-container">
-		<div class="modal-window"></div>
+		<div class="modal-window">
+			<div id="modal-viewport">
+			</div>
+		</div>
 	</div>
 
 	<div id="modal-container">
-		<div class="modal-window"></div>
+		<div class="modal-window">
+			<div id="modal-viewport">
+			</div>
+		</div>
 		<div class="modal-window-secondary"></div>
 	</div>
 

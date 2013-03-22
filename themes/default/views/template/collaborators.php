@@ -22,34 +22,26 @@
 </script>
 
 <script type="text/template" id="collaborator-modal-template">
-	<div id="modal-viewport">
-		<div id="modal-primary" class="modal-view">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white">
-					<i class="icon-cancel"></i><?php echo __("Close"); ?>
-				</a>
-				<h1><?php echo __("Add collaborator"); ?></h1>
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white">
+			<i class="icon-cancel"></i><?php echo __("Close"); ?>
+		</a>
+		<h1><?php echo __("Add collaborator"); ?></h1>
+	</div>
+	<div class="modal-body">
+		<div class="base">
+			<div class="modal-search-field">
+				<?php echo Form::input('search_box', '', array('placeholder' => __("Find a user..."))); ?>
 			</div>
-			<div class="modal-body">
-				<div class="base">
-					<div class="modal-search-field">
-						<?php echo Form::input('search_box', '', array('placeholder' => __("Find a user..."))); ?>
-					</div>
-					<div class="modal-search-results livesearch">
-						<ul class="view-table"></ul>
-					</div>
-				</div>
-				
-				<div class="modal-search-results added nodisplay">
-					<h2 class="label">People you have just made collaborators...</h2>
-					<ul class="view-table">
-					</ul>													
-				</div>
+			<div class="modal-search-results livesearch">
+				<ul class="view-table"></ul>
 			</div>
-				<div class="modal-toolbar">
-					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
-				</div>
-			</div>
+		</div>
+	
+		<div class="modal-search-results added nodisplay">
+			<h2 class="label">People you have just made collaborators...</h2>
+			<ul class="view-table">
+			</ul>													
 		</div>
 	</div>
 </script>
