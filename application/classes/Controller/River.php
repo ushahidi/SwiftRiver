@@ -363,7 +363,7 @@ class Controller_River extends Controller_Drop_Container {
 		
 		if ($query)
 		{
-			echo json_encode($this->accountService->search($query));
+			echo json_encode($this->account_service->search($query));
 			return;
 		}
 		

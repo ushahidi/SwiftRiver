@@ -227,7 +227,7 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				try
 				{
-					$account = $this->accountService->create_account(
+					$account = $this->account_service->create_account(
 						$this->request->post('fullname'),
 						$this->request->post('email'),
 						$this->request->post('username'),
@@ -331,7 +331,7 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				try
 				{
-					$account = $this->accountService->get_token(
+					$account = $this->account_service->get_token(
 						$this->request->post('email')
 					);
 					
@@ -419,7 +419,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$email = $this->request->param('email');
 					$token = $this->request->param('token');
 					$password = $this->request->post('password');
-					$this->accountService->reset_password(
+					$this->account_service->reset_password(
 						$email,
 						$token,
 						$password
@@ -485,7 +485,7 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		try 
 		{
-			$this->accountService->activate_account($email, $token);
+			$this->account_service->activate_account($email, $token);
 		}
 		catch (SwiftRiver_API_Exception_BadRequest  $e)
 		{
