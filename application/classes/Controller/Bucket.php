@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-class Controller_Bucket extends Controller_Drop_Container {
+class Controller_Bucket extends Controller_Drop_Base {
 
 	/**
 	 * Bucket currently being viewed

@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 /**
- * Base Controller for the drop containers
+ * Base Controller for the drop views
  *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
@@ -13,7 +13,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
-abstract class Controller_Drop_Container extends Controller_Swiftriver {
+abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	
 	/**
 	 * Boolean indicating whether the logged in user owns the river
