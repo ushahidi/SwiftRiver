@@ -13,19 +13,7 @@
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-class Service_Bucket {
-	
-	/**
-	 * Buckets API
-	 * @var SwiftRiver_API_Buckets
-	 */
-	private $buckets_api;
-	
-	public function __construct($api)
-	{
-		// Initialize the Buckets API
-		$this->buckets_api = $api->get_buckets_api();
-	}
+class Service_Bucket extends Service_Base {
 	
 	/**
 	 * Return the URL to the given bucket
@@ -61,7 +49,7 @@ class Service_Bucket {
 		}
 
 		// Fetch the drops
-		$drops = $this->buckets_api->get_drops($bucket_id, $parameters);
+		$drops = $this->api->get_buckets_api()->get_drops($bucket_id, $parameters);
 		
 		Service_Drop::format_drops($drops);
 
@@ -75,7 +63,7 @@ class Service_Bucket {
 	public function get_bucket_by_id($id, $querying_account)
 	{
 		// Fetch the bucket
-		$bucket =  $this->buckets_api->get_bucket_by_id($id);
+		$bucket =  $this->api->get_buckets_api()->get_bucket_by_id($id);
 		
 		return self::get_array($bucket, $querying_account);		
 	}
@@ -92,7 +80,7 @@ class Service_Bucket {
 		if (Valid::not_empty($source))
 		{
 			$source_data = array('source' => $source);
-			$this->buckets_api->add_drop($bucket_id, $drop_id, $source_data);
+			$this->api->get_buckets_api()->add_drop($bucket_id, $drop_id, $source_data);
 		}
 	}
 	
@@ -105,7 +93,7 @@ class Service_Bucket {
 	 */
 	public function delete_drop($bucket_id, $drop_id)
 	{
-		$this->buckets_api->delete_drop($bucket_id, $drop_id);
+		$this->api->get_buckets_api()->delete_drop($bucket_id, $drop_id);
 	}
 	
 	/**
@@ -117,7 +105,7 @@ class Service_Bucket {
 	 */
 	public function create_bucket($bucket_name, $account)
 	{
-		$bucket = $this->buckets_api->create_bucket($bucket_name);
+		$bucket = $this->api->get_buckets_api()->create_bucket($bucket_name);
 		if ($bucket['account']['id'] == $account['id'])
 		{
 			$bucket['is_owner'] = TRUE;
@@ -138,7 +126,7 @@ class Service_Bucket {
 	 */
 	public function delete_bucket($bucket_id)
 	{
-		$this->buckets_api->delete_bucket($bucket_id);
+		$this->api->get_buckets_api()->delete_bucket($bucket_id);
 	}
 	
 	/**
@@ -150,7 +138,7 @@ class Service_Bucket {
 	 */
 	public function get_collaborators($bucket_id)
 	{
-		return $this->buckets_api->get_collaborators($bucket_id);
+		return $this->api->get_buckets_api()->get_collaborators($bucket_id);
 	}
 	
 	/**
@@ -162,7 +150,7 @@ class Service_Bucket {
 	 */
 	public function delete_collaborator($bucket_id, $collaborator_id)
 	{
-		return $this->buckets_api->delete_collaborator($bucket_id, $collaborator_id);
+		return $this->api->get_buckets_api()->delete_collaborator($bucket_id, $collaborator_id);
 	}
 	
 	/**
@@ -174,7 +162,7 @@ class Service_Bucket {
 	 */
 	public function add_collaborator($bucket_id, $collaborator_array)
 	{
-		return $this->buckets_api->add_collaborator($bucket_id, $collaborator_array);
+		return $this->api->get_buckets_api()->add_collaborator($bucket_id, $collaborator_array);
 	}
 	
 	/**
@@ -188,7 +176,7 @@ class Service_Bucket {
 	 */
 	public function modify_bucket($bucket_id, $parameters, $querying_account)
 	{
-		$bucket = $this->buckets_api->modify_bucket($bucket_id, $parameters);
+		$bucket = $this->api->get_buckets_api()->modify_bucket($bucket_id, $parameters);
 
 		return self::get_array($bucket, $querying_account);
 	}
@@ -244,7 +232,7 @@ class Service_Bucket {
 	 */
 	public function is_bucket_follower($bucket_id,  $account_id)
 	{
-		return $this->buckets_api->is_bucket_follower($bucket_id, $account_id);
+		return $this->api->get_buckets_api()->is_bucket_follower($bucket_id, $account_id);
 	}
 	
 	/**
@@ -255,7 +243,7 @@ class Service_Bucket {
 	 */
 	public function add_follower($bucket_id, $account_id)
 	{
-		$this->buckets_api->add_follower($bucket_id, $account_id);
+		$this->api->get_buckets_api()->add_follower($bucket_id, $account_id);
 	}
 	
 	/**
@@ -266,7 +254,7 @@ class Service_Bucket {
 	 */
 	public function delete_follower($bucket_id, $account_id)
 	{
-		$this->buckets_api->delete_follower($bucket_id, $account_id);
+		$this->api->get_buckets_api()->delete_follower($bucket_id, $account_id);
 	}
 
 	/**
@@ -286,7 +274,7 @@ class Service_Bucket {
 
 		if ($validation->check())
 		{
-			return $this->buckets_api->add_drop_tag($bucket_id, $drop_id, $tag_data);
+			return $this->api->get_buckets_api()->add_drop_tag($bucket_id, $drop_id, $tag_data);
 		}
 	}
 
@@ -299,7 +287,7 @@ class Service_Bucket {
 	 */
 	public function delete_drop_tag($bucket_id, $drop_id, $tag_id)
 	{
-		$this->buckets_api->delete_drop_tag($bucket_id, $drop_id, $tag_id);
+		$this->api->get_buckets_api()->delete_drop_tag($bucket_id, $drop_id, $tag_id);
 	}
 
 	/**
@@ -318,7 +306,7 @@ class Service_Bucket {
 
 		if ($validation->check())
 		{
-			return $this->buckets_api->add_drop_link($bucket_id, $drop_id, $link_data);
+			return $this->api->get_buckets_api()->add_drop_link($bucket_id, $drop_id, $link_data);
 		}
 	}
 
@@ -331,7 +319,7 @@ class Service_Bucket {
 	 */
 	public function delete_drop_link($bucket_id, $drop_id, $link_id)
 	{
-		$this->buckets_api->delete_drop_link($bucket_id, $drop_id, $link_id);
+		$this->api->get_buckets_api()->delete_drop_link($bucket_id, $drop_id, $link_id);
 	}
 
 	/**
@@ -352,7 +340,7 @@ class Service_Bucket {
 
 		if ($validation->check())
 		{
-			return $this->buckets_api->add_drop_place($bucket_id, $drop_id, $place_data);
+			return $this->api->get_buckets_api()->add_drop_place($bucket_id, $drop_id, $place_data);
 		}
 	}
 
@@ -365,7 +353,7 @@ class Service_Bucket {
 	 */
 	public function delete_drop_place($bucket_id, $drop_id, $place_id)
 	{
-		$this->buckets_api->delete_drop_place($bucket_id, $drop_id, $place_id);
+		$this->api->get_buckets_api()->delete_drop_place($bucket_id, $drop_id, $place_id);
 	}
 
 	/**
@@ -377,7 +365,7 @@ class Service_Bucket {
 	 */
 	public function add_drop_comment($bucket_id, $drop_id, $comment_text)
 	{
-		return $this->buckets_api->add_drop_comment($bucket_id, $drop_id, $comment_text);
+		return $this->api->get_buckets_api()->add_drop_comment($bucket_id, $drop_id, $comment_text);
 	}
 	
 	/**
@@ -389,7 +377,7 @@ class Service_Bucket {
 	 */
 	public function get_drop_comments($bucket_id, $drop_id)
 	{
-		return $this->buckets_api->get_drop_comments($bucket_id, $drop_id);
+		return $this->api->get_buckets_api()->get_drop_comments($bucket_id, $drop_id);
 	}
 	
 	/**
@@ -398,7 +386,7 @@ class Service_Bucket {
 	 */
 	public function delete_drop_comment($bucket_id, $drop_id, $comment_id)
 	{
-		$this->buckets_api->delete_drop_comment($bucket_id, $drop_id, $comment_id);
+		$this->api->get_buckets_api()->delete_drop_comment($bucket_id, $drop_id, $comment_id);
 	}
 	
 	/**
@@ -409,7 +397,7 @@ class Service_Bucket {
 	 */
 	public function add_bucket_comment($bucket_id, $comment_text)
 	{
-		return $this->buckets_api->add_bucket_comment($bucket_id, $comment_text);
+		return $this->api->get_buckets_api()->add_bucket_comment($bucket_id, $comment_text);
 	}
 	
 	/**
@@ -419,7 +407,7 @@ class Service_Bucket {
 	 */
 	public function get_bucket_comments($bucket_id)
 	{
-		return $this->buckets_api->get_bucket_comments($bucket_id);
+		return $this->api->get_buckets_api()->get_bucket_comments($bucket_id);
 	}
 	
 	/**
@@ -430,7 +418,7 @@ class Service_Bucket {
 	 */
 	public function delete_bucket_comment($bucket_id, $comment_id)
 	{
-		$this->buckets_api->delete_bucket_comment($bucket_id, $comment_id);
+		$this->api->get_buckets_api()->delete_bucket_comment($bucket_id, $comment_id);
 	}
 
 }

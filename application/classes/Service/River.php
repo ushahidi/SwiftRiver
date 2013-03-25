@@ -13,18 +13,7 @@
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-class Service_River {
-	
-	/**
-	 * SwiftRiver_API_River object
-	 * @var SwiftRiver_API_River
-	 */
-	private $rivers_api = NULL;
-	
-	public function __construct($api)
-	{
-		$this->rivers_api = $api->get_rivers_api();
-	}
+class Service_River extends Service_Base {
 	
 	/**
 	 * Return a river array with subscription and collaboration
@@ -90,7 +79,7 @@ class Service_River {
 	 */
 	public function get_river_by_id($id, $querying_account)
 	{
-		$river = $this->rivers_api->get_river_by_id($id);
+		$river = $this->api->get_rivers_api()->get_river_by_id($id);
 
 		return $this->get_array($river, $querying_account);
 	}
@@ -114,7 +103,7 @@ class Service_River {
 	 */
 	public function create_river_from_array($river_array) 
 	{
-		$river_array = $this->rivers_api->create_river(
+		$river_array = $this->api->get_rivers_api()->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
 			$river_array['public']
@@ -135,7 +124,7 @@ class Service_River {
 	 */
 	public function update_river($river_id, $river_name, $river_description, $river_public)
 	{
-		return $this->rivers_api->update_river($river_id, $river_name, $river_description, $river_public);
+		return $this->api->get_rivers_api()->update_river($river_id, $river_name, $river_description, $river_public);
 	}
 	
 	/**
@@ -146,7 +135,7 @@ class Service_River {
 	 */
 	public function delete_channel($river_id, $channel_id)
 	{
-		$this->rivers_api->delete_channel($river_id, $channel_id);
+		$this->api->get_rivers_api()->delete_channel($river_id, $channel_id);
 	}
 	
 	/**
@@ -158,7 +147,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->rivers_api->create_channel(
+		$channel_array = $this->api->get_rivers_api()->create_channel(
 					$river_id, 
 					$channel_array["channel"], 
 					json_encode($channel_array["parameters"])
@@ -179,7 +168,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->rivers_api->update_channel(
+		$channel_array = $this->api->get_rivers_api()->update_channel(
 					$river_id, 
 					$channel_id, 
 					$channel_array["channel"], 
@@ -204,7 +193,7 @@ class Service_River {
 	 */
 	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
 	{
-		return $this->rivers_api->get_drops($id, $max_id, $page, $count, $filters);
+		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count, $filters);
 	}
 	
 	/**
@@ -216,7 +205,7 @@ class Service_River {
 	 */
 	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
 	{
-		return $this->rivers_api->get_drops_since($id, $since_id, $count, $filters);
+		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
 	}
 	
 	/**
@@ -229,7 +218,7 @@ class Service_River {
 	 */
 	public function is_follower($river_id, $account_id)
 	{
-		return $this->rivers_api->is_follower($river_id, $account_id);
+		return $this->api->get_rivers_api()->is_follower($river_id, $account_id);
 	}
 	
 	/**
@@ -237,7 +226,7 @@ class Service_River {
 	 */
 	public function add_follower($river_id, $account_id)
 	{
-		$this->rivers_api->add_follower($river_id, $account_id);
+		$this->api->get_rivers_api()->add_follower($river_id, $account_id);
 	}
 	
 	/**
@@ -245,7 +234,7 @@ class Service_River {
 	 */
 	public function delete_follower($river_id, $account_id)
 	{
-		$this->rivers_api->delete_follower($river_id, $account_id);
+		$this->api->get_rivers_api()->delete_follower($river_id, $account_id);
 	}
 
 	/**
@@ -256,7 +245,7 @@ class Service_River {
 	 */
 	public function get_collaborators($river_id)
 	{
-		return $this->rivers_api->get_collaborators($river_id);
+		return $this->api->get_rivers_api()->get_collaborators($river_id);
 	}
 	
 	/**
@@ -268,7 +257,7 @@ class Service_River {
 	 */
 	public function delete_collaborator($river_id, $collaborator_id)
 	{
-		return $this->rivers_api->delete_collaborator($river_id, $collaborator_id);
+		return $this->api->get_rivers_api()->delete_collaborator($river_id, $collaborator_id);
 	}
 	
 	/**
@@ -280,7 +269,7 @@ class Service_River {
 	 */
 	public function add_collaborator($river_id, $collaborator_array)
 	{
-		return $this->rivers_api->add_collaborator($river_id, $collaborator_array);
+		return $this->api->get_rivers_api()->add_collaborator($river_id, $collaborator_array);
 	}
 	
 	/**
@@ -300,7 +289,7 @@ class Service_River {
 
 		if ($validation->check())
 		{
-			return $this->rivers_api->add_drop_tag($river_id, $drop_id, $tag_data);
+			return $this->api->get_rivers_api()->add_drop_tag($river_id, $drop_id, $tag_data);
 		}
 	}
 
@@ -313,7 +302,7 @@ class Service_River {
 	 */
 	public function delete_drop_tag($river_id, $drop_id, $tag_id)
 	{
-		$this->rivers_api->delete_drop_tag($river_id, $drop_id, $tag_id);
+		$this->api->get_rivers_api()->delete_drop_tag($river_id, $drop_id, $tag_id);
 	}
 
 	/**
@@ -332,7 +321,7 @@ class Service_River {
 
 		if ($validation->check())
 		{
-			return $this->rivers_api->add_drop_link($river_id, $drop_id, $link_data);
+			return $this->api->get_rivers_api()->add_drop_link($river_id, $drop_id, $link_data);
 		}
 	}
 
@@ -345,7 +334,7 @@ class Service_River {
 	 */
 	public function delete_drop_link($river_id, $drop_id, $link_id)
 	{
-		$this->rivers_api->delete_drop_link($river_id, $drop_id, $link_id);
+		$this->api->get_rivers_api()->delete_drop_link($river_id, $drop_id, $link_id);
 	}
 
 	/**
@@ -366,7 +355,7 @@ class Service_River {
 
 		if ($validation->check())
 		{
-			return $this->rivers_api->add_drop_place($river_id, $drop_id, $place_data);
+			return $this->api->get_rivers_api()->add_drop_place($river_id, $drop_id, $place_data);
 		}
 	}
 
@@ -379,7 +368,7 @@ class Service_River {
 	 */
 	public function delete_drop_place($river_id, $drop_id, $place_id)
 	{
-		$this->rivers_api->delete_drop_place($river_id, $drop_id, $place_id);
+		$this->api->get_rivers_api()->delete_drop_place($river_id, $drop_id, $place_id);
 	}
 	
 	/**
@@ -391,7 +380,7 @@ class Service_River {
 	 */
 	public function add_drop_comment($river_id, $drop_id, $comment_text)
 	{
-		return $this->rivers_api->add_drop_comment($river_id, $drop_id, $comment_text);
+		return $this->api->get_rivers_api()->add_drop_comment($river_id, $drop_id, $comment_text);
 	}
 	
 	/**
@@ -403,7 +392,7 @@ class Service_River {
 	 */
 	public function get_drop_comments($river_id, $drop_id)
 	{
-		return $this->rivers_api->get_drop_comments($river_id, $drop_id);
+		return $this->api->get_rivers_api()->get_drop_comments($river_id, $drop_id);
 	}
 	
 	/**
@@ -412,7 +401,7 @@ class Service_River {
 	 */
 	public function delete_drop_comment($river_id, $drop_id, $comment_id)
 	{
-		$this->rivers_api->delete_drop_comment($river_id, $drop_id, $comment_id);
+		$this->api->get_rivers_api()->delete_drop_comment($river_id, $drop_id, $comment_id);
 	}
 	
 	/**
@@ -422,7 +411,7 @@ class Service_River {
 	 */
 	public function delete_drop($river_id, $drop_id)
 	{
-		$this->rivers_api->delete_drop($river_id, $drop_id);
+		$this->api->get_rivers_api()->delete_drop($river_id, $drop_id);
 	}
 	
 	/**
@@ -432,7 +421,7 @@ class Service_River {
 	 */
 	public function delete_river($river_id)
 	{
-		$this->rivers_api->delete_river($river_id);
+		$this->api->get_rivers_api()->delete_river($river_id);
 	}
 
 }

@@ -13,20 +13,8 @@
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
-class Service_Account {
-	
-	/**
-	 * SwiftRiver_API_Accounts instance
-	 * @var SwiftRiver_API_Accounts
-	 */
-	private $accounts_api;
-
-	
-	public function __construct($api)
-	{
-		$this->accounts_api = $api->get_accounts_api();
-	}
-	
+class Service_Account extends Service_Base {
+		
 	/**
 	 * Register an account.
 	 *
@@ -49,7 +37,7 @@ class Service_Account {
 	 */
 	public function get_logged_in_account()
 	{
-		return $this->accounts_api->get_logged_in_account();
+		return $this->api->get_accounts_api()->get_logged_in_account();
 	}
 	
 	/**
@@ -59,7 +47,7 @@ class Service_Account {
 	 */
 	public function get_account_by_name($account_path)
 	{
-		return $this->accounts_api->get_account_by_name($account_path);
+		return $this->api->get_accounts_api()->get_account_by_name($account_path);
 	}
 	
 	/**
@@ -79,7 +67,7 @@ class Service_Account {
 	 */
 	public function search($query)
 	{
-		return $this->accounts_api->search($query);
+		return $this->api->get_accounts_api()->search($query);
 	}
 	
 	/**
@@ -193,7 +181,7 @@ class Service_Account {
 	 */
 	public function is_account_follower($id, $query_account_id)
 	{
-		return $this->accounts_api->is_account_follower($id, $query_account_id);
+		return $this->api->get_accounts_api()->is_account_follower($id, $query_account_id);
 	}
 	
 	/**
@@ -206,7 +194,7 @@ class Service_Account {
 	 */
 	public function add_follower($id, $follower_account_id)
 	{
-		return $this->accounts_api->add_follower($id, $follower_account_id);
+		return $this->api->get_accounts_api()->add_follower($id, $follower_account_id);
 	}
 	
 	/**
@@ -219,7 +207,7 @@ class Service_Account {
 	 */
 	public function remove_follower($id, $follower_account_id)
 	{
-		return $this->accounts_api->remove_follower($id, $follower_account_id);
+		return $this->api->get_accounts_api()->remove_follower($id, $follower_account_id);
 	}
 	
 	/**
@@ -252,6 +240,6 @@ class Service_Account {
 		);
 
 		// Execute API request
-		return $this->accounts_api->update_account($account_id, $account_data);
+		return $this->api->get_accounts_api()->update_account($account_id, $account_data);
 	}
 }
