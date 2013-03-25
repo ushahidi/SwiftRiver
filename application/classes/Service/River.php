@@ -455,16 +455,10 @@ class Service_River {
 	 */
 	public function add_rule($river_id, $rule_data)
 	{
-		$validation = Validation::factory($rule_data)
-			->rule('name', 'not_empty')
-			->rule('conditions', 'not_empty')
-			->rule('actions', 'not_empty');
-		
-		if ( ! $validation->check())
+		if ($this->validate_rule($rule_data))
 		{
-			throw new Validation_Exception($validation);
+			return $this->rivers_api->add_rule($river_id, $rule_data);
 		}
-		return $this->rivers_api->add_rule($river_id, $rule_data);
 	}
 	
 	/**
@@ -476,7 +470,10 @@ class Service_River {
 	 */
 	public function modify_rule($river_id, $rule_id, $rule_data)
 	{
-		return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+		if ($this->validate_rule($rule_data))
+		{
+			return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+		}
 	}
 	
 	/**
@@ -488,6 +485,26 @@ class Service_River {
 	public function delete_rule($river_id, $rule_id)
 	{
 		$this->rivers_api->delete_rule($river_id, $rule_id);
+	}
+	
+	/**
+	 * Internal helper method for validating rules
+	 */
+	private function validate_rule(array & $rule_data)
+	{
+		$rule_data['all_conditions'] = (bool) intval($rule_data['all_conditions']);
+
+		$validation = Validation::factory($rule_data)
+			->rule('name', 'not_empty')
+			->rule('conditions', 'not_empty')
+			->rule('actions', 'not_empty');
+		
+		if ( ! $validation->check())
+		{
+			throw new Validation_Exception($validation);
+		}
+		
+		return TRUE;
 	}
 
 }

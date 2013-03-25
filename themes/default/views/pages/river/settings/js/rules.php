@@ -38,7 +38,6 @@ $(function() {
 	
 	var RuleConditionList = Backbone.Collection.extend({model: RuleCondition});
 	
-	
 	// Model for rules
 	var Rule = Backbone.Model.extend({
 		defaults: {
@@ -57,6 +56,10 @@ $(function() {
 			
 			if (!attrs.actions || attrs.actions.length == 0) {
 				return '<?php echo __("No actions have been specified for this rule"); ?>';
+			}
+			
+			if (attrs.all_conditions == undefined || attrs.all_conditions == null) {
+				return '<?php echo __("The action trigger has not been specified"); ?>';
 			}
 		}
 	});
@@ -108,15 +111,9 @@ $(function() {
 		},
 
 		initialize: function() {
-			if (this.model.get('addToBucket')) {
-				// Find the bucket
-				var bucketId = this.model.get('addToBucket')
-				var bucket = _.find(Assets.bucketList.own(), function(bucket) {
-					return (bucket.get('id') == bucketId);
-					
-				});
-				this.model.set('label', '<?php echo __("Add to \""); ?>' + bucket.get('name') + "\" bucket");
-			}
+			this.model.on("change:addToBucket change:markAsRead change:removeFromRiver", this.updateLabel, this);
+			this.labels = [];
+			this.createLabel();
 		},
 
 		render: function() {
@@ -132,7 +129,41 @@ $(function() {
 			this.options.dialog.conditionsList.remove(this.model);
 			this.$el.fadeOut('fast');
 			return false;
-		}
+		},
+		
+		// Create the label for displaying the rule
+		createLabel: function() {
+			if (this.model.get('addToBucket')) {
+				// Find the bucket
+				var bucketId = this.model.get('addToBucket')
+				var bucket = _.find(Assets.bucketList.own(), function(bucket) {
+					return (bucket.get('id') == bucketId);
+					
+				});
+				this.labels.push('<?php echo __("Add to \""); ?>' + bucket.get('name') + "\" bucket");
+			}
+			
+			if (this.model.get('markAsRead')) {
+				this.labels.push('<?php echo __("Mark as read"); ?>');
+			}
+			
+			if (this.model.get('removeFromRiver')) {
+				this.labels.push('<?php echo __("Remove from river"); ?>');
+			}
+			
+			if (this.labels.length > 0) {
+				var label = this.labels.length == 1 ? this.labels[0] : this.labels.join(" & ");
+				this.model.set('label', label);
+			}
+			
+		},
+		
+		updateLabel: function() {
+			this.labels = [];
+			this.createLabel();
+			this.render();
+		},
+		
 	});
 	
 	// View for a single bucket
@@ -157,8 +188,12 @@ $(function() {
 		},
 		
 		selectBucket: function() {
-			this.$el.toggleClass("selected");
-			this.options.actionView.setTargetBucket(this.model, this.$el.hasClass('selected'));
+			var hasClass = this.$el.hasClass('selected');
+			this.options.actionView.removeSelectedBuckets();
+			if (!hasClass) {
+				this.setSelected();
+				this.options.actionView.setTargetBucket(this.model);
+			}
 		}
 	});
 	
@@ -264,14 +299,13 @@ $(function() {
 			return false;
 		},
 		
-		setTargetBucket: function(bucket, add) {
-			if (add) {
-				this.model.set('addToBucket', bucket.get('id'));
-				this.model.set('label', '<?php echo __("Add to \""); ?>' + bucket.get('name') + "\" bucket");
-			} else {
-				this.model.unset('addToBucket');
-				this.model.unset('label');
-			}
+		removeSelectedBuckets: function() {
+			this.$(".buckets-list ul.view-table li").removeClass('selected');
+			this.model.unset('addToBucket');
+		},
+		
+		setTargetBucket: function(bucket) {
+			this.model.set('addToBucket', bucket.get('id'));
 		}
 	});
 
@@ -286,6 +320,7 @@ $(function() {
 		events: {
 			"click #rule-actions li.add > a.modal-transition": "createRuleAction",
 			"click #rule-conditions li.add > a.modal-transition": "createRuleCondition",
+			"click #rule-conditions-match li a": "toggleConditionMatch",
 			"click .modal-toolbar a.modal-close": "save"
 		},
 		
@@ -355,6 +390,14 @@ $(function() {
 			this.conditionsList.reset(this.model.get('conditions'));
 			this.actionsList.reset(this.model.get('actions'));
 			
+			if (this.model.get('id')) {
+				if (this.model.get('all_conditions')) {
+					this.$("#match-all").attr("checked", true);
+				} else {
+					this.$("#match-any").attr("checked", true);
+				}
+			}
+			
 			return this;
 		},
 
@@ -362,7 +405,8 @@ $(function() {
 			var data = {
 				name: $.trim(this.$("#rule_name").val()),
 				conditions: this.conditionsList.models,
-				actions: this.actionsList.models
+				actions: this.actionsList.models,
+				all_conditions: this.$("input[name=all_conditions]:checked").val()
 			}
 
 			var isNew = !this.model.get('id');
@@ -389,6 +433,13 @@ $(function() {
 			}
 
 			return false;
+		},
+
+		toggleConditionMatch: function(e) {
+			var hash = $(e.currentTarget).prop("hash");
+			this.$(hash).attr("checked", true);
+			
+			return false;
 		}
 	});
 	
@@ -400,6 +451,12 @@ $(function() {
 		events: {
 			"click span.remove": "deleteRule",
 			"click a.modal-trigger": "displayRule"
+		},
+		
+		initialize: function() {
+			if (this.model.get("id")) {
+				this.model.on("change:name", this.renderRuleLabel, this);
+			}
 		},
 
 		deleteRule: function() {
@@ -429,6 +486,10 @@ $(function() {
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
 			return this;
+		},
+		
+		renderRuleLabel: function() {
+			this.$el.html(this.template(this.model.toJSON()));
 		}
 	});
 	

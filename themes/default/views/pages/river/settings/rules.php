@@ -29,7 +29,7 @@
 					<% if (name != undefined && name.length > 0) { %>
 						<%= name %>
 					<% } else { %>
-						 <?php echo __("Add rule"); ?>
+						 <?php echo __("Add Rule"); ?>
 					<% } %>
 				</h1>
 			</div>
@@ -39,7 +39,24 @@
 					<h2 class="label"><?php echo __("Name"); ?></h2>
 					<div class="modal-field">
 						<input type="text" name="rule_name" value="<%= name %>" placeholder="Name your new rule" id="rule_name" />
-					</div>					
+					</div>
+				</div>
+				<div class="view-table base">
+					<h2 class="label"><?php echo __("Trigger rule actions when"); ?></h2>
+					<ul id="rule-conditions-match">
+						<li>
+							<a href="#match-all">
+								<?php echo Form::radio('all_conditions', 1, FALSE, array('id' => 'match-all')); ?> 
+								<?php echo __("All conditions match"); ?>
+							</a>
+						</li>
+						<li>
+							<a href="#match-any">
+							<?php echo Form::radio('all_conditions', 0, FALSE, array('id' => 'match-any')); ?> 
+							<?php echo __("Any condition matches"); ?>
+							</a>
+						<li>
+					</ul>
 				</div>
 			
 				<div class="view-table base">

@@ -64,7 +64,8 @@ class Controller_River_Rules extends Controller_River_Settings {
 			case "PUT":
 				$rule_id = $this->request->param('id', 0);
 				$rules_data = json_decode($this->request->body(), TRUE);
-				$this->river_service->modify_rule($this->river['id'], $rule_id, $rules_data);
+				$rule = $this->river_service->modify_rule($this->river['id'], $rule_id, $rules_data);
+				echo json_encode($rule);
 			break;
 			
 			case "DELETE":
