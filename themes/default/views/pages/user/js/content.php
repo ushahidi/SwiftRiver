@@ -1,6 +1,22 @@
 <script type="text/javascript">
 $(function() {
 	
+	// Container for an assets in the combined DashboardAssetList
+	var DashboardAsset = Assets.Asset.extend();
+	
+	// Combined Asset List
+	var DashboardAssetList = Assets.AssetList.extend({
+		comparator: function (asset) {
+			return asset.get("asset").get('name').toLowerCase();
+		},
+		
+		selected: function() {
+			return this.filter(function(asset) { 
+				return asset.get("selected"); 
+			});
+		},
+	});
+	
 	var CreateAssetModal = Backbone.View.extend({
 		tagName: "article",
 		
@@ -38,28 +54,27 @@ $(function() {
 	});
 
 	var DashboardAssetView = Backbone.View.extend({
+		
 		tagName: "tr",
 		
 		events: {
-			"change .select-toggle input[type=checkBox]": "setSelected"
+			"change .select-toggle input[type=checkBox]": "setSelected",
 		},
 		
 		template: _.template($("#asset-template").html()),
 		
 		render: function(eventName) {
-			this.$el.html(this.template(this.model.toJSON()));
+			var data = this.model.get("asset").toJSON();
+			data["type"] = this.model.get("type");
+			this.$el.html(this.template(data));
 			return this;
 		},
 		
 		setSelected: function() {
-			this.$el.toggleClass("row-selected", "");
-			if (this.$el.hasClass("row-selected")) {
-				this.options.listView.addSelected(this);
-			} else {
-				this.options.listView.removeSelected(this);
+			this.model.set("selected", !this.model.get("selected"));
+		},
+		
 			}
-
-			return false;
 		}
 	});
 	
@@ -68,77 +83,127 @@ $(function() {
 		
 		el: '#content',
 		
-		// Selected asset type
 		selectedType: "all",
 		
-		// Selected role
 		selectedRole: "all",
-		
-		// Hashmap of selected assets
-		selectedAssets: {},
 		
 		events: {
 			"click .filters-primary a": "filterByType",
 			"click .filters-type a": "filterByCategory",
 			"click .container-tabs-menu a": "filterByRole",
-			"click .container-toolbar a.delete-asset": "deleteAssets",
+			"click .container-toolbar a.delete-asset": "confirmDelete",
 			"click .create-new a.button-primary": "showCreateAsset"
 		},
 		
 		initialize: function(options) {
-			options.bucketList.on("reset", this.addBuckets, this);
-			options.riverList.on("reset", this.addRivers, this);
+			this.collection = new DashboardAssetList();
+			
+			// Bind to global River, Bucket and Form list events
+			options.bucketList.on("reset", this.addAssets, this);
+			options.riverList.on("reset", this.addAssets, this);
 			options.bucketList.on("add", this.addAsset, this);
 			options.riverList.on("add", this.addAsset, this);
-
-			// When the list of assets in the nav changes
-			Assets.riverList.on("add", this.addAsset, this);
-			Assets.bucketList.on("add", this.addAsset, this);
-
-			this.typeMap = {"#all":"all", "#river":"river", "#bucket":"bucket"};
-			this.roleMap = {"#all":"all", "#managing":"managing", "#following":"following"};
+			
+			// Render asset when added to combined list
+			this.collection.on("add", this.renderAsset, this);
 		},
 		
-		addBuckets: function() {
-			this.applyRolesFilter(this.options.bucketList);
+		addAssets: function(assets) {
+			assets.each(this.addAsset, this);
 		},
 		
-		addRivers: function() {			
-			this.applyRolesFilter(this.options.riverList);
-		},
-
-		// Filters the asset list by the selected role
-		applyRolesFilter: function(assetList) {
-			var filteredList = null;
-			switch (this.selectedRole) {
-				case "managing":
-				filteredList = assetList.own();
-				break;
-				
-				case "following":
-				filteredList = assetList.following();
-				break;
-				
-				default:
-				filteredList = assetList.models;
-			}
-			_.each(filteredList, this.addAsset, this);
-		},
-
 		addAsset: function(asset) {
+			var dbAsset = new DashboardAsset({
+				asset: asset
+			});
+			
 			if (asset instanceof Assets.Bucket) {
-				asset.set("asset_type", "bucket");
+				dbAsset.set("type", "bucket");
 			} else if (asset instanceof Assets.River) {
-				asset.set("asset_type", "river");
+				dbAsset.set("type", "river");
 			}
-			var view = new DashboardAssetView({model: asset, listView: this});
-			this.$("#asset-list").prepend(view.render().el);
+			
+			this.collection.add(dbAsset);
+			dbAsset.on("destroy", this.onAssetDeleted, this);
+		},
+		
+		
+		// Display an asset sorted into the view
+		renderAsset: function(asset) {
+			var view = new DashboardAssetView({model: asset});
+			asset.view = view;
+			
+			var index = this.collection.indexOf(asset);
+			if (index > 0) {
+				// Insert assets after those they followin in the list.
+				this.collection.at(index-1).view.$el.after(view.render().el);
+			} else {
+				// First asset is simply appended to the view
+				this.$("#asset-list").append(view.render().el);
+			}
 
 			asset.on("destroy", function() {
 				view.$el.fadeOut().remove();
 			});
 		},
 		
+		// Remove a deleted asset from view
+		onAssetDeleted: function(asset) {
+			asset.view.$el.fadeOut("slow", function() { $(this).remove(); })
+		},
+		
+		// Return true if the asset matched the current type filter
+		matchTypeFilter: function(asset) {
+			var match = true;
+			
+			// Apply type filter
+			switch (this.selectedType) {
+				case "river":
+					match = asset instanceof Assets.River;
+					break;
+				case "bucket":
+					match = asset instanceof Assets.Bucket;
+					break;	
+			}
+			
+			return match;
+		},
+		
+		// Return true if the asset matched the current role filter
+		matchRoleFilter: function(asset) {
+			var match = true;
+			
+			// Apply role filter
+			switch (this.selectedRole) {
+				case "managing":
+					match = asset.get("is_owner") || asset.get("is_collaborator");
+					break;
+
+				case "following":
+					match = asset.get("following");
+					break;
+			}
+			
+			return match;
+		},
+		
+		// Show assets that match current filters otherwise hide them
+		filterView: function() {
+			this.collection.each(function(dbAsset) {
+				// If true, display the asset otherwise hide it
+				var isSelected = true;
+				var asset = dbAsset.get("asset");
+				
+				if (this.matchTypeFilter(asset) && this.matchRoleFilter(asset)) {
+					dbAsset.view.$el.fadeIn("slow");
+				} else {
+					dbAsset.view.$el.fadeOut("slow");
+				}
+				
+			}, this);
+		},
+		
+		// Update the current type filter
 		filterByType: function(ev) {
 			var parentEl = $(ev.currentTarget).parent();
 			if (parentEl.hasClass("active"))
@@ -149,18 +214,20 @@ $(function() {
 
 			// Get the hash
 			var propHash = $(ev.currentTarget).prop('hash');
-			this.selectedType = this.typeMap[propHash];
+			this.selectedType = propHash.substring(1);
 			
-			this.updateAssetList();
+			this.filterView();
 
 			return false;
 		},
 		
+		// Update the current category filter
 		filterByCategory: function(ev) {
 			$(ev.currentTarget).parent().toggleClass("active");
 			return false;
 		},
 		
+		// Update the current role filter
 		filterByRole: function(ev) {
 			var parentEl = $(ev.currentTarget).parent();
 			if (parentEl.hasClass("active"))
@@ -170,81 +237,52 @@ $(function() {
 			parentEl.addClass("active");
 			
 			var role = $(ev.currentTarget).prop('hash');
-			this.selectedRole = this.roleMap[role];
+			this.selectedRole = role.substring(1);
 			
-			this.updateAssetList();
+			this.filterView();
 
 			return false;
 		},
 		
-		// Applies a first pass filter on the asset list based on type
-		// before moving on to the other filters
-		updateAssetList: function() {
-			// Clone the collections
-			var riverList = this.options.riverList.clone(),
-				bucketList = this.options.bucketList.clone();
-			
-			// Empty the asset list
-			this.$("#asset-list").empty().hide();
-			
-			switch (this.selectedType) {
-				case "river":
-					this.options.riverList.reset(riverList.models);
-				break;
+		// Show a delete confirmation window
+		confirmDelete: function() {
+			if (this.collection.selected().length == 0)
+				return false;
 				
-				case "bucket":
-					this.options.bucketList.reset(bucketList.models);
-				break;
-				
-				default:
-					this.options.bucketList.reset(bucketList.models);
-					this.options.riverList.reset(riverList.models);
-			}
+			// Show confirmation window
+			new ConfirmationWindow("<?php echo __("Are you sure you want to delete the selected items?"); ?>", 
+				this.deleteAssets, this).show();
 			
-			this.$("#asset-list").fadeIn('slow');
-		},
-		
-		addSelected: function(view) {
-			if (this.selectedAssets[view.cid] == undefined) {
-				this.selectedAssets[view.cid] = view.model;
-			}
-		},
-		
-		removeSelected: function(view) {
-			if (this.selectedAssets[view.cid]) {
-				delete this.selectedAssets[view.cid];
-			}
+			return false;
 		},
 		
 		// Deletes all currently selected assets
 		deleteAssets: function() {
-			if (_.size(this.selectedAssets) == 0)
-				return false;
-
-			// Show confirmation window
-			new ConfirmationWindow("<?php echo __("Are you sure you want to delete the selected items?"); ?>", 
-				this.confirmDelete, this).show();
+			var selection = this.collection.selected();
 			
-			return false;
-		},
-		
-		confirmDelete: function() {
-			_.each(this.selectedAssets, function(asset, id) {				
-				if (asset.get("asset_type") == "bucket") {
-					Assets.bucketList.remove(asset);
-				} else if (asset.get("asset_type") == "river"){
-					Assets.riverList.remove(asset);
-				}
-				asset.destroy();
+			
+			var success = true;			
+			_.each(selection, function(dbAsset) {				
+				var asset = dbAsset.get("asset");
+				
+				asset.destroy({
+					wait: true,
+					async: false,
+					success: function() {
+						dbAsset.trigger("destroy", dbAsset);
+					},
+					error: function() {
+						success = false;						
+					}
+				});
 			}, this);
 			
-			var message = _.size(this.selectedAssets) + " <?php echo __("item(s) successfully deleted!"); ?>";
-
-			// Show success message
-			showSuccessMessage(message, {flash: true});
-			
-			// Clear the list of selected items
-			this.selectedAssets = {};
+			if (success) {
+				var message = selection.length + " <?php echo __(" item(s) successfully deleted!"); ?>";
+				showSuccessMessage(message, {flash: true});
+			} else {
+				showFailureMessage("Some items could not be deleted. Try again later.");
+			}
 		},
 		
 		showCreateAsset: function() {
@@ -254,12 +292,12 @@ $(function() {
 		
 	});
 	
-	var bucketList = new Assets.BucketList(),
-		riverList = new Assets.RiverList();
+	var bucketList = new Assets.BucketList();
+    var riverList = new Assets.RiverList();
 
 	new DashboardAssetListView({
 		bucketList: bucketList,
-		riverList: riverList
+		riverList: riverList,
 	});
 	
 	bucketList.reset(<?php echo $buckets; ?>);

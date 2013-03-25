@@ -159,22 +159,18 @@
 <?php endif; ?>
 
 <script type="text/template" id="confirm-window-template">
-	<div id="modal-viewport">
-		<div class="modal-view">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white">
-					<i class="icon-cancel"></i>
-					<?php echo __("Close"); ?>
-				</a>
-				<h2><%= message %></h2>
-			</div>
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white">
+			<i class="icon-cancel"></i>
+			<?php echo __("Close"); ?>
+		</a>
+		<h2><%= message %></h2>
+	</div>
 
-			<div class="modal-body">
-				<div class="settings-category-toolbar">
-					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Yes"); ?></a>
-					<a href="#" class="button-destruct button-secondary modal-close"><?php echo __("Nope, nevermind"); ?></a>
-				</div>
-			</div>
+	<div class="modal-body">
+		<div class="settings-category-toolbar">
+			<a href="#" class="button-submit button-primary modal-close"><?php echo __("Yes"); ?></a>
+			<a href="#" class="button-destruct button-secondary modal-close"><?php echo __("Nope, nevermind"); ?></a>
 		</div>
 	</div>
 </script>

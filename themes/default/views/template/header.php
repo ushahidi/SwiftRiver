@@ -91,17 +91,21 @@
 		(new Image()).src = window.default_avatar.attr('src');		
 	</script>
 	
-	<?php if (isset($bucket_list)): ?>
 		<script type="text/javascript">
 			$(function() {
-				// Bootstrap the global bucket list		
-				Assets.bucketList.reset(<?php echo $bucket_list; ?>);
 				
-				// Bootstrap the global bucket list		
-				Assets.riverList.reset(<?php echo $river_list; ?>);
+				<?php if (isset($bucket_list)): ?>
+					// Bootstrap the global bucket list		
+					Assets.bucketList.reset(<?php echo $bucket_list; ?>);
+				<?php endif; ?>
+				
+				<?php if (isset($river_list)): ?>
+					// Bootstrap the global bucket list		
+					Assets.riverList.reset(<?php echo $river_list; ?>);
+				<?php endif; ?>
+				
 			});
 		</script>
-	<?php endif; ?>
 	<?php Swiftriver_Event::run('swiftriver.template.head'); ?>
 </head> 
  
