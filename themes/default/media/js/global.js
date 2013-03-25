@@ -301,7 +301,7 @@ $(document).ready(function() {
 		window.ConfirmationWindow = Backbone.View.extend({
 			tagName: "article",
 			
-			className: "modal",
+			className: "modal modal-view",
 			
 			template: _.template($("#confirm-window-template").html()),
 			
@@ -326,8 +326,8 @@ $(document).ready(function() {
 			},
 			
 			confirm: function() {
-				modalHide();
 				this.callback.call(this.context);
+				modalHide();
 				return false;
 			}
 		});

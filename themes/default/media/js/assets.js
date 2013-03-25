@@ -588,4 +588,506 @@
 		}
 	});
 	
+	// Form model
+	var Form = Assets.Form = Asset.extend({
+		validate: function(attrs, options) {
+			
+			if (! _.has(attrs, "name"))
+				return "Form name not provided.";
+				
+			if (attrs.name.length == 0)
+				return "Form name cannot be empty.";
+				
+			if (! _.has(attrs, "fields") || attrs.fields.length == 0)
+				return "A form must have at least one field.";
+		}
+	});
+	
+	var FormList = Assets.FormList = AssetList.extend({
+		model: Form,
+
+		url: site_url + logged_in_account_path + "/forms"
+	});
+	// Global form list
+	var formList = Assets.formList = new FormList();
+	
+	// Form field model
+	var FormField = Backbone.Model.extend({
+		"defaults": {
+			"title": null,
+			"description": null,
+			"options": []
+		}
+	});
+	
+	// List of fields in a form
+	var Fields = Backbone.Collection.extend({
+		model: FormField
+	})	
+	
+	// Single Field in a list view
+	var FieldView = Backbone.View.extend({
+
+		tagName: "li",
+
+		events: {
+			"click span.icon-cancel": "removeField",
+			"click span.icon-pencil": "editField",
+		},
+		
+		initialize: function() {
+			this.model.on("destroy", this.onRemove, this);
+		},
+
+		render: function() {
+			switch (this.model.get("type")) {
+				case "text":
+					this.template = _.template($("#text-field-template").html());
+					break;
+					
+				case "multiple":
+					this.template = _.template($("#checkbox-field-template").html());
+					this.optionTemplate = _.template($("#checkbox-field-option-template").html());
+					break;
+				
+				case "list":
+					this.template = _.template($("#list-field-template").html());
+					this.optionTemplate = _.template($("#list-field-option-template").html());
+					break;
+			}
+			
+			this.$el.html(this.template(this.model.toJSON()));
+			
+			if (this.model.get("type") == "multiple") {
+				_.each(this.model.get("options"), function(option) {
+					var view = this.optionTemplate({"option": option})
+					this.$(".modal-field").append(view);
+				}, this);
+			}
+			
+			if (this.model.get("type") == "list") {
+				_.each(this.model.get("options"), function(option) {
+					var view = this.optionTemplate({"option": option})
+					this.$("select").append(view);
+				}, this);
+			}
+			
+			return this;	
+		},
+		
+		onRemove: function() {
+			this.$el.fadeOut("slow");
+		},
+		
+
+		removeField: function() {
+			var view = this;
+			
+			if (view.isFetching)
+				return;		
+				
+			if (this.model.isNew()) {
+				this.onRemove();
+				return;
+			}    
+				
+			view.isFetching = true;
+			
+			var button = this.$("span.remove");
+			
+			// Show loading icon if there is a delay
+			var t = setTimeout(function() { button.removeClass("icon-cancel").html(loading_image); }, 500);
+			
+			this.model.destroy({
+				wait: true,
+				complete: function() {
+					clearTimeout(t);
+					view.isFetching = false;
+				},
+				error: function() {
+					showFailureMessage("Unable to remove field. Try again later.");
+					button.html("");
+					button.addClass("icon-cancel");
+				}
+			});
+			return false;
+		},
+		
+		editField: function() {
+			var view = new EditFieldModalView({model: this.model});					
+			view.on("change", function() { 
+				this.trigger("change", this.model);
+			}, this);
+			modalShow(view.render().el);
+			
+			return false;
+		}
+	});
+	
+	
+	// Modal for creating Forms
+	var CreateFormModalView = Assets.CreateFormModalView = Backbone.View.extend({
+		
+		tagName: "article",
+
+		className: "modal modal-view",
+		
+		events: {
+			"click .modal-toolbar a.button-submit": "doCreateForm",
+			"click li.add a": "showAddField",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#create-form-modal-template").html());
+			this.model.urlRoot = site_url + logged_in_account_path + "/forms";
+			this.model.on("invalid", this.onFormInvalid, this);
+
+			this.collection = new Fields();
+			if (!this.model.isNew()) {
+				var baseUrl = site_url + logged_in_account_path + "/form"
+				this.collection.url = baseUrl + "/" + this.model.get("id") + "/fields";	
+			}
+			this.collection.on('add',	 this.addField, this);
+			this.collection.on('reset', this.addFields, this);
+		},
+		
+		addField: function(field) {
+			var view = field.view = new FieldView({model: field});			
+			this.$("ul.view-table .add").before(view.render().el);
+			view.on("change", this.onFieldChanged, this);
+		},
+		
+		addFields: function() {
+			this.collection.each(this.addField, this);
+		},
+		
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			
+			// Render existing fields if any
+			this.collection.reset(this.model.get("fields"));
+			
+			return this;
+		},
+		
+		onFieldAdded: function(field) {
+			this.collection.add(field);
+			modalBack();
+		},
+		
+		onFieldChanged: function(field) {
+			field.view.render();
+			modalBack();
+		},
+		
+		showAddField: function() {
+			var view = new AddFieldModalView();
+			view.on("change", this.onFieldAdded, this);			
+			modalShow(view.render().$el);
+			return false;
+		},
+		
+		onFormInvalid: function(model, error) {
+			showFailureMessage(error);
+		},
+		
+		doCreateForm: function() {
+			var view = this;
+			
+			if (view.isFetching)
+				return false;
+			
+			view.isFetching = true;
+			var button = this.$(".button-submit");
+			var originalButton = button.clone();
+			var t = setTimeout(function() {
+				button.children("span").html("<em>Creating form</em>").append(loading_image_squares);
+			}, 500);
+				
+			// Disable form elements	
+			this.$("input[name=form_name]").attr("disabled", "disabled");
+			
+			var formName = $.trim(this.$("input[name=form_name]").val());
+			this.model.set("name", formName);
+			this.model.set("fields", this.collection.toJSON());
+			
+			var saveStatus = this.model.save({
+				name: formName,
+				fields: this.collection.toJSON()
+			},{
+				wait: true,
+				success: function() {
+					modalHide();
+					showSuccessMessage("Form updated successfully", {flash: true});
+				},
+				error: function() {
+					showFailureMessage("There was a problem creating the form. Try again later.");
+					view.$("input[name=form_name]").removeAttr("disabled");
+				},
+				complete: function() {
+					view.isFetching = false;
+					button.replaceWith(originalButton);
+				},
+			});
+			
+			if (!saveStatus) {
+				this.isFetching = false;
+				this.$("input[name=form_name]").removeAttr("disabled");
+			}
+			
+			return false;
+		}
+	});
+	
+	// Add field modal
+	var AddFieldModalView = Backbone.View.extend({
+		
+		tagName: "article",
+
+		className: "modal modal-view modal-segment",
+		
+		events: {
+			"click .modal-tabs-menu a": "showEditField",
+			"click .button-submit": "saveField",
+		},
+		
+		initialize: function() {
+			this.template = _.template($("#add-field-modal-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		showEditField: function(e) {
+			// Hide the currently visible field editor
+			this.$(".modal-tabs-window div.active").removeClass("active");
+			
+			var hash = $(e.currentTarget).prop('hash');
+			
+			switch(hash) {
+				case "#add-custom-text":
+					this.fieldView = this.textFieldView;
+					if (this.fieldView == undefined) {
+						this.fieldView = this.textFieldView = new EditFieldView({model: new FormField({type:"text"})});
+						this.renderField(this.fieldView);
+					}
+				break;
+				
+				case "#add-custom-list":
+					this.fieldView = this.listFieldView;
+					
+					if (this.fieldView == undefined) {
+						this.fieldView = this.listFieldView = new EditFieldView({model: new FormField({type:"list"})});
+						this.renderField(this.fieldView);
+					}
+				break;
+			}
+			
+			// Show the selected view
+			this.fieldView.$el.addClass("active");
+			$(e.currentTarget).parents("li").addClass("active").siblings().removeClass("active");
+			return false;
+		},
+		
+		renderField: function(view) {
+			// Show the new field
+			this.$(".modal-tabs-window").append(view.render().$el);
+		},
+		
+		saveField: function() {
+			view = this;
+			
+			if (this.fieldView == undefined || view.isFetching)
+				return false;
+				
+			view.isFetching = true;
+			
+			var button = this.$(".button-submit");
+			var originalButton = button.clone();
+			var t = setTimeout(function() {
+				button.children("span").html("<em>Saving field</em>").append(loading_image_squares);
+			}, 500);
+			
+			this.fieldView.save( function() {
+					view.isFetching = false;
+					button.replaceWith(originalButton);
+				},
+				function() {
+					view.trigger("change", view.fieldView.model);
+				},
+				function() {
+					showFailureMessage("There was a problem adding the field. Try again later.");
+				}
+			);
+			return false;
+		}
+	});
+	
+	// Single field edit view
+	var EditFieldView = Backbone.View.extend({
+		
+		tagName: "div",
+		
+		// True whether this is a list/checkbox field
+		multi: false,
+		
+		events: {
+			"click .icon-plus ": "addOption",
+			"click .icon-cancel": "removeOption",
+			"change input[name=multi]": "toggleMulti"
+		},
+		
+		initialize: function() {
+			
+			switch (this.model.get("type")) {
+				case "text":
+					this.template = _.template($("#edit-text-field-modal-template").html());
+				break;
+
+				case "multiple":
+				case "list":
+					this.template = _.template($("#edit-list-field-modal-template").html());
+					this.multi = true;
+				break;
+			}
+		},
+		
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			
+			// Render options if a multi field
+			if (this.multi) {
+				// Use the current option field as a template
+				var optionField = this.$(".option-field").last();
+				
+				var options = this.model.get("options");
+				_.each(options, function(option) {
+					var el = optionField.clone();
+					el.children("input").val(option);
+					optionField.before(el);
+				}, this);
+				
+				if (options.length) {
+					optionField.remove();
+				}
+			}
+			
+			return this;
+		},
+		
+		save: function(complete, success, error) {
+			var title = this.$("input[name=title]").val()
+			var description = this.$("input[name=description]").val()
+			
+			
+			this.model.set("title", title);
+			this.model.set("description", description);
+			
+			var fieldType = this.model.get("type");
+			if (fieldType == "multiple" || fieldType == "list") {
+				var options = [];
+				_.each($(".modal-field .option-field input"), function(input) {
+					var val = $(input).val();
+					if (val.length > 0) {
+						options.push(val);
+					}
+				})
+				this.model.set("options", options);
+			}
+			
+			if (this.model.isNew()) {
+				success();
+				complete();
+			} else {
+				this.model.save(this.model.toJSON(), {
+					wait: true,
+					complete: complete,
+					success: success,
+					error: error
+				});
+			}
+		},
+		
+		addOption: function(e) {
+			// Copy an existing option field and insert it into the DOM
+			var button = $(e.currentTarget);
+			
+			var optionField = button.closest(".option-field");
+			
+			// Add new option to the dom
+			var el = optionField.clone()
+			el.children("input").val("");
+			optionField.after(el);
+
+			return false;
+		},
+		
+		removeOption: function(e) {
+			$(e.currentTarget).closest(".option-field").fadeOut("slow", function() { $(this).remove(); });
+			
+			return false;
+		},
+		
+		toggleMulti: function() {
+			var newType = this.model.get("type") == "list" ? "multiple" : "list";
+			this.model.set("type", newType);
+		}
+	});
+	
+	// Modal view for editing a field
+	var EditFieldModalView = Backbone.View.extend({
+		
+		tagName: "article",
+
+		className: "modal modal-view modal-segment",
+		
+		events: {
+			"click .button-submit": "saveField",
+		},
+				
+		initialize: function() {
+			this.template = _.template($("#edit-field-modal-template").html());
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template());
+			
+			this.fieldView = new EditFieldView({model: this.model});					
+			this.$(".modal-field-tabs-window").replaceWith(this.fieldView.render().el);
+			
+			return this;
+		},
+		
+		saveField: function() {
+			view = this;
+			
+			if (this.fieldView == undefined || view.isFetching)
+				return false;
+				
+			view.isFetching = true;
+			
+			var button = this.$(".button-submit");
+			var originalButton = button.clone();
+			var t = setTimeout(function() {
+				button.children("span").html("<em>Saving field</em>").append(loading_image_squares);
+			}, 500);
+			
+			this.fieldView.save(
+				function() {
+					view.isFetching = false;
+					button.replaceWith(originalButton);
+				},
+				function() {
+					view.trigger("change", view.fieldView.model);
+				},
+				function() {
+					showFailureMessage("There was a problem saving the field. Try again later.");
+				}
+			);
+			return false;
+		}
+	});
+	
 }(this));

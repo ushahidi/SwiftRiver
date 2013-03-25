@@ -179,6 +179,7 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->account_service = new Service_Account($this->api);
 		$this->river_service = new Service_River($this->api);
 		$this->bucket_service = new Service_Bucket($this->api);
+		$this->form_service = new Service_Form($this->api);
 		
 		if (Auth::instance()->logged_in())
 		{
@@ -336,6 +337,7 @@ class Controller_Swiftriver extends Controller_Template {
 					$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
 					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
+				
 				$this->template->header->bucket_list = $buckets;
 				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
@@ -343,6 +345,13 @@ class Controller_Swiftriver extends Controller_Template {
 					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;
+				
+				if ( ! ($forms = Cache::instance()->get('user_forms_'.$this->user['id'], FALSE)))
+				{
+					$forms = json_encode($this->account_service->get_forms($this->visited_account, $this->user));
+					//Cache::instance()->set('user_forms_'.$this->user->id, $rivers, 3600 + rand(0,3600));
+				}
+				$this->template->header->form_list = $forms;
 			}
 
 			$this->template->content = '';

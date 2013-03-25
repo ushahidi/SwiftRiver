@@ -253,7 +253,7 @@ Route::set('search', 'search(/<action>(/<id>(/<id2>)))')
  */
 Route::set('account_pages', '<account>/<action>(/<id>)',
     array(
-    	'action' => '(content|rivers|buckets|create|settings|share|followers|following|invite)',
+    	'action' => '(content|rivers|buckets|forms|create|settings|share|followers|following|invite)',
 		'id' => '\d+'
     ))
 	->defaults(array(
@@ -305,7 +305,7 @@ Route::set('river_bucket_discussion', '<account>/<directory>/<name>/discussion(/
  */
 Route::set('account', '<account>(/<controller>/<name>(/<action>(/<id>(/<id2>))))',
 	array(
-		'controller' => '(user|river|bucket)',
+		'controller' => '(user|river|bucket|form)',
 	))
 	->defaults(array(
 		'controller' => 'user',

@@ -142,6 +142,21 @@ class SwiftRiver_Client {
 		return $this->apis['drops'];
 	}
 	
+	/**
+	 * Gets and returns the forms API
+	 *
+	 * @return SwiftRiver_API_Forms
+	 */
+	public function get_forms_api()
+	{
+		if ( ! isset($this->apis['forms']))
+		{
+			$this->apis['forms'] = new SwiftRiver_API_Forms($this);
+		}
+		
+		return $this->apis['forms'];
+	}
+	
 	
 	/**
 	 * Send request to an api endpoint

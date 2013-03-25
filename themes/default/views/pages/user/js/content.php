@@ -44,6 +44,10 @@ $(function() {
 				case "#bucket":
 					view = new Assets.CreateBucketModalView();
 				break;
+				
+				case "#form":
+					view = new Assets.CreateFormModalView({model: new Assets.Form()});
+				break;
 			}
 			
 			if (view != null) {
@@ -59,6 +63,7 @@ $(function() {
 		
 		events: {
 			"change .select-toggle input[type=checkBox]": "setSelected",
+			"click .item-summary a": "showEditForm"
 		},
 		
 		template: _.template($("#asset-template").html()),
@@ -74,6 +79,12 @@ $(function() {
 			this.model.set("selected", !this.model.get("selected"));
 		},
 		
+		showEditForm: function () {
+			var asset = this.model.get("asset");
+			if (asset instanceof Assets.Form) {
+				var view = new Assets.CreateFormModalView({model: asset});
+				modalShow(view.render().el);
+				return false;
 			}
 		}
 	});
@@ -101,8 +112,10 @@ $(function() {
 			// Bind to global River, Bucket and Form list events
 			options.bucketList.on("reset", this.addAssets, this);
 			options.riverList.on("reset", this.addAssets, this);
+			options.formList.on("reset", this.addAssets, this);
 			options.bucketList.on("add", this.addAsset, this);
 			options.riverList.on("add", this.addAsset, this);
+			options.formList.on("add", this.addAsset, this);
 			
 			// Render asset when added to combined list
 			this.collection.on("add", this.renderAsset, this);
@@ -121,6 +134,8 @@ $(function() {
 				dbAsset.set("type", "bucket");
 			} else if (asset instanceof Assets.River) {
 				dbAsset.set("type", "river");
+			} else if (asset instanceof Assets.Form) {
+				dbAsset.set("type", "form");
 			}
 			
 			this.collection.add(dbAsset);
@@ -164,6 +179,9 @@ $(function() {
 				case "bucket":
 					match = asset instanceof Assets.Bucket;
 					break;	
+				case "form":
+					match = asset instanceof Assets.Form;
+					break;					
 			}
 			
 			return match;
@@ -289,18 +307,20 @@ $(function() {
 			modalShow(new CreateAssetModal().render().el);
 			return false;
 		}
-		
 	});
 	
 	var bucketList = new Assets.BucketList();
     var riverList = new Assets.RiverList();
+	var formList = new Assets.FormList();
 
 	new DashboardAssetListView({
 		bucketList: bucketList,
 		riverList: riverList,
+		formList: formList
 	});
 	
 	bucketList.reset(<?php echo $buckets; ?>);
 	riverList.reset(<?php echo $rivers; ?>);
+	formList.reset(<?php echo $forms; ?>);
 });
 </script>

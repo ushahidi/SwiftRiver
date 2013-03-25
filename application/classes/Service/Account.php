@@ -173,6 +173,27 @@ class Service_Account extends Service_Base {
 	}
 	
 	/**
+	 * Get a single forms array for the given account.
+	 *
+	 * @param   array   account          Account that owns the forms to be returned
+	 * @param   array   querying_account Account requesting for the forms
+	 * @return	array
+	 */
+	public function get_forms($account, $querying_account)
+	{
+		$forms = array();
+		
+		// Own forms
+		foreach ($account['forms'] as $form)
+		{
+			$forms[] = Service_Form::get_array($form, $querying_account);
+		}
+		
+		return $forms;
+	}
+	
+	
+	/**
 	 * Verifies where the account in $query_account_id is following the account in $id
 	 *
 	 * @param  int  id

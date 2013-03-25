@@ -104,6 +104,10 @@
 					Assets.riverList.reset(<?php echo $river_list; ?>);
 				<?php endif; ?>
 				
+				<?php if (isset($form_list)): ?>
+					// Bootstrap the global form list		
+					Assets.formList.reset(<?php echo $form_list; ?>);
+				<?php endif; ?>
 			});
 		</script>
 	<?php Swiftriver_Event::run('swiftriver.template.head'); ?>

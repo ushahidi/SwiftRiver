@@ -98,7 +98,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		$droplet_js = View::factory('pages/drop/js/drops')
 			->set('fetch_base_url', $this->bucket_base_url)
-			->set('default_view', $this->bucket['default_layout'])
+			->set('default_view', 'drops')
 			->set("photos", ($this->photos ? 1 : 0))
 			->set('droplet_list', json_encode($droplet_list))
 			->set('filters', NULL)

@@ -95,10 +95,12 @@ class Controller_User extends Controller_Swiftriver {
 		$this->template->header->title = __('Content');
 		$this->template->header->js = View::factory('pages/user/js/content')
 			->bind('rivers', $rivers)
+			->bind('forms', $forms)				
 			->bind('buckets', $buckets);
 		
 		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
 		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
+		$forms = json_encode($this->account_service->get_forms($this->visited_account, $this->user));
 
 		$this->sub_content = View::factory('pages/user/content')
 			->bind('owner', $this->owner);
@@ -174,6 +176,71 @@ class Controller_User extends Controller_Swiftriver {
 				$this->bucket_service->delete_bucket($bucket_id);
 			break;
 		}
+	}
+	
+	/**
+	 * Endpoint for managing forms
+	 */
+	public function action_forms()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$form_array = json_decode($this->request->body(), TRUE);
+			
+				$post = Validation::factory($form_array)
+							->rule('name', 'not_empty')
+							->rule('fields', 'not_empty');
+			
+				if ( ! $post->check())
+				{
+					throw new HTTP_Exception_400();
+				}
+			
+				try
+				{
+					$response = $this->form_service->create_form($form_array);
+					echo json_encode($response);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}
+				
+			break;
+			
+			case "PUT":
+				$form_array = json_decode($this->request->body(), TRUE);
+				
+				$post = Validation::factory($form_array)
+							->rule('name', 'not_empty');
+			
+				if ( ! $post->check())
+				{
+					throw new HTTP_Exception_400();
+				}
+				
+				try
+				{
+					$form_id = intval($this->request->param('id', 0));
+					$response = $this->form_service->update_form($form_id, $form_array['name']);
+					echo json_encode($response);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}
+			break;
+			
+			case "DELETE":
+				$form_id = $this->request->param('id', 0);
+				$this->form_service->delete_form($form_id);
+			break;
+		}
+		
 	}
 	
 	/**
