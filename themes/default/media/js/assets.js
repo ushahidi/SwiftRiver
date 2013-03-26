@@ -650,7 +650,7 @@
 					this.optionTemplate = _.template($("#checkbox-field-option-template").html());
 					break;
 				
-				case "list":
+				case "select":
 					this.template = _.template($("#list-field-template").html());
 					this.optionTemplate = _.template($("#list-field-option-template").html());
 					break;
@@ -665,7 +665,7 @@
 				}, this);
 			}
 			
-			if (this.model.get("type") == "list") {
+			if (this.model.get("type") == "select") {
 				_.each(this.model.get("options"), function(option) {
 					var view = this.optionTemplate({"option": option})
 					this.$("select").append(view);
@@ -879,7 +879,7 @@
 					this.fieldView = this.listFieldView;
 					
 					if (this.fieldView == undefined) {
-						this.fieldView = this.listFieldView = new EditFieldView({model: new FormField({type:"list"})});
+						this.fieldView = this.listFieldView = new EditFieldView({model: new FormField({type:"select"})});
 						this.renderField(this.fieldView);
 					}
 				break;
@@ -947,7 +947,7 @@
 				break;
 
 				case "multiple":
-				case "list":
+				case "select":
 					this.template = _.template($("#edit-list-field-modal-template").html());
 					this.multi = true;
 				break;
@@ -986,7 +986,7 @@
 			this.model.set("description", description);
 			
 			var fieldType = this.model.get("type");
-			if (fieldType == "multiple" || fieldType == "list") {
+			if (fieldType == "multiple" || fieldType == "select") {
 				var options = [];
 				_.each($(".modal-field .option-field input"), function(input) {
 					var val = $(input).val();
@@ -1031,7 +1031,7 @@
 		},
 		
 		toggleMulti: function() {
-			var newType = this.model.get("type") == "list" ? "multiple" : "list";
+			var newType = this.model.get("type") == "select" ? "multiple" : "select";
 			this.model.set("type", newType);
 		}
 	});
