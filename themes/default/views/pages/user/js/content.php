@@ -309,18 +309,26 @@ $(function() {
 		}
 	});
 	
-	var bucketList = new Assets.BucketList();
-    var riverList = new Assets.RiverList();
-	var formList = new Assets.FormList();
+	<?php if ($owner): ?>
+		new DashboardAssetListView({
+			bucketList: Assets.bucketList,
+			riverList: Assets.riverList,
+			formList: Assets.formList
+		});
+	<?php else: ?>
+		var bucketList = new Assets.BucketList();
+	    var riverList = new Assets.RiverList();
+		var formList = new Assets.FormList();
 
-	new DashboardAssetListView({
-		bucketList: bucketList,
-		riverList: riverList,
-		formList: formList
-	});
+		new DashboardAssetListView({
+			bucketList: bucketList,
+			riverList: riverList,
+			formList: formList
+		});
 	
-	bucketList.reset(<?php echo $buckets; ?>);
-	riverList.reset(<?php echo $rivers; ?>);
-	formList.reset(<?php echo $forms; ?>);
+		bucketList.reset(<?php echo $buckets; ?>);
+		riverList.reset(<?php echo $rivers; ?>);
+		formList.reset(<?php echo $forms; ?>);
+	<?php endif; ?>
 });
 </script>

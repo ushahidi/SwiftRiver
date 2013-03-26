@@ -96,7 +96,8 @@ class Controller_User extends Controller_Swiftriver {
 		$this->template->header->js = View::factory('pages/user/js/content')
 			->bind('rivers', $rivers)
 			->bind('forms', $forms)				
-			->bind('buckets', $buckets);
+			->bind('buckets', $buckets)
+			->bind('owner', $this->owner);
 		
 		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
 		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
