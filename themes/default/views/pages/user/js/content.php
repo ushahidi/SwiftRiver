@@ -46,7 +46,7 @@ $(function() {
 				break;
 				
 				case "#form":
-					view = new Assets.CreateFormModalView({model: new Assets.Form()});
+					view = new Assets.FormModalView({model: new Assets.Form(), collection: Assets.formList});
 				break;
 			}
 			
@@ -68,6 +68,10 @@ $(function() {
 		
 		template: _.template($("#asset-template").html()),
 		
+		initialize: function(options) {
+			this.model.get("asset").on("change", this.render, this);
+		},
+		
 		render: function(eventName) {
 			var data = this.model.get("asset").toJSON();
 			data["type"] = this.model.get("type");
@@ -82,7 +86,7 @@ $(function() {
 		showEditForm: function () {
 			var asset = this.model.get("asset");
 			if (asset instanceof Assets.Form) {
-				var view = new Assets.CreateFormModalView({model: asset});
+				var view = new Assets.FormModalView({model: asset, collection: Assets.formList});
 				modalShow(view.render().el);
 				return false;
 			}

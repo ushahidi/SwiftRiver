@@ -57,9 +57,16 @@ class Controller_Form extends Controller_Swiftriver {
 	{
 		$this->template = "";
 		$this->auto_render = FALSE;
-				
+		
 		switch ($this->request->method())
 		{
+			case "POST":
+				$field_array = json_decode($this->request->body(), TRUE);
+				$field = $this->form_service->create_field($this->form['id'], $field_array);
+			
+				echo json_encode($field);
+			break;
+			
 			case "PUT":
 				$field_id = intval($this->request->param('id', 0));
 				$field_array = json_decode($this->request->body(), TRUE);

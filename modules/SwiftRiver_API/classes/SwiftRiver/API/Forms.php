@@ -50,6 +50,19 @@ class SwiftRiver_API_Forms extends SwiftRiver_API {
 	}
 	
 	/**
+	 * Create a form field
+	 *
+	 * @param   string  $form_id
+	 * @param   string  $field_id
+	 * @param   string  $field_array
+	 * @return Array
+	 */
+	public function create_field($form_id, $field_array)
+	{
+		return $this->post('/forms/'.$form_id.'/fields', $field_array);
+	}
+	
+	/**
 	 * Modify a form field
 	 *
 	 * @param   string  $form_id

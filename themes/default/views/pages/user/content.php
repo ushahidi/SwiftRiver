@@ -138,30 +138,39 @@
 
 <script type="text/template" id="create-form-modal-template">
 	<div class="modal-title cf">
-		<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
-		<h1>Create a new custom form</h1>
+		<% if (isNew) { %>
+			<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+			<h1><?php echo __("Create a new custom form"); ?></h1>
+		<% } else { %>
+			<a href="#" class="modal-close button-white"><span class="icon-cancel"></span></a>
+			<h1><?php echo __("Edit form"); ?></h1>
+		<% } %>
 	</div>
 
 	<div class="modal-body">
 		<div class="base">
-			<h2 class="label">Basics</h2>
+			<h2 class="label"><?php echo __("Basics"); ?></h2>
 			<div class="modal-field">
-				<h3 class="label">Form name</h3>
-				<input type="text" placeholder="Name this custom form"  name="form_name" value="<%= name %>" />
+				<h3 class="label"><?php echo __("Form name"); ?></h3>
+				<input type="text" placeholder="<?php echo __("Name this custom form"); ?>"  name="form_name" value="<%= name %>" />
 			</div>
 		</div>
 
 		<div class="base">
-			<h2 class="label">Fields</h2>
+			<h2 class="label"><?php echo __("Fields"); ?></h2>
 			<ul class="view-table">
 				<!-- Field options will go here -->
 				
-				<li class="add"><a href="#create-river" class="modal-transition">Add a field</a></li>
+				<li class="add"><a href="#create-river" class="modal-transition"><?php echo __("Add a field"); ?></a></li>
 			</ul>
 		</div>
 	
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary">Create custom form</a>				
+			<% if (isNew) { %>
+				<a href="#" class="button-submit button-primary"><?php echo __("Create custom form"); ?></a>				
+			<% } else { %>
+				<a href="#" class="button-submit button-primary"><?php echo __("Save"); ?></a>				
+			<% } %>
 		</div>					
 	</div>
 </script>

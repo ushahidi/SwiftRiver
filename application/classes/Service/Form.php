@@ -78,6 +78,16 @@ class Service_Form extends Service_Base {
 	}
 	
 	/**
+	 * Create the given form field
+	 *
+	 * @return Array
+	 */
+	public function create_field($form_id, $field_array)
+	{
+		return $this->api->get_forms_api()->create_field($form_id, $field_array);
+	}
+	
+	/**
 	 * Update the given form field
 	 *
 	 * @return Array

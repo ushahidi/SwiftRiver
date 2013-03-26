@@ -590,6 +590,13 @@
 	
 	// Form model
 	var Form = Assets.Form = Asset.extend({
+		defaults: {
+		    "is_owner":  true,
+			"collaborator":  false,
+			"follower":  false,
+			"url": null,
+		},
+		
 		validate: function(attrs, options) {
 			
 			if (! _.has(attrs, "name"))
@@ -725,8 +732,8 @@
 	});
 	
 	
-	// Modal for creating Forms
-	var CreateFormModalView = Assets.CreateFormModalView = Backbone.View.extend({
+	// Modal for creating/editing Forms
+	var FormModalView = Assets.FormModalView = Backbone.View.extend({
 		
 		tagName: "article",
 
@@ -742,13 +749,13 @@
 			this.model.urlRoot = site_url + logged_in_account_path + "/forms";
 			this.model.on("invalid", this.onFormInvalid, this);
 
-			this.collection = new Fields();
+			this.fields = new Fields();
 			if (!this.model.isNew()) {
 				var baseUrl = site_url + logged_in_account_path + "/form"
-				this.collection.url = baseUrl + "/" + this.model.get("id") + "/fields";	
+				this.fields.url = baseUrl + "/" + this.model.get("id") + "/fields";	
 			}
-			this.collection.on('add',	 this.addField, this);
-			this.collection.on('reset', this.addFields, this);
+			this.fields.on('add',	 this.addField, this);
+			this.fields.on('reset', this.addFields, this);
 		},
 		
 		addField: function(field) {
@@ -758,20 +765,23 @@
 		},
 		
 		addFields: function() {
-			this.collection.each(this.addField, this);
+			this.fields.each(this.addField, this);
 		},
 		
 		render: function() {
-			this.$el.html(this.template(this.model.toJSON()));
+			var data = this.model.toJSON();
+			data.isNew = this.model.isNew();
+			this.$el.html(this.template(data));
 			
 			// Render existing fields if any
-			this.collection.reset(this.model.get("fields"));
+			console.log(this.model.get("fields"));
+			this.fields.reset(this.model.get("fields"));
 			
 			return this;
 		},
 		
 		onFieldAdded: function(field) {
-			this.collection.add(field);
+			this.fields.add(field);
 			modalBack();
 		},
 		
@@ -781,7 +791,7 @@
 		},
 		
 		showAddField: function() {
-			var view = new AddFieldModalView();
+			var view = new AddFieldModalView({urlRoot: this.fields.url});
 			view.on("change", this.onFieldAdded, this);			
 			modalShow(view.render().$el);
 			return false;
@@ -809,19 +819,25 @@
 			
 			var formName = $.trim(this.$("input[name=form_name]").val());
 			this.model.set("name", formName);
-			this.model.set("fields", this.collection.toJSON());
+			this.model.set("fields", this.fields.toJSON());
 			
 			var saveStatus = this.model.save({
 				name: formName,
-				fields: this.collection.toJSON()
+				fields: this.fields.toJSON()
 			},{
 				wait: true,
 				success: function() {
 					modalHide();
+					view.model.set("display_name", formName);
+					view.collection.add(view.model);
 					showSuccessMessage("Form updated successfully", {flash: true});
 				},
-				error: function() {
-					showFailureMessage("There was a problem creating the form. Try again later.");
+				error: function(model, response) {
+					if (response.status == 400) {
+						showFailureMessage("A form with the name '" + formName + "' already exists.");
+					} else {
+						showFailureMessage("There was a problem creating the form. Try again later.");
+					}
 					view.$("input[name=form_name]").removeAttr("disabled");
 				},
 				complete: function() {
@@ -868,9 +884,12 @@
 			
 			switch(hash) {
 				case "#add-custom-text":
+				console.log(this.options.urlRoot);
 					this.fieldView = this.textFieldView;
 					if (this.fieldView == undefined) {
-						this.fieldView = this.textFieldView = new EditFieldView({model: new FormField({type:"text"})});
+						var field = new FormField({type:"text"});
+						field.urlRoot = this.options.urlRoot;
+						this.fieldView = this.textFieldView = new EditFieldView({model: field});
 						this.renderField(this.fieldView);
 					}
 				break;
@@ -879,7 +898,9 @@
 					this.fieldView = this.listFieldView;
 					
 					if (this.fieldView == undefined) {
-						this.fieldView = this.listFieldView = new EditFieldView({model: new FormField({type:"select"})});
+						var field = new FormField({type:"select"});
+						field.urlRoot = this.options.urlRoot;
+						this.fieldView = this.listFieldView = new EditFieldView({model: field});
 						this.renderField(this.fieldView);
 					}
 				break;
@@ -997,16 +1018,17 @@
 				this.model.set("options", options);
 			}
 			
-			if (this.model.isNew()) {
-				success();
-				complete();
-			} else {
+			console.log(this.model.urlRoot);
+			if (this.model.urlRoot != undefined || !this.model.isNew()) {
 				this.model.save(this.model.toJSON(), {
 					wait: true,
 					complete: complete,
 					success: success,
 					error: error
 				});
+			} else {
+				success();
+				complete();
 			}
 		},
 		
