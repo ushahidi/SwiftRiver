@@ -129,11 +129,14 @@
 				command = "add";
 			}
 			
+			var isRead = !this.get('read');
+
 			// Save the changes
 			this.save({
 				buckets: buckets,
 				command: command,
-				bucket_id: bucketId
+				bucket_id: bucketId,
+				read: isRead
 			},{
 				patch: true,
 				wait: true,
@@ -247,6 +250,11 @@
 			} else {
 				shareView = new ShareDropView({model: this.model, baseURL: this.options.baseURL});
 				modalShow(shareView.render().el);
+				
+				// Mark the drop as read; Assumption: If a user is sharing a drop, they have read it
+				if (!this.model.get('read')) {
+					this.markAsRead();
+				}
 			}
 		    return false;
 		},
@@ -274,6 +282,30 @@
 				}
 			});
 			return false;
+		},
+
+		hideReadStatusButton: function() {
+			this.$(".drop-status > li.drop-status-read").fadeOut('fast').remove();
+		},
+
+		markAsRead: function() {
+			if (this.model.get('read') == true) {
+				this.hideReadStatusButton();
+				return;
+			}
+
+			var view = this;
+			this.model.save({read: true}, {
+				patch: true,
+				wait: true,
+				success: function(model, response) {
+					view.hideReadStatusButton();
+				},
+				error: function(model, response) {
+					showFailureMessage(response.responseText);
+				}
+			});
+			return false;
 		}
 	})
 	
@@ -288,7 +320,8 @@
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
 			"click li.share > a": "shareDrop",
-			"click li.drop-status-remove > a": "removeDrop"
+			"click li.drop-status-remove > a": "removeDrop",
+			"click li.drop-status-read > a": "markAsRead"
 		},
 		
 		initialize: function(options) {
@@ -307,7 +340,8 @@
 			
 			this.model.on("change:user_score", this.updateDropScore, this);
 			this.model.on("change:comment_count", this.render, this);
-			this.model.on("change:buckets", this.updateBucketCount, this);			
+			this.model.on("change:buckets", this.updateBucketCount, this);
+			this.model.on("change:read", this.markAsRead, this);
 		},
 
 		make: function(tagName, attributes) {
@@ -347,6 +381,9 @@
 		
 		// Show the drop in zoom view
 		showDetail: function() {
+			if (!this.model.get('read')) {
+				this.model.set('read', true);
+			}
 			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
 		},
@@ -523,7 +560,7 @@
 
 		},
 		
-		alertNewComments: function(comment) {			
+		alertNewComments: function(comment) {
 			if (parseInt(comment.get("id")) > this.maxId) {
 				this.maxId = parseInt(comment.get("id"));
 			}
@@ -654,7 +691,7 @@
 					view.$el.addClass('selected');
 				} else {
 					view.$el.removeClass('selected');
-				}			
+				}
 				
 			}, function(){
 				var message = "The drop could not be added to the \"" + bucketName + "\" bucket";

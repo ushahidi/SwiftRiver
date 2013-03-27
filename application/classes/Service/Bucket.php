@@ -84,8 +84,9 @@ class Service_Bucket {
 	 * Adds the drop specified in $drop_id to the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param  int bucket_id
-	 * @param  int drop_id
+	 * @param  int    bucket_id
+	 * @param  int    drop_id
+	 * @param  string source
 	 */
 	public function add_drop($bucket_id, $drop_id, $source)
 	{
@@ -100,12 +101,17 @@ class Service_Bucket {
 	 * Removes the drop specified in $drop_id from the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param  int  bucket_id
-	 * @param  int  drop_id
+	 * @param  int    bucket_id
+	 * @param  int    drop_id
+	 * @param  string source
 	 */
-	public function delete_drop($bucket_id, $drop_id)
+	public function delete_drop($bucket_id, $drop_id, $source)
 	{
-		$this->buckets_api->delete_drop($bucket_id, $drop_id);
+		$valid_sources = array('river', 'bucket');
+		if (in_array($source, $valid_sources))
+		{
+			$this->buckets_api->delete_drop($bucket_id, $drop_id, $source);
+		}
 	}
 	
 	/**
@@ -431,6 +437,18 @@ class Service_Bucket {
 	public function delete_bucket_comment($bucket_id, $comment_id)
 	{
 		$this->buckets_api->delete_bucket_comment($bucket_id, $comment_id);
+	}
+	
+	/**
+	 * Adds the drop with the specified $droplet_id to the list of read
+	 * drops for the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int droplet_id
+	 */
+	public function mark_drop_as_read($bucket_id, $droplet_id)
+	{
+		$this->buckets_api->mark_drop_as_read($bucket_id, $droplet_id);
 	}
 
 }

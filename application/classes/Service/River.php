@@ -195,28 +195,55 @@ class Service_River {
 	/**
 	 * Get drops from a river
 	 *
-	 * @param   long    $id
-	 * @param   long    $max_id
-	 * @param   int     $page
-	 * @param   int     $count
-	 * @param   array   $filters
-	 * @return Array
+	 * @param   long    river_id
+	 * @param   int     page
+	 * @param   int     count
+	 * @param   long    since_id
+	 * @param   long    max_id
+	 * @param   bool    photos
+	 * @param   array   filters
+	 * @return  array
 	 */
-	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
+	public function get_drops($river_id, $page = 1, $count = 20, $since_id = NULL, $max_id = NULL, $photos = FALSE, $filters = array())
 	{
-		return $this->rivers_api->get_drops($id, $max_id, $page, $count, $filters);
-	}
-	
-	/**
-	 * Get drops from a river
-	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       GET parameters
-	 * @return Array
-	 */
-	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
-	{
-		return $this->rivers_api->get_drops_since($id, $since_id, $count, $filters);
+		// Parameters to send to the API
+		$parameters = array(
+			'page' => $page,
+			'count' => $count
+		);
+		
+		// since_id parameter
+		if ( ! empty($since_id) AND $since_id > 0)
+		{
+			$parameters['since_id'] = $since_id;
+		}
+		
+		// max_id parameter
+		if ( ! empty($max_id) AND $max_id > 0)
+		{
+			$parameters['max_id'] = $max_id;
+		}
+		
+		// photos parameter
+		if ($photos === TRUE)
+		{
+			$parameters['photos'] = TRUE;
+		}
+
+		// Filters
+		if ( ! empty($filters))
+		{
+			$filter_keys = array('keywords', 'channels');
+			foreach ($filter_keys as $key) 
+			{
+				if (isset($filters[$key])) 
+				{
+					$parameters[$key] = implode(',', $filters[$key]);
+				}
+			}
+		}
+
+		return $this->rivers_api->get_drops($river_id, $parameters);
 	}
 	
 	/**
@@ -505,6 +532,18 @@ class Service_River {
 		}
 		
 		return TRUE;
+	}
+	
+	/**
+	 * Issues an API request to mark the drop with the specified $droplet_id
+	 * as read
+	 *
+	 * @param  int river_id
+	 * @param  int droplet_id
+	 */
+	public function mark_drop_as_read($river_id, $droplet_id)
+	{
+		$this->rivers_api->mark_drop_as_read($river_id, $droplet_id);
 	}
 
 }

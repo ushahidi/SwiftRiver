@@ -204,20 +204,27 @@ class Controller_Bucket extends Controller_Drop_Container {
 				}
 			
 				$payload = json_decode($this->request->body(), TRUE);
-				if ( ! isset($payload['command']) OR ! isset($payload['bucket_id']))
+				$droplet_id = intval($this->request->param('id', 0));
+				
+				// Check for change in bucket membership
+				if (isset($payload['bucket_id']))
 				{
-					throw new HTTP_Exception_400();
+					// Add/remove drop from bucket
+					$bucket_id = intval($payload['bucket_id']);
+					if ($payload['command'] === 'add')
+					{
+						$this->bucket_service->add_drop($bucket_id, $droplet_id, "bucket");
+					}
+					elseif ($payload['command'] === 'remove')
+					{
+						$this->bucket_service->delete_drop($bucket_id, $droplet_id, "bucket");
+					}
 				}
 
-				$bucket_id = intval($payload['bucket_id']);
-				$droplet_id = intval($this->request->param('id', 0));
-				if ($payload['command'] === 'add')
+				// Has the drop been marked as read
+				if (isset($payload['read']) AND $payload['read'] === TRUE)
 				{
-					$this->bucket_service->add_drop($bucket_id, $droplet_id, "bucket");
-				}
-				elseif ($payload['command'] === 'remove')
-				{
-					$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+					$this->bucket_service->mark_drop_as_read($this->bucket['id'], $droplet_id);
 				}
 			break;
 			
