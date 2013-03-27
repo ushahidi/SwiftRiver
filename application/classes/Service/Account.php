@@ -121,7 +121,6 @@ class Service_Account {
 	}
 	
 	/**
-	 * Get a single rivers array for the given account.
 	 * Get a single rivers array for the specified $account
 	 *
 	 * @param   array account          Account that owns the rivers to be returned
@@ -230,7 +229,7 @@ class Service_Account {
 	 * @param array profile_data
 	 * @return array
 	 */
-	public function update_profile($account_id, $profile_data)
+	public function update_account($account_id, $profile_data)
 	{
 		// Validate the profile data
 		$validation = Validation::factory($profile_data)
@@ -280,6 +279,5 @@ class Service_Account {
 		{
 			throw new Validation_Exception($validation);
 		}
-		
 	}
 }

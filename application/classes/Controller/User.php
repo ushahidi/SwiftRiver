@@ -258,7 +258,7 @@ class Controller_User extends Controller_Swiftriver {
 		{
 			if ( ! isset($_POST['current_password']))
 			{
-				if (($account = $this->account_service->update_profile($this->user['id'], $_POST)) != FALSE)
+				if (($account = $this->account_service->update_account($this->user['id'], $_POST)) != FALSE)
 				{
 					$this->user = $account;
 					$this->visited_account  = $account;
