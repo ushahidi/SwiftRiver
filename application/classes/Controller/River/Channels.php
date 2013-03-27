@@ -38,7 +38,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 		{
 			case "DELETE":			
 				$channel_id = intval($this->request->param('id', 0));				
-				$this->riverService->delete_channel($this->river['id'], $channel_id);
+				$this->river_service->delete_channel($this->river['id'], $channel_id);
 			break;
 			case "POST":			
 				$channel_array = json_decode($this->request->body(), TRUE);
@@ -49,7 +49,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 				
 				try 
 				{
-					$channel_array = $this->riverService->create_channel_from_array($this->river['id'], $channel_array);
+					$channel_array = $this->river_service->create_channel_from_array($this->river['id'], $channel_array);
 					echo json_encode($channel_array);
 				} 
 				catch (Swiftriver_Exception_Channel_Option $e)
@@ -69,7 +69,7 @@ class Controller_River_Channels extends Controller_River_Settings {
 				
 				try 
 				{
-					$channel_array = $this->riverService->update_channel_from_array($this->river['id'], $channel_id, $channel_array);
+					$channel_array = $this->river_service->update_channel_from_array($this->river['id'], $channel_id, $channel_array);
 					echo json_encode($channel_array);
 				} 
 				catch (Swiftriver_Exception_Channel_Option $e)

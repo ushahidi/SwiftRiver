@@ -164,15 +164,14 @@ class SwiftRiver_Client {
 			}
 			
 			$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
-		
+
 			$exception_map = array(
 				400 => "SwiftRiver_API_Exception_BadRequest",
 				403 => "SwiftRiver_API_Exception_Forbidden",
 				404 => "SwiftRiver_API_Exception_NotFound"
-			)	
-			;
+			);
 		
-			if 	(in_array($response['code'], array_keys($exception_map)))
+			if (in_array($response['code'], array_keys($exception_map)))
 			{
 				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
 				throw new $exception_map[$response['code']]($response['result']);
@@ -184,7 +183,7 @@ class SwiftRiver_Client {
 			else if ($response['code'] != 200)
 			{
 				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
-				throw new SwiftRiver_API_Exception_Unknown();
+				throw new SwiftRiver_API_Exception_Unknown($response['result']);
 			}
 		
 			return $response['result'];		

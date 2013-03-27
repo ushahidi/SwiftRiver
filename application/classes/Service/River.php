@@ -7,19 +7,23 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com> 
- * @package    SwiftRiver - https://github.com/ushahidi/SwiftRiver
- * @subpackage  Exceptions
+ * @package     SwiftRiver - https://github.com/ushahidi/SwiftRiver
+ * @category    Services
  * @copyright   Ushahidi - http://www.ushahidi.com
- * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
+ * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
 
 class Service_River {
 	
-	private $api = NULL;
+	/**
+	 * SwiftRiver_API_River object
+	 * @var SwiftRiver_API_River
+	 */
+	private $rivers_api = NULL;
 	
 	public function __construct($api)
 	{
-		$this->api = $api;
+		$this->rivers_api = $api->get_rivers_api();
 	}
 	
 	/**
@@ -31,14 +35,15 @@ class Service_River {
 	 * @return array
 	 *
 	 */
-	public static function get_array($river, $querying_account) {
+	public static function get_array($river, $querying_account)
+	{
 		$river['url'] = self::get_base_url($river);
 		$river['expired'] = FALSE;
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the river?
 		$river['collaborator'] = FALSE;
-		foreach($querying_account['collaborating_rivers'] as $r)
+		foreach ($querying_account['collaborating_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
@@ -48,12 +53,12 @@ class Service_River {
 		}
 		
 		// Is the querying account following the river?
-		$river['subscribed'] = FALSE;
+		$river['following'] = FALSE;
 		foreach($querying_account['following_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['subscribed'] = TRUE;
+				$river['following'] = TRUE;
 			}
 		}
 		
@@ -61,7 +66,8 @@ class Service_River {
 		if (isset($river['channels']))
 		{
 			$channels = array();
-			foreach($river['channels'] as $channel) {
+			foreach ($river['channels'] as $channel)
+			{
 				if (! Swiftriver_Plugins::get_channel_config($channel['channel']))
 					continue;
 				
@@ -84,9 +90,8 @@ class Service_River {
 	 */
 	public function get_river_by_id($id, $querying_account)
 	{
-		$river = $this->api->get_rivers_api()->get_river_by_id($id);
-		
-		
+		$river = $this->rivers_api->get_river_by_id($id);
+
 		return $this->get_array($river, $querying_account);
 	}
 	
@@ -109,7 +114,7 @@ class Service_River {
 	 */
 	public function create_river_from_array($river_array) 
 	{
-		$river_array = $this->api->get_rivers_api()->create_river(
+		$river_array = $this->rivers_api->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
 			$river_array['public']
@@ -130,7 +135,7 @@ class Service_River {
 	 */
 	public function update_river($river_id, $river_name, $river_description, $river_public)
 	{
-		return $this->api->get_rivers_api()->update_river($river_id, $river_name, $river_description, $river_public);
+		return $this->rivers_api->update_river($river_id, $river_name, $river_description, $river_public);
 	}
 	
 	/**
@@ -141,7 +146,7 @@ class Service_River {
 	 */
 	public function delete_channel($river_id, $channel_id)
 	{
-		$this->api->get_rivers_api()->delete_channel($river_id, $channel_id);
+		$this->rivers_api->delete_channel($river_id, $channel_id);
 	}
 	
 	/**
@@ -153,7 +158,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->api->get_rivers_api()->create_channel(
+		$channel_array = $this->rivers_api->create_channel(
 					$river_id, 
 					$channel_array["channel"], 
 					json_encode($channel_array["parameters"])
@@ -174,7 +179,7 @@ class Service_River {
 	{
 		Swiftriver_Event::run('swiftriver.channel.validate', $channel_array);
 		
-		$channel_array = $this->api->get_rivers_api()->update_channel(
+		$channel_array = $this->rivers_api->update_channel(
 					$river_id, 
 					$channel_id, 
 					$channel_array["channel"], 
@@ -199,7 +204,7 @@ class Service_River {
 	 */
 	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count, $filters);
+		return $this->rivers_api->get_drops($id, $max_id, $page, $count, $filters);
 	}
 	
 	/**
@@ -211,9 +216,38 @@ class Service_River {
 	 */
 	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
+		return $this->rivers_api->get_drops_since($id, $since_id, $count, $filters);
 	}
 	
+	/**
+	 * Checks whether the account specified in $account_id is following the river
+	 * specified in $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int account_id
+	 * @return bool
+	 */
+	public function is_follower($river_id, $account_id)
+	{
+		return $this->rivers_api->is_follower($river_id, $account_id);
+	}
+	
+	/**
+	 * Adds an account to the list of river followers
+	 */
+	public function add_follower($river_id, $account_id)
+	{
+		$this->rivers_api->add_follower($river_id, $account_id);
+	}
+	
+	/**
+	 * Deletes an account from the list of river followers
+	 */
+	public function delete_follower($river_id, $account_id)
+	{
+		$this->rivers_api->delete_follower($river_id, $account_id);
+	}
+
 	/**
 	 * Get the river's collaborators
 	 *
@@ -222,7 +256,7 @@ class Service_River {
 	 */
 	public function get_collaborators($river_id)
 	{
-		return $this->api->get_rivers_api()->get_collaborators($river_id);
+		return $this->rivers_api->get_collaborators($river_id);
 	}
 	
 	/**
@@ -234,7 +268,7 @@ class Service_River {
 	 */
 	public function delete_collaborator($river_id, $collaborator_id)
 	{
-		return $this->api->get_rivers_api()->delete_collaborator($river_id, $collaborator_id);
+		return $this->rivers_api->delete_collaborator($river_id, $collaborator_id);
 	}
 	
 	/**
@@ -246,6 +280,231 @@ class Service_River {
 	 */
 	public function add_collaborator($river_id, $collaborator_array)
 	{
-		return $this->api->get_rivers_api()->add_collaborator($river_id, $collaborator_array);
+		return $this->rivers_api->add_collaborator($river_id, $collaborator_array);
 	}
+	
+	/**
+	 * Adds a tag to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($river_id, $drop_id, $tag_data)
+	{
+		// Validation
+		$validation = Validation::factory($tag_data)
+			->rule('tag', 'not_empty')
+			->rule('tag_type', 'not_empty');
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_tag($river_id, $drop_id, $tag_data);
+		}
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($river_id, $drop_id, $tag_id)
+	{
+		$this->rivers_api->delete_drop_tag($river_id, $drop_id, $tag_id);
+	}
+
+	/**
+	 * Adds a link to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($river_id, $drop_id, $link_data)
+	{
+		// Validation
+		$validation = Validation::factory($link_data)
+			->rule('url', 'url');
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_link($river_id, $drop_id, $link_data);
+		}
+	}
+
+	/**
+	 * Removes a tag from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($river_id, $drop_id, $link_id)
+	{
+		$this->rivers_api->delete_drop_link($river_id, $drop_id, $link_id);
+	}
+
+	/**
+	 * Adds a place to a river drop
+	 *
+	 * @param  int   river_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($river_id, $drop_id, $place_data)
+	{
+		// Validation
+		$validation = Validation::factory($place_data)
+			->rule('name', 'not_empty')
+			->rule('longitude', 'range', -90, 90)
+			->rule('latitude', 'range', -180, 180);
+
+		if ($validation->check())
+		{
+			return $this->rivers_api->add_drop_place($river_id, $drop_id, $place_data);
+		}
+	}
+
+	/**
+	 * Removes a place from a river drop
+	 *
+	 * @param int  river_id
+	 * @param int  drop_id
+	 * @param int  place_id
+	 */
+	public function delete_drop_place($river_id, $drop_id, $place_id)
+	{
+		$this->rivers_api->delete_drop_place($river_id, $drop_id, $place_id);
+	}
+	
+	/**
+	 * Adds a comment to a river drop
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($river_id, $drop_id, $comment_text)
+	{
+		return $this->rivers_api->add_drop_comment($river_id, $drop_id, $comment_text);
+	}
+	
+	/**
+	 * Get the comments for the river drop specified in $drop_id
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($river_id, $drop_id)
+	{
+		return $this->rivers_api->get_drop_comments($river_id, $drop_id);
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the river drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($river_id, $drop_id, $comment_id)
+	{
+		$this->rivers_api->delete_drop_comment($river_id, $drop_id, $comment_id);
+	}
+	
+	/**
+	 * Deletes a drop from a river
+	 * @param int river_id
+	 * @param int drop_id
+	 */
+	public function delete_drop($river_id, $drop_id)
+	{
+		$this->rivers_api->delete_drop($river_id, $drop_id);
+	}
+	
+	/**
+	 * Deletes the river specified in $river_id
+	 *
+	 * @param int river_id
+	 */
+	public function delete_river($river_id)
+	{
+		$this->rivers_api->delete_river($river_id);
+	}
+
+	/**
+	 * Gets and returns the rules for the specified river
+	 *
+	 * @param  int river_id ID of the river with the rules
+	 * @return array
+	 */
+	public function get_rules($river_id)
+	{
+		return $this->rivers_api->get_rules($river_id);
+	}
+	
+	/**
+	 * Adds a rule to the river with the specified river_id
+	 *
+	 * @param  int   river_id
+	 * @param  array rule_data
+	 * @return array
+	 */
+	public function add_rule($river_id, $rule_data)
+	{
+		if ($this->validate_rule($rule_data))
+		{
+			return $this->rivers_api->add_rule($river_id, $rule_data);
+		}
+	}
+	
+	/**
+	 * Modify a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 * @param array rule_data
+	 */
+	public function modify_rule($river_id, $rule_id, $rule_data)
+	{
+		if ($this->validate_rule($rule_data))
+		{
+			return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+		}
+	}
+	
+	/**
+	 * Deletes a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 */
+	public function delete_rule($river_id, $rule_id)
+	{
+		$this->rivers_api->delete_rule($river_id, $rule_id);
+	}
+	
+	/**
+	 * Internal helper method for validating rules
+	 */
+	private function validate_rule(array & $rule_data)
+	{
+		$rule_data['all_conditions'] = (bool) intval($rule_data['all_conditions']);
+
+		$validation = Validation::factory($rule_data)
+			->rule('name', 'not_empty')
+			->rule('conditions', 'not_empty')
+			->rule('actions', 'not_empty');
+		
+		if ( ! $validation->check())
+		{
+			throw new Validation_Exception($validation);
+		}
+		
+		return TRUE;
+	}
+
 }

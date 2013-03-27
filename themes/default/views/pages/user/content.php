@@ -39,12 +39,14 @@
 				<span class="button" class="button-white">
 					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
 				</span>
+				<?php if ($owner): ?>
 				<span class="button create-new">
 					<a href="#" class="button-primary modal-trigger">
 						<i class="icon-plus"></i>
 						<?php echo __("Create new"); ?>
 					</a>
 				</span>
+				<?php endif; ?>
 			</div>
 
 			<div class="container-tabs-window">
@@ -66,7 +68,11 @@
 </div>
 
 <script type="text/template" id="asset-template">
-	<td class="select-toggle"><input type="checkbox" /></td>
+	<td class="select-toggle">
+	<% if (is_owner) { %>
+		<input type="checkbox" />
+	<% } %>
+	</td>
 	<td class="item-type">
 		<span class="icon-<%= asset_type %>"></span>
 	</td>										
@@ -75,7 +81,7 @@
 		<% if (asset_type == "river") { %>
 		<div class="metadata">
 			<%= drop_count %> drops
-			<% percent_full = (drop_count >0) ? Math.round(drop_count/drop_quota) : 0 %>			
+			<% percent_full = (drop_count > 0) ? Math.round(drop_count/drop_quota) : 0 %>
 			<span class="quota-meter">
 				<span class="quota-meter-capacity">
 					<span class="quota-total" style="width:<%= percent_full %>%;"></span>

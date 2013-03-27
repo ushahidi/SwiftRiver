@@ -92,7 +92,7 @@ class Controller_Swiftriver extends Controller_Template {
 	/**
 	 * Account Services object.
 	 */
-	protected $accountService = NULL;
+	protected $account_service = NULL;
 	
 	/**
 	 * Bucket Services object
@@ -176,8 +176,8 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->api = SwiftRiver_Client::instance();
 		
 		// Services
-		$this->accountService = new Service_Account($this->api);
-		$this->riverService = new Service_River($this->api);
+		$this->account_service = new Service_Account($this->api);
+		$this->river_service = new Service_River($this->api);
 		$this->bucket_service = new Service_Bucket($this->api);
 		
 		if (Auth::instance()->logged_in())
@@ -186,7 +186,7 @@ class Controller_Swiftriver extends Controller_Template {
 			{
 				$auth = Auth::instance()->get_user();
 				$this->api->set_access_token($auth['access_token']);
-				$this->user = $this->accountService->get_logged_in_account();
+				$this->user = $this->account_service->get_logged_in_account();
 			
 				if ($this->user['owner']['username'] == 'public')
 				{
@@ -287,7 +287,7 @@ class Controller_Swiftriver extends Controller_Template {
 				
 				try
 				{
-					$this->visited_account = $this->accountService->get_account_by_name($visited_account_path);
+					$this->visited_account = $this->account_service->get_account_by_name($visited_account_path);
 				}
 				catch (Swiftriver_API_Exception $e)
 				{
@@ -333,13 +333,13 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
 				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
-					$buckets = json_encode($this->accountService->get_buckets($this->user));
+					$buckets = json_encode($this->account_service->get_buckets($this->user, $this->user));
 					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
 				$this->template->header->bucket_list = $buckets;
 				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
-					$rivers = json_encode($this->accountService->get_rivers($this->user));
+					$rivers = json_encode($this->account_service->get_rivers($this->user, $this->user));
 					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;
@@ -347,12 +347,6 @@ class Controller_Swiftriver extends Controller_Template {
 
 			$this->template->content = '';
 			$this->template->footer = View::factory('template/footer');
-
-			if ( ! in_array(strtolower($this->request->controller()), array('river', 'bucket', 'search')))
-			{
-				// Reset cookies
-				Cookie::set(Swiftriver::COOKIE_SEARCH_SCOPE, 'all');
-			}
 		}
 
 	}

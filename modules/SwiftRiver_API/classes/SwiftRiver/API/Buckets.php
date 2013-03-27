@@ -8,7 +8,7 @@
  * that is available through the world-wide-web at the following URI:
  * http://www.gnu.org/licenses/agpl.html
  * @author      Ushahidi Team <team@ushahidi.com>
- * @package     Swiftriver - http://github.com/ushahidi/Swiftriver_v2
+ * @package     SwiftRiver - http://github.com/ushahidi/SwiftRiver
  * @subpackage  Libraries
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
@@ -78,9 +78,9 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * Adds the drop specified in $drop_id to the bucket in
 	 * @param $bucket_id
 	 */
-	public function add_drop($bucket_id, $drop_id)
+	public function add_drop($bucket_id, $drop_id, $source_data)
 	{
-		$this->put("/buckets/".$bucket_id."/drops/".$drop_id);
+		$this->put("/buckets/".$bucket_id."/drops/".$drop_id, $source_data);
 	}
 	
 	/**
@@ -134,4 +134,194 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 		}
 		return $this->put("/buckets/".$bucket_id, $parameters);
 	}
+
+	/**
+	 * Verifies whether the account specified in $account_id is following
+	 * the bucket specified in $id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 * @return bool
+	 */	
+	public function is_bucket_follower($bucket_id, $account_id)
+	{
+		try
+		{
+			$result = $this->get('/buckets/'.$bucket_id.'/followers', array('follower' => $account_id));
+		}
+		catch (SwiftRiver_API_Exception_NotFound $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds the account in $account_id to the list of followers for
+	 * the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 */
+	public function add_follower($bucket_id, $account_id)
+	{
+		$this->put('/buckets/'.$bucket_id.'/followers/'.$account_id);
+	}
+	
+	/**
+	 * Removes the account in $account_id from the list of followers for
+	 * the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int account_id
+	 */
+	public function delete_follower($bucket_id, $account_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/followers/'.$account_id);
+	}
+
+	/**
+	 * Adds a tag to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array tag_data
+	 * @return array
+	 */
+	public function add_drop_tag($bucket_id, $drop_id, $tag_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/tags', $tag_data);
+	}
+
+	/**
+	 * Removes a tag from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  tag_id
+	 */
+	public function delete_drop_tag($bucket_id, $drop_id, $tag_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/tags/'.$tag_id);
+	}
+
+	/**
+	 * Adds a link to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array link_data
+	 * @return array
+	 */
+	public function add_drop_link($bucket_id, $drop_id, $link_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/links', $link_data);
+	}
+
+	/**
+	 * Removes a link from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_link($bucket_id, $drop_id, $link_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/links/'.$link_id);
+	}
+
+	/**
+	 * Adds a place to a bucket drop
+	 *
+	 * @param  int   bucket_id
+	 * @param  int   drop_id
+	 * @param  array place_data
+	 * @return array
+	 */
+	public function add_drop_place($bucket_id, $drop_id, $place_data)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/places', $place_data);
+	}
+
+	/**
+	 * Removes a place from a bucket drop
+	 *
+	 * @param int  bucket_id
+	 * @param int  drop_id
+	 * @param int  link_id
+	 */
+	public function delete_drop_place($bucket_id, $drop_id, $place_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/places/'.$place_id);
+	}
+
+	/**
+	 * Adds a comment to a bucket drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string comment_text
+	 */
+	public function add_drop_comment($bucket_id, $drop_id, $comment_text)
+	{
+		$parameters = array('comment_text' => $comment_text);
+
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments', $parameters);
+	}
+	
+	/**
+	 * Get the comments for the bucket drop specified in $drop_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @return array
+	 */
+	public function get_drop_comments($bucket_id, $drop_id)
+	{
+		return $this->get('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments');
+	}
+	
+	/**
+	 * Deletes the comment specified in $comment_id from the bucket drop
+	 * specified in $drop_id
+	 */
+	public function delete_drop_comment($bucket_id, $drop_id, $comment_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/comments/'.$commenti_id);
+	}
+
+	/**
+	 * Adds a comment to a bucket
+	 * @param  int    bucket_id
+	 * @param  string comment_text
+	 * @return array
+	 */
+	public function add_bucket_comment($bucket_id, $comment_text)
+	{
+		return $this->post('/buckets/'.$bucket_id.'/comments', array('comment_text' => $comment_text));
+	}
+	
+	/**
+	 * Gets the list of comments for the bucket specified in $bucket_id
+	 * @param  int bucket_id
+	 * @return array
+	 */
+	public function get_bucket_comments($bucket_id)
+	{
+		return $this->get('/buckets/'.$bucket_id.'/comments');
+	}
+	
+	/**
+	 * Deletes a comment from a bucket
+	 *
+	 * @param int bucket_id
+	 * @param int comment_id
+	 */
+	public function delete_bucket_comment($bucket_id, $comment_id)
+	{
+		$this->delete('/buckets/'.$bucket_id.'/comments/'.$comment_id);
+	}
+
 }

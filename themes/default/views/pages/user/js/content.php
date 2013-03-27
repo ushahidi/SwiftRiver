@@ -90,7 +90,11 @@ $(function() {
 			options.riverList.on("reset", this.addRivers, this);
 			options.bucketList.on("add", this.addAsset, this);
 			options.riverList.on("add", this.addAsset, this);
-			
+
+			// When the list of assets in the nav changes
+			Assets.riverList.on("add", this.addAsset, this);
+			Assets.bucketList.on("add", this.addAsset, this);
+
 			this.typeMap = {"#all":"all", "#river":"river", "#bucket":"bucket"};
 			this.roleMap = {"#all":"all", "#managing":"managing", "#following":"following"};
 		},
@@ -99,7 +103,7 @@ $(function() {
 			this.applyRolesFilter(this.options.bucketList);
 		},
 		
-		addRivers: function() {
+		addRivers: function() {			
 			this.applyRolesFilter(this.options.riverList);
 		},
 
@@ -225,14 +229,19 @@ $(function() {
 		},
 		
 		confirmDelete: function() {
-			_.each(this.selectedAssets, function(asset, id) {
+			_.each(this.selectedAssets, function(asset, id) {				
+				if (asset.get("asset_type") == "bucket") {
+					Assets.bucketList.remove(asset);
+				} else if (asset.get("asset_type") == "river"){
+					Assets.riverList.remove(asset);
+				}
 				asset.destroy();
 			}, this);
 			
 			var message = _.size(this.selectedAssets) + " <?php echo __("item(s) successfully deleted!"); ?>";
 
 			// Show success message
-			showSysMessage("success", "Success", message, true);
+			showSuccessMessage(message, {flash: true});
 			
 			// Clear the list of selected items
 			this.selectedAssets = {};
@@ -245,9 +254,15 @@ $(function() {
 		
 	});
 	
+	var bucketList = new Assets.BucketList(),
+		riverList = new Assets.RiverList();
+
 	new DashboardAssetListView({
-		bucketList: Assets.bucketList,
-		riverList: Assets.riverList
+		bucketList: bucketList,
+		riverList: riverList
 	});
+	
+	bucketList.reset(<?php echo $buckets; ?>);
+	riverList.reset(<?php echo $rivers; ?>);
 });
 </script>

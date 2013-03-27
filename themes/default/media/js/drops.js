@@ -105,7 +105,7 @@
 		},
 		
 		// Add/Remove a droplet from a bucket
-		setBucket: function(changeBucket) {
+		setBucket: function(changeBucket, success_callback, error_callback) {
 			// Clone the buckets lit - Backbone JS appears to be using
 			// reference equality so when the buckets list/array is altered via
 			// buckets.push, the Backbone JS reference will remain the same - hence
@@ -129,10 +129,17 @@
 				command = "add";
 			}
 			
+			// Save the changes
 			this.save({
 				buckets: buckets,
 				command: command,
-				bucket_id: bucketId}, {patch: true, wait: true});
+				bucket_id: bucketId
+			},{
+				patch: true,
+				wait: true,
+				success: success_callback,
+				error: error_callback
+			});
 		},
 		
 		// Return boolean of whether this droplet is in the provided bucket
@@ -253,6 +260,20 @@
 			} else {
 				selector.hide();
 			}
+		},
+		removeDrop: function() {
+			var view = this;
+			this.model.destroy({
+				wait: true,
+				success: function() {
+					view.$el.fadeOut();
+					showSuccessMessage("The drop has been successfully deleted.", {flash: true});
+				},
+				error: function(model, response) {
+					showFailureMssage("Unable to delete the drop");
+				}
+			});
+			return false;
 		}
 	})
 	
@@ -266,7 +287,8 @@
 			"click li.bucket a.modal-trigger": "showAddToBucketModal",
 			"click ul.score-drop > li.star a": "likeDrop",
 			"click ul.score-drop > li.remove a": "dislikeDrop",
-			"click li.share > a": "shareDrop"
+			"click li.share > a": "shareDrop",
+			"click li.drop-status-remove > a": "removeDrop"
 		},
 		
 		initialize: function(options) {
@@ -285,7 +307,7 @@
 			
 			this.model.on("change:user_score", this.updateDropScore, this);
 			this.model.on("change:comment_count", this.render, this);
-			this.model.on("change:buckets", this.updateBucketCount, this);
+			this.model.on("change:buckets", this.updateBucketCount, this);			
 		},
 
 		make: function(tagName, attributes) {
@@ -327,7 +349,7 @@
 		showDetail: function() {
 			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
-		}
+		},
 
 	});
 	
@@ -438,8 +460,7 @@
 				this.$(".drop-discussion").prepend(view.render().el);
 			}
 		},
-				
-		// When add reply is clicked
+
 		addComment: function(e) {
 			var textarea = this.$("#add-comment textarea");
 			
@@ -462,7 +483,7 @@
 					drop.set("comment_count", parseInt(drop.get("comment_count")) + 1);
 				},
 				error: function(model, response) {
-					showConfirmationMessage("Unable to add comment. Try again later.");
+					showFailureMessage("Unable to add comment. Try again later.");
 				}
 			});
 			
@@ -625,13 +646,22 @@
 		},
 		
 		toggleBucket: function() {
-			this.options.drop.setBucket(this.model);
-			if (!this.$el.hasClass("selected")) {
-				this.$el.addClass('selected');
-			} else {
-				this.$el.removeClass('selected');
-			}
+			var bucketName = this.model.get("name");
+			var view = this;
+
+			this.options.drop.setBucket(this.model, function() {
+				if (!view.$el.hasClass("selected")) {
+					view.$el.addClass('selected');
+				} else {
+					view.$el.removeClass('selected');
+				}			
+				
+			}, function(){
+				var message = "The drop could not be added to the \"" + bucketName + "\" bucket";
+				showFailureMessage(message);
+			});
 		}
+		
 	});
 	
 	
@@ -718,6 +748,7 @@
 				// Masonry requires all new drops to be added at once for a smooth
 				// animation
 				options.dropsList.on('drops', this.addDrops, this);
+				options.dropsList.on('remove', this.masonry, this);
 				this.setElement(this.make("div", {"class": "river drops", "style": "position:relative;"}));
 			}
 			
@@ -755,7 +786,13 @@
 				views.push(new DropView({model: drop, 
 										layout: this.options.layout, 
 										baseURL: context.options.baseURL,
-										router: context.options.router}).render().el);
+										router: context.options.router,
+										dropsList: context.options.dropsList}).render().el);
+
+				if (context.options.layout != 'list') {
+					drop.on("destroy", context.masonry, context);
+				}
+
 			}, this)
 			
 			// Hide the new drops while they are loading
@@ -792,7 +829,11 @@
 									baseURL: this.options.baseURL,
 									router: this.options.router});
 			drop.view = view;
-			
+
+			if (this.options.layout != 'list') {
+				drop.on("destroy", this.masonry, this);
+			}
+
 			// Create a circular linked list of drops
 			var i = this.options.dropsList.indexOf(drop);
 			// Last index

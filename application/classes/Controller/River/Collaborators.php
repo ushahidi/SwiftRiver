@@ -28,7 +28,7 @@ class Controller_River_Collaborators extends Controller_River_Settings {
 							->bind('collaborator_list', $collaborators);
 
 		$fetch_url = $this->river_base_url.'/collaborators';		
-		$collaborators = json_encode($this->riverService->get_collaborators($this->river['id']));
+		$collaborators = json_encode($this->river_service->get_collaborators($this->river['id']));
 		
 	}
 	
