@@ -334,21 +334,21 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
 				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
-					$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
+					$buckets = json_encode($this->account_service->get_buckets($this->user, $this->user));
 					//Cache::instance()->set('user_buckets_'.$this->user->id, $buckets, 3600 + rand(0,3600));
 				}
 				
 				$this->template->header->bucket_list = $buckets;
 				if ( ! ($rivers = Cache::instance()->get('user_rivers_'.$this->user['id'], FALSE)))
 				{
-					$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
+					$rivers = json_encode($this->account_service->get_rivers($this->user, $this->user));
 					//Cache::instance()->set('user_rivers_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->river_list = $rivers;
 				
 				if ( ! ($forms = Cache::instance()->get('user_forms_'.$this->user['id'], FALSE)))
 				{
-					$forms = json_encode($this->account_service->get_forms($this->visited_account, $this->user));
+					$forms = json_encode($this->account_service->get_forms($this->user, $this->user));
 					//Cache::instance()->set('user_forms_'.$this->user->id, $rivers, 3600 + rand(0,3600));
 				}
 				$this->template->header->form_list = $forms;
