@@ -182,6 +182,7 @@ class Controller_River extends Controller_Drop_Base {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+		$this->droplets_view->asset_templates = View::factory('template/assets');
 
 
 		// Show expiry notice to owners only
@@ -676,6 +677,39 @@ class Controller_River extends Controller_Drop_Base {
 				$comment_id = $this->request->param('id2', 0);
 				$this->river_service->delete_drop_comment($this->river['id'], $drop_id, $comment_id);
 			break;
+		}
+	}
+	
+	public function action_forms()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$form_array = json_decode($this->request->body(), TRUE);
+				
+				$form_id = $form_array['id'];
+				$values = $form_array['values'];
+				
+				
+				try
+				{
+					$response = $this->river_service->add_drop_form($this->river['id'], $drop_id, $form_id, $values);
+					echo json_encode($response);
+				}
+				catch (Swiftriver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}			
+			break;			
 		}
 	}
 }

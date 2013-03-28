@@ -607,7 +607,14 @@
 				
 			if (! _.has(attrs, "fields") || attrs.fields.length == 0)
 				return "A form must have at least one field.";
-		}
+		},
+		
+		// Helper function for obtaining a field using its id
+		getField: function(id) {
+			return _.filter(this.get("fields"), function(field) {
+				return field.id == id; 
+			}, this).pop();
+		},
 	});
 	
 	var FormList = Assets.FormList = AssetList.extend({
@@ -628,18 +635,24 @@
 	});
 	
 	// List of fields in a form
-	var Fields = Backbone.Collection.extend({
+	var Fields = Assets.Fields = Backbone.Collection.extend({
 		model: FormField
 	})	
 	
 	// Single Field in a list view
-	var FieldView = Backbone.View.extend({
+	var FieldView = Assets.FieldView = Backbone.View.extend({
 
 		tagName: "li",
 
-		events: {
-			"click span.icon-cancel": "removeField",
-			"click span.icon-pencil": "editField",
+		events: function() {
+			// When options.isLive is true, allow user input for values otherwise
+			// disable the inputs and allow editing of the field.
+			if (!this.options.isLive) {
+				return {
+					"click span.icon-cancel": "removeField",
+					"click span.icon-pencil": "editField"
+				};
+			}
 		},
 		
 		initialize: function() {
@@ -663,18 +676,26 @@
 					break;
 			}
 			
-			this.$el.html(this.template(this.model.toJSON()));
+			var data = this.model.toJSON();
+			data.isLive = this.options.isLive;
+			this.$el.html(this.template(data));
 			
 			if (this.model.get("type") == "multiple") {
 				_.each(this.model.get("options"), function(option) {
-					var view = this.optionTemplate({"option": option})
+					var view = this.optionTemplate({
+						option: option,
+						isLive:this.options.isLive
+					})
 					this.$(".modal-field").append(view);
 				}, this);
 			}
 			
 			if (this.model.get("type") == "select") {
 				_.each(this.model.get("options"), function(option) {
-					var view = this.optionTemplate({"option": option})
+					var view = this.optionTemplate({
+						option: option,
+						isLive:this.options.isLive
+					})
 					this.$("select").append(view);
 				}, this);
 			}
@@ -728,6 +749,29 @@
 			modalShow(view.render().el);
 			
 			return false;
+		},
+		
+		getValue: function() {
+			var val = null;
+			
+			switch (this.model.get("type")) {
+				case "text":
+					val = this.$("input[type=text]").val();
+					break;
+					
+				case "multiple":
+					val = [];
+					_.each(this.$("input[type=checkbox]:checked"), function(e) {
+						val.push($(e).val());
+					}, this);
+					break;
+				
+				case "select":
+					val = $("select").val();
+					break;
+			}
+			
+			return val;
 		}
 	});
 	
@@ -774,7 +818,6 @@
 			this.$el.html(this.template(data));
 			
 			// Render existing fields if any
-			console.log(this.model.get("fields"));
 			this.fields.reset(this.model.get("fields"));
 			
 			return this;
@@ -843,12 +886,15 @@
 				complete: function() {
 					view.isFetching = false;
 					button.replaceWith(originalButton);
+					clearTimeout(t);
 				},
 			});
 			
 			if (!saveStatus) {
 				this.isFetching = false;
 				this.$("input[name=form_name]").removeAttr("disabled");
+				button.replaceWith(originalButton);
+				clearTimeout(t);
 			}
 			
 			return false;
@@ -884,7 +930,6 @@
 			
 			switch(hash) {
 				case "#add-custom-text":
-				console.log(this.options.urlRoot);
 					this.fieldView = this.textFieldView;
 					if (this.fieldView == undefined) {
 						var field = new FormField({type:"text"});
@@ -1018,7 +1063,6 @@
 				this.model.set("options", options);
 			}
 			
-			console.log(this.model.urlRoot);
 			if (this.model.urlRoot != undefined || !this.model.isNew()) {
 				this.model.save(this.model.toJSON(), {
 					wait: true,

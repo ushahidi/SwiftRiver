@@ -217,7 +217,7 @@
 </script>
 
 <script type="text/template" id="checkbox-field-option-template">
-	<input type="checkbox" <% if (!isLive) { %> disabled <% } %> /> <%= option %> <br>
+	<input type="checkbox" <% if (!isLive) { %> disabled <% } %> value="<%= option %>" /> <%= option %> <br>
 </script>
 
 <script type="text/template" id="list-field-template">

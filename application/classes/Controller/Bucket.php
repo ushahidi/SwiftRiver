@@ -116,6 +116,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+		$droplets_view->asset_templates = View::factory('template/assets');
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';

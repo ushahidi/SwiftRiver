@@ -235,7 +235,24 @@
 
 		</div>
 
-		<div id="metadata" class="col_3"></div>
+		<div id="metadata" class="col_3">
+			<div class="filters-type">
+				<span class="filters-type-settings">
+					<a href="#" class="modal-trigger"><span class="icon-cancel"></span></a>
+					<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
+				</span>
+				<h2>Dangerous Speech Categorization</h2>
+			</div>
+			<div class="filters-type">
+				<span class="filters-type-settings">
+					<a href="#" class="modal-trigger"><span class="icon-cancel"></span></a>
+					<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
+				</span>
+				<h2>Another form</h2>
+			</div>
+			
+			<a id="add-custom-form" href="#" class="button-add modal-trigger"><i class="icon-plus"></i>Add custom fields</a>
+		</div>
 	</div>
 </script>
 
@@ -433,4 +450,47 @@
 	<%= name %>
 </script>
 
+<script type="text/template" id="add-drop-form-modal-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+		<h1>Add custom fields</h1>
+	</div>
+
+	<div class="modal-body">
+		<div class="base">
+			<ul class="view-table">
+			</ul>
+		</div>			
+	</div>
+</script>
+
+<script type="text/template" id="drop-form-template">
+	<a href="#custom-form-1" class="modal-transition">
+	<span class="transition icon-arrow-right"></span>
+	<%= name %>
+	</a>
+</script>
+
+<script type="text/template" id="edit-drop-form-modal-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+		<h1><%= name %></h1>
+	</div>
+		
+
+	<div class="modal-body">
+		<div class="base">
+			<h2 class="label"><?php echo __("Fields"); ?></h2>
+			<ul class="view-table">
+				<!-- Fields will go here -->
+				</ul>
+		</div>
+
+		<div class="modal-toolbar">
+			<a href="#" class="button-submit button-primary"><span><?php echo __("Save"); ?></span></a>
+		</div>					
+	</div>
+</script>
+
 <?php echo $droplet_js; ?>
+<?php echo $asset_templates; ?>

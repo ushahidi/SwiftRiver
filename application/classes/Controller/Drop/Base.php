@@ -57,6 +57,11 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	 * xHR endpoint for adding/removing comments
 	 */
 	abstract public function action_comments();
+	
+	/**
+	 * XHR endpoint for adding/removing custom drop fields
+	 */
+	abstract public function action_forms();
 		
 	/**
 	 * REST endpoint for sharing droplets via email

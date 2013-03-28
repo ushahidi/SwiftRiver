@@ -386,7 +386,8 @@
 			"click #discussions_next_page": "loadComments",
 			"click #new_comments_alert a": "showNewComments",
 			"click a.button-prev": "showPrevDrop",
-			"click a.button-next": "showNextDrop"
+			"click a.button-next": "showNextDrop",
+			"click #add-custom-form": "showAddForm",
 		},
 		
 		initialize: function(options) {
@@ -494,7 +495,7 @@
 
 		addMetadataBlock: function (collection, metadataType, propertyName) {
 			var view = new MetadataView({collection: collection, model: this.model});
-			this.$("#metadata").append(view.render().el);
+			this.$("#metadata").prepend(view.render().el);
 		},
 		
 		doPollComments: function() {
@@ -609,6 +610,15 @@
 			if (this.model.next) {
 				this.options.router.navigate("/drop/" + this.model.next.get("id")  + "/zoom", {trigger: true});
 			}
+			return false;
+		},
+		
+		showAddForm: function() {
+			var view = new AddCustomFormModal({
+				baseUrl: this.options.baseURL + "/forms/" + this.model.get("id"),
+			});
+			modalShow(view.render().el);
+			
 			return false;
 		}
 	});
@@ -1459,6 +1469,185 @@
 		renderTotals: function() {
 			this.$("li.read .total").html(this.options.dropsList.getRead().length);
 			this.$("li.unread .total").html(this.options.dropsList.getUnread().length);
+		}
+	});
+	
+	
+	// Model form form values
+	var DropForm = Backbone.Model.extend({
+		
+		validate: function(attrs, options) {
+			for (var i = 0; i < attrs.values.length; i++) {
+				var fieldValue = attrs.values[i];
+				var field = options.form.getField(fieldValue.id);
+				if (fieldValue.value.length == 0 && field.required)
+					return "The field '" + field.title + "' is required";
+			}
+		}
+	});
+	
+	// Modal view for adding a custom form to a drop
+	var AddCustomFormModal = Backbone.View.extend({
+		tagName: "article",
+
+		className: "modal modal-view",
+		
+		initialize: function(options) {
+			this.template = _.template($("#add-drop-form-modal-template").html());
+		},
+		
+		addForm: function(form) {
+			var view = new FormView({model: form, baseUrl: this.options.baseUrl});
+			this.$(".view-table").append(view.render().el);
+		},
+		
+		addForms: function() {
+			Assets.formList.each(this.addForm, this);
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			this.addForms();
+			return this;
+		},
+	});
+	
+	// Single form in the AddCustomFormModal listing
+	var FormView = Backbone.View.extend({
+		
+		tagName: "li",
+		
+		events: {
+			"click a": "onClick"
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#drop-form-template").html());
+		},
+		
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		},
+		
+		onClick: function() {
+			var view = new EditFormModalView({
+				baseUrl: this.options.baseUrl,
+				model: new DropForm(),
+				form: this.model
+			});
+			modalShow(view.render().el);
+			return false;
+		}
+	});
+	
+	// Modal view for adding field values for a form
+	var EditFormModalView = Backbone.View.extend({
+		
+		tagName: "article",
+
+		className: "modal modal-view modal-segment",
+		
+		events: {
+			"click .modal-toolbar a.button-submit": "save",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#edit-drop-form-modal-template").html());
+			this.form = options.form;
+			this.model.urlRoot = options.baseUrl;
+			this.model.on("invalid", this.onFormInvalid, this);
+			
+			this.fields = new Assets.Fields();
+			this.fields.on('add',	 this.addField, this);
+			this.fields.on('reset', this.addFields, this);
+		},
+		
+		addFields: function() {
+			this.fields.each(this.addField, this);
+		},
+		
+		addField: function(field) {
+			var view = field.view = new Assets.FieldView({model: field, isLive:true});
+			field.view = view;
+			this.$("ul.view-table").append(view.render().el);
+			view.on("change", this.onFieldChanged, this);
+		},
+		
+		render: function(eventName) {
+			this.$el.html(this.template({
+				name: this.form.get("name")
+			}));
+			
+			// Render the field list
+			this.fields.reset(this.form.get("fields"));
+			
+			return this;
+		},
+		
+		onFormInvalid: function(model, error) {
+			showFailureMessage(error);
+		},
+		
+		save: function() {
+			var view = this;
+			
+			if (view.isFetching)
+				return false;
+			
+			view.isFetching = true;
+			var button = this.$(".button-submit");
+			var originalButton = button.clone();
+			var t = setTimeout(function() {
+				button.children("span").html("<em>Saving form</em>").append(loading_image_squares);
+			}, 500);
+				
+			// Disable form elements	
+			this.$("input,select").attr("disabled", "disabled");
+			
+			// Get field values
+			var values = [];
+			this.fields.each(function(field) {
+				values.push({
+					id: field.get("id"),
+					value: field.view.getValue()
+				});
+			}, this);
+			
+			var saveStatus = this.model.save({
+				id: this.form.get("id"),
+				values: values
+			},{
+				form: this.form,
+				wait: true,
+				success: function() {
+					modalHide();
+					showSuccessMessage("Form saved successfully", {flash: true});
+				},
+				error: function(model, response) {
+					if (response.status == 400) {
+						showFailureMessage("The drop already has the '" + view.form.get("name") + "' form fields.");
+					} else {
+						showFailureMessage("There was a problem creating the form. Try again later.");
+					}
+					
+					view.$("input,select").removeAttr("disabled");
+				},
+				complete: function() {
+					view.isFetching = false;
+					button.replaceWith(originalButton);
+					clearTimeout(t);
+				},
+			});
+			
+			if (!saveStatus) {
+				this.isFetching = false;
+				this.$("input,select").removeAttr("disabled");
+				button.replaceWith(originalButton);
+				clearTimeout(t);
+			}
+			
+			return false;
 		}
 	});
 	
