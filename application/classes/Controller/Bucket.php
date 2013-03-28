@@ -202,10 +202,10 @@ class Controller_Bucket extends Controller_Drop_Container {
 				{
 					throw new HTTP_Exception_403();
 				}
-			
+
 				$payload = json_decode($this->request->body(), TRUE);
 				$droplet_id = intval($this->request->param('id', 0));
-				
+
 				// Check for change in bucket membership
 				if (isset($payload['bucket_id']))
 				{
@@ -217,7 +217,8 @@ class Controller_Bucket extends Controller_Drop_Container {
 					}
 					elseif ($payload['command'] === 'remove')
 					{
-						$this->bucket_service->delete_drop($bucket_id, $droplet_id, "bucket");
+						$bucket_drop_id = $payload['bucket_drop_id'];
+						$this->bucket_service->delete_drop($bucket_id, $bucket_drop_id);
 					}
 				}
 

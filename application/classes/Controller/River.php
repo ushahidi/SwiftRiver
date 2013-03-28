@@ -317,7 +317,8 @@ class Controller_River extends Controller_Drop_Container {
 					}
 					elseif ($payload['command'] === 'remove')
 					{
-						$this->bucket_service->delete_drop($bucket_id, $droplet_id, "river");
+						$bucket_drop_id = $payload['bucket_drop_id'];
+						$this->bucket_service->delete_drop($bucket_id, $bucket_drop_id);
 					}
 				}
 

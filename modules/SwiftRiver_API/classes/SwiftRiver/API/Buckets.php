@@ -90,20 +90,12 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * Removes the drop specified in $drop_id from the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param   int     bucket_id
-	 * @param   int     drop_id
-	 * @param   string  source
+	 * @param   int  bucket_id
+	 * @param   int  drop_id
 	 */
-	public function delete_drop($bucket_id, $drop_id, $source)
+	public function delete_drop($bucket_id, $drop_id)
 	{
-		if ($source === 'bucket')
-		{
-			$this->delete("/buckets/".$bucket_id."/drops/".$drop_id);
-		}
-		elseif ($source === 'river')
-		{
-			$this->delete("/buckets/".$bucket_id."/river/drops/".$drop_id);
-		}
+		$this->delete("/buckets/".$bucket_id."/drops/".$drop_id);
 	}
 	
 	/**

@@ -103,15 +103,10 @@ class Service_Bucket {
 	 *
 	 * @param  int    bucket_id
 	 * @param  int    drop_id
-	 * @param  string source
 	 */
-	public function delete_drop($bucket_id, $drop_id, $source)
+	public function delete_drop($bucket_id, $drop_id)
 	{
-		$valid_sources = array('river', 'bucket');
-		if (in_array($source, $valid_sources))
-		{
-			$this->buckets_api->delete_drop($bucket_id, $drop_id, $source);
-		}
+		$this->buckets_api->delete_drop($bucket_id, $drop_id);
 	}
 	
 	/**

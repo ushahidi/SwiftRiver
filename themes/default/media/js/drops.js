@@ -114,30 +114,41 @@
 			if (buckets == null) {
 				buckets = [];
 			}
-			
+
 			bucketId = changeBucket.get("id");
+
 			// The task to be performed - add/remove from bucket
 			var command = "";
+			var removedBucket = null;
 
 			// Is the drop already in the bucket
 			if (this.isInBucket(changeBucket)) {
 				// Remove the bucket from the list
+				removedBucket = _.find(buckets, function(bucket) {return bucket['id'] == bucketId; });
 				buckets = _.filter(buckets, function(bucket) { return bucket["id"] != bucketId; });
 				command = "remove";
 			} else {
 				buckets.push({id: bucketId, name: changeBucket.get("name")});
 				command = "add";
 			}
-			
-			var isRead = !this.get('read');
 
-			// Save the changes
-			this.save({
+			// Updated model data
+			var modelData = {
 				buckets: buckets,
 				command: command,
-				bucket_id: bucketId,
-				read: isRead
-			},{
+				bucket_id: bucketId
+			};
+			
+			if (command == "add") {
+				modelData.read = !this.get('read');
+			}
+			
+			if (command == "remove") {
+				modelData.bucket_drop_id = removedBucket["bucket_drop_id"];
+			}
+
+			// Save the changes
+			this.save(modelData ,{
 				patch: true,
 				wait: true,
 				success: success_callback,
