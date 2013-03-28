@@ -105,6 +105,7 @@ class Controller_User extends Controller_Swiftriver {
 
 		$this->sub_content = View::factory('pages/user/content')
 			->bind('owner', $this->owner);
+		$this->sub_content->asset_templates = View::factory('template/assets');
 
 		$this->active = 'content-navigation-link';
 	}
