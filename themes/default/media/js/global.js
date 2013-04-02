@@ -104,8 +104,6 @@ $(document).ready(function() {
 		} else {
 			$('body').addClass('has_modal');
 		}
-		
-		this._registerBackHandler();
 
 		return this;
 	};
@@ -118,6 +116,8 @@ $(document).ready(function() {
 		oldContent.addClass("view-secondary").fadeOut("fast");		
 		this.contents.fadeIn("fast");
 		$(this.container).scrollTop(0,0);
+		
+		this._registerBackHandler();
 		
 		return this;
 	};
@@ -136,7 +136,7 @@ $(document).ready(function() {
 	Dialog.prototype._registerBackHandler = function() {
 		var root = $(this.container);
 		var dialog = this;
-		$('a.modal-back', root).live('click', function() {
+		$('a.modal-back', root).bind('click', function() {
 			dialog.back();
 			return false;
 		});
