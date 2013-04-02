@@ -236,7 +236,7 @@
 		</div>
 
 		<div id="metadata" class="col_3">
-			<div class="filters-type">
+			<!-- div class="filters-type">
 				<span class="filters-type-settings">
 					<a href="#" class="modal-trigger"><span class="icon-cancel"></span></a>
 					<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
@@ -249,7 +249,7 @@
 					<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
 				</span>
 				<h2>Another form</h2>
-			</div>
+			</div -->
 			
 			<a id="add-custom-form" href="#" class="button-add modal-trigger"><i class="icon-plus"></i>Add custom fields</a>
 		</div>
@@ -473,7 +473,11 @@
 
 <script type="text/template" id="edit-drop-form-modal-template">
 	<div class="modal-title cf">
-		<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+		<% if (isNew) { %>
+			<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+		<% } else { %>
+			<a href="#" class="modal-close button-white"><span class="icon-cancel"></span></a>
+		<% } %>
 		<h1><%= name %></h1>
 	</div>
 		
@@ -490,6 +494,14 @@
 			<a href="#" class="button-submit button-primary"><span><?php echo __("Save"); ?></span></a>
 		</div>					
 	</div>
+</script>
+
+<script type="text/template" id="drop-dropform-template">
+	<span class="filters-type-settings">
+		<a href="#" class="modal-trigger"><span class="icon-cancel"></span></a>
+		<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
+	</span>
+	<h2><%= name %></h2>
 </script>
 
 <?php echo $droplet_js; ?>

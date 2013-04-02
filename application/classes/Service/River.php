@@ -436,4 +436,29 @@ class Service_River extends Service_Base {
 	{
 		return $this->api->get_rivers_api()->add_drop_form($river_id, $drop_id, $form_id, $values);
 	}
+	
+	/**
+	 * Modify existing form fields a form to a drop
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  string id of the form being modified
+	 * @param  mixed form field values
+	 */
+	public function modify_drop_form($river_id, $drop_id, $form_id, $values)
+	{
+		return $this->api->get_rivers_api()->modify_drop_form($river_id, $drop_id, $form_id, $values);
+	}
+	
+	/**
+	 * Delete custom drop fields
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  string id of the form being modified
+	 */
+	public function delete_drop_form($river_id, $drop_id, $form_id)
+	{
+		return $this->api->get_rivers_api()->delete_drop_form($river_id, $drop_id, $form_id);
+	}
 }

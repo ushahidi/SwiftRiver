@@ -772,6 +772,33 @@
 			}
 			
 			return val;
+		},
+		
+		setValue: function(value) {
+			switch (this.model.get("type")) {
+				case "text":
+					this.$("input[type=text]").val(value);
+					break;
+					
+				case "multiple":
+					val = [];
+					_.each(this.$("input[type=checkbox]"), function(e) {
+						var el = $(e);
+						if (_.contains(value, el.val())) {
+							el.attr("checked", "checked")
+						}
+					}, this);
+					break;
+				
+				case "select":
+					_.each(this.$("select option"), function(e) {
+						var el = $(e);
+						if (el.val() == value) {
+							el.attr("selected", "selected")
+						}
+					}, this);
+					break;
+			}
 		}
 	});
 	

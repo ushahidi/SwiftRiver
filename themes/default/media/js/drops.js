@@ -409,6 +409,12 @@
 			this.newComments.url = options.baseURL + "/comments/" + this.model.get("id");
 			this.newComments.on('add', this.alertNewComments, this);
 			this.newComments.on('reset', this.resetNewCommentsAlert, this);
+			
+			var forms = this.forms = new DropForms;
+			forms.url = this.options.baseURL+"/forms/"+this.model.get("id");
+			forms.on("add", this.addDropForm, this);
+			forms.on("reset", this.addDropForms, this);
+			
 		},
 						
 		render: function(eventName) {
@@ -434,6 +440,8 @@
 			tags.url = this.options.baseURL+"/tags/"+this.model.get("id");
 			tags.reset(this.model.get("tags"));
 			this.addMetadataBlock(tags);
+			
+			this.forms.reset(this.model.get("forms"));
 
 			return this;
 		},
@@ -613,8 +621,23 @@
 			return false;
 		},
 		
+		addDropForm: function(dropForm) {
+			var form = Assets.formList.get(dropForm.get("id"));
+			
+			var view = new DropFormView({
+				model: dropForm,
+				form: form
+			});
+			this.$("#metadata #add-custom-form").before(view.render().el);
+		},
+		
+		addDropForms: function() {
+			this.forms.each(this.addDropForm, this);
+		},
+		
 		showAddForm: function() {
 			var view = new AddCustomFormModal({
+				dropForms: this.forms,
 				baseUrl: this.options.baseURL + "/forms/" + this.model.get("id"),
 			});
 			modalShow(view.render().el);
@@ -1486,6 +1509,11 @@
 		}
 	});
 	
+	// DropForm collection
+	var DropForms = Backbone.Collection.extend({
+		model: DropForm
+	});
+	
 	// Modal view for adding a custom form to a drop
 	var AddCustomFormModal = Backbone.View.extend({
 		tagName: "article",
@@ -1497,7 +1525,14 @@
 		},
 		
 		addForm: function(form) {
-			var view = new FormView({model: form, baseUrl: this.options.baseUrl});
+			var value = this.options.dropForms.get(form.get("id"));
+			
+			var view = new FormView({
+				model: form,
+				collection: this.options.dropForms,
+				value: value,
+				baseUrl: this.options.baseUrl
+			});
 			this.$(".view-table").append(view.render().el);
 		},
 		
@@ -1531,9 +1566,20 @@
 		},
 		
 		onClick: function() {
+			var model = null;
+			
+			// Are there existing values for this form or is this a 
+			// new entry?
+			if (this.options.value != undefined) {
+				model = this.options.value;
+			} else {
+				model = new DropForm();
+			}
+			
 			var view = new EditFormModalView({
 				baseUrl: this.options.baseUrl,
-				model: new DropForm(),
+				collection: this.collection,
+				model: model,
 				form: this.model
 			});
 			modalShow(view.render().el);
@@ -1546,7 +1592,7 @@
 		
 		tagName: "article",
 
-		className: "modal modal-view modal-segment",
+		className: "modal modal-view",
 		
 		events: {
 			"click .modal-toolbar a.button-submit": "save",
@@ -1561,6 +1607,9 @@
 			this.fields = new Assets.Fields();
 			this.fields.on('add',	 this.addField, this);
 			this.fields.on('reset', this.addFields, this);
+			
+			this.values = new Backbone.Collection();			
+			this.values.reset(this.model.get("values"));
 		},
 		
 		addFields: function() {
@@ -1568,15 +1617,27 @@
 		},
 		
 		addField: function(field) {
-			var view = field.view = new Assets.FieldView({model: field, isLive:true});
+			var view = field.view = new Assets.FieldView({
+				model: field, 
+				isLive: true
+			});
 			field.view = view;
-			this.$("ul.view-table").append(view.render().el);
+			view.render();
+			
+			var value = this.values.get(field.get("id"));
+			if (value != undefined) {
+				view.setValue(value.get("value"));
+			}
+			
+			
+			this.$("ul.view-table").append(view.el);
 			view.on("change", this.onFieldChanged, this);
 		},
 		
 		render: function(eventName) {
 			this.$el.html(this.template({
-				name: this.form.get("name")
+				name: this.form.get("name"),
+				isNew: this.model.isNew()
 			}));
 			
 			// Render the field list
@@ -1621,6 +1682,9 @@
 				form: this.form,
 				wait: true,
 				success: function() {
+					if (view.collection != undefined) {
+						view.collection.add(view.model);
+					}
 					modalHide();
 					showSuccessMessage("Form saved successfully", {flash: true});
 				},
@@ -1647,6 +1711,75 @@
 				clearTimeout(t);
 			}
 			
+			return false;
+		}
+	});
+	
+	// Single form in the drop detail metadata listing
+	var DropFormView = Backbone.View.extend({
+		
+		tagName: "div",
+		
+		className: "filters-type",
+		
+		events: {
+			"click .icon-pencil": "showEditForm",
+			"click .icon-cancel": "deleteForm",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#drop-dropform-template").html());
+		},
+		
+		render: function() {
+			this.$el.html(this.template({
+				name: this.options.form.get("name")
+			}));
+			return this;
+		},
+		
+		showEditForm: function() {
+			if (this.isFetching)
+				return;	
+			
+			
+			var view = new EditFormModalView({
+				baseUrl: this.options.baseUrl,
+				model: this.model,
+				form: this.options.form
+			});
+			modalShow(view.render().el);
+			return false;
+		},
+		
+		deleteForm: function() {
+			var view = this;
+			
+			if (view.isFetching)
+				return;		
+				
+			view.isFetching = true;
+			
+			var button = this.$("span.icon-cancel");
+			
+			// Show loading icon if there is a delay
+			var t = setTimeout(function() { button.removeClass("icon-cancel").html(loading_image); }, 500);
+			
+			this.model.destroy({
+				wait: true,
+				complete: function() {
+					clearTimeout(t);
+					view.isFetching = false;
+				},
+				error: function() {
+					showFailureMessage("Unable to remove form. Try again later.");
+					button.html("");
+					button.addClass("icon-cancel");
+				},
+				success: function() {
+					view.$el.fadeOut("slow")
+				}
+			});
 			return false;
 		}
 	});

@@ -406,4 +406,32 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 
 		return $this->post('/rivers/'.$river_id.'/drops/'.$drop_id.'/forms', $parameters);
 	}
+	
+	/**
+	 * Modify custom drop fields
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  array form values
+	 */
+	public function modify_drop_form($river_id, $drop_id, $form_id, $values)
+	{
+		$parameters = array(
+			'values' => $values
+		);
+		
+		return $this->put('/rivers/'.$river_id.'/drops/'.$drop_id.'/forms/'.$form_id, $parameters);
+	}
+	
+	/**
+	 * Delete custom drop fields
+	 *
+	 * @param  int river_id
+	 * @param  int drop_id
+	 * @param  array form values
+	 */
+	public function delete_drop_form($river_id, $drop_id, $form_id)
+	{
+		return $this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/forms/'.$form_id);
+	}
 }

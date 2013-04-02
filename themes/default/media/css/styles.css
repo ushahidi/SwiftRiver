@@ -721,7 +721,8 @@ form .field .label {
    max-height: 300px;
 }
 
-.view-table li .loading_image {
+.view-table li .loading_image,
+.filters-type-settings .loading_image{
 	max-height: 25px;
 	max-width: 25px;
 }
