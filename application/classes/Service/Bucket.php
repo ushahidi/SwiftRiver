@@ -420,5 +420,42 @@ class Service_Bucket extends Service_Base {
 	{
 		$this->api->get_buckets_api()->delete_bucket_comment($bucket_id, $comment_id);
 	}
-
+	
+	/**
+	 * Adds a form to a drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string id of the form being added
+	 * @param  mixed form field values
+	 */
+	public function add_drop_form($bucket_id, $drop_id, $form_id, $values)
+	{
+		return $this->api->get_buckets_api()->add_drop_form($bucket_id, $drop_id, $form_id, $values);
+	}
+	
+	/**
+	 * Modify existing form fields a form to a drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string id of the form being modified
+	 * @param  mixed form field values
+	 */
+	public function modify_drop_form($bucket_id, $drop_id, $form_id, $values)
+	{
+		return $this->api->get_buckets_api()->modify_drop_form($bucket_id, $drop_id, $form_id, $values);
+	}
+	
+	/**
+	 * Delete custom drop fields
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  string id of the form being modified
+	 */
+	public function delete_drop_form($bucket_id, $drop_id, $form_id)
+	{
+		return $this->api->get_buckets_api()->delete_drop_form($bucket_id, $drop_id, $form_id);
+	}
 }

@@ -418,5 +418,61 @@ class Controller_Bucket extends Controller_Drop_Base {
 			break;
 		}
 	}
+	
+	public function action_forms()
+	{
+		$this->template = "";
+		$this->auto_render = FALSE;
+		
+		if ( ! $this->owner)
+		{
+			throw new HTTP_Exception_403();
+		}
+		
+		switch ($this->request->method())
+		{
+			case "POST":
+				$drop_id = intval($this->request->param('id', 0));
+				$form_array = json_decode($this->request->body(), TRUE);
+				
+				$form_id = $form_array['id'];
+				$values = $form_array['values'];
+				
+				
+				try
+				{
+					$response = $this->bucket_service->add_drop_form($this->bucket['id'], $drop_id, $form_id, $values);
+					echo json_encode($response);
+				}
+				catch (SwiftRiver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}			
+			break;
+			
+			case "PUT":
+				$drop_id = intval($this->request->param('id', 0));
+				$form_id = $this->request->param('id2', 0);
+				$form_array = json_decode($this->request->body(), TRUE);				
+				$values = $form_array['values'];
+				
+				try
+				{
+					$response = $this->bucket_service->modify_drop_form($this->bucket['id'], $drop_id, $form_id, $values);
+					echo json_encode($response);
+				}
+				catch (SwiftRiver_API_Exception_BadRequest $e)
+				{
+					throw new HTTP_Exception_400();
+				}			
+			break;
+			
+			case "DELETE":
+				$drop_id = $this->request->param('id', 0);
+				$form_id = $this->request->param('id2', 0);
+				$this->bucket_service->delete_drop_form($this->bucket['id'], $drop_id, $form_id);
+			break;
+		}
+	}
 
 }

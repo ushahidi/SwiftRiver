@@ -323,5 +323,49 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	{
 		$this->delete('/buckets/'.$bucket_id.'/comments/'.$comment_id);
 	}
+	
+	/**
+	 * Adds a form to a drop
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  array form values
+	 */
+	public function add_drop_form($bucket_id, $drop_id, $form_id, $values)
+	{
+		$parameters = array(
+			'id' => $form_id,
+			'values' => $values
+		);
 
+		return $this->post('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/forms', $parameters);
+	}
+	
+	/**
+	 * Modify custom drop fields
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  array form values
+	 */
+	public function modify_drop_form($bucket_id, $drop_id, $form_id, $values)
+	{
+		$parameters = array(
+			'values' => $values
+		);
+		
+		return $this->put('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/forms/'.$form_id, $parameters);
+	}
+	
+	/**
+	 * Delete custom drop fields
+	 *
+	 * @param  int bucket_id
+	 * @param  int drop_id
+	 * @param  array form values
+	 */
+	public function delete_drop_form($bucket_id, $drop_id, $form_id)
+	{
+		return $this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/forms/'.$form_id);
+	}
 }
