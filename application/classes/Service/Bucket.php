@@ -469,7 +469,7 @@ class Service_Bucket extends Service_Base {
 	 */
 	public function mark_drop_as_read($bucket_id, $droplet_id)
 	{
-		$this->buckets_api->mark_drop_as_read($bucket_id, $droplet_id);
+		$this->api->get_buckets_api()->mark_drop_as_read($bucket_id, $droplet_id);
 	}
 
 }

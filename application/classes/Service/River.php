@@ -244,7 +244,7 @@ class Service_River extends Service_Base {
 				}
 			}
 		}
-		return $this->rivers_api->get_drops($river_id, $parameters);
+		return $this->api->get_rivers_api()->get_drops($river_id, $parameters);
 	}
 	
 	/**
@@ -509,7 +509,7 @@ class Service_River extends Service_Base {
 	 */
 	public function get_rules($river_id)
 	{
-		return $this->rivers_api->get_rules($river_id);
+		return $this->api->get_rivers_api()->get_rules($river_id);
 	}
 	
 	/**
@@ -523,7 +523,7 @@ class Service_River extends Service_Base {
 	{
 		if ($this->validate_rule($rule_data))
 		{
-			return $this->rivers_api->add_rule($river_id, $rule_data);
+			return $this->api->get_rivers_api()->add_rule($river_id, $rule_data);
 		}
 	}
 	
@@ -538,7 +538,7 @@ class Service_River extends Service_Base {
 	{
 		if ($this->validate_rule($rule_data))
 		{
-			return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+			return $this->api->get_rivers_api()->modify_rule($river_id, $rule_id, $rule_data);
 		}
 	}
 	
@@ -550,7 +550,7 @@ class Service_River extends Service_Base {
 	 */
 	public function delete_rule($river_id, $rule_id)
 	{
-		$this->rivers_api->delete_rule($river_id, $rule_id);
+		$this->api->get_rivers_api()->delete_rule($river_id, $rule_id);
 	}
 	
 	/**
@@ -582,7 +582,7 @@ class Service_River extends Service_Base {
 	 */
 	public function mark_drop_as_read($river_id, $droplet_id)
 	{
-		$this->rivers_api->mark_drop_as_read($river_id, $droplet_id);
+		$this->api->get_rivers_api()->mark_drop_as_read($river_id, $droplet_id);
 	}
 
 }
