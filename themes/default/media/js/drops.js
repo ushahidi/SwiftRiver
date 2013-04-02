@@ -352,7 +352,6 @@
 			this.model.on("change:user_score", this.updateDropScore, this);
 			this.model.on("change:comment_count", this.render, this);
 			this.model.on("change:buckets", this.updateBucketCount, this);
-			this.model.on("change:read", this.markAsRead, this);
 		},
 
 		make: function(tagName, attributes) {
@@ -393,7 +392,7 @@
 		// Show the drop in zoom view
 		showDetail: function() {
 			if (!this.model.get('read')) {
-				this.model.set('read', true);
+				this.markAsRead();
 			}
 			this.options.router.navigate("/drop/" + this.model.get("id")  + "/zoom", {trigger: true});
 			return false;
@@ -1124,7 +1123,7 @@
 		isPageFetching: false,
 		
 		saveNewMetadata: function() {
-			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());			
+			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());
 			var tagType = this.$(".modal-field select[name=tag_type]").val();;
 
 			if (!name.length || this.isPageFetching)

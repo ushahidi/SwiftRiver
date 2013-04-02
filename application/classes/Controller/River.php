@@ -158,14 +158,18 @@ class Controller_River extends Controller_Drop_Container {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->river_service->get_drops($river_id, 1, 20, NULL, $max_droplet_id);
+		$droplets_array = $this->river_service->get_drops($river_id, 1, 20, NULL, $max_droplet_id, (bool) $this->photos, $filters);
+
+		$this->template->content->drop_count = count($droplets_array);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
-		$droplet_js = View::factory('pages/drop/js/drops');
-		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->default_view = 'drops';
-		$droplet_js->photos = $this->photos ? 1 : 0;
+
+		$droplet_js = View::factory('pages/drop/js/drops')
+			->set('fetch_base_url',  $this->river_base_url)
+			->set('default_view', 'drops')
+			->set('photos', $this->photos ? 1 : 0);
+
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
@@ -285,12 +289,10 @@ class Controller_River extends Controller_Drop_Container {
 				}
 				
 
-				//Throw a 404 if a non existent page/drop is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets))
+				if (empty($droplets))
 				{
-				    throw new HTTP_Exception_404('The requested page was not found on this server.');
+					Kohana::$log->add(Log::INFO, __("No drops returned"));
 				}
-
 				echo json_encode($droplets);
 
 			break;
@@ -467,7 +469,7 @@ class Controller_River extends Controller_Drop_Container {
 			{
 				if ($type == 'list')
 				{
-					$filters[$parameter] = array();				
+					$filters[$parameter] = array();
 					// Parameters are array strings that are comma delimited
 					foreach (explode(',', urldecode($values)) as $value)
 					{

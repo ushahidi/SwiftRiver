@@ -233,16 +233,28 @@ class Service_River {
 		// Filters
 		if ( ! empty($filters))
 		{
-			$filter_keys = array('keywords', 'channels');
-			foreach ($filter_keys as $key) 
+			$filter_keys = array(
+				'keywords' => 'list',
+				'channels' => 'list',
+				'channel_ids' => 'list',
+				'state' => 'string'
+			);
+
+			foreach ($filter_keys as $key => $type) 
 			{
 				if (isset($filters[$key])) 
 				{
-					$parameters[$key] = implode(',', $filters[$key]);
+					$value = $filters[$key];
+					if ($type === 'list')
+					{
+						$value = implode(',', $value);
+					}
+
+					$parameters[$key] = $value;
+					
 				}
 			}
 		}
-
 		return $this->rivers_api->get_drops($river_id, $parameters);
 	}
 	

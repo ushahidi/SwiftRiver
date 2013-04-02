@@ -1,7 +1,10 @@
 <script type="text/javascript">
 	$(function() {
 		
-		var baseURL = "<?php echo $fetch_base_url; ?>"
+		var baseURL = "<?php echo $fetch_base_url; ?>";
+
+		// Boolean that is true when in photos view
+		var photos = <?php echo $photos; ?>;
 		
 		// Filters 
 		var Filter = Backbone.Model.extend({
@@ -39,10 +42,7 @@
 		var newDropsList = window.newDropsList = new Drops.DropsList;
 		
 		dropsList.url = newDropsList.url = filters.getDropListUrl(true);
-						
-		// Boolean that is true when in photos view
-		var photos = <?php echo $photos; ?>;
-		
+
 		// Load content while scrolling - Infinite Scrolling
 		var pageNo = 1;
 		var maxId = 0;
@@ -60,24 +60,26 @@
 			if (nearBottom(bottomEl) && !isPageFetching && !isAtLastPage) {
 				// Advance page and fetch it
 				isPageFetching = true;
-				pageNo += 1;		
+				pageNo += 1;
 
 				// Show a loading message after a delay if fetch takes long.
 				var t = setTimeout(function() { $(".stream-message.waiting").fadeIn("slow"); }, 500);
 
 				dropsList.fetch({
+					url: filters.getDropListUrl(true),
 				    data: {
-				        page: pageNo, 
+				        page: pageNo,
 				        max_id: maxId,
 				        photos: photos
 				    }, 
 				    update: true,
 					remove: false,
-				    complete: function(model, response) {
+				    success: function(collection, response, options) {
 						// Re-enable scrolling after a delay
 						setTimeout(function(){ isPageFetching = false; }, 700);
 						clearTimeout(t);
 				        $(".stream-message.waiting").fadeOut("normal");
+						$(".filters-primary li span.total").html(collection.length);
 				    },
 				    error: function(model, response) {
 				        if (response.status == 404) {
@@ -235,7 +237,6 @@
 				}
 				var fullView = new Drops.DropFullView({model: drop, baseURL: baseURL}).render();
 				fullView.$('.settings-toolbar').remove();
-				// $("hgroup.page-title, #filters").remove();
 				$("#content").append(fullView.el);
 			},
 
@@ -285,10 +286,12 @@
 			
 			filterUpdated: function(filter) {
 				var router = this;
-				dropsList.url = newDropsList.url = filters.getDropListUrl(true);
 				dropsList.fetch({
+					url: filters.getDropListUrl(true),
+					data: {photos: photos},
 					silent: true,
-					success: function() {
+					success: function(collection, response, options) {
+						$(".filters-primary li span.total").html(collection.length);
 						router.setFilter(filter.getString(), true, true);
 					}
 				});

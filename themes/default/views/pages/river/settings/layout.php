@@ -4,7 +4,7 @@
 			<h1><a href="<?php echo $river_base_url?>"><?php echo $river['name']; ?></a> <em>settings</em></h1>
 		</div>
 		<div class="page-action col_3">
-			<a href="<?php echo $river_base_url?>" class="button button-white">Return to river</a>
+			<a href="<?php echo $river_base_url?>" class="button button-white"><?php echo __("Return to river"); ?></a>
 			<a href="#" class="button button-primary filters-trigger"><i class="icon-menu"></i>More</a>
 		</div>
 	</div>
@@ -31,13 +31,11 @@
 						<?php endforeach; ?>
 					</ul>
 				</div>
-			</div>															
+			</div>
 		</section>
 					
 		<div id="settings" class="body-tabs-window col_9">
-			
-		<?php echo $settings_content ?>			
-								
+			<?php echo $settings_content ?>
 		</div>
 	</div>
 </div>
