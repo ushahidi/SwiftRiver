@@ -93,7 +93,6 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 		}
 		catch (Exception $e)
 		{
-			Kohana::$log->add(Log::ERROR, $e->getMessage());
 			return FALSE;
 		}
 		
@@ -125,7 +124,8 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 
 	/**
 	 * Search accounts
-	 * @return Array
+	 *
+	 * @return array
 	 */
 	public function search($query)
 	{
@@ -149,11 +149,11 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	}
 	
 	/**
-	 * Modify a river
+	 * Modify an account
 	 *
-	 * @param   string  $account_id
-	 * @param   string  $parameters
-	 * @return Array
+	 * @param   string  account_id
+	 * @param   string  parameters
+	 * @return  array
 	 */
 	public function update_account($account_id, $parameters)
 	{

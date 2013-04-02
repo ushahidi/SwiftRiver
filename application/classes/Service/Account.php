@@ -109,7 +109,7 @@ class Service_Account extends Service_Base {
 	}
 	
 	/**
-	 * Get a single rivers array for the given account.
+	 * Get a single rivers array for the specified $account
 	 *
 	 * @param   array account          Account that owns the rivers to be returned
 	 * @param   array querying_account Account requesting for the rivers
@@ -262,5 +262,31 @@ class Service_Account extends Service_Base {
 
 		// Execute API request
 		return $this->api->get_accounts_api()->update_account($account_id, $account_data);
+	}
+	
+	/**
+	 * Change password
+	 */
+	public function change_password($account_id, $password_data)
+	{
+		$validation = Validation::factory($password_data)
+			->rule('current_password', 'not_empty')
+			->rule('new_password', 'matches', array(':validation', 'new_password', 'confirm_password'));
+		
+		if ($validation->check())
+		{
+			$params = array(
+				'owner' => array(
+					'current_password' => $password_data['current_password'],
+					'password' => $password_data['new_password']
+				)
+			);
+
+			$this->accounts_api->update_account($account_id, $params);
+		}
+		else
+		{
+			throw new Validation_Exception($validation);
+		}
 	}
 }

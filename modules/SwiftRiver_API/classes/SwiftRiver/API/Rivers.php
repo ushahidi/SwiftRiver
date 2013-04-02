@@ -26,70 +26,15 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	}
 	
 	/**
-	 * Get drops from a river with id less than the given max_id
+	 * Get drops from the river with the specified $id using the parameters
+	 * in $parameters
 	 *
-	 * @param   long  $id          The id of the river
-	 * @param   long  $max_id      The maximum of drops to be returned
-	 * @param   int   $page        Page relative from max_id and count
-	 * @param   int   $count       Number of drops to return per page
-	 * @param   array $filters     Drop filters
-	 * @return Array
+	 * @param   long   $id          The id of the river
+	 * @param   array  $parameters  The query parameters for fetching the drops
+	 * @return  array
 	 */
-	public function get_drops($id, $max_id, $page, $count, $filters)
+	public function get_drops($id, $parameters = array())
 	{
-		$parameters = array(
-			'max_id' => $max_id,
-			'page' => $page,
-			'count' => $count
-		);
-		
-		$filter_keys = array(
-			'keywords' => 'list', 
-			'channels' => 'list', 
-			'channel_ids' => 'list', 
-			'state' => 'string');
-		foreach ($filter_keys as $key => $type) 
-		{
-			if (isset($filters[$key])) 
-			{
-				$value = $filters[$key];
-				
-				if ($type == 'list')
-				{
-					$value = implode(',', $value);	
-				} 
-				
-				$parameters[$key] = $value;
-			}
-		}
-		
-		return $this->get('/rivers/'.$id.'/drops', $parameters);
-	}
-	
-	/**
-	 * Get drops from a river with id greater than the given since_id
-	 *
-	 * @param   long  $id          The id of the river
-	 * @param   long  $since_id      The maximum of drops to be returned
-	 * @param   int   $count       Number of drops to return per page
-	 * @return Array
-	 */
-	public function get_drops_since($id, $since_id, $count, $filters)
-	{
-		$parameters = array(
-			'since_id' => $since_id,
-			'count' => $count
-		);
-		
-		$filter_keys = array('keywords', 'channels');
-		foreach ($filter_keys as $key) 
-		{
-			if (isset($filters[$key])) 
-			{
-				$parameters[$key] = implode(',', $filters[$key]);
-			}
-		}
-		
 		return $this->get('/rivers/'.$id.'/drops', $parameters);
 	}
 	
@@ -433,5 +378,66 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	public function delete_drop_form($river_id, $drop_id, $form_id)
 	{
 		return $this->delete('/rivers/'.$river_id.'/drops/'.$drop_id.'/forms/'.$form_id);
+	}
+	
+	/**
+	 * Gets and returns the rules for the specified river
+	 *
+	 * @param  int  river_id
+	 * @return array
+	 */
+	public function get_rules($river_id)
+	{
+		return $this->get('/rivers/'.$river_id.'/rules');
+	}
+	
+	/**
+	 * Adds a rule to the river with the specified river_id
+	 *
+	 * @param int    river_id
+	 * @param array  rule_data	
+	 * @return array
+	 */
+	public function add_rule($river_id, $rule_data)
+	{
+		return $this->post('/rivers/'.$river_id.'/rules', $rule_data);
+	}
+	
+	/**
+	 * Modifies the rule with the specified $rule_id in the river specified
+	 * by $river_id
+	 *
+	 * @param   int    river_id
+	 * @param   int    rule_id
+	 * @param   array  rule_data
+	 * @return  array
+	 */
+	public function modify_rule($river_id, $rule_id, $rule_data)
+	{
+		return $this->put('/rivers/'.$river_id.'/rules/'.$rule_id, $rule_data);
+	}
+	
+	/**
+	 * Deletes the rule specified in $rule_id from the river with the
+	 * specified $river_id
+	 *
+	 * @param  int river_id
+	 * @param  int rule_id
+	 */
+	public function delete_rule($river_id, $rule_id)
+	{
+		$this->delete('/rivers/'.$river_id.'/rules/'.$rule_id);
+	}
+	
+	/**
+	 * Marks the drop with the id specified in $droplet_id as having been
+	 * read
+	 *
+	 * @param int river_id
+	 * @param int droplet_id
+	 */
+	public function mark_drop_as_read($river_id, $droplet_id)
+	{
+		$this->put('/rivers/'.$river_id.'/drops/read/'.$droplet_id);
 	}
 }

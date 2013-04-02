@@ -72,8 +72,9 @@ class Service_Bucket extends Service_Base {
 	 * Adds the drop specified in $drop_id to the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param  int bucket_id
-	 * @param  int drop_id
+	 * @param  int    bucket_id
+	 * @param  int    drop_id
+	 * @param  string source
 	 */
 	public function add_drop($bucket_id, $drop_id, $source)
 	{
@@ -88,8 +89,8 @@ class Service_Bucket extends Service_Base {
 	 * Removes the drop specified in $drop_id from the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param  int  bucket_id
-	 * @param  int  drop_id
+	 * @param  int    bucket_id
+	 * @param  int    drop_id
 	 */
 	public function delete_drop($bucket_id, $drop_id)
 	{
@@ -458,4 +459,17 @@ class Service_Bucket extends Service_Base {
 	{
 		return $this->api->get_buckets_api()->delete_drop_form($bucket_id, $drop_id, $form_id);
 	}
+	
+	/**
+	 * Adds the drop with the specified $droplet_id to the list of read
+	 * drops for the bucket in $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int droplet_id
+	 */
+	public function mark_drop_as_read($bucket_id, $droplet_id)
+	{
+		$this->buckets_api->mark_drop_as_read($bucket_id, $droplet_id);
+	}
+
 }

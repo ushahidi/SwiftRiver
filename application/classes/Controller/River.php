@@ -19,7 +19,7 @@ class Controller_River extends Controller_Drop_Base {
 	 * Channels
 	 */
 	protected $channels;
-	
+
 	/**
 	 * ORM reference for the currently selected river
 	 * @var Model_River
@@ -158,14 +158,18 @@ class Controller_River extends Controller_Drop_Base {
 		$filters = $this->_get_filters();
 
 		//Get Droplets
-		$droplets_array = $this->river_service->get_drops($river_id, $max_droplet_id, 1, 20, $filters);
+		$droplets_array = $this->river_service->get_drops($river_id, 1, 20, NULL, $max_droplet_id, (bool) $this->photos, $filters);
+
+		$this->template->content->drop_count = count($droplets_array);
 		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
-		$droplet_js = View::factory('pages/drop/js/drops');
-		$droplet_js->fetch_base_url = $this->river_base_url;
-		$droplet_js->default_view = 'drops';
-		$droplet_js->photos = $this->photos ? 1 : 0;
+
+		$droplet_js = View::factory('pages/drop/js/drops')
+			->set('fetch_base_url',  $this->river_base_url)
+			->set('default_view', 'drops')
+			->set('photos', $this->photos ? 1 : 0);
+
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
@@ -266,45 +270,30 @@ class Controller_River extends Controller_Drop_Base {
 				if ($drop_id)
 				{
 					// Specific drop requested
-					$droplets_array = Model_River::get_droplets($this->user->id, 
-				    	$this->river->id, $drop_id);
+					$droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $drop_id);
 					$droplets = array_pop($droplets_array);
 				}
 				else
 				{
-					//Use page paramter or default to page 1
+					//Use page parameter or default to page 1
 					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
 					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
 					$filters = $this->_get_filters();
 
-					$droplets = array();
-					if ($since_id)
+					$droplets = $this->river_service->get_drops($this->river['id'], $page, 20, $since_id, $max_id, (bool) $photos, $filters);
+					if ( ! $since_id)
 					{
-						try 
-						{
-							$droplets = $this->river_service->get_drops_since($this->river['id'], $since_id, 20, $filters);
-							
-						} 
-						catch (SwiftRiver_API_Exception_NotFound $e)
-						{
-							// Do nothing
-						}
+						$droplets = array_reverse($droplets);
 					}
-					else
-					{
-						$droplets = array_reverse($this->river_service->get_drops($this->river['id'], $max_id, $page, 20, $filters));
-					}
-				}				
+				}
 				
 
-				//Throw a 404 if a non existent page/drop is requested
-				if (($page > 1 OR $drop_id) AND empty($droplets))
+				if (empty($droplets))
 				{
-				    throw new HTTP_Exception_404('The requested page was not found on this server.');
+					Kohana::$log->add(Log::INFO, __("No drops returned"));
 				}
-
 				echo json_encode($droplets);
 
 			break;
@@ -317,20 +306,30 @@ class Controller_River extends Controller_Drop_Base {
 				}
 
 				$payload = json_decode($this->request->body(), TRUE);
-				if ( ! isset($payload['command']) OR ! isset($payload['bucket_id']))
+				$droplet_id = intval($this->request->param('id', 0));
+
+				// Check for change in bucket membership
+				if (isset($payload['bucket_id']))
 				{
-					throw new HTTP_Exception_400();
+					// Add/remove drop from bucket
+
+					$bucket_id = intval($payload['bucket_id']);
+					if ($payload['command'] === 'add')
+					{
+						$this->bucket_service->add_drop($bucket_id, $droplet_id, "river");
+					}
+					elseif ($payload['command'] === 'remove')
+					{
+						$bucket_drop_id = $payload['bucket_drop_id'];
+						$this->bucket_service->delete_drop($bucket_id, $bucket_drop_id);
+					}
 				}
 
-				$bucket_id = intval($payload['bucket_id']);
-				$droplet_id = intval($this->request->param('id', 0));
-				if ($payload['command'] === 'add')
+				// Has the drop been marked as read
+				if (isset($payload['read']) AND $payload['read'] === TRUE)
 				{
-					$this->bucket_service->add_drop($bucket_id, $droplet_id, "river");
-				}
-				elseif ($payload['command'] === 'remove')
-				{
-					$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+					// Mark drop as read
+					$this->river_service->mark_drop_as_read($this->river['id'], $droplet_id);
 				}
 			
 			break;
@@ -471,7 +470,7 @@ class Controller_River extends Controller_Drop_Base {
 			{
 				if ($type == 'list')
 				{
-					$filters[$parameter] = array();				
+					$filters[$parameter] = array();
 					// Parameters are array strings that are comma delimited
 					foreach (explode(',', urldecode($values)) as $value)
 					{

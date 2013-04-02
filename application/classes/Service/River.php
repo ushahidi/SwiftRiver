@@ -181,31 +181,70 @@ class Service_River extends Service_Base {
 		return $channel_array;
 	}
 	
-	/**
+/**
 	 * Get drops from a river
 	 *
-	 * @param   long    $id
-	 * @param   long    $max_id
-	 * @param   int     $page
-	 * @param   int     $count
-	 * @param   array   $filters
-	 * @return Array
+	 * @param   long    river_id
+	 * @param   int     page
+	 * @param   int     count
+	 * @param   long    since_id
+	 * @param   long    max_id
+	 * @param   bool    photos
+	 * @param   array   filters
+	 * @return  array
 	 */
-	public function get_drops($id, $max_id = NULL, $page = 1, $count = 20, $filters = array())
+	public function get_drops($river_id, $page = 1, $count = 20, $since_id = NULL, $max_id = NULL, $photos = FALSE, $filters = array())
 	{
-		return $this->api->get_rivers_api()->get_drops($id, $max_id, $page, $count, $filters);
-	}
-	
-	/**
-	 * Get drops from a river
-	 *
-	 * @param   string  $path            the resource path
-	 * @param   mixed   $parameters       GET parameters
-	 * @return Array
-	 */
-	public function get_drops_since($id, $since_id, $count = 20, $filters = array())
-	{
-		return $this->api->get_rivers_api()->get_drops_since($id, $since_id, $count, $filters);
+		// Parameters to send to the API
+		$parameters = array(
+			'page' => $page,
+			'count' => $count
+		);
+
+		// since_id parameter
+		if ( ! empty($since_id) AND $since_id > 0)
+		{
+			$parameters['since_id'] = $since_id;
+		}
+
+		// max_id parameter
+		if ( ! empty($max_id) AND $max_id > 0)
+		{
+			$parameters['max_id'] = $max_id;
+		}
+
+		// photos parameter
+		if ($photos === TRUE)
+		{
+			$parameters['photos'] = TRUE;
+		}
+
+		// Filters
+		if ( ! empty($filters))
+		{
+			$filter_keys = array(
+				'keywords' => 'list',
+				'channels' => 'list',
+				'channel_ids' => 'list',
+				'state' => 'string'
+			);
+
+			foreach ($filter_keys as $key => $type) 
+			{
+				if (isset($filters[$key])) 
+				{
+					$value = $filters[$key];
+					if ($type === 'list')
+					{
+						$value = implode(',', $value);
+					}
+
+					$parameters[$key] = $value;
+
+				}
+			}
+		}
+		return $this->rivers_api->get_drops($river_id, $parameters);
 	}
 	
 	/**
@@ -461,4 +500,89 @@ class Service_River extends Service_Base {
 	{
 		return $this->api->get_rivers_api()->delete_drop_form($river_id, $drop_id, $form_id);
 	}
+
+	/**
+	 * Gets and returns the rules for the specified river
+	 *
+	 * @param  int river_id ID of the river with the rules
+	 * @return array
+	 */
+	public function get_rules($river_id)
+	{
+		return $this->rivers_api->get_rules($river_id);
+	}
+	
+	/**
+	 * Adds a rule to the river with the specified river_id
+	 *
+	 * @param  int   river_id
+	 * @param  array rule_data
+	 * @return array
+	 */
+	public function add_rule($river_id, $rule_data)
+	{
+		if ($this->validate_rule($rule_data))
+		{
+			return $this->rivers_api->add_rule($river_id, $rule_data);
+		}
+	}
+	
+	/**
+	 * Modify a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 * @param array rule_data
+	 */
+	public function modify_rule($river_id, $rule_id, $rule_data)
+	{
+		if ($this->validate_rule($rule_data))
+		{
+			return $this->rivers_api->modify_rule($river_id, $rule_id, $rule_data);
+		}
+	}
+	
+	/**
+	 * Deletes a rule
+	 *
+	 * @param int river_id
+	 * @param int rule_id
+	 */
+	public function delete_rule($river_id, $rule_id)
+	{
+		$this->rivers_api->delete_rule($river_id, $rule_id);
+	}
+	
+	/**
+	 * Internal helper method for validating rules
+	 */
+	private function validate_rule(array & $rule_data)
+	{
+		$rule_data['all_conditions'] = (bool) intval($rule_data['all_conditions']);
+
+		$validation = Validation::factory($rule_data)
+			->rule('name', 'not_empty')
+			->rule('conditions', 'not_empty')
+			->rule('actions', 'not_empty');
+		
+		if ( ! $validation->check())
+		{
+			throw new Validation_Exception($validation);
+		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Issues an API request to mark the drop with the specified $droplet_id
+	 * as read
+	 *
+	 * @param  int river_id
+	 * @param  int droplet_id
+	 */
+	public function mark_drop_as_read($river_id, $droplet_id)
+	{
+		$this->rivers_api->mark_drop_as_read($river_id, $droplet_id);
+	}
+
 }

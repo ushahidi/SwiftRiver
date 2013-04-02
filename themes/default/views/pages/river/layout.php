@@ -33,6 +33,7 @@
 						<?php foreach ($nav as $item): ?>
 						<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
 							<a href="<?php echo $river_base_url.$item['url']; ?>">
+								<span class="total"><?php echo $drop_count; ?></span>
 								<?php echo $item['label'];?>
 							</a>
 						</li>
@@ -46,7 +47,11 @@
 					</div>
 				
 					<div class="filters-type" id="drops-channel-list">
-						<span class="toggle-filters-display"><span class="total">5</span><span class="icon-arrow-down"></span><span class="icon-arrow-up"></span></span>				
+						<span class="toggle-filters-display">
+							<span class="total">5</span>
+							<span class="icon-arrow-down"></span>
+							<span class="icon-arrow-up"></span>
+						</span>
 						<span class="filters-type-settings"><a href="#"><span class="icon-cog"></span></a></span>
 						<h2>Channels</h2>
 						<div class="filters-type-details">
@@ -58,14 +63,22 @@
 							
 					<div class="filters-type">
 						<ul>
-							<li class="active"><a href="#"><span class="remove icon-cancel"></span><i class="icon-calendar"></i>November 1, 2012 to present</a></li>
-							<!--li class=""><a href="#"><span class="remove icon-cancel"></span><i class="icon-pencil"></i>hate, robbed</a></li-->
+							<li class="active">
+								<a href="#">
+									<span class="remove icon-cancel"></span>
+									<i class="icon-calendar"></i>
+									November 1, 2012 to present
+								</a>
+							</li>
 						</ul>
-						<a href="/markup/_modals/add-search-filter.php" class="button-add modal-trigger"><i class="icon-search"></i>Add search filter</a>				
+						<a href="/markup/_modals/add-search-filter.php" class="button-add modal-trigger">
+							<i class="icon-search"></i>
+							Add search filter
+						</a>
 					</div>
 
 					<div class="modal-toolbar">
-						<a href="#" class="button-submit button-primary modal-close">Done</a>				
+						<a href="#" class="button-submit button-primary modal-close">Done</a>
 					</div>
 				</div>
 			</div>
@@ -104,7 +117,7 @@ $(function() {
 
 	<div class="modal-body">
 		<div class="view-table base">
-			<ul>										
+			<ul>
 				<li class="add"><a href="#">Add channel</a></li>
 			</ul>
 		</div>
@@ -112,7 +125,11 @@ $(function() {
 </script>
 
 <script type="text/template" id="channel-drop-list-template">
-	<a href="#" style="text-overflow:ellipsis;"><i class="icon-<%= channel %>"></i><span class="total"><%= drop_count %></span><%= display_name %></a>
+	<a href="#" style="text-overflow:ellipsis;">
+		<i class="icon-<%= channel %>"></i>
+		<span class="total"><%= drop_count %></span>
+		<%= display_name %>
+	</a>
 </script>
 
 <script type="text/template" id="channel-modal-template">
@@ -204,12 +221,12 @@ $(function() {
 						<div class="modal-field-tabs-window">
 						</div>
 					</div>
-				</div>														
+				</div>
 			</div>
 		</div>
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary"><span>Add channel</span></a>				
-		</div>					
+			<a href="#" class="button-submit button-primary"><span>Add channel</span></a>
+		</div>
 	</div>
 </script>
 
@@ -232,11 +249,11 @@ $(function() {
 						<div class="modal-field-tabs-window">
 						</div>
 					</div>
-				</div>														
+				</div>
 			</div>
 		</div>
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary">Save channel</a>				
-		</div>					
+			<a href="#" class="button-submit button-primary">Save channel</a>
+		</div>
 	</div>
 </script>

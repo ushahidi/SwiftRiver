@@ -36,14 +36,18 @@
 		<span class="drop-score">
 			<a href="#" class="button-white"><span class="icon-star"></span></a>
 		</span>
+		<?php if ($owner): ?>
 		<ul class="drop-status cf" style="display: none;">
+			<% if (!read) { %>
 			<li class="drop-status-read">
 				<a href="#"><span class="icon-checkmark"></span></a>
 			</li>
+			<% } %>
 			<li class="drop-status-remove">
 				<a href="#"><span class="icon-cancel"></span></a>
 			</li>
 		</ul>
+		<?php endif; ?>
 	</div>
 	<section class="drop-source cf">
 		<a href="#" class="avatar-wrap"><img src="<%= source.avatar %>" /></a>
@@ -94,6 +98,8 @@
 							<span class="icon-add-to-bucket"></span>
 							<% if (buckets != null && buckets.length > 0) { %>
 								<span class="bucket-total"><%= buckets.length %></span>
+							<% } else { %>
+							<span class="bucket-total" style="display:none">0</span>
 							<% } %>
 						</a>
 					</li>
@@ -103,10 +109,14 @@
 						<span class="icon-star"></span>
 					</a>
 				</span>
+				<?php if ($owner): ?>
 				<ul class="drop-status cf" style="display: none;">
+					<% if (!read) { %>
 					<li class="drop-status-read"><a href="#"><span class="icon-checkmark"></span></a></li>
+					<% } %>
 					<li class="drop-status-remove"><a href="#"><span class="icon-cancel"></span></a><li>
 				</ul>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>
@@ -192,6 +202,8 @@
 								<span class="icon-add-to-bucket"></span>
 								<% if (buckets != null && buckets.length > 0) { %>
 									<span class="bucket-total"><%= buckets.length %></span>
+								<% } else { %>
+									<span class="bucket-total" style="display:none">0</span>
 								<% } %>
 							</a>
 						</li>

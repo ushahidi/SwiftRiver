@@ -75,8 +75,11 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	}
 	
 	/**
-	 * Adds the drop specified in $drop_id to the bucket in
-	 * @param $bucket_id
+	 * Adds the drop specified in $drop_id to the bucket specified in $bucket_id
+	 *
+	 * @param int    bucket_id
+	 * @param int    drop_id
+	 * @param array  source_data
 	 */
 	public function add_drop($bucket_id, $drop_id, $source_data)
 	{
@@ -87,8 +90,8 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * Removes the drop specified in $drop_id from the bucket specified
 	 * in $bucket_id
 	 *
-	 * @param   int bucket_id
-	 * @param   int drop_id
+	 * @param   int  bucket_id
+	 * @param   int  drop_id
 	 */
 	public function delete_drop($bucket_id, $drop_id)
 	{
@@ -367,5 +370,17 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	public function delete_drop_form($bucket_id, $drop_id, $form_id)
 	{
 		return $this->delete('/buckets/'.$bucket_id.'/drops/'.$drop_id.'/forms/'.$form_id);
+	}
+	
+	/**
+	 * Adds the drop with the specified $droplet_id to the list of
+	 * read drops for the bucket identified by $bucket_id
+	 *
+	 * @param  int bucket_id
+	 * @param  int droplet_id
+	 */
+	public function mark_drop_as_read($bucket_id, $droplet_id)
+	{
+		$this->put('/buckets/'.$bucket_id.'/drops/read/'.$droplet_id);
 	}
 }
