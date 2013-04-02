@@ -186,18 +186,7 @@ $(document).ready(function() {
 		return false;
 	});
 	$('article.modal a.modal-close').live('click', function(e) {
-<<<<<<< HEAD
 		modalHide();
-=======
-		if (modalWindow != null) {
-			modalWindow.hide();
-		}
-		return false;
-	});
-	$('a.modal-transition').live('click', function(e) {
-		var hash = $(this).prop('hash');
-		modalWindow.transition(hash);
->>>>>>> integration-dev
 		return false;
 	});
 
