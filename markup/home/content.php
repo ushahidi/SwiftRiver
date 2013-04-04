@@ -5,7 +5,7 @@
 
 	<hgroup class="page-title user-title cf">
 		<div class="center">
-			<div class="col_9">		
+			<div class="col_9">
 				<a class="avatar-wrap"><img src="http://www.ushahidi.com/uploads/people/team_Emmanuel-Kala.jpg" class="avatar" /></a>
 				<h1><?php print $page_title; ?></h1>
 				<h2 class="label">ekala</h2>
@@ -30,15 +30,15 @@
 			<div id="filters-trigger" class="col_12 cf">
 				<a href="#" class="button button-primary filters-trigger"><i class="icon-filter"></i>Filters</a>
 			</div>
-			
+
 			<section id="filters" class="col_3">
 				<div class="modal-window">
-					<div class="modal">		
+					<div class="modal">
 						<div class="modal-title cf">
 							<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
 							<h1>Filters</h1>
 						</div>
-						
+
 						<ul class="filters-primary">
 							<li class="active"><a href="#" class="modal-close">All your stuff</a></li>
 							<li><a href="#" class="modal-close">Rivers</a></li>
@@ -56,13 +56,34 @@
 						</div>
 
 						<div class="modal-toolbar">
-							<a href="#" class="button-submit button-primary modal-close">Done</a>				
-						</div>						
+							<a href="#" class="button-submit button-primary modal-close">Done</a>
+						</div>
 					</div>
-				</div>					
+				</div>
 			</section>
 
 			<div class="col_9">
+
+				<!--// IF: No content //
+				<article class="stream-message cf">
+					<h1>This is where you'll see your rivers, buckets and custom forms.</h1>
+					<div class="stream-message-summary">
+						<h2><i class="icon-river"></i>Rivers</h2>
+						<p>Rivers are a real-time look at the information flowing from the channels you choose. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first river</a></p>
+					</div>
+
+					<div class="stream-message-summary">
+						<h2><i class="icon-bucket"></i>Buckets</h2>
+						<p>Buckets store the information you hand-pick from rivers. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first bucket</a></p>
+					</div>
+
+					<div class="stream-message-summary">
+						<h2><i class="icon-form"></i>Custom forms</h2>
+						<p>Custom forms are additional data fields that only you see attached to each drop. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first custom form</a></p>
+					</div>
+				</article>
+				// ENDIF //-->
+
 				<div class="container base">
 					<div class="container-tabs">
 						<ul class="container-tabs-menu cf">
@@ -84,15 +105,18 @@
 							<span class="button create-new"><a href="/markup/_modals/create.php" class="button-primary modal-trigger"><i class="icon-plus"></i>Create new</a></span>
 						</div>
 						<div class="container-tabs-window">
-							<!-- NO RESULTS: Clear filters
-							<div class="null-message">
-								<h2>No rivers or buckets to show.</h2>
-								<p>Clear active filters.</p>
-							</div>
-							-->
-							
 							<table>
 								<tbody>
+									<!--// IF: No results //
+									<tr>
+										<td class="select-toggle"></td>
+										<td class="item-type"></td>
+										<td class="item-summary">
+											<h2>No content to show.</h2>
+										</td>
+										<td class="item-categories"></td>
+									</tr>
+									//-->
 									<tr>
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
@@ -105,7 +129,7 @@
 										<td class="item-categories">
 											<span class="mark" style="background-color:red;"></span>
 										</td>
-									</tr>	
+									</tr>
 									<tr>
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
@@ -118,15 +142,15 @@
 										<td class="item-categories">
 											<span class="mark" style="background-color:red;"></span>
 										</td>
-									</tr>																	
+									</tr>
 									<tr>
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-bucket"></span>
-										</td>										
+										</td>
 										<td class="item-summary">
 											<h2><a href="/markup/bucket">Kenya election hate speech</a></h2>
-											<div class="metadata">38 drops</div>											
+											<div class="metadata">38 drops</div>
 										</td>
 										<td class="item-categories">
 											<span class="mark" style="background-color:orange;"></span>
@@ -137,22 +161,22 @@
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-river"></span>
-										</td>										
+										</td>
 										<td class="item-summary">
 											<h2><a href="/markup/river">Open Source software</a></h2>
-											<div class="metadata">102 drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:31%;"></span></span>31% full</span></div>										
+											<div class="metadata">102 drops <span class="quota-meter"><span class="quota-meter-capacity"><span class="quota-total" style="width:31%;"></span></span>31% full</span></div>
 										</td>
 										<td class="item-categories">
 										</td>
-									</tr>																										
+									</tr>
 									<tr>
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-form"></span>
-										</td>										
+										</td>
 										<td class="item-summary">
 											<h2><a href="/markup/_modals/settings-custom-form.php" class="modal-trigger">Speech type</a></h2>
-											<div class="metadata">Custom form fields for drops</div>																				
+											<div class="metadata">Custom form fields for drops</div>
 										</td>
 										<td class="item-categories">
 											<span class="mark" style="background-color:green;"></span>
@@ -162,14 +186,14 @@
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
 											<span class="icon-bucket"></span>
-										</td>										
+										</td>
 										<td class="item-summary">
 											<h2><a href="/markup/river">Web development</a></h2>
-											<div class="metadata">62 drops</div>											
+											<div class="metadata">62 drops</div>
 										</td>
 										<td class="item-categories">
 										</td>
-									</tr>									
+									</tr>
 								</tbody>
 							</table>
 						</div>
