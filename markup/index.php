@@ -5,7 +5,7 @@
 
 	<hgroup class="page-title user-title cf">
 		<div class="center">
-			<div class="col_9">		
+			<div class="col_9">
 				<a class="avatar-wrap"><img src="http://www.ushahidi.com/uploads/people/team_Emmanuel-Kala.jpg" class="avatar" /></a>
 				<h1><?php print $page_title; ?></h1>
 				<h2 class="label">ekala</h2>
@@ -33,7 +33,7 @@
 
 			<section id="filters" class="col_3">
 				<div class="modal-window">
-					<div class="modal">		
+					<div class="modal">
 						<div class="modal-title cf">
 							<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
 							<h1>Filters</h1>
@@ -45,18 +45,49 @@
 							<li><a href="#" class="modal-close">Discussion</a></li>
 						</ul>
 					</div>
-				</div>		
+				</div>
 			</section>
 
 			<div class="col_9">
 				<div id="news-feed" class="container base">
-					<!-- NO RESULTS: Clear filters
-					<div class="null-message">
-						<h2>No rivers or buckets to show.</h2>
-						<p>Clear active filters.</p>
-					</div>
-					-->
-					
+					<!--// IF: No activity //
+					<article class="stream-message cf">
+						<h1>This is where you'll see the latest from people, rivers and buckets you follow.</h1>
+
+						<div class="search-box">
+							<h2>Find people, rivers or buckets</h2>
+							<input type="text" placeholder="e.g. Detroit Tigers" />
+							<a href="#" class="button-submit"><span class="icon-search"></span></a>
+						</div>
+
+						<div>
+							<h2>Popular rivers</h2>
+							<ul class="view-table">
+								<li><a href="/markup/river">Ushahidi at SXSW</a></li>
+								<li><a href="#">River 2</a></li>
+							</ul>
+
+							<h2>Popular people</h2>
+							<ul class="view-table">
+								<li class="user cf">
+									<a href="#">
+									<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">
+									<span class="label">Juliana Rotich</span>
+									</a>
+								</li>
+							</ul>
+						</div>
+					</article>
+					// ENDIF //-->
+
+					<!--// IF: No results //
+					<article class="news-feed-item cf">
+						<div class="item-summary">
+							<h2>No activity to show.</h2>
+						</div>
+					</article>
+					// ENDIF //-->
+
 					<article class="news-feed-item cf">
 						<div class="item-type">
 							<span class="icon-comment"></span>
@@ -72,7 +103,7 @@
 							</div>
 						</div>
 					</article>
-					
+
 					<article class="news-feed-item cf">
 						<div class="item-type">
 							<span class="icon-river"></span>
@@ -101,7 +132,7 @@
 							</div>
 						</div>
 					</article>
-					
+
 					<article class="pending news-feed-item cf">
 						<div class="item-type">
 							<span class="icon-bucket"></span>
@@ -114,7 +145,7 @@
 								<a href="#" class="button-white">Ignore</a>
 							</div>
 						</div>
-					</article>														
+					</article>
 				</div>
 			</div>
 		</div>
