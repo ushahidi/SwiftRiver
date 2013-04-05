@@ -124,7 +124,7 @@
 
 <script type="text/template" id="drop-photos-view-template">
 <% if (image != null) { %>
-	<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= image.url %>" class="drop-image" /></a>
+	<a href="#" class="drop-image-wrap zoom-trigger"><img src="<%= image %>" class="drop-image" /></a>
 <% } %>
 </script>
 
