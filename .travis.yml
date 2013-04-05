@@ -1,0 +1,16 @@
+language: php
+
+php:
+  - 5.4
+  - 5.3
+
+before_script:
+  - mkdir application/{cache,logs}
+  - chmod 0777 application/{cache,logs}
+  - find application/config -name "*template" -exec bash -c 'cp "$1" "${1/.template/}"' modlang \{\} \;
+
+script: phpunit --bootstrap=application/tests/bootstrap.php --exclude-group=kohana modules/unittest/tests.php
+
+notifications:
+  email:
+    - code@swiftriver.io
