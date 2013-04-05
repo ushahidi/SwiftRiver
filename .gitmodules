@@ -4,9 +4,6 @@
 [submodule "system"]
 	path = system
 	url = https://github.com/kohana/core.git
-[submodule "modules/database"]
-	path = modules/database
-	url = git://github.com/kohana/database.git
 [submodule "modules/auth"]
 	path = modules/auth
 	url = git://github.com/kohana/auth.git
@@ -16,9 +13,6 @@
 [submodule "modules/image"]
 	path = modules/image
 	url = git://github.com/kohana/image.git
-[submodule "modules/orm"]
-	path = modules/orm
-	url = git://github.com/kohana/orm.git
 [submodule "plugins/feedwriter"]
 	path = plugins/feedwriter
 	url = git://github.com/ushahidi/swiftriver-plugin-feedwriter.git

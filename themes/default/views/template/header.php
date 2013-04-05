@@ -35,7 +35,7 @@
 			window.logged_in_account_path = null;
 			window.logged_in_user = null;
 		<?php endif; ?>
-		window.public_registration_enabled = <?php echo Model_Setting::get_setting('public_registration_enabled'); ?>;
+		window.public_registration_enabled = <?php echo Swiftriver::get_setting('public_registration_enabled') ? "true" : "false"; ?>;
 		window.site_url = "<?php echo URL::base(TRUE, FALSE); ?>";
 		window.system_messages = <?php echo $messages; ?>;
 	</script>

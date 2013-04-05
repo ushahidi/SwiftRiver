@@ -70,22 +70,6 @@ define('PLUGINPATH', realpath($plugins).DIRECTORY_SEPARATOR);
 // Flag testing mode is on
 define('TESTING_MODE', TRUE);
 
-// Setup the testing database
-$db_config = include $apppath.'config/database.php';
-$setup_script = $apppath.'tests/setup_db.sh';
-$sql_file = $docroot.'install/sql/swiftriver.sql';
-$db_host = $db_config['unittest']['connection']['hostname'];
-$db_name = $db_config['unittest']['connection']['database'];
-$db_user = $db_config['unittest']['connection']['username'];
-$db_pass = $db_config['unittest']['connection']['password'];
-exec("$setup_script $sql_file $db_host $db_name $db_user $db_pass", $out, $ret);
-
-if ($ret)
-{
-	echo "Error initializing DB\n\n $out";
-	exit;
-}
-
 // Clean up the configuration vars
 unset($application, $modules, $themes, $plugins, $docroot);
 

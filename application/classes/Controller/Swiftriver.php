@@ -112,7 +112,7 @@ class Controller_Swiftriver extends Controller_Template {
 		// present the login form
 		if
 		( 
-			(bool) Model_Setting::get_setting('anonymous_access_enabled') AND 
+			(bool) Swiftriver::get_setting('anonymous_access_enabled') AND 
 				strtolower($this->request->controller()) != 'login'
 		)
 		{
@@ -196,7 +196,7 @@ class Controller_Swiftriver extends Controller_Template {
 						// Anonymous logged in and login controller requested, logout
 						strtolower($this->request->controller()) == 'login' OR
 						// In case anonymous setting changed and user had a session,
-						! (bool) Model_Setting::get_setting('anonymous_access_enabled')
+						! (bool) Swiftriver::get_setting('anonymous_access_enabled')
 					)
 					{
 						Auth::instance()->logout();
@@ -316,7 +316,7 @@ class Controller_Swiftriver extends Controller_Template {
 			$this->template->header->css = ''; // Dynamic CSS
 			$this->template->header->meta = '';
 			$this->template->header->show_nav = TRUE;
-			$site_name = Model_Setting::get_setting('site_name');
+			$site_name = Swiftriver::get_setting('site_name');
 			
 			// System messages
 			$this->template->header->messages = json_encode($this->session->get_once('messages'));
@@ -331,7 +331,7 @@ class Controller_Swiftriver extends Controller_Template {
 			
 			if ($this->user)
 			{
-				$this->template->header->nav_header->num_notifications = Model_User_Action::count_notifications($this->user['id']);
+				$this->template->header->nav_header->num_notifications = 0;
 				if ( ! ($buckets = Cache::instance()->get('user_buckets_'.$this->user['id'], FALSE)))
 				{
 					$buckets = json_encode($this->account_service->get_buckets($this->user, $this->user));

@@ -23,7 +23,7 @@ class Task_River_Expire extends Minion_Task {
 		Kohana::$log->add(Log::INFO, __("Running river maintenance schedule"));
 		
 		// Get settings
-		$settings = Model_Setting::get_settings(array(
+		$settings = Swiftriver::get_settings(array(
 			'default_river_lifetime',
 			'river_expiry_notice_period',
 			'site_url'

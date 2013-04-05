@@ -12,4 +12,46 @@ return array(
 	
 	/* Default cache driver */
 	'default_cache' => 'file',
+    
+    /* Installed plugins */
+    'plugins' => array('rss', 'twitter'),
+    
+    /* Site name */
+    'site_name' => 'SwiftRiver',
+    
+    /* Site theme */
+    'site_theme' => 'default',
+    
+    /* Site locale */
+    'site_locale' => 'en',
+    
+    /* Is user registration allowed */
+    'public_registration_enabled' => FALSE,
+    
+    /* Is login required to view content */
+    'anonymous_access_enabled' => FALSE,
+    
+    /* Default river lifetime */
+    'default_river_lifetime' => 14,
+    
+    /* Days before river expiry when alert will be sent */
+    'river_expiry_notice_period' => 3,
+    
+    /* Can non admin users send registration invites? */
+    'general_invites_enabled' => FALSE,
+    
+    /* Default maximum number of rivers a user can create */
+    'default_river_quota' => 1,
+    
+    /* Default maximum number of drops a river can hold */
+    'default_river_drop_quota' => 10000,
+    
+    /* Site url */
+    'site_url' => 'http://www.example.com',
+    
+    /* Default domain for outgoing emails */
+    'email_domain' => 'example.com',
+    
+    /* Default domain for outgoing comment notification emails */
+    'comments_email_domain' => 'example.com'
 );

@@ -35,7 +35,7 @@ class Controller_Welcome extends Controller_Swiftriver {
 		$this->template->header->title = __('Welcome');
 		$this->template->content = View::factory('pages/welcome/main');
 		$this->template->content->set(array(
-			'public_registration_enabled' => (bool) Model_Setting::get_setting('public_registration_enabled'),
+			'public_registration_enabled' => (bool) Swiftriver::get_setting('public_registration_enabled'),
 			'anonymous' => $this->anonymous
 		));
 	}
