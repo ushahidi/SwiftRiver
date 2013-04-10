@@ -1,15 +1,15 @@
-<!DOCTYPE html> 
-<html> 
- 
-<head> 
-    <meta charset="utf-8"> 
-	<title>SwiftRiver ~ Curate real-time information with the power of the crowd</title> 
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+	<title>SwiftRiver ~ Curate real-time information with the power of the crowd</title>
 	<link rel="shortcut icon" href="#">
-	<link type="text/css" href="/markup/css/styles.css" rel="stylesheet" />
-	<link type="text/css" href="/markup/css/home.css" rel="stylesheet" />
+	<link type="text/css" href="/markup/_css/styles.css" rel="stylesheet" />
+	<link type="text/css" href="/markup/_css/home.css" rel="stylesheet" />
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/markup/js/jquery.outside.js"></script>
-	<script type="text/javascript" src="/markup/js/global.js"></script>
+	<script type="text/javascript" src="/markup/_js/jquery.outside.js"></script>
+	<script type="text/javascript" src="/markup/_js/global.js"></script>
 	<script>
 	$(document).ready(function() {
 		$('.button-video a').live('click', function(e) {
@@ -24,7 +24,7 @@
 		});
 		$('article.features ul li a').toggle(
 			function(e) {
-				var thumbImg = $(this).children('img').attr('src');			
+				var thumbImg = $(this).children('img').attr('src');
 				var zoomImg = $(this).attr('href');
 				$(this).addClass('zoom');
 				$('body').addClass('noscroll');
@@ -44,9 +44,9 @@
 	});
 	</script>
 	<meta name="viewport" content="width=device-width; initial-scale=1.0">
-</head> 
- 
-<body> 
+</head>
+
+<body>
 	<header class="toolbar">
 		<div class="center">
 			<div class="col_4">

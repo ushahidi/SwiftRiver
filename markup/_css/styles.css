@@ -1053,8 +1053,8 @@ header.toolbar ul.user-menu > li.user a:hover {
    -webkit-border-radius: 3px;
    -moz-border-radius: 3px;
    border-radius: 3px;
-   -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.1);
-   -moz-box-shadow: 0 1px 5px rgba(0,0,0,.1);
+   -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
+   -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
    box-shadow: 0 1px 2px rgba(0,0,0,.1) inset;
    background-color: #eeeeee;
    padding: 2em;
@@ -1065,16 +1065,23 @@ header.toolbar ul.user-menu > li.user a:hover {
    margin: 0.8em 3.125%;
 }
 
+.container-tabs-window .stream-message {
+   -webkit-border-radius: 0;
+   -moz-border-radius: 0;
+   border-radius: 0;
+   margin: 0;
+}
+
+.stream-message.no-drops {
+   padding-bottom: 0;
+}
+
 .stream-message.waiting {
    border: 2px solid #3faec0;
    padding: 1em 0;
    -webkit-animation: border-pulsate 2s infinite;
    margin-top: 1em;
    margin-bottom: 1em;
-}
-
-.stream-message > div {
-   text-align: left;
 }
 
 .stream-message .stream-message-summary {
@@ -1087,9 +1094,9 @@ header.toolbar ul.user-menu > li.user a:hover {
 }
 
 .stream-message h2 {
-   color: #555;
-   font-size: 1em;
-   padding: 2em 0 0.5em;
+   color: #444;
+   font-weight: normal;
+   font-size: 1.3em;
 }
 
 .stream-message p {
@@ -1106,19 +1113,47 @@ header.toolbar ul.user-menu > li.user a:hover {
    padding: 0;
 }
 
-
-/*.stream-message ul {
-   width: ;
+.stream-message .callout {
+   -moz-box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+   border-bottom: 1px solid #dedede;
+   padding: 1em 0 1.5em;
 }
 
-.stream-message ul li {
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   background-color: #fff;
-   padding: 0.5em;
-   margin: 0.5em 0;
-}*/
+.stream-message .callout:last-child {
+   border-bottom: none;
+}
+
+.stream-message .callout span[class^="icon-"] {
+   color: #36b7ce;
+   font-size: 4em;
+   line-height: 1.1em;
+}
+
+.stream-message .callout p {
+   font-size: 0.9em;
+}
+
+.stream-message #stream-illustration {
+   width: 100%;
+   height: 150px;
+   background-image: url(/markup/_img/river-empty1.gif);
+   background-position: center;
+   background-repeat: no-repeat;
+   -o-background-size: contain;
+   -moz-background-size: contain;
+   -webkit-background-size: contain;
+   background-size: contain;
+   transition: .5s all ease;
+   -moz-transition: .5s all ease;
+   -webkit-transition: .3s all ease;
+   -o-transition: .5s all ease;
+}
+
+.stream-message #stream-illustration:hover {
+   background-image: url(/markup/_img/river-empty2.gif);
+}
 
 /* --------------------------- PAGE TITLE */
 
@@ -3510,8 +3545,16 @@ article.drop ul.score-drop li.remove a {
    float: right;
 }
 
-.stream-message > div {
-   margin: 0 20%;
+.stream-message .callout {
+   float: left;
+   width: 33.333333333%;
+   border-bottom: none;
+   padding: 0 0.5em;
+   margin: 1.5em 0;
+}
+
+.stream-message #stream-illustration {
+   height: 350px;
 }
 
 /* ---- DROP: VIEW FULL */
