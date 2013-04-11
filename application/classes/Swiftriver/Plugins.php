@@ -49,21 +49,15 @@ class Swiftriver_Plugins {
 		{
 			$plugin_entries = array();
 			
-			$active_plugins = ORM::factory("Plugin")
-				->where("plugin_enabled", "=", 1)
-				->find_all();
+			$active_plugins = Kohana::$config->load('site')->get('plugins');
 
 			foreach ($active_plugins as $plugin)
 			{
-				$plugin_path = PLUGINPATH.$plugin->plugin_path;
-				if ( ! is_dir(realpath($plugin_path.DIRECTORY_SEPARATOR)))
+				$plugin_path = PLUGINPATH.$plugin;
+				if ( is_dir(realpath($plugin_path.DIRECTORY_SEPARATOR)))
 				{
-					// Plugin no longer exists. Delete.
-					$plugin->delete();
-					continue;
+                    $plugin_entries[$plugin] = $plugin_path;
 				}
-
-				$plugin_entries[$plugin->plugin_path] = $plugin_path;
 			}
 			
 			Cache::instance()->set('site_plugin_entries', $plugin_entries, 86400 + rand(0,86400));
@@ -74,18 +68,11 @@ class Swiftriver_Plugins {
 			{
 				if ( ! is_dir(realpath(PLUGINPATH.$plugin_path.DIRECTORY_SEPARATOR)))
 				{
-					// Plugin no longer exists. Remove from DB.
-					$plugin = ORM::factory("Plugin")
-						->where("plugin_path", "=", $plugin_path)
-						->find();
-					$plugin->delete();
-
 					// Log this event
-					Kohana::$log->add(Log::INFO, "Plugin directory for ':plugin' not found. Deleting from DB",
+					Kohana::$log->add(Log::ERROR, "Plugin directory for ':plugin' not found. Deleting from DB",
 						array(':plugin' => $plugin_path));
 					
 					unset($plugin_entries[$plugin_path]);
-					continue;
 				}
 			}
 
@@ -192,15 +179,13 @@ class Swiftriver_Plugins {
 		// Load the plugin configs and fetch only those that 
 		// have the channel property set to TRUE
 		$config_plugins = Kohana::$config->load('plugin');
-		$active_plugins = ORM::factory('Plugin')
-		                     ->where('plugin_enabled', '=', '1')
-		                     ->find_all();
+		$active_plugins = Kohana::$config->load('site')->get('plugins');
 		foreach ($active_plugins as $active_plugin)
 		{
-			if ( ! isset($config_plugins[$active_plugin->plugin_path]))
+			if ( ! isset($config_plugins[$active_plugin]))
 				continue;
-
-			$plugin_config = $config_plugins[$active_plugin->plugin_path];
+            
+			$plugin_config = $config_plugins[$active_plugin];
 			if (isset($plugin_config['channel']) AND $plugin_config['channel'] == TRUE )
 			{
 				$channel_config = self::_validate_channel_plugin_config($plugin_config);
@@ -209,7 +194,7 @@ class Swiftriver_Plugins {
 
 				self::$channels[] = array(
 					'name' => $plugin_config['name'],
-					'channel' => $active_plugin->plugin_path,
+					'channel' => $active_plugin,
 					'options' => $channel_config
 				);
 			}

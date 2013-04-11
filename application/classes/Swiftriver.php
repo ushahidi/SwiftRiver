@@ -53,7 +53,7 @@ class Swiftriver {
 		Swiftriver_Plugins::load();
 
 		// Add the current default theme to the list of modules
-		$theme = Model_Setting::get_setting('site_theme');
+		$theme = Swiftriver::get_setting('site_theme');
 
 		if (isset($theme) AND $theme != "default")
 		{
@@ -75,7 +75,7 @@ class Swiftriver {
 		Cookie::$expiration = $cookie_config->get('expiration') OR 0;
 
 		// Set the default site locale
-		I18n::$lang = Model_Setting::get_setting('site_locale');
+		I18n::$lang = Swiftriver::get_setting('site_locale');
 	}
 	
 	/**
@@ -188,6 +188,46 @@ class Swiftriver {
 				}
 			}
 		}
+	}
+    
+	/**
+	 * Get a single setting value
+	 *
+	 * @param string $key
+	 * @return string Value for the key
+	 */
+	public static function get_setting($key)
+	{
+		$value = NULL;
+		$cache_key = 'site_setting_'.$key;
+		if ( ! ($value = Cache::instance()->get($cache_key, FALSE)))
+		{
+			$value = Kohana::$config->load('site')->get($key);
+			
+			Cache::instance()->set($cache_key, $value, 86400 + rand(0,86400));
+		}
+			
+		return $value;
+	}
+
+	/**
+	 * Given an array of keys, returns an an array of the key-value pairs from the db
+	 *
+	 * @param array $setting_keys Array of keys to be fetched
+	 * @return Array hash of the key value pairs from the db
+	 */
+	public static function get_settings($setting_keys)
+	{
+		if (empty($setting_keys) OR ! is_array($setting_keys))
+			return NULL;
+        
+        $settings_array = array();
+		foreach ($setting_keys as $key)
+		{
+			$settings_array[$key] = get_setting($key);
+		}
+		
+		return $settings_array;
 	}
 
 }

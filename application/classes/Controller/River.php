@@ -196,7 +196,7 @@ class Controller_River extends Controller_Drop_Base {
 
 			$expiry_notice = View::factory('pages/river/expiry_notice');
 			$expiry_notice->river_base_url = $this->river_base_url."/extend";
-			$expiry_notice->extension_period = Model_Setting::get_setting('default_river_lifetime');
+			$expiry_notice->extension_period = Swiftriver::get_setting('default_river_lifetime');
 			$this->droplets_view->river_notice = $expiry_notice;
 
 		}
@@ -219,7 +219,7 @@ class Controller_River extends Controller_Drop_Base {
 		if ($this->owner AND ! $this->river['expired'] AND FALSE)
 		{
 		 	$days_remaining = $this->river->get_days_to_expiry();
-			$notice_period = Model_Setting::get_setting('default_river_lifetime');
+			$notice_period = Swiftriver::get_setting('default_river_lifetime');
 			
 			if (($days_remaining <= $notice_period) AND $this->river->is_notified())
 			{

@@ -87,12 +87,14 @@
 
 			<div id="stream" class="col_9">
 				<!--// IF: Channels, but no drops //
-				<article class="stream-message">
+				<article class="stream-message no-drops">
 					<h1>No drops, yet.</h1>
-					<p>SwiftRiver is trying to add drops from your channels. It's best to either wait, <a href="/markup/_modals/settings-channels.php" class="modal-trigger">adjust your channels' parameters</a> or change the filters you've applied to your river.</p>
+					<p>Your river is currently dry. But SwiftRiver is trying to add drops from your channels. It's best to either wait, <a href="/markup/_modals/settings-channels.php" class="modal-trigger">adjust your channels' parameters</a> or change the filters you've applied to your river.</p>
+					<div id="stream-illustration"></div>
 				</article>
 				// ENDIF //-->
 
+				<!--// ELSE //-->
 				<article class="drop base">
 					<h1><a href="/markup/drop/" class="zoom-trigger">This are terrorists in the making and should be crashed immediately</a></h1>
 					<div class="drop-actions cf">
@@ -406,13 +408,14 @@
 						</div>
 					</section>
 				</article>
+				<!--// END:ELSE //-->
 			</div>
 
-			<!--// IF: Loading more drops //-->
+			<!--// IF: Loading more drops //
 			<article class="stream-message waiting col_9">
 				<p><em>Loading more drops</em></p>
 			</article>
-			<!--// END STREAM MESSAGE -->
+			// END:IF -->
 		</div>
 	</div>
 

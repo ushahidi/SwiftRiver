@@ -49,37 +49,34 @@
 			</section>
 
 			<div class="col_9">
+				<!--// IF: No activity //
+				<article class="stream-message cf">
+					<h1>This is where you'll see the latest from people, rivers and buckets you follow.</h1>
+
+					<div class="callout">
+						<span class="icon-river"></span>
+						<h2>Get real-time information flowing.</h2>
+						<p>Rivers are real-time streams of information from the channels and topics that matter to you.</p>
+						<a href="/markup/_modals/create.php" class="button-primary modal-trigger">Create a river</a>
+					</div>
+
+					<div class="callout">
+						<span class="icon-bucket"></span>
+						<h2>Save your hand-picked information.</h2>
+						<p>Buckets are containers for the information you want to save, organize and gain insight from.</p>
+						<a href="/markup/_modals/create.php" class="button-primary modal-trigger">Create a bucket</a>
+					</div>
+
+					<div class="callout">
+						<span class="icon-search"></span>
+						<h2>Find information and people of interest.</h2>
+						<p>Search rivers, buckets and people that are wading through real-time information.</p>
+						<a href="/markup/_modals/search.php" class="button-primary modal-trigger">Search</a>
+					</div>
+				</article>
+				// ENDIF //-->
+
 				<div id="news-feed" class="container base">
-					<!--// IF: No activity //
-					<article class="stream-message cf">
-						<h1>This is where you'll see the latest from people, rivers and buckets you follow.</h1>
-
-						<div class="search-box">
-							<h2>Find people, rivers or buckets</h2>
-							<input type="text" placeholder="e.g. Detroit Tigers" />
-							<a href="#" class="button-submit"><span class="icon-search"></span></a>
-						</div>
-
-						<div>
-							<h2>Popular rivers</h2>
-							<ul class="view-table">
-								<li><a href="/markup/river">Ushahidi at SXSW</a></li>
-								<li><a href="#">River 2</a></li>
-							</ul>
-
-							<h2>Popular people</h2>
-							<ul class="view-table">
-								<li class="user cf">
-									<a href="#">
-									<img src="https://si0.twimg.com/profile_images/2525445853/TweetLandPhoto_normal.jpg" class="avatar">
-									<span class="label">Juliana Rotich</span>
-									</a>
-								</li>
-							</ul>
-						</div>
-					</article>
-					// ENDIF //-->
-
 					<!--// IF: No results //
 					<article class="news-feed-item cf">
 						<div class="item-summary">
@@ -87,6 +84,8 @@
 						</div>
 					</article>
 					// ENDIF //-->
+
+					<!--// ELSE //-->
 
 					<article class="news-feed-item cf">
 						<div class="item-type">
@@ -146,6 +145,7 @@
 							</div>
 						</div>
 					</article>
+					<!--// END:ELSE //-->
 				</div>
 			</div>
 		</div>

@@ -27,7 +27,7 @@
 		<?php if ($anonymous): ?>
 			<h3 class="push-up"><span><?php echo __('In the mean time...') ?></h3>
 			
-			<?php if ((bool) Model_Setting::get_setting('public_registration_enabled')): ?>
+			<?php if ((bool) Swiftriver::get_setting('public_registration_enabled')): ?>
 			<div class="panel-left">
 				<div class="login" id="nothing_to_display_login_form">
 					<div class="loading center"></div>

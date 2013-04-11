@@ -47,7 +47,7 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
 		$this->template->content->active = 'login';
-		$this->template->content->public_registration_enabled = Model_Setting::get_setting('public_registration_enabled');
+		$this->template->content->public_registration_enabled = Swiftriver::get_setting('public_registration_enabled');
 		
 		if ($this->user)
 		{
@@ -241,7 +241,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$mail_body = View::factory('emails/text/createuser')
 								 ->bind('secret_url', $secret_url);
 					$mail_subject = __(':sitename: Please confirm your email address', 
-						array(':sitename' => Model_Setting::get_setting('site_name')));
+						array(':sitename' => Swiftriver::get_setting('site_name')));
 						
 					$secret_url = URL::site('login/create/'.urlencode($email).'/'.$token, TRUE, TRUE);
 					Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
@@ -344,7 +344,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$mail_body = View::factory('emails/text/resetpassword')
 								 ->bind('secret_url', $secret_url);		            
 					$secret_url = URL::site('login/reset/'.urlencode($email).'/'.$token, TRUE, TRUE);
-					$mail_subject = __(':sitename: Password Reset', array(':sitename' => Model_Setting::get_setting('site_name')));
+					$mail_subject = __(':sitename: Password Reset', array(':sitename' => Swiftriver::get_setting('site_name')));
 					Swiftriver_Mail::send($email, $mail_subject, $mail_body);
 					
 					

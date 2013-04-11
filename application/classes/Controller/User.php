@@ -363,12 +363,7 @@ class Controller_User extends Controller_Swiftriver {
 				$last_id = array_key_exists('last_id', $query_params)  ? intval($this->request->query('last_id')) : NULL;
 				$since_id = array_key_exists('since_id', $query_params) ? intval($this->request->query('since_id')) : NULL;
 				
-				$activity_list = Model_User_Action::get_activity_stream(
-											$this->visited_account->user->id, 
-											$this->user->id, 
-											! $this->owner,
-											$last_id,
-											$since_id);
+				$activity_list = array();
 											
 				if (empty($activity_list))
 					throw new HTTP_Exception_404();
@@ -611,7 +606,7 @@ class Controller_User extends Controller_Swiftriver {
 
 	public function action_invite()
 	{
-		if ( ! Model_Setting::get_setting('general_invites_enabled') OR ! $this->owner)
+		if ( ! Swiftriver::get_setting('general_invites_enabled') OR ! $this->owner)
 			$this->redirect($this->dashboard_url, 302);
 
 		// Set the current page
@@ -695,7 +690,7 @@ class Controller_User extends Controller_Swiftriver {
 		);
 
 		// Invite
-		if (Model_Setting::get_setting('general_invites_enabled') AND
+		if (Swiftriver::get_setting('general_invites_enabled') AND
 			$user->invites > 0)
 		{
 			$nav[] = array(

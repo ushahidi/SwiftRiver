@@ -99,7 +99,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 				);
 
 				// Update the settings
-				Model_Setting::update_settings($settings);
+				Swiftriver::update_settings($settings);
 				
 				$this->settings_content->set('messages', 
 					array(__('The site settings have been updated.')));
@@ -110,7 +110,7 @@ class Controller_Settings_Main extends Controller_Swiftriver {
 			}
 		}
 		
-		$this->settings_content->settings = Model_Setting::get_settings(array_keys($settings));
+		$this->settings_content->settings = Swiftriver::get_settings(array_keys($settings));
 	}
 
 }

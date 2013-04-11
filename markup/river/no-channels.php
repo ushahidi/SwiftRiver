@@ -24,13 +24,13 @@
 				<a href="#" class="button-follow selected button-primary"><i class="icon-checkmark"></i>Following</a>
 				! ELSE
 				<a href="#" class="button-follow button-primary"><i class="icon-checkmark"></i>Follow</a>
-				-->				
+				-->
 			</div>
 		</div>
 	</hgroup>
-	
+
 	<div id="content" class="river drops cf">
-		<div class="center">		
+		<div class="center">
 
 			<section id="filters" class="col_3">
 				<ul class="filters-primary">
@@ -40,14 +40,15 @@
 					<li><a href="#">Map</a></li>
 				</ul>
 			</section>
-			
+
 			<div id="stream" class="col_9">
 				<!--// IF: No channels //-->
-				<article class="stream-message">
+				<article class="stream-message no-drops">
 					<h1>Let's add at least one channel.</h1>
-					<p>Channels (like Twitter and RSS) are what feed your river information. You'll need at least one to see drops in your river.</p>
+					<p>Channels (like Twitter and RSS) are what feed your river information. You'll need at least one to see drops in your river. Otherwise, it'll remain dry.</p>
 					<a href="/markup/_modals/settings-channels.php#add-channel" class="button-primary modal-trigger"><i class="icon-plus"></i>Add channels</a>
-				</article>			
+					<div id="stream-illustration"></div>
+				</article>
 				<!--// ENDIF -->
 			</div>
 		</div>

@@ -63,27 +63,6 @@
 			</section>
 
 			<div class="col_9">
-
-				<!--// IF: No content //
-				<article class="stream-message cf">
-					<h1>This is where you'll see your rivers, buckets and custom forms.</h1>
-					<div class="stream-message-summary">
-						<h2><i class="icon-river"></i>Rivers</h2>
-						<p>Rivers are a real-time look at the information flowing from the channels you choose. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first river</a></p>
-					</div>
-
-					<div class="stream-message-summary">
-						<h2><i class="icon-bucket"></i>Buckets</h2>
-						<p>Buckets store the information you hand-pick from rivers. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first bucket</a></p>
-					</div>
-
-					<div class="stream-message-summary">
-						<h2><i class="icon-form"></i>Custom forms</h2>
-						<p>Custom forms are additional data fields that only you see attached to each drop. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first custom form</a></p>
-					</div>
-				</article>
-				// ENDIF //-->
-
 				<div class="container base">
 					<div class="container-tabs">
 						<ul class="container-tabs-menu cf">
@@ -105,6 +84,29 @@
 							<span class="button create-new"><a href="/markup/_modals/create.php" class="button-primary modal-trigger"><i class="icon-plus"></i>Create new</a></span>
 						</div>
 						<div class="container-tabs-window">
+							<!--// IF: No content //
+							<article class="stream-message cf">
+								<h1>This is where you'll see your rivers, buckets and custom forms.</h1>
+								<div class="callout">
+									<span class="icon-river"></span>
+									<h2>Rivers</h2>
+									<p>Rivers are a real-time look at the information flowing from the channels you choose. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first river</a></p>
+								</div>
+
+								<div class="callout">
+									<span class="icon-bucket"></span>
+									<h2>Buckets</h2>
+									<p>Buckets store the information you hand-pick from rivers. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first bucket</a></p>
+								</div>
+
+								<div class="callout">
+									<span class="icon-form"></span>
+									<h2>Custom forms</h2>
+									<p>Custom forms are additional data fields that only you see attached to each drop. <a href="/markup/_modals/create.php" class="modal-trigger">Create your first custom form</a></p>
+								</div>
+							</article>
+							// ENDIF //-->
+
 							<table>
 								<tbody>
 									<!--// IF: No results //
@@ -117,6 +119,8 @@
 										<td class="item-categories"></td>
 									</tr>
 									//-->
+
+									<!--// ELSE //-->
 									<tr>
 										<td class="select-toggle"><input type="checkbox" /></td>
 										<td class="item-type">
@@ -194,6 +198,7 @@
 										<td class="item-categories">
 										</td>
 									</tr>
+									<!--// END:ELSE //-->
 								</tbody>
 							</table>
 						</div>

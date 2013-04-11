@@ -26,7 +26,7 @@ class Swiftriver_Mail {
 	public static function send($email, $subject, $mail_body, $mail_body_html = NULL, $from = NULL, $extra_headers = array())
 	{
 		$site_email = Swiftriver_Mail::get_default_address();
-		$default_from = '"'.Model_Setting::get_setting('site_name').'" <'.$site_email.'>';
+		$default_from = '"'.Swiftriver::get_setting('site_name').'" <'.$site_email.'>';
 		$from_address = isset($from) ? $from : $default_from;
 		
 		// Send multipart message
@@ -69,7 +69,7 @@ class Swiftriver_Mail {
 	 */
 	public static function get_email_domain()
 	{
-		return Model_Setting::get_setting('email_domain');
+		return Swiftriver::get_setting('email_domain');
 	}
 	
 	/**
@@ -79,7 +79,7 @@ class Swiftriver_Mail {
 	 */
 	public static function get_comments_email_domain()
 	{
-		return Model_Setting::get_setting('comments_email_domain');
+		return Swiftriver::get_setting('comments_email_domain');
 	}
 	
 	/**
