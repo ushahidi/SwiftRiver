@@ -1135,6 +1135,12 @@ header.toolbar ul.user-menu > li.user a:hover {
    font-size: 0.9em;
 }
 
+.stream-message img.illustration {
+   width: 100%;
+   max-width: 576px;
+   margin-bottom: 1em;
+}
+
 .stream-message #stream-illustration {
    width: 100%;
    height: 150px;
