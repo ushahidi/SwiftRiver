@@ -86,9 +86,11 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template->content->anonymous = $this->anonymous;
 		$this->template->content->bucket = $this->bucket;
 		$this->template->content->user = $this->user;
+
+		$filters = $this->get_filters();
 			
 		// The maximum droplet id for pagination and polling
-		$droplet_list = $this->bucket_service->get_drops($this->bucket['id'], NULL, $this->photos);
+		$droplet_list = $this->bucket_service->get_drops($this->bucket['id'], NULL, $this->photos, $filters);
 
 		$drop_count = count($droplet_list);
 		$photos_drop_count = ($this->photos) ? $drop_count : 0;
@@ -107,7 +109,19 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		if (count($droplet_list) > 0)
 		{
-			$droplet_js->set('max_droplet_id', $droplet_list[0]['id']);
+			$drop_ids = array();
+			foreach($droplet_list as $droplet)
+			{
+				$drop_ids[] = $droplet['id'];
+			}
+			// Sort
+			sort($drop_ids, SORT_NUMERIC);
+			$droplet_js->set('max_droplet_id', end($drop_ids));
+		}
+		
+		if ( ! empty($filters))
+		{
+			$droplet_js->set('filters', json_encode($filters));
 		}
 
 		// Generate the List HTML
@@ -116,6 +130,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
+
 		$droplets_view->asset_templates = View::factory('template/assets');
 
 		// Links to bucket menu items
@@ -180,6 +195,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$this->template = "";
 		$this->auto_render = FALSE;
 		
+		$this->response->headers('Content-Type', 'application/json;charset=UTF-8');
+
 		switch ($this->request->method())
 		{
 			case "GET":
@@ -190,9 +207,10 @@ class Controller_Bucket extends Controller_Drop_Base {
 				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
 				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
 				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
+				$filters = $this->get_filters();
 
 				// Get the drops
-				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos, $page);
+				$droplets_array = $this->bucket_service->get_drops($this->bucket['id'], $since_id, (bool) $photos, $page, $filters);
 				
 				echo json_encode($droplets_array);
 			break;

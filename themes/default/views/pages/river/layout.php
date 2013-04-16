@@ -61,19 +61,12 @@
 						</div>
 					</div>
 							
-					<div class="filters-type">
-						<ul>
-							<li class="active">
-								<a href="#">
-									<span class="remove icon-cancel"></span>
-									<i class="icon-calendar"></i>
-									November 1, 2012 to present
-								</a>
-							</li>
+					<div class="filters-type" id="drop-search-filter">
+						<ul id="search-filter-list">
 						</ul>
-						<a href="/markup/_modals/add-search-filter.php" class="button-add modal-trigger">
+						<a href="#" class="button-add modal-trigger">
 							<i class="icon-search"></i>
-							Add search filter
+							<?php echo __("Add search filter"); ?>
 						</a>
 					</div>
 

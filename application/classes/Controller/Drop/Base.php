@@ -107,4 +107,48 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 			Swiftriver_Mail::send($recipient, $subject, $mail_body);
 		}
 	}
+	
+	/**
+	 * Return filter parameters as a hash array
+	 * @return array
+	 */
+	protected function get_filters()
+	{
+		$filters = array();
+		$parameters = array(
+			'keywords' => 'list',
+			'channels' => 'list', 
+			'channel_ids' => 'list', 
+			'start_date' => 'string', 
+			'end_date' => 'string', 
+			'state' => 'string'
+		);
+		
+		foreach ($parameters as $parameter => $type)
+		{
+			$values = $this->request->query($parameter);
+			if ($values)
+			{
+				if ($type == 'list')
+				{
+					$filters[$parameter] = array();
+					// Parameters are array strings that are comma delimited
+					foreach (explode(',', urldecode($values)) as $value)
+					{
+						$value = trim($value);
+						if (strlen($value) > 0)
+						{
+							$filters[$parameter][] = $value;
+						}
+					}
+				}
+				else
+				{
+					$filters[$parameter] = $values;
+				}
+			}
+		}
+		
+		return $filters;
+	}
 }

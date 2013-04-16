@@ -45,7 +45,7 @@ $(document).ready(function() {
 	Dialog.prototype.hide = function() {
 		// Do nothing if an attempt is made to close a zoom window
 		// when a modal window is open
-		if (!this.modal && $('body').hasClass('has_modal')) {			
+		if (!this.modal && $('body').hasClass('has_modal')) {
 			return;
 		} 
 		

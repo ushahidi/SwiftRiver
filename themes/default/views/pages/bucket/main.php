@@ -53,7 +53,9 @@
 						</li>
 					</ul>
 					
-					<div class="filters-type">
+					<div class="filters-type" id="drop-search-filter">
+						<ul id="search-filter-list">
+						</ul>
 						<a href="#" class="button-add modal-trigger">
 							<i class="icon-search"></i>
 							<?php echo __("Add search filter"); ?>

@@ -33,7 +33,7 @@ class Service_Bucket extends Service_Base {
 	 * @param  bool  photos
 	 * @return array
 	 */
-	public function get_drops($bucket_id, $since_id = 0, $photos = FALSE, $page = 1)
+	public function get_drops($bucket_id, $since_id = 0, $photos = FALSE, $page = 1, $filters = array())
 	{
 		$parameters = array('page' => $page);
 		
@@ -46,6 +46,32 @@ class Service_Bucket extends Service_Base {
 		if ($photos)
 		{
 			$parameters['photos'] = TRUE;
+		}
+
+		// Filters
+		if ( ! empty($filters))
+		{
+			$filter_keys = array(
+				'keywords' => 'list',
+				'channels' => 'list',
+				'channel_ids' => 'list',
+				'state' => 'string'
+			);
+
+			foreach ($filter_keys as $key => $type) 
+			{
+				if (isset($filters[$key])) 
+				{
+					$value = $filters[$key];
+					if ($type === 'list')
+					{
+						$value = implode(',', $value);
+					}
+
+					$parameters[$key] = $value;
+
+				}
+			}
 		}
 
 		// Fetch the drops

@@ -155,7 +155,7 @@ class Controller_River extends Controller_Drop_Base {
 		$max_droplet_id = $this->river['max_drop_id'];
 
 		// River filters
-		$filters = $this->_get_filters();
+		$filters = $this->get_filters();
 
 		//Get Droplets
 		$droplets_array = $this->river_service->get_drops($river_id, 1, 20, NULL, $max_droplet_id, (bool) $this->photos, $filters);
@@ -262,31 +262,24 @@ class Controller_River extends Controller_Drop_Base {
 		$this->template = "";
 		$this->auto_render = FALSE;
 
+		$this->response->headers('Content-Type', 'application/json;charset=UTF-8');
+
 		switch ($this->request->method())
 		{
 			case "GET":
 				$drop_id = $this->request->param('id');
 				$page = 1;
-				if ($drop_id)
-				{
-					// Specific drop requested
-					$droplets_array = Model_River::get_droplets($this->user->id, $this->river->id, $drop_id);
-					$droplets = array_pop($droplets_array);
-				}
-				else
-				{
-					//Use page parameter or default to page 1
-					$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
-					$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
-					$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
-					$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
-					$filters = $this->_get_filters();
+				//Use page parameter or default to page 1
+				$page = $this->request->query('page') ? intval($this->request->query('page')) : 1;
+				$max_id = $this->request->query('max_id') ? intval($this->request->query('max_id')) : PHP_INT_MAX;
+				$since_id = $this->request->query('since_id') ? intval($this->request->query('since_id')) : 0;
+				$photos = $this->request->query('photos') ? intval($this->request->query('photos')) : 0;
+				$filters = $this->get_filters();
 
-					$droplets = $this->river_service->get_drops($this->river['id'], $page, 20, $since_id, $max_id, (bool) $photos, $filters);
-					if ( ! $since_id)
-					{
-						$droplets = array_reverse($droplets);
-					}
+				$droplets = $this->river_service->get_drops($this->river['id'], $page, 20, $since_id, $max_id, (bool) $photos, $filters);
+				if ( ! $since_id)
+				{
+					$droplets = array_reverse($droplets);
 				}
 				
 
@@ -446,46 +439,6 @@ class Controller_River extends Controller_Drop_Base {
 		}
 	}
 	
-	
-	/**
-	 * Return filter parameters as a hash array
-	 */
-	private function _get_filters()
-	{
-		$filters = array();
-		$parameters = array(
-			'keywords' => 'list', 
-			'places' => 'list', 
-			'channels' => 'list', 
-			'channel_ids' => 'list', 
-			'start_date' => 'string', 
-			'end_date' => 'string', 
-			'state' => 'string'
-		);
-		
-		foreach ($parameters as $parameter => $type)
-		{
-			$values = $this->request->query($parameter);
-			if ($values)
-			{
-				if ($type == 'list')
-				{
-					$filters[$parameter] = array();
-					// Parameters are array strings that are comma delimited
-					foreach (explode(',', urldecode($values)) as $value)
-					{
-						$filters[$parameter][] = strtolower(trim($value));
-					}
-				}
-				else
-				{
-					$filters[$parameter] = $values;
-				}
-			}
-		}
-		
-		return $filters;
-	}
 	
 	/**
 	 * @return	void

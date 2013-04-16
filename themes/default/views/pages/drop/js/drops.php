@@ -13,10 +13,13 @@
 				var query = "";
 				var data = this.toJSON();
 				for (filter in data) {
+					if (!data[filter] || data[filter] == null || !data[filter].length)
+						continue;
+					
 					if (query.length) {
 						query += "&";
 					}
-					query += filter + "=" + data[filter];
+					query += filter + "=" + encodeURIComponent(data[filter]);
 				}
 				return query;
 			},
@@ -41,8 +44,8 @@
 		var dropsList = window.dropsList = new Drops.DropsList;
 		var newDropsList = window.newDropsList = new Drops.DropsList;
 		
-		dropsList.url = newDropsList.url = filters.getDropListUrl(true);
-
+		dropsList.url = newDropsList.url = filters.getDropListUrl(false);
+		
 		// Load content while scrolling - Infinite Scrolling
 		var pageNo = 1;
 		var maxId = 0;
@@ -61,17 +64,13 @@
 				// Advance page and fetch it
 				isPageFetching = true;
 				pageNo += 1;
-
+				
 				// Show a loading message after a delay if fetch takes long.
 				var t = setTimeout(function() { $(".stream-message.waiting").fadeIn("slow"); }, 500);
 
 				dropsList.fetch({
 					url: filters.getDropListUrl(true),
-				    data: {
-				        page: pageNo,
-				        max_id: maxId,
-				        photos: photos
-				    }, 
+				    data: {page: pageNo, max_id: maxId, photos: photos}, 
 				    update: true,
 					remove: false,
 				    success: function(collection, response, options) {
@@ -105,7 +104,9 @@
 		setInterval(function() {
 			if (!isSyncing) {
 				isSyncing = true;
-				newDropsList.fetch({data: {since_id: sinceId, photos: photos}, 
+				newDropsList.fetch({
+					url: filters.getDropListUrl(true),
+					data: {since_id: sinceId, photos: photos}, 
 				    update: true,
 					remove: false,
 				    complete: function () {
@@ -286,6 +287,7 @@
 			
 			filterUpdated: function(filter) {
 				var router = this;
+				page = 0;
 				dropsList.fetch({
 					url: filters.getDropListUrl(true),
 					data: {photos: photos},
@@ -307,6 +309,11 @@
 		new Drops.DropsStateFilterView({
 			dropFilters: filters,
 			dropsList: dropsList
+		});
+		
+		// Drop search filter
+		new Drops.DropSearchFiltersView({
+			dropFilters: filters
 		});
 
 		// Onclick Handlers for Drops/List

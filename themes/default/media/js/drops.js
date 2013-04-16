@@ -84,7 +84,21 @@
 	// Link collection
 	var Places = Backbone.Collection.extend({
 		model: Place
-	})		
+	})
+	
+	// SearchFilter model
+	var SearchFilter = Backbone.Model.extend({
+		defaults: {
+			"keywords": null,
+			"date_from": null,
+			"date_to": null,
+		},
+	});
+	
+	// SearchFilter collection
+	var SearchFilters = Backbone.Collection.extend({
+		model: SearchFilter
+	})
 
 
 	// Droplet model
@@ -1830,5 +1844,289 @@
 			return false;
 		}
 	});
+
+	// Search Filter modal
+	var SearchFilterModalView = Backbone.View.extend({
+		
+		tagName: "article",
+		
+		className: "modal modal-view",
+		
+		events:{
+			"click .modal-toolbar a.button-submit": "addSearchFilters"
+		},
+		
+		initialize: function(options){
+			this.template = _.template($("#search-filter-modal-template").html());
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		addSearchFilters: function() {
+			var searchFilters = {
+				keywords: this.$("input[name=keywords]").val(),
+				date_from: this.$("input[name=date_from]").val(),
+				date_to: this.$("input[name=date_to]").val(),
+			};
+			
+			var validCount = 0;
+			for (key in searchFilters) {
+				if (searchFilters[key] != null && $.trim(searchFilters[key]).length > 0) {
+					validCount++;
+				} else {
+					delete searchFilters[key];
+				}
+			}
+			
+			if (validCount === 0) {
+				showFailureMessage('You have not specified a search filter');
+				return;
+			}
+		
+			// Deactivate any active search filters
+			// this.options.filtersView.deactivateFilters();
+			
+			// Check for keywords search filter
+			if (searchFilters.keywords) {
+				var searchFilterModel = new SearchFilter({
+					keywords: searchFilters.keywords
+				});
+				
+				this.options.filtersView.addSearchFilter(searchFilterModel);
+			};
+			
+			// Check for date search filter
+			if (searchFilters.date_from || searchFilters.date_to) {
+				var searchFilterModel = new SearchFilter();
+				if (searchFilters.date_from && searchFilters.date_to) {
+					searchFilterModel.set({
+						date_from: searchFilters.date_from,
+						date_to: searchFilters.date_to
+					});
+				}
+			
+				if (searchFilters.date_from && !searchFilters.date_to) {
+					searchFiltersModel.set({
+						date_from: searchFilters.date_from
+					});
+				}
+			
+				if (searchFilters.date_to && !searchFilters.date_from) {
+					searchFiltersModel.set({
+						date_to: searchFilters.date_to
+					});
+				}
+				
+				this.options.filtersView.addSearchFilter(searchFilterModel);
+			}
+			
+			this.options.filtersView.updateDropFilters();
+
+			modalHide();
+			return false;
+		}
+	});
 	
+	// View for individual search filters
+	var SearchFilterItemView = Backbone.View.extend({
+		tagName: "li",
+		
+		className: "active",
+
+		events: {
+			"click a span.remove": "removeSearchFilter",
+			"click a": "toggleSearchFilter",
+		},
+		
+		initialize: function(options) {
+			this.template = _.template($("#search-filter-item-template").html());
+			
+			//
+			// Set the labels
+			// 
+
+			// Keywords
+			if (this.model.get('keywords')) {
+				this.model.set({
+					iconClass: "icon-pencil",
+					label: this.model.get('keywords')
+				});
+			}
+
+			// Date from and date to
+			if (this.model.get('date_from') && this.model.get('date_to')) {
+				this.model.set({
+					iconClass: "icon-calendar",
+					label: this.model.get('date_from') + " to " + this.model.get('date_to'),
+					dateRange: true,
+				});
+			}
+
+			// Date from only
+			if (this.model.get('date_from') && !this.model.get('date_to')) {
+				this.model.set({
+					iconClass: "icon-calendar",
+					label: this.model.get('date_from') + " to present"
+				});
+			}
+			
+			// Date to only
+			if (!this.model.get('date_from') && this.model.get('date_to')) {
+				this.model.set({
+					iconClass: "icon-calendar",
+					label: "Until " + this.model.get('date_to')
+				});
+				
+			}
+		},
+		
+		removeSearchFilter: function() {
+			this.options.filtersView.removeSearchFilter(this);
+			this.$el.fadeOut('slow').remove();
+			return false;
+		},
+		
+		toggleSearchFilter: function() {
+			if (this.$el.hasClass("active")) {
+				this.options.filtersView.removeSearchFilter(this);
+				this.$el.removeClass("active");
+			} else {
+				this.options.filtersView.activateSearchFilter(this);
+				this.$el.addClass("active");
+			}
+
+			return false;
+		},
+
+		render: function() {
+			this.$el.html(this.template(this.model.toJSON()));
+			return this;
+		}
+	})
+
+	// Search filters view
+	var DropSearchFiltersView = Drops.DropSearchFiltersView = Backbone.View.extend({
+		
+		el: "#drop-search-filter",
+		
+		events: {
+			"click a.button-add": "showSearchFilterModal"
+		},
+		
+		initialize: function(options) {
+			this.render();
+			this.collection = new SearchFilters();
+
+			// Hashtable of active search filters
+			this.activeSearchFilters = {};
+			
+			if (options.dropFilters.get('keywords')) {
+				this.collection.add(new SearchFilter({keywords: options.dropFilters.get('keywords')}));
+			}
+			
+			if (options.dropFilters.get('date_from') && options.dropFilters.get('date_to')) {
+				this.collection.add(new SearchFilter({
+					date_from: options.dropFilters.get('date_from'),
+					date_to: options.dropFilters.get('date_to')
+				}));
+			}
+			
+			if (options.dropFilters.get('date_from') && !options.dropFilters.get('date_to')) {
+				this.collection.add(new SearchFilter({
+					date_from: options.dropFilters.get('date_from')
+				}));
+			}
+
+			if (!options.dropFilters.get('date_from') && options.dropFilters.get('date_to')) {
+				this.collection.add(new SearchFilter({
+					date_to: options.dropFilters.get('date_to')
+				}));
+			}
+
+			this.collection.each(this.addSearchFilter, this);
+			if (_.size(this.collection)) {
+				this.updateDropFilters();
+			}
+		},
+		
+		showSearchFilterModal: function() {
+			var view = new SearchFilterModalView({filtersView: this});
+			modalShow(view.render().el);
+			return false;
+		},
+		
+		addSearchFilter: function(searchFilter) {
+			var view = new SearchFilterItemView({model: searchFilter, filtersView: this});
+			this.$("#search-filter-list").append(view.render().el);
+			
+			// Store the search model against its view
+			this.checkActiveDateFilter(view);
+			this.activeSearchFilters[view.cid] = view;
+		},
+		
+		activateSearchFilter: function(view) {
+			this.checkActiveDateFilter(view);
+			this.activeSearchFilters[view.cid] = view;
+			this.updateDropFilters();
+		},
+		
+		removeSearchFilter: function(view) {
+			delete this.activeSearchFilters[view.cid];
+			this.updateDropFilters();
+		},
+		
+		// Checks for active date filters
+		checkActiveDateFilter: function(view) {
+			var model = view.model.toJSON();
+			if (model.date_from || model.date_to) {
+
+				for (cid in this.activeSearchFilters) {
+					var filterView = this.activeSearchFilters[cid],
+						filterModel = filterView.model.toJSON();
+
+					if (filterModel.dateRange) {
+						filterView.$el.removeClass("active");
+					} else {
+						if (filterModel.date_from && model.date_from) {
+							filterView.$el.removeClass("active");
+						}
+						
+						if (filterModel.date_to && model.date_to) {
+							filterView.$el.removeClass("active");
+						}
+					}
+					
+				}
+			}
+		},
+		
+		updateDropFilters: function() {
+			var searchFilters = {keywords: [], date_from: null, date_to: null};
+			for (cid in this.activeSearchFilters) {
+				var model = this.activeSearchFilters[cid].model.toJSON();
+				if (model.keywords) {
+					if (!searchFilters.keywords) {
+						searchFilters.keywords = [];
+					}
+					searchFilters.keywords.push(model.keywords);
+				}
+				
+				if (model.date_from) searchFilters.date_from = model.date_from;
+				if (model.date_to) searchFilters.date_to = model.date_to;
+			}
+			this.options.dropFilters.set(searchFilters);
+		},
+		
+		deactivateFilters: function() {
+			this.$("#search-filter-list li").removeClass("active");
+		},
+
+		render: function() {
+			return this;
+		}
+	});
+
 }(this));

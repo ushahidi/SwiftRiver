@@ -504,7 +504,7 @@
 
 		<div class="modal-toolbar">
 			<a href="#" class="button-submit button-primary"><span><?php echo __("Save"); ?></span></a>
-		</div>					
+		</div>
 	</div>
 </script>
 
@@ -514,6 +514,63 @@
 		<a href="#" class="modal-trigger"><span class="icon-pencil"></span></a>
 	</span>
 	<h2><%= name %></h2>
+</script>
+
+<script type="text/template" id="search-filter-modal-template">
+	<div id="modal-viewport">
+		<div id="modal-primary" class="modal-view">
+			<div class="modal-title cf">
+				<a href="#" class="modal-close button-white">
+					<i class="icon-cancel"></i><?php echo __("Close"); ?>
+					</a>
+				<h1><a href="#group-name" class="modal-transition"><?php echo __("Add search filter"); ?></a></h1>
+			</div>
+		
+			<div class="modal-body modal-tabs-container">
+				<div class="base">
+					<ul class="modal-tabs-menu">
+						<li class="active"><a href="#add-keyword"><span class="channel-icon icon-pencil"></span></a></li>
+						<li><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
+					</ul>
+					<div class="modal-tabs-window">
+						<!-- ADD Keyword filter -->
+						<div id="add-keyword" class="active">
+							<div class="modal-field">
+								<h3 class="label"><?php echo __("Keyword"); ?></h3>
+								<input type="text" placeholder="<?php echo __("Enter keywords..."); ?>" name="keywords"/>
+							</div>
+						</div>
+
+						<!-- Add date filter -->
+						<div id="add-date">
+							<div class="modal-field">
+								<h3 class="label"><?php echo __("From"); ?></h3>
+								<input type="date" placeholder="Start date" name="date_from"/>
+							</div>
+							<div class="modal-field">
+								<h3 class="label"><?php echo __("To"); ?></h3>
+								<input type="date" placeholder="End date" name="date_to"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div class="modal-toolbar">
+					<a href="#" class="button-submit button-primary"><?php echo __("Add filter"); ?></a>
+				</div>
+			</div>
+		</div>
+		<div id="modal-secondary" class="modal-view"></div>
+	</div>
+</script>
+
+<!-- Label for a single search filter item -->
+<script type="text/template" id="search-filter-item-template">
+	<a href="#">
+		<span class="remove icon-cancel"></span>
+		<i class="<%= iconClass %>"></i>
+		<%= label %>
+	</a>
 </script>
 
 <?php echo $droplet_js; ?>
