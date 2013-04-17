@@ -31,6 +31,9 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	public function before()
 	{
 		parent::before();
+
+		Swiftriver_Event::add('swiftriver.template.head.css', array($this, 'add_drop_base_css'));
+		Swiftriver_Event::add('swiftriver.template.head.js', array($this, 'add_drop_base_js'));
 	}
 
 	/**
@@ -119,8 +122,8 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 			'keywords' => 'list',
 			'channels' => 'list', 
 			'channel_ids' => 'list', 
-			'start_date' => 'string', 
-			'end_date' => 'string', 
+			'date_from' => 'date', 
+			'date_to' => 'date', 
 			'state' => 'string'
 		);
 		
@@ -150,5 +153,23 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 		}
 		
 		return $filters;
+	}
+	
+	/**
+	 * Event callback function to add extra CSS to the <head>
+	 * section when a Drop_Base controller is accessed
+	 */
+	public function add_drop_base_css()
+	{
+		echo HTML::style('themes/default/media/css/glDatePicker.default.css');
+	}
+	
+	/**
+	 * Event callback function to add extra JavaScript to the <head>
+	 * section when a Drop_Base controller is accessed
+	 */
+	public function add_drop_base_js()
+	{
+		echo HTML::script('themes/default/media/js/glDatePicker.min.js');
 	}
 }

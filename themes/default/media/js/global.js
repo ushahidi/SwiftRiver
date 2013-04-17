@@ -344,7 +344,7 @@ $(document).ready(function() {
 	$('.modal-tabs-menu a').live('click', function(e) {
 		var modalTabHash = $(this).prop('hash');
 		$('.modal-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
-			$('.modal-tabs-window ' + modalTabHash).fadeIn('fast').addClass('active');		
+			$('.modal-tabs-window ' + modalTabHash).fadeIn('fast').addClass('active');
 		});
 		$('.modal-tabs-menu li').removeClass('active');
 		$(this).parent().addClass('active');
@@ -353,7 +353,7 @@ $(document).ready(function() {
 	$('.modal-field-tabs-menu a').live('click', function(e) {
 		var modalFieldTabHash = $(this).prop('hash');
 		$('.modal-field-tabs-window > div.active').removeClass('active').fadeOut(100, function(){
-			$('.modal-field-tabs-window ' + modalFieldTabHash).fadeIn('fast').addClass('active');		
+			$('.modal-field-tabs-window ' + modalFieldTabHash).fadeIn('fast').addClass('active');
 		});
 		$('.modal-field-tabs-menu li').removeClass('active');
 		$(this).parent().addClass('active');

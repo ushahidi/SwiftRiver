@@ -530,7 +530,7 @@
 				<div class="base">
 					<ul class="modal-tabs-menu">
 						<li class="active"><a href="#add-keyword"><span class="channel-icon icon-pencil"></span></a></li>
-						<li><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
+						<li id="add-date-filter"><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
 					</ul>
 					<div class="modal-tabs-window">
 						<!-- ADD Keyword filter -->
@@ -545,11 +545,13 @@
 						<div id="add-date">
 							<div class="modal-field">
 								<h3 class="label"><?php echo __("From"); ?></h3>
-								<input type="date" placeholder="Start date" name="date_from"/>
+								<input type="text" placeholder="<?php echo __("Start date"); ?>" name="date_from" gldp-id="date-from"/>
+								<div gldp-el="date-from" style="width:350px; height:240px; position:absolute"></div>
 							</div>
 							<div class="modal-field">
 								<h3 class="label"><?php echo __("To"); ?></h3>
-								<input type="date" placeholder="End date" name="date_to"/>
+								<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" gldp-id="date-to"/>
+								<div gldp-el="date-to" style="width:350px; height:240px; position:absolute"></div>
 							</div>
 						</div>
 					</div>
@@ -561,6 +563,7 @@
 			</div>
 		</div>
 		<div id="modal-secondary" class="modal-view"></div>
+
 	</div>
 </script>
 

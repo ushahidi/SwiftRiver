@@ -1853,15 +1853,52 @@
 		className: "modal modal-view",
 		
 		events:{
-			"click .modal-toolbar a.button-submit": "addSearchFilters"
+			"click .modal-toolbar a.button-submit": "addSearchFilters",
+			"click #add-date-filter a": "activateDatePicker",
 		},
 		
 		initialize: function(options){
 			this.template = _.template($("#search-filter-modal-template").html());
 		},
 		
+		activateDatePicker: function(e) {
+			var el = $(e.currentTarget);
+			var modalTabHash = el.prop('hash');
+
+			if (this.$(".modal-tabs-window " + modalTabHash).is(":visible")) {
+				return false;
+			}
+
+			var view = this;
+			this.$('.modal-tabs-window > div.active')
+				.removeClass('active')
+				.fadeOut(100, function() {
+					view.$('.modal-tabs-window ' + modalTabHash)
+						.fadeIn('fast')
+						.addClass('active');
+				});
+
+			this.$('.modal-tabs-menu li').removeClass('active');
+			$(el).parent().addClass('active');
+			
+			var dateFrom = this.$("input[name=date_from]"),
+				dateTo = this.$("input[name=date_to]");
+			
+			var onSelectDate = function(target, cell, date, data) {
+				var months = {1: "Jan", 2: "Feb", 3: "Mar", 4:"Apr", 5:"May", 6:"Jun", 7:"Jul", 8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"};
+				var dateVal = new String(date.getDate()).length == 1 ? "0" + date.getDate() : date.getDate();
+				dateVal += "-" + months[date.getMonth() + 1] + "-" + new String(date.getFullYear()).substring(2);
+				target.val(dateVal);
+			};
+			dateFrom.glDatePicker({onClick: onSelectDate, calendarPosition: {x: dateFrom.offset().left, y: dateFrom.offset().top}});
+			dateTo.glDatePicker({onClick: onSelectDate, calendarPosition: {x: dateTo.offset().left, y: dateTo.offset().top}});
+
+			return false;
+		},
+		
 		render: function() {
 			this.$el.html(this.template());
+
 			return this;
 		},
 		
@@ -1909,13 +1946,13 @@
 				}
 			
 				if (searchFilters.date_from && !searchFilters.date_to) {
-					searchFiltersModel.set({
+					searchFilterModel.set({
 						date_from: searchFilters.date_from
 					});
 				}
 			
 				if (searchFilters.date_to && !searchFilters.date_from) {
-					searchFiltersModel.set({
+					searchFilterModel.set({
 						date_to: searchFilters.date_to
 					});
 				}
@@ -2055,6 +2092,7 @@
 		showSearchFilterModal: function() {
 			var view = new SearchFilterModalView({filtersView: this});
 			modalShow(view.render().el);
+
 			return false;
 		},
 		

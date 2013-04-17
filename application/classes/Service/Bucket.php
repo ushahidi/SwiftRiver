@@ -55,6 +55,8 @@ class Service_Bucket extends Service_Base {
 				'keywords' => 'list',
 				'channels' => 'list',
 				'channel_ids' => 'list',
+				'date_from' => 'string', 
+				'date_to' => 'string', 
 				'state' => 'string'
 			);
 

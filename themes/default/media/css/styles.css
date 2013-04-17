@@ -820,7 +820,7 @@ header.toolbar {
    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
    box-shadow: 0 1px 2px rgba(0,0,0,.2);
-   background: url(/markup/_img/header-toolbarBG.gif) bottom repeat-x;
+   background: url(/themes/default/media/img/header-toolbarBG.gif) bottom repeat-x;
 }
 
 header.toolbar .logo {
@@ -831,7 +831,7 @@ header.toolbar .logo a {
    display: block;
    width: 118px;
    height: 37px;
-   background: url(/markup/_img/logo-swiftriver.png) center left no-repeat;
+   background: url(/themes/default/media/img/logo-swiftriver.png) center left no-repeat;
    background-size: 90%;
    padding: 1px 0;
    margin-right: 8px;
@@ -1217,7 +1217,7 @@ nav.page-navigation ul li:first-child a {
 nav.page-navigation ul li.active a {
    color: #259cb5;
    font-weight: bold;
-   background: url(/markup/_img/page-navigation_active.png) center bottom no-repeat;
+   background: url(/themes/default/media/img/page-navigation_active.png) center bottom no-repeat;
 }
 
 nav.page-navigation ul li a:hover {
@@ -1714,7 +1714,7 @@ article.drop,
 #buoy .buoy-message p {
    color: #444444;
    font-weight: bold;
-   background: url(/markup/_img/icon-buoy.png) left no-repeat;
+   background: url(/themes/default/media/img/icon-buoy.png) left no-repeat;
    padding: 20px 10px 20px 40px;
    margin-left: 5px;
 }
@@ -1733,7 +1733,7 @@ article.drop,
 }
 
 .drop-full section.drop-source {
-   background: #eaf3f5 url(/markup/_img/drop-wave_full.gif) bottom left repeat-x;
+   background: #eaf3f5 url(/themes/default/media/img/drop-wave_full.gif) bottom left repeat-x;
 }
 
 .drop-full section.drop-source p.metadata {
@@ -1918,7 +1918,7 @@ section.meta-data img.media-image {
 }
 
 .drops article.drop section.drop-source {
-   background: #eaf3f5 url(/markup/_img/drop-wave1.png) top no-repeat;
+   background: #eaf3f5 url(/themes/default/media/img/drop-wave1.png) top no-repeat;
    -o-background-size: 100%;
    -moz-background-size: 100%;
    -webkit-background-size: 100%;
@@ -3024,7 +3024,7 @@ article.modal section.drop-summary {
    -moz-border-radius-bottomright: 3px;
    border-bottom-left-radius: 3px;
    border-bottom-right-radius: 3px;
-   background: #eaf3f5 url(/markup/_img/drop-wave.gif) top right repeat-x;
+   background: #eaf3f5 url(/themes/default/media/img/drop-wave.gif) top right repeat-x;
    padding: 20px 2.083333333%;
    margin-top: 15px;
 }
@@ -3617,7 +3617,7 @@ header.toolbar ul.global-menu > li:last-child {
 body { text-rendering: optimizeLegibility; }
 
 header.toolbar .logo a {
-   background: url(/markup/_img/logo-swiftriver-2x.png) center left no-repeat;
+   background: url(/themes/default/media/img/logo-swiftriver-2x.png) center left no-repeat;
    -o-background-size: 100%;
    -moz-background-size: 100%;
    -webkit-background-size: 100%;
@@ -3625,11 +3625,11 @@ header.toolbar .logo a {
 }
 
 .drops article.drop section.drop-source {
-   background-image: url(/markup/_img/drop-wave1@2x.png);
+   background-image: url(/themes/default/media/img/drop-wave1@2x.png);
 }
 
 /*.list article.drop section.drop-source {
-   background-image: url(/markup/_img/drop-wave2@2x.png);
+   background-image: url(/themes/default/media/img/drop-wave2@2x.png);
 }*/
 
 }
