@@ -52,7 +52,7 @@
 							</a>
 						</li>
 					</ul>
-					
+
 					<div class="filters-type" id="drop-search-filter">
 						<ul id="search-filter-list">
 						</ul>
@@ -61,11 +61,10 @@
 							<?php echo __("Add search filter"); ?>
 						</a>
 					</div>
+
 				</div>
 			</div>
 		</section>
-
 		<?php echo $droplets_view; ?>
-
 	</div>
 </div>

@@ -109,8 +109,11 @@
 					data: {since_id: sinceId, photos: photos}, 
 				    update: true,
 					remove: false,
-				    complete: function () {
+				    success: function(collection, response, options) {
 				        isSyncing = false;
+						
+						// Show the search filter
+						$("#drop-search-filter:hidden").fadeIn('slow');
 				    }
 				});   
 			}		    
@@ -121,6 +124,17 @@
 
 		// Set the maxId after inital rendering of droplet list
 		maxId = sinceId = <?php echo $max_droplet_id ?>;
+
+		// Drop state filter
+		new Drops.DropsStateFilterView({
+			dropFilters: filters,
+			dropsList: dropsList
+		});
+		
+		// Drop search filter
+		new Drops.DropSearchFiltersView({
+			dropFilters: filters
+		});
 
 		var AppRouter = Backbone.Router.extend({
 			routes: {
@@ -143,12 +157,17 @@
 			view: null,
 
 			resetView: function() {
-				var noticeContent = $("#system_notification", "#content");
-
-				$("#stream").empty();
-				if (noticeContent !== null) {
-					$("#stream").append(noticeContent);
+				var dropsContainer = $("#stream");
+				
+				if (!dropsList.size()) {
+					$(".no-drops", dropsContainer).show();
+					
+					// Hide the search filter
+					$("#drop-search-filter").hide();
+				} else {
+					dropsContainer.empty();
 				}
+
 				modalHide();
 				zoomHide();
 				dropsList.off(null, null, this.view);
@@ -302,20 +321,10 @@
 
 		// Initiate the router
 		var appRouter = new AppRouter;
+
 		// Start Backbone history
 		Backbone.history.start({pushState: true, root: baseURL + "/"});
 		
-		// Drop state filter
-		new Drops.DropsStateFilterView({
-			dropFilters: filters,
-			dropsList: dropsList
-		});
-		
-		// Drop search filter
-		new Drops.DropSearchFiltersView({
-			dropFilters: filters
-		});
-
 		// Onclick Handlers for Drops/List
 		if ( ! photos)
 		{

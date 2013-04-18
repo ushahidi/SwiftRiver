@@ -1013,6 +1013,11 @@ header.toolbar ul.user-menu > li.user a:hover {
     100% { border-color: rgba(63,174,192, 1); }
 }
 
+/* --------------------------- STREAM MESSAGE */
+#stream .stream-message {
+    margin: 0.8em 1.04167%;
+}
+
 .stream-message {
    display: none;
    clear: both;
@@ -1034,6 +1039,32 @@ header.toolbar ul.user-menu > li.user a:hover {
    border: 2px solid #3faec0;
    padding: 1em;
    -webkit-animation: border-pulsate 2s infinite;
+}
+
+.stream-message.no-drops {
+    padding-bottom: 0;
+}
+
+.stream-message h1 {
+    color: #444444;
+}
+
+.stream-message p {
+	padding: 1em 0;
+}
+
+.stream-message #stream-illustration {
+	height: 350px;
+    background-image: url("/themes/default/media/img/river-empty1.gif");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: all 0.5s ease 0s;
+    width: 100%;
+}
+
+.stream-message #stream-illustration:hover {
+	background-image: url("/themes/default/media/img/river-empty2.gif");
 }
 
 /* --------------------------- PAGE TITLE */

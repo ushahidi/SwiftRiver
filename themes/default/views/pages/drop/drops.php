@@ -1,4 +1,5 @@
 <div id="stream" class="col_9">
+	<?php echo $no_content_view; ?>
 </div>
 
 <script type="text/template" id="drop-listing-template">

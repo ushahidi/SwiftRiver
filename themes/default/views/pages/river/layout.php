@@ -39,28 +39,32 @@
 						</li>
 						<?php endforeach; ?>
 					</ul>
+					
+					<!-- Restrict this channels and read/unread sections to "owners" -->
+					<?php if ($owner): ?>
 					<div class="filters-type" id="drops-state-filter">
 						<ul>
-							<li class="unread"><a href="#"><span class="total">39</span> Unread</a></li>
-							<li class="read"><a href="#"><span class="total">165</span> Read</a></li>
+							<li class="unread"><a href="#"><span class="total">0</span> <?php echo __("Unread"); ?></a></li>
+							<li class="read"><a href="#"><span class="total">0</span> <?php echo __("Read"); ?></a></li>
 						</ul>
 					</div>
-				
+			
 					<div class="filters-type" id="drops-channel-list">
 						<span class="toggle-filters-display">
-							<span class="total">5</span>
+							<span class="total">0</span>
 							<span class="icon-arrow-down"></span>
 							<span class="icon-arrow-up"></span>
 						</span>
 						<span class="filters-type-settings"><a href="#"><span class="icon-cog"></span></a></span>
-						<h2>Channels</h2>
+						<h2><?php echo __("Channels"); ?></h2>
 						<div class="filters-type-details">
 							<ul>
 								<!-- List of channels goes here -->
 							</ul>
 						</div>
 					</div>
-							
+					<?php endif; ?>
+
 					<div class="filters-type" id="drop-search-filter">
 						<ul id="search-filter-list">
 						</ul>
@@ -70,9 +74,6 @@
 						</a>
 					</div>
 
-					<div class="modal-toolbar">
-						<a href="#" class="button-submit button-primary modal-close">Done</a>
-					</div>
 				</div>
 			</div>
 		</section>

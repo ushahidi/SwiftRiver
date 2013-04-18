@@ -51,13 +51,13 @@ class Swiftriver_Navs {
 				'label' => __('Photos')
 			);
 			
-			// Photos
-			$nav[] = array(
-				'id' => 'trends-navigation-link',
-				'active' => 'trends',
-				'url' => '/trends',
-				'label' => __('Trends')
-			);			
+			// Trends
+			// $nav[] = array(
+			// 	'id' => 'trends-navigation-link',
+			// 	'active' => 'trends',
+			// 	'url' => '/trends',
+			// 	'label' => __('Trends')
+			// );			
 		}
 
 		// SwiftRiver Plugin Hook -- Add Nav Items
