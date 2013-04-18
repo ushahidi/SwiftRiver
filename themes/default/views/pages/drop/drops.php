@@ -545,13 +545,11 @@
 						<div id="add-date">
 							<div class="modal-field">
 								<h3 class="label"><?php echo __("From"); ?></h3>
-								<input type="text" placeholder="<?php echo __("Start date"); ?>" name="date_from" gldp-id="date-from"/>
-								<div gldp-el="date-from" style="width:350px; height:240px; position:absolute"></div>
+								<input type="text" placeholder="<?php echo __("Start date"); ?>" name="date_from" readonly="true"/>
 							</div>
 							<div class="modal-field">
 								<h3 class="label"><?php echo __("To"); ?></h3>
-								<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" gldp-id="date-to"/>
-								<div gldp-el="date-to" style="width:350px; height:240px; position:absolute"></div>
+								<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" readonly="true"/>
 							</div>
 						</div>
 					</div>

@@ -1860,7 +1860,7 @@
 		initialize: function(options){
 			this.template = _.template($("#search-filter-modal-template").html());
 		},
-		
+
 		activateDatePicker: function(e) {
 			var el = $(e.currentTarget);
 			var modalTabHash = el.prop('hash');
@@ -1884,15 +1884,46 @@
 			var dateFrom = this.$("input[name=date_from]"),
 				dateTo = this.$("input[name=date_to]");
 			
-			var onSelectDate = function(target, cell, date, data) {
-				var months = {1: "Jan", 2: "Feb", 3: "Mar", 4:"Apr", 5:"May", 6:"Jun", 7:"Jul", 8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"};
+			// Short names for the months
+			var months = {1: "Jan", 2: "Feb", 3: "Mar", 4:"Apr", 5:"May", 6:"Jun", 7:"Jul", 8:"Aug", 9:"Sep", 10:"Oct", 11:"Nov", 12:"Dec"};
+			
+			// Callback function to be executed when a date is selected
+			var onChangeDate = function(ev) {
+				var date = ev.date;
 				var dateVal = new String(date.getDate()).length == 1 ? "0" + date.getDate() : date.getDate();
 				dateVal += "-" + months[date.getMonth() + 1] + "-" + new String(date.getFullYear()).substring(2);
-				target.val(dateVal);
+				$(ev.currentTarget).val(dateVal);
 			};
-			dateFrom.glDatePicker({onClick: onSelectDate, calendarPosition: {x: dateFrom.offset().left, y: dateFrom.offset().top}});
-			dateTo.glDatePicker({onClick: onSelectDate, calendarPosition: {x: dateTo.offset().left, y: dateTo.offset().top}});
+			
+			// When the date picker is shown - adjust position
+			var onShow = function(ev) {
+				var el = $(ev.currentTarget);
+				var offset = {left: el.offset().left, top: el.offset().top + el.outerHeight()},
+					datePickerEl = $("div.datepicker.dropdown-menu:visible");
 
+				datePickerEl.offset(offset);
+				ev.preventDefault();
+			};
+
+			var nowTemp = new Date();
+			var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+			dateFrom.datepicker({format: 'dd-mm-yy'})
+				.on('changeDate', onChangeDate)
+				.on('show', onShow);
+			
+			// Disable selecting a date after the current date (today)
+			dateTo.datepicker({
+				onRender: function(date) {
+					return date.valueOf() <= now.valueOf() ? '' : 'disabled';
+				}
+			}).on('changeDate', onChangeDate)
+			.on('show', onShow);
+			
+			// Display the datepicker dialog within the modal
+			$("#modal-container .modal-window").append($("div.datepicker"));
+			$("body > div.datepicker").remove();
+			
 			return false;
 		},
 		
@@ -2006,7 +2037,7 @@
 			if (this.model.get('date_from') && !this.model.get('date_to')) {
 				this.model.set({
 					iconClass: "icon-calendar",
-					label: this.model.get('date_from') + " to present"
+					label: "From " + this.model.get('date_from')
 				});
 			}
 			
@@ -2120,21 +2151,26 @@
 		checkActiveDateFilter: function(view) {
 			var model = view.model.toJSON();
 			if (model.date_from || model.date_to) {
-
 				for (cid in this.activeSearchFilters) {
 					var filterView = this.activeSearchFilters[cid],
-						filterModel = filterView.model.toJSON();
-
+						filterModel = filterView.model.toJSON(),
+						found = false;
 					if (filterModel.dateRange) {
 						filterView.$el.removeClass("active");
+						found = true;
 					} else {
 						if (filterModel.date_from && model.date_from) {
 							filterView.$el.removeClass("active");
+							found = true;
 						}
 						
 						if (filterModel.date_to && model.date_to) {
 							filterView.$el.removeClass("active");
+							found = true;
 						}
+					}
+					if (found) {
+						delete this.activeSearchFilters[cid];
 					}
 					
 				}

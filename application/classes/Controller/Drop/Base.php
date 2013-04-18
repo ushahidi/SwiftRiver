@@ -161,7 +161,7 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	public function add_drop_base_css()
 	{
-		echo HTML::style('themes/default/media/css/glDatePicker.default.css');
+		echo HTML::style('themes/default/media/css/datepicker.css');
 	}
 	
 	/**
@@ -170,6 +170,6 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	public function add_drop_base_js()
 	{
-		echo HTML::script('themes/default/media/js/glDatePicker.min.js');
+		echo HTML::script('themes/default/media/js/bootstrap-datepicker.js');
 	}
 }
