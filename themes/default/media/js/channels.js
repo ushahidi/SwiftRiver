@@ -155,7 +155,7 @@
 				collection: this.options.config,
 				baseUrl: this.options.baseUrl
 			});
-			view.on("add", this.channelAdded, this);			
+			view.on("add", this.channelAdded, this);
 			modalShow(view.render().$el);
 			return false;
 		},

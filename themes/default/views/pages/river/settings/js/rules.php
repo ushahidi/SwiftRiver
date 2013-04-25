@@ -199,11 +199,11 @@ $(function() {
 	
 	// View for the rule conditions
 	var EditRuleConditionView = Backbone.View.extend({
-		tagName: "div",
+		tagName: "article",
 		
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 
-		template: _.template($("#edit-rule-condition-template").html()),
+		template: _.template($("#edit-rule-condition-modal-template").html()),
 
 		events: {
 			"click .modal-toolbar a.button-submit": "save",
@@ -236,9 +236,8 @@ $(function() {
 				return false;
 			}
 			if (this.isNew) {
-				this.options.conditionsList.add(this.model);
+				this.trigger("add", this.model);
 			}
-			this.$("a.modal-back").trigger("click");
 			return false;
 		}
 
@@ -246,15 +245,14 @@ $(function() {
 	
 	// View for the rule actions
 	var EditRuleActionView = Backbone.View.extend({
-		tagName: "div",
+		tagName: "article",
 
-		className: "modal-segment",
+		className: "modal modal-view modal-segment",
 
-		template: _.template($("#edit-rule-action-template").html()),
+		template: _.template($("#edit-rule-action-modal-template").html()),
 		
 		initialize: function(options) {
 			this.isNew = this.model.get('addToBucket') == undefined && this.model.get('markAsRead') == false && this.model.get('markAsRead') == false;
-			this.model.on("save", options.rule.addAction);
 			this.model.on("invalid", function(model, error) {
 				showFailureMessage(error);
 			});
@@ -293,9 +291,8 @@ $(function() {
 			}
 
 			if (this.isNew) {
-				this.options.actionsList.add(this.model);
+				this.trigger("add", this.model);
 			}
-			this.$("a.modal-back").trigger("click");
 			return false;
 		},
 		
@@ -313,7 +310,7 @@ $(function() {
 	var CreateRuleModal = Backbone.View.extend({
 		tagName: "article",
 		
-		className: "modal",
+		className: "modal modal-view",
 
 		template: _.template($("#create-rule-modal-template").html()),
 		
@@ -372,15 +369,27 @@ $(function() {
 			if (item instanceof RuleCondition) {
 				optionData.conditionsList = this.conditionsList;
 				view = new EditRuleConditionView(optionData);
+				view.on("add", this.ruleConditionAdded, this);
 			} else if (item instanceof RuleAction) {
 				optionData.actionsList = this.actionsList;
 				optionData.bucketsList = Assets.bucketList;
 				view = new EditRuleActionView(optionData);
+				view.on("add", this.ruleActionAdded, this);
 			}
-			
+
 			if (view != null) {
-				this.$("#modal-secondary").html(view.render().el);
+				modalShow(view.render().$el);
 			}
+		},
+		
+		ruleConditionAdded: function(condition) {
+			this.conditionsList.add(condition);
+			modalBack();
+		},
+
+		ruleActionAdded: function(action) {
+			this.actionsList.add(action);
+			modalBack();
 		},
 
 		render: function() {

@@ -72,7 +72,7 @@
 			<div class="base">
 				<h2 class="label following-title" style="display:none">Following</h2>
 				<ul class="view-table following">
-				</ul>													
+				</ul
 			</div>
 		</div>
 	</script>
@@ -117,17 +117,17 @@
 			<h1><i class="icon-bucket"></i>Buckets</h1>
 		</div>
 	
-		<div class="modal-body">			
+		<div class="modal-body">
 			<div class="base">
 				<h2 class="label own-title" style="display:none">Managing</h2>
 				<ul class="view-table own">
 					<li class="add"><a href="#create-bucket" class="modal-transition">Create a new bucket</a></li>
-				</ul>													
+				</ul>
 			</div>
 			<div class="base">
 				<h2 class="label following-title" style="display:none">Following</h2>
 				<ul class="view-table following">
-				</ul>													
+				</ul>
 			</div>
 		</div>
 	</script>

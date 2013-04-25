@@ -1128,7 +1128,7 @@
 		},
 		
 		initialize: function() {
-			this.template = _.template($("#edit-metadata-template").html());
+			this.template = _.template($("#edit-metadata-modal-template").html());
 			this.collection.on("add", this.addMetadata, this);
 		},
 		
@@ -1161,11 +1161,6 @@
 			// Display current meta in the list
 			this.collection.each(this.addMetadata, this);
 			
-			// Add the form for adding a new metadata item
-			if (metadataEditForm != null) {
-				this.$(".modal-tabs-container").prepend(metadataEditForm());
-			}
-						
 			return this;
 		},
 		
