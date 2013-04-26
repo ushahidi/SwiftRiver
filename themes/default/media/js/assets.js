@@ -478,9 +478,9 @@
 		doCreateRiver: function() {
 			var riverName = this.$('input[name=river_name]').val();
 			var description = this.$('input[name=river_description]').val();
-			var isPublic = Boolean(this.$('select[name=public]').val());
-			
-			var view = this;
+			var isPublic = this.$('select[name=public]').val();
+
+ 			var view = this;
 			if (!riverName.length || view.isFetching)
 				return false;
 			

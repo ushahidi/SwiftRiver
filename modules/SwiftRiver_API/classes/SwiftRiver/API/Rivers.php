@@ -51,7 +51,7 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 		$request_body = array(
 			"name" => $river_name,
 			"description" => $river_description,
-			"public" => (bool) $public
+			"public" => $public
 		);
 		return $this->post('/rivers', $request_body);
 	}

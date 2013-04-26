@@ -106,7 +106,7 @@ class Service_River extends Service_Base {
 		$river_array = $this->api->get_rivers_api()->create_river(
 			$river_array['name'], 
 			$river_array['description'], 
-			$river_array['public']
+			(bool) $river_array['public']
 		);
 		
 		$river_array['url'] = self::get_base_url($river_array);
