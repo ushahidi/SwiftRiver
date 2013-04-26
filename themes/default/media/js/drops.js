@@ -1114,6 +1114,44 @@
 		}
 	});
 	
+	var AddMetadataModalView = Backbone.View.extend({
+
+		tagName: "article",
+		
+		className: "modal modal-view modal-segment",
+
+		events: {
+			"click .modal-toolbar a.button-submit": "saveNewMetadata",
+			"keyup .modal-field input": "keypressSave"
+		},
+
+		initialize: function(options) {
+			this.template = options.templateView;
+		},
+		
+		render: function() {
+			this.$el.html(this.template());
+			return this;
+		},
+		
+		saveNewMetadata: function(e) {
+			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());
+			var tagType = this.$(".modal-field select[name=tag_type]").val();
+			if (name && name.length > 0) {
+				this.trigger("add", {name: name, tagType: tagType});
+			}
+			return false;
+		},
+
+		keypressSave: function(e) {
+			if (e.which == 13) {
+				this.saveNewMetadata();
+				return false;
+			}
+		},
+		
+	});
+
 	// VIEW: Edit Metadata modal dialog
 	var EditMetadataView = Backbone.View.extend({
 	
@@ -1122,14 +1160,25 @@
 		className: "modal modal-view",
 		
 		events: {
-			"click .modal-toolbar a.button-submit": "saveNewMetadata",
-			"submit": "saveNewMetadata",
-			"keyup .modal-field input": "keypressSave"
+			"click li.add a": "showAddMetadata",
 		},
 		
 		initialize: function() {
-			this.template = _.template($("#edit-metadata-modal-template").html());
+			this.template = _.template($("#edit-metadata-template").html());
 			this.collection.on("add", this.addMetadata, this);
+
+			this.data = this.model.toJSON();
+			this.templateView = null;
+			
+			if(this.collection instanceof Tags) {
+				this.data.label = 'Tags';
+				this.templateView = _.template($("#add-tag-modal-template").html());
+			} else if(this.collection instanceof Links) {
+				this.data.label = 'Links';
+				this.templateView = _.template($("#add-link-modal-template").html());
+			} else if(this.collection instanceof Places) {
+				this.data.label = 'Places';
+			}
 		},
 		
 		addMetadata: function(metadata) {
@@ -1142,21 +1191,15 @@
 			return false;
 		},
 		
+		showAddMetadata: function() {
+			var view = new AddMetadataModalView({templateView: this.templateView});
+			view.on("add", this.save, this);
+			modalShow(view.render().el);
+			return false;
+		},
+		
 		render: function() {
-			var data = this.model.toJSON();
-			var metadataEditForm = null;
-			
-			if(this.collection instanceof Tags) {
-				data.label = 'Tags';
-				metadataEditForm = _.template($("#add-tag-template").html());
-			} else if(this.collection instanceof Links) {
-				data.label = 'Links';
-				metadataEditForm = _.template($("#add-link-template").html());
-			} else if(this.collection instanceof Places) {
-				data.label = 'Places';
-			}
-
-			this.$el.html(this.template(data));
+			this.$el.html(this.template(this.data));
 			
 			// Display current meta in the list
 			this.collection.each(this.addMetadata, this);
@@ -1166,21 +1209,19 @@
 		
 		isPageFetching: false,
 		
-		saveNewMetadata: function() {
-			var name = $.trim(this.$(".modal-field input[name=new_metadata]").val());
-			var tagType = this.$(".modal-field select[name=tag_type]").val();;
-
-			if (!name.length || this.isPageFetching)
+		save: function(data) {
+			if (this.isPageFetching)
 				return false;
-				
+			
 			// First check if the metadata already exists in the drop
 			var metadata = this.collection.find(function(metadata) { 
 				if(metadata instanceof Tag) {
-					return (metadata.get('tag').toLowerCase() == name.toLowerCase()) && (metadata.get('type').toLowerCase == tagType.toLowerCase());
+					return (metadata.get('tag').toLowerCase() == data.name.toLowerCase()) 
+						&& (metadata.get('type').toLowerCase() == data.tagType.toLowerCase());
 				} else if(metadata instanceof Link) {
-					return metadata.get('url').toLowerCase() == name;
+					return metadata.get('url').toLowerCase() == data.name;
 				} else if(metadata instanceof Place) {
-					return metadata.get('name').toLowerCase() == name.toLowerCase();
+					return metadata.get('name').toLowerCase() == data.name.toLowerCase();
 				}
 			});
 			
@@ -1198,7 +1239,7 @@
 				modalBack();
 				metadata.view.setSelected();
 				this.$(".modal-field input[name=new_metadata]").val("");
-				this.isPageFetching = false;				
+				this.isPageFetching = false;
 				return false;
 			}
 				
@@ -1207,11 +1248,11 @@
 			this.$(".create-new .field").replaceWith(loading_msg);
 						
 			if (this.collection instanceof Tags) {
-				metadata = new Tag({tag: name, tag_type: tagType});
+				metadata = new Tag({tag: data.name, tag_type: data.tagType});
 			} else if (this.collection instanceof Links) {
-				metadata = new Link({url: name});
+				metadata = new Link({url: data.name});
 			} else if (this.collection instanceof Places) {
-				metadata = new Place({name: name});
+				metadata = new Place({name: data.name});
 			}
 			
 			var view = this;
@@ -1236,25 +1277,15 @@
 					view.$(".view-table ul").animate({
 						scrollTop: view.$(".view-table ul").scrollTop() + (view.$(".view-table ul li").last().offset().top - view.$(".view-table ul").offset().top)
 					}, 600);
-					
-					// Go back to the list mode
-					view.$("a.modal-back").trigger("click");
+
+					modalBack();
 					view.$(".view-table ul li").removeClass("selected");
 					metadata.view.setSelected();
-
-					// Clear the input field
-					view.$(".modal-field input[name=new_metadata]").val("");
 				}
 			});
 			return false;
-		},
+		}
 		
-		keypressSave: function(e) {
-			if (e.which == 13) {
-				this.saveNewMetadata();
-				return false;
-			}
-		},
 	});
 	
 		

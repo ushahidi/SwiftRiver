@@ -321,28 +321,50 @@
 	</a>
 </script>
 
-<script type="text/template" id="add-link-template">
-	<div class="base">
-		<div class="modal-field">
-			<input type="text" name="new_metadata" placeholder="<?php echo  __("Enter a URL"); ?>"/>
+<script type="text/template" id="add-link-modal-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-back button-white">
+			<span class="icon-arrow-left"></span>
+		</a>
+		<h1><?php echo __("Add link"); ?></h1>
+	</div>
+	<div class="modal-body">
+		<div class="base">
+			<div class="modal-field">
+				<input type="text" name="new_metadata" placeholder="<?php echo  __("Enter a URL"); ?>"/>
+			</div>
 		</div>
+	</div>
+	<div class="modal-toolbar">
+		<a href="#" class="button-submit button-primary"><span><?php echo __("Save"); ?></span></a>
 	</div>
 </script>
 
-<script type="text/template" id="add-tag-template">
-	<div class="base">
-		<div class="modal-field">
-			<input type="text" name="new_metadata" placeholder="<?php echo __("Enter a name"); ?>"/>
+<script type="text/template" id="add-tag-modal-template">
+	<div class="modal-title cf">
+		<a href="#" class="modal-back button-white">
+			<span class="icon-arrow-left"></span>
+		</a>
+		<h1><?php echo __("Add tag"); ?></h1>
+	</div>
+	<div class="modal-body">
+		<div class="base">
+			<div class="modal-field">
+				<input type="text" name="new_metadata" placeholder="<?php echo __("Enter a name"); ?>"/>
+			</div>
+			<div class="modal-field">
+				<h3 class="label"><?php echo __("Type of Tag"); ?></h3>
+				<?php 
+					echo Form::select('tag_type', array(
+						'organization' => __('Organization'),
+						'person' => __('Person'),
+						'general' => __('General'))); 
+				?>
+			</div>
 		</div>
-		<div class="modal-field">
-			<h3 class="label"><?php echo __("Type of Tag"); ?></h3>
-			<?php 
-				echo Form::select('tag_type', array(
-					'organization' => __('Organization'),
-					'person' => __('Person'),
-					'general' => __('General'))); 
-			?>
-		</div>
+	</div>
+	<div class="modal-toolbar">
+		<a href="#" class="button-submit button-primary"><span><?php echo __("Save"); ?></span></a>
 	</div>
 </script>
 
@@ -518,53 +540,47 @@
 </script>
 
 <script type="text/template" id="search-filter-modal-template">
-	<div id="modal-viewport">
-		<div id="modal-primary" class="modal-view">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white">
-					<i class="icon-cancel"></i><?php echo __("Close"); ?>
-					</a>
-				<h1><a href="#group-name" class="modal-transition"><?php echo __("Add search filter"); ?></a></h1>
-			</div>
-		
-			<div class="modal-body modal-tabs-container">
-				<div class="base">
-					<ul class="modal-tabs-menu">
-						<li class="active"><a href="#add-keyword"><span class="channel-icon icon-pencil"></span></a></li>
-						<li id="add-date-filter"><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
-					</ul>
-					<div class="modal-tabs-window">
-						<!-- ADD Keyword filter -->
-						<div id="add-keyword" class="active">
-							<div class="modal-field">
-								<h3 class="label"><?php echo __("Keyword"); ?></h3>
-								<input type="text" placeholder="<?php echo __("Enter keywords..."); ?>" name="keywords"/>
-							</div>
-						</div>
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white">
+			<i class="icon-cancel"></i><?php echo __("Close"); ?>
+			</a>
+		<h1><a href="#group-name" class="modal-transition"><?php echo __("Add search filter"); ?></a></h1>
+	</div>
 
-						<!-- Add date filter -->
-						<div id="add-date">
-							<div class="modal-field">
-								<h3 class="label"><?php echo __("From"); ?></h3>
-								<input type="text" placeholder="<?php echo __("Start date"); ?>" name="date_from" readonly="true"/>
-							</div>
-							<div class="modal-field">
-								<h3 class="label"><?php echo __("To"); ?></h3>
-								<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" readonly="true"/>
-							</div>
-						</div>
+	<div class="modal-body modal-tabs-container">
+		<div class="base">
+			<ul class="modal-tabs-menu">
+				<li class="active"><a href="#add-keyword"><span class="channel-icon icon-pencil"></span></a></li>
+				<li id="add-date-filter"><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
+			</ul>
+			<div class="modal-tabs-window">
+				<!-- ADD Keyword filter -->
+				<div id="add-keyword" class="active">
+					<div class="modal-field">
+						<h3 class="label"><?php echo __("Keyword"); ?></h3>
+						<input type="text" placeholder="<?php echo __("Enter keywords..."); ?>" name="keywords"/>
 					</div>
 				</div>
-			
-				<div class="modal-toolbar">
-					<a href="#" class="button-submit button-primary"><?php echo __("Add filter"); ?></a>
+
+				<!-- Add date filter -->
+				<div id="add-date">
+					<div class="modal-field">
+						<h3 class="label"><?php echo __("From"); ?></h3>
+						<input type="text" placeholder="<?php echo __("Start date"); ?>" name="date_from" readonly="true"/>
+					</div>
+					<div class="modal-field">
+						<h3 class="label"><?php echo __("To"); ?></h3>
+						<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" readonly="true"/>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div id="modal-secondary" class="modal-view"></div>
-
+	
+		<div class="modal-toolbar">
+			<a href="#" class="button-submit button-primary"><?php echo __("Add filter"); ?></a>
+		</div>
 	</div>
-</script>
+	</script>
 
 <!-- Label for a single search filter item -->
 <script type="text/template" id="search-filter-item-template">
