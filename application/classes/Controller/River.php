@@ -55,12 +55,9 @@ class Controller_River extends Controller_Drop_Base {
 		$action = $this->request->action();
 		
 		// Find the matching river from the visited account's rivers.
-		foreach($this->visited_account['rivers'] as $river)
+		if (($river = $this->account_service->has_river($this->visited_account, $river_name_url)) !== FALSE)
 		{
-			if (URL::title($river['name']) == $river_name_url)
-			{
-				$this->river = $this->river_service->get_river_by_id($river['id'], $this->user);
-			}
+			$this->river = $this->river_service->get_river_by_id($river['id'], $this->user);
 		}
 		
 		if ($river_name_url AND ! $this->river AND $action != 'manage')
@@ -70,7 +67,7 @@ class Controller_River extends Controller_Drop_Base {
 		
 		// Action involves a specific river, check permissions
 		if ($this->river)
-		{					
+		{
 			$this->owner = $this->river['is_owner'];
 			$this->collaborator = $this->river['collaborator'];
 			$this->public = (bool) $this->river['public'];

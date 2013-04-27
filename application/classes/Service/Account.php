@@ -289,4 +289,45 @@ class Service_Account extends Service_Base {
 			throw new Validation_Exception($validation);
 		}
 	}
+	
+	/**
+	 * Checks if the specified $account owns a river
+	 * with the specified $name
+	 *
+	 * @param  array  account
+	 * @param  string name
+	 * @return mixed  River array when found, FALSE otherwise
+	 */
+	public function has_river($account, $name)
+	{
+		foreach ($account['rivers'] as $river)
+		{
+			if (URL::title($river['name']) === URL::title($name))
+			{
+				return $river;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Checks if the specified $account owns a bucket
+	 * with the specified $name
+	 *
+	 * @param  array  account
+	 * @param  string name
+	 * @return mixed  Bucket array when found, FALSE otherwise
+	 */
+	public function has_bucket($account, $name)
+	{
+		foreach ($account['buckets'] as $bucket)
+		{
+			if (URL::title($bucket['name']) === URL::title($name))
+			{
+				return $bucket;
+			}
+		}
+		return FALSE;
+	}
+
 }

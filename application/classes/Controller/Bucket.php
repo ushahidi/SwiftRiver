@@ -41,27 +41,21 @@ class Controller_Bucket extends Controller_Drop_Base {
 		// Execute parent::before first
 		parent::before();
 		
-		// Get the bucket name from the url
-		$this->bucket_base_url = sprintf("/%s/bucket/%s", $this->request->param('account'), $this->request->param('name'));
-		
-		// Get the buckets associated with the visited account
-		$visited_account_buckets = $this->account_service->get_buckets($this->visited_account, $this->user);
+		// Base URL for the bucket
+		$bucket_url_name = $this->request->param('name');
 
-		foreach ($visited_account_buckets as $k => $bucket)
+		// Does the visited account own a bucket with the specified name?
+		if (($bucket = $this->account_service->has_bucket($this->visited_account, $bucket_url_name)) !== FALSE)
 		{
-			if ($bucket['url'] === $this->bucket_base_url)
-			{
-				$this->bucket = $this->bucket_service->get_bucket_by_id($bucket['id'], $this->user);
-				$this->owner = $this->bucket['is_owner'];
-				break;
-			}
+			$this->bucket = $this->bucket_service->get_bucket_by_id($bucket['id'], $this->user);
+			$this->owner = $this->bucket['is_owner'];
+			$this->bucket_base_url = $this->bucket_service->get_base_url($this->bucket);
 		}
 
-		// Check if the bucket was retrieved
+		// If the bucket does not exist, redirect to the dashboard
 		if (empty($this->bucket))
 		{
-			Kohana::$log->add(Log::INFO, __("Bucket :name not found", array(":name" => $this->bucket_base_url)));
-			throw new HTTP_Exception_404();
+			$this->redirect($this->dashboard_url, 302);
 		}
 		
 		// Set the page title

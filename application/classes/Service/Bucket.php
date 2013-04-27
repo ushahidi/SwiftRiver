@@ -225,7 +225,7 @@ class Service_Bucket extends Service_Base {
 		$bucket['url'] = self::get_base_url($bucket);
 
 		// Is the querying account an owner of the bucket
-		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];		
+		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];
 
 		// Is the querying account collaborating on the fetched bucket?
 		$bucket['collaborator'] = FALSE;

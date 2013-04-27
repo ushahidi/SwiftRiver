@@ -251,10 +251,8 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 		}
 
-
 		if ($this->user)
 		{
-
 			// Is anonymous logged in?
 			if ($this->user['owner']['username'] == 'public')
 			{

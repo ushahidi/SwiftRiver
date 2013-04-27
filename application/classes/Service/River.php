@@ -93,8 +93,7 @@ class Service_River extends Service_Base {
 	{
 		return URL::site($river['account']['account_path'].'/river/'.URL::title($river['name']));
 	}
-	
-	
+
 	/**
 	 * Create a river
 	 *
