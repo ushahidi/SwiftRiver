@@ -275,7 +275,7 @@ class Controller_Swiftriver extends Controller_Template {
 			}
 			else
 			{
-				$this->dashboard_url = URL::site().$this->user['account_path'];
+				$this->dashboard_url = URL::site($this->user['account_path'], TRUE);
 			}
 			
 			// Build the base URL
@@ -300,7 +300,6 @@ class Controller_Swiftriver extends Controller_Template {
 				$this->visited_account = $this->user;
 			}
 		}
-
 
 		// Load Header & Footer & variables
 		if ($this->auto_render) 

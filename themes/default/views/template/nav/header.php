@@ -1,6 +1,6 @@
 <ul class="global-menu">
-	<li class="home"><a href="/"><span class="icon-home"></span></a></li>
-	<li class="search"><a href="/markup/modal-search.php" class="modal-trigger"><span class="icon-search"></span></a></li>
+	<li class="home"><a href="<?php $dashboard_url; ?>"><span class="icon-home"></span></a></li>
+	<li class="search"><a href="#" class="modal-trigger"><span class="icon-search"></span></a></li>
 </ul>
 </div>
 

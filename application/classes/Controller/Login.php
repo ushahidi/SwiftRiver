@@ -85,7 +85,6 @@ class Controller_Login extends Controller_Swiftriver {
 			}
 			else 
 			{
-
 				// Is the email registed in this site?
 				$user = ORM::factory('User',array('email'=>$email));
 
@@ -105,10 +104,9 @@ class Controller_Login extends Controller_Swiftriver {
 					if (isset($messages['messages']))
 					{
 						$this->messages = $messages['messages'];
-					}					
+					}
 				}
 			}
-
 		}
 
 		// Check, has the form been submitted, if so, setup validation
@@ -132,25 +130,6 @@ class Controller_Login extends Controller_Swiftriver {
 					$redirect_to = $this->request->post('referrer');
 					$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
 					
-					if
-					( 
-						! $redirect_to 
-						OR strpos($redirect_to, URL::base($this->request)) === FALSE
-						OR strpos($redirect_to, URL::base($this->request)) != 0
-					)
-					{
-						$user = Auth::instance()->get_user();
-						$redirect_to = URL::site().$user->account->account_path;
-					}
-					
-					$redirect_to_request = Request::factory(parse_url($redirect_to, PHP_URL_PATH));
-					if (strtolower($redirect_to_request->uri()) == 'welcome')
-					{
-						// Just logged in from the welcome page, go to the dashboard.
-						$user = Auth::instance()->get_user();
-						$redirect_to = URL::site($user->account->account_path);
-					}
-					
 					$this->redirect($redirect_to, 302);
 				}
 				else
@@ -166,15 +145,11 @@ class Controller_Login extends Controller_Swiftriver {
 						$validation->error('password', 'invalid');
 					}
 					
-					foreach ($validation->errors('login') as $error) {
-						Swiftriver_Messages::add_message(
-							'failure', 
-							__('Failure'), 
-							$error,
-							false
-						);
+					foreach ($validation->errors('login') as $error)
+					{
+						Swiftriver_Messages::add_message('failure',  __('Failure'), $error, FALSE);
 					}
-					$this->redirect(URL::site('login'), 302);
+					$this->redirect(URL::site('login', TRUE), 302);
 				}
 			}
 			else
