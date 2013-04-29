@@ -303,7 +303,7 @@
 					showSuccessMessage("The drop has been successfully deleted.", {flash: true});
 				},
 				error: function(model, response) {
-					showFailureMssage("Unable to delete the drop");
+					showFailureMessage("Unable to delete the drop");
 				}
 			});
 			return false;

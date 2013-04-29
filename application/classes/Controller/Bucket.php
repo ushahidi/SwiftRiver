@@ -246,15 +246,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			break;
 			
 			case "DELETE":
-				
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-
 				$droplet_id = intval($this->request->param('id', 0));
-				// $this->bucket_service->delete_drop($bucket_id, $droplet_id);
+				$this->bucket_service->delete_drop($this->bucket['id'], $droplet_id);
 		}
 	}
 	
