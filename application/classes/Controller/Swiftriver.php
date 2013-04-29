@@ -323,7 +323,9 @@ class Controller_Swiftriver extends Controller_Template {
 			    ->bind('user', $this->user)
 			    ->bind('admin', $this->admin)
 			    ->bind('account', $this->account)
-			    ->bind('anonymous', $this->anonymous);
+			    ->bind('anonymous', $this->anonymous)
+				->bind('dashboard_url', $this->dashboard_url);
+
 			$this->template->header->nav_header->controller = strtolower($this->request->controller());
 			
 			if ($this->user)

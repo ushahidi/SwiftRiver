@@ -75,7 +75,7 @@ class Controller_User extends Controller_Swiftriver {
 				'type' => 'user',
 				'following' => $is_following
 			));
-			$follow_button->action_url = URL::site($this->visited_account['account_path'].'/user/followers/manage');
+			$follow_button->action_url = URL::site($this->visited_account['account_path'].'/user/followers/manage', TRUE);
 			$this->template->content->follow_button = $follow_button;
 		}
 	}

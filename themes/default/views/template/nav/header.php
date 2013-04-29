@@ -1,5 +1,5 @@
 <ul class="global-menu">
-	<li class="home"><a href="<?php $dashboard_url; ?>"><span class="icon-home"></span></a></li>
+	<li class="home"><a href="<?php echo $dashboard_url; ?>"><span class="icon-home"></span></a></li>
 	<li class="search"><a href="#" class="modal-trigger"><span class="icon-search"></span></a></li>
 </ul>
 </div>
@@ -28,11 +28,11 @@
 							</a>
 						</li>
 						<li class="group">
-							<?php echo HTML::anchor(URL::site().$user['account_path'].'/settings', __('Account Settings')); ?>
+							<?php echo HTML::anchor(URL::site($user['account_path'].'/settings', TRUE), __('Account Settings')); ?>
 						</li>
 						<?php if ($admin): ?>
 							<li>
-								<a href="<?php echo URL::site().'settings/main'; ?>">
+								<a href="<?php echo URL::site('settings/main', TRUE); ?>">
 									<?php echo __("Website Settings"); ?>
 								</a>
 							</li>
@@ -67,7 +67,7 @@
 				<h2 class="label own-title" style="display:none">Managing</h2>
 				<ul class="view-table own">
 					<li class="add"><a href="#create-river" class="modal-transition">Create a new river</a></li>
-				</ul>													
+				</ul>
 			</div>
 			<div class="base">
 				<h2 class="label following-title" style="display:none">Following</h2>
@@ -105,7 +105,7 @@
 				</div>
 					
 				<div class="modal-toolbar">
-					<a href="#" class="button-submit button-primary"><span>Create the river</span></a>				
+					<a href="#" class="button-submit button-primary"><span>Create the river</span></a>
 				</div>					
 			<?php echo Form::close(); ?>
 		</div>
