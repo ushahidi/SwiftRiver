@@ -62,7 +62,7 @@
 			<h1><i class="icon-river"></i>Rivers</h1>
 		</div>
 
-		<div class="modal-body">			
+		<div class="modal-body">
 			<div class="base">
 				<h2 class="label own-title" style="display:none">Managing</h2>
 				<ul class="view-table own">
@@ -79,8 +79,12 @@
 
 	<script type="text/template" id="create-river-modal-template">
 		<div class="modal-title cf">
+			<% if(closable) { %>
+			<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+			<% } else { %>
 			<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
-			<h1>Create a new river</h1>
+			<% } %>
+			<h1><?php echo __("Create a new river"); ?></h1>
 		</div>
 				
 		<div class="modal-body">
@@ -134,7 +138,11 @@
 
 	<script type="text/template" id="create-bucket-modal-template">
 		<div class="modal-title cf">
+			<% if(closable) { %>
+			<a href="#" class="modal-close button-white"><i class="icon-cancel"></i>Close</a>
+			<% } else { %>
 			<a href="#" class="modal-back button-white"><span class="icon-arrow-left"></span></a>
+			<% } %>
 			<h1><?php echo __("Create a new bucket"); ?></h1>
 		</div>
 	

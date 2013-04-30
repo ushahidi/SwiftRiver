@@ -330,4 +330,87 @@ class Service_Account extends Service_Base {
 		return FALSE;
 	}
 
+	/** Get the view account's activity stream
+	 *
+	 * @param  Array activities
+	 *
+	 * @return	Array
+	 */
+	public function format_activities(& $activities)
+	{
+		foreach ($activities as & $activity)
+		{
+			// URL of the user that did the action
+			$activity['actor_url'] = URL::site($activity['account']['account_path']);
+			
+			// URL of the target of the action
+			switch ($activity["action_on"])
+			{
+				case "river":
+					$activity['action_on_url'] = Service_River::get_base_url($activity['action_on_obj']);
+					break;
+				case "river_collaborator":
+					$activity['action_to_url'] = URL::site($activity['action_on_obj']['account']['account_path'], TRUE);
+					$activity['invite_to_url'] = Service_River::get_base_url($activity['action_on_obj']['river']);
+					break;
+				case "bucket":
+					$activity['action_on_url'] = Service_Bucket::get_base_url($activity['action_on_obj'], TRUE);
+					break;
+				case "bucket_collaborator":
+					$activity['action_to_url'] = URL::site($activity['action_on_obj']['account']['account_path'], TRUE);
+					$activity['invite_to_url'] = Service_River::get_base_url($activity['action_on_obj']['bucket']);
+					break;
+				case "account":
+					$activity['action_on_url'] = URL::site($activity['action_on_obj']['account_path'], TRUE);
+					break;
+			}
+		}
+	}
+	
+	/**
+	 * Get the view account's activity stream
+	 *
+	 * @param  int account_id
+	 * @return	Array
+	 */
+	public function get_activities($account_id)
+	{
+		$activities = array();
+		try
+		{
+			$activities = $this->api->get_accounts_api()->get_activities($account_id);
+		}
+		catch (SwiftRiver_API_Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+		}
+		
+		return $activities;
+	}
+	
+	/**
+	 * Get activities of the account the authenticated user is following
+	 *
+	 * @param   last_id
+	 * @return	Array
+	 */
+	public function get_timeline($last_id = 0)
+	{
+		$activities = array();
+		try
+		{
+			$parameters = array();
+			if ($last_id > 0)
+			{
+				$parameters = array('last_id' => $last_id, 'newer' => TRUE);
+			}
+			$activities = $this->api->get_accounts_api()->get_timeline($parameters);
+		}
+		catch (SwiftRiver_API_Exception $e)
+		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
+		}
+
+		return $activities;
+	}
 }

@@ -188,7 +188,6 @@ class SwiftRiver_Client {
 		
 			if (in_array($response['code'], array_keys($exception_map)))
 			{
-				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
 				throw new $exception_map[$response['code']]($response['result']);
 			}
 			else if ($response['code'] == 401)
@@ -197,11 +196,10 @@ class SwiftRiver_Client {
 			}
 			else if ($response['code'] != 200)
 			{
-				Kohana::$log->add(Log::DEBUG, var_export($response, TRUE));
 				throw new SwiftRiver_API_Exception_Unknown($response['result']);
 			}
 		
-			return $response['result'];		
+			return $response['result'];
 		}
 		catch (OAuth2\Exception $e)
 		{

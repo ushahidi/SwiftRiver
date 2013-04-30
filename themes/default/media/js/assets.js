@@ -382,16 +382,24 @@
 			"click .modal-toolbar a.button-submit": "save",
 			"submit": "save",
 		},
-		
+
 		initialize: function(options) {
 			this.template = _.template($("#create-bucket-modal-template").html());
 			if (options && options.listView !== undefined) {
 				this.listView = options.listView;
 			}
+
+			this.viewData = {closable: false};
+
+			if (options.closable) {
+				this.viewData.closable = true;
+			} else {
+				this.className += " modal-segment";
+			}
 		},
 		
 		render: function() {
-			this.$el.html(this.template());
+			this.$el.html(this.template(this.viewData));
 			return this;
 		},
 		
@@ -458,7 +466,7 @@
 		
 		tagName: "article",
 
-		className: "modal modal-view modal-segment",
+		className: "modal modal-view",
 		
 		events: {
 			"click .modal-toolbar a.button-submit": "doCreateRiver",
@@ -468,10 +476,18 @@
 			this.template = _.template($("#create-river-modal-template").html());
 			this.model = new River();
 			this.model.urlRoot = site_url + logged_in_account_path + "/rivers";
+
+			this.viewData = {closable: false};
+			
+			if (options && options.closable) {
+				this.viewData.closable = true;
+			} else {
+				this.className += " modal-segment";
+			}
 		},
 		
 		render: function() {
-			this.$el.html(this.template());
+			this.$el.html(this.template(this.viewData));
 			return this;
 		},
 		
@@ -742,7 +758,7 @@
 		},
 		
 		editField: function() {
-			var view = new EditFieldModalView({model: this.model});					
+			var view = new EditFieldModalView({model: this.model});
 			view.on("change", function() { 
 				this.trigger("change", this.model);
 			}, this);

@@ -20,9 +20,10 @@
 </section>
 
 <div class="col_9">
-	<div id="news-feed" class="container base">
-		<article class="stream-message">
-			<p><?php echo __("There has been no recent activity on your profile"); ?></p>
-		</article>
-	</div>
+	<?php if ($owner): ?>
+		<?php echo $no_activity_view; ?>
+	<?php endif; ?>
+	<div id="news-feed" class="container base"></div>
 </div>
+
+<?php echo $activity_stream; ?>

@@ -580,7 +580,7 @@
 			<a href="#" class="button-submit button-primary"><?php echo __("Add filter"); ?></a>
 		</div>
 	</div>
-	</script>
+</script>
 
 <!-- Label for a single search filter item -->
 <script type="text/template" id="search-filter-item-template">

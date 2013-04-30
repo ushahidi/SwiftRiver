@@ -16,7 +16,7 @@
 				<li><a href="#bucket" class="modal-close"><?php echo __("Buckets"); ?></a></li>
 				<li><a href="#form" class="modal-close"><?php echo __("Forms"); ?></a></li>
 			</ul>
-
+            
 			<div class="modal-toolbar">
 				<a href="#" class="button-submit button-primary modal-close">Done</a>
 			</div>
@@ -36,9 +36,6 @@
 			<div class="container-toolbar cf">
 				<span class="button">
 					<a href="#" class="button-white delete-asset"><?php echo __("Delete"); ?></a>
-				</span>
-				<span class="button" class="button-white">
-					<a href="#" class="button-white"><?php echo __("Duplicate"); ?></a>
 				</span>
 				<?php if ($owner): ?>
 				<span class="button create-new">

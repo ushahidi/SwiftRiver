@@ -1046,11 +1046,49 @@ header.toolbar ul.user-menu > li.user a:hover {
 }
 
 .stream-message h1 {
-    color: #444444;
+   color: #444;
+}
+
+.stream-message h2 {
+   color: #444;
+   font-weight: normal;
+   font-size: 1.3em;
 }
 
 .stream-message p {
 	padding: 1em 0;
+}
+
+.stream-message-summary h2 {
+   font-size: 1.2em;
+   padding: 0.5em 0;
+}
+
+.stream-message-summary p {
+   font-size: 0.9em;
+   padding: 0;
+}
+
+.stream-message .callout {
+   -moz-box-sizing: border-box;
+   -webkit-box-sizing: border-box;
+   box-sizing: border-box;
+   border-bottom: 1px solid #dedede;
+   padding: 1em 0 1.5em;
+}
+
+.stream-message .callout:last-child {
+   border-bottom: none;
+}
+
+.stream-message .callout span[class^="icon-"] {
+   color: #36b7ce;
+   font-size: 4em;
+   line-height: 1.1em;
+}
+
+.stream-message .callout p {
+   font-size: 0.9em;
 }
 
 .stream-message #stream-illustration {
@@ -1067,6 +1105,13 @@ header.toolbar ul.user-menu > li.user a:hover {
 	background-image: url("/themes/default/media/img/river-empty2.gif");
 }
 
+.stream-message .callout {
+    float: left;
+    width: 33.333333333%;
+    border-bottom: none;
+    padding: 0 0.5em;
+    margin: 1.5em 0;
+}
 /* --------------------------- PAGE TITLE */
 
 hgroup.page-title {
@@ -1108,22 +1153,6 @@ hgroup.page-title h1 {
 hgroup.user-title h1 {
    padding: 0.3em 0 0;
 }
-
-/*hgroup.page-title h1 [class^="icon-"] {
-   color: #fff;
-   font-weight: normal;
-   text-align: center;
-   text-shadow: none;
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   background: #54c2d5;
-   padding: 5px 8px 3px;
-}
-
-hgroup.page-title h1 [class^="icon-"] {
-   margin-right: 0.5em;
-}*/
 
 hgroup.page-title h1 a {
    color: #444444;

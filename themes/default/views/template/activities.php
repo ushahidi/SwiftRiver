@@ -1,61 +1,46 @@
-<script type="text/template" id="activity_template">
-	<?php if ($owner AND $gravatar_view): ?>
-		<a class="avatar-wrap"><img src="<%= avatar %>"/></a>
-	<?php else: ?>
-		<span class="icon"></span>
-	<?php endif; ?>
+<script type="text/template" id="create_activity_template">
+	<div class="item-type">
+		<a href="#" class="avatar-wrap"><img src="<%= account.owner.avatar %>" /></a>
+	</div>
+	<div class="item-summary">
+		<span class="timestamp"><%= date %></span>
+		<h2><a href="<%= actor_url %>"><%= account.owner.name %></a> created the <a href="<%= action_on_url %>"><%= action_on_obj.name %></a> <%= action_on %>.</h2>
+	</div>	
+</script>
 
-	<div class="item-body">
-		
-		<?php if ($owner): ?>
-			<% if (action == "invite" && (action_to_id == logged_in_user) && !confirmed) { %>
-				<div class="actions">
-					<ul class="dual-buttons">
-						<li class="button-white confirm"><a href="#"><?php echo __('Accept'); ?></a></li>
-						<li class="button-white ignore"><a href="#"><?php echo __('Ignore'); ?></a></li>
-					</ul>
-				</div>
-			<% } %>
-		<?php endif; ?>
+<script type="text/template" id="invite_activity_template">
+	<div class="item-type">
+		<a href="#" class="avatar-wrap"><img src="<%= account.owner.avatar %>" /></a>
+	</div>
+	<div class="item-summary">
+		<span class="timestamp"><%= date %></span>
+		<h2><a href="<%= actor_url %>"><%= account.owner.name %></a> invited <a href="<%= action_to_url %>"><%= action_on_obj.account.owner.name %></a> to collaborate on the <a href="<%= invite_to_url %>"><%= invite_to_name %></a> <%= invite_to %>.</h2>
+	</div>		
+</script>
 
-		<h2>
-			<a href="<%= user_url %>"><%= user_name %></a>
-			<% if (action == "invite" && (action_to_id == logged_in_user)) { %>
-				invited you <% if (count > 1) { %> and <%= count %> others <% } %> to collaborate on the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
-			<% } %>
-			
-			<% if (action == "invite" && (action_to_id != logged_in_user)) { %>
-				invited <%= action_to_name %><% if (count > 1) { %> and <%= count %> others <% } %> to collaborate on the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
-			<% } %>
+<script type="text/template" id="follow_activity_template">
+	<div class="item-type">
+		<a href="#" class="avatar-wrap"><img src="<%= account.owner.avatar %>" /></a>
+	</div>
+	<div class="item-summary">
+		<span class="timestamp"><%= date %></span>
+		<h2><a href="<%= actor_url %>"><%= account.owner.name %></a> started following the <a href="<%= action_on_url %>"><%= action_on_obj.name %></a> <%= action_on %>.</h2>
+	</div>	
+</script>
 
-			<% if (action == "create") { %>
-				created the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
-			<% } %>
-			
-			<% if (action == "follow") { %>
-				<% if (action_on == "user") { %>
-					<% if (action_on_id == logged_in_user) { %>
-						started following you.
-					<% } else { %>
-						started following <a href="<%= action_on_url %>"><%= action_on_name %></a>.
-					<% } %>
-				<% } else {  %>
-					subscribed to the <%= action_on %> <a href="<%= action_on_url %>">"<%= action_on_name %>"</a>.
-				<% } %>
-			<% } %>
-
-			<?php if ($owner): ?>
-				<% if (action == "invite" && (action_to_id == logged_in_user) && !confirmed) { %>
-					<p>
-					<?php echo __("By accepting this invitation, you will be able to view and edit the settings for the "); ?>
-					<a href="<%= action_on_url %>">"<%= action_on_name %>"</a> 
-					<%= action_on %> along with <a href="<%= user_url %>"><%= user_name %></a>.
-					</p>
-				<% } %>
-			<?php endif; ?>
-
-		</h2>
-		<p class="metadata"><%= new Date(action_date_add).toLocaleString() %></p>
+<script type="text/template" id="comment_activity_template">
+	<div class="item-type">
+		<a href="#" class="avatar-wrap"><img src="<%= account.owner.avatar %>" /></a>
+	</div>
+	<div class="item-summary">
+		<span class="timestamp"><%= date %></span>
+		<h2><a href="<%= actor_url %>">Nathaniel Manning</a> commented on bucket <a href="#">Web design and development</a></h2>
+		<div class="item-sample">
+			<a href="#" class="avatar-wrap"><img src="https://si0.twimg.com/profile_images/2448693999/emrjufxpmmgckny5frdn_bigger.jpeg" /></a>
+			<div class="item-sample-body">
+				<p>Short loin meatball pork loin leberkas venison pork belly tri-tip short ribs ground round ribeye. Tail pastrami shankle pancetta pork belly ball tip, filet mignon shank.</p>
+			</div>
+		</div>
 	</div>
 </script>
 
@@ -90,7 +75,7 @@ $(function() {
 				// Advance page and fetch it
 				isPageFetching = true;
 
-				// Hide the navigation selector and show a loading message				
+				// Hide the navigation selector and show a loading message
 				loading_msg.appendTo(bottomEl).show();
 
 				activities.fetch({

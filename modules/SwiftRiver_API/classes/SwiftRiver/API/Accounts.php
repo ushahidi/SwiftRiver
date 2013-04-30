@@ -159,4 +159,26 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	{
 		return $this->put('/accounts/'.$account_id, $parameters);
 	}
+	
+	/**
+	* Get activities for the given account_id
+	*
+	* @param   string  account_id
+	* @return  array
+	*/
+	public function get_activities($account_id)
+	{
+		return $this->get('/accounts/'.$account_id.'/activities');
+	}
+	
+	/**
+	* Get activities for the given account_id
+	*
+	* @param  array  parameters
+	* @return array
+	*/
+	public function get_timeline($parameters)
+	{
+		return $this->get('/accounts/timeline', $parameters);
+	}
 }

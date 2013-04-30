@@ -88,6 +88,26 @@ class Controller_User extends Controller_Swiftriver {
 		$this->sub_content = View::factory('pages/user/activity')
 			->bind('owner', $this->owner)
 			->bind('account', $this->visited_account);
+			
+		// Activity stream
+		$this->template->header->js .= HTML::script("themes/default/media/js/activities.js");
+		$this->sub_content->activity_stream = View::factory('template/activities')
+		    ->bind('activities', $activities)
+		    ->bind('fetch_url', $fetch_url)
+		    ->bind('owner', $this->owner)
+		    ->bind('gravatar_view', $gravatar_view);
+		
+		$fetch_url = URL::site($this->visited_account['account_path'].'/timeline', TRUE);
+
+		if ( ! $this->owner)
+		{
+			$activities = json_encode($this->account_service->get_activities($this->visited_account['id']));
+		}
+		else
+		{
+			$this->sub_content->set('no_activity_view', View::factory('pages/user/no_activity'));
+			$activities = json_encode($this->account_service->get_timeline());
+		}
 	}
 	
 	public function action_content()
@@ -95,7 +115,7 @@ class Controller_User extends Controller_Swiftriver {
 		$this->template->header->title = __('Content');
 		$this->template->header->js = View::factory('pages/user/js/content')
 			->bind('rivers', $rivers)
-			->bind('forms', $forms)				
+			->bind('forms', $forms)
 			->bind('buckets', $buckets)
 			->bind('owner', $this->owner);
 		
@@ -293,10 +313,8 @@ class Controller_User extends Controller_Swiftriver {
 		$html->from_link = $text->from_link = URL::site($this->user->account->account_path, TRUE);
 		$html->nickname = $text->nickname = $user_orm->account->account_path;
 		$subject = __(':who if now following you of SwiftRiver!',
-						array( ":who" => $this->user->name,
-						));
-		Swiftriver_Mail::send($user_orm->email, 
-							  $subject, $text->render(), $html->render());
+						array( ":who" => $this->user->name));
+		Swiftriver_Mail::send($user_orm->email,  $subject, $text->render(), $html->render());
 	}
 	
 	/**
@@ -338,9 +356,8 @@ class Controller_User extends Controller_Swiftriver {
 				// The change password form has been submitted
 				$this->account_service->change_password($this->user['id'], $_POST);
 			}
-				
 		}
-		
+
 		$session = Session::instance();
 		$this->sub_content->messages = $session->get('messages');
 		$session->delete('messages');
@@ -351,7 +368,7 @@ class Controller_User extends Controller_Swiftriver {
 	 *
 	 * @return	void
 	 */
-	public function action_actions()
+	public function action_timeline()
 	{
 		$this->template = '';
 		$this->auto_render = FALSE;
@@ -363,73 +380,11 @@ class Controller_User extends Controller_Swiftriver {
 				$last_id = array_key_exists('last_id', $query_params)  ? intval($this->request->query('last_id')) : NULL;
 				$since_id = array_key_exists('since_id', $query_params) ? intval($this->request->query('since_id')) : NULL;
 				
-				$activity_list = array();
-											
-				if (empty($activity_list))
-					throw new HTTP_Exception_404();
+				$activity_list = $this->account_service->get_timeline($last_id);
 				
 				echo json_encode($activity_list);
 				break;
-			case "PUT":
-				$action_array = json_decode($this->request->body(), TRUE);
-				
-				$action_id = intval($action_array['id']);
-				$action_orm = ORM::factory('User_Action', $action_id);
-				
-				if ( ! $action_orm->loaded())
-					throw new HTTP_Exception_404();
-				
-				if ( $this->user->id != $action_orm->action_to_id)
-					throw new HTTP_Exception_403(); // User can only accept own invites
-				
-				
-				// Get the collaboration being saved
-				$collaborator_orm = NULL;
-				switch ($action_orm->action_on)
-				{
-					case "account":
-						$collaborator_orm = ORM::factory('Account_Collaborator')
-						                       ->where('account_id', '=', $action_orm->action_on_id)
-						                       ->where('user_id', '=', $action_orm->action_to_id)
-						                       ->find();
-					break;
-					case "river":
-						$collaborator_orm = ORM::factory('River_Collaborator')
-						                       ->where('river_id', '=', $action_orm->action_on_id)
-						                       ->where('user_id', '=', $action_orm->action_to_id)
-						                       ->find();
-					break;
-					case "bucket":
-						$collaborator_orm = ORM::factory('Bucket_Collaborator')
-						                       ->where('bucket_id', '=', $action_orm->action_on_id)
-						                       ->where('user_id', '=', $action_orm->action_to_id)
-						                       ->find();
-					break;
-				}
-				
-				// Are we confirming?
-				if ($action_array['confirmed'])
-				{
-					$action_orm->confirmed = $action_array['confirmed'];
-					
-					if ($collaborator_orm and $collaborator_orm->loaded())
-					{
-						$collaborator_orm->collaborator_active = $action_array['confirmed'];
-						$collaborator_orm->save();
-						$action_orm->save();
-					}
-					
-					// Notify owners
-					$this->notify_new_collaborator($collaborator_orm);
-				}
-				else
-				{
-					$action_orm->delete();
-					$collaborator_orm->delete();
-				}
-			break;
 		}
-			
 	}
 	
 	private function notify_new_collaborator($collaborator_orm)
