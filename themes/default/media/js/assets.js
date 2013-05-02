@@ -391,7 +391,7 @@
 
 			this.viewData = {closable: false};
 
-			if (options.closable) {
+			if (options && options.closable) {
 				this.viewData.closable = true;
 			} else {
 				this.className += " modal-segment";
