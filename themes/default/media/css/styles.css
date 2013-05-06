@@ -3324,20 +3324,23 @@ header.toolbar .logo a {
 }
 
 header.toolbar ul.global-menu {
-   -webkit-border-radius: 3px;
-   -moz-border-radius: 3px;
-   border-radius: 3px;
-   -moz-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
-   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
-   box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
-   border: 1px solid rgba(0,0,0,0.1);
+	/*
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-moz-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+	-webkit-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+	box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+	border: 1px solid rgba(0,0,0,0.1);
+	*/
    margin-top: 0.8em;
+   width: 60%;
 }
 
 header.toolbar ul.user-menu > li > a {
-   width: auto;
-   padding: 0 10px;
-   margin: 7px 0;
+	width: auto;
+	padding: 0 10px;
+	margin: 7px 0;
 }
 
 header.toolbar ul.user-menu > li span.label {
@@ -3646,13 +3649,21 @@ header.toolbar ul.global-menu li.home {
 }
 
 header.toolbar ul.global-menu > li:first-child {
-   border-right: 1px solid rgba(0,0,0,0.1);
+   /*border-right: 1px solid rgba(0,0,0,0.1);*/
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   -moz-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   -webkit-box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   box-shadow: 0 1px 1px rgba(256,256,256,.25) inset;
+   border: 1px solid rgba(0,0,0,0.1);
 }
 
-header.toolbar ul.global-menu > li:last-child {
+/*header.toolbar ul.global-menu > li:last-child {
    border-left: 1px solid rgba(256,256,256,0.17);
+   float: right;
 }
-
+*/
 /* --------------------------- MODAL */
 
 #zoom-container .drop-full .settings-toolbar {
@@ -3692,4 +3703,35 @@ header.toolbar .logo a {
    background-image: url(../../media/img/drop-wave2@2x.png);
 }*/
 
+}
+
+header.toolbar ul.global-menu li.search-bar {
+	margin-left: 0.8em;
+	width: 70%;
+}
+header.toolbar ul.global-menu input[type="text"] {
+	height: 33px;
+	font-size: 1.0em;
+	box-shadow: none;
+	width: 100%;
+}
+
+article#search-container {
+	padding-top: 180px;
+	margin: auto 10%;
+}
+
+#search-container .base {
+	background-color: inherit;
+	border: none;
+	box-shadow: none;
+}
+
+#search-container .modal-field h2 {
+   display: inline-block;
+   color: #888;
+   font-weight: normal;
+   font-size: 1.3em;
+   line-height: 20px;
+   padding: 0.2em 0;
 }

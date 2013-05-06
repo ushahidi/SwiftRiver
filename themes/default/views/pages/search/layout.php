@@ -1,45 +1,33 @@
-<?php if ( ! empty($search_term)): ?>
 <hgroup class="page-title cf">
 	<div class="center">
-		<div class="page-h1 col_9">
-			<h1><?php echo __("Search results "); ?> <em><?php echo $search_term; ?></em></h1>
+		<div class="col_9">
+			<h1><?php echo __("Search results for "); ?><em><?php echo "'".$search_term."'"; ?></em></h1>
 		</div>
 	</div>
 </hgroup>
 
-<nav class="page-navigation cf">
-	<div class="center">
-		<div id="page-views" class="river touchcarousel col_12">
-			<?php $url_params = (empty($url_params)) ? '' : '?'.$url_params; ?>
-			<ul class="touchcarousel-container">
-				<li id="list-navigation-link" class="touchcarousel-item <?php if ($active == 'list') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/list'.$url_params); ?>"><?php echo __("List"); ?></a>
-				</li>
-				<li id="photos-navigation-link" class="touchcarousel-item <?php if ($active == 'photos') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/photos'.$url_params); ?>"><?php echo __("Photos"); ?></a>
-				</li>
+<div id="content">
+	<div class="center body-tabs-container cf">
 
-				<?php if ($search_scope === 'all') : ?>
-				<li class="touchcarousel-item <?php if ($active == 'rivers') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/rivers'.$url_params); ?>">
-						<?php echo __("Rivers"); ?>
-					</a>
-				</li>
-				<li class="touchcarousel-item <?php if ($active == 'buckets') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/buckets'.$url_params); ?>">
-						<?php echo __("Buckets"); ?>
-					</a>
-				</li>
-				<li class="touchcarousel-item <?php if ($active == 'users') echo 'active'; ?>">
-					<a href="<?php echo URL::site('search/users'.$url_params); ?>">
-						<?php echo __("Users"); ?>
-					</a>
-				</li>
-				<?php endif; ?>
-			</ul>
-		</div>
+		<section id="filters" class="col_3">
+			<div class="modal-window">
+				<div class="modal">		
+					<div class="modal-title cf">
+						<a href="#" class="modal-close button-white"><i class="icon-cancel"></i><?php echo __("Close"); ?></a>
+						<h1><?php echo __("Filters"); ?></h1>
+					</div>
+						
+					<ul class="filters-primary">
+						<?php foreach ($navigation_links as $key => $nav): ?>
+						<li id="<?php echo $key; ?>-navigation-link" class="<?php echo $active == $key ? 'active' : ''; ?>">
+							<a href="<?php echo $nav['link']; ?>"><?php echo $nav['label']; ?></a>
+						</li>
+					<?php endforeach; ?>
+					</ul>
+				</div>
+			</div>
+		</section>
+					
+		<?php echo $search_results; ?>
 	</div>
-</nav>
-<?php endif; ?>
-
-<?php echo $sub_content; ?>
+</div>

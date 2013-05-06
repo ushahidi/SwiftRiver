@@ -1,10 +1,16 @@
 <ul class="global-menu">
 	<li class="home"><a href="<?php echo $dashboard_url; ?>"><span class="icon-home"></span></a></li>
-	<li class="search"><a href="#" class="modal-trigger"><span class="icon-search"></span></a></li>
+	<?php if ($show_search_bar): ?>
+	<li class="search-bar">
+		<?php echo Form::open(URL::site('search', TRUE), array('method' => 'GET')); ?>
+		<?php echo Form::input("q", NULL, array('placeholder' => "Search")); ?>
+		<?php echo Form::close(); ?>
+	</li>
+	<?php endif; ?>
 </ul>
 </div>
 
-<div class="col_8">
+<div class="col_12">
 	<ul class="user-menu">	
 		<!-- hide parts of the header menu in the login page and for non registered users -->
 		<?php if ($user AND ! $anonymous): ?>

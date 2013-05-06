@@ -157,6 +157,20 @@ class SwiftRiver_Client {
 		return $this->apis['forms'];
 	}
 	
+	/**
+	 * Gets and returns the search API
+	 *
+	 * @return SwiftRiver_API_Search
+	 */
+	public function get_search_api()
+	{
+		if ( ! isset($this->apis['search']))
+		{
+			$this->apis['search'] = new SwiftRiver_API_Search($this);
+		}
+		
+		return $this->apis['search'];
+	}
 	
 	/**
 	 * Send request to an api endpoint

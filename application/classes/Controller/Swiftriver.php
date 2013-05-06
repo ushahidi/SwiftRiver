@@ -324,10 +324,20 @@ class Controller_Swiftriver extends Controller_Template {
 			    ->bind('admin', $this->admin)
 			    ->bind('account', $this->account)
 			    ->bind('anonymous', $this->anonymous)
-				->bind('dashboard_url', $this->dashboard_url);
+				->bind('dashboard_url', $this->dashboard_url)
+				->bind('show_search_bar', $show_search_bar)
+				->bind('controller', $controller);
 
-			$this->template->header->nav_header->controller = strtolower($this->request->controller());
+			$controller = strtolower($this->request->controller());
+
+			// Only show the search bar when the user is logged in and is not on the main search page
+			$show_search_bar = $this->user AND ! $this->anonymous;
 			
+			if ($controller === 'search' AND empty($_GET))
+			{
+				$show_search_bar = FALSE;
+			}
+
 			if ($this->user)
 			{
 				$this->template->header->nav_header->num_notifications = 0;

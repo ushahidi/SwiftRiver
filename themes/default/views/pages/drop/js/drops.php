@@ -54,6 +54,9 @@
 
 		var loading_msg = window.loading_message.clone();
 
+		// Polling check
+		// If polling is disabled, disable infinite scrolling as well
+		<?php if (isset($polling_enabled) AND $polling_enabled !== FALSE): ?>
 		$(window).bind("scroll", function() {
 			bottomEl = $("#drop_listing_bottom");
 
@@ -118,6 +121,8 @@
 				});   
 			}		    
 		}, 30000 + Math.floor((Math.random()*30000)+1));
+		<?php endif; ?>
+		// END Polling check
 
 		// Bootstrap the droplet list
 		dropsList.reset(<?php echo $droplet_list; ?>);
@@ -191,11 +196,10 @@
 
 			dropsView: function() {
 				this.activateNavigationLink("#drops-navigation-link");
-				this.resetView();		
+				this.resetView();
 				$("#stream").append(this.getView("drops"));
 				this.view.masonry();
 				this.listingDone = true;
-
 				// Apply filter parameters to the navigation if any
 				if (!filters.isEmpty()) {
 					this.setFilter(filters.getString(), true, false);
@@ -216,7 +220,7 @@
 
 			photosView: function() {
 				this.activateNavigationLink("#photos-navigation-link");
-				this.resetView();		
+				this.resetView();
 				$("#stream").append(this.getView("photos"));
 				this.view.masonry();
 				this.listingDone = true;
@@ -273,7 +277,9 @@
 					}
 				});
 				$("#zoom-container a.zoom-close").bind("click", function(e) {
-					appRouter.navigate(layout);
+					var filterStr = filters.getString();
+					if (filterStr.length) filterStr = '?' + filterStr;
+					appRouter.navigate(layout + filterStr);
 				});
 				return false;
 			},
