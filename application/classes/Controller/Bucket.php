@@ -98,8 +98,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->set("photos", ($this->photos ? 1 : 0))
 			->set('droplet_list', json_encode($droplet_list))
 			->set('filters', NULL)
-			->set('max_droplet_id', 0)
-			->set('channels', json_encode(array()));
+			->set('max_droplet_id', 0);
 
 		if (count($droplet_list) > 0)
 		{
@@ -115,7 +114,9 @@ class Controller_Bucket extends Controller_Drop_Base {
 		
 		if ( ! empty($filters))
 		{
-			$droplet_js->set('filters', json_encode($filters));
+			$encoded_filters = array();
+			parse_str(http_build_query($filters), $encoded_filters);
+			$droplet_js->filters = json_encode($encoded_filters);
 		}
 
 		// Generate the List HTML

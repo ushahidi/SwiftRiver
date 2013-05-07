@@ -231,7 +231,7 @@
 		<select>
 			<option></option>
 		</select>
-	</div>																	
+	</div>
 </script>
 
 <script type="text/template" id="list-field-option-template">

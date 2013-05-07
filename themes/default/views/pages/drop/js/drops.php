@@ -19,7 +19,7 @@
 					if (query.length) {
 						query += "&";
 					}
-					query += filter + "=" + encodeURIComponent(data[filter]);
+					query += filter + "=" + data[filter];
 				}
 				return query;
 			},

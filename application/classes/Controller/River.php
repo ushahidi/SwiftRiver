@@ -171,14 +171,16 @@ class Controller_River extends Controller_Drop_Base {
 		$droplet_js->filters = NULL;
 		if ( ! empty($filters))
 		{
-			$droplet_js->filters = json_encode($filters);
+			$encoded_filters = array();
+			parse_str(http_build_query($filters), $encoded_filters);
+			$droplet_js->filters = json_encode($encoded_filters);
 		}
+
 		$droplet_js->droplet_list = json_encode($droplets_array);
 		$droplet_js->max_droplet_id = $max_droplet_id;
-		$droplet_js->channels = json_encode($this->river['channels']);
 
 		// No content view
-		$no_content_view = empty($this->river['channels']) 
+		$no_content_view = empty($this->river['channels'])
 			? View::factory('pages/river/no-channels')
 			: View::factory('pages/river/no-drops');
 

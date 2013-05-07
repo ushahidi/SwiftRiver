@@ -37,13 +37,13 @@ class Controller_River_Channels extends Controller_River_Settings {
 		switch ($this->request->method())
 		{
 			case "DELETE":			
-				$channel_id = intval($this->request->param('id', 0));				
+				$channel_id = intval($this->request->param('id', 0));
 				$this->river_service->delete_channel($this->river['id'], $channel_id);
 			break;
 			case "POST":			
 				$channel_array = json_decode($this->request->body(), TRUE);
 				
-				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);			
+				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);
 				if ( ! $channel_config)
 					throw new HTTP_Exception_400();
 				
@@ -60,10 +60,10 @@ class Controller_River_Channels extends Controller_River_Settings {
 				}
 			break;
 			case "PUT":
-				$channel_id = intval($this->request->param('id', 0));				
+				$channel_id = intval($this->request->param('id', 0));
 				$channel_array = json_decode($this->request->body(), TRUE);
 				
-				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);			
+				$channel_config = Swiftriver_Plugins::get_channel_config($channel_array['channel']);
 				if ( ! $channel_config)
 					throw new HTTP_Exception_400();
 				

@@ -4,7 +4,7 @@
 	<p>
 		<?php echo __("Channels (like Twitter and RSS) are what feed your river information. You'll need at least one channel in order for drops to start appearing in your river. Otherwise, it'll remain dry."); ?>
 	</p>
-	<a href="#" id="add-river-channels" class="button-primary modal-trigger">
+	<a href="#" id="add-river-channels" class="button-primary">
 		<i class="icon-plus"></i>
 		<?php echo __("Add channels"); ?>
 	</a>
@@ -12,5 +12,8 @@
 </article>
 
 <script type="text/javascript">
-	
+$("#add-river-channels").live("click", function(e) {
+	$(".filters-type-settings a").trigger('click');
+	return false;
+});
 </script>

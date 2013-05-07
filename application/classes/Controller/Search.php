@@ -50,8 +50,8 @@ class Controller_Search extends Controller_Swiftriver {
 			// Sanitize the search term - strip all HTML
 			// Layout for the seach page
 			$this->template->content = View::factory('pages/search/layout')
-			    ->bind('search_results', $this->search_results)
-			    ->bind('search_term', $this->search_term)
+				->bind('search_results', $this->search_results)
+				->bind('search_term', $this->search_term)
 				->bind('active', $this->search_type)
 				->bind('navigation_links', $navigation_links);
 
@@ -129,7 +129,6 @@ class Controller_Search extends Controller_Swiftriver {
 		$droplet_js = View::factory('pages/drop/js/drops')
 			->set('default_view', 'drops')
 			->set('photos', 0)
-			->set('channels', json_encode(array()))
 			->set('polling_enabled', FALSE)
 			->set('max_droplet_id', PHP_INT_MAX)
 			->bind('user', $this->user)
