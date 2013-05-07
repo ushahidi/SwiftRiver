@@ -1,12 +1,6 @@
 <ul class="global-menu">
 	<li class="home"><a href="<?php echo $dashboard_url; ?>"><span class="icon-home"></span></a></li>
-	<?php if ($show_search_bar): ?>
-	<li class="search-bar">
-		<?php echo Form::open(URL::site('search', TRUE), array('method' => 'GET')); ?>
-		<?php echo Form::input("q", NULL, array('placeholder' => "Search")); ?>
-		<?php echo Form::close(); ?>
-	</li>
-	<?php endif; ?>
+	<li class=""><a href="<?php echo URL::site('search'); ?>"><span class="icon-search"></span></a></li>
 </ul>
 </div>
 
@@ -29,7 +23,7 @@
 					</a>
 					<ul class="popover-window base header-toolbar">
 						<li>
-							<a href="#">
+							<a href="<?php echo URL::site($user['account_path']); ?>">
 								<?php echo __('Your Activity');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
 							</a>
 						</li>
@@ -44,7 +38,7 @@
 							</li>
 						<?php endif; ?>
 						<li>
-							<a href="<?php echo URL::site().'login/done'; ?>">
+							<a href="<?php echo URL::site('login/done'); ?>">
 								<em><?php echo __('Log Out');?></em>
 							</a>
 						</li>
