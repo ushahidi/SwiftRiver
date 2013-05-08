@@ -122,15 +122,14 @@ class Controller_Bucket extends Controller_Drop_Base {
 
 		// Generate the List HTML
 		$droplets_view = View::factory('pages/drop/drops')
+			->set('asset_templates', View::factory('template/assets'))
+			->bind('no_content_view', $no_content_view)
 			->bind('droplet_js', $droplet_js)
 			->bind('user', $this->user)
 			->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
 
-		$droplets_view->set(array(
-			'no_content_view' => View::factory('pages/bucket/no-drops'),
-			'asset_templates' => View::factory('template/assets')
-		));
+		$no_content_view = View::factory('pages/bucket/no-drops');
 
 		// Links to bucket menu items
 		$settings_url = $this->bucket_base_url.'/settings';

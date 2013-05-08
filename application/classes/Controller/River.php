@@ -183,8 +183,9 @@ class Controller_River extends Controller_Drop_Base {
 		// No content view
 		$no_content_view = empty($this->river['channels'])
 			? View::factory('pages/river/no-channels')
-			: View::factory('pages/river/no-drops');
-
+			: View::factory('pages/river/no-drops')->set('has_drops', ($max_droplet_id > 0));
+		
+			
 		// Select droplet list view with drops view as the default if list not specified
 		$this->droplets_view = View::factory('pages/drop/drops')
 			->set('no_content_view', $no_content_view)
@@ -193,11 +194,6 @@ class Controller_River extends Controller_Drop_Base {
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
 		    ->bind('anonymous', $this->anonymous);
-			
-		$this->droplets_view->set(array(
-			'no_content_view' => $no_content_view,
-			'asset_templates' => View::factory('template/assets')
-		));
 
 		// Show expiry notice to owners only
 		if ($this->owner AND $this->river['expired'])
@@ -288,7 +284,6 @@ class Controller_River extends Controller_Drop_Base {
 				{
 					$droplets = array_reverse($droplets);
 				}
-				
 
 				if (empty($droplets))
 				{
