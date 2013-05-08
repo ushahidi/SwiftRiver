@@ -98,7 +98,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->set("photos", ($this->photos ? 1 : 0))
 			->set('droplet_list', json_encode($droplet_list))
 			->set('filters', NULL)
-			->set('max_droplet_id', 0);
+			->set('max_droplet_id', 0)
+			->set('polling_enabled', TRUE);
 
 		if (count($droplet_list) > 0)
 		{

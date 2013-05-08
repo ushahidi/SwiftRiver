@@ -390,7 +390,7 @@
 					var channel = new Channel();
 					channel.urlRoot = this.options.baseUrl;
 					channel.set("channel", channelConfig.get("channel"));
-					var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: channel});					
+					var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: channel});
 					this.$(".modal-field-tabs-window").replaceWith(channelView.render().el);
 				}, this);
 				
@@ -450,10 +450,10 @@
 			this.$el.html(this.template());
 			
 			var parameters = this.model.get("parameters");
-			var channel = this.model.get("channel");			
-			var optionConfig = this.options.config.getChannelOptionConfig(channel, parameters.key);			
+			var channel = this.model.get("channel");
+			var optionConfig = this.options.config.getChannelOptionConfig(channel, parameters.key);
 			optionConfig = new Backbone.Model(optionConfig);
-			var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: this.model});					
+			var channelView = this.channelView = new EditChannelParametersView({config: optionConfig, model: this.model});
 			this.$(".modal-field-tabs-window").replaceWith(channelView.render().el);
 			
 			return this;

@@ -213,7 +213,7 @@
 			<span class="remove icon-pencil"></span>
 			<span class="remove icon-cancel"></span>
 		<% } %>
-	</div>																
+	</div>
 </script>
 
 <script type="text/template" id="checkbox-field-option-template">

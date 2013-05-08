@@ -54,9 +54,6 @@
 
 		var loading_msg = window.loading_message.clone();
 
-		// Polling check
-		// If polling is disabled, disable infinite scrolling as well
-		<?php if (isset($polling_enabled) AND $polling_enabled !== FALSE): ?>
 		$(window).bind("scroll", function() {
 			bottomEl = $("#drop_listing_bottom");
 
@@ -103,6 +100,8 @@
 			}
 		}, this);
 
+		// Is polling enabled?
+		<?php if ($polling_enabled): ?>
 		// Poll for new drops every 30 seconds
 		setInterval(function() {
 			if (!isSyncing) {

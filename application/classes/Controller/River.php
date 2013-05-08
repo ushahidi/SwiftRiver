@@ -165,7 +165,8 @@ class Controller_River extends Controller_Drop_Base {
 		$droplet_js = View::factory('pages/drop/js/drops')
 			->set('fetch_base_url',  $this->river_base_url)
 			->set('default_view', 'drops')
-			->set('photos', $this->photos ? 1 : 0);
+			->set('photos', $this->photos ? 1 : 0)
+			->set('polling_enabled', TRUE);
 
 		// Check if any filters exist and modify the fetch urls
 		$droplet_js->filters = NULL;
@@ -186,6 +187,8 @@ class Controller_River extends Controller_Drop_Base {
 
 		// Select droplet list view with drops view as the default if list not specified
 		$this->droplets_view = View::factory('pages/drop/drops')
+			->set('no_content_view', $no_content_view)
+			->set('asset_templates', View::factory('template/assets'))
 		    ->bind('droplet_js', $droplet_js)
 		    ->bind('user', $this->user)
 		    ->bind('owner', $this->owner)
