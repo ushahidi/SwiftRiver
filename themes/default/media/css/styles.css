@@ -1574,6 +1574,7 @@ article.drop,
 .drop h1 a.zoom-trigger {
    display: block;
    color: #666666;
+   word-wrap: break-word;
 }
 
 .drop h1 a.zoom-trigger:hover {
