@@ -976,6 +976,9 @@
 			// Remove drops if any from the view
 			this.$("article.drop").remove();
 			
+			if (this.checkEmpty())
+				return;
+			
 			// When a reset is done after initialization, redo masonry.
 			var doMasonry = false;
 			if (this.$("#drops-view").hasClass("masonry-brick")) {
@@ -983,11 +986,9 @@
 				doMasonry = true;
 			}
 			
-			if (!this.checkEmpty()) {
-				this.hideNoContentEl();
-				this.options.dropsList.each(this.addDrop, this);
-			}
-			
+			this.hideNoContentEl();
+			this.options.dropsList.each(this.addDrop, this);
+
 			if (doMasonry) {
 				this.masonry();
 			}

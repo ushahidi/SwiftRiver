@@ -109,16 +109,15 @@
 				newDropsList.fetch({
 					url: filters.getDropListUrl(true),
 					data: {since_id: sinceId, photos: photos}, 
-				    update: true,
+					update: true,
 					remove: false,
-				    success: function(collection, response, options) {
-				        isSyncing = false;
-						
+					success: function(collection, response, options) {
+						isSyncing = false;
 						// Show the search filter
 						$("#drop-search-filter:hidden").fadeIn('slow');
-				    }
+					}
 				});   
-			}		    
+			}
 		}, 30000 + Math.floor((Math.random()*30000)+1));
 		<?php endif; ?>
 		// END Polling check
@@ -152,6 +151,7 @@
 				this.route(/^list(\?.+)?$/, "listView");
 				this.route(/^photos(\?.+)?$/, "photosView");
 				filters.on("change", this.filterUpdated, this);
+				this.noContentView = window.noContentView = $("article.no-drops");
 			},
 
 			listingDone: false,
@@ -159,34 +159,36 @@
 			// Cache for the drops view to unbinding event handlers
 			// when the view changes.
 			view: null,
-
+			
 			resetView: function() {
 				var dropsContainer = $("#stream");
-				
+				dropsContainer.empty();
+
 				if (!dropsList.size()) {
-					$(".no-drops", dropsContainer).show();
-					
-					// Hide the search filter
-					$("#drop-search-filter").hide();
-				} else {
-					dropsContainer.empty();
+					dropsContainer.append(this.noContentView);
+					$(this.noContentView, dropsContainer).fadeIn();
+
+					if (sinceId == 0) {
+						$("#drop-search-filter").hide();
+					}
 				}
 
 				modalHide();
 				zoomHide();
-				dropsList.off(null, null, this.view);
 				this.view = null;
 			},
 
 			getView: function (layout) {
 				if (!this.view) {
-					this.view = window.dropsView = new Drops.DropsView({layout: layout, 
-													dropsList: dropsList, 
-													newDropsList: newDropsList,
-													baseURL: baseURL,
-													maxId: maxId,
-													router: this,
-													filters: filters});
+					this.view = window.dropsView = new Drops.DropsView({
+						layout: layout, 
+						dropsList: dropsList, 
+						newDropsList: newDropsList,
+						baseURL: baseURL,
+						maxId: maxId,
+						router: this,
+						filters: filters
+					});
 					this.view.render();
 					this.view.initDrops();
 				}
@@ -316,6 +318,7 @@
 					url: filters.getDropListUrl(true),
 					data: {photos: photos},
 					silent: true,
+					reset: true,
 					success: function(collection, response, options) {
 						$(".filters-primary li span.total").html(collection.length);
 						router.setFilter(filter.getString(), true, true);
