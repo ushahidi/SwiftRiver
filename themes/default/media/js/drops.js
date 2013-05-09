@@ -913,10 +913,14 @@
 				$newElems.animate({ opacity: 1 });
 				if (id > context.options.maxId) {
 					// New drops, prepend them
-					 $container.masonry('reload');
+					$container
+						.masonry()
+						.masonry('reload');
 				} else {
 					// Pagination, append the drops
-					$container.masonry('appended', $(views), true);
+					$container
+						.masonry()
+						.masonry('appended', $(views), true);
 				}
 			});
 		},
