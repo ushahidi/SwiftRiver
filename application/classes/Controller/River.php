@@ -1,5 +1,4 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
-
 /**
  * River Controller
  *
@@ -13,6 +12,7 @@
  * @copyright  Ushahidi - http://www.ushahidi.com
  * @license    http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL)
  */
+
 class Controller_River extends Controller_Drop_Base {
 
 	/**
@@ -339,7 +339,7 @@ class Controller_River extends Controller_Drop_Base {
 
 	
 	/**
-	 * River collaborators restful api
+	 * XHR endpoint for adding/removing collaborators
 	 * 
 	 * @return	void
 	 */
@@ -375,7 +375,6 @@ class Controller_River extends Controller_Drop_Base {
 					throw new HTTP_Exception_400();
 				}
 				echo json_encode($collaborator);
-				break;
 			break;
 			
 			case "DELETE":
@@ -390,11 +389,12 @@ class Controller_River extends Controller_Drop_Base {
 				try
 				{
 					$this->river_service->delete_collaborator($this->river['id'], $collaborator_id);
-				} catch (SwiftRiver_API_Exception_NotFound $e)
-				{
-					throw new HTTP_Exception_403();
 				}
-			break;			
+				catch (SwiftRiver_API_Exception_NotFound $e)
+				{
+					throw new HTTP_Exception_404();
+				}
+			break;
 		}
 	}
 	
@@ -439,102 +439,6 @@ class Controller_River extends Controller_Drop_Base {
 		{
 			// Cache::instance()->delete('user_rivers_'.$this->user->id);
 		}
-	}
-	
-	
-	/**
-	 * @return	void
-	 */
-	public function action_trends()
-	{
-		$this->droplets_view = View::factory('pages/river/trend');
-		$this->droplets_view->river_base_url = $this->river_base_url;
-		$this->active = 'trends';
-		
-		$this->droplets_view->trends = array();
-		$cur_date = new DateTime(null, new DateTimeZone('UTC'));
-		$tag_types =  array('person' => 'People', 
-							'place' => 'Places', 
-							'organization' => 'Organizations');
-		$periods = array('hour' => 'This Hour',
-		 				 'day' => 'Today',
-						 'week' => 'This Week', 
-						 'month' => 'This Month',
-						 'all' => 'All Time');
-		foreach($tag_types as $type_key => $type_title)
-		{
-			$has_data = FALSE;
-			foreach($periods as $period_key => $period_value)
-			{
-				$start_time = $this->get_period_start_time($period_key, $cur_date);
-				$data = Model_River_Tag_Trend::get_trend($this->river->id, $start_time, $type_key);
-				foreach ($data as & $trend)
-				{
-					$trend['url'] = $this->river_base_url.
-									'?'.($type_key == 'place' ? 'places' : 'tags').'='.
-									urlencode($trend['tag']);
-					if ($start_time)
-					{
-						$trend['url'] .= '&start_date='.urlencode($start_time);
-					}
-				}
-				$this->droplets_view->trends[$type_title]['data'][$period_value] = $data;
-				if (! empty($data))
-				{
-					$has_data = TRUE;
-				}
-			}
-			$this->droplets_view->trends[$type_title]['has_data'] = $has_data;
-		}
-	}
-	
-	/**
-	 * Given a current time, return the star date for the requested period.
-	 *
-	 * @param string $period 'hour', 'day', 'week', 'month' or all
-	 * @param DateTime $cur_date current date
-	 * @return string
-	 */
-	private function get_period_start_time($period, $cur_date)
-	{
-		switch ($period)
-		{
-			case 'hour':
-				return date_format($cur_date, 'Y-m-d H:00:00');
-				break;
-			case 'day':
-				return date_format($cur_date, 'Y-m-d 00:00:00');
-				break;
-			case 'week':
-				$ts = date_timestamp_get($cur_date);
-				$start = (date('w', $ts) == 0) ? $ts : strtotime('last sunday', $ts);
-				return date('Y-m-d', $start);
-				break;
-			case 'month':
-				return date_format($cur_date, 'Y-m-01 00:00:00');
-				break;				
-			case 'all':
-				return NULL;
-				break;
-		}
-	}
-
-	/**
-	 * Endpoint for extending the lifetime of the river
-	 * If the current user is not an owner of the river, they are redirected
-	 * the the river's main page
-	 */
-	public function action_extend()
-	{
-		if ( ! $this->owner || ! $this->river->is_expired())
-		{
-			$this->redirect($this->river_base_url, 302);
-		}
-
-		$this->auto_render = FALSE;
-		$this->template = "";
-		$this->river->extend_lifetime();
-		$this->redirect($this->river_base_url, 302);
 	}
 	
 	public function action_tags()
@@ -668,7 +572,7 @@ class Controller_River extends Controller_Drop_Base {
 			case "PUT":
 				$drop_id = intval($this->request->param('id', 0));
 				$form_id = $this->request->param('id2', 0);
-				$form_array = json_decode($this->request->body(), TRUE);				
+				$form_array = json_decode($this->request->body(), TRUE);
 				$values = $form_array['values'];
 				
 				try
