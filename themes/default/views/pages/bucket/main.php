@@ -35,19 +35,19 @@
 					<ul class="filters-primary">
 						<li id="drops-navigation-link" class="active">
 							<a href="drops">
-								<span class="total" style="display: none;"><?php echo $drop_count; ?></span>
+								<span class="total" style="display: none;"></span>
 								<?php echo __("Drops"); ?>
 							</a>
 						</li>
 						<li id="list-navigation-link">
 							<a href="list">
-								<span class="total" style="display: none;"><?php echo $drop_count; ?></span>
+								<span class="total" style="display: none;"></span>
 								<?php echo __("List"); ?>
 							</a>
 						</li>		
 						<li id="photos-navigation-link">
 							<a href="photos">
-								<span class="total" style="display: none;"><?php echo $photos_drop_count; ?></span>
+								<span class="total" style="display: none;"></span>
 								<?php echo __("Photos"); ?>
 							</a>
 						</li>

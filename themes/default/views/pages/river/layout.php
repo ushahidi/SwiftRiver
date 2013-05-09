@@ -33,7 +33,7 @@
 						<?php foreach ($nav as $item): ?>
 						<li id="<?php echo $item['id']; ?>" class="<?php echo $item['active'] == $active ? 'active' : ''; ?>">
 							<a href="<?php echo $river_base_url.$item['url']; ?>">
-								<span class="total"><?php echo $drop_count; ?></span>
+								<span class="total"></span>
 								<?php echo $item['label'];?>
 							</a>
 						</li>

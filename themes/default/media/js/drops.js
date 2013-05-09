@@ -212,7 +212,11 @@
 				var models = [];
 				dropsList = this;
 				_.each(model, function(drop) {
-					models.push(dropsList.get(drop.id));
+					var dropModel = dropsList.get(drop.id);
+					if (!dropModel.urlRoot) {
+						dropModel.urlRoot = dropsList.url;
+					}
+					models.push(dropModel);
 				})
 
 				// Custom event that unlike the add event, will contain an
@@ -1054,13 +1058,12 @@
 		
 		showNewDrops: function() {
 			var view = this;
-			var dropsList = this.options.dropsList;
 			var newDropsList = this.options.newDropsList;
 			view.alertView.$el.fadeOut("slow", function() {
 				view.alertView.$el.remove();
 				delete view.alertView;
 				
-				dropsList.add(newDropsList.models);
+				view.options.dropsList.add(newDropsList.models);
 				newDropsList.reset();
 			})
 		},
@@ -1578,6 +1581,7 @@
 		},
 		
 		renderTotals: function() {
+			$(".filters-primary li span.total").html(this.options.dropsList.length)
 			this.$("li.read .total").html(this.options.dropsList.getRead().length);
 			this.$("li.unread .total").html(this.options.dropsList.getUnread().length);
 		}

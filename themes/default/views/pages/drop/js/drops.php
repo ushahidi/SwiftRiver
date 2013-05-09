@@ -15,7 +15,7 @@
 				for (filter in data) {
 					if (!data[filter] || data[filter] == null || !data[filter].length)
 						continue;
-					
+
 					if (query.length) {
 						query += "&";
 					}
@@ -70,23 +70,22 @@
 
 				dropsList.fetch({
 					url: filters.getDropListUrl(true),
-				    data: {page: pageNo, max_id: maxId, photos: photos}, 
-				    update: true,
+					data: {page: pageNo, max_id: maxId, photos: photos}, 
+					update: true,
 					remove: false,
-				    success: function(collection, response, options) {
+					success: function(collection, response, options) {
 						// Re-enable scrolling after a delay
 						setTimeout(function(){ isPageFetching = false; }, 700);
 						clearTimeout(t);
-				        $(".stream-message.waiting").fadeOut("normal");
-						$(".filters-primary li span.total").html(collection.length);
-				    },
-				    error: function(model, response) {
-				        if (response.status == 404) {
-				            isAtLastPage = true;
-				        }
-				    }
+						$(".stream-message.waiting").fadeOut("normal");
+					},
+					error: function(model, response) {
+						if (response.status == 404) {
+							isAtLastPage = true;
+						}
+					}
 				});
-		    }
+			}
 		});
 
 		// New drop polling
@@ -320,7 +319,6 @@
 					silent: true,
 					reset: true,
 					success: function(collection, response, options) {
-						$(".filters-primary li span.total").html(collection.length);
 						router.setFilter(filter.getString(), true, true);
 					}
 				});

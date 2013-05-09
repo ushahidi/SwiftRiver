@@ -73,9 +73,7 @@ class Controller_River extends Controller_Drop_Base {
 			$this->public = (bool) $this->river['public'];
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->public AND 
-				 ! $this->owner AND 
-				 ! $this->collaborator)
+			if ( ! $this->public AND  ! $this->owner AND  ! $this->collaborator)
 			{
 				$this->redirect($this->dashboard_url, 302);
 			}
@@ -157,8 +155,6 @@ class Controller_River extends Controller_Drop_Base {
 		//Get Droplets
 		$droplets_array = $this->river_service->get_drops($river_id, 1, 20, NULL, $max_droplet_id, (bool) $this->photos, $filters);
 
-		$this->template->content->drop_count = count($droplets_array);
-		
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
 
