@@ -181,4 +181,12 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	{
 		return $this->get('/accounts/timeline', $parameters);
 	}
+	
+	/**
+	 * Sends an account activation request
+	 */
+	public function activate_account($parameters)
+	{
+		return $this->post('accounts/activate', $parameters);
+	}
 }

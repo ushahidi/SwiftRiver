@@ -77,8 +77,8 @@ class Service_Account extends Service_Base {
 	*/
 	public function activate_account($email, $token) 
 	{
-		$account = $this->get_account_by_email($email);
-		return $this->api->get_accounts_api()->update_account($account['id'], array('token' => $token));
+		$parameters = array('email' => $email, 'token' => $token);
+		return $this->api->get_accounts_api()->activate_account($parameters);
 	}
 	
 	/**
@@ -282,7 +282,7 @@ class Service_Account extends Service_Base {
 				)
 			);
 
-			$this->accounts_api->update_account($account_id, $params);
+			$this->api->get_accounts_api()->update_account($account_id, $params);
 		}
 		else
 		{
