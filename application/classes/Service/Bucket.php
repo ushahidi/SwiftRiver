@@ -102,15 +102,10 @@ class Service_Bucket extends Service_Base {
 	 *
 	 * @param  int    bucket_id
 	 * @param  int    drop_id
-	 * @param  string source
 	 */
-	public function add_drop($bucket_id, $drop_id, $source)
+	public function add_drop($bucket_id, $drop_id)
 	{
-		if (Valid::not_empty($source))
-		{
-			$source_data = array('source' => $source);
-			$this->api->get_buckets_api()->add_drop($bucket_id, $drop_id, $source_data);
-		}
+		$this->api->get_buckets_api()->add_drop($bucket_id, $drop_id);
 	}
 	
 	/**

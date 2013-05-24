@@ -82,13 +82,14 @@ class Service_Account extends Service_Base {
 	}
 	
 	/**
-	* Request an activation token for the given account.
+	* Send a request to reset the password
 	*
 	* @return Array
 	*/
-	public function get_token($email)
+	public function forgot_password($email)
 	{
-		return $this->get_account_by_email($email, TRUE);
+		$parameters = array('email' => $email);
+		return $this->api->get_accounts_api()->forgot_password($parameters);
 	}
 	
 	/**

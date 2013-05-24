@@ -307,12 +307,11 @@ class Controller_River extends Controller_Drop_Base {
 					$bucket_id = intval($payload['bucket_id']);
 					if ($payload['command'] === 'add')
 					{
-						$this->bucket_service->add_drop($bucket_id, $droplet_id, "river");
+						$this->bucket_service->add_drop($bucket_id, $droplet_id);
 					}
 					elseif ($payload['command'] === 'remove')
 					{
-						$bucket_drop_id = $payload['bucket_drop_id'];
-						$this->bucket_service->delete_drop($bucket_id, $bucket_drop_id);
+						$this->bucket_service->delete_drop($bucket_id, $droplet_id);
 					}
 				}
 

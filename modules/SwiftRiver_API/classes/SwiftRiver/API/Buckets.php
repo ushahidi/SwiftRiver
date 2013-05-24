@@ -81,9 +81,9 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * @param int    drop_id
 	 * @param array  source_data
 	 */
-	public function add_drop($bucket_id, $drop_id, $source_data)
+	public function add_drop($bucket_id, $drop_id)
 	{
-		$this->put("/buckets/".$bucket_id."/drops/".$drop_id, $source_data);
+		$this->put("/buckets/".$bucket_id."/drops/".$drop_id);
 	}
 	
 	/**

@@ -187,6 +187,14 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	 */
 	public function activate_account($parameters)
 	{
-		return $this->post('accounts/activate', $parameters);
+		return $this->post('/accounts/activate', $parameters);
+	}
+	
+	/**
+	 * Sends a password reset request
+	 */
+	public function forgot_password($parameters)
+	{
+		return $this->post('/accounts/forgot_password', $parameters);
 	}
 }
