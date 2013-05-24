@@ -104,7 +104,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			$drop_ids = array();
 			foreach($droplet_list as $droplet)
 			{
-				$drop_ids[] = $droplet['id'];
+				$drop_ids[] = $droplet['tracking_id'];
 			}
 			// Sort
 			sort($drop_ids, SORT_NUMERIC);
@@ -232,7 +232,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 					}
 					elseif ($payload['command'] === 'remove')
 					{
-						$this->bucket_service->delete_drop($bucket_id, $droplet_id);
+						$this->bucket_service->delete_drop($bucket_id, $droplet_id );
 					}
 				}
 

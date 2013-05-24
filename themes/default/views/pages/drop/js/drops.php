@@ -94,8 +94,8 @@
 
 		// New drops via polling will queue in this list
 		newDropsList.on('add', function (droplet) {
-			if (parseInt(droplet.get("id")) > sinceId) {
-				sinceId = parseInt(droplet.get("id"));
+			if (parseInt(droplet.get("tracking_id")) > sinceId) {
+				sinceId = parseInt(droplet.get("tracking_id"));
 			}
 		}, this);
 
