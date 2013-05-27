@@ -33,6 +33,10 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->riverid_auth = TRUE;
 		}
 
+		$this->template->content = View::factory('pages/login/main')
+		    ->bind('messages', $this->messages)
+		    ->bind('errors', $this->errors)
+		    ->bind('referrer', $referrer);
 	}
 	
 	/**
@@ -42,10 +46,6 @@ class Controller_Login extends Controller_Swiftriver {
 	 */	
 	public function action_index()
 	{
-		$this->template->content = View::factory('pages/login/main')
-		    ->bind('messages', $this->messages)
-		    ->bind('errors', $this->errors)
-		    ->bind('referrer', $referrer);
 		$this->template->content->active = 'login';
 		$this->template->content->public_registration_enabled = Swiftriver::get_setting('public_registration_enabled');
 		
@@ -55,8 +55,8 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 
 		// Get the referriing URL
-		$referrer = $this->request->query('redirect_to') 
-		    ? $this->request->query('redirect_to') 
+		$referrer = $this->request->query('redirect_to')
+		    ? $this->request->query('redirect_to')
 		    : NULL;
 
 		//Check for system messages
@@ -163,11 +163,7 @@ class Controller_Login extends Controller_Swiftriver {
 	
 	public function action_register()
 	{
-		$this->template->content = View::factory('pages/login/main')
-		    ->bind('messages', $this->messages)
-		    ->bind('errors', $this->errors)
-		    ->bind('referrer', $referrer);
-		$this->template->content->active = 'register';		
+		$this->template->content->active = 'register';
 		
 		// New user registration
 		if ($this->request->method() == 'POST')
@@ -185,18 +181,12 @@ class Controller_Login extends Controller_Swiftriver {
 			if ( ! $validation->check())
 			{
 				foreach ($validation->errors('login') as $error) {
-					Swiftriver_Messages::add_message(
-						'failure', 
-						__('Failure'), 
-						$error,
-						false
-					);
+					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
 				}
 				$this->session->set("fullname", $this->request->post('fullname'));
 				$this->session->set("email", $this->request->post('email'));
 				$this->session->set("username", $this->request->post('username'));
 				$this->redirect(URL::site('login/register'), 302);
-				
 			}
 			else
 			{
@@ -212,20 +202,12 @@ class Controller_Login extends Controller_Swiftriver {
 					
 					// Send an email verification email.
 					$email = $this->request->post('email');
-					$token = $account['token'];
-					$mail_body = View::factory('emails/text/createuser')
-								 ->bind('secret_url', $secret_url);
-					$mail_subject = __(':sitename: Please confirm your email address', 
-						array(':sitename' => Swiftriver::get_setting('site_name')));
-						
-					$secret_url = URL::site('login/create/'.urlencode($email).'/'.$token, TRUE, TRUE);
-					Swiftriver_Mail::send($email, $mail_subject, $mail_body); 
 					
 					Swiftriver_Messages::add_message(
 						'success', 
 						__('Success'), 
 						__('An email has been sent with instructions to complete the registration process.'),
-						false
+						FALSE
 					);
 					$this->redirect(URL::site('login'), 302);
 				}
@@ -235,21 +217,17 @@ class Controller_Login extends Controller_Swiftriver {
 					{
 						$message = "Error";
 						
-						if ($error['field'] == 'account_path' && $error['code'] == 'duplicate')
+						if ($error['field'] == 'account_path' AND $error['code'] == 'duplicate')
 						{
 							$message = __('The username you seected is not available.');
 						}
 						
-						if ($error['field'] == 'email' && $error['code'] == 'duplicate')
+						if ($error['field'] == 'email' AND $error['code'] == 'duplicate')
 						{
 							$message = __('The email address is already registered.');
 						}
 						
-						Swiftriver_Messages::add_message(
-							'failure', 
-							__('Failure'), 
-							$message,
-							false
+						Swiftriver_Messages::add_message('failure',  __('Failure'),  $message, FALSE
 						);	
 					}
 					
@@ -273,9 +251,9 @@ class Controller_Login extends Controller_Swiftriver {
 	* 
 	* @return void
 	*/	
-	public function action_request_reset()
+	public function action_forgot_password()
 	{
-		$this->template->content = View::factory('pages/login/main')
+		$this->template->content = View::factory('pages/login/forgot_password')
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
@@ -291,12 +269,7 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				foreach ($validation->errors('login') as $error) 
 				{
-					Swiftriver_Messages::add_message(
-						'failure', 
-						__('Failure'), 
-						$error,
-						false
-					);
+					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
 				}
 				$this->session->set("email", $this->request->post('email'));
 				$this->redirect(URL::site('login/request_reset'), 302);
@@ -306,38 +279,21 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				try
 				{
-					$account = $this->account_service->get_token(
-						$this->request->post('email')
-					);
+					$account = $this->account_service->forgot_password($this->request->post('email'));
 					
-					
-					// Send an email verification email.
-					$email = $this->request->post('email');
-					$token = $account['token'];
-
-					//Send an email with a secret token URL
-					$mail_body = View::factory('emails/text/resetpassword')
-								 ->bind('secret_url', $secret_url);		            
-					$secret_url = URL::site('login/reset/'.urlencode($email).'/'.$token, TRUE, TRUE);
-					$mail_subject = __(':sitename: Password Reset', array(':sitename' => Swiftriver::get_setting('site_name')));
-					Swiftriver_Mail::send($email, $mail_subject, $mail_body);
-					
-					
-					Swiftriver_Messages::add_message(
-						'success', 
-						__('Success'), 
+					Swiftriver_Messages::add_message('success', __('Success'), 
 						__('An email has been sent with instructions to reset your password.'),
-						false
+						FALSE
 					);
 					$this->redirect(URL::site('login/request_reset'), 302);
 				}
-				catch (SwiftRiver_API_Exception_NotFound  $e)
+				catch (SwiftRiver_API_Exception_NotFound $e)
 				{		
 					Swiftriver_Messages::add_message(
 						'failure', 
 						__('Failure'), 
 						__('There is no account registered with that email address.'),
-						false
+						FALSE
 					);	
 					
 					$this->session->set("fullname", $this->request->post('fullname'));
@@ -346,7 +302,6 @@ class Controller_Login extends Controller_Swiftriver {
 					$this->redirect(URL::site('login/request_reset'), 302);
 				}
 			}
-							
 		}
 		
 		$this->template->content->email = $this->session->get_once("email");
@@ -357,12 +312,19 @@ class Controller_Login extends Controller_Swiftriver {
 	* 
 	* @return void
 	*/
-	public function action_reset()
-	{		
-		$this->template->content = View::factory('pages/login/main')
+	public function action_reset_password()
+	{
+		// Check if the email and token params are present
+		if ( ! isset($_GET['email']) OR ! isset($_GET['token']))
+		{
+			$this->redirect('/login');
+		}
+
+		$this->template->content = View::factory('pages/login/reset_password')
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
+
 		$this->template->content->active = 'reset';
 		
 		if ($this->request->method() == 'POST')
@@ -375,14 +337,9 @@ class Controller_Login extends Controller_Swiftriver {
 			
 			if ( ! $validation->check())
 			{
-				foreach ($validation->errors('login') as $error) 
+				foreach ($validation->errors('login') as $error)
 				{
-					Swiftriver_Messages::add_message(
-						'failure', 
-						__('Failure'), 
-						$error,
-						false
-					);
+					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
 				}
 				$this->redirect(URL::site($this->request->uri()), 302);
 				
@@ -394,17 +351,11 @@ class Controller_Login extends Controller_Swiftriver {
 					$email = $this->request->param('email');
 					$token = $this->request->param('token');
 					$password = $this->request->post('password');
-					$this->account_service->reset_password(
-						$email,
-						$token,
-						$password
-					);
-										
-					Swiftriver_Messages::add_message(
-						'success', 
-						__('Success'), 
+					$this->account_service->reset_password($email, $token, $password);
+
+					Swiftriver_Messages::add_message('success', __('Success'), 
 						__('Password reset successfully.'),
-						false
+						FALSE
 					);
 					$this->redirect(URL::site('login'), 302);
 				}
@@ -419,23 +370,16 @@ class Controller_Login extends Controller_Swiftriver {
 							$message = __('Account not found.');
 						}
 						
-						Swiftriver_Messages::add_message(
-							'failure', 
-							__('Failure'), 
-							$message,
-							false
-						);	
+						Swiftriver_Messages::add_message('failure', __('Failure'), $message, FALSE);
 					}
 					
 					$this->redirect(URL::site($this->request->uri()), 302);
 				}
 				catch (SwiftRiver_API_Exception_NotFound  $e)
 				{		
-					Swiftriver_Messages::add_message(
-						'failure', 
-						__('Failure'), 
+					Swiftriver_Messages::add_message('failure', __('Failure'), 
 						__('There is no account registered with that email address.'),
-						false
+						FALSE
 					);	
 					
 					$this->session->set("fullname", $this->request->post('fullname'));
@@ -444,7 +388,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$this->redirect(URL::site($this->request->uri()), 302);
 				}
 			}
-							
+			
 		}
 	}
 	
@@ -473,102 +417,21 @@ class Controller_Login extends Controller_Swiftriver {
 					$message = __('Account not found.');
 				}
 						
-				Swiftriver_Messages::add_message(
-					'failure', 
-					__('Failure'), 
-					$message,
-					false
-				);	
+				Swiftriver_Messages::add_message('failure', __('Failure'), $message, FALSE);
 			}
 			$this->redirect(URL::site('login'), 302);
 		}
 		catch (SwiftRiver_API_Exception_NotFound  $e)
 		{
-			Swiftriver_Messages::add_message(
-				'failure', 
-				__('Failure'), 
-				__('Account not found.'),
-				false
-			);	
+			Swiftriver_Messages::add_message('failure', __('Failure'), __('Account not found.'), FALSE);
 			$this->redirect(URL::site('login'), 302);
 		}
 		
-		Swiftriver_Messages::add_message(
-			'success', 
-			__('Success'), 
+		Swiftriver_Messages::add_message('success', __('Success'), 
 			__('Account activated. Proceed to log in.'),
-			false
+			FALSE
 		);	
 		$this->redirect(URL::site('login'), 302);
-	}
-
-	
-	/**
-	 * Change email address
-	 * 
-	 * @return void
-	 */		
-	public function action_changeemail()
-	{
-		$this->template->content = View::factory('pages/login/landing');
-		$this->template->header->meta = '<meta HTTP-EQUIV="REFRESH" content="5; url='.URL::site().'">';
-		
-		// Force logout
-		Auth::instance()->logout();
-		
-		$session = Session::instance();
-		
-		$old_email = $this->request->param('old_email');
-		$new_email = $this->request->param('new_email');
-		$token = $this->request->param('token');
-		
-		$user = ORM::factory('User', array('email' => $old_email));
-
-		if ($this->riverid_auth)
-		{
-			$riverid_api = RiverID_API::instance();
-			$resp = $riverid_api->confirm_email($new_email, $token);	        
-        
-			if ( ! $resp['status']) 
-			{
-				$errors = array($resp['error']);
-			}            
-		}
-		else
-		{
-			$token = Model_Auth_Token::get_token($token, 'change_email');
-			if ( $token)
-			{
-				$data = json_decode($token->data);
-				$token->delete();
-				
-				if ($new_email != $data->new_email OR $old_email != $data->old_email) {
-					// The emails in the request does not match
-					// the emails in the token
-					$errors = array(__('Invalid email'));
-				}
-			}
-			else
-			{
-				$errors = array(__('Error'));
-			}
-		}
-        
-		if (empty($errors))
-		{
-			// Email change was validated, make the change to the user object
-			$user->email = $user->username = $new_email;
-			$user->save();
-			
-			// Auto login
-			Auth::instance()->force_login($user);
-        
-			$this->template->content->messages = array(__('Email changed successfully.'));
-		}
-		else
-		{
-			$this->template->content->errors = $errors;
-		}		
 	}
 
 	/**

@@ -181,6 +181,9 @@ class Controller_Swiftriver extends Controller_Template {
 		$this->bucket_service = new Service_Bucket($this->api);
 		$this->form_service = new Service_Form($this->api);
 		
+		// Initialize the dashboard url
+		$this->dashboard_url = URL::site(FALSE, TRUE);
+		
 		if (Auth::instance()->logged_in())
 		{
 			try

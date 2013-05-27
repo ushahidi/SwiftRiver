@@ -13,7 +13,7 @@
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL) 
  */
-class Auth_SwiftRiver extends Kohana_Auth { 
+class Auth_SwiftRiver extends Kohana_Auth {
 	
 	/**
 	 * Perfomr login using user credentials.
@@ -27,10 +27,8 @@ class Auth_SwiftRiver extends Kohana_Auth {
 	{
 		try 
 		{
-			$auth = SwiftRiver_Client::instance()->get_access_token(
-				'password', 
-				array('username' => $username, 'password' => $password)
-			);
+			$token_params = array('username' => $username, 'password' => $password);
+			$auth = SwiftRiver_Client::instance()->get_access_token('password', $token_params);
 			$this->complete_login($auth);
 		}
 		catch (Exception $e)
