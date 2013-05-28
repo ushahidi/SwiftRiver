@@ -326,66 +326,59 @@ class Controller_Login extends Controller_Swiftriver {
 		
 		if ($this->request->method() == 'POST')
 		{
-			$validation = Validation::factory($this->request->post())
-				->rule('password', 'not_empty')
-				->rule('password', 'min_length', array(':value', '6'))
-				->rule('password_confirm',  'matches', array(':validation', ':field', 'password'));
-				
+			try
+			{
+				// Marshall the submitted data
+				$reset_data = array(
+					'email' => $this->request->query('email'),
+					'token' => $this->request->query('token'),
+					'password' => $this->request->post('password'),
+					'password_confirm' => $this->request->post('password_confirm')
+				);
 			
-			if ( ! $validation->check())
-			{
-				foreach ($validation->errors('login') as $error)
+				// Reset the password
+				if ($this->account_service->reset_password($reset_data))
 				{
-					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
-				}
-				$this->redirect(URL::site($this->request->uri()), 302);
-				
-			}
-			else
-			{
-				try
-				{
-					$email = $this->request->param('email');
-					$token = $this->request->param('token');
-					$password = $this->request->post('password');
-					$this->account_service->reset_password($email, $token, $password);
-
-					Swiftriver_Messages::add_message('success', __('Success'), 
+					Swiftriver_Messages::add_message('success', __('Success'),
 						__('Password reset successfully.'),
 						FALSE
 					);
 					$this->redirect(URL::site('login'), 302);
 				}
-				catch (SwiftRiver_API_Exception_BadRequest  $e)
+				else
 				{
-					foreach ($e->get_errors() as $error)
+					$this->redirect(URL::site($this->request->uri()), 302);
+				}
+
+			}
+			catch (SwiftRiver_API_Exception_BadRequest  $e)
+			{
+				foreach ($e->get_errors() as $error)
+				{
+					$message = "Error";
+					
+					if ($error['field'] == 'token' AND $error['code'] == 'invalid')
 					{
-						$message = "Error";
-						
-						if ($error['field'] == 'token' && $error['code'] == 'invalid')
-						{
-							$message = __('Account not found.');
-						}
-						
-						Swiftriver_Messages::add_message('failure', __('Failure'), $message, FALSE);
+						$message = __('Account not found.');
 					}
 					
-					$this->redirect(URL::site($this->request->uri()), 302);
+					Swiftriver_Messages::add_message('failure', __('Failure'), $message, FALSE);
 				}
-				catch (SwiftRiver_API_Exception_NotFound  $e)
-				{		
-					Swiftriver_Messages::add_message('failure', __('Failure'), 
-						__('There is no account registered with that email address.'),
-						FALSE
-					);	
-					
-					$this->session->set("fullname", $this->request->post('fullname'));
-					$this->session->set("email", $this->request->post('email'));
-					$this->session->set("username", $this->request->post('username'));
-					$this->redirect(URL::site($this->request->uri()), 302);
-				}
+				
+				$this->redirect(URL::site($this->request->uri()), 302);
 			}
-			
+			catch (SwiftRiver_API_Exception_NotFound  $e)
+			{		
+				Swiftriver_Messages::add_message('failure', __('Failure'), 
+					__('There is no account registered with that email address.'),
+					FALSE
+				);	
+				
+				$this->session->set("fullname", $this->request->post('fullname'));
+				$this->session->set("email", $this->request->post('email'));
+				$this->session->set("username", $this->request->post('username'));
+				$this->redirect(URL::site($this->request->uri()), 302);
+			}
 		}
 	}
 	

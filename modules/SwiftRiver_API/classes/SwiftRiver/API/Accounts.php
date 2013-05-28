@@ -192,9 +192,22 @@ class SwiftRiver_API_Accounts extends SwiftRiver_API {
 	
 	/**
 	 * Sends a password reset request
+	 *
+	 * @param   array  parameters
 	 */
 	public function forgot_password($parameters)
 	{
 		return $this->post('/accounts/forgot_password', $parameters);
+	}
+	
+	/**
+	 * Resets the password of the account identified by the email address
+	 * specified in the 'email' property of the $parameters array.
+	 *
+	 * @param  array parameters
+	 */
+	public function reset_password($parameters)
+	{
+		$this->post('/accounts/reset_password', $parameters);
 	}
 }

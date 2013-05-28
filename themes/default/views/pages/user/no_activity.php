@@ -19,7 +19,7 @@
 		<span class="icon-search"></span>
 		<h2>Find information and people of interest.</h2>
 		<p>Search rivers, buckets and people that are wading through real-time information.</p>
-		<a href="#" id="general-search" class="button-primary"><?php echo __("Search"); ?></a>
+		<a href="<?php echo URL::site('search', TRUE); ?>" id="general-search" class="button-primary"><?php echo __("Search"); ?></a>
 	</div>
 </article>
 

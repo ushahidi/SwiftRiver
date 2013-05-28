@@ -93,20 +93,42 @@ class Service_Account extends Service_Base {
 	}
 	
 	/**
-	* Reset password
-	*
-	* @return Array
-	*/
-	public function reset_password($email, $token, $password)
+	 * Resets the password of the account associated with the email
+	 * specified in the 'email' index in $reset_data
+	 *
+	 * @param   array  reset_data
+	 * @return  bool   TRUE on success, FALSE otherwise
+	 */
+	public function reset_password($reset_data)
 	{
+		// Validate the input parameters
+		$validation = Validation::factory($reset_data)
+			->rule('password', 'not_empty')
+			->rule('password_confirm',  'matches', array(':validation', ':field', 'password'))
+			->rule('email', 'email')
+			->rule('token', 'not_empty');
+		
+		if ( ! $validation->check())
+		{
+			// Validation error messages
+			foreach ($validation->errors('password_reset') as $error)
+			{
+				Swiftriver_Messages:add('failure', __('Failure'), $error, FALSE);
+			}
+
+			return FALSE;
+		}
+
+		// Data to send to the API
 		$parameters = array(
-			'token' => $token,
-			'owner' => array(
-				'password' => $password
-			)
+			'email' => $reset_data['email'],
+			'token' => $reset_data['token'],
+			'password' => $reset_data['password']
 		);
-		$account = $this->get_account_by_email($email);
-		return $this->api->get_accounts_api()->update_account($account['id'], $parameters);
+
+		$this->api->get_accounts_api()->reset_password($parameters);
+		
+		return TRUE;
 	}
 	
 	/**
