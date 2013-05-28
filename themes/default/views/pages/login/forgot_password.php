@@ -6,7 +6,7 @@
 			</hgroup>
 			<div class="modal-body">
 				<div class="base">
-					<div id="request_reset">
+					<div id="forgot_password">
 						<?php echo Form::open(URL::site('login/forgot_password', TRUE)); ?>
 							<div class="modal-field">
 								<h3 class="label"><?php echo __("Email address"); ?></h3>

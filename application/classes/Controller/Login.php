@@ -257,7 +257,6 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
-		$this->template->content->active = 'request_reset';	
 		
 		if ($this->request->method() == 'POST')
 		{
@@ -272,7 +271,7 @@ class Controller_Login extends Controller_Swiftriver {
 					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
 				}
 				$this->session->set("email", $this->request->post('email'));
-				$this->redirect(URL::site('login/request_reset'), 302);
+				$this->redirect(URL::site('login/forgot_password'), 302);
 				
 			}
 			else
@@ -285,7 +284,7 @@ class Controller_Login extends Controller_Swiftriver {
 						__('An email has been sent with instructions to reset your password.'),
 						FALSE
 					);
-					$this->redirect(URL::site('login/request_reset'), 302);
+					$this->redirect(URL::site('login/forgot_password'), 302);
 				}
 				catch (SwiftRiver_API_Exception_NotFound $e)
 				{		
@@ -299,7 +298,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$this->session->set("fullname", $this->request->post('fullname'));
 					$this->session->set("email", $this->request->post('email'));
 					$this->session->set("username", $this->request->post('username'));
-					$this->redirect(URL::site('login/request_reset'), 302);
+					$this->redirect(URL::site('login/forgot_password'), 302);
 				}
 			}
 		}
@@ -324,8 +323,6 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
-
-		$this->template->content->active = 'reset';
 		
 		if ($this->request->method() == 'POST')
 		{
