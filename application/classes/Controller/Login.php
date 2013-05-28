@@ -383,14 +383,19 @@ class Controller_Login extends Controller_Swiftriver {
 	}
 	
 	/**
-	* Create an account
+	* Activates a newly created account
 	* 
 	* @return void
 	*/	
-	public function action_create()
+	public function action_activate()
 	{
-		$email = $this->request->param('email');
-		$token = $this->request->param('token');
+		$email = $this->request->query('email');
+		$token = $this->request->query('token');
+
+		if ( ! isset($email) OR ! isset($token))
+		{
+			$this->redirect('login', 302);
+		}
 		
 		try 
 		{
@@ -402,11 +407,11 @@ class Controller_Login extends Controller_Swiftriver {
 			{
 				$message = "Error";
 						
-				if ($error['field'] == 'token' && $error['code'] == 'invalid')
+				if ($error['field'] == 'token' AND $error['code'] == 'invalid')
 				{
 					$message = __('Account not found.');
 				}
-						
+				
 				Swiftriver_Messages::add_message('failure', __('Failure'), $message, FALSE);
 			}
 			$this->redirect(URL::site('login'), 302);
