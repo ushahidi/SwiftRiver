@@ -552,6 +552,7 @@
 			<ul class="modal-tabs-menu">
 				<li class="active"><a href="#add-keyword"><span class="channel-icon icon-pencil"></span></a></li>
 				<li id="add-date-filter"><a href="#add-date"><span class="channel-icon icon-calendar"></span></a></li>
+				<li id="add-location-filter"><a href="#add-location"><span class="channel-icon icon-cog"></span></a></li>
 			</ul>
 			<div class="modal-tabs-window">
 				<!-- ADD Keyword filter -->
@@ -573,6 +574,15 @@
 						<input type="text" placeholder="<?php echo __("End date"); ?>" name="date_to" readonly="true"/>
 					</div>
 				</div>
+
+				<!-- Location filter -->
+				<div id="add-location">
+					<div class="modal-field">
+						<h3><?php echo __("Select a region to filter by") ;?></h3>
+						<br/>
+						<div id="location-map" style="height: 350px;"></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	
@@ -580,6 +590,7 @@
 			<a href="#" class="button-submit button-primary"><?php echo __("Add filter"); ?></a>
 		</div>
 	</div>
+	
 </script>
 
 <!-- Label for a single search filter item -->

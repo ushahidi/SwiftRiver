@@ -92,6 +92,7 @@
 			"keywords": null,
 			"date_from": null,
 			"date_to": null,
+			"locations": null,
 		},
 	});
 	
@@ -1890,32 +1891,22 @@
 		events:{
 			"click .modal-toolbar a.button-submit": "addSearchFilters",
 			"click #add-date-filter a": "activateDatePicker",
+			"click #add-location-filter a": "activateMap"
 		},
+		
+		map: null,
+		
+		drawnItems: null,
+		
+		boundingBox: null,
 		
 		initialize: function(options){
 			this.template = _.template($("#search-filter-modal-template").html());
 		},
 
 		activateDatePicker: function(e) {
-			var el = $(e.currentTarget);
-			var modalTabHash = el.prop('hash');
+			this.toggleTabs(e);
 
-			if (this.$(".modal-tabs-window " + modalTabHash).is(":visible")) {
-				return false;
-			}
-
-			var view = this;
-			this.$('.modal-tabs-window > div.active')
-				.removeClass('active')
-				.fadeOut(100, function() {
-					view.$('.modal-tabs-window ' + modalTabHash)
-						.fadeIn('fast')
-						.addClass('active');
-				});
-
-			this.$('.modal-tabs-menu li').removeClass('active');
-			$(el).parent().addClass('active');
-			
 			var dateFrom = this.$("input[name=date_from]"),
 				dateTo = this.$("input[name=date_to]");
 			
@@ -1962,6 +1953,81 @@
 			return false;
 		},
 		
+		toggleTabs: function(e) {
+			var el = $(e.currentTarget);
+			var modalTabHash = el.prop('hash');
+
+			if (this.$(".modal-tabs-window " + modalTabHash).is(":visible")) {
+				return false;
+			}
+
+			var view = this;
+			this.$('.modal-tabs-window > div.active')
+				.removeClass('active')
+				.fadeOut(100, function() {
+					view.$('.modal-tabs-window ' + modalTabHash)
+						.fadeIn('fast')
+						.addClass('active');
+				});
+
+			this.$('.modal-tabs-menu li').removeClass('active');
+			$(el).parent().addClass('active');
+			
+		},
+		
+		activateMap: function(e) {
+			this.toggleTabs(e);
+
+			// Initialize the map
+			if (!this.map) {
+				this.map = L.map('location-map').setView([-1.28333, 36.8167], 13);
+
+				L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+				}).addTo(this.map);
+				
+				// Initialze the FeatureGroup to store the editable layers
+				this.drawnItems = new L.FeatureGroup();
+				this.map.addLayer(this.drawnItems);
+
+				// Draw control
+				var drawControl = new L.Control.Draw({
+					allowIntersection: false,
+					draw: {
+						polygon: false,
+						polyline: false,
+						circle: false,
+						marker: false
+					},
+					edit: {
+						featureGroup: this.drawnItems
+					}
+				});
+				
+				this.map.addControl(drawControl);
+			}
+
+			var context = this;
+			var bounds = null;
+			// when a new vector has been created
+			this.map.on('draw:created', function(e){
+				var layer = e.layer;
+				context.drawnItems.addLayer(layer);
+				bounds = layer.getBounds();
+			});
+			
+			// When drawing is complete
+			this.map.on('draw:drawstop', function(e){
+				var southWest = bounds.getSouthWest(),
+					northEast =  bounds.getNorthEast();
+
+					// Generate the bounding box string
+					context.boundingBox = southWest.lat + "," + southWest.lng + ", " + northEast.lat + "," + northEast.lng;
+			})
+
+			return false;
+		},
+
 		render: function() {
 			this.$el.html(this.template());
 
@@ -1973,6 +2039,7 @@
 				keywords: this.$("input[name=keywords]").val(),
 				date_from: this.$("input[name=date_from]").val(),
 				date_to: this.$("input[name=date_to]").val(),
+				locations: this.boundingBox,
 			};
 			
 			var validCount = 0;
@@ -2026,6 +2093,12 @@
 				this.options.filtersView.addSearchFilter(searchFilterModel);
 			}
 			
+			// Location search filter
+			if (searchFilters.locations) {
+				var locationSearchFilter = new SearchFilter({locations: searchFilters.locations});
+				this.options.filtersView.addSearchFilter(locationSearchFilter);
+			}
+			
 			this.options.filtersView.updateDropFilters();
 
 			modalHide();
@@ -2056,6 +2129,14 @@
 				this.model.set({
 					iconClass: "icon-pencil",
 					label: this.model.get('keywords')
+				});
+			}
+			
+			// Locations
+			if (this.model.get('locations')) {
+				this.model.set({
+					iconClass: "icon-cog",
+					label: this.model.get('locations')
 				});
 			}
 
@@ -2129,6 +2210,10 @@
 			if (options.dropFilters.get('keywords')) {
 				this.collection.add(new SearchFilter({keywords: options.dropFilters.get('keywords')}));
 			}
+
+			if (options.dropFilters.get('locations')) {
+				this.collection.add(new SearchFilter({locations: options.dropFilters.get('locations')}));
+			}
 			
 			if (options.dropFilters.get('date_from') && options.dropFilters.get('date_to')) {
 				this.collection.add(new SearchFilter({
@@ -2167,12 +2252,12 @@
 			this.$("#search-filter-list").append(view.render().el);
 			
 			// Store the search model against its view
-			this.checkActiveDateFilter(view);
+			this.checkActiveSingletonFilters(view);
 			this.activeSearchFilters[view.cid] = view;
 		},
 		
 		activateSearchFilter: function(view) {
-			this.checkActiveDateFilter(view);
+			this.checkActiveSingletonFilters(view);
 			this.activeSearchFilters[view.cid] = view;
 			this.updateDropFilters();
 		},
@@ -2182,15 +2267,15 @@
 			this.updateDropFilters();
 		},
 		
-		// Checks for active date filters
-		checkActiveDateFilter: function(view) {
+		// Checks for active date and location filters
+		checkActiveSingletonFilters: function(view) {
 			var model = view.model.toJSON();
-			if (model.date_from || model.date_to) {
+			if (model.date_from || model.date_to || model.locations) {
 				for (cid in this.activeSearchFilters) {
 					var filterView = this.activeSearchFilters[cid],
 						filterModel = filterView.model.toJSON(),
 						found = false;
-					if (filterModel.dateRange) {
+					if (filterModel.dateRange || filterModel.locations) {
 						filterView.$el.removeClass("active");
 						found = true;
 					} else {
@@ -2213,7 +2298,7 @@
 		},
 		
 		updateDropFilters: function() {
-			var searchFilters = {keywords: [], date_from: null, date_to: null};
+			var searchFilters = {keywords: [], date_from: null, date_to: null, locations: null};
 			for (cid in this.activeSearchFilters) {
 				var model = this.activeSearchFilters[cid].model.toJSON();
 				if (model.keywords) {
@@ -2223,6 +2308,7 @@
 					searchFilters.keywords.push(model.keywords);
 				}
 				
+				if (model.locations) searchFilters.locations = model.locations;
 				if (model.date_from) searchFilters.date_from = model.date_from;
 				if (model.date_to) searchFilters.date_to = model.date_to;
 			}

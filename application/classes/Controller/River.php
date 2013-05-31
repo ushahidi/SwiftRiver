@@ -135,6 +135,7 @@ class Controller_River extends Controller_Drop_Base {
 					
 				$action_url = URL::site($this->river['url'].'/manage');
 			}
+			
 		}
 	}
 

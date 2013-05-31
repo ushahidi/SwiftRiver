@@ -124,7 +124,8 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 			'channel_ids' => 'list', 
 			'date_from' => 'date', 
 			'date_to' => 'date', 
-			'state' => 'string'
+			'state' => 'string',
+			'locations' => 'string',
 		);
 		
 		foreach ($parameters as $parameter => $type)
@@ -161,7 +162,21 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	public function add_drop_base_css()
 	{
+		// Date picker
 		echo HTML::style('themes/default/media/css/datepicker.css');
+		
+		// Leaflet - for map rendering
+		echo HTML::style('themes/default/media/css/leaflet.css');
+
+		// Leaflet draw
+		echo HTML::style('themes/default/media/css/leaflet.draw.css');
+		
+		$leaflet_css_ie = "<!--[if lte IE 8]>"
+		    .HTML::style('themes/default/media/css/leaflet.ie.css')
+		    .HTML::style('themes/default/media/css/leaflet.draw.ie.css')
+		    ."<![endif]-->";
+		
+		echo $leaflet_css_ie;
 	}
 	
 	/**
@@ -170,6 +185,13 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	 */
 	public function add_drop_base_js()
 	{
+		// Datepicker
 		echo HTML::script('themes/default/media/js/bootstrap-datepicker.js');
+		
+		// Leaflet JS
+		echo HTML::script('themes/default/media/js/leaflet.js');
+		
+		// Leaflet.draw
+		echo HTML::script('themes/default/media/js/leaflet.draw.js');
 	}
 }

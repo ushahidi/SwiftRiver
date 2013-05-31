@@ -57,7 +57,8 @@ class Service_Bucket extends Service_Base {
 				'channel_ids' => 'list',
 				'date_from' => 'string', 
 				'date_to' => 'string', 
-				'state' => 'string'
+				'state' => 'string',
+				'locations' => 'string',
 			);
 
 			foreach ($filter_keys as $key => $type) 

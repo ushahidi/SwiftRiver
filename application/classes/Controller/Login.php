@@ -180,7 +180,8 @@ class Controller_Login extends Controller_Swiftriver {
 			
 			if ( ! $validation->check())
 			{
-				foreach ($validation->errors('login') as $error) {
+				foreach ($validation->errors('login') as $error)
+				{
 					Swiftriver_Messages::add_message('failure', __('Failure'), $error, FALSE);
 				}
 				$this->session->set("fullname", $this->request->post('fullname'));
@@ -227,8 +228,7 @@ class Controller_Login extends Controller_Swiftriver {
 							$message = __('The email address is already registered.');
 						}
 						
-						Swiftriver_Messages::add_message('failure',  __('Failure'),  $message, FALSE
-						);	
+						Swiftriver_Messages::add_message('failure',  __('Failure'),  $message, FALSE);	
 					}
 					
 					$this->session->set("fullname", $this->request->post('fullname'));
@@ -237,7 +237,7 @@ class Controller_Login extends Controller_Swiftriver {
 					$this->redirect(URL::site('login/register'), 302);
 				}
 			}
-							
+
 		}
 		
 		$this->template->content->fullname = $this->session->get_once("fullname");
@@ -258,7 +258,7 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
 		
-		if ($this->request->method() == 'POST')
+		if ($this->request->method() == 'POST' AND CSRF::valid($this->request->post('form_auth_id')))
 		{
 			$validation = Validation::factory($this->request->post())
 				->rule('email', 'not_empty')
@@ -324,7 +324,7 @@ class Controller_Login extends Controller_Swiftriver {
 		    ->bind('errors', $this->errors)
 		    ->bind('referrer', $referrer);
 		
-		if ($this->request->method() == 'POST')
+		if ($this->request->method() == 'POST' AND CSRF::valid($this->request->post('form_auth_id')))
 		{
 			try
 			{
@@ -422,10 +422,9 @@ class Controller_Login extends Controller_Swiftriver {
 			$this->redirect(URL::site('login'), 302);
 		}
 		
-		Swiftriver_Messages::add_message('success', __('Success'), 
-			__('Account activated. Proceed to log in.'),
-			FALSE
-		);	
+		Swiftriver_Messages::add_message('success', __('Success'),
+			__('Account activated. Proceed to log in.'), FALSE
+		);
 		$this->redirect(URL::site('login'), 302);
 	}
 
