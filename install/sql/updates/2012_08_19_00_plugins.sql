@@ -1,1 +1,0 @@
-ALTER TABLE `plugins` ADD `plugin_installed` TINYINT(4) NOT NULL DEFAULT 0 AFTER `plugin_weight`;

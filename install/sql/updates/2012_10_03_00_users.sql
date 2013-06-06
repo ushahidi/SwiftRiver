@@ -1,1 +1,0 @@
-ALTER TABLE `users` ADD `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00';
