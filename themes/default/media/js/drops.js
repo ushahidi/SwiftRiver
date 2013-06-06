@@ -1702,10 +1702,10 @@
 			this.model.on("invalid", this.onFormInvalid, this);
 			
 			this.fields = new Assets.Fields();
-			this.fields.on('add',	 this.addField, this);
+			this.fields.on('add', this.addField, this);
 			this.fields.on('reset', this.addFields, this);
 			
-			this.values = new Backbone.Collection();			
+			this.values = new Backbone.Collection();
 			this.values.reset(this.model.get("values"));
 		},
 		
