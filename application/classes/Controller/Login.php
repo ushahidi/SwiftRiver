@@ -72,42 +72,6 @@ class Controller_Login extends Controller_Swiftriver {
 		{
 			$this->errors = $errors;
 		}
-				
-		// Password reset request
-		if ($this->request->post('recover_email'))
-		{
-			$email = $this->request->post('recover_email');
-			$csrf_token = $this->request->post('form_auth_id');
-			
-			if ( ! Valid::email($email) OR ! CSRF::valid($csrf_token))
-			{
-				$this->errors = array(__('The email address you have provided is invalid'));
-			}
-			else 
-			{
-				// Is the email registed in this site?
-				$user = ORM::factory('User',array('email'=>$email));
-
-				if ( ! $user->loaded())
-				{
-					$this->errors = array(__('The provided email address is not registered'));
-				} 
-				else
-				{
-					$messages = Model_User::password_reset($email, $this->riverid_auth);
-					
-					// Display the messages
-					if (isset($messages['errors']))
-					{
-						$this->errors = $messages['errors'];
-					}
-					if (isset($messages['messages']))
-					{
-						$this->messages = $messages['messages'];
-					}
-				}
-			}
-		}
 
 		// Check, has the form been submitted, if so, setup validation
 		if ($this->request->post('username') AND $this->request->post('password'))
@@ -272,7 +236,6 @@ class Controller_Login extends Controller_Swiftriver {
 				}
 				$this->session->set("email", $this->request->post('email'));
 				$this->redirect(URL::site('login/forgot_password'), 302);
-				
 			}
 			else
 			{
@@ -286,12 +249,10 @@ class Controller_Login extends Controller_Swiftriver {
 					);
 					$this->redirect(URL::site('login/forgot_password'), 302);
 				}
-				catch (SwiftRiver_API_Exception_NotFound $e)
+				catch (SwiftRiver_API_Exception $e)
 				{		
-					Swiftriver_Messages::add_message(
-						'failure', 
-						__('Failure'), 
-						__('There is no account registered with that email address.'),
+					Swiftriver_Messages::add_message('failure', __('Failure'), 
+						__('An unkown error has occurred'),
 						FALSE
 					);	
 					

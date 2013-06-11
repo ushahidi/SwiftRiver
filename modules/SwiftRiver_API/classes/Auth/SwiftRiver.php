@@ -31,8 +31,9 @@ class Auth_SwiftRiver extends Kohana_Auth {
 			$auth = SwiftRiver_Client::instance()->get_access_token('password', $token_params);
 			$this->complete_login($auth);
 		}
-		catch (Exception $e)
+		catch (SwiftRiver_API_Exception_Authorization $e)
 		{
+			Kohana::$log->add(Log::ERROR, $e->getMessage());
 			return FALSE;
 		}
 		
