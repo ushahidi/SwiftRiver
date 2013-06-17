@@ -25,7 +25,7 @@ class SwiftRiver_API_Search extends SwiftRiver_API {
 	 */
 	public function find_drops($search_term, $page = 1)
 	{
-		Kohaha::$log->add(Log::DEBUG, __("Searching for ':search_term' on page :page", array(
+		Kohana::$log->add(Log::DEBUG, __("Searching for ':search_term' on page :page", array(
 			":search_term" => $search_term,
 			":page"=>$page
 		)));
