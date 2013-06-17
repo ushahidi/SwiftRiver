@@ -24,6 +24,9 @@ class Kohana_Exception extends Kohana_Kohana_Exception {
 	 */
 	public static function _handler(Exception $e)
 	{
+		// Log the error
+		Kohana::$log->add(Log::ERROR, $e->getMessage());
+
 		// Generate the response
 		$response = Response::factory();
 

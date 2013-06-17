@@ -197,7 +197,8 @@ class SwiftRiver_Client {
 			$exception_map = array(
 				400 => "SwiftRiver_API_Exception_BadRequest",
 				403 => "SwiftRiver_API_Exception_Forbidden",
-				404 => "SwiftRiver_API_Exception_NotFound"
+				404 => "SwiftRiver_API_Exception_NotFound",
+				500 => "SwiftRiver_API_Exception_Unknown",
 			);
 		
 			if (in_array($response['code'], array_keys($exception_map)))
@@ -207,10 +208,6 @@ class SwiftRiver_Client {
 			else if ($response['code'] == 401)
 			{
 				throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
-			}
-			else if ($response['code'] != 200)
-			{
-				throw new SwiftRiver_API_Exception_Unknown($response['result']);
 			}
 		
 			return $response['result'];
