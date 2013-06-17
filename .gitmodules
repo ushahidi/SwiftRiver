@@ -43,3 +43,6 @@
 [submodule "modules/markdown"]
 	path = modules/markdown
 	url = git://github.com/durham-university/kohana-markdown.git
+[submodule "modules/SwiftRiver_API/vendor/PHP-OAuth2"]
+	path = modules/SwiftRiver_API/vendor/PHP-OAuth2
+	url = git://github.com/ekala/PHP-OAuth2.git
