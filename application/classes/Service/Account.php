@@ -402,6 +402,30 @@ class Service_Account extends Service_Base {
 		try
 		{
 			$activities = $this->api->get_accounts_api()->get_activities($account_id);
+			
+			// For each activity, add the actor_url, action_on_url and action_to_url properties
+			foreach ($activities as & $activity)
+			{
+				// The actor's account path
+				$actor_account_path = $activity['account']['account_path'];
+				$activity['actor_url'] = URL::site($actor_account_path);
+				
+				// Set the action_on_url
+				$action_on = $activity['action_on'];
+				switch ($action_on)
+				{
+					case "river":
+					case "bucket":
+						$action_on_name = URL::title($activity['action_on_obj']['name']);
+						$activity['action_on_url'] = URL::site($actor_account_path."/".$action_on."/".$action_on_name);
+						break;
+				}
+				
+				// Set action_to_url
+				$activity['action_to_url'] = URL::site($activity['actionTo']['account_path']);
+			}
+			
+			// Kohana::$log->add(Log::DEBUG, json_encode($activities));
 		}
 		catch (SwiftRiver_API_Exception $e)
 		{

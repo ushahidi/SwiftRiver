@@ -192,7 +192,9 @@ class SwiftRiver_Client {
 				$this->set_access_token($this->access_token['access_token']);
 			}
 			
-			$response = $this->oauth_client->fetch($this->base_url.$path, $params, $method, $headers);
+			$request_uri = $this->base_url.$path;
+			Kohana::$log->add(Log::DEBUG, "Sending requet to ".$request_uri);
+			$response = $this->oauth_client->fetch($request_uri, $params, $method, $headers);
 
 			$exception_map = array(
 				400 => "SwiftRiver_API_Exception_BadRequest",
@@ -209,7 +211,7 @@ class SwiftRiver_Client {
 			{
 				throw new SwiftRiver_API_Exception_Authorization($response['result']['error_description']);
 			}
-		
+			
 			return $response['result'];
 		}
 		catch (OAuth2\Exception $e)
