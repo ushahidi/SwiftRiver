@@ -230,4 +230,43 @@ class Swiftriver {
 		return $settings_array;
 	}
 
+	/**
+	 * Creates and returns the base view for rendering error pages
+	 * Error handlers that use this method must set the $content
+	 * property of the view
+	 *
+	 * @return    View
+	 */
+	public static function get_base_error_view()
+	{
+		$view = View::factory('template/layout')
+			->set('footer', View::factory('template/footer'))
+			->bind('header', $header);
+		
+		// Header
+		// Params for the <head> section
+		$dashboard_url =  URL::site('/', TRUE);
+		$_head_params = array(
+			'meta' => "",
+			'js'=> "",
+			'css' => "",
+			'messages' => json_encode(array()),
+			'dashboard_url' => $dashboard_url,
+		);
+		
+		$header = View::factory('template/header')
+			->set('show_nav', TRUE)
+			->set('site_name', Swiftriver::get_setting('site_name'))
+			->set($_head_params)
+			->bind('nav_header', $nav_header);
+		
+		// Navigation header
+		$nav_header = View::factory('template/nav/header')
+			->set('user', NULL)
+			->set('anonymous', FALSE)
+			->set('dashboard_url', $dashboard_url);
+		
+		return $view;
+	}
+
 }

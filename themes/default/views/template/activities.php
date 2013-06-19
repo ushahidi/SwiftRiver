@@ -14,7 +14,7 @@
 	</div>
 	<div class="item-summary">
 		<span class="timestamp"><%= date %></span>
-		<h2><a href="<%= actor_url %>"><%= account.owner.name %></a> invited <a href="<%= action_to_url %>"><%= action_on_obj.account.owner.name %></a> to collaborate on the <a href="<%= invite_to_url %>"><%= invite_to_name %></a> <%= invite_to %>.</h2>
+		<h2><a href="<%= actor_url %>"><%= account.owner.name %></a> invited <a href="<%= action_to_url %>"><%= actionTo.owner.name %></a> to collaborate on the <a href="<%= action_on_url %>"><%= invite_to_name %></a> <%= invite_to %>.</h2>
 	</div>		
 </script>
 

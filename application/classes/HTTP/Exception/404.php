@@ -1,8 +1,6 @@
-<?php defined('SYSPATH') or die('No direct access');
+<?php defined('SYSPATH') or die('No direct script access');
 
 /**
- * Overrides the default exception handler
- *
  * PHP version 5
  * LICENSE: This source file is subject to the AGPL license 
  * that is available through the world-wide-web at the following URI:
@@ -13,28 +11,26 @@
  * @copyright   Ushahidi - http://www.ushahidi.com
  * @license     http://www.gnu.org/licenses/agpl.html GNU Affero General Public License (AGPL) 
  */
-class Kohana_Exception extends Kohana_Kohana_Exception {
- 
+class HTTP_Exception_404 extends Kohana_HTTP_Exception_404 {
+	
 	/**
-	 * Exception handler, logs the exception and generates a 
-	 * Response object for display
+	 * Generates a Response for all Exceptions without a specific override
 	 *
-	 * @param   Exception $e
-	 * @return  boolean
+	 * @return Response
 	 */
-	public static function _handler(Exception $e)
+	public function get_response()
 	{
-		// Log the error
-		Kohana::$log->add(Log::ERROR, $e->getMessage());
+		// Log the exception
+		Kohana_Exception::log($this);
 
-		// Generate the response
 		$response = Response::factory();
 		
 		$view = Swiftriver::get_base_error_view();
-		$view->content = View::factory('pages/errors/default');
-		
-		$response->body($view->render());
+		$view->content = View::factory('pages/errors/404')
+			->set('page', $this->request()->uri());
 
+		$response->body($view->render());
+		
 		return $response;
 	}
 }

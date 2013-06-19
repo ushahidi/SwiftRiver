@@ -18,12 +18,12 @@
 				var actionOnObj = this.get("action_on_obj")
 				actionOnObj["name"] = actionOnObj["owner"]["name"];
 				this.set("action_on_obj", actionOnObj);
-			} else if (this.get("action_on") == "river_collaborator") {
+			} else if (this.get("action_on") == "river") {
 				this.set("invite_to", "river");
-				this.set("invite_to_name", this.get("action_on_obj")["river"]["name"]);
-			} else if (this.get("action_on") == "bucket_collaborator") {
+				this.set("invite_to_name", this.get("action_on_obj")["name"]);
+			} else if (this.get("action_on") == "bucket") {
 				this.set("invite_to", "bucket");
-				this.set("invite_to_name", this.get("action_on_obj")["bucket"]["name"]);
+				this.set("invite_to_name", this.get("action_on_obj")["name"]);
 			}
 			
 			this.set("date", this.getDateString(this.get("date_added")));
@@ -141,7 +141,7 @@
 			}
 			
 			this.$el.html(this.template(this.model.toJSON()));
-			return this;	
+			return this;
 		}
 	});
 	
@@ -156,7 +156,7 @@
 		
 		initialize: function() {
 			this.collection.on('add', this.addActivity, this);
-			this.collection.on('reset', this.addActivities, this);			
+			this.collection.on('reset', this.addActivities, this);
 		},
 		
 		showNewActivity: function(activity, isInvite) {
@@ -228,7 +228,7 @@
 				$("#no-activity-message").hide();
 				this.collection.each(this.addActivity, this);
 			}
-		}		
+		}
 	});
 
 }(this));

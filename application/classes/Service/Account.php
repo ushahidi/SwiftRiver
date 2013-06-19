@@ -408,7 +408,7 @@ class Service_Account extends Service_Base {
 			{
 				// The actor's account path
 				$actor_account_path = $activity['account']['account_path'];
-				$activity['actor_url'] = URL::site($actor_account_path);
+				$activity['actor_url'] = URL::site($actor_account_path, TRUE);
 				
 				// Set the action_on_url
 				$action_on = $activity['action_on'];
@@ -417,12 +417,12 @@ class Service_Account extends Service_Base {
 					case "river":
 					case "bucket":
 						$action_on_name = URL::title($activity['action_on_obj']['name']);
-						$activity['action_on_url'] = URL::site($actor_account_path."/".$action_on."/".$action_on_name);
+						$activity['action_on_url'] = URL::site($actor_account_path."/".$action_on."/".$action_on_name, TRUE);
 						break;
 				}
 				
 				// Set action_to_url
-				$activity['action_to_url'] = URL::site($activity['actionTo']['account_path']);
+				$activity['action_to_url'] = URL::site($activity['actionTo']['account_path'], TRUE);
 			}
 			
 			// Kohana::$log->add(Log::DEBUG, json_encode($activities));

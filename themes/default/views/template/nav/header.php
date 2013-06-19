@@ -8,47 +8,41 @@
 	<ul class="user-menu">	
 		<!-- hide parts of the header menu in the login page and for non registered users -->
 		<?php if ($user AND ! $anonymous): ?>
-				<li class="rivers"><a href="#"><span class="icon-river"></span><span class="label"><?php echo __("Rivers"); ?></span></a></li>
-				<li class="bucket"><a href="#"><span class="icon-bucket"></span><span class="label"><?php echo __("Buckets"); ?></span></a></li>
-				<li class="user popover">
-					<a href="#" class="popover-trigger">
-						<span class="icon-arrow-down"></span>
-						<span class="avatar-wrap">
-							<?php if ($num_notifications): ?>
-								<span class="notification"><?php echo $num_notifications; ?></span>
-							<?php endif ?>
-							<img src="<?php echo Swiftriver_Users::gravatar($user['owner']['email'], 80); ?>" />
-						</span>
-						<span class="nodisplay">Account Name</span>
-					</a>
-					<ul class="popover-window base header-toolbar">
-						<li>
-							<a href="<?php echo URL::site($user['account_path']); ?>">
-								<?php echo __('Your Activity');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
-							</a>
-						</li>
-						<li class="group">
-							<?php echo HTML::anchor(URL::site($user['account_path'].'/settings', TRUE), __('Account Settings')); ?>
-						</li>
-						<?php if ($admin): ?>
-							<li>
-								<a href="<?php echo URL::site('settings/main', TRUE); ?>">
-									<?php echo __("Website Settings"); ?>
-								</a>
-							</li>
-						<?php endif; ?>
-						<li>
-							<a href="<?php echo URL::site('login/done'); ?>">
-								<em><?php echo __('Log Out');?></em>
-							</a>
-						</li>
-					</ul>
-				</li>
-		<?php elseif ($controller != 'login'): ?>
-			<li class="login">
-				<a href="<?php echo URL::site('login'); ?>" class="modal-trigger">
-					<span class="icon-login"></span><span class="label">Log in</span>
+			<li class="rivers"><a href="#"><span class="icon-river"></span><span class="label"><?php echo __("Rivers"); ?></span></a></li>
+			<li class="bucket"><a href="#"><span class="icon-bucket"></span><span class="label"><?php echo __("Buckets"); ?></span></a></li>
+			<li class="user popover">
+				<a href="#" class="popover-trigger">
+					<span class="icon-arrow-down"></span>
+					<span class="avatar-wrap">
+						<?php if ($num_notifications): ?>
+							<span class="notification"><?php echo $num_notifications; ?></span>
+						<?php endif ?>
+						<img src="<?php echo Swiftriver_Users::gravatar($user['owner']['email'], 80); ?>" />
+					</span>
+					<span class="nodisplay">Account Name</span>
 				</a>
+				<ul class="popover-window base header-toolbar">
+					<li>
+						<a href="<?php echo URL::site($user['account_path']); ?>">
+							<?php echo __('Your Activity');?><?php if ($num_notifications) echo ' ('.$num_notifications.')'; ?>
+						</a>
+					</li>
+					<li class="group">
+						<?php echo HTML::anchor(URL::site($user['account_path'].'/settings', TRUE), __('Account Settings')); ?>
+					</li>
+					<?php if ($admin): ?>
+						<li>
+							<a href="<?php echo URL::site('settings/main', TRUE); ?>">
+								<?php echo __("Website Settings"); ?>
+							</a>
+						</li>
+					<?php endif; ?>
+					<li>
+						<a href="<?php echo URL::site('login/done'); ?>">
+							<em><?php echo __('Log Out');?></em>
+						</a>
+					</li>
+				</ul>
 			</li>
 		<?php endif; ?>
 	</ul>
