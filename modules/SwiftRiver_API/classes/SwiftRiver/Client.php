@@ -193,7 +193,11 @@ class SwiftRiver_Client {
 			}
 			
 			$request_uri = $this->base_url.$path;
-			Kohana::$log->add(Log::DEBUG, "Sending requet to ".$request_uri);
+			
+			Kohana::$log->add(Log::DEBUG, __("Sending request: :method :request_uri", array(
+				":method" => $method,
+				":request_uri" => $request_uri)));
+			
 			$response = $this->oauth_client->fetch($request_uri, $params, $method, $headers);
 
 			$exception_map = array(
