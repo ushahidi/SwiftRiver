@@ -119,7 +119,7 @@ $(function() {
 		setInterval(function() {
 			if (!isSyncing) {
 				isSyncing = true;
-				newActivities.fetch({data: {since_id: maxId}, 
+				newActivities.fetch({data: {since_id: maxId},
 				    add: true, 
 				    complete: function () {
 				        isSyncing = false;

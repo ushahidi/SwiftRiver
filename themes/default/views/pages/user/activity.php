@@ -13,7 +13,6 @@
 			<ul class="filters-primary">
 				<li class="active"><a href="#" class="modal-close"><?php echo __("Everything"); ?></a></li>
 				<li><a href="#" class="modal-close"><?php echo __("Pending"); ?></a></li>
-				<li><a href="#" class="modal-close"><?php echo __("Discussion"); ?></a></li>
 			</ul>
 		</div>
 	</div>

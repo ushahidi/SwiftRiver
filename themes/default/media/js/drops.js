@@ -332,7 +332,7 @@
 					view.hideReadStatusButton();
 				},
 				error: function(model, response) {
-					showFailureMessage(response.responseText);
+					showFailureMessage("Oops! Something just went wrong on our server while loading this drop. We'll fix it shortly.");
 				}
 			});
 			return false;
