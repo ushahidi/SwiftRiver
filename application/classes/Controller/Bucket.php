@@ -72,7 +72,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('settings_url', $settings_url)
 			->bind('discussion_url', $discussion_url)
 			->bind('owner', $this->owner)
-			->bind('photos_drop_count', $photos_drop_count)
 			->bind('follow_button', $follow_button);
 
 		$this->template->content->is_collaborator = FALSE;
@@ -84,8 +83,6 @@ class Controller_Bucket extends Controller_Drop_Base {
 			
 		// The maximum droplet id for pagination and polling
 		$droplet_list = $this->bucket_service->get_drops($this->bucket['id'], NULL, $this->photos, $filters);
-
-		$photos_drop_count = ($this->photos) ? $drop_count : 0;
 
 		// Bootstrap the droplet list
 		$this->template->header->js .= HTML::script("themes/default/media/js/drops.js");
