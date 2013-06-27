@@ -54,12 +54,12 @@ class SwiftRiver_API_Buckets extends SwiftRiver_API {
 	 * Delete collaborator
 	 *
 	 * @param   long  $bucket_id
-	 * @param   long  $collaborator_id
-	 * @return Array
+	 * @param   long  $account_id
+	 * @return  array
 	 */
-	public function delete_collaborator($bucket_id, $collaborator_id)
+	public function delete_collaborator($bucket_id, $account_id)
 	{
-		return $this->delete('/buckets/'.$bucket_id.'/collaborators/'.$collaborator_id);
+		return $this->delete('/buckets/'.$bucket_id.'/collaborators/'.$account_id);
 	}
 	
 	/**

@@ -170,12 +170,12 @@ class Service_Bucket extends Service_Base {
 	 * Remove collaborator
 	 *
 	 * @param   long  $bucket_id
-	 * @param   long  $collaborator_id	 
+	 * @param   long  $account_id
 	 * @return Array
 	 */
-	public function delete_collaborator($bucket_id, $collaborator_id)
+	public function delete_collaborator($bucket_id, $account_id)
 	{
-		return $this->api->get_buckets_api()->delete_collaborator($bucket_id, $collaborator_id);
+		return $this->api->get_buckets_api()->delete_collaborator($bucket_id, $account_id);
 	}
 	
 	/**

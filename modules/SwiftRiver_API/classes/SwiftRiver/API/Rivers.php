@@ -184,12 +184,12 @@ class SwiftRiver_API_Rivers extends SwiftRiver_API {
 	 * Delete collaborator
 	 *
 	 * @param   long  $river_name
-	 * @param   long  $collaborator_id
-	 * @return Array
+	 * @param   long  $account_id
+	 * @return  array
 	 */
-	public function delete_collaborator($river_id, $collaborator_id)
+	public function delete_collaborator($river_id, $account_id)
 	{
-		return $this->delete('/rivers/'.$river_id.'/collaborators/'.$collaborator_id);
+		return $this->delete('/rivers/'.$river_id.'/collaborators/'.$account_id);
 	}
 	
 	/**

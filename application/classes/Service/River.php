@@ -293,12 +293,12 @@ class Service_River extends Service_Base {
 	 * Remove collaborator
 	 *
 	 * @param   long  $river_id
-	 * @param   long  $collaborator_id	 
-	 * @return Array
+	 * @param   long  $account_id
+	 * @return  array
 	 */
-	public function delete_collaborator($river_id, $collaborator_id)
+	public function delete_collaborator($river_id, $account_id)
 	{
-		return $this->api->get_rivers_api()->delete_collaborator($river_id, $collaborator_id);
+		return $this->api->get_rivers_api()->delete_collaborator($river_id, $account_id);
 	}
 	
 	/**

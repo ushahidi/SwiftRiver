@@ -12,8 +12,8 @@
 
 <script type="text/template" id="collaborator-template">
 	<span class="remove icon-cancel"></span>
-	<img src="<%= account.owner.avatar %>" class="avatar" />
-	<%= account.owner.name %>
+	<img src="<%= owner.avatar %>" class="avatar" />
+	<%= owner.name %>
 </script>
 
 <script type="text/template" id="collaborator-search-result-template">
@@ -41,7 +41,7 @@
 		<div class="modal-search-results added nodisplay">
 			<h2 class="label">People you have just made collaborators...</h2>
 			<ul class="view-table">
-			</ul>													
+			</ul>
 		</div>
 	</div>
 </script>

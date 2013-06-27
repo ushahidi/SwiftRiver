@@ -440,11 +440,11 @@ function showConfirmationMessage(message, options) {
 }
 
 function showSuccessMessage(message, options) {
-	showSysMessage("success", "Success", message, options);
+	showSysMessage("success", "Success!", message, options);
 }
 
 function showFailureMessage(message, options) {
-	showSysMessage("failure", "Failure", message, options);
+	showSysMessage("failure", "Error.", message, options);
 }
 
 
