@@ -16,6 +16,12 @@
 class Controller_Login extends Controller_Swiftriver {
 	
 	/**
+	 * Stores the referring URL
+	 * @var string
+	 */
+	private $referrer;
+	
+	/**
 	 * The before() method is called before main controller action.
 	 * In our template controller we override this method so that we can
 	 * set up default values. These variables are then available to our
@@ -36,7 +42,7 @@ class Controller_Login extends Controller_Swiftriver {
 		$this->template->content = View::factory('pages/login/main')
 		    ->bind('messages', $this->messages)
 		    ->bind('errors', $this->errors)
-		    ->bind('referrer', $referrer);
+		    ->bind('referrer', $this->referrer);
 	}
 	
 	/**
@@ -55,9 +61,7 @@ class Controller_Login extends Controller_Swiftriver {
 		}
 
 		// Get the referriing URL
-		$referrer = $this->request->query('redirect_to')
-		    ? $this->request->query('redirect_to')
-		    : NULL;
+		$this->referrer = $this->request->query('redirect_to');
 
 		//Check for system messages
 		$session = Session::instance();
@@ -92,7 +96,13 @@ class Controller_Login extends Controller_Swiftriver {
 					// just redirect to the user profile if the above are not found or do
 					// not point to a url in this site
 					$redirect_to = $this->request->post('referrer');
-					$redirect_to = $redirect_to ? $redirect_to : $this->request->referrer();
+					if (empty($redirect_to))
+					{
+						$redirect_to = $this->request->referrer();
+					}
+
+					Kohana::$log->add(Log::DEBUG, __("Redirecting to :redirect_to", 
+						array(":redirect_to" => $redirect_to)));
 					
 					$this->redirect($redirect_to, 302);
 				}
