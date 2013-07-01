@@ -31,13 +31,13 @@ class Service_River extends Service_Base {
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the river?
-		$river['collaborator'] = FALSE;
+		$river['is_collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['is_owner'] = TRUE;
-				$river['collaborator'] = TRUE;
+				// $river['is_owner'] = TRUE;
+				$river['is_collaborator'] = TRUE;
 			}
 		}
 		

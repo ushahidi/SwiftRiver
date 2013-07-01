@@ -224,13 +224,13 @@ class Service_Bucket extends Service_Base {
 		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];
 
 		// Is the querying account collaborating on the fetched bucket?
-		$bucket['collaborator'] = FALSE;
+		$bucket['is_collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_buckets'] as $b)
 		{
 			if ($b['id'] === $bucket['id'])
 			{
-				$bucket['is_owner'] = TRUE;
-				$bucket['collaborator'] = TRUE;
+				// $bucket['is_owner'] = TRUE;
+				$bucket['is_collaborator'] = TRUE;
 			}
 		}
 

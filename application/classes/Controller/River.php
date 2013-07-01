@@ -69,11 +69,11 @@ class Controller_River extends Controller_Drop_Base {
 		if ($this->river)
 		{
 			$this->owner = $this->river['is_owner'];
-			$this->collaborator = $this->river['collaborator'];
+			$this->is_collaborator = $this->river['is_collaborator'];
 			$this->public = (bool) $this->river['public'];
 			
 			// If this river is not public and no ownership...
-			if ( ! $this->public AND  ! $this->owner AND  ! $this->collaborator)
+			if ( ! $this->public AND  ! $this->owner AND  ! $this->is_collaborator)
 			{
 				$this->redirect($this->dashboard_url, 302);
 			}
@@ -118,7 +118,7 @@ class Controller_River extends Controller_Drop_Base {
 			$this->template->header->js .= HTML::script("themes/default/media/js/channels.js");
 			
 			// Show the follow button?
-			if ( ! $this->owner)
+			if ( ! $this->owner AND ! $this->is_collaborator)
 			{
 				$is_following = $this->river_service->is_follower($this->river['id'], $this->user['id']);
 
