@@ -88,24 +88,24 @@
 		//Preload default avatar
 		var default_avatar_html = '<?php echo HTML::image("themes/default/media/img/avatar_default.gif"); ?>';
 		window.default_avatar = $(default_avatar_html);
-		(new Image()).src = window.default_avatar.attr('src');		
+		(new Image()).src = window.default_avatar.attr('src');
 	</script>
 	
 		<script type="text/javascript">
 			$(function() {
 				
 				<?php if (isset($bucket_list)): ?>
-					// Bootstrap the global bucket list		
+					// Bootstrap the global bucket list
 					Assets.bucketList.reset(<?php echo $bucket_list; ?>);
 				<?php endif; ?>
 				
 				<?php if (isset($river_list)): ?>
-					// Bootstrap the global bucket list		
+					// Bootstrap the global bucket list
 					Assets.riverList.reset(<?php echo $river_list; ?>);
 				<?php endif; ?>
 				
 				<?php if (isset($form_list)): ?>
-					// Bootstrap the global form list		
+					// Bootstrap the global form list
 					Assets.formList.reset(<?php echo $form_list; ?>);
 				<?php endif; ?>
 			});

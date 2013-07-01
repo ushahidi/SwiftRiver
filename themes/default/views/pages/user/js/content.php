@@ -185,7 +185,7 @@ $(function() {
 					break;	
 				case "form":
 					match = asset instanceof Assets.Form;
-					break;					
+					break;
 			}
 			
 			return match;
@@ -198,12 +198,25 @@ $(function() {
 			// Apply role filter
 			switch (this.selectedRole) {
 				case "managing":
-					match = asset.get("is_owner") || asset.get("is_collaborator");
+					this.$(".container-toolbar a.delete-asset").show();
+					this.$(".container-toolbar a.uncollaborate-asset").hide();
+					match = asset.get("is_owner");
 					break;
 
 				case "following":
+					this.$(".container-toolbar a.delete-asset").hide();
+					this.$(".container-toolbar a.uncollaborate-asset").hide();
 					match = asset.get("following");
 					break;
+				
+				case "collaborating":
+					this.$(".container-toolbar a.delete-asset").hide();
+					this.$(".container-toolbar a.uncollaborate-asset").show();
+					match = asset.get("is_collaborator");
+					break;
+				
+				default:
+					this.$(".container-toolbar a.uncollaborate-asset").hide();
 			}
 			
 			return match;
@@ -211,6 +224,9 @@ $(function() {
 		
 		// Show assets that match current filters otherwise hide them
 		filterView: function() {
+			if (!this.collection.size())
+				return;
+			
 			this.collection.each(function(dbAsset) {
 				// If true, display the asset otherwise hide it
 				var isSelected = true;
@@ -284,7 +300,7 @@ $(function() {
 			
 			
 			var success = true;			
-			_.each(selection, function(dbAsset) {				
+			_.each(selection, function(dbAsset) {
 				var asset = dbAsset.get("asset");
 				
 				asset.destroy({
@@ -294,7 +310,7 @@ $(function() {
 						dbAsset.trigger("destroy", dbAsset);
 					},
 					error: function() {
-						success = false;						
+						success = false;
 					}
 				});
 			}, this);

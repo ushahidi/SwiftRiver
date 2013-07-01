@@ -226,7 +226,7 @@
 
 		// Display a search result
 		addSearchResult: function(searchResult) {
-			var view = new SearchResultView({model: searchResult, collection: this.collection});	
+			var view = new SearchResultView({model: searchResult, collection: this.collection});
 			this.$(".livesearch > ul").append(view.render().el);
 		},
 
@@ -273,8 +273,8 @@
 
 				success: function(response){
 					if (response.length) {
-						// Remove already existing collaborators					
-						var results = _.filter(response, function(searchResult) {						
+						// Remove already existing collaborators
+						var results = _.filter(response, function(searchResult) {
 							return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
 								return collaborator.get('account').id == searchResult["id"]
 							});

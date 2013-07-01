@@ -468,6 +468,11 @@
 						</li>
 					</ul>
 				</div>
+				<div class="base">
+					<h2 class="label collaborating-title" style="display:none"><?php echo __("Collaborating"); ?></h2>
+					<ul class="view-table collaborating">
+					</ul>
+				</div>
 				<div class="modal-toolbar">
 					<a href="#" class="button-submit button-primary modal-close"><?php echo __("Done"); ?></a>
 				</div>
@@ -482,7 +487,7 @@
 
 <script type="text/template" id="bucket-template">
 	<span class="select icon-plus"></span>
-	<%= name %>
+	<%= display_name %>
 </script>
 
 <script type="text/template" id="add-drop-form-modal-template">
