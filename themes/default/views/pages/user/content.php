@@ -37,7 +37,7 @@
 			<div class="container-toolbar cf">
 				<span class="button">
 					<a href="#" class="button-white delete-asset"><?php echo __("Delete"); ?></a>
-					<a href="#" class="button-white uncollaborate-asset" style="display:none;"><?php echo __("Uncollaborate"); ?></a>
+					<a href="#" class="button-white uncollaborate" style="display:none;"><?php echo __("Uncollaborate"); ?></a>
 				</span>
 				<?php if ($owner): ?>
 				<span class="button create-new">

@@ -374,22 +374,8 @@ class Controller_River extends Controller_Drop_Base {
 			break;
 			
 			case "DELETE":
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-							
-				$collaborator_id = intval($this->request->param('id', 0));
-				
-				try
-				{
-					$this->river_service->delete_collaborator($this->river['id'], $collaborator_id);
-				}
-				catch (SwiftRiver_API_Exception_NotFound $e)
-				{
-					throw new HTTP_Exception_404();
-				}
+				$account_id = intval($this->request->param('id', 0));
+				$this->river_service->delete_collaborator($this->river['id'], $account_id);
 			break;
 		}
 	}

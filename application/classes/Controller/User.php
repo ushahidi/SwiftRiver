@@ -117,7 +117,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('rivers', $rivers)
 			->bind('forms', $forms)
 			->bind('buckets', $buckets)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+			->bind('account_id', $this->user['id']);
 		
 		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
 		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
@@ -190,7 +191,7 @@ class Controller_User extends Controller_Swiftriver {
 					
 					$this->response->headers("Content-Type", "application/json;charset=UTF-8");
 					echo json_encode($bucket);
-				}				
+				}
 			break;
 			
 			case "DELETE";
