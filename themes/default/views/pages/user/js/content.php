@@ -357,7 +357,7 @@ $(function() {
 					wait: true,
 					async: false,
 					success: function() {
-						dbAsset.trigger("delete", dbAsset);
+						dbAsset.trigger("destroy", dbAsset);
 					},
 					
 					error: function() {
