@@ -33,7 +33,8 @@ class Service_River extends Service_Base {
 		// Calculate % of the river that is occupied
 		$drop_count = $river['drop_count'];
 		$drop_quota = $river['drop_quota'];
-		$percent_full = $drop_count > 0 ? round(($drop_count/$drop_quota) * 100, 2) : 0;
+		$percent_full = ($drop_count > 0 AND $drop_quota > 0) 
+			? round(($drop_count/$drop_quota) * 100, 2) : 0;
 		$river['percent_full'] = $percent_full;
 		
 		// Is the querying account collaborating on the river?
