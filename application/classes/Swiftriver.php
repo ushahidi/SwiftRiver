@@ -20,14 +20,6 @@ class Swiftriver {
 	 */
 	const DEFAULT_COOKIE_SALT = 'cZjO0Lgfv7QrRGiG3XZJZ7fXuPz0vfcL';
 
-	// Cookie name constants
-	const COOKIE_SEARCH_SCOPE = "search_scope";
-	const COOKIE_PREVIOUS_SEARCH_SCOPE = "previous_search_scope";
-	const COOKIE_SEARCH_ITEM_ID = "search_item_id";
-	
-	// Crawl mutex
-	const CRAWL_MUTEX = 'SwiftRiver_Crawler';
-
 	/**
 	 * Application initialization
 	 *     - Loads the plugins
@@ -100,97 +92,6 @@ class Swiftriver {
 	}
 	
 	/**
-	 * Forks of the callback into a separate process.
-	 * The parent process exits immediately completing the HTTP request.
-	 * and maintain a mutex preventing other instances of this class
-	 * from running before the callback completes.
-	 * Double fork is done to allow the callback to obtain another
-	 * mutex if need be.
-	 */	   
-	public static function do_fork($callback, $mutex=NULL)
-	{
-		// The signals used below require cli mode
-		if (php_sapi_name() != 'cli')
-		{
-		    Kohana::$log->add(Log::ERROR, "CLI mode is required");
-			return;
-		}
-		
-		// Fork process to do the crawl if pcntl is installed
-		if ( ! function_exists('pcntl_fork'))
-		{
-			Kohana::$log->add(Log::ERROR, "PCNTL is required");
-			return;
-		}
-
-		$pid = pcntl_fork();		
-		if ($pid == -1)
-		{
-			 Kohana::$log->add(Log::ERROR, "Forking failed.");
-		}
-		elseif ($pid == 0)
-		{
-			// Fork again
-			// This second parent will hold the crawl mutex
-			// so that child processes can other locks
-
-			// Install signal handlers
-			declare(ticks = 1); // How often to check for signals
-			// Run callable where OK received from parent
-			pcntl_signal(SIGUSR1, $callback);
-			// Exit when NACK received from parent.
-			pcntl_signal(SIGUSR2, function($signo) { exit; } );
-						
-			// Force reconnection. Both parent and child
-			// processes will open their own conneciton
-			// once they start.
-			Database::instance()->disconnect();
-			
-			$pid = pcntl_fork();
-			
-			if ($pid == -1)
-			{
-				 Kohana::$log->add(Log::ERROR, "Second fork failed.");
-			}
-			elseif ($pid == 0)
-			{
-				// Second child
-				
-				// Wait for signal from parent to proceed
-				while (TRUE)
-					sleep(60);
-			}
-			else
-			{
-				// Second parent
-				try
-				{
-					if ($mutex) 
-					{
-						Swiftriver_Mutex::obtain($mutex);
-					}
-					
-					// Signal child to proceed
-					Kohana::$log->write();
-					posix_kill($pid, SIGUSR1);
-				}
-				catch (SwiftRiver_Exception_Mutex $e)
-				{
-					// Signal child to exit
-					Kohana::$log->add(Log::ERROR, "Unable to obtain mutex");
-					posix_kill($pid, SIGUSR2);
-					exit;
-				}
-				pcntl_wait($status);
-				if ($mutex) 
-				{
-					Swiftriver_Mutex::release($mutex);
-				}
-			}
-		}
-	}
-    
-	/**
 	 * Get a single setting value
 	 *
 	 * @param string $key
@@ -221,7 +122,7 @@ class Swiftriver {
 		if (empty($setting_keys) OR ! is_array($setting_keys))
 			return NULL;
         
-        $settings_array = array();
+		$settings_array = array();
 		foreach ($setting_keys as $key)
 		{
 			$settings_array[$key] = get_setting($key);
