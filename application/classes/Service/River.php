@@ -30,6 +30,12 @@ class Service_River extends Service_Base {
 		$river['expired'] = FALSE;
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
+		// Calculate % of the river that is occupied
+		$drop_count = $river['drop_count'];
+		$drop_quota = $river['drop_quota'];
+		$percent_full = $drop_count > 0 ? round(($drop_count/$drop_quota) * 100, 2) : 0;
+		$river['percent_full'] = $percent_full;
+		
 		// Is the querying account collaborating on the river?
 		$river['is_collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_rivers'] as $r)
