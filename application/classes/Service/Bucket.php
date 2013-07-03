@@ -170,12 +170,12 @@ class Service_Bucket extends Service_Base {
 	 * Remove collaborator
 	 *
 	 * @param   long  $bucket_id
-	 * @param   long  $collaborator_id	 
+	 * @param   long  $account_id
 	 * @return Array
 	 */
-	public function delete_collaborator($bucket_id, $collaborator_id)
+	public function delete_collaborator($bucket_id, $account_id)
 	{
-		return $this->api->get_buckets_api()->delete_collaborator($bucket_id, $collaborator_id);
+		return $this->api->get_buckets_api()->delete_collaborator($bucket_id, $account_id);
 	}
 	
 	/**
@@ -224,13 +224,13 @@ class Service_Bucket extends Service_Base {
 		$bucket['is_owner'] = $bucket['account']['id'] == $querying_account['id'];
 
 		// Is the querying account collaborating on the fetched bucket?
-		$bucket['collaborator'] = FALSE;
+		$bucket['is_collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_buckets'] as $b)
 		{
 			if ($b['id'] === $bucket['id'])
 			{
-				$bucket['is_owner'] = TRUE;
-				$bucket['collaborator'] = TRUE;
+				// $bucket['is_owner'] = TRUE;
+				$bucket['is_collaborator'] = TRUE;
 			}
 		}
 

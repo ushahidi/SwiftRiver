@@ -31,13 +31,13 @@ class Service_River extends Service_Base {
 		$river['is_owner'] = $river['account']['id'] == $querying_account['id'];
 		
 		// Is the querying account collaborating on the river?
-		$river['collaborator'] = FALSE;
+		$river['is_collaborator'] = FALSE;
 		foreach ($querying_account['collaborating_rivers'] as $r)
 		{
 			if ($river['id'] == $r['id'])
 			{
-				$river['is_owner'] = TRUE;
-				$river['collaborator'] = TRUE;
+				// $river['is_owner'] = TRUE;
+				$river['is_collaborator'] = TRUE;
 			}
 		}
 		
@@ -293,12 +293,12 @@ class Service_River extends Service_Base {
 	 * Remove collaborator
 	 *
 	 * @param   long  $river_id
-	 * @param   long  $collaborator_id	 
-	 * @return Array
+	 * @param   long  $account_id
+	 * @return  array
 	 */
-	public function delete_collaborator($river_id, $collaborator_id)
+	public function delete_collaborator($river_id, $account_id)
 	{
-		return $this->api->get_rivers_api()->delete_collaborator($river_id, $collaborator_id);
+		return $this->api->get_rivers_api()->delete_collaborator($river_id, $account_id);
 	}
 	
 	/**

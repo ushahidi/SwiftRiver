@@ -783,16 +783,16 @@
 				
 			Assets.BaseAssetListView.prototype.initialize.call(this, options);
 		},
-				
+		
 		getView: function(bucket) {
 			return new BucketView({model: bucket, drop: this.model});
 		},
 		
 		// Override default determination for assets to be rendered
 		renderAsset: function(bucket) {
-			return bucket.get("is_owner");
+			return bucket.get("is_owner") || bucket.get("is_collaborator");
 		},
-						
+		
 		onSaveNewBucket: function(bucket) {
 			// if the drop is not already in the bucket
 			if (!this.model.isInBucket(bucket)) {

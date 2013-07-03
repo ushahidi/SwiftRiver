@@ -117,7 +117,8 @@ class Controller_User extends Controller_Swiftriver {
 			->bind('rivers', $rivers)
 			->bind('forms', $forms)
 			->bind('buckets', $buckets)
-			->bind('owner', $this->owner);
+			->bind('owner', $this->owner)
+			->bind('account_id', $this->user['id']);
 		
 		$rivers = json_encode($this->account_service->get_rivers($this->visited_account, $this->user));
 		$buckets = json_encode($this->account_service->get_buckets($this->visited_account, $this->user));
@@ -190,7 +191,7 @@ class Controller_User extends Controller_Swiftriver {
 					
 					$this->response->headers("Content-Type", "application/json;charset=UTF-8");
 					echo json_encode($bucket);
-				}				
+				}
 			break;
 			
 			case "DELETE";
@@ -386,53 +387,7 @@ class Controller_User extends Controller_Swiftriver {
 				break;
 		}
 	}
-	
-	private function notify_new_collaborator($collaborator_orm)
-	{
-		// Send email notification after successful save
-		$html = View::factory('emails/html/collaboration_invite_accepted');
-		$text = View::factory('emails/text/collaboration_invite_accepted');
-		$html->from_name = $text->from_name = $collaborator_orm->user->name;
-		$html->avatar = Swiftriver_Users::gravatar($collaborator_orm->user->email, 80);
-		$html->from_link = URL::site($collaborator_orm->user->account->account_path, TRUE);
-		$subject = __(':from accepted your collaboration invite!',
-						array( ":from" => $collaborator_orm->user->name,
-						));
-		
-		$owners = NULL;
-		$to = NULL;
-		if ($collaborator_orm instanceof Model_River_Collaborator)
-		{
-			$to = '"'.$collaborator_orm->river->account->user->name.'" <'.$collaborator_orm->river->account->user->email.'>';
-			$owners = $collaborator_orm->river->get_collaborators(TRUE);
-			$text->link = $html->asset_link = URL::site($collaborator_orm->river->get_base_url(), TRUE);
-			$html->asset_name = $text->asset_name = $collaborator_orm->river->river_name;
-			$html->asset = $text->asset = "river";
-		}
-		elseif ($collaborator_orm instanceof Model_Bucket_Collaborator)
-		{
-			$to = '"'.$collaborator_orm->bucket->account->user->name.'" <'.$collaborator_orm->bucket->account->user->email.'>';
-			$owners = $collaborator_orm->bucket->get_collaborators(TRUE);
-			$text->link = $html->asset_link = URL::site($collaborator_orm->bucket->get_base_url(), TRUE);
-			$html->asset_name = $text->asset_name = $collaborator_orm->bucket->bucket_name;
-			$html->asset = $text->asset = "bucket";
-		}
-		
-		foreach ($owners as $owner)
-		{
-			if ($collaborator_orm->user->id == $owner['id'])
-				continue; // Skip the just added collaborator
-			
-			if ($to)
-			{
-				$to .= ', ';
-			}
-			$to .= '"'.$owner['name'].'" '.'<'.$owner['email'].'>';
-		}
-		
-		Swiftriver_Mail::send($to, $subject, $text->render(), $html->render());
-	}
-	
+
 	/**
 	 * Initial registration page
 	 *

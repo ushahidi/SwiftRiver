@@ -58,15 +58,20 @@
 
 		<div class="modal-body">
 			<div class="base">
-				<h2 class="label own-title" style="display:none">Managing</h2>
+				<h2 class="label own-title" style="display:none"><?php echo __("Managing"); ?></h2>
 				<ul class="view-table own">
-					<li class="add"><a href="#create-river" class="modal-transition">Create a new river</a></li>
+					<li class="add"><a href="#create-river" class="modal-transition"><?php echo __("Create a new river"); ?></a></li>
 				</ul>
 			</div>
 			<div class="base">
-				<h2 class="label following-title" style="display:none">Following</h2>
+				<h2 class="label collaborating-title" style="display:none"><?php echo __("Collaborating"); ?></h2>
+				<ul class="view-table collaborating">
+				</ul>
+			</div>
+			<div class="base">
+				<h2 class="label following-title" style="display:none"><?php echo __("Following"); ?></h2>
 				<ul class="view-table following">
-				</ul
+				</ul>
 			</div>
 		</div>
 	</script>
@@ -104,7 +109,7 @@
 					
 				<div class="modal-toolbar">
 					<a href="#" class="button-submit button-primary"><span>Create the river</span></a>
-				</div>					
+				</div>
 			<?php echo Form::close(); ?>
 		</div>
 	</script>
@@ -117,13 +122,18 @@
 	
 		<div class="modal-body">
 			<div class="base">
-				<h2 class="label own-title" style="display:none">Managing</h2>
+				<h2 class="label own-title" style="display:none"><?php echo __("Managing"); ?></h2>
 				<ul class="view-table own">
-					<li class="add"><a href="#create-bucket" class="modal-transition">Create a new bucket</a></li>
+					<li class="add"><a href="#create-bucket" class="modal-transition"><?php echo __("Create a new bucket"); ?></a></li>
 				</ul>
 			</div>
 			<div class="base">
-				<h2 class="label following-title" style="display:none">Following</h2>
+				<h2 class="label collaborating-title" style="display:none"><?php echo __("Collaborating"); ?></h2>
+				<ul class="view-table collaborating">
+				</ul>
+			</div>
+			<div class="base">
+				<h2 class="label following-title" style="display:none"><?php echo __("Following"); ?></h2>
 				<ul class="view-table following">
 				</ul>
 			</div>

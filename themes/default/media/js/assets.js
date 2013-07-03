@@ -45,7 +45,7 @@
 			// Since we cannot toggle subscription for our buckets
 			// because a delete button is shown or nothing at all
 			this.set('is_owner', false);
-			this.set('collaborator', false);
+			this.set('is_collaborator', false);
 		},
 
 		// A model can have multiple views using it
@@ -70,19 +70,19 @@
 	var AssetList = Assets.AssetList = Backbone.Collection.extend({
 		own: function() {
 			return this.filter(function(asset) { 
-				return !asset.get('following') && asset.get('is_owner'); 
+				return asset.get('is_owner'); 
 			});
 		},
 		
 		following: function() {
 			return this.filter(function(asset) {
-				return !asset.get('collaborator') && asset.get('following');
+				return asset.get('following');
 			});
 		},
 
 		collaborating: function() {
 			return this.filter(function(asset) { 
-				return !asset.get('following') && asset.get('collaborator'); 
+				return asset.get('is_collaborator');
 			});
 		}
 	});
@@ -164,7 +164,7 @@
 		},
 
 		toggleFollowing: function() {
-			if (this.model.get("collaborator")) {
+			if (this.model.get("is_collaborator")) {
 				// Collaborator
 				var message = 'Stop collaborating on <a href="#">' + this.model.get('display_name') + "</a>?";
 				new ConfirmationWindow(message, function() {
@@ -233,16 +233,15 @@
 		},
 
 		renderAsset: function(asset) {
-			// Default render all assets
 			return true;
 		},
 
 		isCreator: function(asset) {
-			return asset.get("is_owner") && !asset.get("collaborator");
+			return asset.get("is_owner");
 		},
 
 		isCollaborator: function(asset) {
-			return asset.get("collaborator");
+			return asset.get("is_collaborator");
 		},
 
 		followingChanged: function(model, following) {
@@ -299,7 +298,7 @@
 
 		// Override default determination for assets to be rendered
 		renderAsset: function(asset) {
-			return asset.get("is_owner") || asset.get("following");
+			return asset.get("is_owner") || asset.get("is_collaborator");
 		},
 
 		renderOwn: function(view) {
@@ -355,17 +354,6 @@
 
 		onSaveNewBucket: function(bucket) {
 			// Do nothing
-		},
-		
-		// Assets in the header are listed before the create button
-		renderOwn: function(view) {
-			this.$(".own").prepend(view.render().el);
-			this.$(".own-title").show();
-		},
-		
-		// Collaborating assets are managed assets
-		renderCollaborating: function(view) {
-			this.renderOwn(view);
 		},
 	});
 
@@ -608,7 +596,7 @@
 	var Form = Assets.Form = Asset.extend({
 		defaults: {
 		    "is_owner":  true,
-			"collaborator":  false,
+			"is_collaborator":  false,
 			"follower":  false,
 			"url": null,
 		},
@@ -846,7 +834,7 @@
 		},
 		
 		addField: function(field) {
-			var view = field.view = new FieldView({model: field});			
+			var view = field.view = new FieldView({model: field});
 			this.$("ul.view-table .add").before(view.render().el);
 			view.on("change", this.onFieldChanged, this);
 		},
@@ -878,7 +866,7 @@
 		
 		showAddField: function() {
 			var view = new AddFieldModalView({urlRoot: this.fields.url});
-			view.on("change", this.onFieldAdded, this);			
+			view.on("change", this.onFieldAdded, this);
 			modalShow(view.render().$el);
 			return false;
 		},

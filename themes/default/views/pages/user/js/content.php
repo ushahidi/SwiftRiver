@@ -12,7 +12,7 @@ $(function() {
 		
 		selected: function() {
 			return this.filter(function(asset) { 
-				return asset.get("selected"); 
+				return asset.get("selected");
 			});
 		},
 	});
@@ -107,7 +107,8 @@ $(function() {
 			"click .filters-type a": "filterByCategory",
 			"click .container-tabs-menu a": "filterByRole",
 			"click .container-toolbar a.delete-asset": "confirmDelete",
-			"click .create-new a.button-primary": "showCreateAsset"
+			"click .create-new a.button-primary": "showCreateAsset",
+			"click .container-toolbar a.uncollaborate": "confirmUnCollaborate",
 		},
 		
 		initialize: function(options) {
@@ -185,7 +186,7 @@ $(function() {
 					break;	
 				case "form":
 					match = asset instanceof Assets.Form;
-					break;					
+					break;
 			}
 			
 			return match;
@@ -198,12 +199,25 @@ $(function() {
 			// Apply role filter
 			switch (this.selectedRole) {
 				case "managing":
-					match = asset.get("is_owner") || asset.get("is_collaborator");
+					this.$(".container-toolbar a.delete-asset").show();
+					this.$(".container-toolbar a.uncollaborate").hide();
+					match = asset.get("is_owner");
 					break;
 
 				case "following":
+					this.$(".container-toolbar a.delete-asset").hide();
+					this.$(".container-toolbar a.uncollaborate").hide();
 					match = asset.get("following");
 					break;
+				
+				case "collaborating":
+					this.$(".container-toolbar a.delete-asset").hide();
+					this.$(".container-toolbar a.uncollaborate").show();
+					match = asset.get("is_collaborator");
+					break;
+				
+				default:
+					this.$(".container-toolbar a.uncollaborate").hide();
 			}
 			
 			return match;
@@ -211,12 +225,18 @@ $(function() {
 		
 		// Show assets that match current filters otherwise hide them
 		filterView: function() {
+			if (!this.collection.size())
+				return;
+			
 			this.collection.each(function(dbAsset) {
 				// If true, display the asset otherwise hide it
 				var isSelected = true;
 				var asset = dbAsset.get("asset");
 				
 				if (this.matchTypeFilter(asset) && this.matchRoleFilter(asset)) {
+					if (this.selectedRole == "collaborating" && asset.get("is_collaborator")) {
+						$(".select-toggle", dbAsset.view.$el).html($("<input>").attr("type", "checkbox"));
+					}
 					dbAsset.view.$el.fadeIn("slow");
 				} else {
 					dbAsset.view.$el.fadeOut("slow");
@@ -268,7 +288,7 @@ $(function() {
 		
 		// Show a delete confirmation window
 		confirmDelete: function() {
-			if (this.collection.selected().length == 0)
+			if (!this.collection.selected().length)
 				return false;
 				
 			// Show confirmation window
@@ -281,10 +301,8 @@ $(function() {
 		// Deletes all currently selected assets
 		deleteAssets: function() {
 			var selection = this.collection.selected();
-			
-			
-			var success = true;			
-			_.each(selection, function(dbAsset) {				
+			var success = true;
+			_.each(selection, function(dbAsset) {
 				var asset = dbAsset.get("asset");
 				
 				asset.destroy({
@@ -294,7 +312,7 @@ $(function() {
 						dbAsset.trigger("destroy", dbAsset);
 					},
 					error: function() {
-						success = false;						
+						success = false;
 					}
 				});
 			}, this);
@@ -310,6 +328,53 @@ $(function() {
 		showCreateAsset: function() {
 			modalShow(new CreateAssetModal().render().el);
 			return false;
+		},
+		
+		confirmUnCollaborate: function(e) {
+			if (!this.collection.selected().length)
+				return false;
+			
+			new ConfirmationWindow(
+				"<?php echo __("Are you sure you want to stop collaborating on the selected items?"); ?>",
+				this.uncollaborate, this).show();
+			return false;
+		},
+		
+		uncollaborate: function() {
+			var selection = this.collection.selected(),
+				success = true;
+			
+			_.each(selection, function(dbAsset) {
+				var asset = dbAsset.get("asset");
+				var urlRoot = asset.get("url")+ "/collaborators";
+				var AssetCollaborator = Backbone.Model.extend({urlRoot: urlRoot});
+				
+				var collaborator = new AssetCollaborator({
+					id: <?php echo $account_id; ?>, 
+				});
+				
+				collaborator.destroy({
+					wait: true,
+					async: false,
+					success: function() {
+						dbAsset.trigger("delete", dbAsset);
+					},
+					
+					error: function() {
+						success = false;
+					}
+				});
+				
+			}, this);
+			
+			if (success) {
+				var message = "You have successfully stopped collaborating on " + selection.length + "item(s)";
+				showSuccessMessage(message, {flash: true});
+			} else {
+				var message = "<?php echo __("Oops! An error occurred while removing you "
+				. "from the list of collaborators of some of the selected items. Please try again later."); ?>";
+				showFailureMessage(message);
+			}
 		}
 	});
 	

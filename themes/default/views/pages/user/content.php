@@ -30,12 +30,14 @@
 			<ul class="container-tabs-menu cf">
 				<li class="active"><a href="#all"><?php echo __("All"); ?></a></li>
 				<li><a href="#managing"><?php echo __("Managing"); ?></a></li>
+				<li><a href="#collaborating"><?php echo __("Collaborating"); ?></a>
 				<li><a href="#following"><?php echo __("Following"); ?></a></li>
 			</ul>
 
 			<div class="container-toolbar cf">
 				<span class="button">
 					<a href="#" class="button-white delete-asset"><?php echo __("Delete"); ?></a>
+					<a href="#" class="button-white uncollaborate" style="display:none;"><?php echo __("Uncollaborate"); ?></a>
 				</span>
 				<?php if ($owner): ?>
 				<span class="button create-new">

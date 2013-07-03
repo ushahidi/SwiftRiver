@@ -6,7 +6,7 @@
 	</td>
 	<td class="item-type">
 		<span class="icon-<%= type %>"></span>
-	</td>										
+	</td>
 	<td class="item-summary">
 		<h2><a href="<%= url %>"><%= display_name %></a></h2>
 		<% if (type == "river") { %>
@@ -27,42 +27,41 @@
 </script>
 
 <script type="text/template" id="create-asset-modal-template">
-			<div class="modal-title cf">
-				<a href="#" class="modal-close button-white">
-					<i class="icon-cancel"></i>
-					<?php echo __("Close"); ?>
-				</a>
-				<h1><?php echo __("Create new"); ?></h1>
-			</div>
+	<div class="modal-title cf">
+		<a href="#" class="modal-close button-white">
+			<i class="icon-cancel"></i>
+			<?php echo __("Close"); ?>
+		</a>
+		<h1><?php echo __("Create new"); ?></h1>
+	</div>
 			
-			<div class="modal-body">
-				<div class="base">
-					<ul class="view-table">
-						<li>
-							<a href="#river" class="modal-transition">
-								<span class="transition icon-arrow-right"></span>
-								<i class="icon-river"></i>
-								<?php echo __("River"); ?>
-							</a>
-						</li>
-						<li>
-							<a href="#bucket" class="modal-transition">
-								<span class="transition icon-arrow-right"></span>
-								<i class="icon-bucket"></i>
-								<?php echo __("Bucket"); ?>
-							</a>
-						</li>
+	<div class="modal-body">
+		<div class="base">
+			<ul class="view-table">
+				<li>
+					<a href="#river" class="modal-transition">
+						<span class="transition icon-arrow-right"></span>
+						<i class="icon-river"></i>
+						<?php echo __("River"); ?>
+					</a>
+				</li>
+				<li>
+					<a href="#bucket" class="modal-transition">
+						<span class="transition icon-arrow-right"></span>
+						<i class="icon-bucket"></i>
+						<?php echo __("Bucket"); ?>
+					</a>
+				</li>
 
-						<li>
-							<a href="#form" class="modal-transition">
-								<span class="transition icon-arrow-right"></span>
-								<i class="icon-form"></i>
-								<?php echo __("Custom form"); ?>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
+				<li>
+					<a href="#form" class="modal-transition">
+						<span class="transition icon-arrow-right"></span>
+						<i class="icon-form"></i>
+						<?php echo __("Custom form"); ?>
+					</a>
+				</li>
+			</ul>
+		</div>
 	</div>
 </script>
 
@@ -97,9 +96,9 @@
 	
 		<div class="modal-toolbar">
 			<% if (isNew) { %>
-				<a href="#" class="button-submit button-primary"><?php echo __("Create custom form"); ?></a>				
+				<a href="#" class="button-submit button-primary"><?php echo __("Create custom form"); ?></a>
 			<% } else { %>
-				<a href="#" class="button-submit button-primary"><?php echo __("Save"); ?></a>				
+				<a href="#" class="button-submit button-primary"><?php echo __("Save"); ?></a>
 			<% } %>
 		</div>					
 	</div>
@@ -123,7 +122,7 @@
 		</div>
 
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary">Add field</a>				
+			<a href="#" class="button-submit button-primary">Add field</a>
 		</div>
 	</div>
 </script>
@@ -147,12 +146,12 @@
 						<div class="modal-field-tabs-window">
 						</div>
 					</div>
-				</div>														
+				</div>
 			</div>
 		</div>
 		<div class="modal-toolbar">
-			<a href="#" class="button-submit button-primary">Save field</a>				
-		</div>					
+			<a href="#" class="button-submit button-primary">Save field</a>
+		</div>
 	</div>
 </script>
 
@@ -161,12 +160,12 @@
 		<h3 class="label">Title</h3>
 		<input type="text" name="title" placeholder="Enter a title for this field..." value="<%= title %>" />
 		<label>
-	</div>																
+	</div>
 	<div class="modal-field">
 		<h3 class="label">Description</h3>
 		<input type="text" name="description" placeholder="Provide a description of this field..."  value="<%= description %>" />
 		<label>
-	</div>		
+	</div>
 </script>
 
 <script type="text/template" id="edit-list-field-modal-template">
@@ -223,7 +222,7 @@
 <script type="text/template" id="list-field-template">
 	<div class="modal-field">
 		<h3 class="label"><%= title %></h3>
-		<h4 class="label"><%= description %></h4>	
+		<h4 class="label"><%= description %></h4>
 		<% if (!isLive) { %>
 			<span class="remove icon-pencil"></span>
 			<span class="remove icon-cancel"></span>

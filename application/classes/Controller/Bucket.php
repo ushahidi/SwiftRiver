@@ -50,6 +50,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 			$this->bucket = $this->bucket_service->get_bucket_by_id($bucket['id'], $this->user);
 			$this->owner = $this->bucket['is_owner'];
 			$this->bucket_base_url = $this->bucket_service->get_base_url($this->bucket);
+			$this->is_collaborator = $this->bucket['is_collaborator'];
 		}
 
 		// If the bucket does not exist, redirect to the dashboard
@@ -60,24 +61,22 @@ class Controller_Bucket extends Controller_Drop_Base {
 		
 		// Set the page title
 		$this->page_title = $this->bucket['name'];
-		
 	}
 
 	public function action_index()
 	{
 		$this->template->header->title = $this->page_title;
-		
+
 		$this->template->content = View::factory('pages/bucket/main')
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
 			->bind('discussion_url', $discussion_url)
 			->bind('owner', $this->owner)
-			->bind('follow_button', $follow_button);
-
-		$this->template->content->is_collaborator = FALSE;
-		$this->template->content->anonymous = $this->anonymous;
-		$this->template->content->bucket = $this->bucket;
-		$this->template->content->user = $this->user;
+			->bind('follow_button', $follow_button)
+			->bind('is_collaborator', $this->is_collaborator)
+			->bind('anonymous', $this->anonymous)
+			->bind('bucket', $this->bucket)
+			->bind('user', $this->user);
 
 		$filters = $this->get_filters();
 			
@@ -131,7 +130,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		$discussion_url = $this->bucket_base_url.'/discussion';
 		
 		// Follow button
-		if ( ! $this->owner)
+		if ( ! $this->owner AND ! $this->is_collaborator)
 		{
 			// Is the current user following the visited bucket?
 			$is_following = $this->bucket_service->is_bucket_follower($this->bucket['id'], 
@@ -283,21 +282,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			break;
 			
 			case "DELETE":
-				// Is the logged in user an owner?
-				if ( ! $this->owner)
-				{
-					throw new HTTP_Exception_403();
-				}
-							
-				$collaborator_id = intval($this->request->param('id', 0));
-				
-				try
-				{
-					$this->bucket_service->delete_collaborator($this->bucket['id'], $collaborator_id);
-				} catch (SwiftRiver_API_Exception_NotFound $e)
-				{
-					throw new HTTP_Exception_403();
-				}
+				$account_id = intval($this->request->param('id', 0));
+				$this->bucket_service->delete_collaborator($this->bucket['id'], $account_id);
 			break;
 		}
 	}

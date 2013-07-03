@@ -14,7 +14,7 @@
 		},
 	});
 
-	var CollaboratorList = Collaborators.CollaboratorList = Backbone.Collection.extend({		
+	var CollaboratorList = Collaborators.CollaboratorList = Backbone.Collection.extend({
 		model: Collaborator
 	});
 
@@ -37,7 +37,7 @@
 
 		render: function() {
 			this.$el.html(this.template(this.model.toJSON()));
-			return this;	
+			return this;
 		},
 		
 		onDestroy: function() {
@@ -89,7 +89,7 @@
 			// Show loading icon if there is a delay
 			var t = setTimeout(function() { button.removeClass("icon-cancel").html(loading_image); }, 500);
 			
-			var message = this.model.get("account").owner.name + " is no longer a collaborator.";
+			var message = this.model.get("owner").name + " is no longer a collaborator.";
 			this.model.destroy({
 				wait: true,
 				complete: function() {
@@ -226,7 +226,7 @@
 
 		// Display a search result
 		addSearchResult: function(searchResult) {
-			var view = new SearchResultView({model: searchResult, collection: this.collection});	
+			var view = new SearchResultView({model: searchResult, collection: this.collection});
 			this.$(".livesearch > ul").append(view.render().el);
 		},
 
@@ -273,8 +273,8 @@
 
 				success: function(response){
 					if (response.length) {
-						// Remove already existing collaborators					
-						var results = _.filter(response, function(searchResult) {						
+						// Remove already existing collaborators
+						var results = _.filter(response, function(searchResult) {
 							return ! _.find(collaboratorsList.toArray(), function(collaborator) { 
 								return collaborator.get('account').id == searchResult["id"]
 							});
