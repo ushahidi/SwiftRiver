@@ -22,6 +22,12 @@ abstract class Controller_Drop_Base extends Controller_Swiftriver {
 	protected $owner = FALSE; 
 	
 	/**
+	 * Whether the currently authenticated user is a collaborator
+	 * @var bool
+	 */
+	protected $is_collaborator = FALSE;
+	
+	/**
 	 * Boolean indicating whether the logged in user owns the river
 	 * @var bool
 	 */

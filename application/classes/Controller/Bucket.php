@@ -48,7 +48,7 @@ class Controller_Bucket extends Controller_Drop_Base {
 		if (($bucket = $this->account_service->has_bucket($this->visited_account, $bucket_url_name)) !== FALSE)
 		{
 			$this->bucket = $this->bucket_service->get_bucket_by_id($bucket['id'], $this->user);
-			$this->owner = $this->bucket['is_owner'];
+			$this->owner = $this->bucket['is_owner'] OR $this->bucket['is_collaborator'];
 			$this->bucket_base_url = $this->bucket_service->get_base_url($this->bucket);
 			$this->is_collaborator = $this->bucket['is_collaborator'];
 		}
@@ -71,9 +71,8 @@ class Controller_Bucket extends Controller_Drop_Base {
 			->bind('droplets_view', $droplets_view)
 			->bind('settings_url', $settings_url)
 			->bind('discussion_url', $discussion_url)
-			->bind('owner', $this->owner)
+			->bind('is_owner', $this->owner)
 			->bind('follow_button', $follow_button)
-			->bind('is_collaborator', $this->is_collaborator)
 			->bind('anonymous', $this->anonymous)
 			->bind('bucket', $this->bucket)
 			->bind('user', $this->user);

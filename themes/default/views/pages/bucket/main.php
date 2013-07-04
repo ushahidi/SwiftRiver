@@ -3,7 +3,7 @@
 		<div class="col_9">
 			<h1>
 				<?php $bucket_name = $bucket['name']; ?>
-				<?php if ($bucket['is_owner']): ?>
+				<?php if ($is_owner): ?>
 					<span><?php echo $bucket_name; ?></span>
 				<?php else: ?>
 					<a href="<?php echo URL::site().$bucket['account']['account_path'] ?>">
@@ -14,7 +14,7 @@
 			</h1>		
 		</div>
 		<div class="page-action col_3">
-			<?php if ($bucket['is_owner']): ?>
+			<?php if ($is_owner): ?>
 			<a href="<?php echo $discussion_url; ?>" class="button button-white settings"><span class="icon-comment"></span></a>
 			<a href="<?php echo $settings_url; ?>" class="button button-white settings"><span class="icon-cog"></span></a>
 			<?php endif; ?>

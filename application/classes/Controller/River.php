@@ -68,7 +68,7 @@ class Controller_River extends Controller_Drop_Base {
 		// Action involves a specific river, check permissions
 		if ($this->river)
 		{
-			$this->owner = $this->river['is_owner'];
+			$this->owner = $this->river['is_owner'] OR $this->river['is_collaborator'];
 			$this->is_collaborator = $this->river['is_collaborator'];
 			$this->public = (bool) $this->river['public'];
 			
@@ -104,7 +104,8 @@ class Controller_River extends Controller_Drop_Base {
 				->bind('nav', $this->nav)
 				->bind('active', $this->active)
 				->bind('page_title', $this->page_title)
-				->bind('follow_button', $follow_button);
+				->bind('follow_button', $follow_button)
+				->bind('is_collaborator', $this->is_collaborator);
 
 			$view_data = array(
 				'channels_config' => json_encode(Swiftriver_Plugins::channels()),
