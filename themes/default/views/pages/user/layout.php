@@ -9,8 +9,8 @@
 		</div>
 		<div class="page-action col_3">
 			<span class="follow-total">
-				<a href="#" class="modal-trigger"><strong><?php echo $account['follower_count']; ?></strong> followers</a>, 
-				<a href="#"><strong><?php echo $account['following_count']; ?></strong> following</a>
+				<a href="#"><strong><?php echo $account['follower_count']; ?></strong> <?php echo __("followers"); ?></a>, 
+				<a href="#"><strong><?php echo $account['following_count']; ?></strong> <?php echo __("following"); ?></a>
 			</span>
 			<?php if (isset($follow_button)): ?>
 			<span class='button-follow' id="follow-button">
