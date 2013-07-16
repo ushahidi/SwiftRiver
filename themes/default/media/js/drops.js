@@ -1107,7 +1107,7 @@
 			} else if (metadata instanceof Place) {
 				label = metadata.get("name");
 			}
-			this.$el.html(this.template({label: label}));
+			this.$el.html(this.template({label: label, is_link: metadata.get("is_link")}));
 			return this;
 		},
 		
@@ -1191,6 +1191,7 @@
 		},
 		
 		addMetadata: function(metadata) {
+            metadata.set('is_link', (metadata instanceof Link));
 			var editMetadataView = new EditMetadataListItemView({model: metadata});
 			this.$(".view-table ul").prepend(editMetadataView.render().el);
 			
@@ -1346,7 +1347,7 @@
 		},
 		
 		addMetadata: function(metadata) {
-			var itemView = new MetadataItemView({model: metadata});			
+			var itemView = new MetadataItemView({model: metadata});
 			this.$(".filters-type-details ul").append(itemView.render().el);
 			metadata.itemView = itemView;
 			if (!this.initialRender) {

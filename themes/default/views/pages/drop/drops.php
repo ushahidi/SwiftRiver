@@ -217,7 +217,8 @@
 				</div>
 				<h2 class="label attach"><?php echo __("Full Story"); ?></h2>
 				<article class="drop-fullstory">
-					<h1><a href="#"><%= title %></a></h1>
+					<% var drop_url = (original_url == null) ? "#" : original_url; %>
+					<h1><a href="<%= drop_url %>" target="_blank"><%= title %></a></h1>
 					<%= content %>
 				</article>
 			</div>
@@ -311,7 +312,8 @@
 </script>
 
 <script type="text/template" id="edit-metadata-item-template">
-	<a href="#" title="<%= label %>">
+	<% var label_link = is_link ? label : "#"; %>
+	<a href="<%= label_link %>" title="<%= label %>" target="_blank">
 		<span class="remove icon-cancel"></span>
 		<% if (label.length > 50) { %>
 			<%= label.substring(0, 50) + " ..." %>
